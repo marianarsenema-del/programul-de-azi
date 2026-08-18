@@ -379,6 +379,10 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
 .install-btn{display:none;width:calc(100% - 36px);margin:14px 18px 0;background:#2ecc71;color:#ffffff;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
 .ios-install-hint{display:none;margin:8px 18px 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5;}
+.geo-suggestion{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 18px 0;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);padding:12px 16px;font-size:14px;}
+.geo-suggestion strong{color:var(--accent);}
+.geo-suggestion-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border-radius:100px;padding:8px 14px;font-weight:700;font-size:13px;white-space:nowrap;}
+.geo-suggestion-note{margin:6px 18px 0;font-size:12px;color:var(--muted);text-align:center;}
 .disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
 footer p + p{margin-top:8px;}
@@ -823,7 +827,7 @@ function renderCityPage({ orasSlug, orasDisplay, nonce }) {
 }
 
 // Pagină de start: site.ro/ — fără oraș/magazin specificat încă
-function renderHomePage(nonce) {
+function renderHomePage(nonce, suggestedCity) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
   const canonical = "https://programul-de-azi.ro/";
@@ -840,6 +844,17 @@ function renderHomePage(nonce) {
   ];
   const exampleListHtml = exampleLinks.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("");
 
+  // Sugestie pe baza IP-ului — NU redirect forțat. Pe rețele mobile din România,
+  // IP-ul apare adesea "din București" indiferent de orașul real al vizitatorului,
+  // așa că îi lăsăm mereu alegerea, vizibilă chiar sub sugestie.
+  const geoSuggestionHtml = suggestedCity
+    ? `<div class="geo-suggestion">
+        <span>📍 Se pare că ești în <strong>${escapeHtml(suggestedCity.display)}</strong></span>
+        <a href="/${suggestedCity.slug}" class="geo-suggestion-btn">Vezi programul →</a>
+      </div>
+      <p class="geo-suggestion-note">Nu e orașul tău? Alege mai jos.</p>`
+    : "";
+
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
@@ -850,6 +865,8 @@ function renderHomePage(nonce) {
 <main class="wrap">
   <button type="button" id="installBtn" class="install-btn">📱 Instalează aplicația pentru acces rapid</button>
   <p id="iosInstallHint" class="ios-install-hint" style="display:none">Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.</p>
+
+  ${geoSuggestionHtml}
 
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
   <p class="intro-text">Scrie orașul tău mai jos sau lasă-ne să-l detectăm automat.</p>
@@ -1037,25 +1054,28 @@ app.get("/ads.txt", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  // Vercel injectează automat headere de geolocație pe baza IP-ului vizitatorului —
-  // fără să ceară nicio permisiune. Header-ul corect pentru oraș este
-  // x-vercel-ip-city (nu x-vercel-id-city). Redirect doar dacă țara e România
-  // ȘI orașul detectat se potrivește cu unul din lista noastră cunoscută —
-  // altfel arătăm homepage-ul normal, ca să nu trimitem pe nimeni greșit.
+  // Vercel injectează automat headere de geolocație pe baza IP-ului vizitatorului.
+  // IMPORTANT: pe rețelele mobile din România (Orange, Vodafone, Digi, Telekom),
+  // traficul e adesea rutat printr-un punct central, de regulă în București —
+  // IP-ul apare "din București" chiar dacă utilizatorul e fizic în alt oraș.
+  // De aceea NU mai facem redirect forțat: arătăm orașul detectat ca sugestie,
+  // pe homepage, cu un buton — utilizatorul confirmă sau alege alt oraș.
   const country = String(req.headers["x-vercel-ip-country"] || "").toUpperCase();
   const rawCity = req.headers["x-vercel-ip-city"] || "";
 
+  let suggestedCity = null;
   if (country === "RO" && rawCity) {
-    const citySlug = resolveGeoCitySlug(decodeGeoHeader(rawCity));
+    const cityDisplay = decodeGeoHeader(rawCity);
+    const citySlug = resolveGeoCitySlug(cityDisplay);
     if (citySlug) {
-      return res.redirect(302, `/${citySlug}`);
+      suggestedCity = { slug: citySlug, display: toDisplayName(citySlug) };
     }
   }
 
   res.set("Content-Type", "text/html; charset=utf-8");
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  res.send(renderHomePage(nonce));
+  res.send(renderHomePage(nonce, suggestedCity));
 });
 
 app.get("/:oras/:magazin/:locatie", (req, res, next) => {
