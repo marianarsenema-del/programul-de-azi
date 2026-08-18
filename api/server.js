@@ -8,6 +8,8 @@
 
 const express = require("express");
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const app = express();
 
 /* ============================================================
@@ -18,6 +20,10 @@ const app = express();
    complet ascunse — nu se vede niciun chenar gol pentru vizitatori.
    ============================================================ */
 const codAdSense = "";
+
+// ID-ul de publisher AdSense (ex: "pub-1234567890123456") — folosit doar
+// pentru generarea automată a /ads.txt. Completează-l după aprobare.
+const adsensePublisherId = "";
 
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
@@ -45,6 +51,7 @@ const MANIFEST_JSON = {
   lang: "ro",
   icons: [
     { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" },
+    { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
   ],
 };
 
@@ -656,7 +663,10 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0F1115">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="apple-touch-icon" href="/icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ProgramulDeAzi">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -677,10 +687,18 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }) {
-  const title = `Program ${magazinDisplay} ${orasDisplay} Azi – Deschis sau Închis Acum`;
-  const description = `Vezi acum dacă ${magazinDisplay} din ${orasDisplay} este deschis. Program pe zile ale săptămânii și program de sărbători pentru ${magazinDisplay} ${orasDisplay}, actualizat live.`;
-  const canonical = `https://programul-de-azi.ro/${orasSlug}/${encodeURIComponent(magazinDisplay.toLowerCase())}`;
+function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, nonce }) {
+  // sufixul de locație hiper-locală (cartier/stradă) — opțional, gol pentru paginile normale de magazin
+  const locatieSuffix = locatieDisplay ? ` ${locatieDisplay}` : "";
+  const locatieForDescription = locatieDisplay ? ` din ${locatieDisplay},` : "";
+  const canonicalSlug = magazinSlug || encodeURIComponent(magazinDisplay.toLowerCase());
+  const locatieSlug = locatieDisplay ? slugifyCityName(locatieDisplay) : "";
+
+  const title = `Program ${magazinDisplay}${locatieSuffix} ${orasDisplay} Azi – Deschis sau Închis Acum`;
+  const description = `Vezi acum dacă ${magazinDisplay}${locatieForDescription} ${orasDisplay} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`;
+  const canonical = locatieDisplay
+    ? `https://programul-de-azi.ro/${orasSlug}/${canonicalSlug}/${locatieSlug}`
+    : `https://programul-de-azi.ro/${orasSlug}/${canonicalSlug}`;
 
   let mainHtml = "";
   let dataForClient;
@@ -688,7 +706,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }
   if (store.type === "mall") {
     mainHtml = `
       <div class="status-card" id="statusCard">
-        <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)} — Zonă shopping</div>
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} — Zonă shopping</div>
         <div class="status-text">—</div>
         <div class="status-sub">Se calculează programul...</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
@@ -714,7 +732,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }
   } else {
     mainHtml = `
       <div class="status-card" id="statusCard">
-        <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
         <div class="status-text">—</div>
         <div class="status-sub">Se calculează programul...</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
@@ -730,6 +748,10 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }
     dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays };
   }
 
+  const breadcrumb = locatieDisplay
+    ? `<a href="/${orasSlug}">${escapeHtml(orasDisplay)}</a> / <a href="/${orasSlug}/${canonicalSlug}">${escapeHtml(magazinDisplay)}</a> / ${escapeHtml(locatieDisplay)}`
+    : `<a href="/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}`;
+
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
@@ -738,7 +760,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+  <p class="breadcrumb">${breadcrumb}</p>
 
   ${renderBrandNav(orasSlug)}
 
@@ -747,10 +769,10 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }
 
   ${mainHtml}
 
-  <p class="disclaimer">Programul afișat pentru ${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.</p>
+  <p class="disclaimer">Programul afișat pentru ${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.</p>
 
   <footer>
-    <p><strong>Programul de Azi</strong> îți arată în timp real dacă ${escapeHtml(magazinDisplay)} din ${escapeHtml(orasDisplay)} este deschis chiar acum, plus programul complet pe zile și programul special de sărbători legale.</p>
+    <p><strong>Programul de Azi</strong> îți arată în timp real dacă ${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} din ${escapeHtml(orasDisplay)} este deschis chiar acum, plus programul complet pe zile și programul special de sărbători legale.</p>
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
@@ -977,6 +999,21 @@ app.get("/icon.svg", (req, res) => {
   res.send(ICON_SVG);
 });
 
+// Iconiță PNG reală, cerută de iOS/Safari și de unele integrări care nu
+// acceptă SVG ca icon de instalare. Fișierul trebuie să existe la rădăcina
+// proiectului (lângă vercel.json, package.json — NU în interiorul /api).
+app.get("/icon-512.png", (req, res) => {
+  const iconPath = path.join(__dirname, "..", "icon-512.png");
+  fs.readFile(iconPath, (err, data) => {
+    if (err) {
+      res.status(404).end();
+      return;
+    }
+    res.header("Content-Type", "image/png");
+    res.send(data);
+  });
+});
+
 app.get("/sitemap.xml", (req, res) => {
   res.header("Content-Type", "application/xml");
   res.send(generateSitemapXml());
@@ -985,6 +1022,18 @@ app.get("/sitemap.xml", (req, res) => {
 app.get("/robots.txt", (req, res) => {
   res.header("Content-Type", "text/plain");
   res.send("User-agent: *\nAllow: /\n\nSitemap: https://programul-de-azi.ro/sitemap.xml\n");
+});
+
+// ads.txt — cerut de Google AdSense ca să confirme că acest domeniu are
+// voie să vândă spațiul de reclamă legat de codAdSense. Completează
+// adsensePublisherId (sus, lângă codAdSense) după ce ești aprobat.
+app.get("/ads.txt", (req, res) => {
+  res.set("Content-Type", "text/plain");
+  if (!adsensePublisherId) {
+    res.send("# ads.txt va fi completat automat după aprobarea Google AdSense\n");
+    return;
+  }
+  res.send(`google.com, ${adsensePublisherId}, DIRECT, f08c47fec0942fa0\n`);
 });
 
 app.get("/", (req, res) => {
@@ -1009,11 +1058,34 @@ app.get("/", (req, res) => {
   res.send(renderHomePage(nonce));
 });
 
+app.get("/:oras/:magazin/:locatie", (req, res, next) => {
+  // pagini hiper-locale: /cluj-napoca/kaufland/manastur — cartierul/strada e
+  // inserat dinamic în titlu și în cardul de status, ca să prindem căutările
+  // gen "program kaufland manastur" alături de căutările generale pe oraș
+  if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
+
+  const orasSlug = req.params.oras.toLowerCase();
+  const orasDisplay = toDisplayName(req.params.oras);
+  const magazinSlug = req.params.magazin.toLowerCase();
+  const found = findStore(req.params.magazin);
+  const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
+  const locatieDisplay = toDisplayName(req.params.locatie);
+
+  const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
+
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 app.get("/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
+  const magazinSlug = req.params.magazin.toLowerCase();
   const found = findStore(req.params.magazin);
   const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
 
@@ -1023,7 +1095,7 @@ app.get("/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store: effectiveStore, nonce });
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
