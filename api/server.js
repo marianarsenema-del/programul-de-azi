@@ -44,7 +44,7 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
    butonul corespunzător nu apare deloc — fără spații goale pe pagină.
    Completează-le direct aici, în cod, când primești aprobările.
    ============================================================ */
-const linkEmagMall = "https://2performant.com";
+const linkEmagMall = "https://l.profitshare.ro/l/16330256";
 const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkAfiliatDedeman = "";
