@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://programuldeazi.ro/sitemap.xml
