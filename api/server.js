@@ -426,7 +426,7 @@ ${dataForClient ? buildClientScript(dataForClient) : ""}
 function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
   const title = `Program ${magazinDisplay} ${orasDisplay} Azi – Deschis sau Închis Acum`;
   const description = `Vezi acum dacă ${magazinDisplay} din ${orasDisplay} este deschis. Program pe zile ale săptămânii și program de sărbători pentru ${magazinDisplay} ${orasDisplay}, actualizat live.`;
-  const canonical = `https://site.ro/${orasSlug}/${encodeURIComponent(magazinDisplay.toLowerCase())}`;
+  const canonical = `https://programul-de-azi.ro/${orasSlug}/${encodeURIComponent(magazinDisplay.toLowerCase())}`;
 
   let mainHtml = "";
   let dataForClient;
@@ -510,7 +510,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
 function renderCityPage({ orasSlug, orasDisplay }) {
   const title = `Program Magazine ${orasDisplay} Azi – Lidl, Kaufland, Penny și Alte Magazine`;
   const description = `Alege un magazin din ${orasDisplay} și vezi instant dacă este deschis acum: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din ${orasDisplay}.`;
-  const canonical = `https://site.ro/${orasSlug}`;
+  const canonical = `https://programul-de-azi.ro/${orasSlug}`;
 
   const listItems = Object.keys(STORE_CONFIG)
     .map((key) => `<li><a href="/${orasSlug}/${key}">${escapeHtml(STORE_CONFIG[key].name)} ${escapeHtml(orasDisplay)}</a></li>`)
@@ -550,7 +550,7 @@ function renderCityPage({ orasSlug, orasDisplay }) {
 function renderHomePage() {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
-  const canonical = "https://site.ro/";
+  const canonical = "https://programul-de-azi.ro/";
 
   const exampleLinks = [
     { href: "/bucuresti/lidl", label: "Lidl București" },
