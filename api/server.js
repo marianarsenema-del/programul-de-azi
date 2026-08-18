@@ -19,6 +19,70 @@ const app = express();
 const codAdSense = "";
 
 /* ============================================================
+   0.5) PWA — manifest, service worker, iconiță
+   Cerute prin rutele /manifest.json, /sw.js și /icon.svg mai jos,
+   ca legăturile din <head> să funcționeze efectiv, nu doar să existe.
+   ============================================================ */
+
+// iconiță simplă, generată ca SVG (nu necesită fișiere PNG separate;
+// pentru suport iOS mai vechi, poți adăuga ulterior și icon-192.png / icon-512.png reale)
+const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0F1115"/>
+  <rect x="96" y="96" width="320" height="320" rx="48" fill="#16A34A"/>
+  <text x="256" y="300" font-family="Arial, sans-serif" font-size="180" font-weight="800" fill="#FFFFFF" text-anchor="middle">P</text>
+</svg>`;
+
+const MANIFEST_JSON = {
+  name: "Programul de Azi",
+  short_name: "ProgramulDeAzi",
+  description: "Vezi instant dacă magazinele și mall-urile din România sunt deschise acum.",
+  start_url: "/",
+  scope: "/",
+  display: "standalone",
+  background_color: "#0F1115",
+  theme_color: "#0F1115",
+  lang: "ro",
+  icons: [
+    { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" },
+  ],
+};
+
+// Service worker: network-first, cu fallback pe cache la offline.
+// Statusul DESCHIS/ÎNCHIS se recalculează oricum în telefon din ora locală,
+// deci o pagină servită din cache tot arată statusul corect — nu doar una „proaspătă".
+const SW_SCRIPT = `
+const CACHE_NAME = "programul-de-azi-v1";
+const PRECACHE_URLS = ["/", "/manifest.json", "/icon.svg"];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).catch(() => {})
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
+        return response;
+      })
+      .catch(() => caches.match(event.request))
+  );
+});
+`;
+
+/* ============================================================
    1) PROGRAM IMPLICIT — valori naționale standard, ușor de
       modificat manual mai jos, per brand sau per zonă de mall.
       weekly are 7 poziții, index 0 = Duminică ... 6 = Sâmbătă
@@ -269,6 +333,11 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-btn{display:block;width:calc(100% - 36px);margin:16px 18px 0;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;transition:opacity .15s ease;}
 .geo-btn:disabled{opacity:.6;cursor:default;}
 .geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
+.city-search-form{display:flex;gap:8px;margin:16px 18px 0;}
+.city-search-input{flex:1 1 auto;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
+.city-search-input::placeholder{color:var(--muted);}
+.city-search-input:focus{outline:none;border-color:var(--accent);}
+.city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
 .disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
 footer p + p{margin-top:8px;}
@@ -422,6 +491,31 @@ function buildGeoScript() {
 </script>`;
 }
 
+// Script pentru bara de căutare de pe homepage: la submit, transformă orașul
+// tastat în slug și navighează la /oras — funcționează pentru orice oraș,
+// nu doar cele 30 din listă, pentru că ruta /:oras e complet dinamică.
+function buildCitySearchScript() {
+  return `
+<script>
+(function(){
+  var form = document.getElementById("citySearchForm");
+  var input = document.getElementById("citySearchInput");
+  if (!form || !input) return;
+
+  function slugify(name){
+    return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().trim().replace(/\\s+/g, "-");
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var val = input.value.trim();
+    if (!val) return;
+    window.location.href = "/" + slugify(val);
+  });
+})();
+</script>`;
+}
+
 /* ============================================================
    5) RANDARE HTML — pagină completă per cerere
    ============================================================ */
@@ -476,6 +570,10 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient }) {
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:locale" content="ro_RO">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0F1115">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -484,6 +582,13 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient }) {
 <body>
 ${bodyHtml}
 ${dataForClient ? buildClientScript(dataForClient) : ""}
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("/sw.js").catch(function(){});
+  });
+}
+</script>
 </body>
 </html>`;
 }
@@ -545,7 +650,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand">Programul<span>DeAzi</span></div>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -585,7 +690,7 @@ function renderCityPage({ orasSlug, orasDisplay }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand">Programul<span>DeAzi</span></div>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -633,15 +738,21 @@ function renderHomePage() {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand">Programul<span>DeAzi</span></div>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
 <main class="wrap">
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
-  <p class="intro-text">Scrie în adresa browserului orașul și magazinul pe care vrei să-l verifici, în formatul <strong>/oras/magazin</strong> — de exemplu <code>/bucuresti/lidl</code> sau <code>/cluj-napoca/kaufland</code>. Sau lasă-ne să detectăm automat orașul tău.</p>
+  <p class="intro-text">Scrie orașul tău mai jos sau lasă-ne să-l detectăm automat.</p>
 
-  <button type="button" id="geoBtn" class="geo-btn">📍 Detectează orașul meu automat</button>
+  <form id="citySearchForm" class="city-search-form" autocomplete="off">
+    <input type="text" id="citySearchInput" list="cityListOptions" class="city-search-input" placeholder="Scrie orașul tău (ex: Cluj-Napoca)">
+    <datalist id="cityListOptions">${SITEMAP_CITIES.map((c) => `<option value="${escapeHtml(c)}"></option>`).join("")}</datalist>
+    <button type="submit" class="city-search-btn">Caută</button>
+  </form>
+
+  <button type="button" id="geoBtn" class="geo-btn">📍 sau detectează orașul meu automat</button>
   <p id="geoStatus" class="geo-status" style="display:none"></p>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
@@ -657,6 +768,7 @@ function renderHomePage() {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
+${buildCitySearchScript()}
 ${buildGeoScript()}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
@@ -705,6 +817,36 @@ function slugifyCityName(name) {
     .replace(/\s+/g, "-");
 }
 
+// setul de slug-uri cunoscute, derivat din cele 30 de orașe de mai sus — folosit
+// pentru a valida orașul detectat din headerele de geolocație Vercel
+const KNOWN_CITY_SLUGS = new Set(SITEMAP_CITIES.map(slugifyCityName));
+
+// Vercel oferă uneori exonime în engleză pentru orașe mari (ex: "Bucharest" în loc
+// de "București") — le mapăm explicit la slug-ul nostru canonic
+const GEO_CITY_ALIASES = {
+  bucharest: "bucuresti",
+};
+
+// headerele x-vercel-ip-* vin URL-encodate (pot conține spații/diacritice)
+function decodeGeoHeader(raw) {
+  try {
+    return decodeURIComponent(raw);
+  } catch (e) {
+    return raw;
+  }
+}
+
+// validează orașul detectat din IP împotriva listei cunoscute; returnează slug-ul
+// sau null dacă nu-l putem recunoaște cu încredere (mai bine arătăm homepage-ul
+// decât să trimitem vizitatorul către un oraș greșit)
+function resolveGeoCitySlug(cityName) {
+  if (!cityName) return null;
+  const slug = slugifyCityName(cityName);
+  if (KNOWN_CITY_SLUGS.has(slug)) return slug;
+  if (GEO_CITY_ALIASES[slug]) return GEO_CITY_ALIASES[slug];
+  return null;
+}
+
 function generateSitemapXml() {
   const base = "https://programul-de-azi.ro";
   const urls = [`${base}/`];
@@ -733,6 +875,21 @@ function generateSitemapXml() {
 // evită ca cereri de tip /favicon.ico, /robots.txt etc. să fie tratate ca nume de oraș
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
+app.get("/manifest.json", (req, res) => {
+  res.set("Content-Type", "application/manifest+json");
+  res.send(JSON.stringify(MANIFEST_JSON));
+});
+
+app.get("/sw.js", (req, res) => {
+  res.set("Content-Type", "application/javascript; charset=utf-8");
+  res.send(SW_SCRIPT);
+});
+
+app.get("/icon.svg", (req, res) => {
+  res.set("Content-Type", "image/svg+xml");
+  res.send(ICON_SVG);
+});
+
 app.get("/sitemap.xml", (req, res) => {
   res.header("Content-Type", "application/xml");
   res.send(generateSitemapXml());
@@ -744,6 +901,21 @@ app.get("/robots.txt", (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  // Vercel injectează automat headere de geolocație pe baza IP-ului vizitatorului —
+  // fără să ceară nicio permisiune. Header-ul corect pentru oraș este
+  // x-vercel-ip-city (nu x-vercel-id-city). Redirect doar dacă țara e România
+  // ȘI orașul detectat se potrivește cu unul din lista noastră cunoscută —
+  // altfel arătăm homepage-ul normal, ca să nu trimitem pe nimeni greșit.
+  const country = String(req.headers["x-vercel-ip-country"] || "").toUpperCase();
+  const rawCity = req.headers["x-vercel-ip-city"] || "";
+
+  if (country === "RO" && rawCity) {
+    const citySlug = resolveGeoCitySlug(decodeGeoHeader(rawCity));
+    if (citySlug) {
+      return res.redirect(302, `/${citySlug}`);
+    }
+  }
+
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(renderHomePage());
 });
