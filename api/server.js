@@ -47,6 +47,9 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
 const linkEmagMall = "https://l.profitshare.ro/l/16330318";
 const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
+// link Amazon Affiliate — folosit DOAR pe paginile internaționale (DE/UK/ES),
+// afișat sub cardul de status pe pagina de magazin. Pe RO, malls rămân cu butonul eMAG.
+const linkAmazonAffiliate = "";
 const linkAfiliatDedeman = "";
 const linkAfiliatAltex = "";
 const linkAfiliatJysk = "";
@@ -103,6 +106,258 @@ const STORE_AFFILIATE_LINKS = {
   sameday: "",
   dpd: "",
   gls: "",
+};
+
+/* ============================================================
+   0.7) MULTILINGV — extindere internațională (DE/UK/ES)
+   Paginile din România (RO) folosesc în continuare textele RO,
+   scrise direct în funcțiile de randare — NU au fost atinse, ca să
+   nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
+   alimentează DOAR paginile noi /:tara(de|uk|es)/... .
+   "{time}" și "{label}" din stringurile de status sunt înlocuite
+   dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
+   ============================================================ */
+const TRANSLATIONS = {
+  ro: {
+    dayNames: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
+    home: "Acasă",
+    todayLabel: "Azi",
+    calculating: "Se calculează programul...",
+    weeklyTitle: "Program săptămânal",
+    holidaysTitle: "Program de sărbători",
+    noHolidays: "Fără program special momentan",
+    closedWord: "Închis",
+    installBtn: "📱 Instalează aplicația pentru acces rapid",
+    iosHint: "Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.",
+    geoSuggestionPrefix: "📍 Orașul tău pare să fie",
+    geoSuggestionBtn: "Vrei să vezi magazinele de aici? →",
+    geoSuggestionNote: "Nu e orașul tău? Alege mai jos.",
+    amazonBtn: "🛍️ Vezi ofertele de azi pe Amazon",
+    titleTemplate: (brand, city) => `Program ${brand} ${city} Azi – Deschis sau Închis Acum`,
+    descriptionTemplate: (brand, city) => `Vezi acum dacă ${brand} din ${city} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`,
+    disclaimer: (name) => `Programul afișat pentru ${name} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.`,
+    footer: (name) => `Programul de Azi îți arată în timp real dacă ${name} este deschis chiar acum, plus programul complet pe zile și programul special de sărbători legale.`,
+    labels: {
+      openNow: "DESCHIS ACUM",
+      closedNow: "ÎNCHIS ACUM",
+      closedHoliday: "Închis astăzi — {label}",
+      closedAllDay: "Închis toată ziua",
+      opensToday: "Se deschide azi la {time}",
+      closedComeBack: "S-a închis la {time} — revino mâine",
+      closesToday: "Se închide azi la {time}",
+    },
+  },
+  de: {
+    dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+    home: "Startseite",
+    todayLabel: "Heute",
+    calculating: "Öffnungszeiten werden berechnet...",
+    weeklyTitle: "Wöchentliche Öffnungszeiten",
+    holidaysTitle: "Feiertagsöffnungszeiten",
+    noHolidays: "Derzeit keine besonderen Öffnungszeiten",
+    closedWord: "Geschlossen",
+    installBtn: "📱 App für schnellen Zugriff installieren",
+    iosHint: "Auf dem iPhone: Tippen Sie auf „Teilen” und wählen Sie „Zum Home-Bildschirm”.",
+    geoSuggestionPrefix: "📍 Ihre Stadt scheint zu sein",
+    geoSuggestionBtn: "Geschäfte hier anzeigen? →",
+    geoSuggestionNote: "Nicht Ihre Stadt? Unten auswählen.",
+    amazonBtn: "🛍️ Heutige Angebote bei Amazon ansehen",
+    titleTemplate: (brand, city) => `Öffnungszeiten ${brand} ${city} Heute – Geöffnet oder Geschlossen`,
+    descriptionTemplate: (brand, city) => `Prüfen Sie jetzt, ob ${brand} in ${city} geöffnet ist. Wöchentliche Öffnungszeiten und Feiertagszeiten, live aktualisiert.`,
+    disclaimer: (name) => `Die angezeigten Öffnungszeiten für ${name} sind Richtwerte, basierend auf den Standardzeiten der Kette. Einzelne Filialen können abweichen — bitte prüfen Sie die vor Ort angegebenen Öffnungszeiten.`,
+    footer: (name) => `Programul de Azi zeigt Ihnen in Echtzeit, ob ${name} gerade geöffnet ist, sowie die vollständigen wöchentlichen Öffnungszeiten und Feiertagszeiten.`,
+    labels: {
+      openNow: "JETZT GEÖFFNET",
+      closedNow: "JETZT GESCHLOSSEN",
+      closedHoliday: "Heute geschlossen — {label}",
+      closedAllDay: "Ganztägig geschlossen",
+      opensToday: "Öffnet heute um {time} Uhr",
+      closedComeBack: "Hat um {time} Uhr geschlossen — morgen wieder da",
+      closesToday: "Schließt heute um {time} Uhr",
+    },
+  },
+  uk: {
+    dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    home: "Home",
+    todayLabel: "Today",
+    calculating: "Calculating opening hours...",
+    weeklyTitle: "Weekly Opening Hours",
+    holidaysTitle: "Holiday Opening Hours",
+    noHolidays: "No special hours at the moment",
+    closedWord: "Closed",
+    installBtn: "📱 Install the app for quick access",
+    iosHint: "On iPhone: tap the Share button and select \"Add to Home Screen\".",
+    geoSuggestionPrefix: "📍 Your city appears to be",
+    geoSuggestionBtn: "Want to see shops here? →",
+    geoSuggestionNote: "Not your city? Choose below.",
+    amazonBtn: "🛍️ Check today's deals on Amazon",
+    titleTemplate: (brand, city) => `${brand} ${city} Opening Hours Today – Open or Closed Now`,
+    descriptionTemplate: (brand, city) => `Check now whether ${brand} in ${city} is open. Weekly opening hours and holiday hours, updated live.`,
+    disclaimer: (name) => `Opening hours shown for ${name} are indicative, based on the chain's standard hours. Individual branches may vary — please check the hours posted at the store entrance.`,
+    footer: (name) => `Programul de Azi shows you in real time whether ${name} is currently open, plus full weekly opening hours and holiday hours.`,
+    labels: {
+      openNow: "OPEN NOW",
+      closedNow: "CLOSED NOW",
+      closedHoliday: "Closed today — {label}",
+      closedAllDay: "Closed all day",
+      opensToday: "Opens today at {time}",
+      closedComeBack: "Closed at {time} — come back tomorrow",
+      closesToday: "Closes today at {time}",
+    },
+  },
+  es: {
+    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+    home: "Inicio",
+    todayLabel: "Hoy",
+    calculating: "Calculando el horario...",
+    weeklyTitle: "Horario semanal",
+    holidaysTitle: "Horario de festivos",
+    noHolidays: "Sin horario especial por el momento",
+    closedWord: "Cerrado",
+    installBtn: "📱 Instala la app para acceso rápido",
+    iosHint: "En iPhone: toca el botón Compartir y selecciona «Añadir a pantalla de inicio».",
+    geoSuggestionPrefix: "📍 Tu ciudad parece ser",
+    geoSuggestionBtn: "¿Quieres ver las tiendas de aquí? →",
+    geoSuggestionNote: "¿No es tu ciudad? Elige abajo.",
+    amazonBtn: "🛍️ Ver las ofertas de hoy en Amazon",
+    titleTemplate: (brand, city) => `Horario ${brand} ${city} Hoy – Abierto o Cerrado Ahora`,
+    descriptionTemplate: (brand, city) => `Comprueba ahora si ${brand} en ${city} está abierto. Horario semanal y horario de festivos, actualizado en vivo.`,
+    disclaimer: (name) => `El horario mostrado para ${name} es orientativo, según el horario estándar de la cadena. Cada tienda puede variar — comprueba el horario indicado en la entrada.`,
+    footer: (name) => `Programul de Azi te muestra en tiempo real si ${name} está abierto ahora mismo, además del horario semanal completo y el horario de festivos.`,
+    labels: {
+      openNow: "ABIERTO AHORA",
+      closedNow: "CERRADO AHORA",
+      closedHoliday: "Cerrado hoy — {label}",
+      closedAllDay: "Cerrado todo el día",
+      opensToday: "Abre hoy a las {time}",
+      closedComeBack: "Cerró a las {time} — vuelve mañana",
+      closesToday: "Cierra hoy a las {time}",
+    },
+  },
+};
+
+/* ============================================================
+   0.8) MAGAZINE INTERNAȚIONALE — configurație separată per țară.
+   Cheile pot coincide cu cele din STORE_CONFIG (RO) — ex. "lidl" —
+   pentru că sunt obiecte complet separate, fără nicio legătură.
+   Orele Lidl din Germania NU au nicio influență asupra orelor
+   Lidl din România, și invers.
+   ============================================================ */
+
+// Germania: aproape toate magazinele sunt ÎNCHISE duminica prin lege
+// ("Ladenschlussgesetz") — asta nu e o simplificare de-a noastră, e regula reală.
+const DE_HOLIDAYS = [
+  { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
+  { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
+];
+function deSupermarketWeekly() {
+  return [
+    null, // Sonntag — închis prin lege
+    { open: "08:00", close: "20:00" }, // Montag
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Samstag
+  ];
+}
+function deElectronicsWeekly() {
+  return [
+    null,
+    { open: "10:00", close: "20:00" },
+    { open: "10:00", close: "20:00" },
+    { open: "10:00", close: "20:00" },
+    { open: "10:00", close: "20:00" },
+    { open: "10:00", close: "20:00" },
+    { open: "10:00", close: "20:00" },
+  ];
+}
+const DE_STORE_CONFIG = {
+  aldi: { name: "Aldi", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  rewe: { name: "Rewe", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  edeka: { name: "Edeka", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  mediamarkt: { name: "Media Markt", slug: "media-markt", weekly: deElectronicsWeekly(), holidays: DE_HOLIDAYS },
+};
+
+// Marea Britanie: legea limitează magazinele mari la 6 ore de vânzare duminica
+// ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt.
+const UK_HOLIDAYS = [
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+  { date: "01-01", label: "New Year's Day (1 January)", hours: null },
+];
+function ukSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "16:00" }, // Sunday — limitat prin lege
+    { open: "07:00", close: "22:00" }, // Monday
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" }, // Saturday
+  ];
+}
+function ukPharmacyWeekly() {
+  return [
+    { open: "10:00", close: "16:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+  ];
+}
+const UK_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  sainsburys: { name: "Sainsbury's", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  asda: { name: "Asda", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  morrisons: { name: "Morrisons", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  boots: { name: "Boots", weekly: ukPharmacyWeekly(), holidays: UK_HOLIDAYS },
+};
+
+// Spania: multe supermarketuri (mai ales Mercadona) sunt închise duminica, deși
+// legea variază pe comunități autonome — unele zone turistice permit deschidere
+// duminica. Ce urmează e comportamentul standard, majoritar, nu o regulă universală.
+const ES_HOLIDAYS = [
+  { date: "12-25", label: "Navidad (25 de diciembre)", hours: null },
+  { date: "01-01", label: "Año Nuevo (1 de enero)", hours: null },
+];
+function esSupermarketWeekly() {
+  return [
+    null, // Domingo — închis, cu excepții regionale
+    { open: "09:00", close: "21:30" }, // Lunes
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" }, // Sábado
+  ];
+}
+function esDepartmentStoreWeekly() {
+  return [
+    { open: "11:00", close: "21:00" }, // multe El Corte Inglés deschid duminica în orașe mari
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ];
+}
+const ES_STORE_CONFIG = {
+  mercadona: { name: "Mercadona", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esDepartmentStoreWeekly(), holidays: ES_HOLIDAYS },
+};
+
+// registru central: fiecare țară = configurația ei de magazine + traducerea +
+// câteva orașe mari de pornire (extensibile oricând, la fel ca la cele 30 din RO)
+const COUNTRIES = {
+  de: { config: DE_STORE_CONFIG, t: TRANSLATIONS.de, cities: ["Berlin", "München", "Hamburg", "Köln", "Frankfurt am Main"] },
+  uk: { config: UK_STORE_CONFIG, t: TRANSLATIONS.uk, cities: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"] },
+  es: { config: ES_STORE_CONFIG, t: TRANSLATIONS.es, cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao"] },
 };
 
 /* ============================================================
@@ -508,6 +763,19 @@ function findStore(rawMagazinParam) {
   return null;
 }
 
+// variantă generică de findStore, pentru configurațiile internaționale
+// (DE_STORE_CONFIG / UK_STORE_CONFIG / ES_STORE_CONFIG) — fără STORE_ALIASES,
+// nu au fost cerute pentru piețele noi.
+function findStoreInConfig(rawMagazinParam, config) {
+  const normalized = normalizeSlug(rawMagazinParam);
+  const collapsed = normalized.replace(/[\s_-]+/g, "");
+  if (config[collapsed]) {
+    const cfg = config[collapsed];
+    return { key: collapsed, config: cfg, displayName: cfg.name };
+  }
+  return null;
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -622,6 +890,7 @@ main{padding-top:8px;}
 .cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
+.amazon-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;background:linear-gradient(135deg,#131A22,#232F3E);color:#FF9900;border:1px solid #FF9900;box-shadow:0 12px 26px -10px rgba(0,0,0,.5);}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -675,7 +944,22 @@ function buildClientScript(dataForClient, nonce) {
 <script nonce="${nonce}">
 (function(){
   var DATA = ${safeJson(dataForClient)};
-  var DAY_NAMES = ${safeJson(DAY_NAMES)};
+  var DEFAULT_DAY_NAMES = ${safeJson(DAY_NAMES)};
+  var DEFAULT_LABELS = {
+    openNow: "DESCHIS ACUM",
+    closedNow: "ÎNCHIS ACUM",
+    openShort: "Deschis",
+    closedShort: "Închis",
+    closedHoliday: "Închis astăzi — {label}",
+    closedAllDay: "Închis toată ziua",
+    opensToday: "Se deschide azi la {time}",
+    closedComeBack: "S-a închis la {time} — revino mâine",
+    closesToday: "Se închide azi la {time}"
+  };
+  var DAY_NAMES = DATA.dayNames || DEFAULT_DAY_NAMES;
+  var LABELS = DATA.labels || DEFAULT_LABELS;
+  function fmt(tpl, key, val){ return tpl.replace("{" + key + "}", val); }
+
   function pad(n){ return String(n).padStart(2,"0"); }
   function toMinutes(hhmm){ var p = hhmm.split(":"); return (+p[0])*60 + (+p[1]); }
   function mmdd(d){ return pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -699,26 +983,26 @@ function buildClientScript(dataForClient, nonce) {
     var today = getDayHours(entity, now);
     var nowMin = now.getHours()*60 + now.getMinutes();
     if (!today.hours){
-      return { open:false, sub: today.isHoliday ? ("Închis astăzi — " + today.label) : "Închis toată ziua" };
+      return { open:false, sub: today.isHoliday ? fmt(LABELS.closedHoliday, "label", today.label) : LABELS.closedAllDay };
     }
     var openMin = toMinutes(today.hours[0]), closeMin = toMinutes(today.hours[1]);
-    if (nowMin < openMin) return { open:false, sub: "Se deschide azi la " + today.hours[0] };
-    if (nowMin >= closeMin) return { open:false, sub: "S-a închis la " + today.hours[1] + " — revino mâine" };
-    return { open:true, sub: "Se închide azi la " + today.hours[1] };
+    if (nowMin < openMin) return { open:false, sub: fmt(LABELS.opensToday, "time", today.hours[0]) };
+    if (nowMin >= closeMin) return { open:false, sub: fmt(LABELS.closedComeBack, "time", today.hours[1]) };
+    return { open:true, sub: fmt(LABELS.closesToday, "time", today.hours[1]) };
   }
 
   function applyStatus(el, status){
     if (!el) return;
     el.classList.remove("is-open","is-closed");
     el.classList.add(status.open ? "is-open" : "is-closed");
-    var t = el.querySelector(".status-text"); if (t) t.textContent = status.open ? "DESCHIS ACUM" : "ÎNCHIS ACUM";
+    var t = el.querySelector(".status-text"); if (t) t.textContent = status.open ? LABELS.openNow : LABELS.closedNow;
     var s = el.querySelector(".status-sub"); if (s) s.textContent = status.sub;
   }
   function applySecondary(el, status){
     if (!el) return;
     el.classList.remove("sb-open","sb-closed");
     el.classList.add(status.open ? "sb-open" : "sb-closed");
-    var st = el.querySelector(".sb-state"); if (st) st.textContent = status.open ? "Deschis" : "Închis";
+    var st = el.querySelector(".sb-state"); if (st) st.textContent = status.open ? (LABELS.openShort || LABELS.openNow) : (LABELS.closedShort || LABELS.closedNow);
     var sb = el.querySelector(".sb-sub"); if (sb) sb.textContent = status.sub;
   }
 
@@ -1138,6 +1422,109 @@ function renderCityPage({ orasSlug, orasDisplay, nonce }) {
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
 
+/* ============================================================
+   PAGINI INTERNAȚIONALE (DE/UK/ES) — funcții separate de cele RO,
+   ca să nu riscăm nimic din ce funcționează deja pentru România.
+   ============================================================ */
+
+// Pagină de magazin internațională: /:tara/:oras/:magazin
+function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, nonce }) {
+  const t = TRANSLATIONS[countryCode];
+  const title = t.titleTemplate(magazinDisplay, orasDisplay);
+  const description = t.descriptionTemplate(magazinDisplay, orasDisplay);
+  const canonical = `https://programul-de-azi.ro/${countryCode}/${orasSlug}/${magazinSlug}`;
+
+  const amazonButtonHtml = linkAmazonAffiliate
+    ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
+    : "";
+
+  const weeklyRows = store.weekly
+    .map((w, i) => {
+      const hours = w ? `${w.open} – ${w.close}` : t.closedWord;
+      return `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${hours}</td></tr>`;
+    })
+    .join("");
+
+  const holidayHtml =
+    store.holidays && store.holidays.length
+      ? store.holidays
+          .map((h) => {
+            const hoursText = h.hours ? `${h.hours[0]} – ${h.hours[1]}` : t.closedWord;
+            const cls = h.hours ? "" : "closed";
+            return `<div class="holiday-row"><span class="holiday-label">${escapeHtml(h.label)}</span><span class="holiday-hours ${cls}">${hoursText}</span></div>`;
+          })
+          .join("")
+      : `<div class="holiday-row"><span class="holiday-label">${escapeHtml(t.noHolidays)}</span></div>`;
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+
+  <div class="status-card" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <div class="status-text">—</div>
+    <div class="status-sub">${escapeHtml(t.calculating)}</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+  </div>
+
+  ${amazonButtonHtml}
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
+  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
+  <tbody>${weeklyRows}</tbody></table></div>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.holidaysTitle)}</h2>
+  <div class="holiday-card">${holidayHtml}</div>
+
+  <p class="disclaimer">${escapeHtml(t.disclaimer(`${magazinDisplay} ${orasDisplay}`))}</p>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
+  </footer>
+</main>`;
+
+  const dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays, dayNames: t.dayNames, labels: t.labels };
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce });
+}
+
+// Pagină generală de oraș internațională: /:tara/:oras
+function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, nonce }) {
+  const t = TRANSLATIONS[countryCode];
+  const country = COUNTRIES[countryCode];
+  const title = `${orasDisplay} — Programul de Azi`;
+  const description = t.descriptionTemplate("", orasDisplay);
+  const canonical = `https://programul-de-azi.ro/${countryCode}/${orasSlug}`;
+
+  const listItems = Object.keys(country.config)
+    .map((key) => {
+      const cfg = country.config[key];
+      const urlSlug = cfg.slug || key;
+      return `<li><a href="/${countryCode}/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+    })
+    .join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(orasDisplay)}</p>
+  <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
+  <ul class="mall-list">${listItems}</ul>
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [], dayNames: t.dayNames, labels: t.labels }, nonce });
+}
+
 // Pagină de start: site.ro/ — fără oraș/magazin specificat încă
 function renderHomePage(nonce, suggestedCity) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
@@ -1310,6 +1697,19 @@ function generateSitemapXml() {
     urls.push(`${base}/${citySlug}/${mall.slug}`); // ex: /bucuresti/afi-cotroceni
   });
 
+  // internațional (DE/UK/ES) — aceeași logică oraș × brand, pe fiecare țară
+  Object.keys(COUNTRIES).forEach((countryCode) => {
+    const country = COUNTRIES[countryCode];
+    country.cities.forEach((city) => {
+      const citySlug = slugifyCityName(city);
+      urls.push(`${base}/${countryCode}/${citySlug}`);
+      Object.keys(country.config).forEach((brandKey) => {
+        const brandSlug = country.config[brandKey].slug || brandKey;
+        urls.push(`${base}/${countryCode}/${citySlug}/${brandSlug}`);
+      });
+    });
+  });
+
   const body = urls.map((u) => `  <url><loc>${escapeHtml(u)}</loc></url>`).join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
 }
@@ -1403,6 +1803,55 @@ app.get("/", (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.send(renderHomePage(nonce, suggestedCity));
+});
+
+// ============================================================
+// RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
+// (":tara(de|uk|es)"), nu prin sintaxa "?" opțională, care e fragilă și
+// se comportă inconsistent între versiunile de Express/path-to-regexp.
+// Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
+// interpretat greșit ca oraș="de" în sistemul românesc.
+// ============================================================
+app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
+  if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
+
+  const countryCode = req.params.tara;
+  const country = COUNTRIES[countryCode];
+  const orasSlug = req.params.oras.toLowerCase();
+  const orasDisplay = toDisplayName(req.params.oras);
+  const magazinSlug = req.params.magazin.toLowerCase();
+  const found = findStoreInConfig(req.params.magazin, country.config);
+
+  if (!found) {
+    // brand necunoscut pentru piața asta — 404 explicit, direct (nu next()),
+    // ca să nu "cadă" din greșeală pe ruta hiper-locală RO de mai jos, care
+    // acceptă orice text pe 3 segmente. Nu presupunem un program implicit
+    // pentru un brand internațional necunoscut — legile de închidere diferă
+    // radical între țări, spre deosebire de magazinele RO unde avem un
+    // implicit național sigur (07-22/08-20).
+    res.status(404).send("Pagină negăsită.");
+    return;
+  }
+
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+app.get("/:tara(de|uk|es)/:oras", (req, res, next) => {
+  if (req.params.oras.includes(".")) return next();
+
+  const countryCode = req.params.tara;
+  const orasSlug = req.params.oras.toLowerCase();
+  const orasDisplay = toDisplayName(req.params.oras);
+
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
 });
 
 app.get("/:oras/:magazin/:locatie", (req, res, next) => {
