@@ -23,7 +23,7 @@ const codAdSense = "";
 
 // ID-ul de publisher AdSense (ex: "pub-1234567890123456") — folosit doar
 // pentru generarea automată a /ads.txt. Completează-l după aprobare.
-const adsensePublisherId = "";
+const adsensePublisherId = "ca-pub-7945793092031366";
 
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
@@ -674,6 +674,7 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+${adsensePublisherId ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}" crossorigin="anonymous"></script>` : ""}
 <style nonce="${nonce}">${CSS_STYLES}</style>
 </head>
 <body>
