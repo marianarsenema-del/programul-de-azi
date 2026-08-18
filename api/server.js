@@ -7,6 +7,7 @@
    ============================================================ */
 
 const express = require("express");
+const crypto = require("crypto");
 const app = express();
 
 /* ============================================================
@@ -253,6 +254,37 @@ function safeJson(obj) {
 }
 
 /* ============================================================
+   2.5) SECURITATE — nonce CSP generat unic la fiecare cerere
+   Fiecare pagină HTML primește un token aleator nou; doar
+   <script>/<style> cu exact acel token pot rula. Fără el (sau cu
+   unul vechi, reutilizat), browserul refuză să execute codul —
+   de asta NU poate fi generat static în vercel.json, ci aici,
+   per cerere, chiar înainte de a trimite răspunsul.
+   ============================================================ */
+function generateNonce() {
+  return crypto.randomBytes(16).toString("base64");
+}
+
+function buildCsp(nonce) {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com`,
+    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net",
+    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
+    "worker-src 'self'",
+    "manifest-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
+
+/* ============================================================
    3) STILURI — identitate vizuală comună tuturor paginilor
    ============================================================ */
 const CSS_STYLES = `
@@ -350,9 +382,9 @@ footer strong{color:var(--text);}
    4) SCRIPT CLIENT — rulează în telefonul vizitatorului: ceas
       live + calcul DESCHIS/ÎNCHIS pe baza orei lui locale.
    ============================================================ */
-function buildClientScript(dataForClient) {
+function buildClientScript(dataForClient, nonce) {
   return `
-<script>
+<script nonce="${nonce}">
 (function(){
   var DATA = ${safeJson(dataForClient)};
   var DAY_NAMES = ${safeJson(DAY_NAMES)};
@@ -433,9 +465,9 @@ function buildClientScript(dataForClient) {
 // Script dedicat pentru pagina de start: cere locația (opțional, la click),
 // o transformă în nume de oraș prin geocoding invers, apoi redirect la /oras.
 // Dacă orice pas eșuează sau utilizatorul refuză, pagina rămâne neschimbată.
-function buildGeoScript() {
+function buildGeoScript(nonce) {
   return `
-<script>
+<script nonce="${nonce}">
 (function(){
   var btn = document.getElementById("geoBtn");
   var status = document.getElementById("geoStatus");
@@ -496,9 +528,9 @@ function buildGeoScript() {
 // Script pentru bara de căutare de pe homepage: la submit, transformă orașul
 // tastat în slug și navighează la /oras — funcționează pentru orice oraș,
 // nu doar cele 30 din listă, pentru că ruta /:oras e complet dinamică.
-function buildCitySearchScript() {
+function buildCitySearchScript(nonce) {
   return `
-<script>
+<script nonce="${nonce}">
 (function(){
   var form = document.getElementById("citySearchForm");
   var input = document.getElementById("citySearchInput");
@@ -523,9 +555,9 @@ function buildCitySearchScript() {
 // browserul confirmă că aplicația poate fi instalată, și declanșează
 // promptul nativ la click. Pe iOS (fără beforeinstallprompt), arată în
 // schimb instrucțiunea text pentru Share -> Adaugă pe ecranul de pornire.
-function buildInstallScript() {
+function buildInstallScript(nonce) {
   return `
-<script>
+<script nonce="${nonce}">
 (function(){
   var installBtn = document.getElementById("installBtn");
   var iosHint = document.getElementById("iosInstallHint");
@@ -607,7 +639,7 @@ function renderBrandNav(orasSlug) {
   return `<nav class="store-scroll" aria-label="Alege magazinul">${items}</nav>`;
 }
 
-function pageShell({ title, description, canonical, bodyHtml, dataForClient }) {
+function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce }) {
   return `<!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -628,12 +660,12 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>${CSS_STYLES}</style>
+<style nonce="${nonce}">${CSS_STYLES}</style>
 </head>
 <body>
 ${bodyHtml}
-${dataForClient ? buildClientScript(dataForClient) : ""}
-<script>
+${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
+<script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function(){
     navigator.serviceWorker.register("/sw.js").catch(function(){});
@@ -645,7 +677,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
+function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store, nonce }) {
   const title = `Program ${magazinDisplay} ${orasDisplay} Azi – Deschis sau Închis Acum`;
   const description = `Vezi acum dacă ${magazinDisplay} din ${orasDisplay} este deschis. Program pe zile ale săptămânii și program de sărbători pentru ${magazinDisplay} ${orasDisplay}, actualizat live.`;
   const canonical = `https://programul-de-azi.ro/${orasSlug}/${encodeURIComponent(magazinDisplay.toLowerCase())}`;
@@ -725,11 +757,11 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
   ${adSlotHtml()}
 </main>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce });
 }
 
 // Pagină generală de oraș: site.ro/:oras (fără magazin specificat)
-function renderCityPage({ orasSlug, orasDisplay }) {
+function renderCityPage({ orasSlug, orasDisplay, nonce }) {
   const title = `Program Magazine ${orasDisplay} Azi – Lidl, Kaufland, Penny și Alte Magazine`;
   const description = `Alege un magazin din ${orasDisplay} și vezi instant dacă este deschis acum: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din ${orasDisplay}.`;
   const canonical = `https://programul-de-azi.ro/${orasSlug}`;
@@ -765,11 +797,11 @@ function renderCityPage({ orasSlug, orasDisplay }) {
 </main>`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
 
 // Pagină de start: site.ro/ — fără oraș/magazin specificat încă
-function renderHomePage() {
+function renderHomePage(nonce) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
   const canonical = "https://programul-de-azi.ro/";
@@ -822,11 +854,11 @@ function renderHomePage() {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${buildCitySearchScript()}
-${buildGeoScript()}
-${buildInstallScript()}`;
+${buildCitySearchScript(nonce)}
+${buildGeoScript(nonce)}
+${buildInstallScript(nonce)}`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
 
 /* ============================================================
@@ -972,7 +1004,9 @@ app.get("/", (req, res) => {
   }
 
   res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(renderHomePage());
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.send(renderHomePage(nonce));
 });
 
 app.get("/:oras/:magazin", (req, res, next) => {
@@ -987,7 +1021,9 @@ app.get("/:oras/:magazin", (req, res, next) => {
   // dar păstrăm numele exact așa cum a fost tastat în URL
   const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
 
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store: effectiveStore });
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store: effectiveStore, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -998,7 +1034,9 @@ app.get("/:oras", (req, res, next) => {
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
 
-  const html = renderCityPage({ orasSlug, orasDisplay });
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderCityPage({ orasSlug, orasDisplay, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
