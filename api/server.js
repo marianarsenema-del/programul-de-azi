@@ -39,6 +39,26 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
 </script>`;
 
 /* ============================================================
+   0.6) LINK-URI DE AFILIERE — un singur link general per brand,
+   valabil în toată țara (nu per oraș). Când o variabilă e goală (""),
+   butonul corespunzător nu apare deloc — fără spații goale pe pagină.
+   Completează-le direct aici, în cod, când primești aprobările.
+   ============================================================ */
+const linkEmagMall = "https://2performant.com";
+const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
+const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
+
+// hartă brand -> link de catalog, ca să fie ușor de extins cu Penny/Mega Image/Carrefour/Auchan mai târziu
+const STORE_AFFILIATE_LINKS = {
+  lidl: linkCatalogLidl,
+  kaufland: linkCatalogKaufland,
+  penny: "",
+  megaimage: "",
+  carrefour: "",
+  auchan: "",
+};
+
+/* ============================================================
    0.5) PWA — manifest, service worker, iconiță
    Cerute prin rutele /manifest.json, /sw.js și /icon.svg mai jos,
    ca legăturile din <head> să funcționeze efectiv, nu doar să existe.
@@ -239,7 +259,9 @@ function normalizeSlug(raw) {
 }
 
 // găsește magazinul cerut în STORE_CONFIG, indiferent de forma exactă a slug-ului din URL.
-// Returnează { config, displayName } sau null dacă slug-ul nu e recunoscut deloc.
+// Returnează { key, config, displayName } sau null dacă slug-ul nu e recunoscut deloc.
+// "key" e cheia canonică din STORE_CONFIG (ex: "lidl") — folosită și pentru a
+// decide care link de afiliere din STORE_AFFILIATE_LINKS se aplică paginii.
 function findStore(rawMagazinParam) {
   const normalized = normalizeSlug(rawMagazinParam);
   const collapsed = normalized.replace(/[\s_-]+/g, "");
@@ -247,13 +269,13 @@ function findStore(rawMagazinParam) {
 
   if (STORE_CONFIG[collapsed]) {
     const config = STORE_CONFIG[collapsed];
-    return { config, displayName: config.name };
+    return { key: collapsed, config, displayName: config.name };
   }
 
   const aliasEntry = STORE_ALIASES[dashed] || STORE_ALIASES[collapsed];
   if (aliasEntry) {
     const config = STORE_CONFIG[aliasEntry.key];
-    return { config, displayName: aliasEntry.displayName || config.name };
+    return { key: aliasEntry.key, config, displayName: aliasEntry.displayName || config.name };
   }
 
   return null;
@@ -366,6 +388,10 @@ main{padding-top:8px;}
 .sb-state{font-family:var(--font-mono);font-weight:700;font-size:12.5px;flex:0 0 auto;}
 .secondary-badge.sb-open .sb-state{color:var(--open-bg);}
 .secondary-badge.sb-closed .sb-state{color:#F87171;}
+.affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
+.affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
+.affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
+.affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FFB648);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,150,50,.5);}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -714,7 +740,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, nonce }) {
+function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, nonce }) {
   // sufixul de locație hiper-locală (cartier/stradă) — opțional, gol pentru paginile normale de magazin
   const locatieSuffix = locatieDisplay ? ` ${locatieDisplay}` : "";
   const locatieForDescription = locatieDisplay ? ` din ${locatieDisplay},` : "";
@@ -731,6 +757,11 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   let dataForClient;
 
   if (store.type === "mall") {
+    // link unic, general pe toată țara — nu variază per oraș/mall
+    const affiliateButtonHtml = linkEmagMall
+      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag">🔥 Vezi magazinele cu reduceri de azi pe eMAG</a>`
+      : "";
+
     mainHtml = `
       <div class="status-card" id="statusCard">
         <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} — Zonă shopping</div>
@@ -743,6 +774,8 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
         <div class="sb-text"><span class="sb-label">Hipermarket din mall</span><span class="sb-sub">Se calculează...</span></div>
         <span class="sb-state">…</span>
       </div>
+
+      ${affiliateButtonHtml}
 
       <h2 class="section-title"><span class="bar"></span>Orar magazine mall</h2>
       <div class="schedule-card"><table><thead><tr><th>Zi</th><th style="text-align:right">Interval orar</th></tr></thead>
@@ -757,6 +790,12 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
     `;
     dataForClient = { type: "mall", zones: store.zones };
   } else {
+    // link specific brandului (Lidl/Kaufland/...), gol până e completat manual în cod
+    const catalogLink = magazinKey ? STORE_AFFILIATE_LINKS[magazinKey] || "" : "";
+    const affiliateButtonHtml = catalogLink
+      ? `<a href="${escapeHtml(catalogLink)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic">🔥 Vezi catalogul cu reduceri ${escapeHtml(magazinDisplay)} de azi</a>`
+      : "";
+
     mainHtml = `
       <div class="status-card" id="statusCard">
         <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
@@ -764,6 +803,8 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
         <div class="status-sub">Se calculează programul...</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
+
+      ${affiliateButtonHtml}
 
       <h2 class="section-title"><span class="bar"></span>Program săptămânal</h2>
       <div class="schedule-card"><table><thead><tr><th>Zi</th><th style="text-align:right">Interval orar</th></tr></thead>
@@ -1125,7 +1166,7 @@ app.get("/:oras/:magazin/:locatie", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, nonce });
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -1145,7 +1186,7 @@ app.get("/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, nonce });
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
