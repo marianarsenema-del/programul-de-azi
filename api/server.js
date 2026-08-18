@@ -10,6 +10,15 @@ const express = require("express");
 const app = express();
 
 /* ============================================================
+   0) MONETIZARE — cod Google AdSense
+   Lipește aici, între ghilimele, tot codul de anunț primit de la
+   Google AdSense (de obicei un <script> + un <ins class="adsbygoogle">).
+   Cât timp rămâne "" (gol), sloturile de reclamă din pagină sunt
+   complet ascunse — nu se vede niciun chenar gol pentru vizitatori.
+   ============================================================ */
+const codAdSense = "";
+
+/* ============================================================
    1) PROGRAM IMPLICIT — valori naționale standard, ușor de
       modificat manual mai jos, per brand sau per zonă de mall.
       weekly are 7 poziții, index 0 = Duminică ... 6 = Sâmbătă
@@ -91,13 +100,16 @@ const STORE_CONFIG = {
   },
 };
 
-// Slug-uri alternative care trebuie recunoscute și mapate la cheia canonică de mai sus
+// Slug-uri alternative care trebuie recunoscute și mapate la cheia canonică de mai sus.
+// "displayName" e opțional — folosit când slug-ul se referă la o locație anume
+// (ex: un mall concret), ca numele afișat să rămână cel real, nu genericul "Mall".
 const STORE_ALIASES = {
-  "mega-image": "megaimage",
-  "mega_image": "megaimage",
-  "megaimage": "megaimage",
-  "mall-uri": "mall",
-  "malluri": "mall",
+  "mega-image": { key: "megaimage" },
+  "mega_image": { key: "megaimage" },
+  "megaimage": { key: "megaimage" },
+  "mall-uri": { key: "mall" },
+  "malluri": { key: "mall" },
+  "afi-cotroceni": { key: "mall", displayName: "AFI Cotroceni" },
 };
 
 const DAY_NAMES = ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"];
@@ -141,15 +153,24 @@ function normalizeSlug(raw) {
     .trim();
 }
 
-// găsește magazinul cerut în STORE_CONFIG, indiferent de forma exactă a slug-ului din URL
+// găsește magazinul cerut în STORE_CONFIG, indiferent de forma exactă a slug-ului din URL.
+// Returnează { config, displayName } sau null dacă slug-ul nu e recunoscut deloc.
 function findStore(rawMagazinParam) {
   const normalized = normalizeSlug(rawMagazinParam);
   const collapsed = normalized.replace(/[\s_-]+/g, "");
   const dashed = normalized.replace(/[\s_]+/g, "-");
 
-  if (STORE_CONFIG[collapsed]) return STORE_CONFIG[collapsed];
-  if (STORE_ALIASES[collapsed]) return STORE_CONFIG[STORE_ALIASES[collapsed]];
-  if (STORE_ALIASES[dashed]) return STORE_CONFIG[STORE_ALIASES[dashed]];
+  if (STORE_CONFIG[collapsed]) {
+    const config = STORE_CONFIG[collapsed];
+    return { config, displayName: config.name };
+  }
+
+  const aliasEntry = STORE_ALIASES[dashed] || STORE_ALIASES[collapsed];
+  if (aliasEntry) {
+    const config = STORE_CONFIG[aliasEntry.key];
+    return { config, displayName: aliasEntry.displayName || config.name };
+  }
+
   return null;
 }
 
@@ -200,7 +221,8 @@ header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-f
 .chip{flex:0 0 auto;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:9px 16px;border-radius:100px;white-space:nowrap;transition:all .15s ease;}
 .chip.active{background:var(--accent);color:#1A1200;border-color:var(--accent);}
 main{padding-top:8px;}
-.ad-slot{margin:14px 18px 0;padding:10px;border:1px dashed var(--border);border-radius:var(--radius-md);text-align:center;font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;min-height:0;}
+.ad-slot{margin:14px 18px 0;border-radius:var(--radius-md);overflow:hidden;text-align:center;}
+.ad-slot:empty{display:none;margin:0;}
 .status-card{margin:14px 18px 0;padding:30px 24px 26px;border-radius:var(--radius-lg);text-align:center;position:relative;overflow:hidden;transition:background .3s ease;animation:swing-in .5s cubic-bezier(.2,.9,.3,1.2);background:var(--surface-2);}
 @keyframes swing-in{0%{transform:rotate(-2deg) translateY(-6px);opacity:0;}100%{transform:rotate(0) translateY(0);opacity:1;}}
 .status-card.is-open{background:var(--open-bg);box-shadow:0 18px 40px -12px var(--open-glow);}
@@ -359,6 +381,11 @@ function renderHolidayRows(holidays) {
     .join("");
 }
 
+// container pentru reclamă — gol dacă codAdSense nu e completat încă (CSS îl ascunde automat)
+function adSlotHtml() {
+  return `<div class="ad-slot">${codAdSense}</div>`;
+}
+
 function renderBrandNav(orasSlug) {
   const items = Object.keys(STORE_CONFIG)
     .map((key) => {
@@ -462,7 +489,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
   ${renderBrandNav(orasSlug)}
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 
   ${mainHtml}
 
@@ -473,7 +500,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store }) {
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 </main>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient });
@@ -501,7 +528,7 @@ function renderCityPage({ orasSlug, orasDisplay }) {
   <h1 class="page-h1">Program magazine în ${escapeHtml(orasDisplay)}</h1>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 
   <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
 
@@ -512,7 +539,7 @@ function renderCityPage({ orasSlug, orasDisplay }) {
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 </main>`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
@@ -532,6 +559,8 @@ function renderHomePage() {
     { href: "/iasi/carrefour", label: "Carrefour Iași" },
     { href: "/brasov/penny", label: "Penny Brașov" },
     { href: "/constanta/auchan", label: "Auchan Constanța" },
+    { href: "/bucuresti/mega-image", label: "Mega Image București" },
+    { href: "/bucuresti/afi-cotroceni", label: "AFI Cotroceni" },
   ];
   const exampleListHtml = exampleLinks.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("");
 
@@ -547,7 +576,7 @@ function renderHomePage() {
   <p class="intro-text">Scrie în adresa browserului orașul și magazinul pe care vrei să-l verifici, în formatul <strong>/oras/magazin</strong> — de exemplu <code>/bucuresti/lidl</code> sau <code>/cluj-napoca/kaufland</code>. Mai jos ai câteva exemple gata de accesat.</p>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 
   <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
   <ul class="mall-list">${exampleListHtml}</ul>
@@ -557,7 +586,7 @@ function renderHomePage() {
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-  <div class="ad-slot">Spațiu reclamă</div>
+  ${adSlotHtml()}
 </main>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
@@ -580,12 +609,12 @@ app.get("/:oras/:magazin", (req, res, next) => {
 
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
-  const store = findStore(req.params.magazin);
-  const magazinDisplay = store ? store.name : toDisplayName(req.params.magazin);
+  const found = findStore(req.params.magazin);
+  const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
 
   // dacă brand-ul nu e cunoscut, folosim tot programul standard național ca implicit,
   // dar păstrăm numele exact așa cum a fost tastat în URL
-  const effectiveStore = store || { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
+  const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
 
   const html = renderStorePage({ orasSlug, orasDisplay, magazinDisplay, store: effectiveStore });
   res.set("Content-Type", "text/html; charset=utf-8");
