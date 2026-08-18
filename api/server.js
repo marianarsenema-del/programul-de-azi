@@ -76,6 +76,14 @@ const STORE_AFFILIATE_LINKS = {
   dm: "",
   drmax: "",
   farmaciatei: "",
+  remedia: "",
+  springpharma: "",
+  catena: "",
+  sensiblu: "",
+  helpnet: "",
+  dona: "",
+  ropharma: "",
+  mrbricolage: "",
 };
 
 /* ============================================================
@@ -277,6 +285,14 @@ const STORE_CONFIG = {
   dm: { name: "Dm", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   drmax: { name: "Dr. Max", slug: "dr-max", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   farmaciatei: { name: "Farmacia Tei", slug: "farmacia-tei", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  remedia: { name: "Remedia", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  springpharma: { name: "Spring Pharma", slug: "spring-pharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  catena: { name: "Catena", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  sensiblu: { name: "Sensiblu", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  helpnet: { name: "Help Net", slug: "help-net", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  mrbricolage: { name: "Mr. Bricolage", slug: "mr-bricolage", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mall: {
     name: "Mall",
     type: "mall",
@@ -1083,6 +1099,8 @@ const SITEMAP_BRANDS = [
   "lidl", "kaufland", "penny", "mega-image", "carrefour", "auchan",
   "profi", "metro", "selgros", "dedeman", "leroy-merlin", "brico-depot",
   "hornbach", "jysk", "ikea", "altex", "flanco", "dm", "dr-max", "farmacia-tei",
+  "remedia", "spring-pharma", "catena", "sensiblu", "help-net", "dona", "ropharma",
+  "mr-bricolage",
 ];
 
 // cele mai căutate 10 mall-uri — NU se combină cu toate cele 30 de orașe
