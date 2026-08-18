@@ -1076,6 +1076,13 @@ app.get("/ads.txt", (req, res) => {
   res.send(`google.com, ${adsensePublisherId}, DIRECT, f08c47fec0942fa0\n`);
 });
 
+// Fișier de verificare a domeniului pentru rețeaua de afiliere — numele
+// fișierului ȘI conținutul lui trebuie să coincidă exact cu ce a cerut platforma.
+app.get("/cad147c6a5b6cb338e880ca855c2679f.html", (req, res) => {
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send("cad147c6a5b6cb338e880ca855c2679f");
+});
+
 app.get("/", (req, res) => {
   // Vercel injectează automat headere de geolocație pe baza IP-ului vizitatorului.
   // IMPORTANT: pe rețelele mobile din România (Orange, Vodafone, Digi, Telekom),
