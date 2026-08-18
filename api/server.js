@@ -47,8 +47,14 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
 const linkEmagMall = "https://2performant.com";
 const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
+const linkAfiliatDedeman = "";
+const linkAfiliatAltex = "";
+const linkAfiliatJysk = "";
 
-// hartă brand -> link de catalog, ca să fie ușor de extins cu Penny/Mega Image/Carrefour/Auchan mai târziu
+// hartă brand -> link de catalog/afiliere. Cheile trebuie să coincidă exact cu
+// cheile din STORE_CONFIG de mai jos (forma colapsată, fără cratime).
+// Restul brandurilor noi rămân "" — completează-le aici pe măsură ce primești
+// aprobările, la fel cum ai făcut cu Lidl/Kaufland.
 const STORE_AFFILIATE_LINKS = {
   lidl: linkCatalogLidl,
   kaufland: linkCatalogKaufland,
@@ -56,6 +62,20 @@ const STORE_AFFILIATE_LINKS = {
   megaimage: "",
   carrefour: "",
   auchan: "",
+  profi: "",
+  metro: "",
+  selgros: "",
+  dedeman: linkAfiliatDedeman,
+  leroymerlin: "",
+  bricodepot: "",
+  hornbach: "",
+  jysk: linkAfiliatJysk,
+  ikea: "",
+  altex: linkAfiliatAltex,
+  flanco: "",
+  dm: "",
+  drmax: "",
+  farmaciatei: "",
 };
 
 /* ============================================================
@@ -175,7 +195,67 @@ function mallHyperWeekly() {
   ];
 }
 
-// STORE_CONFIG: câte o intrare per brand, cu cheia = slug-ul folosit în URL (site.ro/oras/{cheie})
+// Bricolaj (Dedeman, Leroy Merlin, Brico Depot, Hornbach, Jysk, Ikea):
+// Luni-Sâmbătă 08:00-21:00, Duminică 09:00-18:00
+function bricolajWeekly() {
+  return [
+    { open: "09:00", close: "18:00" }, // Duminică
+    { open: "08:00", close: "21:00" }, // Luni
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// Electrocasnice (Altex, Flanco) și Dm: Luni-Sâmbătă 09:00-21:00, Duminică 10:00-18:00.
+// Notă: multe locații Altex/Flanco/Dm sunt de fapt în interiorul unui mall — pentru
+// o locație anume care e cu adevărat în mall, leag-o manual de tipul "mall" în
+// STORE_ALIASES mai jos (exact ca "afi-cotroceni"), ca să preia automat orele
+// reale ale mall-ului (10:00-22:00) în loc de programul standard al brandului.
+function electroWeekly() {
+  return [
+    { open: "10:00", close: "18:00" }, // Duminică
+    { open: "09:00", close: "21:00" }, // Luni
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// Metro / Selgros: Luni-Sâmbătă 06:00-21:00, Duminică 08:00-18:00
+function metroWeekly() {
+  return [
+    { open: "08:00", close: "18:00" }, // Duminică
+    { open: "06:00", close: "21:00" }, // Luni
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// Farmacii (Dr. Max, Farmacia Tei): Luni-Sâmbătă 08:00-21:00, Duminică 09:00-16:00
+function farmacieWeekly() {
+  return [
+    { open: "09:00", close: "16:00" }, // Duminică
+    { open: "08:00", close: "21:00" }, // Luni
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// STORE_CONFIG: câte o intrare per brand, cu cheia = slug-ul folosit în URL (site.ro/oras/{cheie}).
+// Cheia e mereu forma "colapsată", fără cratime (ex: "leroymerlin"), pentru că
+// findStore() elimină cratimele înainte de căutare — dar "slug" (opțional) fixează
+// cum arată URL-ul frumos, cu cratimă, folosit în sitemap și în navigația de branduri.
 const STORE_CONFIG = {
   lidl: { name: "Lidl", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   kaufland: { name: "Kaufland", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
@@ -183,6 +263,20 @@ const STORE_CONFIG = {
   megaimage: { name: "Mega Image", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   carrefour: { name: "Carrefour", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   auchan: { name: "Auchan", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  profi: { name: "Profi", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  metro: { name: "Metro", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  selgros: { name: "Selgros", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dedeman: { name: "Dedeman", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  leroymerlin: { name: "Leroy Merlin", slug: "leroy-merlin", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  bricodepot: { name: "Brico Depot", slug: "brico-depot", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  hornbach: { name: "Hornbach", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  jysk: { name: "Jysk", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ikea: { name: "Ikea", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  altex: { name: "Altex", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  flanco: { name: "Flanco", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dm: { name: "Dm", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  drmax: { name: "Dr. Max", slug: "dr-max", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  farmaciatei: { name: "Farmacia Tei", slug: "farmacia-tei", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mall: {
     name: "Mall",
     type: "mall",
@@ -690,8 +784,9 @@ function adSlotHtml() {
 function renderBrandNav(orasSlug) {
   const items = Object.keys(STORE_CONFIG)
     .map((key) => {
-      const label = STORE_CONFIG[key].name;
-      return `<a class="chip" href="/${orasSlug}/${key}">${escapeHtml(label)}</a>`;
+      const cfg = STORE_CONFIG[key];
+      const urlSlug = cfg.slug || key;
+      return `<a class="chip" href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)}</a>`;
     })
     .join("");
   return `<nav class="store-scroll" aria-label="Alege magazinul">${items}</nav>`;
@@ -857,7 +952,11 @@ function renderCityPage({ orasSlug, orasDisplay, nonce }) {
   const canonical = `https://programul-de-azi.ro/${orasSlug}`;
 
   const listItems = Object.keys(STORE_CONFIG)
-    .map((key) => `<li><a href="/${orasSlug}/${key}">${escapeHtml(STORE_CONFIG[key].name)} ${escapeHtml(orasDisplay)}</a></li>`)
+    .map((key) => {
+      const cfg = STORE_CONFIG[key];
+      const urlSlug = cfg.slug || key;
+      return `<li><a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+    })
     .join("");
 
   const bodyHtml = `
@@ -980,7 +1079,11 @@ const SITEMAP_CITIES = [
 ];
 
 // brandurile combinate cu fiecare oraș de mai sus (slug-uri identice cu STORE_CONFIG/STORE_ALIASES)
-const SITEMAP_BRANDS = ["lidl", "kaufland", "penny", "mega-image", "carrefour", "auchan"];
+const SITEMAP_BRANDS = [
+  "lidl", "kaufland", "penny", "mega-image", "carrefour", "auchan",
+  "profi", "metro", "selgros", "dedeman", "leroy-merlin", "brico-depot",
+  "hornbach", "jysk", "ikea", "altex", "flanco", "dm", "dr-max", "farmacia-tei",
+];
 
 // cele mai căutate 10 mall-uri — NU se combină cu toate cele 30 de orașe
 // (fiecare mall există într-un singur oraș anume, spre deosebire de branduri)
