@@ -25,6 +25,19 @@ const codAdSense = "";
 // pentru generarea automată a /ads.txt. Completează-l după aprobare.
 const adsensePublisherId = "ca-pub-7945793092031366";
 
+// Google Analytics (GA4) — codul exact primit, păstrat ca atare. La randare,
+// nonce-ul curent se injectează automat pe <script>-ul inline de mai jos (vezi
+// withNonce mai jos) — altfel CSP-ul strict (fără unsafe-inline) l-ar bloca.
+const codAnalytics = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-04RLHKC4K8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-04RLHKC4K8');
+</script>`;
+
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
    Cerute prin rutele /manifest.json, /sw.js și /icon.svg mai jos,
@@ -272,14 +285,22 @@ function generateNonce() {
   return crypto.randomBytes(16).toString("base64");
 }
 
+// injectează nonce-ul curent pe orice <script> fără atribute dintr-un bloc de
+// cod colat (ex: codAnalytics) — necesar pentru ca inline-ul să treacă de CSP
+// fără să slăbim politica cu 'unsafe-inline'. Script-urile care au deja src=
+// (externe) nu au nevoie de nonce, sunt permise prin domeniul lor din CSP.
+function withNonce(rawHtml, nonce) {
+  return rawHtml.replace(/<script>/g, `<script nonce="${nonce}">`);
+}
+
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com`,
     `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "worker-src 'self'",
     "manifest-src 'self'",
@@ -655,6 +676,7 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
+${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
