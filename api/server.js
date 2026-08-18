@@ -88,6 +88,21 @@ const STORE_AFFILIATE_LINKS = {
   cineplexx: "",
   happycinema: "",
   movieplex: "",
+  bcr: "",
+  brd: "",
+  ing: "",
+  raiffeisen: "",
+  bancatransilvania: "",
+  cec: "",
+  posta: "",
+  mcdonalds: "",
+  kfc: "",
+  burgerking: "",
+  fancourier: "",
+  cargus: "",
+  sameday: "",
+  dpd: "",
+  gls: "",
 };
 
 /* ============================================================
@@ -283,6 +298,66 @@ function cinemaWeekly() {
   ];
 }
 
+// Bănci (BCR, BRD, ING, Raiffeisen, Banca Transilvania, CEC Bank):
+// Luni-Vineri 09:00-16:00, închis sâmbătă și duminică la majoritatea sucursalelor.
+// Notă: unele sucursale mari/din mall au program prelungit sau lucrează și sâmbăta —
+// asta e programul standard, de sucursală obișnuită.
+function bankWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "09:00", close: "16:00" }, // Luni
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" }, // Vineri
+    null, // Sâmbătă — închis
+  ];
+}
+
+// Poșta Română: Luni-Vineri 08:00-19:00, Sâmbătă 08:00-12:00, Duminică închis.
+// Multe oficii poștale mici au program mai scurt sau pauză de masă — asta e
+// programul standard, orientativ, pentru oficiile mai mari.
+function postaWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "08:00", close: "19:00" }, // Luni
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, // Vineri
+    { open: "08:00", close: "12:00" }, // Sâmbătă
+  ];
+}
+
+// Fast-food (McDonald's, KFC, Burger King): deschis zilnic, program lung.
+// Notă: multe locații cu drive-thru sunt de fapt 24/7 — asta e programul
+// standard pentru restaurantele obișnuite, fără drive-thru non-stop.
+function fastfoodWeekly() {
+  return [
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+  ];
+}
+
+// Curieri (FAN Courier, Cargus, Sameday, DPD, GLS): program de tip agenție/punct
+// de lucru — Luni-Vineri 09:00-18:00, Sâmbătă program redus, Duminică închis.
+function curierWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "09:00", close: "18:00" }, // Luni
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" }, // Vineri
+    { open: "09:00", close: "13:00" }, // Sâmbătă
+  ];
+}
+
 // STORE_CONFIG: câte o intrare per brand, cu cheia = slug-ul folosit în URL (site.ro/oras/{cheie}).
 // Cheia e mereu forma "colapsată", fără cratime (ex: "leroymerlin"), pentru că
 // findStore() elimină cratimele înainte de căutare — dar "slug" (opțional) fixează
@@ -320,6 +395,21 @@ const STORE_CONFIG = {
   cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/" },
   happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/" },
   movieplex: { name: "Movie Plex", slug: "movie-plex", type: "cinema", ticketUrl: "https://www.movieplex.ro/" },
+  bcr: { name: "BCR", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  brd: { name: "BRD", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ing: { name: "ING Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  raiffeisen: { name: "Raiffeisen Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  bancatransilvania: { name: "Banca Transilvania", slug: "banca-transilvania", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cec: { name: "CEC Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  posta: { name: "Poșta Română", type: "store", weekly: postaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  mcdonalds: { name: "McDonald's", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  kfc: { name: "KFC", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  burgerking: { name: "Burger King", slug: "burger-king", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  fancourier: { name: "FAN Courier", slug: "fan-courier", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cargus: { name: "Cargus", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  sameday: { name: "Sameday", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dpd: { name: "DPD", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  gls: { name: "GLS", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mall: {
     name: "Mall",
     type: "mall",
@@ -1144,6 +1234,8 @@ const SITEMAP_BRANDS = [
   "hornbach", "jysk", "ikea", "altex", "flanco", "dm", "dr-max", "farmacia-tei",
   "remedia", "spring-pharma", "catena", "sensiblu", "help-net", "dona", "ropharma",
   "mr-bricolage", "cinema-city", "cineplexx", "happy-cinema", "movie-plex",
+  "bcr", "brd", "ing", "raiffeisen", "banca-transilvania", "cec", "posta",
+  "mcdonalds", "kfc", "burger-king", "fan-courier", "cargus", "sameday", "dpd", "gls",
 ];
 
 // cele mai căutate 10 mall-uri — NU se combină cu toate cele 30 de orașe
