@@ -593,11 +593,85 @@ function renderHomePage() {
 }
 
 /* ============================================================
-   6) RUTE
+   6) SITEMAP — generat automat din orașe × branduri + mall-uri
+   ============================================================ */
+
+// cele mai mari 30 de orașe din România (nume complete, cu diacritice —
+// slug-ul din URL se derivă automat mai jos, cu slugifyCityName)
+const SITEMAP_CITIES = [
+  "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+  "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+  "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+  "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+  "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+  "Tulcea", "Reșița",
+];
+
+// brandurile combinate cu fiecare oraș de mai sus (slug-uri identice cu STORE_CONFIG/STORE_ALIASES)
+const SITEMAP_BRANDS = ["lidl", "kaufland", "penny", "mega-image", "carrefour", "auchan"];
+
+// cele mai căutate 10 mall-uri — NU se combină cu toate cele 30 de orașe
+// (fiecare mall există într-un singur oraș anume, spre deosebire de branduri)
+const SITEMAP_MALLS = [
+  { slug: "afi-cotroceni", city: "București" },
+  { slug: "baneasa-shopping-city", city: "București" },
+  { slug: "mega-mall", city: "București" },
+  { slug: "promenada", city: "București" },
+  { slug: "sun-plaza", city: "București" },
+  { slug: "parklake", city: "București" },
+  { slug: "iulius-mall-cluj", city: "Cluj-Napoca" },
+  { slug: "vivo-cluj", city: "Cluj-Napoca" },
+  { slug: "iulius-mall-timisoara", city: "Timișoara" },
+  { slug: "palas-iasi", city: "Iași" },
+];
+
+// transformă un nume de oraș ("Târgu Mureș") în slug-ul folosit deja în rute ("targu-mures")
+function slugifyCityName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // elimină diacriticele
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+function generateSitemapXml() {
+  const base = "https://programul-de-azi.ro";
+  const urls = [`${base}/`];
+
+  SITEMAP_CITIES.forEach((city) => {
+    const citySlug = slugifyCityName(city);
+    urls.push(`${base}/${citySlug}`); // pagina generală a orașului
+    SITEMAP_BRANDS.forEach((brand) => {
+      urls.push(`${base}/${citySlug}/${brand}`); // ex: /cluj-napoca/kaufland
+    });
+  });
+
+  SITEMAP_MALLS.forEach((mall) => {
+    const citySlug = slugifyCityName(mall.city);
+    urls.push(`${base}/${citySlug}/${mall.slug}`); // ex: /bucuresti/afi-cotroceni
+  });
+
+  const body = urls.map((u) => `  <url><loc>${escapeHtml(u)}</loc></url>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
+}
+
+/* ============================================================
+   7) RUTE
    ============================================================ */
 
 // evită ca cereri de tip /favicon.ico, /robots.txt etc. să fie tratate ca nume de oraș
 app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+app.get("/sitemap.xml", (req, res) => {
+  res.header("Content-Type", "application/xml");
+  res.send(generateSitemapXml());
+});
+
+app.get("/robots.txt", (req, res) => {
+  res.header("Content-Type", "text/plain");
+  res.send("User-agent: *\nAllow: /\n\nSitemap: https://programul-de-azi.ro/sitemap.xml\n");
+});
 
 app.get("/", (req, res) => {
   res.set("Content-Type", "text/html; charset=utf-8");
@@ -637,7 +711,7 @@ app.use((req, res) => {
 });
 
 /* ============================================================
-   7) EXPORT — Vercel importă acest fișier ca serverless function.
+   8) EXPORT — Vercel importă acest fișier ca serverless function.
       Blocul de mai jos pornește un server local doar când rulezi
       direct `node api/server.js` (ex: pentru dezvoltare locală).
    ============================================================ */
