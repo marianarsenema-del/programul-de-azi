@@ -316,10 +316,10 @@ const STORE_CONFIG = {
   dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mrbricolage: { name: "Mr. Bricolage", slug: "mr-bricolage", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  cineplexx: { name: "Cineplexx", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "cinema", ticketUrl: "https://www.cinemacity.ro/" },
+  cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/" },
+  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/" },
+  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "cinema", ticketUrl: "https://www.movieplex.ro/" },
   mall: {
     name: "Mall",
     type: "mall",
@@ -529,6 +529,9 @@ main{padding-top:8px;}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
 .affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FFB648);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,150,50,.5);}
+.cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center;}
+.cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
+.cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -927,6 +930,19 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
       <div class="holiday-card">${renderHolidayRows(store.zones.shopping.holidays)}</div>
     `;
     dataForClient = { type: "mall", zones: store.zones };
+  } else if (store.type === "cinema") {
+    // cinematografele nu au un status fix "deschis/închis" — orarul de
+    // proiecție variază zilnic în funcție de filme, deci nu afișăm un badge
+    // live, ca să nu dăm o informație aproximativă. Trimitem direct către
+    // site-ul oficial, unde programul de azi e exact.
+    mainHtml = `
+      <div class="cinema-card">
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
+        <p class="cinema-note">Programul de filme se schimbă zilnic, în funcție de premierele săptămânii — nu afișăm aici un status fix „deschis” sau „închis”, ca să nu-ți dăm o informație aproximativă.</p>
+        <a href="${escapeHtml(store.ticketUrl)}" target="_blank" rel="noopener" class="cinema-btn">🎬 Vezi orarul filmelor de azi</a>
+      </div>
+    `;
+    dataForClient = { type: "general", weekly: [], holidays: [] }; // păstrează ceasul din header activ
   } else {
     // link specific brandului (Lidl/Kaufland/...), gol până e completat manual în cod
     const catalogLink = magazinKey ? STORE_AFFILIATE_LINKS[magazinKey] || "" : "";
