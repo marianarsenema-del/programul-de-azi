@@ -1,24 +1,19 @@
 # Programul de Azi
 
-Site utilitar Next.js care arată în timp real dacă Lidl, Kaufland, Penny, Mega
-Image, Carrefour, Auchan și mall-urile sunt deschise acum, plus programul
-standard și programul de sărbători.
+Server Express care generează dinamic pagini de tipul `site.ro/cluj/kaufland`
+sau `site.ro/bucuresti/mall`, cu status live „deschis/închis” calculat în
+telefonul vizitatorului.
 
 ## Structură
 
 ```
-lib/schedule.js     -> logica de calcul „deschis/închis" (comună)
-lib/stores.js        -> configurare magazine (orele editabile aici)
-lib/malls.js          -> configurare mall-uri (2 zone: shopping + hipermarket) + text SEO
-components/           -> piese de UI reutilizate (StatusCard, WeekTable, ...)
-pages/index.js         -> pagina principală (magazine)
-pages/mall/index.js     -> listă mall-uri
-pages/mall/[id].js       -> pagină individuală per mall/oraș (SEO dedicat)
-pages/sitemap.xml.js      -> sitemap generat automat din lista de mall-uri
-public/robots.txt          -> permite indexarea, indică sitemap-ul
+api/server.js   -> tot backend-ul: rute, program implicit, HTML/CSS/JS, SEO
+vercel.json      -> trimite toate cererile către api/server.js (URL-uri curate)
+package.json      -> dependința Express + versiunea de Node cerută
+.gitignore
 ```
 
-## Rulare locală
+## 1) Rulare locală
 
 Necesită Node.js 18 sau mai nou.
 
@@ -27,49 +22,66 @@ npm install
 npm run dev
 ```
 
-Deschide `http://localhost:3000`.
+Apoi deschide, de exemplu:
+- http://localhost:3000/cluj/kaufland
+- http://localhost:3000/bucuresti/mall
+- http://localhost:3000/cluj-napoca   (pagină generală, fără magazin ales)
 
-## Deploy pe Vercel
+## 2) Deploy pe Vercel
 
-Nu ai nevoie de `vercel.json` — Vercel detectează automat un proiect Next.js
-și configurează build-ul (`next build`) și output-ul fără nimic suplimentar.
+**Varianta recomandată — din GitHub:**
+1. `git init && git add . && git commit -m "init"` apoi urcă pe un repo GitHub nou.
+2. Pe [vercel.com](https://vercel.com) → **Add New → Project** → alege repo-ul.
+3. Vercel detectează automat `api/server.js` ca serverless function — nu trebuie
+   ales niciun framework preset, nu trebuie setat build command. Apasă **Deploy**.
+4. La fiecare push, Vercel redeployează automat.
 
-**Varianta 1 — din GitHub (recomandat):**
-1. Urcă folderul într-un repo Git (`git init`, `git add .`, `git commit -m "init"`, push pe GitHub).
-2. Pe [vercel.com](https://vercel.com) → New Project → Import repo-ul.
-3. Framework Preset: „Next.js" (auto-detectat). Apasă Deploy.
-4. La fiecare push pe branch-ul principal, Vercel redeployează automat.
-
-**Varianta 2 — din linia de comandă:**
+**Varianta din linia de comandă:**
 ```bash
 npm install -g vercel
 vercel login
-vercel        # deploy de test (preview)
-vercel --prod # deploy pe domeniul de producție
+vercel          # deploy de test (preview), primești un link *.vercel.app
+vercel --prod   # deploy pe domeniul de producție
 ```
 
-## Cum adaugi un magazin nou
+## 3) De ce `vercel.json` e obligatoriu aici
 
-Deschide `lib/stores.js` și adaugă o intrare nouă în obiectul `STORES`, după
-modelul celor existente (`weekly` cu 7 poziții, index 0 = Duminică; `holidays`
-cu excepții).
+Fără el, Vercel ar expune funcția doar pe adresa `/api/server`, nu pe
+`/cluj/kaufland`. Regula de `rewrites` din `vercel.json` trimite *orice*
+cerere către `api/server.js`, păstrând URL-ul original — Express-ul din
+interior face routing-ul real pe baza lui (`req.params.oras`,
+`req.params.magazin`).
 
-## Cum adaugi un mall nou
+## 4) Domeniu propriu
 
-Deschide `lib/malls.js` și adaugă un rând nou în array-ul `MALLS`:
+După primul deploy: Project → **Settings → Domains** → adaugă domeniul tău
+(ex: `programuldeazi.ro`) și urmează instrucțiunile DNS afișate de Vercel
+(de obicei un record `A` sau `CNAME` la registrarul tău de domeniu).
 
-```js
-createMallTemplate({ id: "slug-unic", name: "Numele Mall-ului", city: "Oraș", hypermarketName: "Auchan" })
+Nu uita să înlocuiești `https://site.ro` din `api/server.js` (folosit la
+`canonical` și `og:url`) cu domeniul tău real, înainte de a merge live.
+
+## 5) Cum editezi programul magazinelor
+
+Deschide `api/server.js` → funcțiile `supermarketWeekly()`, `mallShoppingWeekly()`
+și `mallHyperWeekly()` de la începutul fișierului. Modifică orele acolo — se
+aplică automat pe toate paginile generate.
+
+## 6) Monetizare (Google AdSense)
+
+În HTML-ul generat există deja două marcaje:
+```html
+<!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+<div class="ad-slot">Spațiu reclamă</div>
 ```
+Când primești codul de la AdSense, înlocuiește conținutul acelui `<div>` (sau
+`<div>`-ul întreg) cu blocul de anunț furnizat de Google, în ambele locuri din
+`renderStorePage()` și `renderCityPage()`.
 
-La următorul build, Next.js generează automat pagina `/mall/slug-unic` cu
-title, meta description, JSON-LD și FAQ completate dinamic — nu trebuie scris
-nimic manual pentru SEO.
+## 7) Verificare înainte de lansare
 
-## Înainte de a merge live
-
-- Înlocuiește `https://programuldeazi.ro` cu domeniul tău real în:
-  `pages/index.js`, `pages/mall/[id].js`, `pages/mall/index.js`,
-  `pages/sitemap.xml.js`, `public/robots.txt`.
-- Adaugă domeniul din Vercel (Project → Settings → Domains).
-- Verifică Search Console și trimite sitemap-ul: `/sitemap.xml`.
+- [ ] Ai înlocuit `https://site.ro` cu domeniul real (căutare-înlocuire în `api/server.js`)
+- [ ] Ai testat câteva URL-uri: `/bucuresti/lidl`, `/cluj/mall`, `/iasi` (general)
+- [ ] Ai adăugat domeniul propriu în Vercel și DNS-ul e propagat
+- [ ] Ai lipit codul AdSense în cele două `<div class="ad-slot">`
+- [ ] Ai adăugat site-ul în Google Search Console
