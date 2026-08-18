@@ -136,7 +136,7 @@ const TRANSLATIONS = {
     titleTemplate: (brand, city) => `Program ${brand} ${city} Azi – Deschis sau Închis Acum`,
     descriptionTemplate: (brand, city) => `Vezi acum dacă ${brand} din ${city} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`,
     disclaimer: (name) => `Programul afișat pentru ${name} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.`,
-    footer: (name) => `Programul de Azi îți arată în timp real dacă ${name} este deschis chiar acum, plus programul complet pe zile și programul special de sărbători legale.`,
+    footer: (name) => `îți arată în timp real dacă ${name} este deschis chiar acum, plus programul complet pe zile și programul special de sărbători legale.`,
     labels: {
       openNow: "DESCHIS ACUM",
       closedNow: "ÎNCHIS ACUM",
@@ -165,7 +165,7 @@ const TRANSLATIONS = {
     titleTemplate: (brand, city) => `Öffnungszeiten ${brand} ${city} Heute – Geöffnet oder Geschlossen`,
     descriptionTemplate: (brand, city) => `Prüfen Sie jetzt, ob ${brand} in ${city} geöffnet ist. Wöchentliche Öffnungszeiten und Feiertagszeiten, live aktualisiert.`,
     disclaimer: (name) => `Die angezeigten Öffnungszeiten für ${name} sind Richtwerte, basierend auf den Standardzeiten der Kette. Einzelne Filialen können abweichen — bitte prüfen Sie die vor Ort angegebenen Öffnungszeiten.`,
-    footer: (name) => `Programul de Azi zeigt Ihnen in Echtzeit, ob ${name} gerade geöffnet ist, sowie die vollständigen wöchentlichen Öffnungszeiten und Feiertagszeiten.`,
+    footer: (name) => `zeigt Ihnen in Echtzeit, ob ${name} gerade geöffnet ist, sowie die vollständigen wöchentlichen Öffnungszeiten und Feiertagszeiten.`,
     labels: {
       openNow: "JETZT GEÖFFNET",
       closedNow: "JETZT GESCHLOSSEN",
@@ -194,7 +194,7 @@ const TRANSLATIONS = {
     titleTemplate: (brand, city) => `${brand} ${city} Opening Hours Today – Open or Closed Now`,
     descriptionTemplate: (brand, city) => `Check now whether ${brand} in ${city} is open. Weekly opening hours and holiday hours, updated live.`,
     disclaimer: (name) => `Opening hours shown for ${name} are indicative, based on the chain's standard hours. Individual branches may vary — please check the hours posted at the store entrance.`,
-    footer: (name) => `Programul de Azi shows you in real time whether ${name} is currently open, plus full weekly opening hours and holiday hours.`,
+    footer: (name) => `shows you in real time whether ${name} is currently open, plus full weekly opening hours and holiday hours.`,
     labels: {
       openNow: "OPEN NOW",
       closedNow: "CLOSED NOW",
@@ -223,7 +223,7 @@ const TRANSLATIONS = {
     titleTemplate: (brand, city) => `Horario ${brand} ${city} Hoy – Abierto o Cerrado Ahora`,
     descriptionTemplate: (brand, city) => `Comprueba ahora si ${brand} en ${city} está abierto. Horario semanal y horario de festivos, actualizado en vivo.`,
     disclaimer: (name) => `El horario mostrado para ${name} es orientativo, según el horario estándar de la cadena. Cada tienda puede variar — comprueba el horario indicado en la entrada.`,
-    footer: (name) => `Programul de Azi te muestra en tiempo real si ${name} está abierto ahora mismo, además del horario semanal completo y el horario de festivos.`,
+    footer: (name) => `te muestra en tiempo real si ${name} está abierto ahora mismo, además del horario semanal completo y el horario de festivos.`,
     labels: {
       openNow: "ABIERTO AHORA",
       closedNow: "CERRADO AHORA",
@@ -1506,7 +1506,7 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
   <p class="disclaimer">${escapeHtml(t.disclaimer(`${magazinDisplay} ${orasDisplay}`))}</p>
 
   <footer>
-    <p><strong>Programul de Azi</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
+    <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
   </footer>
 </main>`;
 
@@ -1518,7 +1518,7 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
 function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce }) {
   const t = TRANSLATIONS[countryCode];
   const country = COUNTRIES[countryCode];
-  const title = `${orasDisplay} — Programul de Azi`;
+  const title = `${orasDisplay} — Opening Hours Today`;
   const description = t.descriptionTemplate("", orasDisplay);
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
 
