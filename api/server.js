@@ -266,6 +266,9 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .mall-list a{display:block;padding:14px 16px;font-weight:600;font-size:14.5px;}
 .mall-list a:hover{color:var(--accent);}
 .intro-text{margin:16px 18px 0;font-size:14.5px;color:var(--muted);line-height:1.7;}
+.geo-btn{display:block;width:calc(100% - 36px);margin:16px 18px 0;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;transition:opacity .15s ease;}
+.geo-btn:disabled{opacity:.6;cursor:default;}
+.geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
 .disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
 footer p + p{margin-top:8px;}
@@ -352,6 +355,69 @@ function buildClientScript(dataForClient) {
 
   tick();
   setInterval(tick, 1000);
+})();
+</script>`;
+}
+
+// Script dedicat pentru pagina de start: cere locația (opțional, la click),
+// o transformă în nume de oraș prin geocoding invers, apoi redirect la /oras.
+// Dacă orice pas eșuează sau utilizatorul refuză, pagina rămâne neschimbată.
+function buildGeoScript() {
+  return `
+<script>
+(function(){
+  var btn = document.getElementById("geoBtn");
+  var status = document.getElementById("geoStatus");
+  if (!btn) return;
+
+  if (!("geolocation" in navigator)) {
+    btn.style.display = "none";
+    return;
+  }
+
+  function showStatus(msg){
+    if (status) { status.style.display = "block"; status.textContent = msg; }
+  }
+  function resetButton(msg){
+    btn.disabled = false;
+    btn.textContent = "📍 Detectează orașul meu automat";
+    if (msg) showStatus(msg);
+  }
+  function slugify(name){
+    return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().trim().replace(/\\s+/g, "-");
+  }
+
+  btn.addEventListener("click", function(){
+    btn.disabled = true;
+    btn.textContent = "Se detectează...";
+    showStatus("Îți cerem acordul pentru locație...");
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        var lat = pos.coords.latitude, lon = pos.coords.longitude;
+        showStatus("Îți identificăm orașul...");
+
+        fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + lon + "&localityLanguage=ro")
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            var city = (data && (data.city || data.locality)) || null;
+            if (!city && data && data.localityInfo && data.localityInfo.administrative) {
+              var admin = data.localityInfo.administrative;
+              for (var i = admin.length - 1; i >= 0; i--) {
+                if (admin[i] && admin[i].name) { city = admin[i].name; break; }
+              }
+            }
+            if (!city) { resetButton("Nu am putut identifica orașul. Alege manual mai jos."); return; }
+            window.location.href = "/" + slugify(city);
+          })
+          .catch(function(){ resetButton("A apărut o eroare la identificarea orașului. Alege manual mai jos."); });
+      },
+      function(){
+        resetButton("Nu am acces la locația ta. Alege manual mai jos.");
+      },
+      { timeout: 8000, maximumAge: 300000 }
+    );
+  });
 })();
 </script>`;
 }
@@ -573,7 +639,10 @@ function renderHomePage() {
 </header>
 <main class="wrap">
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
-  <p class="intro-text">Scrie în adresa browserului orașul și magazinul pe care vrei să-l verifici, în formatul <strong>/oras/magazin</strong> — de exemplu <code>/bucuresti/lidl</code> sau <code>/cluj-napoca/kaufland</code>. Mai jos ai câteva exemple gata de accesat.</p>
+  <p class="intro-text">Scrie în adresa browserului orașul și magazinul pe care vrei să-l verifici, în formatul <strong>/oras/magazin</strong> — de exemplu <code>/bucuresti/lidl</code> sau <code>/cluj-napoca/kaufland</code>. Sau lasă-ne să detectăm automat orașul tău.</p>
+
+  <button type="button" id="geoBtn" class="geo-btn">📍 Detectează orașul meu automat</button>
+  <p id="geoStatus" class="geo-status" style="display:none"></p>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
@@ -587,7 +656,8 @@ function renderHomePage() {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>`;
+</main>
+${buildGeoScript()}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
 }
