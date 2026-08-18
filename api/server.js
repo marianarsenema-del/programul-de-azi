@@ -113,7 +113,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -133,6 +133,9 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Vrei să vezi magazinele de aici? →",
     geoSuggestionNote: "Nu e orașul tău? Alege mai jos.",
     amazonBtn: "🛍️ Vezi ofertele de azi pe Amazon",
+    tabStores: "🛒 Magazine",
+    tabAttractions: "🏛️ Obiective Turistice",
+    attractionsComingSoon: "Ghidul de obiective turistice este în lucru — revino curând.",
     titleTemplate: (brand, city) => `Program ${brand} ${city} Azi – Deschis sau Închis Acum`,
     descriptionTemplate: (brand, city) => `Vezi acum dacă ${brand} din ${city} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`,
     disclaimer: (name) => `Programul afișat pentru ${name} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.`,
@@ -162,6 +165,9 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Geschäfte hier anzeigen? →",
     geoSuggestionNote: "Nicht Ihre Stadt? Unten auswählen.",
     amazonBtn: "🛍️ Heutige Angebote bei Amazon ansehen",
+    tabStores: "🛒 Geschäfte",
+    tabAttractions: "🏛️ Sehenswürdigkeiten",
+    attractionsComingSoon: "Der Sehenswürdigkeiten-Guide wird gerade erstellt — schauen Sie bald wieder vorbei.",
     titleTemplate: (brand, city) => `Öffnungszeiten ${brand} ${city} Heute – Geöffnet oder Geschlossen`,
     descriptionTemplate: (brand, city) => `Prüfen Sie jetzt, ob ${brand} in ${city} geöffnet ist. Wöchentliche Öffnungszeiten und Feiertagszeiten, live aktualisiert.`,
     disclaimer: (name) => `Die angezeigten Öffnungszeiten für ${name} sind Richtwerte, basierend auf den Standardzeiten der Kette. Einzelne Filialen können abweichen — bitte prüfen Sie die vor Ort angegebenen Öffnungszeiten.`,
@@ -191,6 +197,9 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Want to see shops here? →",
     geoSuggestionNote: "Not your city? Choose below.",
     amazonBtn: "🛍️ Check today's deals on Amazon",
+    tabStores: "🛒 Stores",
+    tabAttractions: "🏛️ Attractions",
+    attractionsComingSoon: "Our attractions guide is on its way — check back soon.",
     titleTemplate: (brand, city) => `${brand} ${city} Opening Hours Today – Open or Closed Now`,
     descriptionTemplate: (brand, city) => `Check now whether ${brand} in ${city} is open. Weekly opening hours and holiday hours, updated live.`,
     disclaimer: (name) => `Opening hours shown for ${name} are indicative, based on the chain's standard hours. Individual branches may vary — please check the hours posted at the store entrance.`,
@@ -220,6 +229,9 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "¿Quieres ver las tiendas de aquí? →",
     geoSuggestionNote: "¿No es tu ciudad? Elige abajo.",
     amazonBtn: "🛍️ Ver las ofertas de hoy en Amazon",
+    tabStores: "🛒 Tiendas",
+    tabAttractions: "🏛️ Atracciones",
+    attractionsComingSoon: "Nuestra guía de atracciones está en camino — vuelve pronto.",
     titleTemplate: (brand, city) => `Horario ${brand} ${city} Hoy – Abierto o Cerrado Ahora`,
     descriptionTemplate: (brand, city) => `Comprueba ahora si ${brand} en ${city} está abierto. Horario semanal y horario de festivos, actualizado en vivo.`,
     disclaimer: (name) => `El horario mostrado para ${name} es orientativo, según el horario estándar de la cadena. Cada tienda puede variar — comprueba el horario indicado en la entrada.`,
@@ -232,6 +244,134 @@ const TRANSLATIONS = {
       opensToday: "Abre hoy a las {time}",
       closedComeBack: "Cerró a las {time} — vuelve mañana",
       closesToday: "Cierra hoy a las {time}",
+    },
+  },
+  fr: {
+    dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+    home: "Accueil",
+    todayLabel: "Aujourd'hui",
+    calculating: "Calcul des horaires...",
+    weeklyTitle: "Horaires hebdomadaires",
+    holidaysTitle: "Horaires des jours fériés",
+    noHolidays: "Aucun horaire spécial pour le moment",
+    closedWord: "Fermé",
+    installBtn: "📱 Installer l'application pour un accès rapide",
+    iosHint: "Sur iPhone : appuyez sur le bouton Partager et sélectionnez « Sur l'écran d'accueil ».",
+    geoSuggestionPrefix: "📍 Votre ville semble être",
+    geoSuggestionBtn: "Voir les magasins ici ? →",
+    geoSuggestionNote: "Ce n'est pas votre ville ? Choisissez ci-dessous.",
+    amazonBtn: "🛍️ Voir les offres du jour sur Amazon",
+    tabStores: "🛒 Magasins",
+    tabAttractions: "🏛️ Attractions",
+    attractionsComingSoon: "Notre guide des attractions arrive bientôt — revenez vite.",
+    titleTemplate: (brand, city) => `Horaires ${brand} ${city} Aujourd'hui – Ouvert ou Fermé`,
+    descriptionTemplate: (brand, city) => `Vérifiez maintenant si ${brand} à ${city} est ouvert. Horaires hebdomadaires et horaires des jours fériés, mis à jour en direct.`,
+    disclaimer: (name) => `Les horaires affichés pour ${name} sont indicatifs, basés sur les horaires standards de l'enseigne. Chaque magasin peut varier — vérifiez les horaires affichés à l'entrée.`,
+    footer: (name) => `vous montre en temps réel si ${name} est actuellement ouvert, ainsi que les horaires hebdomadaires complets et les horaires des jours fériés.`,
+    labels: {
+      openNow: "OUVERT MAINTENANT",
+      closedNow: "FERMÉ MAINTENANT",
+      closedHoliday: "Fermé aujourd'hui — {label}",
+      closedAllDay: "Fermé toute la journée",
+      opensToday: "Ouvre aujourd'hui à {time}",
+      closedComeBack: "Fermé à {time} — revenez demain",
+      closesToday: "Ferme aujourd'hui à {time}",
+    },
+  },
+  it: {
+    dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+    home: "Home",
+    todayLabel: "Oggi",
+    calculating: "Calcolo degli orari in corso...",
+    weeklyTitle: "Orari settimanali",
+    holidaysTitle: "Orari festivi",
+    noHolidays: "Nessun orario speciale al momento",
+    closedWord: "Chiuso",
+    installBtn: "📱 Installa l'app per un accesso rapido",
+    iosHint: "Su iPhone: tocca il pulsante Condividi e seleziona «Aggiungi alla schermata Home».",
+    geoSuggestionPrefix: "📍 La tua città sembra essere",
+    geoSuggestionBtn: "Vuoi vedere i negozi qui? →",
+    geoSuggestionNote: "Non è la tua città? Scegli qui sotto.",
+    amazonBtn: "🛍️ Vedi le offerte di oggi su Amazon",
+    tabStores: "🛒 Negozi",
+    tabAttractions: "🏛️ Attrazioni",
+    attractionsComingSoon: "La nostra guida alle attrazioni sta arrivando — torna presto.",
+    titleTemplate: (brand, city) => `Orari ${brand} ${city} Oggi – Aperto o Chiuso Ora`,
+    descriptionTemplate: (brand, city) => `Scopri subito se ${brand} a ${city} è aperto. Orari settimanali e festivi, aggiornati in tempo reale.`,
+    disclaimer: (name) => `Gli orari mostrati per ${name} sono indicativi, basati sugli orari standard della catena. Ogni punto vendita può variare — verifica gli orari esposti all'ingresso.`,
+    footer: (name) => `ti mostra in tempo reale se ${name} è attualmente aperto, oltre agli orari settimanali completi e agli orari festivi.`,
+    labels: {
+      openNow: "APERTO ORA",
+      closedNow: "CHIUSO ORA",
+      closedHoliday: "Chiuso oggi — {label}",
+      closedAllDay: "Chiuso tutto il giorno",
+      opensToday: "Apre oggi alle {time}",
+      closedComeBack: "Ha chiuso alle {time} — torna domani",
+      closesToday: "Chiude oggi alle {time}",
+    },
+  },
+  pl: {
+    dayNames: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+    home: "Strona główna",
+    todayLabel: "Dziś",
+    calculating: "Obliczanie godzin otwarcia...",
+    weeklyTitle: "Godziny otwarcia w tygodniu",
+    holidaysTitle: "Godziny otwarcia w święta",
+    noHolidays: "Brak specjalnych godzin w tej chwili",
+    closedWord: "Zamknięte",
+    installBtn: "📱 Zainstaluj aplikację, aby uzyskać szybki dostęp",
+    iosHint: "Na iPhonie: dotknij przycisku Udostępnij i wybierz „Dodaj do ekranu początkowego”.",
+    geoSuggestionPrefix: "📍 Wygląda na to, że jesteś w",
+    geoSuggestionBtn: "Zobaczyć sklepy tutaj? →",
+    geoSuggestionNote: "To nie twoje miasto? Wybierz poniżej.",
+    amazonBtn: "🛍️ Zobacz dzisiejsze oferty na Amazon",
+    tabStores: "🛒 Sklepy",
+    tabAttractions: "🏛️ Atrakcje",
+    attractionsComingSoon: "Nasz przewodnik po atrakcjach już wkrótce — zajrzyj ponownie.",
+    titleTemplate: (brand, city) => `Godziny otwarcia ${brand} ${city} Dziś – Otwarte czy Zamknięte`,
+    descriptionTemplate: (brand, city) => `Sprawdź teraz, czy ${brand} w ${city} jest otwarte. Godziny w tygodniu i święta, aktualizowane na żywo.`,
+    disclaimer: (name) => `Podane godziny otwarcia dla ${name} mają charakter orientacyjny, na podstawie standardowych godzin sieci. Poszczególne sklepy mogą się różnić — sprawdź godziny podane przy wejściu.`,
+    footer: (name) => `pokazuje w czasie rzeczywistym, czy ${name} jest obecnie otwarte, a także pełne godziny otwarcia w tygodniu i święta.`,
+    labels: {
+      openNow: "OTWARTE TERAZ",
+      closedNow: "ZAMKNIĘTE TERAZ",
+      closedHoliday: "Dziś zamknięte — {label}",
+      closedAllDay: "Zamknięte cały dzień",
+      opensToday: "Otwiera się dziś o {time}",
+      closedComeBack: "Zamknięte od {time} — wróć jutro",
+      closesToday: "Zamyka się dziś o {time}",
+    },
+  },
+  nl: {
+    dayNames: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+    home: "Home",
+    todayLabel: "Vandaag",
+    calculating: "Openingstijden worden berekend...",
+    weeklyTitle: "Openingstijden per week",
+    holidaysTitle: "Openingstijden feestdagen",
+    noHolidays: "Op dit moment geen speciale openingstijden",
+    closedWord: "Gesloten",
+    installBtn: "📱 Installeer de app voor snelle toegang",
+    iosHint: "Op iPhone: tik op Delen en kies «Zet op beginscherm».",
+    geoSuggestionPrefix: "📍 Uw stad lijkt te zijn",
+    geoSuggestionBtn: "Winkels hier bekijken? →",
+    geoSuggestionNote: "Niet uw stad? Kies hieronder.",
+    amazonBtn: "🛍️ Bekijk de aanbiedingen van vandaag op Amazon",
+    tabStores: "🛒 Winkels",
+    tabAttractions: "🏛️ Attracties",
+    attractionsComingSoon: "Onze attractiegids komt eraan — kom snel terug.",
+    titleTemplate: (brand, city) => `Openingstijden ${brand} ${city} Vandaag – Open of Gesloten`,
+    descriptionTemplate: (brand, city) => `Bekijk nu of ${brand} in ${city} open is. Wekelijkse openingstijden en feestdagen, live bijgewerkt.`,
+    disclaimer: (name) => `De getoonde openingstijden voor ${name} zijn indicatief, gebaseerd op de standaardtijden van de keten. Individuele winkels kunnen afwijken — controleer de tijden bij de ingang.`,
+    footer: (name) => `laat u in real time zien of ${name} nu open is, plus de volledige wekelijkse openingstijden en feestdagen.`,
+    labels: {
+      openNow: "NU GEOPEND",
+      closedNow: "NU GESLOTEN",
+      closedHoliday: "Vandaag gesloten — {label}",
+      closedAllDay: "De hele dag gesloten",
+      opensToday: "Opent vandaag om {time}",
+      closedComeBack: "Gesloten sinds {time} — kom morgen terug",
+      closesToday: "Sluit vandaag om {time}",
     },
   },
 };
@@ -329,6 +469,118 @@ const ES_STORE_CONFIG = {
   dia: { name: "Dia", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
 };
 
+// Franța: particularitate reală, nu presupunere — marea majoritate a
+// hipermarketurilor (Leclerc, Carrefour, Auchan, Intermarché) sunt deschise
+// duminica DOAR dimineața, până la 13:00, apoi închise restul zilei. Magazinele
+// de proximitate din centrele orașelor (ex: Monoprix) au adesea program mai
+// lung. Program unic pentru tot grupul: Luni-Sâmbătă 08:30-20:00,
+// Duminică 08:30-13:00.
+const FR_HOLIDAYS = [
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "01-01", label: "Jour de l'An (1er janvier)", hours: null },
+];
+function frSupermarketWeekly() {
+  return [
+    { open: "08:30", close: "13:00" }, // Dimanche — doar dimineața
+    { open: "08:30", close: "20:00" }, // Lundi
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" }, // Samedi
+  ];
+}
+const FR_STORE_CONFIG = {
+  leclerc: { name: "E.Leclerc", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  intermarche: { name: "Intermarché", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  monoprix: { name: "Monoprix", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+};
+
+// Italia: spre deosebire de Germania/Polonia, NU există o lege națională de
+// închidere duminicală — marile lanțuri sunt normal deschise și duminica, cu
+// program obișnuit. Ce variază enorm sunt DOAR sărbătorile legale (Paște,
+// 1 mai, Ferragosto), unde fiecare lanț/magazin decide separat, oraș cu oraș —
+// prea instabil ca să fie reprezentat corect într-un program fix, așa că
+// păstrăm doar programul standard, fără sărbători speciale suprascrise.
+const IT_HOLIDAYS = [
+  { date: "12-25", label: "Natale (25 dicembre)", hours: null },
+  { date: "01-01", label: "Capodanno (1 gennaio)", hours: null },
+];
+function itSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:30" }, // Domenica — program normal, fără închidere legală
+    { open: "08:00", close: "20:30" }, // Lunedì
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" }, // Sabato
+  ];
+}
+const IT_STORE_CONFIG = {
+  esselunga: { name: "Esselunga", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  conad: { name: "Conad", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  coop: { name: "Coop", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+};
+
+// Polonia: lege strictă de interzicere a comerțului duminica ("zakaz handlu
+// w niedziele") — marile lanțuri sunt închise aproape toate duminicile, cu
+// excepția a ~8 "duminici comerciale" pe an, stabilite de guvern și
+// schimbate de la an la an — prea instabile ca să le reprezentăm corect
+// într-un program fix, deci modelăm doar regula generală (închis duminica).
+const PL_HOLIDAYS = [
+  { date: "12-25", label: "Boże Narodzenie (25 grudnia)", hours: null },
+  { date: "01-01", label: "Nowy Rok (1 stycznia)", hours: null },
+];
+function plSupermarketWeekly() {
+  return [
+    null, // Niedziela — închis prin lege (cu excepția ~8 duminici comerciale/an, nemodelate)
+    { open: "06:00", close: "22:00" }, // Poniedziałek
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" }, // Sobota
+  ];
+}
+const PL_STORE_CONFIG = {
+  biedronka: { name: "Biedronka", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+};
+
+// Olanda: fără lege națională de închidere duminicală, dar program de
+// duminică mult mai scurt și inconsistent între lanțuri (Jumbo ~12-18,
+// Albert Heijn variază mult pe locație) — folosim un interval reprezentativ.
+const NL_HOLIDAYS = [
+  { date: "12-25", label: "Kerstmis (25 december)", hours: null },
+  { date: "01-01", label: "Nieuwjaarsdag (1 januari)", hours: null },
+];
+function nlSupermarketWeekly() {
+  return [
+    { open: "12:00", close: "18:00" }, // Zondag — program scurt, variază mult pe lanț
+    { open: "08:00", close: "21:00" }, // Maandag
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Zaterdag
+  ];
+}
+const NL_STORE_CONFIG = {
+  albertheijn: { name: "Albert Heijn", slug: "albert-heijn", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  jumbo: { name: "Jumbo", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  plus: { name: "Plus", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+};
+
 // registru central: fiecare țară = configurația ei de magazine + traducerea +
 // câteva orașe mari de pornire (extensibile oricând, la fel ca la cele 30 din RO)
 const COUNTRIES = {
@@ -347,7 +599,280 @@ const COUNTRIES = {
     t: TRANSLATIONS.es,
     cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia", "Palma", "Bilbao"],
   },
+  fr: {
+    config: FR_STORE_CONFIG,
+    t: TRANSLATIONS.fr,
+    cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille"],
+  },
+  it: {
+    config: IT_STORE_CONFIG,
+    t: TRANSLATIONS.it,
+    cities: ["Roma", "Milano", "Napoli", "Torino", "Palermo", "Bologna", "Firenze", "Venezia", "Genova", "Verona"],
+  },
+  pl: {
+    config: PL_STORE_CONFIG,
+    t: TRANSLATIONS.pl,
+    cities: ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Katowice"],
+  },
+  nl: {
+    config: NL_STORE_CONFIG,
+    t: TRANSLATIONS.nl,
+    cities: ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen"],
+  },
 };
+
+// Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
+// Nu inventăm program: multe obiective au sezoane, bilete cu oră fixă, sau
+// (ca Pergamonmuseum, verificat) sunt parțial închise pentru renovare —
+// link-ul direct arată mereu starea reală, actualizată de instituție.
+// Obiective turistice — nume + link, fără ore inventate. Pentru obiectivele
+// foarte cunoscute (verificate direct), link către site-ul oficial real. Pentru
+// restul — multe regionale/specifice, unde n-am de unde garanta sigur domeniul
+// "oficial" exact — link Google Maps către locația exactă: mereu corect,
+// arată locația reală, recenzii, și adesea orele curente preluate de Google
+// direct de la locul respectiv.
+const ATTRACTIONS = {
+  it: [
+    { name: "Gardaland Resort", url: "https://www.google.com/maps/search/?api=1&query=Gardaland+Resort+Italy" },
+    { name: "Mirabilandia Ravenna", url: "https://www.google.com/maps/search/?api=1&query=Mirabilandia+Ravenna+Italy" },
+    { name: "Cinecittà World Roma", url: "https://www.google.com/maps/search/?api=1&query=Cinecittà+World+Roma+Italy" },
+    { name: "Colosseumul din Roma", url: "https://www.google.com/maps/search/?api=1&query=Colosseumul+din+Roma+Italy" },
+    { name: "Muzeele Vaticane", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Vaticane+Italy" },
+    { name: "Catedrala din Milano", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Milano+Italy" },
+    { name: "Turnul înclinat din Pisa", url: "https://www.google.com/maps/search/?api=1&query=Turnul+înclinat+din+Pisa+Italy" },
+    { name: "Situl Arheologic Pompei", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Pompei+Italy" },
+    { name: "Galleria degli Uffizi Florența", url: "https://www.google.com/maps/search/?api=1&query=Galleria+degli+Uffizi+Florența+Italy" },
+    { name: "Acvariul din Genova", url: "https://www.google.com/maps/search/?api=1&query=Acvariul+din+Genova+Italy" },
+    { name: "Castelul Sant'Angelo Roma", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sant'Angelo+Roma+Italy" },
+    { name: "Palatul Regal din Caserta", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Caserta+Italy" },
+    { name: "Palatul Dogilor Veneția", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dogilor+Veneția+Italy" },
+    { name: "Galleria Borghese Roma", url: "https://www.google.com/maps/search/?api=1&query=Galleria+Borghese+Roma+Italy" },
+    { name: "Parco Natura Viva Bussolengo", url: "https://www.google.com/maps/search/?api=1&query=Parco+Natura+Viva+Bussolengo+Italy" },
+    { name: "MagicLand Valmontone", url: "https://www.google.com/maps/search/?api=1&query=MagicLand+Valmontone+Italy" },
+    { name: "Parcul tematic Leolandia Capriate", url: "https://www.google.com/maps/search/?api=1&query=Parcul+tematic+Leolandia+Capriate+Italy" },
+    { name: "Zoosafari Fasano", url: "https://www.google.com/maps/search/?api=1&query=Zoosafari+Fasano+Italy" },
+    { name: "Villa d'Este Tivoli", url: "https://www.google.com/maps/search/?api=1&query=Villa+d'Este+Tivoli+Italy" },
+    { name: "Parco Giardino Sigurtà", url: "https://www.google.com/maps/search/?api=1&query=Parco+Giardino+Sigurtà+Italy" },
+    { name: "Muzeul Egiptean din Torino", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Egiptean+din+Torino+Italy" },
+    { name: "Castel del Monte Andria", url: "https://www.google.com/maps/search/?api=1&query=Castel+del+Monte+Andria+Italy" },
+    { name: "Catacombele San Callisto", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+San+Callisto+Italy" },
+    { name: "Etnaland Catania Belpasso", url: "https://www.google.com/maps/search/?api=1&query=Etnaland+Catania+Belpasso+Italy" },
+    { name: "Aquafan Riccione", url: "https://www.google.com/maps/search/?api=1&query=Aquafan+Riccione+Italy" },
+    { name: "Pantheonul din Roma", url: "https://www.google.com/maps/search/?api=1&query=Pantheonul+din+Roma+Italy" },
+    { name: "Situl Arheologic Herculaneum", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Herculaneum+Italy" },
+    { name: "Basilica San Marco Veneția", url: "https://www.google.com/maps/search/?api=1&query=Basilica+San+Marco+Veneția+Italy" },
+    { name: "Muzeul Național al Cinematografiei Torino", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+al+Cinematografiei+Torino+Italy" },
+    { name: "Ostia Antica", url: "https://www.google.com/maps/search/?api=1&query=Ostia+Antica+Italy" },
+    { name: "Zoomarine Torvaianica", url: "https://www.google.com/maps/search/?api=1&query=Zoomarine+Torvaianica+Italy" },
+    { name: "Villa Adriana Tivoli", url: "https://www.google.com/maps/search/?api=1&query=Villa+Adriana+Tivoli+Italy" },
+    { name: "Gulliverlandia Lignano", url: "https://www.google.com/maps/search/?api=1&query=Gulliverlandia+Lignano+Italy" },
+    { name: "Muzeele Capitoline Roma", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Capitoline+Roma+Italy" },
+    { name: "Peșterile Frasassi", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Frasassi+Italy" },
+  ],
+  pl: [
+    { name: "Energylandia Zator", url: "https://www.google.com/maps/search/?api=1&query=Energylandia+Zator+Poland" },
+    { name: "Castelul Regal Wawel Cracovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+Wawel+Cracovia+Poland" },
+    { name: "Salina Wieliczka", url: "https://www.google.com/maps/search/?api=1&query=Salina+Wieliczka+Poland" },
+    { name: "Zoo Wrocław & Afrykarium", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Wrocław+and+Afrykarium+Poland" },
+    { name: "Castelul Teuton Malbork", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Teuton+Malbork+Poland" },
+    { name: "Muzeul Varșoviei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Varșoviei+Poland" },
+    { name: "Legendia Parcul de Distracții", url: "https://www.google.com/maps/search/?api=1&query=Legendia+Parcul+de+Distracții+Poland" },
+    { name: "Suntago Wodny Świat", url: "https://www.google.com/maps/search/?api=1&query=Suntago+Wodny+Świat+Poland" },
+    { name: "Castelul Książ Wałbrzych", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Książ+Wałbrzych+Poland" },
+    { name: "Salina Bochnia", url: "https://www.google.com/maps/search/?api=1&query=Salina+Bochnia+Poland" },
+    { name: "Muzeul de Istorie a Evreilor Polonezi Varșovia", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Evreilor+Polonezi+Varșovia+Poland" },
+    { name: "Palatul Culturii și Științei Varșovia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+și+Științei+Varșovia+Poland" },
+    { name: "Catedrala Wawel", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Wawel+Poland" },
+    { name: "Castelul Regal Varșovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+Varșovia+Poland" },
+    { name: "Centrul de Știință Copernic Varșovia", url: "https://www.google.com/maps/search/?api=1&query=Centrul+de+Știință+Copernic+Varșovia+Poland" },
+    { name: "Aquapark Reda cu rechini vii", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Reda+cu+rechini+vii+Poland" },
+    { name: "Castelul Chojnik", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chojnik+Poland" },
+  ],
+  nl: [
+    { name: "Efteling Kaatsheuvel", url: "https://www.google.com/maps/search/?api=1&query=Efteling+Kaatsheuvel+Netherlands" },
+    { name: "Rijksmuseum Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Rijksmuseum+Amsterdam+Netherlands" },
+    { name: "Muzeul Van Gogh", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Van+Gogh+Netherlands" },
+    { name: "Walibi Holland", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Holland+Netherlands" },
+    { name: "Grădinile Keukenhof", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Keukenhof+Netherlands" },
+    { name: "Casa Anne Frank Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Casa+Anne+Frank+Amsterdam+Netherlands" },
+    { name: "Parcul în miniatură Madurodam", url: "https://www.google.com/maps/search/?api=1&query=Parcul+în+miniatură+Madurodam+Netherlands" },
+    { name: "Parcul de distracții Duinrell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Duinrell+Netherlands" },
+    { name: "Heineken Experience Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Heineken+Experience+Amsterdam+Netherlands" },
+    { name: "Zoo Artis", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Artis+Netherlands" },
+    { name: "Attractiepark Slagharen", url: "https://www.google.com/maps/search/?api=1&query=Attractiepark+Slagharen+Netherlands" },
+    { name: "Castelul De Haar Utrecht", url: "https://www.google.com/maps/search/?api=1&query=Castelul+De+Haar+Utrecht+Netherlands" },
+    { name: "Parcul de distracții Toverland", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Toverland+Netherlands" },
+    { name: "Muzeul de Știință NEMO Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Știință+NEMO+Amsterdam+Netherlands" },
+    { name: "Body Worlds Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Body+Worlds+Amsterdam+Netherlands" },
+    { name: "Muzeul Kröller-Müller Otterlo", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Kröller-Müller+Otterlo+Netherlands" },
+    { name: "Deltapark Neeltje Jans", url: "https://www.google.com/maps/search/?api=1&query=Deltapark+Neeltje+Jans+Netherlands" },
+    { name: "Cel mai mare parc de joacă din Europa", url: "https://www.google.com/maps/search/?api=1&query=Cel+mai+mare+parc+de+joacă+din+Europa+Netherlands" },
+  ],
+  ro: [
+    { name: "Castelul Bran", url: "https://bran-castle.com/" },
+    { name: "Castelul Peleș", url: "https://peles.ro/" },
+    { name: "Palatul Parlamentului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Parlamentului+Romania" },
+    { name: "Salina Turda", url: "https://www.salinaturda.eu/" },
+    { name: "Muzeul Antipa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Antipa+Romania" },
+    { name: "Therme București", url: "https://www.therme.ro/" },
+    { name: "Dino Parc Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Dino+Parc+Râșnov+Romania" },
+    { name: "Cetatea Alba Carolina", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Alba+Carolina+Romania" },
+    { name: "Castelul Corvinilor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corvinilor+Romania" },
+    { name: "Muzeul Satului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Romania" },
+    { name: "Cetatea Deva", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Deva+Romania" },
+    { name: "Cetatea Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Râșnov+Romania" },
+    { name: "Cetatea de Scaun a Sucevei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+de+Scaun+a+Sucevei+Romania" },
+    { name: "Salina Praid", url: "https://www.google.com/maps/search/?api=1&query=Salina+Praid+Romania" },
+    { name: "Ansamblul Sculptural Constantin Brâncuși", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Sculptural+Constantin+Brâncuși+Romania" },
+    { name: "Castelul Cantacuzino Bușteni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Cantacuzino+Bușteni+Romania" },
+    { name: "Turnul cu Ceas și Cetatea Sighișoara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+și+Cetatea+Sighișoara+Romania" },
+    { name: "Cetatea Făgăraș", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Făgăraș+Romania" },
+    { name: "Muzeul Național Brukenthal Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Brukenthal+Sibiu+Romania" },
+    { name: "Palatul Culturii Iași", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Iași+Romania" },
+    { name: "Aquapark Nymphaea Oradea", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Nymphaea+Oradea+Romania" },
+    { name: "Muzeul Național al Țăranului Român", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+al+Țăranului+Român+Romania" },
+    { name: "Cetatea Neamț", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Neamț+Romania" },
+    { name: "Castelul Sturdza Miclăușeni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sturdza+Miclăușeni+Romania" },
+    { name: "Muzeul Național de Istorie a României", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Istorie+a+României+Romania" },
+    { name: "Libearty Bear Sanctuary Zărnești", url: "https://www.google.com/maps/search/?api=1&query=Libearty+Bear+Sanctuary+Zărnești+Romania" },
+    { name: "Palatul Mogoșoaia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Mogoșoaia+Romania" },
+    { name: "Cetatea Poenari", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Poenari+Romania" },
+    { name: "Catedrala Mântuirii Neamului", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mântuirii+Neamului+Romania" },
+    { name: "Mănăstirea Voroneț", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Voroneț+Romania" },
+    { name: "Palatul Brâncovenesc Sâmbăta de Sus", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Brâncovenesc+Sâmbăta+de+Sus+Romania" },
+    { name: "MNAR București", url: "https://www.google.com/maps/search/?api=1&query=MNAR+București+Romania" },
+    { name: "Parc Aventura Brașov", url: "https://www.google.com/maps/search/?api=1&query=Parc+Aventura+Brașov+Romania" },
+    { name: "Planetariul Baia Mare", url: "https://www.google.com/maps/search/?api=1&query=Planetariul+Baia+Mare+Romania" },
+    { name: "Complexul de Agrement Cheile Grădiștei", url: "https://www.google.com/maps/search/?api=1&query=Complexul+de+Agrement+Cheile+Grădiștei+Romania" },
+    { name: "Salina Slănic Prahova", url: "https://www.google.com/maps/search/?api=1&query=Salina+Slănic+Prahova+Romania" },
+    { name: "Cetatea Enisala Tulcea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Enisala+Tulcea+Romania" },
+    { name: "Roșia Montană UNESCO", url: "https://www.google.com/maps/search/?api=1&query=Roșia+Montană+UNESCO+Romania" },
+    { name: "Palatul Ghika", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ghika+Romania" },
+  ],
+  de: [
+    { name: "Castelul Neuschwanstein", url: "https://www.neuschwanstein.de/" },
+    { name: "Europa-Park Rust", url: "https://www.europapark.de/" },
+    { name: "Phantasialand Brühl", url: "https://www.google.com/maps/search/?api=1&query=Phantasialand+Brühl+Germany" },
+    { name: "Heide Park Resort", url: "https://www.google.com/maps/search/?api=1&query=Heide+Park+Resort+Germany" },
+    { name: "Miniatur Wunderland Hamburg", url: "https://www.google.com/maps/search/?api=1&query=Miniatur+Wunderland+Hamburg+Germany" },
+    { name: "Poarta Brandenburg", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Brandenburg+Germany" },
+    { name: "Catedrala din Köln", url: "https://www.koelner-dom.de/" },
+    { name: "Legoland Günzburg", url: "https://www.google.com/maps/search/?api=1&query=Legoland+Günzburg+Germany" },
+    { name: "Tropical Islands Resort", url: "https://www.google.com/maps/search/?api=1&query=Tropical+Islands+Resort+Germany" },
+    { name: "Zoo Berlin", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Berlin+Germany" },
+    { name: "Muzeul Pergamon Berlin", url: "https://www.smb.museum/en/museums-institutions/pergamonmuseum/" },
+    { name: "Castelul Eltz", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Eltz+Germany" },
+    { name: "Castelul Heidelberg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Heidelberg+Germany" },
+    { name: "Palatul Rezidențial München", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Rezidențial+München+Germany" },
+    { name: "Hansa-Park Sierksdorf", url: "https://www.google.com/maps/search/?api=1&query=Hansa-Park+Sierksdorf+Germany" },
+    { name: "Insula Muzeelor Berlin", url: "https://www.google.com/maps/search/?api=1&query=Insula+Muzeelor+Berlin+Germany" },
+    { name: "Palatul Sanssouci Potsdam", url: "https://www.spsg.de/" },
+    { name: "Castelul Hohenzollern", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Hohenzollern+Germany" },
+    { name: "Complexul Zwinger Dresda", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Zwinger+Dresda+Germany" },
+    { name: "Filmpark Babelsberg", url: "https://www.google.com/maps/search/?api=1&query=Filmpark+Babelsberg+Germany" },
+    { name: "Palatul Charlottenburg Berlin", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Charlottenburg+Berlin+Germany" },
+    { name: "Muzeul Mercedes-Benz Stuttgart", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mercedes-Benz+Stuttgart+Germany" },
+    { name: "Deutsches Museum München", url: "https://www.google.com/maps/search/?api=1&query=Deutsches+Museum+München+Germany" },
+    { name: "Ravensburger Spieleland", url: "https://www.google.com/maps/search/?api=1&query=Ravensburger+Spieleland+Germany" },
+    { name: "Allgäulino Wertach", url: "https://www.google.com/maps/search/?api=1&query=Allgäulino+Wertach+Germany" },
+    { name: "Belantis Leipzig", url: "https://www.google.com/maps/search/?api=1&query=Belantis+Leipzig+Germany" },
+    { name: "Erlebnispark Tripsdrill", url: "https://www.google.com/maps/search/?api=1&query=Erlebnispark+Tripsdrill+Germany" },
+    { name: "Tierpark Hagenbeck Hamburg", url: "https://www.google.com/maps/search/?api=1&query=Tierpark+Hagenbeck+Hamburg+Germany" },
+    { name: "BMW Welt & Museum München", url: "https://www.google.com/maps/search/?api=1&query=BMW+Welt+and+Museum+München+Germany" },
+    { name: "Muzeul Porsche Stuttgart", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Porsche+Stuttgart+Germany" },
+    { name: "Biserica Frauenkirche Dresda", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Frauenkirche+Dresda+Germany" },
+    { name: "Altes Museum Berlin", url: "https://www.google.com/maps/search/?api=1&query=Altes+Museum+Berlin+Germany" },
+    { name: "Catedrala din Ulm", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Ulm+Germany" },
+    { name: "Aquapark Alpamare Bad Tölz", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Alpamare+Bad+Tölz+Germany" },
+    { name: "Sea Life München", url: "https://www.google.com/maps/search/?api=1&query=Sea+Life+München+Germany" },
+    { name: "Palatul Linderhof", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Linderhof+Germany" },
+    { name: "Castelul Burghausen", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Burghausen+Germany" },
+    { name: "Wunderland Kalkar", url: "https://www.google.com/maps/search/?api=1&query=Wunderland+Kalkar+Germany" },
+  ],
+  uk: [
+    { name: "Tower of London", url: "https://www.hrp.org.uk/tower-of-london/" },
+    { name: "British Museum", url: "https://www.britishmuseum.org/" },
+    { name: "Buckingham Palace", url: "https://www.rct.uk/visit/buckingham-palace" },
+    { name: "Edinburgh Castle", url: "https://www.edinburghcastle.scot/" },
+    { name: "London Eye", url: "https://www.londoneye.com/" },
+  ],
+  es: [
+    { name: "PortAventura World Tarragona", url: "https://www.portaventuraworld.com/" },
+    { name: "Parque Warner Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Warner+Madrid+Spain" },
+    { name: "Terra Mítica Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Terra+Mítica+Benidorm+Spain" },
+    { name: "Basílica de la Sagrada Família", url: "https://sagradafamilia.org/" },
+    { name: "Museo Nacional del Prado", url: "https://www.museodelprado.es/" },
+    { name: "Alhambra de Granada", url: "https://www.alhambra-patronato.es/" },
+    { name: "Parc Güell Barcelona", url: "https://parkguell.barcelona/" },
+    { name: "Siam Park Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Siam+Park+Tenerife+Spain" },
+    { name: "Real Alcázar de Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Real+Alcázar+de+Sevilla+Spain" },
+    { name: "L'Oceanogràfic", url: "https://www.google.com/maps/search/?api=1&query=L'Oceanogràfic+Spain" },
+    { name: "Loro Parque Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Loro+Parque+Tenerife+Spain" },
+    { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Spain" },
+    { name: "Muzeul Picasso", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Spain" },
+    { name: "Museo Nacional Centro de Arte Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Museo+Nacional+Centro+de+Arte+Reina+Sofía+Spain" },
+    { name: "Casa Batlló Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Casa+Batlló+Barcelona+Spain" },
+    { name: "Isla Mágica Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Isla+Mágica+Sevilla+Spain" },
+    { name: "Moscheea-Catedrală din Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Moscheea-Catedrală+din+Córdoba+Spain" },
+    { name: "Muzeul Guggenheim Bilbao", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Guggenheim+Bilbao+Spain" },
+    { name: "Castelul Alcázar din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Alcázar+din+Segovia+Spain" },
+    { name: "Parque de Atracciones", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+Atracciones+Spain" },
+    { name: "Poble Espanyol Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Poble+Espanyol+Barcelona+Spain" },
+    { name: "Parcul de distracții Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Tibidabo+Spain" },
+    { name: "Aqualandia Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Aqualandia+Benidorm+Spain" },
+    { name: "Casa Milà / La Pedrera Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Casa+Milà+/+La+Pedrera+Barcelona+Spain" },
+    { name: "Catedrala din Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Sevilla+Spain" },
+    { name: "Bioparc Valencia", url: "https://www.google.com/maps/search/?api=1&query=Bioparc+Valencia+Spain" },
+    { name: "Katmandu Park Mallorca", url: "https://www.google.com/maps/search/?api=1&query=Katmandu+Park+Mallorca+Spain" },
+    { name: "Teatro Real", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Real+Spain" },
+    { name: "Orașul Artelor și Științelor Valencia", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Artelor+și+Științelor+Valencia+Spain" },
+    { name: "Muzeul Thyssen-Bornemisza Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain" },
+    { name: "Parque Europa Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Europa+Madrid+Spain" },
+    { name: "Castelul Loarre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loarre+Spain" },
+    { name: "Palatul Aljafería Zaragoza", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Aljafería+Zaragoza+Spain" },
+    { name: "Zoo Aquarium Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Aquarium+Madrid+Spain" },
+  ],
+  fr: [
+    { name: "Disneyland Paris", url: "https://www.disneylandparis.com/" },
+    { name: "Parc Astérix", url: "https://www.google.com/maps/search/?api=1&query=Parc+Astérix+France" },
+    { name: "Puy du Fou", url: "https://www.google.com/maps/search/?api=1&query=Puy+du+Fou+France" },
+    { name: "Turnul Eiffel", url: "https://www.toureiffel.paris/" },
+    { name: "Muzeul Luvru", url: "https://www.louvre.fr/" },
+    { name: "Palatul Versailles", url: "https://www.chateauversailles.fr/" },
+    { name: "Arcul de Triumf", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+France" },
+    { name: "Futuroscope Poitiers", url: "https://www.google.com/maps/search/?api=1&query=Futuroscope+Poitiers+France" },
+    { name: "Abația Mont-Saint-Michel", url: "https://www.ot-montsaintmichel.com/" },
+    { name: "Muzeul d'Orsay Paris", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+d'Orsay+Paris+France" },
+    { name: "Cité des Sciences et de l'Industrie", url: "https://www.google.com/maps/search/?api=1&query=Cité+des+Sciences+et+de+l'Industrie+France" },
+    { name: "Castelul Chambord", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chambord+France" },
+    { name: "Centrul Pompidou Paris", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Pompidou+Paris+France" },
+    { name: "Sainte-Chapelle", url: "https://www.google.com/maps/search/?api=1&query=Sainte-Chapelle+France" },
+    { name: "Castelul Fontainebleau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Fontainebleau+France" },
+    { name: "Walibi Rhône-Alpes", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Rhône-Alpes+France" },
+    { name: "Castelul Chenonceau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chenonceau+France" },
+    { name: "Parcul de distracții Nigloland", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Nigloland+France" },
+    { name: "Palais Idéal du Facteur Cheval", url: "https://www.google.com/maps/search/?api=1&query=Palais+Idéal+du+Facteur+Cheval+France" },
+    { name: "Cetatea Medievală Carcassonne", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Medievală+Carcassonne+France" },
+    { name: "Catacombele din Paris", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+din+Paris+France" },
+    { name: "Muzeul Armatei / Domul Invalizilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Armatei+/+Domul+Invalizilor+France" },
+    { name: "Panthéon Paris", url: "https://www.google.com/maps/search/?api=1&query=Panthéon+Paris+France" },
+    { name: "Opéra Garnier Paris", url: "https://www.google.com/maps/search/?api=1&query=Opéra+Garnier+Paris+France" },
+    { name: "Domeniul Trianon Versailles", url: "https://www.google.com/maps/search/?api=1&query=Domeniul+Trianon+Versailles+France" },
+    { name: "Aquaboulevard Paris", url: "https://www.google.com/maps/search/?api=1&query=Aquaboulevard+Paris+France" },
+    { name: "Marineland Antibes", url: "https://www.google.com/maps/search/?api=1&query=Marineland+Antibes+France" },
+    { name: "Castelul Haut-Kœnigsbourg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Haut-Kœnigsbourg+France" },
+    { name: "Muzeul Picasso Paris", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Paris+France" },
+    { name: "Fundația Louis Vuitton", url: "https://www.google.com/maps/search/?api=1&query=Fundația+Louis+Vuitton+France" },
+    { name: "ZooParc de Beauval", url: "https://www.google.com/maps/search/?api=1&query=ZooParc+de+Beauval+France" },
+    { name: "Palais de Tokyo Paris", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+Tokyo+Paris+France" },
+    { name: "Castelul d'If Marseille", url: "https://www.google.com/maps/search/?api=1&query=Castelul+d'If+Marseille+France" },
+    { name: "Muzeul MUCEM", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+MUCEM+France" },
+    { name: "Parcul Festyland Caen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Festyland+Caen+France" },
+    { name: "Peștera Lascaux IV", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Lascaux+IV+France" },
+  ],
+};
+
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands" };
 
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
@@ -912,6 +1437,12 @@ main{padding-top:8px;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
 .amazon-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;background:linear-gradient(135deg,#131A22,#232F3E);color:#FF9900;border:1px solid #FF9900;box-shadow:0 12px 26px -10px rgba(0,0,0,.5);}
+.sub-nav-tabs{display:flex;gap:6px;margin:14px 18px 0;background:#1e1e1e;border-radius:var(--radius-md);padding:6px;}
+.sub-nav-tab{flex:1 1 0;background:transparent;border:none;border-radius:calc(var(--radius-md) - 4px);padding:13px 10px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--muted);cursor:pointer;transition:background .18s ease,color .18s ease;text-align:center;min-height:44px;}
+.sub-nav-tab.active{background:var(--accent);color:#1A1200;}
+.sub-nav-panel{display:none;}
+.sub-nav-panel.active{display:block;}
+.attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -1188,6 +1719,28 @@ function buildInstallScript(nonce) {
   if (isIOS() && !isStandalone() && iosHint) {
     iosHint.style.display = "block";
   }
+})();
+</script>`;
+}
+
+// Script pentru bara de tab-uri (Magazine / Obiective Turistice) — comută
+// clasele "active" pe tab-ul apăsat și pe panoul corespunzător. Generic,
+// reutilizabil pe orice pagină care randează markup-ul .sub-nav-tabs.
+function buildTabsScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var tabs = document.querySelectorAll(".sub-nav-tab");
+  if (!tabs.length) return;
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      var target = tab.getAttribute("data-tab");
+      tabs.forEach(function(t){ t.classList.toggle("active", t === tab); });
+      document.querySelectorAll(".sub-nav-panel").forEach(function(panel){
+        panel.classList.toggle("active", panel.getAttribute("data-panel") === target);
+      });
+    });
+  });
 })();
 </script>`;
 }
@@ -1560,9 +2113,23 @@ function renderIntlHomePage(nonce, baseUrl) {
     { code: "de", flag: "🇩🇪", name: "Germany", href: `/de/${slugifyCityName(COUNTRIES.de.cities[0])}` },
     { code: "uk", flag: "🇬🇧", name: "United Kingdom", href: `/uk/${slugifyCityName(COUNTRIES.uk.cities[0])}` },
     { code: "es", flag: "🇪🇸", name: "Spain", href: `/es/${slugifyCityName(COUNTRIES.es.cities[0])}` },
+    { code: "fr", flag: "🇫🇷", name: "France", href: `/fr/${slugifyCityName(COUNTRIES.fr.cities[0])}` },
+    { code: "it", flag: "🇮🇹", name: "Italy", href: `/it/${slugifyCityName(COUNTRIES.it.cities[0])}` },
+    { code: "pl", flag: "🇵🇱", name: "Poland", href: `/pl/${slugifyCityName(COUNTRIES.pl.cities[0])}` },
+    { code: "nl", flag: "🇳🇱", name: "Netherlands", href: `/nl/${slugifyCityName(COUNTRIES.nl.cities[0])}` },
   ];
   const countryListHtml = countryLinks
     .map((c) => `<li><a href="${c.href}">${c.flag} ${escapeHtml(c.name)}</a></li>`)
+    .join("");
+
+  // atracții grupate pe țară — link direct spre site-ul oficial, fără ore inventate
+  const attractionsHtml = Object.keys(ATTRACTIONS)
+    .map((code) => {
+      const items = ATTRACTIONS[code]
+        .map((a) => `<li><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`)
+        .join("");
+      return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
+    })
     .join("");
 
   const bodyHtml = `
@@ -1576,11 +2143,24 @@ function renderIntlHomePage(nonce, baseUrl) {
   <h1 class="page-h1">Is the store open right now?</h1>
   <p class="intro-text">Choose your country to see live opening hours for major stores near you.</p>
 
+  <nav class="sub-nav-tabs">
+    <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(TRANSLATIONS.uk.tabStores)}</button>
+    <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</button>
+  </nav>
+
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
-  <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
-  <ul class="mall-list">${countryListHtml}</ul>
+  <div class="sub-nav-panel active" data-panel="stores">
+    <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
+    <ul class="mall-list">${countryListHtml}</ul>
+  </div>
+
+  <div class="sub-nav-panel" data-panel="attractions">
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</h2>
+    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit.</p>
+    ${attractionsHtml}
+  </div>
 
   <footer>
     <p><strong>Opening Hours Today</strong> shows you in real time whether major stores in Germany, the UK, and Spain are currently open, plus full weekly and holiday opening hours.</p>
@@ -1588,7 +2168,8 @@ function renderIntlHomePage(nonce, baseUrl) {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>`;
+</main>
+${buildTabsScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
@@ -1885,14 +2466,14 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
 // Accesibile DOAR pe opening-hours-today.eu — pe programul-de-azi.ro,
 // redirect 301 către domeniul internațional (nu duplicăm conținutul).
 // ============================================================
-app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -1924,7 +2505,7 @@ app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
