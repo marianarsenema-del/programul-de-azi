@@ -1480,7 +1480,7 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -1533,7 +1533,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
