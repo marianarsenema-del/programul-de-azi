@@ -519,12 +519,61 @@ function renderCityPage({ orasSlug, orasDisplay }) {
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
 }
 
+// Pagină de start: site.ro/ — fără oraș/magazin specificat încă
+function renderHomePage() {
+  const title = `${SITE_NAME} — Este magazinul deschis acum?`;
+  const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
+  const canonical = "https://site.ro/";
+
+  const exampleLinks = [
+    { href: "/bucuresti/lidl", label: "Lidl București" },
+    { href: "/cluj-napoca/kaufland", label: "Kaufland Cluj-Napoca" },
+    { href: "/timisoara/mall", label: "Mall Timișoara" },
+    { href: "/iasi/carrefour", label: "Carrefour Iași" },
+    { href: "/brasov/penny", label: "Penny Brașov" },
+    { href: "/constanta/auchan", label: "Auchan Constanța" },
+  ];
+  const exampleListHtml = exampleLinks.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <div class="brand">Programul<span>DeAzi</span></div>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <h1 class="page-h1">Este magazinul deschis acum?</h1>
+  <p class="intro-text">Scrie în adresa browserului orașul și magazinul pe care vrei să-l verifici, în formatul <strong>/oras/magazin</strong> — de exemplu <code>/bucuresti/lidl</code> sau <code>/cluj-napoca/kaufland</code>. Mai jos ai câteva exemple gata de accesat.</p>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  <div class="ad-slot">Spațiu reclamă</div>
+
+  <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
+  <ul class="mall-list">${exampleListHtml}</ul>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> îți arată în timp real dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-urile sunt deschise chiar acum, în orice oraș din România.</p>
+  </footer>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  <div class="ad-slot">Spațiu reclamă</div>
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
+}
+
 /* ============================================================
    6) RUTE
    ============================================================ */
 
 // evită ca cereri de tip /favicon.ico, /robots.txt etc. să fie tratate ca nume de oraș
 app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+app.get("/", (req, res) => {
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(renderHomePage());
+});
 
 app.get("/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
