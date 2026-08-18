@@ -84,6 +84,10 @@ const STORE_AFFILIATE_LINKS = {
   dona: "",
   ropharma: "",
   mrbricolage: "",
+  cinemacity: "",
+  cineplexx: "",
+  happycinema: "",
+  movieplex: "",
 };
 
 /* ============================================================
@@ -260,6 +264,25 @@ function farmacieWeekly() {
   ];
 }
 
+// Cinematografe (Cinema City, Cineplexx, Happy Cinema, Movie Plex): aproximăm
+// programul zilnic 10:00–24:00, în fiecare zi a săptămânii, la fel. IMPORTANT:
+// orarul de proiecție real variază zilnic în funcție de filmele programate —
+// asta e doar intervalul orientativ în care sala e deschisă, nu ora exactă a
+// ultimului spectacol. holidays: multe cinematografe rămân deschise chiar și
+// de Crăciun/Anul Nou (perioadă populară pentru filme) — implicit am pus
+// aceleași sărbători ca la restul magazinelor, dar merită verificat și ajustat.
+function cinemaWeekly() {
+  return [
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+  ];
+}
+
 // STORE_CONFIG: câte o intrare per brand, cu cheia = slug-ul folosit în URL (site.ro/oras/{cheie}).
 // Cheia e mereu forma "colapsată", fără cratime (ex: "leroymerlin"), pentru că
 // findStore() elimină cratimele înainte de căutare — dar "slug" (opțional) fixează
@@ -293,6 +316,10 @@ const STORE_CONFIG = {
   dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mrbricolage: { name: "Mr. Bricolage", slug: "mr-bricolage", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cineplexx: { name: "Cineplexx", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "store", weekly: cinemaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mall: {
     name: "Mall",
     type: "mall",
@@ -1100,7 +1127,7 @@ const SITEMAP_BRANDS = [
   "profi", "metro", "selgros", "dedeman", "leroy-merlin", "brico-depot",
   "hornbach", "jysk", "ikea", "altex", "flanco", "dm", "dr-max", "farmacia-tei",
   "remedia", "spring-pharma", "catena", "sensiblu", "help-net", "dona", "ropharma",
-  "mr-bricolage",
+  "mr-bricolage", "cinema-city", "cineplexx", "happy-cinema", "movie-plex",
 ];
 
 // cele mai căutate 10 mall-uri — NU se combină cu toate cele 30 de orașe
