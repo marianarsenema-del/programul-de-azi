@@ -379,6 +379,16 @@ const MANIFEST_JSON = {
   ],
 };
 
+// Manifest separat pentru domeniul internațional — nume/limbă potrivite,
+// restul (iconițe, culori) identic.
+const MANIFEST_JSON_INTL = {
+  ...MANIFEST_JSON,
+  name: "Opening Hours Today",
+  short_name: "OpeningHoursToday",
+  description: "Check instantly whether major stores in Germany, the UK, and Spain are open right now.",
+  lang: "en",
+};
+
 // Service worker: network-first, cu fallback pe cache la offline.
 // Statusul DESCHIS/ÎNCHIS se recalculează oricum în telefon din ora locală,
 // deci o pagină servită din cache tot arată statusul corect — nu doar una „proaspătă".
@@ -690,6 +700,28 @@ const STORE_ALIASES = {
 
 const DAY_NAMES = ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"];
 const SITE_NAME = "Programul de Azi";
+
+/* ============================================================
+   0.9) MULTI-DOMENIU — programul-de-azi.ro (RO) rămâne pe rutele
+   românești; opening-hours-today.eu (nou) servește exclusiv
+   paginile internaționale (DE/UK/ES). Aceeași bază de cod, dar
+   fiecare domeniu răspunde DOAR pentru piața lui — esențial pentru
+   SEO, ca să nu existe conținut duplicat între cele două domenii.
+   Dacă cineva ajunge pe domeniul greșit pentru tipul de pagină cerut,
+   redirect 301 către domeniul corect, nu eroare.
+   ============================================================ */
+const RO_DOMAIN = "programul-de-azi.ro";
+const INTL_DOMAIN = "opening-hours-today.eu";
+
+function getHost(req) {
+  return String(req.headers.host || "").replace(/^www\./, "").split(":")[0].toLowerCase();
+}
+function isIntlHost(req) {
+  return getHost(req) === INTL_DOMAIN;
+}
+function baseUrlFor(req) {
+  return isIntlHost(req) ? `https://${INTL_DOMAIN}` : `https://${RO_DOMAIN}`;
+}
 
 /* ============================================================
    2) HELPERE — normalizare slug-uri din URL, capitalizare,
@@ -1244,7 +1276,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, nonce }) {
+function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, nonce }) {
   // sufixul de locație hiper-locală (cartier/stradă) — opțional, gol pentru paginile normale de magazin
   const locatieSuffix = locatieDisplay ? ` ${locatieDisplay}` : "";
   const locatieForDescription = locatieDisplay ? ` din ${locatieDisplay},` : "";
@@ -1254,8 +1286,8 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   const title = `Program ${magazinDisplay}${locatieSuffix} ${orasDisplay} Azi – Deschis sau Închis Acum`;
   const description = `Vezi acum dacă ${magazinDisplay}${locatieForDescription} ${orasDisplay} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`;
   const canonical = locatieDisplay
-    ? `https://programul-de-azi.ro/${orasSlug}/${canonicalSlug}/${locatieSlug}`
-    : `https://programul-de-azi.ro/${orasSlug}/${canonicalSlug}`;
+    ? `${baseUrl}/${orasSlug}/${canonicalSlug}/${locatieSlug}`
+    : `${baseUrl}/${orasSlug}/${canonicalSlug}`;
 
   let mainHtml = "";
   let dataForClient;
@@ -1368,10 +1400,10 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
 }
 
 // Pagină generală de oraș: site.ro/:oras (fără magazin specificat)
-function renderCityPage({ orasSlug, orasDisplay, nonce }) {
+function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const title = `Program Magazine ${orasDisplay} Azi – Lidl, Kaufland, Penny și Alte Magazine`;
   const description = `Alege un magazin din ${orasDisplay} și vezi instant dacă este deschis acum: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din ${orasDisplay}.`;
-  const canonical = `https://programul-de-azi.ro/${orasSlug}`;
+  const canonical = `${baseUrl}/${orasSlug}`;
 
   const listItems = Object.keys(STORE_CONFIG)
     .map((key) => {
@@ -1417,11 +1449,11 @@ function renderCityPage({ orasSlug, orasDisplay, nonce }) {
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, nonce }) {
+function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, nonce }) {
   const t = TRANSLATIONS[countryCode];
   const title = t.titleTemplate(magazinDisplay, orasDisplay);
   const description = t.descriptionTemplate(magazinDisplay, orasDisplay);
-  const canonical = `https://programul-de-azi.ro/${countryCode}/${orasSlug}/${magazinSlug}`;
+  const canonical = `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`;
 
   const amazonButtonHtml = linkAmazonAffiliate
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
@@ -1483,12 +1515,12 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
 }
 
 // Pagină generală de oraș internațională: /:tara/:oras
-function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, nonce }) {
+function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce }) {
   const t = TRANSLATIONS[countryCode];
   const country = COUNTRIES[countryCode];
   const title = `${orasDisplay} — Programul de Azi`;
   const description = t.descriptionTemplate("", orasDisplay);
-  const canonical = `https://programul-de-azi.ro/${countryCode}/${orasSlug}`;
+  const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
 
   const listItems = Object.keys(country.config)
     .map((key) => {
@@ -1515,10 +1547,56 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, nonce }) {
 }
 
 // Pagină de start: site.ro/ — fără oraș/magazin specificat încă
-function renderHomePage(nonce, suggestedCity) {
+// Pagină de start pentru domeniul internațional (opening-hours-today.eu) —
+// simplu selector de țară, în engleză (punct de intrare neutru, înainte să
+// știm limba vizitatorului). Minimală, deliberat — o pagină completă de tip
+// homepage RO (geolocație, PWA, căutare) pentru fiecare piață e un pas separat.
+function renderIntlHomePage(nonce, baseUrl) {
+  const title = "Opening Hours Today — Is the store open now?";
+  const description = "Check instantly whether major stores in Germany, the UK, and Spain are open right now, plus full weekly and holiday opening hours.";
+  const canonical = `${baseUrl}/`;
+
+  const countryLinks = [
+    { code: "de", flag: "🇩🇪", name: "Germany", href: `/de/${slugifyCityName(COUNTRIES.de.cities[0])}` },
+    { code: "uk", flag: "🇬🇧", name: "United Kingdom", href: `/uk/${slugifyCityName(COUNTRIES.uk.cities[0])}` },
+    { code: "es", flag: "🇪🇸", name: "Spain", href: `/es/${slugifyCityName(COUNTRIES.es.cities[0])}` },
+  ];
+  const countryListHtml = countryLinks
+    .map((c) => `<li><a href="${c.href}">${c.flag} ${escapeHtml(c.name)}</a></li>`)
+    .join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <h1 class="page-h1">Is the store open right now?</h1>
+  <p class="intro-text">Choose your country to see live opening hours for major stores near you.</p>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+
+  <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
+  <ul class="mall-list">${countryListHtml}</ul>
+
+  <footer>
+    <p><strong>Opening Hours Today</strong> shows you in real time whether major stores in Germany, the UK, and Spain are currently open, plus full weekly and holiday opening hours.</p>
+  </footer>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
+}
+
+function renderHomePage(nonce, suggestedCity, baseUrl) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
-  const canonical = "https://programul-de-azi.ro/";
+  const canonical = `${baseUrl}/`;
 
   const exampleLinks = [
     { href: "/bucuresti/lidl", label: "Lidl București" },
@@ -1669,35 +1747,38 @@ function resolveGeoCitySlug(cityName) {
   return null;
 }
 
-function generateSitemapXml() {
-  const base = "https://programul-de-azi.ro";
+function generateSitemapXml(baseUrl, includeIntl) {
+  const base = baseUrl;
   const urls = [`${base}/`];
 
-  SITEMAP_CITIES.forEach((city) => {
-    const citySlug = slugifyCityName(city);
-    urls.push(`${base}/${citySlug}`); // pagina generală a orașului
-    SITEMAP_BRANDS.forEach((brand) => {
-      urls.push(`${base}/${citySlug}/${brand}`); // ex: /cluj-napoca/kaufland
-    });
-  });
-
-  SITEMAP_MALLS.forEach((mall) => {
-    const citySlug = slugifyCityName(mall.city);
-    urls.push(`${base}/${citySlug}/${mall.slug}`); // ex: /bucuresti/afi-cotroceni
-  });
-
-  // internațional (DE/UK/ES) — aceeași logică oraș × brand, pe fiecare țară
-  Object.keys(COUNTRIES).forEach((countryCode) => {
-    const country = COUNTRIES[countryCode];
-    country.cities.forEach((city) => {
+  if (!includeIntl) {
+    // domeniul RO — doar orașele/magazinele din România
+    SITEMAP_CITIES.forEach((city) => {
       const citySlug = slugifyCityName(city);
-      urls.push(`${base}/${countryCode}/${citySlug}`);
-      Object.keys(country.config).forEach((brandKey) => {
-        const brandSlug = country.config[brandKey].slug || brandKey;
-        urls.push(`${base}/${countryCode}/${citySlug}/${brandSlug}`);
+      urls.push(`${base}/${citySlug}`); // pagina generală a orașului
+      SITEMAP_BRANDS.forEach((brand) => {
+        urls.push(`${base}/${citySlug}/${brand}`); // ex: /cluj-napoca/kaufland
       });
     });
-  });
+
+    SITEMAP_MALLS.forEach((mall) => {
+      const citySlug = slugifyCityName(mall.city);
+      urls.push(`${base}/${citySlug}/${mall.slug}`); // ex: /bucuresti/afi-cotroceni
+    });
+  } else {
+    // domeniul internațional — doar paginile DE/UK/ES, aceeași logică oraș × brand
+    Object.keys(COUNTRIES).forEach((countryCode) => {
+      const country = COUNTRIES[countryCode];
+      country.cities.forEach((city) => {
+        const citySlug = slugifyCityName(city);
+        urls.push(`${base}/${countryCode}/${citySlug}`);
+        Object.keys(country.config).forEach((brandKey) => {
+          const brandSlug = country.config[brandKey].slug || brandKey;
+          urls.push(`${base}/${countryCode}/${citySlug}/${brandSlug}`);
+        });
+      });
+    });
+  }
 
   const body = urls.map((u) => `  <url><loc>${escapeHtml(u)}</loc></url>`).join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
@@ -1712,7 +1793,7 @@ app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.get("/manifest.json", (req, res) => {
   res.set("Content-Type", "application/manifest+json");
-  res.send(JSON.stringify(MANIFEST_JSON));
+  res.send(JSON.stringify(isIntlHost(req) ? MANIFEST_JSON_INTL : MANIFEST_JSON));
 });
 
 app.get("/sw.js", (req, res) => {
@@ -1742,12 +1823,12 @@ app.get("/icon-512.png", (req, res) => {
 
 app.get("/sitemap.xml", (req, res) => {
   res.header("Content-Type", "application/xml");
-  res.send(generateSitemapXml());
+  res.send(generateSitemapXml(baseUrlFor(req), isIntlHost(req)));
 });
 
 app.get("/robots.txt", (req, res) => {
   res.header("Content-Type", "text/plain");
-  res.send("User-agent: *\nAllow: /\n\nSitemap: https://programul-de-azi.ro/sitemap.xml\n");
+  res.send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrlFor(req)}/sitemap.xml\n`);
 });
 
 // ads.txt — cerut de Google AdSense ca să confirme că acest domeniu are
@@ -1770,6 +1851,16 @@ app.get("/cad147c6a5b6cb338e880ca855c2679f.html", (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+
+  if (isIntlHost(req)) {
+    // opening-hours-today.eu — selector simplu de țară, fără geolocație RO
+    res.set("Content-Type", "text/html; charset=utf-8");
+    res.send(renderIntlHomePage(nonce, baseUrlFor(req)));
+    return;
+  }
+
   // Vercel injectează automat headere de geolocație pe baza IP-ului vizitatorului.
   // IMPORTANT: pe rețelele mobile din România (Orange, Vodafone, Digi, Telekom),
   // traficul e adesea rutat printr-un punct central, de regulă în București —
@@ -1789,9 +1880,7 @@ app.get("/", (req, res) => {
   }
 
   res.set("Content-Type", "text/html; charset=utf-8");
-  const nonce = generateNonce();
-  res.set("Content-Security-Policy", buildCsp(nonce));
-  res.send(renderHomePage(nonce, suggestedCity));
+  res.send(renderHomePage(nonce, suggestedCity, baseUrlFor(req)));
 });
 
 // ============================================================
@@ -1800,9 +1889,15 @@ app.get("/", (req, res) => {
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
+// Accesibile DOAR pe opening-hours-today.eu — pe programul-de-azi.ro,
+// redirect 301 către domeniul internațional (nu duplicăm conținutul).
 // ============================================================
 app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
+
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
 
   const countryCode = req.params.tara;
   const country = COUNTRIES[countryCode];
@@ -1824,7 +1919,7 @@ app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, nonce });
+  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -1832,22 +1927,34 @@ app.get("/:tara(de|uk|es)/:oras/:magazin", (req, res, next) => {
 app.get("/:tara(de|uk|es)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+
   const countryCode = req.params.tara;
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, nonce });
+  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
 
+// ============================================================
+// RUTE ROMÂNEȘTI — accesibile DOAR pe programul-de-azi.ro. Pe domeniul
+// internațional, redirect 301 către domeniul RO (nu duplicăm conținutul).
+// ============================================================
 app.get("/:oras/:magazin/:locatie", (req, res, next) => {
   // pagini hiper-locale: /cluj-napoca/kaufland/manastur — cartierul/strada e
   // inserat dinamic în titlu și în cardul de status, ca să prindem căutările
   // gen "program kaufland manastur" alături de căutările generale pe oraș
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
+
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
 
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
@@ -1860,13 +1967,17 @@ app.get("/:oras/:magazin/:locatie", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, nonce });
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
 
 app.get("/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
+
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
 
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
@@ -1880,7 +1991,7 @@ app.get("/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, nonce });
+  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -1888,12 +1999,16 @@ app.get("/:oras/:magazin", (req, res, next) => {
 app.get("/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next(); // cereri de tip fișier (css/js/ico) ignorate aici
 
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+
   const orasSlug = req.params.oras.toLowerCase();
   const orasDisplay = toDisplayName(req.params.oras);
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderCityPage({ orasSlug, orasDisplay, nonce });
+  const html = renderCityPage({ orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
