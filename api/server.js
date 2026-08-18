@@ -338,6 +338,8 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .city-search-input::placeholder{color:var(--muted);}
 .city-search-input:focus{outline:none;border-color:var(--accent);}
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
+.install-btn{display:none;width:calc(100% - 36px);margin:14px 18px 0;background:#2ecc71;color:#ffffff;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
+.ios-install-hint{display:none;margin:8px 18px 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5;}
 .disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
 footer p + p{margin-top:8px;}
@@ -512,6 +514,55 @@ function buildCitySearchScript() {
     if (!val) return;
     window.location.href = "/" + slugify(val);
   });
+})();
+</script>`;
+}
+
+// Script pentru butonul de instalare PWA de pe homepage: ascultă
+// beforeinstallprompt (Chrome/Android/Edge), afișează butonul doar când
+// browserul confirmă că aplicația poate fi instalată, și declanșează
+// promptul nativ la click. Pe iOS (fără beforeinstallprompt), arată în
+// schimb instrucțiunea text pentru Share -> Adaugă pe ecranul de pornire.
+function buildInstallScript() {
+  return `
+<script>
+(function(){
+  var installBtn = document.getElementById("installBtn");
+  var iosHint = document.getElementById("iosInstallHint");
+  var deferredPrompt = null;
+
+  function isStandalone(){
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  }
+  function isIOS(){
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  }
+
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.style.display = "block";
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener("click", function(){
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function(){
+        deferredPrompt = null;
+        installBtn.style.display = "none";
+      });
+    });
+  }
+
+  window.addEventListener("appinstalled", function(){
+    if (installBtn) installBtn.style.display = "none";
+    deferredPrompt = null;
+  });
+
+  if (isIOS() && !isStandalone() && iosHint) {
+    iosHint.style.display = "block";
+  }
 })();
 </script>`;
 }
@@ -743,6 +794,9 @@ function renderHomePage() {
   </div>
 </header>
 <main class="wrap">
+  <button type="button" id="installBtn" class="install-btn">📱 Instalează aplicația pentru acces rapid</button>
+  <p id="iosInstallHint" class="ios-install-hint" style="display:none">Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.</p>
+
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
   <p class="intro-text">Scrie orașul tău mai jos sau lasă-ne să-l detectăm automat.</p>
 
@@ -769,7 +823,8 @@ function renderHomePage() {
   ${adSlotHtml()}
 </main>
 ${buildCitySearchScript()}
-${buildGeoScript()}`;
+${buildGeoScript()}
+${buildInstallScript()}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] } });
 }
