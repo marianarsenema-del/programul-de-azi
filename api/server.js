@@ -246,6 +246,8 @@ const TRANSLATIONS = {
 
 // Germania: aproape toate magazinele sunt ÎNCHISE duminica prin lege
 // ("Ladenschlussgesetz") — asta nu e o simplificare de-a noastră, e regula reală.
+// Program unic pentru tot grupul (aldi, rewe, edeka, lidl, kaufland, media-markt):
+// Luni-Sâmbătă 08:00-20:00, Duminică închis complet.
 const DE_HOLIDAYS = [
   { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
   { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
@@ -261,35 +263,26 @@ function deSupermarketWeekly() {
     { open: "08:00", close: "20:00" }, // Samstag
   ];
 }
-function deElectronicsWeekly() {
-  return [
-    null,
-    { open: "10:00", close: "20:00" },
-    { open: "10:00", close: "20:00" },
-    { open: "10:00", close: "20:00" },
-    { open: "10:00", close: "20:00" },
-    { open: "10:00", close: "20:00" },
-    { open: "10:00", close: "20:00" },
-  ];
-}
 const DE_STORE_CONFIG = {
   aldi: { name: "Aldi", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   rewe: { name: "Rewe", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   edeka: { name: "Edeka", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   lidl: { name: "Lidl", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   kaufland: { name: "Kaufland", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
-  mediamarkt: { name: "Media Markt", slug: "media-markt", weekly: deElectronicsWeekly(), holidays: DE_HOLIDAYS },
+  mediamarkt: { name: "Media Markt", slug: "media-markt", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
 };
 
 // Marea Britanie: legea limitează magazinele mari la 6 ore de vânzare duminica
-// ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt.
+// ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
+// nu închis complet. Program unic pentru tot grupul (tesco, sainsburys, asda,
+// morrisons, boots): Luni-Sâmbătă 07:00-22:00, Duminică 10:00-16:00.
 const UK_HOLIDAYS = [
   { date: "12-25", label: "Christmas Day (25 December)", hours: null },
   { date: "01-01", label: "New Year's Day (1 January)", hours: null },
 ];
 function ukSupermarketWeekly() {
   return [
-    { open: "10:00", close: "16:00" }, // Sunday — limitat prin lege
+    { open: "10:00", close: "16:00" }, // Sunday — limitat prin lege, nu închis
     { open: "07:00", close: "22:00" }, // Monday
     { open: "07:00", close: "22:00" },
     { open: "07:00", close: "22:00" },
@@ -298,35 +291,28 @@ function ukSupermarketWeekly() {
     { open: "07:00", close: "22:00" }, // Saturday
   ];
 }
-function ukPharmacyWeekly() {
-  return [
-    { open: "10:00", close: "16:00" },
-    { open: "08:00", close: "20:00" },
-    { open: "08:00", close: "20:00" },
-    { open: "08:00", close: "20:00" },
-    { open: "08:00", close: "20:00" },
-    { open: "08:00", close: "20:00" },
-    { open: "08:00", close: "20:00" },
-  ];
-}
 const UK_STORE_CONFIG = {
   tesco: { name: "Tesco", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
   sainsburys: { name: "Sainsbury's", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
   asda: { name: "Asda", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
   morrisons: { name: "Morrisons", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
-  boots: { name: "Boots", weekly: ukPharmacyWeekly(), holidays: UK_HOLIDAYS },
+  boots: { name: "Boots", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
 };
 
-// Spania: multe supermarketuri (mai ales Mercadona) sunt închise duminica, deși
-// legea variază pe comunități autonome — unele zone turistice permit deschidere
-// duminica. Ce urmează e comportamentul standard, majoritar, nu o regulă universală.
+// Spania: program unic pentru tot grupul (mercadona, carrefour, alcampo,
+// el-corte-ingles, dia): Luni-Sâmbătă 09:00-21:30, Duminică închis.
+// Notă onestă: în realitate, multe magazine El Corte Inglés din centrele
+// marilor orașe (Madrid, Barcelona) chiar deschid duminica, iar legea de
+// închidere duminicală variază pe comunități autonome — am aplicat aici
+// simplificarea explicit cerută (program unic pentru tot grupul), nu
+// comportamentul real, variabil, al fiecărui brand.
 const ES_HOLIDAYS = [
   { date: "12-25", label: "Navidad (25 de diciembre)", hours: null },
   { date: "01-01", label: "Año Nuevo (1 de enero)", hours: null },
 ];
 function esSupermarketWeekly() {
   return [
-    null, // Domingo — închis, cu excepții regionale
+    null, // Domingo — închis
     { open: "09:00", close: "21:30" }, // Lunes
     { open: "09:00", close: "21:30" },
     { open: "09:00", close: "21:30" },
@@ -335,29 +321,32 @@ function esSupermarketWeekly() {
     { open: "09:00", close: "21:30" }, // Sábado
   ];
 }
-function esDepartmentStoreWeekly() {
-  return [
-    { open: "11:00", close: "21:00" }, // multe El Corte Inglés deschid duminica în orașe mari
-    { open: "10:00", close: "22:00" },
-    { open: "10:00", close: "22:00" },
-    { open: "10:00", close: "22:00" },
-    { open: "10:00", close: "22:00" },
-    { open: "10:00", close: "22:00" },
-    { open: "10:00", close: "22:00" },
-  ];
-}
 const ES_STORE_CONFIG = {
   mercadona: { name: "Mercadona", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   carrefour: { name: "Carrefour", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
-  elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esDepartmentStoreWeekly(), holidays: ES_HOLIDAYS },
+  alcampo: { name: "Alcampo", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  dia: { name: "Dia", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
 };
 
 // registru central: fiecare țară = configurația ei de magazine + traducerea +
 // câteva orașe mari de pornire (extensibile oricând, la fel ca la cele 30 din RO)
 const COUNTRIES = {
-  de: { config: DE_STORE_CONFIG, t: TRANSLATIONS.de, cities: ["Berlin", "München", "Hamburg", "Köln", "Frankfurt am Main"] },
-  uk: { config: UK_STORE_CONFIG, t: TRANSLATIONS.uk, cities: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"] },
-  es: { config: ES_STORE_CONFIG, t: TRANSLATIONS.es, cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao"] },
+  de: {
+    config: DE_STORE_CONFIG,
+    t: TRANSLATIONS.de,
+    cities: ["Berlin", "München", "Hamburg", "Frankfurt am Main", "Köln", "Stuttgart", "Düsseldorf", "Dortmund", "Leipzig", "Essen"],
+  },
+  uk: {
+    config: UK_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["London", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Leeds", "Sheffield", "Bristol", "Newcastle", "Nottingham"],
+  },
+  es: {
+    config: ES_STORE_CONFIG,
+    t: TRANSLATIONS.es,
+    cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia", "Palma", "Bilbao"],
+  },
 };
 
 /* ============================================================
