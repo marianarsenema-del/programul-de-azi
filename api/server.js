@@ -1083,6 +1083,21 @@ const ATTRACTIONS = {
   ],
 };
 
+// Deducem orașul unei atracții din numele ei deja existent (multe conțin deja
+// orașul, ex: "BMW Welt & Museum München", "Kölner Dom") — NU inventăm
+// asocieri, doar recunoaștem ce e deja scris acolo. Dacă numele nu conține
+// niciunul din orașele acoperite pentru țara respectivă, atracția rămâne
+// "fără oraș detectat" — vizibilă mereu, la orice filtrare pe oraș, nu ascunsă.
+function detectAttractionCity(attractionName, countryCode) {
+  const country = COUNTRIES[countryCode];
+  if (!country) return null;
+  const normalizedName = normalizeSlug(attractionName);
+  for (const city of country.cities) {
+    if (normalizedName.includes(normalizeSlug(city))) return city;
+  }
+  return null;
+}
+
 const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
@@ -1710,6 +1725,8 @@ main{padding-top:8px;}
 .lang-switcher a{color:var(--accent);margin:0 2px;}
 .clear-country-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:var(--font-body);font-weight:600;font-size:13px;padding:8px 14px;border-radius:100px;cursor:pointer;}
 .country-filter-bar{margin-top:0;}
+.attraction-city-tag{color:var(--muted);font-size:12px;font-weight:500;}
+.city-filter-bar{margin:8px 18px 0;padding:0;}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -2157,11 +2174,12 @@ function buildSearchAndFavoritesScript(nonce) {
 // ești. Click pe un steag sau pe o țară din listă => rămâi pe pagină, doar se
 // filtrează. Fără JS, link-urile tot funcționează normal (navighează), ca
 // fallback — progressive enhancement, nu o cerință ascunsă de JS.
-function buildCountryFilterScript(nonce, initialCountry) {
+function buildCountryFilterScript(nonce, initialCountry, initialCity) {
   return `
 <script nonce="${nonce}">
 (function(){
   var INITIAL_COUNTRY = ${safeJson(initialCountry || null)};
+  var INITIAL_CITY = ${safeJson(initialCity ? normalizeSlug(initialCity) : null)};
 
   function selectCountry(code){
     var target = code || "all";
@@ -2174,6 +2192,18 @@ function buildCountryFilterScript(nonce, initialCountry) {
       btn.classList.toggle("active", btn.getAttribute("data-country-select") === target);
     });
     if (typeof window.refreshFavoriteStars === "function") window.refreshFavoriteStars();
+  }
+
+  // filtrare secundară, pe oraș, DOAR în interiorul blocului de țară activ momentan
+  function selectCity(block, cityKey){
+    var target = cityKey || "all";
+    block.querySelectorAll(".city-flag-btn").forEach(function(btn){
+      btn.classList.toggle("active", btn.getAttribute("data-city-select") === target);
+    });
+    block.querySelectorAll("li[data-city]").forEach(function(li){
+      var show = target === "all" || li.getAttribute("data-city") === target;
+      li.style.display = show ? "" : "none";
+    });
   }
 
   document.addEventListener("click", function(e){
@@ -2194,9 +2224,22 @@ function buildCountryFilterScript(nonce, initialCountry) {
       selectCountry(null);
       return;
     }
+    var cityBtn = e.target.closest(".city-flag-btn");
+    if (cityBtn) {
+      var parentBlock = cityBtn.closest(".country-filter-block");
+      if (parentBlock) selectCity(parentBlock, cityBtn.getAttribute("data-city-select") === "all" ? null : cityBtn.getAttribute("data-city-select"));
+      return;
+    }
   });
 
-  if (INITIAL_COUNTRY) selectCountry(INITIAL_COUNTRY);
+  if (INITIAL_COUNTRY) {
+    selectCountry(INITIAL_COUNTRY);
+    if (INITIAL_CITY) {
+      var activeBlock = document.querySelector('.country-filter-block[data-country-block="' + INITIAL_COUNTRY + '"]');
+      var cityBtnMatch = activeBlock && activeBlock.querySelector('.city-flag-btn[data-city-select="' + INITIAL_CITY + '"]');
+      if (activeBlock && cityBtnMatch) selectCity(activeBlock, INITIAL_CITY);
+    }
+  }
 })();
 </script>`;
 }
@@ -2566,7 +2609,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
 // simplu selector de țară, în engleză (punct de intrare neutru, înainte să
 // știm limba vizitatorului). Minimală, deliberat — o pagină completă de tip
 // homepage RO (geolocație, PWA, căutare) pentru fiecare piață e un pas separat.
-function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
+function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const title = "Opening Hours Today — Is the store open now?";
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
@@ -2581,7 +2624,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
 
   const validDetected = detectedCountry && COUNTRIES[detectedCountry] ? detectedCountry : null;
   const geoHighlightHtml = validDetected
-    ? `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(COUNTRY_LABELS[validDetected])}</strong> — showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.</div>`
+    ? `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(detectedCity ? `${detectedCity}, ${COUNTRY_LABELS[validDetected].split(" ").slice(1).join(" ")}` : COUNTRY_LABELS[validDetected])}</strong> — showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.</div>`
     : "";
 
   // bară persistentă de filtrare — vizibilă indiferent pe ce tab ești (Stores
@@ -2643,16 +2686,31 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
 
   const attractionsByCountryHtml = Object.keys(ATTRACTIONS)
     .map((code) => {
+      // orașul fiecărei atracții, dedus din numele ei — vezi detectAttractionCity().
+      // Cele fără oraș detectat rămân mereu vizibile (fără data-city), la orice filtrare.
       const items = ATTRACTIONS[code]
-        .map(
-          (a) =>
-            `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
-        )
+        .map((a) => {
+          const city = detectAttractionCity(a.name, code);
+          const cityAttr = city ? ` data-city="${escapeHtml(normalizeSlug(city))}"` : "";
+          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a></li>`;
+        })
         .join("");
+
+      // bară de oraș, DOAR cu orașele care chiar au măcar o atracție detectată —
+      // altfel ar fi un buton care nu filtrează nimic, confuz degeaba.
+      const citiesWithMatches = [...new Set(ATTRACTIONS[code].map((a) => detectAttractionCity(a.name, code)).filter(Boolean))];
+      const cityBarHtml = citiesWithMatches.length
+        ? `<nav class="store-scroll city-filter-bar">
+            <button type="button" class="chip city-flag-btn active" data-city-select="all">All ${escapeHtml(COUNTRY_LABELS[code].split(" ").slice(1).join(" "))}</button>
+            ${citiesWithMatches.map((c) => `<button type="button" class="chip city-flag-btn" data-city-select="${escapeHtml(normalizeSlug(c))}">${escapeHtml(c)}</button>`).join("")}
+          </nav>`
+        : "";
+
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
     <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
     <h2 class="section-title"><span class="bar"></span>Attractions in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
+    ${cityBarHtml}
     <ul class="mall-list">${items}</ul>
     ${ticketButtonHtml(code)}
   </div>`;
@@ -2710,7 +2768,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
 </main>
 ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
-${buildCountryFilterScript(nonce, validDetected)}`;
+${buildCountryFilterScript(nonce, validDetected, detectedCity)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
@@ -2998,10 +3056,20 @@ app.get("/", (req, res) => {
   if (isIntlHost(req)) {
     // opening-hours-today.eu — detectăm țara din IP (dacă e una din cele acoperite),
     // ca magazinele/atracțiile relevante să apară primele — fără să ascundem restul.
+    // Detectăm și orașul (același header ca pe domeniul RO) — dacă se potrivește
+    // cu unul din orașele deja recunoscute în atracțiile țării, îl pre-selectăm.
     const ipCountry = String(req.headers["x-vercel-ip-country"] || "").toUpperCase();
     const detectedCountry = GEO_COUNTRY_MAP[ipCountry] || null;
+    let detectedCity = null;
+    const rawCity = req.headers["x-vercel-ip-city"] || "";
+    if (detectedCountry && rawCity) {
+      const cityDisplay = decodeGeoHeader(rawCity);
+      const country = COUNTRIES[detectedCountry];
+      const match = country.cities.find((c) => normalizeSlug(c) === normalizeSlug(cityDisplay));
+      if (match) detectedCity = match;
+    }
     res.set("Content-Type", "text/html; charset=utf-8");
-    res.send(renderIntlHomePage(nonce, baseUrlFor(req), detectedCountry));
+    res.send(renderIntlHomePage(nonce, baseUrlFor(req), detectedCountry, detectedCity));
     return;
   }
 
