@@ -2601,7 +2601,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
     const affiliateButtonHtml = linkEmagMall
-      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn-emag-nou">🛒 Verifică reducerile de astăzi pe eMAG</a>`
+      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn-emag-final">🛒 Verifică reducerile de astăzi pe eMAG</a>`
       : "";
      
     mainHtml = `
