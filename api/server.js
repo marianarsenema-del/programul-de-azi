@@ -50,6 +50,10 @@ const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu d
 // link Amazon Affiliate — folosit DOAR pe paginile internaționale (DE/UK/ES),
 // afișat sub cardul de status pe pagina de magazin. Pe RO, malls rămân cu butonul eMAG.
 const linkAmazonAffiliate = "";
+// link general de bilete turistice (ex: GetYourGuide) — un singur link pentru
+// toate atracțiile, până când ai link-uri individuale per obiectiv. Rămâne
+// gol până îl completezi tu direct pe GitHub — fără el, butonul nu apare deloc.
+const linkBileteTurism = "https://getyourguide.com?partner_id=LM6J21N&utm_medium=online_publisher";
 const linkAfiliatDedeman = "";
 const linkAfiliatAltex = "";
 const linkAfiliatJysk = "";
@@ -133,6 +137,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Vrei să vezi magazinele de aici? →",
     geoSuggestionNote: "Nu e orașul tău? Alege mai jos.",
     amazonBtn: "🛍️ Vezi ofertele de azi pe Amazon",
+    ticketBtn: "🎟️ Rezervă bilet online și evită coada",
     tabStores: "🛒 Magazine",
     tabAttractions: "🏛️ Obiective Turistice",
     attractionsComingSoon: "Ghidul de obiective turistice este în lucru — revino curând.",
@@ -165,6 +170,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Geschäfte hier anzeigen? →",
     geoSuggestionNote: "Nicht Ihre Stadt? Unten auswählen.",
     amazonBtn: "🛍️ Heutige Angebote bei Amazon ansehen",
+    ticketBtn: "🎟️ Tickets online buchen",
     tabStores: "🛒 Geschäfte",
     tabAttractions: "🏛️ Sehenswürdigkeiten",
     attractionsComingSoon: "Der Sehenswürdigkeiten-Guide wird gerade erstellt — schauen Sie bald wieder vorbei.",
@@ -197,6 +203,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Want to see shops here? →",
     geoSuggestionNote: "Not your city? Choose below.",
     amazonBtn: "🛍️ Check today's deals on Amazon",
+    ticketBtn: "🎟️ Book tickets online & skip the line",
     tabStores: "🛒 Stores",
     tabAttractions: "🏛️ Attractions",
     attractionsComingSoon: "Our attractions guide is on its way — check back soon.",
@@ -229,6 +236,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "¿Quieres ver las tiendas de aquí? →",
     geoSuggestionNote: "¿No es tu ciudad? Elige abajo.",
     amazonBtn: "🛍️ Ver las ofertas de hoy en Amazon",
+    ticketBtn: "🎟️ Reserva entradas online y evita la cola",
     tabStores: "🛒 Tiendas",
     tabAttractions: "🏛️ Atracciones",
     attractionsComingSoon: "Nuestra guía de atracciones está en camino — vuelve pronto.",
@@ -261,6 +269,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Voir les magasins ici ? →",
     geoSuggestionNote: "Ce n'est pas votre ville ? Choisissez ci-dessous.",
     amazonBtn: "🛍️ Voir les offres du jour sur Amazon",
+    ticketBtn: "🎟️ Réservez vos billets en ligne et évitez la file d'attente",
     tabStores: "🛒 Magasins",
     tabAttractions: "🏛️ Attractions",
     attractionsComingSoon: "Notre guide des attractions arrive bientôt — revenez vite.",
@@ -293,6 +302,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Vuoi vedere i negozi qui? →",
     geoSuggestionNote: "Non è la tua città? Scegli qui sotto.",
     amazonBtn: "🛍️ Vedi le offerte di oggi su Amazon",
+    ticketBtn: "🎟️ Prenota i biglietti online e salta la fila",
     tabStores: "🛒 Negozi",
     tabAttractions: "🏛️ Attrazioni",
     attractionsComingSoon: "La nostra guida alle attrazioni sta arrivando — torna presto.",
@@ -325,6 +335,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Zobaczyć sklepy tutaj? →",
     geoSuggestionNote: "To nie twoje miasto? Wybierz poniżej.",
     amazonBtn: "🛍️ Zobacz dzisiejsze oferty na Amazon",
+    ticketBtn: "🎟️ Zarezerwuj bilety online i unikaj kolejki",
     tabStores: "🛒 Sklepy",
     tabAttractions: "🏛️ Atrakcje",
     attractionsComingSoon: "Nasz przewodnik po atrakcjach już wkrótce — zajrzyj ponownie.",
@@ -357,6 +368,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Winkels hier bekijken? →",
     geoSuggestionNote: "Niet uw stad? Kies hieronder.",
     amazonBtn: "🛍️ Bekijk de aanbiedingen van vandaag op Amazon",
+    ticketBtn: "🎟️ Boek tickets online en sla de wachtrij over",
     tabStores: "🛒 Winkels",
     tabAttractions: "🏛️ Attracties",
     attractionsComingSoon: "Onze attractiegids komt eraan — kom snel terug.",
@@ -389,6 +401,7 @@ const TRANSLATIONS = {
     geoSuggestionBtn: "Vil du se butikker her? →",
     geoSuggestionNote: "Ikke din by? Vælg nedenfor.",
     amazonBtn: "🛍️ Se dagens tilbud på Amazon",
+    ticketBtn: "🎟️ Bestil billetter online og undgå køen",
     tabStores: "🛒 Butikker",
     tabAttractions: "🏛️ Seværdigheder",
     attractionsComingSoon: "Vores guide til seværdigheder er på vej — kig forbi snart igen.",
@@ -1596,11 +1609,11 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com`,
     `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "worker-src 'self'",
     "manifest-src 'self'",
@@ -1674,6 +1687,7 @@ main{padding-top:8px;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
 .amazon-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;background:linear-gradient(135deg,#131A22,#232F3E);color:#FF9900;border:1px solid #FF9900;box-shadow:0 12px 26px -10px rgba(0,0,0,.5);}
+.ticket-btn{display:block;text-align:center;width:calc(100% - 36px);margin:8px 18px 16px;padding:14px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14.5px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 12px 26px -10px rgba(255,85,51,.5);}
 .sub-nav-tabs{display:flex;gap:6px;margin:14px 18px 0;background:#1e1e1e;border-radius:var(--radius-md);padding:6px;}
 .sub-nav-tab{flex:1 1 0;background:transparent;border:none;border-radius:calc(var(--radius-md) - 4px);padding:13px 10px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--muted);cursor:pointer;transition:background .18s ease,color .18s ease;text-align:center;min-height:44px;}
 .sub-nav-tab.active{background:var(--accent);color:#1A1200;}
@@ -2179,6 +2193,8 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 <html lang="ro">
 <head>
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
+<!-- GetYourGuide Analytics -->
+<script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${escapeHtml(title)}</title>
@@ -2537,6 +2553,15 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
   if (detectedCountry && ATTRACTIONS[detectedCountry]) {
     attractionCodes = [detectedCountry, ...attractionCodes.filter((c) => c !== detectedCountry)];
   }
+  // textul de rezervare bilete se traduce per țara atracției (COUNTRIES[code].t
+  // dacă țara are pagini de magazine — ex. "at"/"be" reutilizează de/nl —
+  // altfel engleză implicit) — un singur link general (linkBileteTurism) pentru toate.
+  const ticketButtonHtml = (code) => {
+    if (!linkBileteTurism) return "";
+    const tFor = (COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk;
+    return `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(tFor.ticketBtn)}</a>`;
+  };
+
   const attractionsHtml = attractionCodes
     .map((code) => {
       const items = ATTRACTIONS[code]
@@ -2545,7 +2570,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
             `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
         )
         .join("");
-      return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
+      return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>${ticketButtonHtml(code)}`;
     })
     .join("");
 
