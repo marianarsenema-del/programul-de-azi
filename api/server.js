@@ -1708,6 +1708,8 @@ main{padding-top:8px;}
 .fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
 .lang-switcher{margin:10px 18px 0;font-size:12px;color:var(--muted);line-height:1.8;}
 .lang-switcher a{color:var(--accent);margin:0 2px;}
+.clear-country-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:var(--font-body);font-weight:600;font-size:13px;padding:8px 14px;border-radius:100px;cursor:pointer;}
+.country-filter-bar{margin-top:0;}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -2047,6 +2049,7 @@ function buildSearchAndFavoritesScript(nonce) {
     var favs = getFavorites();
     document.querySelectorAll(".fav-star").forEach(function(btn){ applyStarState(btn, favs); });
   }
+  window.refreshFavoriteStars = refreshAllStars; // expus global, ca scriptul de filtrare de țară să-l poată apela
 
   function renderFavoritesPanel(){
     var panel = document.getElementById("favoritesList");
@@ -2143,6 +2146,57 @@ function buildSearchAndFavoritesScript(nonce) {
 
   refreshAllStars();
   renderFavoritesPanel();
+})();
+</script>`;
+}
+
+// Script pentru filtrul persistent de țară (bara de steaguri + link-urile din
+// lista "Choose a country") — comută DOAR vizibilitatea unor blocuri deja
+// randate pe server (bune pentru SEO/fără JS), nu regenerează nimic. Aceeași
+// selecție se aplică simultan la Stores și Attractions, indiferent pe ce tab
+// ești. Click pe un steag sau pe o țară din listă => rămâi pe pagină, doar se
+// filtrează. Fără JS, link-urile tot funcționează normal (navighează), ca
+// fallback — progressive enhancement, nu o cerință ascunsă de JS.
+function buildCountryFilterScript(nonce, initialCountry) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var INITIAL_COUNTRY = ${safeJson(initialCountry || null)};
+
+  function selectCountry(code){
+    var target = code || "all";
+    document.querySelectorAll(".country-filter-block").forEach(function(el){
+      var match = el.getAttribute("data-country-block") === target;
+      el.style.display = match ? "block" : "none";
+      el.classList.toggle("active", match);
+    });
+    document.querySelectorAll(".country-flag-btn").forEach(function(btn){
+      btn.classList.toggle("active", btn.getAttribute("data-country-select") === target);
+    });
+    if (typeof window.refreshFavoriteStars === "function") window.refreshFavoriteStars();
+  }
+
+  document.addEventListener("click", function(e){
+    var flagBtn = e.target.closest(".country-flag-btn");
+    if (flagBtn) {
+      var code = flagBtn.getAttribute("data-country-select");
+      selectCountry(code === "all" ? null : code);
+      return;
+    }
+    var pick = e.target.closest(".country-pick");
+    if (pick) {
+      e.preventDefault();
+      selectCountry(pick.getAttribute("data-country"));
+      return;
+    }
+    var clearBtn = e.target.closest(".clear-country-btn");
+    if (clearBtn) {
+      selectCountry(null);
+      return;
+    }
+  });
+
+  if (INITIAL_COUNTRY) selectCountry(INITIAL_COUNTRY);
 })();
 </script>`;
 }
@@ -2517,42 +2571,27 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  let countryLinks = [
-    { code: "ro", flag: "🇷🇴", name: "Romania", href: `/ro/${slugifyCityName(COUNTRIES.ro.cities[0])}` },
-    { code: "de", flag: "🇩🇪", name: "Germany", href: `/de/${slugifyCityName(COUNTRIES.de.cities[0])}` },
-    { code: "uk", flag: "🇬🇧", name: "United Kingdom", href: `/uk/${slugifyCityName(COUNTRIES.uk.cities[0])}` },
-    { code: "es", flag: "🇪🇸", name: "Spain", href: `/es/${slugifyCityName(COUNTRIES.es.cities[0])}` },
-    { code: "fr", flag: "🇫🇷", name: "France", href: `/fr/${slugifyCityName(COUNTRIES.fr.cities[0])}` },
-    { code: "it", flag: "🇮🇹", name: "Italy", href: `/it/${slugifyCityName(COUNTRIES.it.cities[0])}` },
-    { code: "pl", flag: "🇵🇱", name: "Poland", href: `/pl/${slugifyCityName(COUNTRIES.pl.cities[0])}` },
-    { code: "nl", flag: "🇳🇱", name: "Netherlands", href: `/nl/${slugifyCityName(COUNTRIES.nl.cities[0])}` },
-    { code: "at", flag: "🇦🇹", name: "Austria", href: `/at/${slugifyCityName(COUNTRIES.at.cities[0])}` },
-    { code: "be", flag: "🇧🇪", name: "Belgium", href: `/be/${slugifyCityName(COUNTRIES.be.cities[0])}` },
-    { code: "dk", flag: "🇩🇰", name: "Denmark", href: `/dk/${slugifyCityName(COUNTRIES.dk.cities[0])}` },
-  ];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk"];
+  const countryLinks = allCodes.map((code) => ({
+    code,
+    flag: COUNTRY_LABELS[code].split(" ")[0],
+    name: COUNTRY_LABELS[code].split(" ").slice(1).join(" "),
+    href: `/${code}/${slugifyCityName(COUNTRIES[code].cities[0])}`,
+  }));
 
-  // "experiență premium": dacă IP-ul vizitatorului arată o țară pe care o
-  // acoperim, o mutăm prima în listă, cu un mic indiciu vizual — restul
-  // țărilor rămân la fel de accesibile mai jos, nimic nu dispare.
-  let geoHighlightHtml = "";
-  if (detectedCountry && COUNTRIES[detectedCountry]) {
-    const idx = countryLinks.findIndex((c) => c.code === detectedCountry);
-    if (idx > 0) {
-      const [match] = countryLinks.splice(idx, 1);
-      countryLinks.unshift(match);
-    }
-    const detected = countryLinks[0];
-    geoHighlightHtml = `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(detected.name)}</strong> — stores and attractions for ${escapeHtml(detected.name)} are shown first below.</div>`;
-  }
+  const validDetected = detectedCountry && COUNTRIES[detectedCountry] ? detectedCountry : null;
+  const geoHighlightHtml = validDetected
+    ? `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(COUNTRY_LABELS[validDetected])}</strong> — showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.</div>`
+    : "";
 
-  const countryListHtml = countryLinks.map((c) => `<li><a href="${c.href}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("");
+  // bară persistentă de filtrare — vizibilă indiferent pe ce tab ești (Stores
+  // sau Attractions), aceeași selecție se aplică simultan la amândouă.
+  const filterBarHtml = `
+  <nav class="store-scroll country-filter-bar">
+    <button type="button" class="chip country-flag-btn" data-country-select="all">🌍 All</button>
+    ${countryLinks.map((c) => `<button type="button" class="chip country-flag-btn" data-country-select="${c.code}">${c.flag} ${escapeHtml(c.name)}</button>`).join("")}
+  </nav>`;
 
-  // atracții grupate pe țară — link direct spre site-ul oficial, fără ore inventate.
-  // Țara detectată (dacă acoperită) apare prima, cu steluță de favorite pe fiecare rând.
-  let attractionCodes = Object.keys(ATTRACTIONS);
-  if (detectedCountry && ATTRACTIONS[detectedCountry]) {
-    attractionCodes = [detectedCountry, ...attractionCodes.filter((c) => c !== detectedCountry)];
-  }
   // textul de rezervare bilete se traduce per țara atracției (COUNTRIES[code].t
   // dacă țara are pagini de magazine — ex. "at"/"be" reutilizează de/nl —
   // altfel engleză implicit) — un singur link general (linkBileteTurism) pentru toate.
@@ -2562,7 +2601,47 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
     return `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(tFor.ticketBtn)}</a>`;
   };
 
-  const attractionsHtml = attractionCodes
+  // --- STORES: blocul "toate țările" (implicit, vizibil, SEO-friendly — link-uri
+  // reale, urmăribile chiar și fără JS) + câte un bloc ascuns per țară, cu orașele ei ---
+  const storesAllBlockHtml = `
+  <div class="country-filter-block active" data-country-block="all">
+    ${geoHighlightHtml}
+    <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
+    <ul class="mall-list">${countryLinks.map((c) => `<li><a href="${c.href}" class="country-pick" data-country="${c.code}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("")}</ul>
+  </div>`;
+
+  const storesByCountryHtml = allCodes
+    .map((code) => {
+      const cityItems = COUNTRIES[code].cities
+        .map((city) => `<li><a href="/${code}/${slugifyCityName(city)}">${escapeHtml(city)}</a></li>`)
+        .join("");
+      return `
+  <div class="country-filter-block" data-country-block="${code}" style="display:none">
+    <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
+    <h2 class="section-title"><span class="bar"></span>Stores in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
+    <ul class="mall-list">${cityItems}</ul>
+  </div>`;
+    })
+    .join("");
+
+  // --- ATTRACTIONS: la fel — blocul "toate țările" (implicit) + câte un bloc ascuns per țară ---
+  const attractionsAllBlockHtml = `
+  <div class="country-filter-block active" data-country-block="all">
+    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.</p>
+    ${Object.keys(ATTRACTIONS)
+      .map((code) => {
+        const items = ATTRACTIONS[code]
+          .map(
+            (a) =>
+              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
+          )
+          .join("");
+        return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
+      })
+      .join("")}
+  </div>`;
+
+  const attractionsByCountryHtml = Object.keys(ATTRACTIONS)
     .map((code) => {
       const items = ATTRACTIONS[code]
         .map(
@@ -2570,7 +2649,13 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
             `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
         )
         .join("");
-      return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>${ticketButtonHtml(code)}`;
+      return `
+  <div class="country-filter-block" data-country-block="${code}" style="display:none">
+    <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
+    <h2 class="section-title"><span class="bar"></span>Attractions in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
+    <ul class="mall-list">${items}</ul>
+    ${ticketButtonHtml(code)}
+  </div>`;
     })
     .join("");
 
@@ -2583,7 +2668,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
 </header>
 <main class="wrap">
   <h1 class="page-h1">Is the store open right now?</h1>
-  <p class="intro-text">Choose your country, or search directly for a store or attraction.</p>
+  <p class="intro-text">Pick a country below to filter everything — Stores and Attractions both — or search directly.</p>
+  ${filterBarHtml}
 
   <nav class="sub-nav-tabs">
     <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(TRANSLATIONS.uk.tabStores)}</button>
@@ -2600,15 +2686,13 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
   ${adSlotHtml()}
 
   <div class="sub-nav-panel active" data-panel="stores">
-    ${geoHighlightHtml}
-    <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
-    <ul class="mall-list">${countryListHtml}</ul>
+    ${storesAllBlockHtml}
+    ${storesByCountryHtml}
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
-    <h2 class="section-title"><span class="bar"></span>${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</h2>
-    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.</p>
-    ${attractionsHtml}
+    ${attractionsAllBlockHtml}
+    ${attractionsByCountryHtml}
   </div>
 
   <div class="sub-nav-panel" data-panel="favorites">
@@ -2625,7 +2709,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
   ${adSlotHtml()}
 </main>
 ${buildTabsScript(nonce)}
-${buildSearchAndFavoritesScript(nonce)}`;
+${buildSearchAndFavoritesScript(nonce)}
+${buildCountryFilterScript(nonce, validDetected)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
