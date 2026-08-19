@@ -113,7 +113,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -374,6 +374,38 @@ const TRANSLATIONS = {
       closesToday: "Sluit vandaag om {time}",
     },
   },
+  da: {
+    dayNames: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
+    home: "Hjem",
+    todayLabel: "I dag",
+    calculating: "Beregner åbningstider...",
+    weeklyTitle: "Ugentlige åbningstider",
+    holidaysTitle: "Åbningstider på helligdage",
+    noHolidays: "Ingen særlige åbningstider lige nu",
+    closedWord: "Lukket",
+    installBtn: "📱 Installer appen for hurtig adgang",
+    iosHint: "På iPhone: tryk på Del-knappen og vælg \"Føj til hjemmeskærm\".",
+    geoSuggestionPrefix: "📍 Din by ser ud til at være",
+    geoSuggestionBtn: "Vil du se butikker her? →",
+    geoSuggestionNote: "Ikke din by? Vælg nedenfor.",
+    amazonBtn: "🛍️ Se dagens tilbud på Amazon",
+    tabStores: "🛒 Butikker",
+    tabAttractions: "🏛️ Seværdigheder",
+    attractionsComingSoon: "Vores guide til seværdigheder er på vej — kig forbi snart igen.",
+    titleTemplate: (brand, city) => `${brand} ${city} Åbningstider I Dag – Åbent eller Lukket Nu`,
+    descriptionTemplate: (brand, city) => `Tjek nu om ${brand} i ${city} har åbent. Ugentlige åbningstider og helligdagsåbningstider, opdateret live.`,
+    disclaimer: (name) => `De viste åbningstider for ${name} er vejledende, baseret på kædens standardtider. De enkelte butikker kan variere — tjek åbningstiderne ved indgangen.`,
+    footer: (name) => `viser dig i realtid, om ${name} har åbent lige nu, samt fulde ugentlige åbningstider og helligdagsåbningstider.`,
+    labels: {
+      openNow: "ÅBENT NU",
+      closedNow: "LUKKET NU",
+      closedHoliday: "Lukket i dag — {label}",
+      closedAllDay: "Lukket hele dagen",
+      opensToday: "Åbner i dag kl. {time}",
+      closedComeBack: "Lukkede kl. {time} — kom igen i morgen",
+      closesToday: "Lukker i dag kl. {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -581,6 +613,85 @@ const NL_STORE_CONFIG = {
   plus: { name: "Plus", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
 };
 
+// Austria: la fel ca Germania, marile lanțuri își închid sucursalele obișnuite
+// complet duminica — normă respectată aproape universal, cu excepții punctuale
+// (gări, aeroporturi, câteva zone turistice din Tirol/Salzburg/Carintia).
+const AT_HOLIDAYS = [
+  { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
+  { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
+];
+function atSupermarketWeekly() {
+  return [
+    null, // Sonntag — închis, cu excepții punctuale (gări/aeroporturi/zone turistice)
+    { open: "07:30", close: "19:30" }, // Montag
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" }, // Samstag
+  ];
+}
+const AT_STORE_CONFIG = {
+  billa: { name: "Billa", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  spar: { name: "Spar", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  hofer: { name: "Hofer", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  penny: { name: "Penny", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+};
+
+// Belgia: situație reală, în schimbare — Colruyt, Aldi și Lidl rămân închise
+// duminica (politică fermă), în timp ce Carrefour a început recent (ian. 2026)
+// să deschidă duminică dimineața la hipermarketuri, iar Delhaize variază pe
+// magazin (multe sunt francizate independent). Păstrăm regula majoritară,
+// valabilă pentru cei mai mulți retaileri mari.
+const BE_HOLIDAYS = [
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "01-01", label: "Nouvel An (1er janvier)", hours: null },
+];
+function beSupermarketWeekly() {
+  return [
+    null, // Dimanche — majoritatea lanțurilor mari închise, cu excepții în schimbare (ex: Carrefour)
+    { open: "08:30", close: "19:00" }, // Lundi
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" }, // Samedi
+  ];
+}
+const BE_STORE_CONFIG = {
+  colruyt: { name: "Colruyt", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  delhaize: { name: "Delhaize", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+};
+
+// Danemarca: fără interdicție de duminică — magazinele sunt deschise 7 zile
+// din 7, cu program de duminică ceva mai scurt, dar nu drastic redus.
+const DK_HOLIDAYS = [
+  { date: "12-25", label: "Juledag (25. december)", hours: null },
+  { date: "01-01", label: "Nytårsdag (1. januar)", hours: null },
+];
+function dkSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "18:00" }, // Søndag
+    { open: "08:00", close: "20:00" }, // Mandag
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Lørdag
+  ];
+}
+const DK_STORE_CONFIG = {
+  netto: { name: "Netto", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  fotex: { name: "Føtex", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  bilka: { name: "Bilka", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  rema1000: { name: "Rema 1000", slug: "rema-1000", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  irma: { name: "Irma", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+};
+
 // registru central: fiecare țară = configurația ei de magazine + traducerea +
 // câteva orașe mari de pornire (extensibile oricând, la fel ca la cele 30 din RO)
 const COUNTRIES = {
@@ -619,6 +730,27 @@ const COUNTRIES = {
     t: TRANSLATIONS.nl,
     cities: ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen"],
   },
+  // Austria: reutilizează traducerea germană (același standard scris,
+  // nicio pierdere de acuratețe pentru textul de interfață) — nu am
+  // duplicat un dicționar întreg identic doar de dragul formei.
+  at: {
+    config: AT_STORE_CONFIG,
+    t: TRANSLATIONS.de,
+    cities: ["Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach", "Wels", "Sankt Pölten", "Dornbirn"],
+  },
+  // Belgia: reutilizează traducerea olandeză (majoritatea populației e
+  // vorbitoare de neerlandeză/flamandă) — simplificare declarată, nu o
+  // acoperire completă a Valoniei francofone sau a minorității germanofone.
+  be: {
+    config: BE_STORE_CONFIG,
+    t: TRANSLATIONS.nl,
+    cities: ["Brussels", "Antwerpen", "Gent", "Charleroi", "Liège", "Brugge", "Namur", "Leuven", "Mons", "Aalst"],
+  },
+  dk: {
+    config: DK_STORE_CONFIG,
+    t: TRANSLATIONS.da,
+    cities: ["København", "Aarhus", "Odense", "Aalborg", "Esbjerg", "Randers", "Kolding", "Horsens", "Vejle", "Roskilde"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -632,6 +764,72 @@ const COUNTRIES = {
 // arată locația reală, recenzii, și adesea orele curente preluate de Google
 // direct de la locul respectiv.
 const ATTRACTIONS = {
+  at: [
+    { name: "Palatul Schönbrunn Viena", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Schönbrunn+Viena+Austria" },
+    { name: "Wurstelprater Viena", url: "https://www.google.com/maps/search/?api=1&query=Wurstelprater+Viena+Austria" },
+    { name: "Catedrala Sfântul Ștefan", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Ștefan+Austria" },
+    { name: "Palatul Belvedere Viena", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Belvedere+Viena+Austria" },
+    { name: "Muzeul de Istorie a Artei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Artei+Austria" },
+    { name: "Zoo Schönbrunn", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Schönbrunn+Austria" },
+    { name: "Fortăreața Hohensalzburg", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Hohensalzburg+Austria" },
+    { name: "Muzeul Albertina Viena", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Albertina+Viena+Austria" },
+    { name: "Familypark Burgenland", url: "https://www.google.com/maps/search/?api=1&query=Familypark+Burgenland+Austria" },
+    { name: "Palatul Hofburg", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Hofburg+Austria" },
+    { name: "Alpenzoo Innsbruck", url: "https://www.google.com/maps/search/?api=1&query=Alpenzoo+Innsbruck+Austria" },
+    { name: "Lumea Cristalelor Swarovski Wattens", url: "https://www.google.com/maps/search/?api=1&query=Lumea+Cristalelor+Swarovski+Wattens+Austria" },
+    { name: "Castelul Ambras Innsbruck", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ambras+Innsbruck+Austria" },
+    { name: "Aqua Terra Zoo Haus des Meeres Viena", url: "https://www.google.com/maps/search/?api=1&query=Aqua+Terra+Zoo+Haus+des+Meeres+Viena+Austria" },
+    { name: "MuseumsQuartier Viena", url: "https://www.google.com/maps/search/?api=1&query=MuseumsQuartier+Viena+Austria" },
+    { name: "Fortăreața Hohenwerfen", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Hohenwerfen+Austria" },
+    { name: "Salina Hallstatt", url: "https://www.google.com/maps/search/?api=1&query=Salina+Hallstatt+Austria" },
+    { name: "Area 47 Ötztal Outdoor Park", url: "https://www.google.com/maps/search/?api=1&query=Area+47+Ötztal+Outdoor+Park+Austria" },
+    { name: "Muzeul Leopold Viena", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Leopold+Viena+Austria" },
+    { name: "Casa Natală a lui Mozart Salzburg", url: "https://www.google.com/maps/search/?api=1&query=Casa+Natală+a+lui+Mozart+Salzburg+Austria" },
+    { name: "Aquapark Aquapulco", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Aquapulco+Austria" },
+    { name: "Peștera de Gheață Eisriesenwelt", url: "https://www.google.com/maps/search/?api=1&query=Peștera+de+Gheață+Eisriesenwelt+Austria" },
+    { name: "Ars Electronica Center", url: "https://www.google.com/maps/search/?api=1&query=Ars+Electronica+Center+Austria" },
+  ],
+  be: [
+    { name: "Atomium Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Atomium+Bruxelles+Belgium" },
+    { name: "Walibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Belgium+Belgium" },
+    { name: "Grădina Zoologică Pairi Daiza", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+Pairi+Daiza+Belgium" },
+    { name: "Mini-Europe Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Mini-Europe+Bruxelles+Belgium" },
+    { name: "Castelul Gravensteen Gent", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Gravensteen+Gent+Belgium" },
+    { name: "Plopsaland De Panne", url: "https://www.google.com/maps/search/?api=1&query=Plopsaland+De+Panne+Belgium" },
+    { name: "Turnul Belfry din Bruges", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Belfry+din+Bruges+Belgium" },
+    { name: "Muzeul Magritte Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Magritte+Bruxelles+Belgium" },
+    { name: "Castelul Bouillon", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bouillon+Belgium" },
+    { name: "Aqualibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Aqualibi+Belgium+Belgium" },
+    { name: "Castelul Vêves", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vêves+Belgium" },
+    { name: "Boudewijn Seapark Bruges", url: "https://www.google.com/maps/search/?api=1&query=Boudewijn+Seapark+Bruges+Belgium" },
+    { name: "Plopsa Coo Stavelot", url: "https://www.google.com/maps/search/?api=1&query=Plopsa+Coo+Stavelot+Belgium" },
+    { name: "Bellewaerde Ieper", url: "https://www.google.com/maps/search/?api=1&query=Bellewaerde+Ieper+Belgium" },
+    { name: "Muzeul Regal al Africii Centrale", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Africii+Centrale+Belgium" },
+    { name: "Citadela din Namur", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Namur+Belgium" },
+    { name: "Centrul de Arte Frumoase BOZAR", url: "https://www.google.com/maps/search/?api=1&query=Centrul+de+Arte+Frumoase+BOZAR+Belgium" },
+    { name: "Peșterile Han-sur-Lesse", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Han-sur-Lesse+Belgium" },
+    { name: "Plopsaqua Hannut-Landen", url: "https://www.google.com/maps/search/?api=1&query=Plopsaqua+Hannut-Landen+Belgium" },
+  ],
+  dk: [
+    { name: "Grădinile Tivoli Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+Copenhaga+Denmark" },
+    { name: "Legoland Billund", url: "https://www.google.com/maps/search/?api=1&query=Legoland+Billund+Denmark" },
+    { name: "Fårup Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Fårup+Sommerland+Denmark" },
+    { name: "Djurs Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Djurs+Sommerland+Denmark" },
+    { name: "Castelul Rosenborg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rosenborg+Denmark" },
+    { name: "Castelul Kronborg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kronborg+Denmark" },
+    { name: "Muzeul Național al Danemarcei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+al+Danemarcei+Denmark" },
+    { name: "Palatul Amalienborg", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Amalienborg+Denmark" },
+    { name: "Tivoli Friheden Aarhus", url: "https://www.google.com/maps/search/?api=1&query=Tivoli+Friheden+Aarhus+Denmark" },
+    { name: "Muzeul în aer liber Den Gamle By Aarhus", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+în+aer+liber+Den+Gamle+By+Aarhus+Denmark" },
+    { name: "Dyrehavsbakken / Bakken", url: "https://www.google.com/maps/search/?api=1&query=Dyrehavsbakken+/+Bakken+Denmark" },
+    { name: "BonBon-Land Holme-Olstrup", url: "https://www.google.com/maps/search/?api=1&query=BonBon-Land+Holme-Olstrup+Denmark" },
+    { name: "Ree Park Safari", url: "https://www.google.com/maps/search/?api=1&query=Ree+Park+Safari+Denmark" },
+    { name: "Zoo Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Copenhaga+Denmark" },
+    { name: "Muzeul de Artă Modernă Louisiana", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Modernă+Louisiana+Denmark" },
+    { name: "Lalandia Aquadome Billund", url: "https://www.google.com/maps/search/?api=1&query=Lalandia+Aquadome+Billund+Denmark" },
+    { name: "Muzeul Maritim Esbjerg", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Maritim+Esbjerg+Denmark" },
+    { name: "Knuthenborg Safari Park", url: "https://www.google.com/maps/search/?api=1&query=Knuthenborg+Safari+Park+Denmark" },
+  ],
   it: [
     { name: "Gardaland Resort", url: "https://www.google.com/maps/search/?api=1&query=Gardaland+Resort+Italy" },
     { name: "Mirabilandia Ravenna", url: "https://www.google.com/maps/search/?api=1&query=Mirabilandia+Ravenna+Italy" },
@@ -872,7 +1070,46 @@ const ATTRACTIONS = {
   ],
 };
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark" };
+
+// Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
+// codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro" };
+
+// Locul unde ești (țara) și limba în care citești nu sunt același lucru —
+// un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
+// pagină internațională poate fi văzută în orice limbă avem tradusă, prin
+// ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
+// "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
+// dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română" };
+function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
+  const items = Object.keys(LANGUAGE_LABELS)
+    .filter((code) => code !== currentLang)
+    .map((code) => `<a href="${escapeHtml(pathWithoutQuery)}?lang=${code}">${escapeHtml(LANGUAGE_LABELS[code])}</a>`)
+    .join(" · ");
+  return `<p class="lang-switcher">🌐 ${escapeHtml(LANGUAGE_LABELS[currentLang] || currentLang)} — ${items}</p>`;
+}
+
+// index combinat de căutare (magazine + atracții, toate țările internaționale)
+// — generat o singură dată, trimis către browser pentru căutarea instant de pe homepage.
+function buildSearchIndex() {
+  const index = [];
+  Object.keys(COUNTRIES).forEach((code) => {
+    const country = COUNTRIES[code];
+    const firstCity = slugifyCityName(country.cities[0]);
+    Object.keys(country.config).forEach((key) => {
+      const cfg = country.config[key];
+      index.push({ name: cfg.name, type: "store", country: code, href: `/${code}/${firstCity}/${cfg.slug || key}` });
+    });
+  });
+  Object.keys(ATTRACTIONS).forEach((code) => {
+    ATTRACTIONS[code].forEach((a) => {
+      index.push({ name: a.name, type: "attraction", country: code, href: a.url });
+    });
+  });
+  return index;
+}
 
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
@@ -1443,6 +1680,20 @@ main{padding-top:8px;}
 .sub-nav-panel{display:none;}
 .sub-nav-panel.active{display:block;}
 .attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
+.geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);}
+.geo-country-highlight strong{color:var(--accent);}
+.search-box-wrap{position:relative;margin:14px 18px 0;}
+.search-box-wrap .city-search-input{width:100%;}
+.search-results{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:0 16px 32px -12px rgba(0,0,0,.6);z-index:20;max-height:320px;overflow-y:auto;}
+.search-result-row{display:flex;align-items:center;gap:8px;padding:2px 10px;}
+.search-result-row + .search-result-row{border-top:1px solid var(--border);}
+.search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
+.search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
+.fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
+.fav-star.is-fav{color:var(--accent);}
+.fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
+.lang-switcher{margin:10px 18px 0;font-size:12px;color:var(--muted);line-height:1.8;}
+.lang-switcher a{color:var(--accent);margin:0 2px;}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
 .schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -1745,6 +1996,143 @@ function buildTabsScript(nonce) {
 </script>`;
 }
 
+// Script pentru căutarea instant (magazine + atracții, toate țările) și pentru
+// favorite (salvate local, în browser — vezi nota din răspuns despre limitări).
+// Un singur handler delegat pentru toate steluțele ☆/★, oriunde apar pe pagină.
+function buildSearchAndFavoritesScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var SEARCH_INDEX = ${safeJson(buildSearchIndex())};
+  var FAV_KEY = "oht_favorites_v1";
+
+  function getFavorites(){
+    try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch(e){ return []; }
+  }
+  function saveFavorites(list){
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch(e){}
+  }
+  function isFav(favs, href){
+    return favs.some(function(f){ return f.href === href; });
+  }
+  function toggleFavorite(item){
+    var favs = getFavorites();
+    var idx = favs.findIndex(function(f){ return f.href === item.href; });
+    if (idx >= 0) favs.splice(idx, 1); else favs.unshift(item);
+    saveFavorites(favs);
+    return favs;
+  }
+
+  function applyStarState(btn, favs){
+    var on = isFav(favs, btn.getAttribute("data-href"));
+    btn.textContent = on ? "★" : "☆";
+    btn.classList.toggle("is-fav", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  function refreshAllStars(){
+    var favs = getFavorites();
+    document.querySelectorAll(".fav-star").forEach(function(btn){ applyStarState(btn, favs); });
+  }
+
+  function renderFavoritesPanel(){
+    var panel = document.getElementById("favoritesList");
+    if (!panel) return;
+    var favs = getFavorites();
+    if (!favs.length) {
+      panel.innerHTML = '<p class="fav-empty">Nothing saved yet. Going somewhere? Tap ☆ next to any store or attraction — for example, save 3 places you want to see in Berlin — and build your own list for the trip, right here.</p>';
+      return;
+    }
+    panel.innerHTML = "";
+    var list = document.createElement("ul");
+    list.className = "mall-list";
+    favs.forEach(function(item){
+      var li = document.createElement("li");
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      var star = document.createElement("button");
+      star.type = "button";
+      star.className = "fav-star is-fav";
+      star.textContent = "★";
+      star.setAttribute("data-href", item.href);
+      star.setAttribute("data-name", item.name);
+      star.setAttribute("data-type", item.type);
+      star.setAttribute("data-country", item.country || "");
+      var a = document.createElement("a");
+      a.href = item.href;
+      if (item.type === "attraction") { a.target = "_blank"; a.rel = "noopener"; }
+      a.style.flex = "1 1 auto";
+      a.textContent = (item.type === "store" ? "🛒 " : "🎫 ") + item.name;
+      li.appendChild(star);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    panel.appendChild(list);
+  }
+
+  // delegare: un singur listener pentru orice ☆/★, prezent acum sau adăugat mai târziu
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest(".fav-star");
+    if (!btn) return;
+    e.preventDefault();
+    var item = {
+      name: btn.getAttribute("data-name"),
+      type: btn.getAttribute("data-type"),
+      country: btn.getAttribute("data-country"),
+      href: btn.getAttribute("data-href"),
+    };
+    toggleFavorite(item);
+    refreshAllStars();
+    renderFavoritesPanel();
+  });
+
+  // căutare instant
+  var input = document.getElementById("siteSearchInput");
+  var results = document.getElementById("siteSearchResults");
+  function norm(s){ return s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase(); }
+  if (input && results) {
+    input.addEventListener("input", function(){
+      var q = norm(input.value.trim());
+      results.innerHTML = "";
+      if (!q) { results.style.display = "none"; return; }
+      var matches = SEARCH_INDEX.filter(function(item){ return norm(item.name).indexOf(q) !== -1; }).slice(0, 8);
+      if (!matches.length) {
+        results.innerHTML = '<div class="search-result-empty">No matches</div>';
+        results.style.display = "block";
+        return;
+      }
+      matches.forEach(function(item){
+        var row = document.createElement("div");
+        row.className = "search-result-row";
+        var star = document.createElement("button");
+        star.type = "button";
+        star.className = "fav-star";
+        star.setAttribute("data-name", item.name);
+        star.setAttribute("data-type", item.type);
+        star.setAttribute("data-country", item.country);
+        star.setAttribute("data-href", item.href);
+        var a = document.createElement("a");
+        a.href = item.href;
+        if (item.type === "attraction") { a.target = "_blank"; a.rel = "noopener"; }
+        a.className = "search-result-item";
+        a.textContent = (item.type === "store" ? "🛒 " : "🎫 ") + item.name;
+        row.appendChild(star);
+        row.appendChild(a);
+        results.appendChild(row);
+      });
+      results.style.display = "block";
+      refreshAllStars();
+    });
+    document.addEventListener("click", function(e){
+      if (!results.contains(e.target) && e.target !== input) results.style.display = "none";
+    });
+  }
+
+  refreshAllStars();
+  renderFavoritesPanel();
+})();
+</script>`;
+}
+
 /* ============================================================
    5) RANDARE HTML — pagină completă per cerere
    ============================================================ */
@@ -2002,11 +2390,12 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, nonce }) {
-  const t = TRANSLATIONS[countryCode];
+function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, lang, nonce }) {
+  const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
+  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   const title = t.titleTemplate(magazinDisplay, orasDisplay);
   const description = t.descriptionTemplate(magazinDisplay, orasDisplay);
-  const canonical = `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`;
+  const canonical = `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`; // canonical rămâne mereu fără ?lang, indiferent ce limbă se afișează
 
   const amazonButtonHtml = linkAmazonAffiliate
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
@@ -2039,6 +2428,7 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
 
   <div class="status-card" id="statusCard">
     <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
@@ -2068,9 +2458,10 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
 }
 
 // Pagină generală de oraș internațională: /:tara/:oras
-function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce }) {
-  const t = TRANSLATIONS[countryCode];
+function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang, nonce }) {
   const country = COUNTRIES[countryCode];
+  const t = (lang && TRANSLATIONS[lang]) || country.t;
+  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === country.t) || "uk";
   const title = `${orasDisplay} — Opening Hours Today`;
   const description = t.descriptionTemplate("", orasDisplay);
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
@@ -2092,6 +2483,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(orasDisplay)}</p>
+  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}`)}
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <ul class="mall-list">${listItems}</ul>
 </main>`;
@@ -2104,12 +2496,13 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, nonce
 // simplu selector de țară, în engleză (punct de intrare neutru, înainte să
 // știm limba vizitatorului). Minimală, deliberat — o pagină completă de tip
 // homepage RO (geolocație, PWA, căutare) pentru fiecare piață e un pas separat.
-function renderIntlHomePage(nonce, baseUrl) {
+function renderIntlHomePage(nonce, baseUrl, detectedCountry) {
   const title = "Opening Hours Today — Is the store open now?";
-  const description = "Check instantly whether major stores in Germany, the UK, and Spain are open right now, plus full weekly and holiday opening hours.";
+  const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const countryLinks = [
+  let countryLinks = [
+    { code: "ro", flag: "🇷🇴", name: "Romania", href: `/ro/${slugifyCityName(COUNTRIES.ro.cities[0])}` },
     { code: "de", flag: "🇩🇪", name: "Germany", href: `/de/${slugifyCityName(COUNTRIES.de.cities[0])}` },
     { code: "uk", flag: "🇬🇧", name: "United Kingdom", href: `/uk/${slugifyCityName(COUNTRIES.uk.cities[0])}` },
     { code: "es", flag: "🇪🇸", name: "Spain", href: `/es/${slugifyCityName(COUNTRIES.es.cities[0])}` },
@@ -2117,16 +2510,40 @@ function renderIntlHomePage(nonce, baseUrl) {
     { code: "it", flag: "🇮🇹", name: "Italy", href: `/it/${slugifyCityName(COUNTRIES.it.cities[0])}` },
     { code: "pl", flag: "🇵🇱", name: "Poland", href: `/pl/${slugifyCityName(COUNTRIES.pl.cities[0])}` },
     { code: "nl", flag: "🇳🇱", name: "Netherlands", href: `/nl/${slugifyCityName(COUNTRIES.nl.cities[0])}` },
+    { code: "at", flag: "🇦🇹", name: "Austria", href: `/at/${slugifyCityName(COUNTRIES.at.cities[0])}` },
+    { code: "be", flag: "🇧🇪", name: "Belgium", href: `/be/${slugifyCityName(COUNTRIES.be.cities[0])}` },
+    { code: "dk", flag: "🇩🇰", name: "Denmark", href: `/dk/${slugifyCityName(COUNTRIES.dk.cities[0])}` },
   ];
-  const countryListHtml = countryLinks
-    .map((c) => `<li><a href="${c.href}">${c.flag} ${escapeHtml(c.name)}</a></li>`)
-    .join("");
 
-  // atracții grupate pe țară — link direct spre site-ul oficial, fără ore inventate
-  const attractionsHtml = Object.keys(ATTRACTIONS)
+  // "experiență premium": dacă IP-ul vizitatorului arată o țară pe care o
+  // acoperim, o mutăm prima în listă, cu un mic indiciu vizual — restul
+  // țărilor rămân la fel de accesibile mai jos, nimic nu dispare.
+  let geoHighlightHtml = "";
+  if (detectedCountry && COUNTRIES[detectedCountry]) {
+    const idx = countryLinks.findIndex((c) => c.code === detectedCountry);
+    if (idx > 0) {
+      const [match] = countryLinks.splice(idx, 1);
+      countryLinks.unshift(match);
+    }
+    const detected = countryLinks[0];
+    geoHighlightHtml = `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(detected.name)}</strong> — stores and attractions for ${escapeHtml(detected.name)} are shown first below.</div>`;
+  }
+
+  const countryListHtml = countryLinks.map((c) => `<li><a href="${c.href}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("");
+
+  // atracții grupate pe țară — link direct spre site-ul oficial, fără ore inventate.
+  // Țara detectată (dacă acoperită) apare prima, cu steluță de favorite pe fiecare rând.
+  let attractionCodes = Object.keys(ATTRACTIONS);
+  if (detectedCountry && ATTRACTIONS[detectedCountry]) {
+    attractionCodes = [detectedCountry, ...attractionCodes.filter((c) => c !== detectedCountry)];
+  }
+  const attractionsHtml = attractionCodes
     .map((code) => {
       const items = ATTRACTIONS[code]
-        .map((a) => `<li><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`)
+        .map(
+          (a) =>
+            `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
+        )
         .join("");
       return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
     })
@@ -2141,35 +2558,49 @@ function renderIntlHomePage(nonce, baseUrl) {
 </header>
 <main class="wrap">
   <h1 class="page-h1">Is the store open right now?</h1>
-  <p class="intro-text">Choose your country to see live opening hours for major stores near you.</p>
+  <p class="intro-text">Choose your country, or search directly for a store or attraction.</p>
 
   <nav class="sub-nav-tabs">
     <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(TRANSLATIONS.uk.tabStores)}</button>
     <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</button>
+    <button type="button" class="sub-nav-tab" data-tab="favorites">⭐ Favorites</button>
   </nav>
+
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="Search a store or attraction..." autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
   <div class="sub-nav-panel active" data-panel="stores">
+    ${geoHighlightHtml}
     <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
     <ul class="mall-list">${countryListHtml}</ul>
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</h2>
-    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit.</p>
+    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.</p>
     ${attractionsHtml}
   </div>
 
+  <div class="sub-nav-panel" data-panel="favorites">
+    <h2 class="section-title"><span class="bar"></span>⭐ Your Favorites</h2>
+    <p class="intro-text">Planning a trip? Tap ☆ next to any store or attraction — say, 3 places you want to see in Berlin — and they'll all be right here, ready to go, no need to search again. Add as many as you like, and tap ★ again anytime to remove one. Saved on this device only, not in an account.</p>
+    <div id="favoritesList"></div>
+  </div>
+
   <footer>
-    <p><strong>Opening Hours Today</strong> shows you in real time whether major stores in Germany, the UK, and Spain are currently open, plus full weekly and holiday opening hours.</p>
+    <p><strong>Opening Hours Today</strong> shows you in real time whether major stores and tourist attractions across Europe are currently open, plus full weekly and holiday opening hours — search, browse by country, or save your favorites for next time.</p>
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${buildTabsScript(nonce)}`;
+${buildTabsScript(nonce)}
+${buildSearchAndFavoritesScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
 }
@@ -2261,6 +2692,25 @@ const SITEMAP_CITIES = [
   "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
   "Tulcea", "Reșița",
 ];
+
+// România adăugată în registrul internațional (site-ul .eu) — reutilizează
+// EXACT aceleași date reale, deja verificate (STORE_CONFIG, 30 de orașe),
+// nu date noi, inventate separat. Motiv: un turist aflat în România care nu
+// vorbește română caută pe opening-hours-today.eu, nu știe de domeniul RO —
+// acum găsește aceleași magazine reale, în engleză. Momentan doar magazine
+// simple (fără mall-uri/cinematografe — acelea au structuri diferite de date
+// și ar necesita extinderea renderIntlStorePage, nu doar copierea listei).
+const RO_INTL_STORE_CONFIG = {};
+Object.keys(STORE_CONFIG).forEach((key) => {
+  const cfg = STORE_CONFIG[key];
+  if (cfg.type === "mall" || cfg.type === "cinema") return;
+  RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, weekly: cfg.weekly, holidays: cfg.holidays };
+});
+COUNTRIES.ro = {
+  config: RO_INTL_STORE_CONFIG,
+  t: TRANSLATIONS.uk, // implicit engleză pe site-ul internațional — vezi mai jos comutatorul de limbă
+  cities: SITEMAP_CITIES.slice(0, 10),
+};
 
 // brandurile combinate cu fiecare oraș de mai sus (slug-uri identice cu STORE_CONFIG/STORE_ALIASES)
 const SITEMAP_BRANDS = [
@@ -2436,9 +2886,12 @@ app.get("/", (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
 
   if (isIntlHost(req)) {
-    // opening-hours-today.eu — selector simplu de țară, fără geolocație RO
+    // opening-hours-today.eu — detectăm țara din IP (dacă e una din cele acoperite),
+    // ca magazinele/atracțiile relevante să apară primele — fără să ascundem restul.
+    const ipCountry = String(req.headers["x-vercel-ip-country"] || "").toUpperCase();
+    const detectedCountry = GEO_COUNTRY_MAP[ipCountry] || null;
     res.set("Content-Type", "text/html; charset=utf-8");
-    res.send(renderIntlHomePage(nonce, baseUrlFor(req)));
+    res.send(renderIntlHomePage(nonce, baseUrlFor(req), detectedCountry));
     return;
   }
 
@@ -2466,14 +2919,14 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
 // Accesibile DOAR pe opening-hours-today.eu — pe programul-de-azi.ro,
 // redirect 301 către domeniul internațional (nu duplicăm conținutul).
 // ============================================================
-app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras/:magazin", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -2500,12 +2953,13 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), nonce });
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
+  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -2518,7 +2972,8 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl)/:oras", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
+  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
