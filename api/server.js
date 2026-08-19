@@ -1276,9 +1276,19 @@ function buildSearchIndex() {
 // iconiță simplă, generată ca SVG (nu necesită fișiere PNG separate;
 // pentru suport iOS mai vechi, poți adăuga ulterior și icon-192.png / icon-512.png reale)
 const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="clockGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF5533"/>
+      <stop offset="100%" stop-color="#FF2D85"/>
+    </linearGradient>
+  </defs>
   <rect width="512" height="512" rx="96" fill="#0F1115"/>
-  <rect x="96" y="96" width="320" height="320" rx="48" fill="#16A34A"/>
-  <text x="256" y="300" font-family="Arial, sans-serif" font-size="180" font-weight="800" fill="#FFFFFF" text-anchor="middle">P</text>
+  <circle cx="256" cy="246" r="148" fill="url(#clockGrad)"/>
+  <line x1="256" y1="246" x2="326" y2="196" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/>
+  <line x1="256" y1="246" x2="202" y2="216" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/>
+  <circle cx="256" cy="246" r="12" fill="#FFFFFF"/>
+  <circle cx="388" cy="388" r="68" fill="#16A34A" stroke="#0F1115" stroke-width="10"/>
+  <polyline points="358,390 382,414 420,362" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
 const MANIFEST_JSON = {
@@ -1293,6 +1303,7 @@ const MANIFEST_JSON = {
   lang: "ro",
   icons: [
     { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" },
+    { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
     { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
   ],
 };
@@ -1302,8 +1313,8 @@ const MANIFEST_JSON = {
 const MANIFEST_JSON_INTL = {
   ...MANIFEST_JSON,
   name: "Opening Hours Today",
-  short_name: "OpeningHoursToday",
-  description: "Check instantly whether major stores in Germany, the UK, and Spain are open right now.",
+  short_name: "Opening Hours",
+  description: "Check instantly whether major stores and attractions across Europe are open right now.",
   lang: "en",
 };
 
@@ -3140,6 +3151,18 @@ app.get("/icon.svg", (req, res) => {
 // proiectului (lângă vercel.json, package.json — NU în interiorul /api).
 app.get("/icon-512.png", (req, res) => {
   const iconPath = path.join(__dirname, "..", "icon-512.png");
+  fs.readFile(iconPath, (err, data) => {
+    if (err) {
+      res.status(404).end();
+      return;
+    }
+    res.header("Content-Type", "image/png");
+    res.send(data);
+  });
+});
+
+app.get("/icon-192.png", (req, res) => {
+  const iconPath = path.join(__dirname, "..", "icon-192.png");
   fs.readFile(iconPath, (err, data) => {
     if (err) {
       res.status(404).end();
