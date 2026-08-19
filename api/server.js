@@ -2601,16 +2601,16 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
     const affiliateButtonHtml = linkEmagMall
-      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag-premium">
-          <svg class="emag-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
+      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn-emag-premium">
+          <div class="emag-mini-logo">
+            <span class="eg-sq eg-blue"></span>
+            <span class="eg-sq eg-orange"></span>
+            <span class="eg-sq eg-green"></span>
+            <span class="eg-sq eg-pink"></span>
+          </div>
           Verifică reducerile de astăzi pe eMAG
          </a>`
       : "";
-
     mainHtml = `
       <div class="status-card" id="statusCard">
         <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} — Zonă shopping</div>
