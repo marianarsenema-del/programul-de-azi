@@ -54,6 +54,14 @@ const linkAmazonAffiliate = "https://amzn.to/4wDIiop";
 // toate atracțiile, până când ai link-uri individuale per obiectiv. Rămâne
 // gol până îl completezi tu direct pe GitHub — fără el, butonul nu apare deloc.
 const linkBileteTurism = "https://getyourguide.com?partner_id=LM6J21N&utm_medium=online_publisher";
+// cheie Google Maps JavaScript API — opțională. Dacă rămâne goală (""), harta
+// folosește automat OpenStreetMap + Leaflet (gratuit, fără cont necesar).
+// Dacă pui o cheie reală aici, site-ul comută automat pe Google Maps, fără
+// nicio altă modificare de cod. Cheia se obține din Google Cloud Console →
+// activezi "Maps JavaScript API" → creezi credențiale → restricționezi cheia
+// la domeniile tale (programul-de-azi.ro, opening-hours-today.eu) și necesită
+// un cont cu facturare activă (card bancar), chiar dacă rămâi în cota gratuită.
+const googleMapsApiKey = "";
 const linkAfiliatDedeman = "";
 const linkAfiliatAltex = "";
 const linkAfiliatJysk = "";
@@ -1777,11 +1785,11 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com`,
     `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "worker-src 'self'",
     "manifest-src 'self'",
@@ -2379,6 +2387,24 @@ function buildSearchAndFavoritesScript(nonce) {
 // unui brand anume, link-urile din pagină duc spre căutarea reală Google Maps.
 function buildCityMapHtml(coords, cityName, nonce) {
   if (!coords) return "";
+
+  // dacă avem cheie Google Maps, o folosim pe aceea — altfel, fallback automat
+  // pe OpenStreetMap + Leaflet (gratuit, fără cont/cheie necesară)
+  if (googleMapsApiKey) {
+    return `
+<div id="cityMap" class="city-map"></div>
+<script nonce="${nonce}">
+  window.__initCityMap_${cityName.replace(/[^a-zA-Z0-9]/g, "")} = function(){
+    var el = document.getElementById("cityMap");
+    if (!el || typeof google === "undefined") return;
+    var center = { lat: ${coords[0]}, lng: ${coords[1]} };
+    var map = new google.maps.Map(el, { center: center, zoom: 12, disableDefaultUI: false });
+    new google.maps.Marker({ position: center, map: map, title: ${safeJson(cityName)} });
+  };
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=${escapeHtml(googleMapsApiKey)}&callback=__initCityMap_${cityName.replace(/[^a-zA-Z0-9]/g, "")}" async defer></script>`;
+  }
+
   return `
 <div id="cityMap" class="city-map"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
