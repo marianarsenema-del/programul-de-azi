@@ -49,7 +49,7 @@ const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din m
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 // link Amazon Affiliate — folosit DOAR pe paginile internaționale (DE/UK/ES),
 // afișat sub cardul de status pe pagina de magazin. Pe RO, malls rămân cu butonul eMAG.
-const linkAmazonAffiliate = "";
+const linkAmazonAffiliate = "https://amzn.to/4wDIiop";
 // link general de bilete turistice (ex: GetYourGuide) — un singur link pentru
 // toate atracțiile, până când ai link-uri individuale per obiectiv. Rămâne
 // gol până îl completezi tu direct pe GitHub — fără el, butonul nu apare deloc.
@@ -455,6 +455,26 @@ const DE_STORE_CONFIG = {
   lidl: { name: "Lidl", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   kaufland: { name: "Kaufland", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
   mediamarkt: { name: "Media Markt", slug: "media-markt", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  // Mall-uri reale, verificate — program de mall (L-S 10-20), NU program de supermarket.
+  // Toate închise duminica, confirmat: normă respectată aproape universal în Germania.
+  mallofberlin: {
+    name: "Mall of Berlin",
+    slug: "mall-of-berlin",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
+  centrooberhausen: {
+    name: "Westfield CentrO Oberhausen",
+    slug: "centro-oberhausen",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
+  myzeil: {
+    name: "MyZeil Frankfurt",
+    slug: "myzeil-frankfurt",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
 };
 
 // Marea Britanie: legea limitează magazinele mari la 6 ore de vânzare duminica
@@ -482,6 +502,49 @@ const UK_STORE_CONFIG = {
   asda: { name: "Asda", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
   morrisons: { name: "Morrisons", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
   boots: { name: "Boots", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  // Mall-uri reale, verificate individual — fiecare cu programul lui real
+  // (diferă mai mult decât la supermarketuri, mai ales sâmbăta/duminica).
+  westfieldlondon: {
+    name: "Westfield London",
+    slug: "westfield-london",
+    weekly: [
+      { open: "12:00", close: "18:00" }, // Sunday
+      { open: "10:00", close: "21:00" }, // Monday
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "09:00", close: "21:00" }, // Saturday
+    ],
+    holidays: UK_HOLIDAYS,
+  },
+  traffordcentre: {
+    name: "Trafford Centre",
+    slug: "trafford-centre",
+    weekly: [
+      { open: "12:00", close: "18:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+    ],
+    holidays: UK_HOLIDAYS,
+  },
+  bluewater: {
+    name: "Bluewater",
+    weekly: [
+      { open: "11:00", close: "17:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+    ],
+    holidays: UK_HOLIDAYS,
+  },
 };
 
 // Spania: program unic pentru tot grupul (mercadona, carrefour, alcampo,
@@ -512,6 +575,37 @@ const ES_STORE_CONFIG = {
   alcampo: { name: "Alcampo", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   dia: { name: "Dia", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Mall-uri reale — Xanadú (Madrid) e o excepție notabilă, deschis chiar și
+  // duminica tot anul; La Maquinista (Barcelona) urmează regula generală
+  // catalană (închis duminica, cu câteva excepții sezoniere, nemodelate aici).
+  xanadumadrid: {
+    name: "Madrid Xanadú",
+    slug: "xanadu-madrid",
+    weekly: [
+      { open: "10:00", close: "22:00" }, // Domingo
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+    ],
+    holidays: ES_HOLIDAYS,
+  },
+  lamaquinista: {
+    name: "Westfield La Maquinista",
+    slug: "la-maquinista",
+    weekly: [
+      null, // Domingo — închis, cu câteva excepții sezoniere/festive, nemodelate
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+    ],
+    holidays: ES_HOLIDAYS,
+  },
 };
 
 // Franța: particularitate reală, nu presupunere — marea majoritate a
@@ -541,6 +635,22 @@ const FR_STORE_CONFIG = {
   intermarche: { name: "Intermarché", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
   auchan: { name: "Auchan", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
   monoprix: { name: "Monoprix", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  // Mall real, verificat — Forum des Halles e într-o "zonă turistică" din
+  // Paris, deci deschis și duminica, spre deosebire de restul Franței.
+  forumdeshalles: {
+    name: "Westfield Forum des Halles",
+    slug: "forum-des-halles",
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Dimanche
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+    ],
+    holidays: FR_HOLIDAYS,
+  },
 };
 
 // Italia: spre deosebire de Germania/Polonia, NU există o lege națională de
@@ -1083,12 +1193,30 @@ const ATTRACTIONS = {
   ],
 };
 
+// Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
+// nume NU conține orașul (Turnul Eiffel nu spune "Paris" nicăieri în nume),
+// deci detecția automată de mai jos le-ar fi ratat. Fapte foarte sigure, nu
+// presupuneri — extensibil ușor pentru alte țări/orașe, la cerere.
+const ATTRACTION_CITY_OVERRIDES = {
+  fr: {
+    "Turnul Eiffel": "Paris",
+    "Muzeul Luvru": "Paris",
+    "Arcul de Triumf": "Paris",
+    "Sainte-Chapelle": "Paris",
+    "Muzeul Armatei / Domul Invalizilor": "Paris",
+    "Fundația Louis Vuitton": "Paris",
+    "Muzeul MUCEM": "Marseille",
+  },
+};
+
 // Deducem orașul unei atracții din numele ei deja existent (multe conțin deja
 // orașul, ex: "BMW Welt & Museum München", "Kölner Dom") — NU inventăm
 // asocieri, doar recunoaștem ce e deja scris acolo. Dacă numele nu conține
 // niciunul din orașele acoperite pentru țara respectivă, atracția rămâne
 // "fără oraș detectat" — vizibilă mereu, la orice filtrare pe oraș, nu ascunsă.
 function detectAttractionCity(attractionName, countryCode) {
+  const override = ATTRACTION_CITY_OVERRIDES[countryCode] && ATTRACTION_CITY_OVERRIDES[countryCode][attractionName];
+  if (override) return override;
   const country = COUNTRIES[countryCode];
   if (!country) return null;
   const normalizedName = normalizeSlug(attractionName);
@@ -2828,6 +2956,8 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
+
+  <div class="geo-country-highlight">✈️ Pleci în străinătate? Vezi programul magazinelor și obiectivelor turistice din Germania, Franța, UK, Spania și alte 7 țări pe <a href="https://${INTL_DOMAIN}/">${INTL_DOMAIN}</a> — poți să-ți salvezi acolo o listă de „favorite" pentru călătorie.</div>
 
   <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
   <ul class="mall-list">${exampleListHtml}</ul>
