@@ -1278,17 +1278,17 @@ function buildSearchIndex() {
 const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="clockGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#FF5533"/>
-      <stop offset="100%" stop-color="#FF2D85"/>
+      <stop offset="0%" stop-color="#FF9A3D"/>
+      <stop offset="100%" stop-color="#E8590C"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="96" fill="#0F1115"/>
-  <circle cx="256" cy="246" r="148" fill="url(#clockGrad)"/>
+  <rect width="512" height="512" rx="96" fill="url(#clockGrad)"/>
+  <circle cx="256" cy="246" r="150" fill="#000000" opacity="0.24"/>
   <line x1="256" y1="246" x2="326" y2="196" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/>
   <line x1="256" y1="246" x2="202" y2="216" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/>
   <circle cx="256" cy="246" r="12" fill="#FFFFFF"/>
-  <circle cx="388" cy="388" r="68" fill="#16A34A" stroke="#0F1115" stroke-width="10"/>
-  <polyline points="358,390 382,414 420,362" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="388" cy="388" r="66" fill="#0F1115" stroke="#FFFFFF" stroke-width="8"/>
+  <polyline points="360,390 382,412 418,364" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
 const MANIFEST_JSON = {
@@ -1785,7 +1785,7 @@ function buildCsp(nonce) {
 const CSS_STYLES = `
 :root{
   --bg:#0F1115; --surface:#171A21; --surface-2:#1E2330; --border:#2A303D;
-  --text:#F3F5F8; --muted:#8E96AA; --accent:#FFB648; --accent-dim:#4A3A22;
+  --text:#F3F5F8; --muted:#8E96AA; --accent:#FF7A1A; --accent-dim:#4A2A16;
   --open-bg:#16A34A; --open-glow:rgba(22,163,74,.35);
   --closed-bg:#DC2626; --closed-glow:rgba(220,38,38,.35);
   --radius-lg:26px; --radius-md:16px;
@@ -1797,7 +1797,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-he
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
-header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 0;}
+header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
 .header-row{display:flex;align-items:center;justify-content:space-between;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
 .brand span{color:var(--accent);}
@@ -1810,6 +1810,10 @@ header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-f
 .store-scroll{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none;}
 .store-scroll::-webkit-scrollbar{display:none;}
 .chip{flex:0 0 auto;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:9px 16px;border-radius:100px;white-space:nowrap;transition:all .15s ease;}
+/* micro-interacțiuni: feedback tactil discret la apăsare, pe toate butoanele importante */
+.chip,.city-search-btn,.geo-btn,.sub-nav-tab,.fav-star,.country-flag-btn,.clear-country-btn,a.affiliate-btn,a.amazon-btn,a.ticket-btn,.affiliate-btn-emag,.affiliate-btn-generic{transition:transform .12s ease,opacity .12s ease,background .15s ease,color .15s ease;}
+.chip:active,.city-search-btn:active,.geo-btn:active,.sub-nav-tab:active,.fav-star:active,.country-flag-btn:active,.clear-country-btn:active,a.affiliate-btn:active,a.amazon-btn:active,a.ticket-btn:active,.affiliate-btn-emag:active,.affiliate-btn-generic:active{transform:scale(.96);}
+.status-card:active{transform:scale(.995);}
 .chip.active{background:var(--accent);color:#1A1200;border-color:var(--accent);}
 main{padding-top:8px;}
 .ad-slot{margin:14px 18px 0;border-radius:var(--radius-md);overflow:hidden;text-align:center;}
@@ -1836,7 +1840,7 @@ main{padding-top:8px;}
 .affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
 .affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
-.affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FFB648);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,150,50,.5);}
+.affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
 .cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
@@ -1848,7 +1852,7 @@ main{padding-top:8px;}
 .sub-nav-panel{display:none;}
 .sub-nav-panel.active{display:block;}
 .attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
-.geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);}
+.geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);text-align:center;}
 .geo-country-highlight strong{color:var(--accent);}
 .search-box-wrap{position:relative;margin:14px 18px 0;}
 .search-box-wrap .city-search-input{width:100%;}
@@ -1889,7 +1893,7 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .mall-list li{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);}
 .mall-list a{display:block;padding:14px 16px;font-weight:600;font-size:14.5px;}
 .mall-list a:hover{color:var(--accent);}
-.intro-text{margin:16px 18px 0;font-size:14.5px;color:var(--muted);line-height:1.7;}
+.intro-text{margin:16px 18px 0;font-size:14.5px;color:var(--muted);line-height:1.7;text-align:center;}
 .geo-btn{display:block;width:calc(100% - 36px);margin:16px 18px 0;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;transition:opacity .15s ease;}
 .geo-btn:disabled{opacity:.6;cursor:default;}
 .geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
@@ -1904,10 +1908,12 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-suggestion strong{color:var(--accent);}
 .geo-suggestion-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border-radius:100px;padding:8px 14px;font-weight:700;font-size:13px;white-space:nowrap;}
 .geo-suggestion-note{margin:6px 18px 0;font-size:12px;color:var(--muted);text-align:center;}
-.disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
+.disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;text-align:center;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
-footer p + p{margin-top:8px;}
+footer p + p{margin-top:14px;}
 footer strong{color:var(--text);}
+footer a{color:var(--accent);font-weight:600;}
+.footer-intl-link{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;}
 `;
 
 /* ============================================================
@@ -2968,13 +2974,12 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
-  <div class="geo-country-highlight">✈️ Pleci în străinătate? Vezi programul magazinelor și obiectivelor turistice din Germania, Franța, UK, Spania și alte 7 țări pe <a href="https://${INTL_DOMAIN}/">${INTL_DOMAIN}</a> — poți să-ți salvezi acolo o listă de „favorite" pentru călătorie.</div>
-
   <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
   <ul class="mall-list">${exampleListHtml}</ul>
 
   <footer>
     <p><strong>Programul de Azi</strong> îți arată în timp real dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-urile sunt deschise chiar acum, în orice oraș din România.</p>
+    <p class="footer-intl-link">✈️ Pleci în străinătate? Vezi programul magazinelor și obiectivelor turistice din toată Europa cu un singur click pe <a href="https://${INTL_DOMAIN}/">opening-hours-today.eu</a> — poți să-ți salvezi acolo o listă de „favorite" pentru călătorie.</p>
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
