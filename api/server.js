@@ -1884,7 +1884,7 @@ main{padding-top:8px;}
 .secondary-badge.sb-closed .sb-state{color:#F87171;}
 .affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
-.affiliate-btn-emag{background: linear-gradient(135deg, #005ea6 0%, #a20067 100%) !important;color: #fff !important;box-shadow: 0 8px 20px -6px rgba(162, 0, 103, 0.4) !important;}
+.affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
 .cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
@@ -2601,9 +2601,9 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
     const affiliateButtonHtml = linkEmagMall
-      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn-emag-final">🛒 Verifică reducerile de astăzi pe eMAG</a>`
+      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag">🔥 Vezi magazinele cu reduceri de azi pe eMAG</a>`
       : "";
-     
+
     mainHtml = `
       <div class="status-card" id="statusCard">
         <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} — Zonă shopping</div>
