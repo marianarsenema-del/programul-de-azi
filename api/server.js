@@ -1735,6 +1735,20 @@ function escapeHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
+// Insignă minimalistă de brand — inițială + culoare derivată din nume (hash
+// simplu, determinist), NU logo-ul real al companiei. Logo-urile sunt mărci
+// înregistrate; folosirea lor fără licență e un risc juridic real, nu doar o
+// alegere de design — de-aia nu punem sigla reală Lidl/Carrefour etc.
+function brandBadgeHtml(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) % 360;
+  }
+  const hue = hash < 0 ? hash + 360 : hash;
+  const initial = escapeHtml(name.trim().charAt(0).toUpperCase());
+  return `<span class="brand-badge" style="background:hsl(${hue},62%,42%)" aria-hidden="true">${initial}</span>`;
+}
+
 // JSON sigur de injectat într-un <script> (evită breakout la "</script>")
 function safeJson(obj) {
   return JSON.stringify(obj).replace(/</g, "\\u003c");
@@ -1763,11 +1777,11 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com`,
+    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "worker-src 'self'",
     "manifest-src 'self'",
@@ -1788,16 +1802,30 @@ const CSS_STYLES = `
   --text:#F3F5F8; --muted:#8E96AA; --accent:#FF7A1A; --accent-dim:#4A2A16;
   --open-bg:#16A34A; --open-glow:rgba(22,163,74,.35);
   --closed-bg:#DC2626; --closed-glow:rgba(220,38,38,.35);
+  --header-bg:rgba(15,17,21,.88);
+  --glass-bg:rgba(23,26,33,.6); --glass-border:rgba(255,255,255,.08);
   --radius-lg:26px; --radius-md:16px;
   --font-display:'Sora',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
 }
+/* Mod zi/noapte: respectă setarea telefonului (majoritatea telefoanelor deja
+   comută automat "Dark Mode" seara, legat de apus/răsărit) — nu reinventăm
+   asta cu un JS separat bazat pe ceas, care ar intra în conflict cu ce
+   utilizatorul a ales deja la nivel de sistem. */
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#FAF8F4; --surface:#FFFFFF; --surface-2:#F3F0EA; --border:#E8E3DA;
+    --text:#1C1E24; --muted:#6B7280; --accent-dim:#FFE4CC;
+    --header-bg:rgba(250,248,244,.88);
+    --glass-bg:rgba(255,255,255,.6); --glass-border:rgba(0,0,0,.06);
+  }
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:48px;}
+body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,26,.14),transparent 60%);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:48px;}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
-header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
+header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
 .header-row{display:flex;align-items:center;justify-content:space-between;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
 .brand span{color:var(--accent);}
@@ -1814,6 +1842,9 @@ header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.88);backdrop-f
 .chip,.city-search-btn,.geo-btn,.sub-nav-tab,.fav-star,.country-flag-btn,.clear-country-btn,a.affiliate-btn,a.amazon-btn,a.ticket-btn,.affiliate-btn-emag,.affiliate-btn-generic{transition:transform .12s ease,opacity .12s ease,background .15s ease,color .15s ease;}
 .chip:active,.city-search-btn:active,.geo-btn:active,.sub-nav-tab:active,.fav-star:active,.country-flag-btn:active,.clear-country-btn:active,a.affiliate-btn:active,a.amazon-btn:active,a.ticket-btn:active,.affiliate-btn-emag:active,.affiliate-btn-generic:active{transform:scale(.96);}
 .status-card:active{transform:scale(.995);}
+.brand-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;color:#fff;font-family:var(--font-display);font-weight:700;font-size:12.5px;margin-right:10px;flex:0 0 auto;vertical-align:middle;}
+.mall-list li{display:flex;align-items:center;padding-left:16px;}
+.city-map{height:280px;border-radius:var(--radius-md);overflow:hidden;margin:14px 18px 0;border:1px solid var(--border);background:var(--surface);}
 .chip.active{background:var(--accent);color:#1A1200;border-color:var(--accent);}
 main{padding-top:8px;}
 .ad-slot{margin:14px 18px 0;border-radius:var(--radius-md);overflow:hidden;text-align:center;}
@@ -1827,6 +1858,12 @@ main{padding-top:8px;}
 .status-sub{font-family:var(--font-body);font-weight:500;font-size:14.5px;color:rgba(255,255,255,.88);}
 .status-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:rgba(255,255,255,.16);border-radius:100px;padding:5px 12px;font-family:var(--font-mono);font-size:12.5px;color:#fff;font-weight:600;}
 .status-badge .dotw{width:6px;height:6px;border-radius:50%;background:#fff;}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.5);}70%{box-shadow:0 0 0 7px rgba(255,255,255,0);}}
+.status-card.is-open .status-badge .dotw{animation:pulse-glow 1.8s ease-in-out infinite;}
+.status-card.is-closed .status-badge .dotw{opacity:.6;}
+.closing-soon-bar{margin-top:14px;height:5px;border-radius:100px;background:rgba(255,255,255,.22);overflow:hidden;}
+.closing-soon-fill{height:100%;background:#fff;border-radius:100px;transition:width 1s linear,background .3s ease;}
+.closing-soon-fill.is-urgent{background:var(--accent);}
 .secondary-badge{margin:10px 18px 0;display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 16px;}
 .sb-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;background:var(--muted);}
 .secondary-badge.sb-open .sb-dot{background:var(--open-bg);}
@@ -1841,7 +1878,7 @@ main{padding-top:8px;}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
 .affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
-.cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center;}
+.cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
 .amazon-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;background:linear-gradient(135deg,#131A22,#232F3E);color:#FF9900;border:1px solid #FF9900;box-shadow:0 12px 26px -10px rgba(0,0,0,.5);}
@@ -1852,11 +1889,11 @@ main{padding-top:8px;}
 .sub-nav-panel{display:none;}
 .sub-nav-panel.active{display:block;}
 .attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
-.geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);text-align:center;}
+.geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);text-align:center;}
 .geo-country-highlight strong{color:var(--accent);}
 .search-box-wrap{position:relative;margin:14px 18px 0;}
 .search-box-wrap .city-search-input{width:100%;}
-.search-results{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:0 16px 32px -12px rgba(0,0,0,.6);z-index:20;max-height:320px;overflow-y:auto;}
+.search-results{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--glass-bg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--glass-border);border-radius:var(--radius-md);box-shadow:0 16px 32px -12px rgba(0,0,0,.6);z-index:20;max-height:320px;overflow-y:auto;}
 .search-result-row{display:flex;align-items:center;gap:8px;padding:2px 10px;}
 .search-result-row + .search-result-row{border-top:1px solid var(--border);}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
@@ -1872,7 +1909,7 @@ main{padding-top:8px;}
 .city-filter-bar{margin:8px 18px 0;padding:0;}
 .section-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin:30px 18px 12px;display:flex;align-items:center;gap:8px;}
 .section-title .bar{width:4px;height:16px;background:var(--accent);border-radius:2px;}
-.schedule-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
+.schedule-card{margin:0 18px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 table{width:100%;border-collapse:collapse;font-size:14.5px;}
 thead th{text-align:left;font-family:var(--font-body);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--border);}
 tbody td{padding:12px 16px;font-weight:500;}
@@ -1883,22 +1920,22 @@ tbody tr:last-child{border-bottom:none;}
 tbody tr.today{background:var(--accent-dim);}
 tbody tr.today .day-cell,tbody tr.today .hours-cell{color:var(--accent);}
 tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);font-weight:600;font-size:11px;opacity:.85;}
-.holiday-card{margin:12px 18px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;}
+.holiday-card{margin:12px 18px 0;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;}
 .holiday-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;}
 .holiday-row + .holiday-row{border-top:1px solid var(--border);}
 .holiday-label{font-weight:600;}
 .holiday-hours{font-family:var(--font-mono);color:var(--muted);font-size:13.5px;}
 .holiday-hours.closed{color:#F87171;}
 .mall-list{list-style:none;margin:0 18px;display:flex;flex-direction:column;gap:8px;}
-.mall-list li{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);}
-.mall-list a{display:block;padding:14px 16px;font-weight:600;font-size:14.5px;}
+.mall-list li{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
+.mall-list a{display:block;padding:14px 16px 14px 0;font-weight:600;font-size:14.5px;flex:1 1 auto;}
 .mall-list a:hover{color:var(--accent);}
 .intro-text{margin:16px 18px 0;font-size:14.5px;color:var(--muted);line-height:1.7;text-align:center;}
 .geo-btn{display:block;width:calc(100% - 36px);margin:16px 18px 0;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;transition:opacity .15s ease;}
 .geo-btn:disabled{opacity:.6;cursor:default;}
 .geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
 .city-search-form{display:flex;gap:8px;margin:16px 18px 0;}
-.city-search-input{flex:1 1 auto;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
+.city-search-input{flex:1 1 auto;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
 .city-search-input::placeholder{color:var(--muted);}
 .city-search-input:focus{outline:none;border-color:var(--accent);}
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
@@ -1908,12 +1945,12 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-suggestion strong{color:var(--accent);}
 .geo-suggestion-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border-radius:100px;padding:8px 14px;font-weight:700;font-size:13px;white-space:nowrap;}
 .geo-suggestion-note{margin:6px 18px 0;font-size:12px;color:var(--muted);text-align:center;}
-.disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;text-align:center;}
+.disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 14px;text-align:center;}
 footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
 footer p + p{margin-top:14px;}
 footer strong{color:var(--text);}
 footer a{color:var(--accent);font-weight:600;}
-.footer-intl-link{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;}
+.footer-intl-link{text-align:center;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;}
 `;
 
 /* ============================================================
@@ -1969,7 +2006,12 @@ function buildClientScript(dataForClient, nonce) {
     var openMin = toMinutes(today.hours[0]), closeMin = toMinutes(today.hours[1]);
     if (nowMin < openMin) return { open:false, sub: fmt(LABELS.opensToday, "time", today.hours[0]) };
     if (nowMin >= closeMin) return { open:false, sub: fmt(LABELS.closedComeBack, "time", today.hours[1]) };
-    return { open:true, sub: fmt(LABELS.closesToday, "time", today.hours[1]) };
+    var minutesLeft = closeMin - nowMin;
+    // procentul barei se calculeaza fata de fereastra de 60 de minute in care
+    // bara chiar apare (nu fata de tot intervalul zilnic de deschidere) —
+    // altfel, la un magazin deschis 12 ore, bara ar parea aproape goala chiar
+    // si cu 22 de minute ramase, in loc sa "curga" vizibil spre zero.
+    return { open:true, sub: fmt(LABELS.closesToday, "time", today.hours[1]), minutesLeft: minutesLeft, percentLeft: Math.max(0, Math.min(100, (minutesLeft / 60) * 100)) };
   }
 
   function applyStatus(el, status){
@@ -1978,6 +2020,17 @@ function buildClientScript(dataForClient, nonce) {
     el.classList.add(status.open ? "is-open" : "is-closed");
     var t = el.querySelector(".status-text"); if (t) t.textContent = status.open ? LABELS.openNow : LABELS.closedNow;
     var s = el.querySelector(".status-sub"); if (s) s.textContent = status.sub;
+    var bar = el.querySelector("#closingSoonBar") || el.querySelector(".closing-soon-bar");
+    var fill = el.querySelector("#closingSoonFill") || el.querySelector(".closing-soon-fill");
+    if (bar && fill) {
+      if (status.open && typeof status.minutesLeft === "number" && status.minutesLeft <= 60) {
+        bar.style.display = "block";
+        fill.style.width = status.percentLeft.toFixed(1) + "%";
+        fill.classList.toggle("is-urgent", status.minutesLeft <= 15);
+      } else {
+        bar.style.display = "none";
+      }
+    }
   }
   function applySecondary(el, status){
     if (!el) return;
@@ -2319,6 +2372,32 @@ function buildSearchAndFavoritesScript(nonce) {
 // ești. Click pe un steag sau pe o țară din listă => rămâi pe pagină, doar se
 // filtrează. Fără JS, link-urile tot funcționează normal (navighează), ca
 // fallback — progressive enhancement, nu o cerință ascunsă de JS.
+// Hartă interactivă (Leaflet + OpenStreetMap, gratuit, fără cheie API) —
+// un singur marker, pe centrul REAL al orașului. NU inventăm pin-uri per
+// magazin (nu avem adrese exacte de sucursale) — asta ar fi o precizie
+// falsă. Harta oferă context vizual + zoom/pan; pentru locația exactă a
+// unui brand anume, link-urile din pagină duc spre căutarea reală Google Maps.
+function buildCityMapHtml(coords, cityName, nonce) {
+  if (!coords) return "";
+  return `
+<div id="cityMap" class="city-map"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script nonce="${nonce}">
+(function(){
+  if (typeof L === "undefined") return;
+  var el = document.getElementById("cityMap");
+  if (!el) return;
+  var map = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([${coords[0]}, ${coords[1]}], 12);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+  }).addTo(map);
+  L.marker([${coords[0]}, ${coords[1]}]).addTo(map).bindPopup(${safeJson(cityName)});
+})();
+</script>`;
+}
+
 function buildCountryFilterScript(nonce, initialCountry, initialCity) {
   return `
 <script nonce="${nonce}">
@@ -2448,6 +2527,8 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:locale" content="ro_RO">
 <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F1115">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF8F4">
 <meta name="theme-color" content="#0F1115">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon-512.png">
@@ -2503,6 +2584,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
         <div class="status-text">—</div>
         <div class="status-sub">Se calculează programul...</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+        <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
       <div class="secondary-badge" id="secondaryBadge">
         <span class="sb-dot"></span>
@@ -2550,6 +2632,7 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
         <div class="status-text">—</div>
         <div class="status-sub">Se calculează programul...</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+        <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
 
       ${affiliateButtonHtml}
@@ -2608,7 +2691,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
-      return `<li><a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      return `<li>${brandBadgeHtml(cfg.name)}<a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
     })
     .join("");
 
@@ -2629,6 +2712,8 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
 
   <ul class="mall-list">${listItems}</ul>
+
+  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 
   <footer>
     <p><strong>Programul de Azi</strong> îți arată în timp real programul magazinelor din ${escapeHtml(orasDisplay)}: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan și mall-uri.</p>
@@ -2693,6 +2778,7 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
     <div class="status-text">—</div>
     <div class="status-sub">${escapeHtml(t.calculating)}</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
   </div>
 
   ${amazonButtonHtml}
@@ -2728,7 +2814,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
     .map((key) => {
       const cfg = country.config[key];
       const urlSlug = cfg.slug || key;
-      return `<li><a href="/${countryCode}/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      return `<li>${brandBadgeHtml(cfg.name)}<a href="/${countryCode}/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
     })
     .join("");
 
@@ -2744,6 +2830,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}`)}
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <ul class="mall-list">${listItems}</ul>
+  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 </main>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [], dayNames: t.dayNames, labels: t.labels }, nonce });
@@ -3053,6 +3140,143 @@ const SITEMAP_MALLS = [
 ];
 
 // transformă un nume de oraș ("Târgu Mureș") în slug-ul folosit deja în rute ("targu-mures")
+// Coordonate reale (centrul orașului) — folosite doar pentru harta
+// interactivă a paginii de oraș. NU sunt locații exacte de magazine (nu
+// avem adrese per sucursală) — un singur marker pentru oraș, nu pin-uri
+// false "per magazin". Pentru locația exactă a unui brand anume, link-urile
+// din pagină duc spre căutarea reală Google Maps.
+const CITY_COORDS = {
+  "București": [44.4268, 26.1025],
+  "Cluj-Napoca": [46.7712, 23.6236],
+  "Timișoara": [45.7489, 21.2087],
+  "Iași": [47.1585, 27.6014],
+  "Constanța": [44.1598, 28.6348],
+  "Craiova": [44.3302, 23.7949],
+  "Brașov": [45.6427, 25.5887],
+  "Galați": [45.4353, 28.008],
+  "Ploiești": [44.9414, 26.0225],
+  "Oradea": [47.0722, 21.9217],
+  "Brăila": [45.2692, 27.9575],
+  "Arad": [46.1866, 21.3123],
+  "Pitești": [44.8565, 24.8692],
+  "Sibiu": [45.7983, 24.1256],
+  "Bacău": [46.567, 26.9146],
+  "Târgu Mureș": [46.5527, 24.5575],
+  "Baia Mare": [47.6567, 23.5666],
+  "Buzău": [45.15, 26.8167],
+  "Botoșani": [47.7486, 26.6693],
+  "Satu Mare": [47.793, 22.8858],
+  "Râmnicu Vâlcea": [45.1047, 24.3762],
+  "Drobeta-Turnu Severin": [44.6367, 22.6597],
+  "Suceava": [47.6459, 26.2554],
+  "Piatra Neamț": [46.9276, 26.3707],
+  "Târgu Jiu": [45.0347, 23.2761],
+  "Târgoviște": [44.9256, 25.457],
+  "Focșani": [45.6969, 27.1842],
+  "Bistrița": [47.1362, 24.4998],
+  "Tulcea": [45.1667, 28.8],
+  "Reșița": [45.2967, 21.89],
+  "Berlin": [52.52, 13.405],
+  "München": [48.1351, 11.582],
+  "Hamburg": [53.5511, 9.9937],
+  "Frankfurt am Main": [50.1109, 8.6821],
+  "Köln": [50.9375, 6.9603],
+  "Stuttgart": [48.7758, 9.1829],
+  "Düsseldorf": [51.2277, 6.7735],
+  "Dortmund": [51.5136, 7.4653],
+  "Leipzig": [51.3397, 12.3731],
+  "Essen": [51.4556, 7.0116],
+  "London": [51.5074, -0.1278],
+  "Birmingham": [52.4862, -1.8904],
+  "Manchester": [53.4808, -2.2426],
+  "Glasgow": [55.8642, -4.2518],
+  "Liverpool": [53.4084, -2.9916],
+  "Leeds": [53.8008, -1.5491],
+  "Sheffield": [53.3811, -1.4701],
+  "Bristol": [51.4545, -2.5879],
+  "Newcastle": [54.9783, -1.6178],
+  "Nottingham": [52.9548, -1.1581],
+  "Madrid": [40.4168, -3.7038],
+  "Barcelona": [41.3874, 2.1686],
+  "Valencia": [39.4699, -0.3763],
+  "Sevilla": [37.3891, -5.9845],
+  "Zaragoza": [41.6488, -0.8891],
+  "Málaga": [36.7213, -4.4214],
+  "Murcia": [37.9922, -1.1307],
+  "Palma": [39.5696, 2.6502],
+  "Bilbao": [43.263, -2.935],
+  "Paris": [48.8566, 2.3522],
+  "Marseille": [43.2965, 5.3698],
+  "Lyon": [45.764, 4.8357],
+  "Toulouse": [43.6047, 1.4442],
+  "Nice": [43.7102, 7.262],
+  "Nantes": [47.2184, -1.5536],
+  "Strasbourg": [48.5734, 7.7521],
+  "Montpellier": [43.6108, 3.8767],
+  "Bordeaux": [44.8378, -0.5792],
+  "Lille": [50.6292, 3.0573],
+  "Roma": [41.9028, 12.4964],
+  "Milano": [45.4642, 9.19],
+  "Napoli": [40.8518, 14.2681],
+  "Torino": [45.0703, 7.6869],
+  "Palermo": [38.1157, 13.3615],
+  "Bologna": [44.4949, 11.3426],
+  "Firenze": [43.7696, 11.2558],
+  "Venezia": [45.4408, 12.3155],
+  "Genova": [44.4056, 8.9463],
+  "Verona": [45.4384, 10.9916],
+  "Warszawa": [52.2297, 21.0122],
+  "Kraków": [50.0647, 19.945],
+  "Łódź": [51.7592, 19.456],
+  "Wrocław": [51.1079, 17.0385],
+  "Poznań": [52.4064, 16.9252],
+  "Gdańsk": [54.352, 18.6466],
+  "Szczecin": [53.4285, 14.5528],
+  "Bydgoszcz": [53.1235, 18.0084],
+  "Lublin": [51.2465, 22.5684],
+  "Katowice": [50.2649, 19.0238],
+  "Amsterdam": [52.3676, 4.9041],
+  "Rotterdam": [51.9244, 4.4777],
+  "Den Haag": [52.0705, 4.3007],
+  "Utrecht": [52.0907, 5.1214],
+  "Eindhoven": [51.4416, 5.4697],
+  "Groningen": [53.2194, 6.5665],
+  "Tilburg": [51.5555, 5.0913],
+  "Almere": [52.3508, 5.2647],
+  "Breda": [51.5719, 4.7683],
+  "Nijmegen": [51.8425, 5.8528],
+  "Wien": [48.2082, 16.3738],
+  "Graz": [47.0707, 15.4395],
+  "Linz": [48.3069, 14.2858],
+  "Salzburg": [47.8095, 13.055],
+  "Innsbruck": [47.2692, 11.4041],
+  "Klagenfurt": [46.6247, 14.3055],
+  "Villach": [46.6111, 13.8558],
+  "Wels": [48.1575, 14.0289],
+  "Sankt Pölten": [48.2047, 15.6256],
+  "Dornbirn": [47.4125, 9.7417],
+  "Brussels": [50.8503, 4.3517],
+  "Antwerpen": [51.2194, 4.4025],
+  "Gent": [51.0543, 3.7174],
+  "Charleroi": [50.4108, 4.4446],
+  "Liège": [50.6326, 5.5797],
+  "Brugge": [51.2093, 3.2247],
+  "Namur": [50.4669, 4.8675],
+  "Leuven": [50.8798, 4.7005],
+  "Mons": [50.4542, 3.9564],
+  "Aalst": [50.9378, 4.0397],
+  "København": [55.6761, 12.5683],
+  "Aarhus": [56.1629, 10.2039],
+  "Odense": [55.4038, 10.4024],
+  "Aalborg": [57.0488, 9.9217],
+  "Esbjerg": [55.4765, 8.4594],
+  "Randers": [56.4607, 10.0369],
+  "Kolding": [55.4904, 9.4721],
+  "Horsens": [55.8607, 9.8503],
+  "Vejle": [55.7091, 9.5357],
+  "Roskilde": [55.6415, 12.0803],
+};
+
 function slugifyCityName(name) {
   return name
     .normalize("NFD")
