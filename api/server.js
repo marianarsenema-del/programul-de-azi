@@ -1275,6 +1275,22 @@ function buildSearchIndex() {
   return index;
 }
 
+// index de căutare DOAR pentru România (magazine + obiective turistice
+// românești) — folosit pe programul-de-azi.ro, ca să nu amestece magazine
+// din toată Europa, în engleză, pe un site în română
+function buildSearchIndexRO() {
+  const index = [];
+  const firstCity = slugifyCityName(SITEMAP_CITIES[0]);
+  Object.keys(RO_INTL_STORE_CONFIG).forEach((key) => {
+    const cfg = RO_INTL_STORE_CONFIG[key];
+    index.push({ name: cfg.name, type: "store", country: "ro", href: `/${firstCity}/${cfg.slug || key}` });
+  });
+  ATTRACTIONS.ro.forEach((a) => {
+    index.push({ name: a.name, type: "attraction", country: "ro", href: a.url });
+  });
+  return index;
+}
+
 /* ============================================================
    0.5) PWA — manifest, service worker, iconiță
    Cerute prin rutele /manifest.json, /sw.js și /icon.svg mai jos,
@@ -1907,6 +1923,7 @@ main{padding-top:8px;}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
 .search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
 .fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
+.ticket-mini-btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:17px;line-height:1;padding:8px;min-width:36px;min-height:36px;}
 .fav-star.is-fav{color:var(--accent);}
 .fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
 .lang-switcher{margin:10px 18px 0;font-size:12px;color:var(--muted);line-height:1.8;}
@@ -2238,12 +2255,12 @@ function buildTabsScript(nonce) {
 // Script pentru căutarea instant (magazine + atracții, toate țările) și pentru
 // favorite (salvate local, în browser — vezi nota din răspuns despre limitări).
 // Un singur handler delegat pentru toate steluțele ☆/★, oriunde apar pe pagină.
-function buildSearchAndFavoritesScript(nonce) {
+function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
   return `
 <script nonce="${nonce}">
 (function(){
-  var SEARCH_INDEX = ${safeJson(buildSearchIndex())};
-  var FAV_KEY = "oht_favorites_v1";
+  var SEARCH_INDEX = ${safeJson(customSearchIndex || buildSearchIndex())};
+  var FAV_KEY = ${safeJson(favKey || "oht_favorites_v1")};
 
   function getFavorites(){
     try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch(e){ return []; }
@@ -2535,9 +2552,28 @@ function renderBrandNav(orasSlug) {
   return `<nav class="store-scroll" aria-label="Alege magazinul">${items}</nav>`;
 }
 
-function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce }) {
+// meta-date de limbă (html lang + og:locale), per codul intern de limbă —
+// corectează bug-ul prin care toate paginile (inclusiv cele în germană,
+// franceză etc.) aveau <html lang="ro"> hardcodat, indiferent de conținut.
+const LANG_META = {
+  ro: { lang: "ro", locale: "ro_RO" },
+  uk: { lang: "en", locale: "en_US" },
+  de: { lang: "de", locale: "de_DE" },
+  es: { lang: "es", locale: "es_ES" },
+  fr: { lang: "fr", locale: "fr_FR" },
+  it: { lang: "it", locale: "it_IT" },
+  pl: { lang: "pl", locale: "pl_PL" },
+  nl: { lang: "nl", locale: "nl_NL" },
+  da: { lang: "da", locale: "da_DK" },
+};
+
+function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
+  const meta = LANG_META[langCode] || LANG_META.ro;
+  const alternatesHtml = (alternateLinks || [])
+    .map((l) => `<link rel="alternate" hreflang="${escapeHtml(l.hreflang)}" href="${escapeHtml(l.href)}">`)
+    .join("\n");
   return `<!DOCTYPE html>
-<html lang="ro">
+<html lang="${meta.lang}">
 <head>
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
@@ -2547,11 +2583,12 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${escapeHtml(canonical)}">
+${alternatesHtml}
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
-<meta property="og:locale" content="ro_RO">
+<meta property="og:locale" content="${meta.locale}">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F1115">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF8F4">
@@ -2704,7 +2741,20 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
   ${adSlotHtml()}
 </main>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce });
+  // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
+  // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
+  // — și orașul e printre primele 10, cele acoperite pe .eu; fără locatieDisplay,
+  // paginile hiper-locale de cartier nu au echivalent pe .eu)
+  let alternateLinks;
+  if (!locatieDisplay && magazinKey && RO_INTL_STORE_CONFIG[magazinKey] && COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))) {
+    const euUrl = `https://${INTL_DOMAIN}/ro/${orasSlug}/${magazinSlug || magazinKey}`;
+    alternateLinks = [
+      { hreflang: "ro", href: canonical },
+      { hreflang: "en", href: euUrl },
+    ];
+  }
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode: "ro", alternateLinks });
 }
 
 // Pagină generală de oraș: site.ro/:oras (fără magazin specificat)
@@ -2750,7 +2800,13 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 </main>`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
+  const cityAlternateLinks = COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))
+    ? [
+        { hreflang: "ro", href: canonical },
+        { hreflang: "en", href: `https://${INTL_DOMAIN}/ro/${orasSlug}` },
+      ]
+    : undefined;
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro", alternateLinks: cityAlternateLinks });
 }
 
 /* ============================================================
@@ -2824,7 +2880,18 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
 </main>`;
 
   const dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays, dayNames: t.dayNames, labels: t.labels };
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce });
+
+  // hreflang reciproc spre programul-de-azi.ro — DOAR pentru magazinele
+  // românești de pe .eu (countryCode "ro"), care au un echivalent nativ real
+  let intlAlternateLinks;
+  if (countryCode === "ro") {
+    intlAlternateLinks = [
+      { hreflang: "en", href: canonical },
+      { hreflang: "ro", href: `https://${RO_DOMAIN}/${orasSlug}/${magazinSlug}` },
+    ];
+  }
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode: activeLang, alternateLinks: intlAlternateLinks });
 }
 
 // Pagină generală de oraș internațională: /:tara/:oras
@@ -2859,7 +2926,22 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 </main>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [], dayNames: t.dayNames, labels: t.labels }, nonce });
+  return pageShell({
+    title,
+    description,
+    canonical,
+    bodyHtml,
+    dataForClient: { type: "general", weekly: [], holidays: [], dayNames: t.dayNames, labels: t.labels },
+    nonce,
+    langCode: activeLang,
+    alternateLinks:
+      countryCode === "ro"
+        ? [
+            { hreflang: "en", href: canonical },
+            { hreflang: "ro", href: `https://${RO_DOMAIN}/${orasSlug}` },
+          ]
+        : undefined,
+  });
 }
 
 // Pagină de start: site.ro/ — fără oraș/magazin specificat încă
@@ -2934,7 +3016,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a></li>`
+              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
           )
           .join("");
         return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
@@ -2950,7 +3032,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
           const cityAttr = city ? ` data-city="${escapeHtml(normalizeSlug(city))}"` : "";
-          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a></li>`;
+          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
         })
         .join("");
 
@@ -3028,7 +3110,7 @@ ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
 }
 
 function renderHomePage(nonce, suggestedCity, baseUrl) {
@@ -3047,6 +3129,19 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
     { href: "/bucuresti/afi-cotroceni", label: "AFI Cotroceni" },
   ];
   const exampleListHtml = exampleLinks.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("");
+
+  // obiective turistice românești — nume + link, cu steluță de favorite,
+  // exact ca pe opening-hours-today.eu, dar în română, fără să te trimită
+  // pe alt domeniu ca să le vezi
+  const attractionItemsHtml = ATTRACTIONS.ro
+    .map(
+      (a) =>
+        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
+    )
+    .join("");
+  const roTicketButtonHtml = linkBileteTurism
+    ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
+    : "";
 
   // Sugestie pe baza IP-ului — NU redirect forțat. Pe rețele mobile din România,
   // IP-ul apare adesea "din București" indiferent de orașul real al vizitatorului,
@@ -3084,11 +3179,26 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <button type="button" id="geoBtn" class="geo-btn">📍 sau detectează orașul meu automat</button>
   <p id="geoStatus" class="geo-status" style="display:none"></p>
 
+  <h2 class="section-title"><span class="bar"></span>🔎 Caută un magazin sau un obiectiv turistic</h2>
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="Caută (ex: Castelul Bran, Lidl)..." autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
+
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
   <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
   <ul class="mall-list">${exampleListHtml}</ul>
+
+  <h2 class="section-title"><span class="bar"></span>🏰 Obiective turistice din România</h2>
+  <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
+  <ul class="mall-list">${attractionItemsHtml}</ul>
+  ${roTicketButtonHtml}
+
+  <h2 class="section-title"><span class="bar"></span>⭐ Favoritele mele</h2>
+  <p class="intro-text">Planifici o excursie? Apasă ☆ pe orice magazin sau obiectiv — de exemplu 3 castele pe care vrei să le vizitezi — și le găsești pe toate aici, gata, fără să mai cauți din nou.</p>
+  <div id="favoritesList"></div>
 
   <footer>
     <p><strong>Programul de Azi</strong> îți arată în timp real dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-urile sunt deschise chiar acum, în orice oraș din România.</p>
@@ -3100,9 +3210,10 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 </main>
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
-${buildInstallScript(nonce)}`;
+${buildInstallScript(nonce)}
+${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
 
 /* ============================================================
