@@ -103,13 +103,13 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
       weeklyScheduleText: [],
       isSpecialDay: false,
       specialDayReason: null,
-      utcOffsetMinutes: raw.utc_offset_minutes ?? null,
+      utcOffsetMinutes: raw.utc_offset ?? null,
       fromCache,
       note: "Google nu are program orar completat pentru această locație.",
     };
   }
 
-  const utcOffsetMinutes = raw.utc_offset_minutes ?? 0;
+  const utcOffsetMinutes = raw.utc_offset ?? 0;
   const now = new Date();
   const local = getLocalNow(utcOffsetMinutes, now);
   const localDateStr = localDateString(utcOffsetMinutes, now);
