@@ -3513,17 +3513,9 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
   const canonical = `${baseUrl}/`;
 
-  const exampleLinks = [
-    { href: "/bucuresti/lidl", label: "Lidl București" },
-    { href: "/cluj-napoca/kaufland", label: "Kaufland Cluj-Napoca" },
-    { href: "/timisoara/mall", label: "Mall Timișoara" },
-    { href: "/iasi/carrefour", label: "Carrefour Iași" },
-    { href: "/brasov/penny", label: "Penny Brașov" },
-    { href: "/constanta/auchan", label: "Auchan Constanța" },
-    { href: "/bucuresti/mega-image", label: "Mega Image București" },
-    { href: "/bucuresti/afi-cotroceni", label: "AFI Cotroceni" },
-  ];
-  const exampleListHtml = exampleLinks.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("");
+  // toate cele 30 de orașe, ca listă completă — exact structura de pe .eu
+  // (acolo, fiecare țară arată lista completă de orașe, nu doar câteva exemple)
+  const allCitiesListHtml = SITEMAP_CITIES.map((c) => `<li><a href="/${slugifyCityName(c)}">${escapeHtml(c)}</a></li>`).join("");
 
   // obiective turistice românești — nume + link, cu steluță de favorite,
   // exact ca pe opening-hours-today.eu, dar în română, fără să te trimită
@@ -3542,11 +3534,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   // IP-ul apare adesea "din București" indiferent de orașul real al vizitatorului,
   // așa că îi lăsăm mereu alegerea, vizibilă chiar sub sugestie.
   const geoSuggestionHtml = suggestedCity
-    ? `<div class="geo-suggestion">
-        <span>📍 Se pare că ești în <strong>${escapeHtml(suggestedCity.display)}</strong></span>
-        <a href="/${suggestedCity.slug}" class="geo-suggestion-btn">Vezi programul →</a>
-      </div>
-      <p class="geo-suggestion-note">Nu e orașul tău? Alege mai jos.</p>`
+    ? `<div class="geo-country-highlight">📍 Se pare că ești în <strong>${escapeHtml(suggestedCity.display)}</strong> — <a href="/${suggestedCity.slug}">vezi programul →</a>. Nu e orașul tău? Alege mai jos.</div>`
     : "";
 
   const bodyHtml = `
@@ -3560,21 +3548,16 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <button type="button" id="installBtn" class="install-btn">📱 Instalează aplicația pentru acces rapid</button>
   <p id="iosInstallHint" class="ios-install-hint" style="display:none">Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.</p>
 
+  <h1 class="page-h1">Este magazinul deschis acum?</h1>
+  <p class="intro-text">Alege mai jos ce cauți — magazine, obiective turistice sau favoritele tale — sau caută direct.</p>
   ${geoSuggestionHtml}
 
-  <h1 class="page-h1">Este magazinul deschis acum?</h1>
-  <p class="intro-text">Scrie orașul tău mai jos sau lasă-ne să-l detectăm automat.</p>
+  <nav class="sub-nav-tabs">
+    <button type="button" class="sub-nav-tab active" data-tab="stores">🛒 Magazine</button>
+    <button type="button" class="sub-nav-tab" data-tab="attractions">🏰 Obiective turistice</button>
+    <button type="button" class="sub-nav-tab" data-tab="favorites">⭐ Favorite</button>
+  </nav>
 
-  <form id="citySearchForm" class="city-search-form" autocomplete="off">
-    <input type="text" id="citySearchInput" list="cityListOptions" class="city-search-input" placeholder="Scrie orașul tău (ex: Cluj-Napoca)">
-    <datalist id="cityListOptions">${SITEMAP_CITIES.map((c) => `<option value="${escapeHtml(c)}"></option>`).join("")}</datalist>
-    <button type="submit" class="city-search-btn">Caută</button>
-  </form>
-
-  <button type="button" id="geoBtn" class="geo-btn">📍 sau detectează orașul meu automat</button>
-  <p id="geoStatus" class="geo-status" style="display:none"></p>
-
-  <h2 class="section-title"><span class="bar"></span>🔎 Caută un magazin sau un obiectiv turistic</h2>
   <div class="search-box-wrap">
     <input type="text" id="siteSearchInput" class="city-search-input" placeholder="Caută (ex: Castelul Bran, Lidl)..." autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
@@ -3583,17 +3566,30 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
-  <h2 class="section-title"><span class="bar"></span>Exemple rapide</h2>
-  <ul class="mall-list">${exampleListHtml}</ul>
+  <div class="sub-nav-panel active" data-panel="stores">
+    <form id="citySearchForm" class="city-search-form" autocomplete="off">
+      <input type="text" id="citySearchInput" list="cityListOptions" class="city-search-input" placeholder="Scrie orașul tău (ex: Cluj-Napoca)">
+      <datalist id="cityListOptions">${SITEMAP_CITIES.map((c) => `<option value="${escapeHtml(c)}"></option>`).join("")}</datalist>
+      <button type="submit" class="city-search-btn">Caută</button>
+    </form>
+    <button type="button" id="geoBtn" class="geo-btn">📍 sau detectează orașul meu automat</button>
+    <p id="geoStatus" class="geo-status" style="display:none"></p>
 
-  <h2 class="section-title"><span class="bar"></span>🏰 Obiective turistice din România</h2>
-  <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
-  <ul class="mall-list">${attractionItemsHtml}</ul>
-  ${roTicketButtonHtml}
+    <h2 class="section-title"><span class="bar"></span>Alege orașul</h2>
+    <ul class="mall-list">${allCitiesListHtml}</ul>
+  </div>
 
-  <h2 class="section-title"><span class="bar"></span>⭐ Favoritele mele</h2>
-  <p class="intro-text">Planifici o excursie? Apasă ☆ pe orice magazin sau obiectiv — de exemplu 3 castele pe care vrei să le vizitezi — și le găsești pe toate aici, gata, fără să mai cauți din nou.</p>
-  <div id="favoritesList"></div>
+  <div class="sub-nav-panel" data-panel="attractions">
+    <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
+    <ul class="attraction-accordion-list">${attractionItemsHtml}</ul>
+    ${roTicketButtonHtml}
+  </div>
+
+  <div class="sub-nav-panel" data-panel="favorites">
+    <h2 class="section-title"><span class="bar"></span>⭐ Favoritele mele</h2>
+    <p class="intro-text">Planifici o excursie? Apasă ☆ pe orice magazin sau obiectiv — de exemplu 3 castele pe care vrei să le vizitezi — și le găsești pe toate aici, gata, fără să mai cauți din nou.</p>
+    <div id="favoritesList"></div>
+  </div>
 
   <footer>
     <p><strong>Programul de Azi</strong> îți arată în timp real dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-urile sunt deschise chiar acum, în orice oraș din România.</p>
@@ -3603,6 +3599,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
+${buildTabsScript(nonce)}
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
 ${buildInstallScript(nonce)}
