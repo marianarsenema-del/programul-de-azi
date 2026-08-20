@@ -184,8 +184,10 @@ function ticketUrlFor(attractionName) {
 // "umplută" de JS la primul click. Nu punem fav-star ÎN INTERIORUL
 // butonului de acordeon — două elemente <button> imbricate nu sunt HTML
 // valid — sunt frați, într-un rând comun.
-function buildAttractionAccordionItem(a, countryCode, cityLabel) {
+function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext) {
   const cityAttr = cityLabel ? ` data-city="${escapeHtml(normalizeSlug(cityLabel))}"` : "";
+  const slug = toDbSlug(a.name);
+  const detailHref = isIntlContext ? `/${countryCode}/obiectiv/${slug}` : `/obiectiv/${slug}`;
   return `<li class="attraction-accordion-item"${cityAttr}>
     <div class="attraction-accordion-header-row">
       <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(a.url)}">☆</button>
@@ -195,6 +197,7 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel) {
       </button>
     </div>
     <div class="attraction-accordion-panel" hidden>
+      <a href="${escapeHtml(detailHref)}" class="accordion-status-link">🕐 Vezi dacă e deschis acum, live</a>
       <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">🎟️ Rezervă bilet online</a></div>
     </div>
   </li>`;
@@ -2080,6 +2083,7 @@ main{padding-top:8px;}
 .attraction-accordion-item.is-open .accordion-chevron{transform:rotate(180deg);}
 .attraction-accordion-panel{padding:0 16px 16px;}
 .gyg-widget-fallback{display:none;margin-top:4px;}
+.accordion-status-link{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--accent);text-decoration:none;margin-bottom:10px;}
 .accordion-ticket-btn{display:block;text-align:center;width:100%;margin:0 0 10px;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 10px 22px -10px rgba(255,85,51,.5);}
 
 .attraction-accordion-header-row{display:flex;align-items:stretch;}
@@ -3278,7 +3282,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              buildAttractionAccordionItem(a, code, null)
+              buildAttractionAccordionItem(a, code, null, true)
           )
           .join("");
         return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="attraction-accordion-list">${items}</ul>`;
@@ -3293,7 +3297,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
       const items = ATTRACTIONS[code]
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
-          return buildAttractionAccordionItem(a, code, city);
+          return buildAttractionAccordionItem(a, code, city, true);
         })
         .join("");
 
@@ -3523,7 +3527,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const attractionItemsHtml = ATTRACTIONS.ro
     .map(
       (a) =>
-        buildAttractionAccordionItem(a, "ro", null)
+        buildAttractionAccordionItem(a, "ro", null, false)
     )
     .join("");
   const roTicketButtonHtml = linkBileteTurism
