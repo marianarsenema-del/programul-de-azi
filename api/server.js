@@ -28,6 +28,14 @@ const dbPool = DB_CONNECTION_STRING
   : null;
 const { getLocationStatus } = dbPool ? require("../place-status-engine/getLocationStatus") : {};
 
+// mapare limbă internă -> codul IETF pe care-l așteaptă Google — definită
+// LOCAL, independent de conexiunea la bază, ca să nu crape apelurile care
+// o folosesc chiar și atunci când baza de date nu e configurată deloc.
+const INTERNAL_TO_GOOGLE_LANG = { ro: "ro", uk: "en", de: "de", es: "es", fr: "fr", it: "it", pl: "pl", nl: "nl", da: "da" };
+function toGoogleLang(internalLangCode) {
+  return INTERNAL_TO_GOOGLE_LANG[internalLangCode] || internalLangCode || "en";
+}
+
 // exact același algoritm de slug folosit la generarea insert_locatii.sql —
 // TREBUIE să rămână identic, altfel căutarea în baza de date nu găsește
 // nimic (slug-uri diferite pentru aceeași locație)
@@ -131,6 +139,31 @@ const linkAmazonAffiliate = "https://amzn.to/4wDIiop";
 // toate atracțiile, până când ai link-uri individuale per obiectiv. Rămâne
 // gol până îl completezi tu direct pe GitHub — fără el, butonul nu apare deloc.
 const linkBileteTurism = "https://getyourguide.com?partner_id=LM6J21N&utm_medium=online_publisher";
+
+// URL-uri REALE, individuale, de pe GetYourGuide, per obiectiv turistic —
+// cheia e EXACT numele din ATTRACTIONS (a.name). Goale la început, se
+// completează treptat, pe măsură ce se confirmă URL-uri reale (nu
+// inventate — un link greșit e mai rău decât fallback-ul general).
+// Pentru cele care NU au o intrare aici, butonul de bilete cade automat
+// pe `linkBileteTurism` (link general), exact ca până acum.
+const ATTRACTION_TICKET_URLS = {
+  "Castelul Bran": "https://www.getyourguide.com/bran-castle-l1572/",
+  "Castelul Peleș": "https://www.getyourguide.com/peles-castle-l1571/",
+  "Palatul Parlamentului": "https://www.getyourguide.com/palace-of-the-parliament-l4247/",
+  "Salina Turda": "https://www.getyourguide.com/salina-turda-l122320/",
+};
+const GYG_PARTNER_ID = "LM6J21N";
+
+// construiește link-ul de bilete pentru un obiectiv anume: dacă avem URL
+// real în ATTRACTION_TICKET_URLS, îi atașăm parametrii de tracking; altfel
+// cădem pe linkul general linkBileteTurism, exact comportamentul de dinainte
+function ticketUrlFor(attractionName) {
+  const realUrl = ATTRACTION_TICKET_URLS[attractionName];
+  if (!realUrl) return linkBileteTurism;
+  const separator = realUrl.includes("?") ? "&" : "?";
+  return `${realUrl}${separator}partner_id=${GYG_PARTNER_ID}&utm_medium=affiliate&utm_source=partner_program`;
+}
+
 // cheie Google Maps JavaScript API — opțională. Dacă rămâne goală (""), harta
 // folosește automat OpenStreetMap + Leaflet (gratuit, fără cont necesar).
 // Dacă pui o cheie reală aici, site-ul comută automat pe Google Maps, fără
@@ -2924,7 +2957,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, lang, nonce }) {
+async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, lang, nonce }) {
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   const title = t.titleTemplate(magazinDisplay, orasDisplay);
@@ -2935,12 +2968,50 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
     : "";
 
-  const weeklyRows = store.weekly
-    .map((w, i) => {
-      const hours = w ? `${w.open} – ${w.close}` : t.closedWord;
-      return `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${hours}</td></tr>`;
-    })
-    .join("");
+  // status live (Google) — același slug generat la popularea bazei
+  // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
+  const liveSlug = toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`);
+  const googleLang = toGoogleLang(activeLang);
+  const live = await tryGetLiveStatus(liveSlug, googleLang);
+
+  let statusCardHtml;
+  let weeklySectionHtml;
+
+  if (live && live.isOpenNow !== null) {
+    const specialBanner = live.isSpecialDay
+      ? `<div class="geo-country-highlight">📅 ${escapeHtml(t.closedHoliday ? t.closedHoliday.split(" — ")[0] : "Special hours today")}</div>`
+      : "";
+    statusCardHtml = `
+  <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
+    <div class="status-sub">Live · Google</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+  </div>
+  ${specialBanner}`;
+    weeklySectionHtml = `
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
+  <div class="holiday-card">${live.weeklyScheduleText.length ? live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("") : `<div class="holiday-row"><span class="holiday-label">—</span></div>`}</div>`;
+  } else {
+    const weeklyRows = store.weekly
+      .map((w, i) => {
+        const hours = w ? `${w.open} – ${w.close}` : t.closedWord;
+        return `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${hours}</td></tr>`;
+      })
+      .join("");
+    statusCardHtml = `
+  <div class="status-card" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <div class="status-text">—</div>
+    <div class="status-sub">${escapeHtml(t.calculating)}</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
+  </div>`;
+    weeklySectionHtml = `
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
+  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
+  <tbody>${weeklyRows}</tbody></table></div>`;
+  }
 
   const holidayHtml =
     store.holidays && store.holidays.length
@@ -2964,19 +3035,11 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
   ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
 
-  <div class="status-card" id="statusCard">
-    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
-    <div class="status-text">—</div>
-    <div class="status-sub">${escapeHtml(t.calculating)}</div>
-    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
-    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
-  </div>
+  ${statusCardHtml}
 
   ${amazonButtonHtml}
 
-  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
-  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
-  <tbody>${weeklyRows}</tbody></table></div>
+  ${weeklySectionHtml}
 
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.holidaysTitle)}</h2>
   <div class="holiday-card">${holidayHtml}</div>
@@ -2988,7 +3051,10 @@ function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, 
   </footer>
 </main>`;
 
-  const dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays, dayNames: t.dayNames, labels: t.labels };
+  const dataForClient =
+    live && live.isOpenNow !== null
+      ? { type: "general", weekly: [], holidays: [] }
+      : { type: "store", weekly: store.weekly, holidays: store.holidays, dayNames: t.dayNames, labels: t.labels };
 
   // hreflang reciproc spre programul-de-azi.ro — DOAR pentru magazinele
   // românești de pe .eu (countryCode "ro"), care au un echivalent nativ real
@@ -3125,7 +3191,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
+              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
           )
           .join("");
         return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
@@ -3141,7 +3207,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
           const cityAttr = city ? ` data-city="${escapeHtml(normalizeSlug(city))}"` : "";
-          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
+          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
         })
         .join("");
 
@@ -3245,7 +3311,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const attractionItemsHtml = ATTRACTIONS.ro
     .map(
       (a) =>
-        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
+        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
     )
     .join("");
   const roTicketButtonHtml = linkBileteTurism
@@ -3732,7 +3798,7 @@ app.get("/", (req, res) => {
 // Accesibile DOAR pe opening-hours-today.eu — pe programul-de-azi.ro,
 // redirect 301 către domeniul internațional (nu duplicăm conținutul).
 // ============================================================
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -3760,7 +3826,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", (req, res, ne
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
