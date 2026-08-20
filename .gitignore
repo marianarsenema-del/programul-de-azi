@@ -2,10 +2,9 @@
 .env
 lib/place-status-engine/.env
 
-# dependințe instalate (se regenerează din package.json cu "npm install",
-# nu trebuie ținute în git — ar umple repo-ul degeaba)
+# dependințe instalate (se regenerează din package.json + package-lock.json
+# cu "npm install", nu trebuie ținute în git — ar umple repo-ul degeaba)
 node_modules/
-package-lock.json
 
 # fișiere de sistem, specifice fiecărui calculator
 .DS_Store
