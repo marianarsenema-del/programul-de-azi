@@ -46,6 +46,20 @@ function toDbSlug(str) {
   return normalizeSlug(str).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+// Caută un obiectiv turistic după slug, într-o anumită țară (sau în toate,
+// dacă countryCode lipsește) — folosește ATTRACTIONS, definit mai jos în
+// fișier; sigur de referit aici, pentru că funcția rulează abia la o
+// cerere reală, mult după ce tot modulul s-a încărcat complet.
+function findAttractionBySlug(slug, countryCode) {
+  const codes = countryCode ? [countryCode] : Object.keys(ATTRACTIONS);
+  for (const code of codes) {
+    const list = ATTRACTIONS[code] || [];
+    const found = list.find((a) => toDbSlug(a.name) === slug);
+    if (found) return { attraction: found, countryCode: code };
+  }
+  return null;
+}
+
 // Convertește "periods" (formatul Google Places) în formatul nostru intern
 // "weekly" (array de 7, index 0=Duminică...6=Sâmbătă) — ca să reutilizăm
 // EXACT același sistem de afișare/JS live care funcționează deja pentru
@@ -3191,7 +3205,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
+              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="/${code}/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
           )
           .join("");
         return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
@@ -3207,7 +3221,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
           const cityAttr = city ? ` data-city="${escapeHtml(normalizeSlug(city))}"` : "";
-          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
+          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="/${code}/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
         })
         .join("");
 
@@ -3288,6 +3302,139 @@ ${buildCountryFilterScript(nonce, validDetected, detectedCity)}`;
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
 }
 
+// Pagină de obiectiv turistic — RO — status live (dacă avem place_id
+// valid) + buton de bilete. Dacă nu avem date live, NU inventăm program —
+// arătăm clar că nu avem, cu link spre sursa oficială.
+async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
+  const slug = toDbSlug(attraction.name);
+  const title = `${attraction.name} — Program și Bilete`;
+  const description = `Vezi programul actualizat și rezervă bilete online pentru ${attraction.name}.`;
+  const canonical = `${baseUrl}/obiectiv/${slug}`;
+
+  const live = await tryGetLiveStatus(slug, "ro");
+
+  let statusHtml;
+  if (live && live.isOpenNow !== null) {
+    const specialBanner = live.isSpecialDay
+      ? `<div class="geo-country-highlight">📅 Azi pare să fie o zi cu program special (posibilă sărbătoare) — verifică programul de mai jos, actualizat live.</div>`
+      : "";
+    const weeklyHtml = live.weeklyScheduleText.length
+      ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
+      : "";
+    statusHtml = `
+    <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="status-text">${live.isOpenNow ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
+      <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
+      <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+    </div>
+    ${specialBanner}
+    <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
+    ${weeklyHtml}`;
+  } else {
+    statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>`;
+  }
+
+  const ticketBtnHtml = linkBileteTurism
+    ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
+    : "";
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / ${escapeHtml(attraction.name)}</p>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+
+  ${statusHtml}
+
+  ${ticketBtnHtml}
+
+  <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> îți arată dacă ${escapeHtml(attraction.name)} este deschis chiar acum, plus acces rapid la bilete online.</p>
+  </footer>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+}
+
+// Pagină de obiectiv turistic — INTERNAȚIONAL — aceeași logică, adaptată
+// la limbă (traduceri deja existente, TRANSLATIONS)
+async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl, nonce }) {
+  const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
+  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
+  const slug = toDbSlug(attraction.name);
+  const title = `${attraction.name} — Opening Hours Today`;
+  const description = `${attraction.name} — check today's opening hours and book tickets online.`;
+  const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
+
+  const googleLang = toGoogleLang(activeLang);
+  const live = await tryGetLiveStatus(slug, googleLang);
+
+  let statusHtml;
+  if (live && live.isOpenNow !== null) {
+    const weeklyHtml = live.weeklyScheduleText.length
+      ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
+      : "";
+    statusHtml = `
+    <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
+      <div class="status-sub">Live · Google</div>
+      <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+    </div>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
+    ${weeklyHtml}`;
+  } else {
+    statusHtml = `<div class="geo-country-highlight">ℹ️ Live hours aren't available yet for this place. Check the <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">official site</a> for up-to-date info.</div>`;
+  }
+
+  const ticketBtnHtml = linkBileteTurism
+    ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(t.ticketBtn)}</a>`
+    : "";
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(attraction.name)}</p>
+  ${buildLanguageSwitcher(activeLang, `/${countryCode}/obiectiv/${slug}`)}
+
+  ${statusHtml}
+
+  ${ticketBtnHtml}
+
+  <footer>
+    <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
+  </footer>
+</main>`;
+
+  return pageShell({
+    title,
+    description,
+    canonical,
+    bodyHtml,
+    dataForClient: { type: "general", weekly: [], holidays: [] },
+    nonce,
+    langCode: activeLang,
+  });
+}
+
 function renderHomePage(nonce, suggestedCity, baseUrl) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
@@ -3311,7 +3458,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const attractionItemsHtml = ATTRACTIONS.ro
     .map(
       (a) =>
-        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
+        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
     )
     .join("");
   const roTicketButtonHtml = linkBileteTurism
@@ -3798,6 +3945,29 @@ app.get("/", (req, res) => {
 // Accesibile DOAR pe opening-hours-today.eu — pe programul-de-azi.ro,
 // redirect 301 către domeniul internațional (nu duplicăm conținutul).
 // ============================================================
+
+// ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
+// formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
+// interpretat greșit ca nume de oraș
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/obiectiv/:slug", async (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+  const countryCode = req.params.tara;
+  const slug = req.params.slug.toLowerCase();
+  const found = findAttractionBySlug(slug, countryCode);
+  if (!found) {
+    res.status(404).send("Obiectiv negăsit.");
+    return;
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
+  const html = await renderAttractionPageIntl({ attraction: found.attraction, countryCode, lang: requestedLang, baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
@@ -3876,6 +4046,26 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// ruta de obiectiv turistic RO — ÎNAINTEA rutei generice de magazin
+// (aceeași formă, 2 segmente: /:oras/:magazin) — altfel "obiectiv" ar fi
+// interpretat greșit ca nume de oraș
+app.get("/obiectiv/:slug", async (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+  const slug = req.params.slug.toLowerCase();
+  const found = findAttractionBySlug(slug, "ro");
+  if (!found) {
+    res.status(404).send("Obiectiv negăsit.");
+    return;
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderAttractionPageRO({ attraction: found.attraction, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
