@@ -178,6 +178,29 @@ function ticketUrlFor(attractionName) {
   return `${realUrl}${separator}partner_id=${GYG_PARTNER_ID}&utm_medium=affiliate&utm_source=partner_program`;
 }
 
+// Construiește un element de acordeon pentru un obiectiv turistic — fără
+// niciun widget încărcat inițial (lazy-loading, vezi
+// buildAttractionAccordionScript); doar structura HTML, gata să fie
+// "umplută" de JS la primul click. Nu punem fav-star ÎN INTERIORUL
+// butonului de acordeon — două elemente <button> imbricate nu sunt HTML
+// valid — sunt frați, într-un rând comun.
+function buildAttractionAccordionItem(a, countryCode, cityLabel) {
+  const cityAttr = cityLabel ? ` data-city="${escapeHtml(normalizeSlug(cityLabel))}"` : "";
+  return `<li class="attraction-accordion-item"${cityAttr} data-query="${escapeHtml(a.name)}" data-partner-id="${escapeHtml(GYG_PARTNER_ID)}">
+    <div class="attraction-accordion-header-row">
+      <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(a.url)}">☆</button>
+      <button type="button" class="attraction-accordion-header" aria-expanded="false">
+        <span class="attraction-name">${escapeHtml(a.name)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
+        <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="attraction-accordion-panel" hidden>
+      <div class="gyg-widget-slot"></div>
+      <div class="gyg-widget-fallback">Nu am putut încărca lista de activități aici — <a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored">vezi biletele pe GetYourGuide</a>.</div>
+    </div>
+  </li>`;
+}
+
 // cheie Google Maps JavaScript API — opțională. Dacă rămâne goală (""), harta
 // folosește automat OpenStreetMap + Leaflet (gratuit, fără cont necesar).
 // Dacă pui o cheie reală aici, site-ul comută automat pe Google Maps, fără
@@ -1894,7 +1917,7 @@ function brandBadgeHtml(name) {
   }
   const hue = hash < 0 ? hash + 360 : hash;
   const initial = escapeHtml(name.trim().charAt(0).toUpperCase());
-  return `<span class="brand-badge" style="background:hsl(${hue},62%,42%)" aria-hidden="true">${initial}</span>`;
+  return `<span class="brand-badge" style="background:linear-gradient(135deg,hsl(${hue},68%,50%),hsl(${hue},62%,36%))" aria-hidden="true">${initial}</span>`;
 }
 
 // JSON sigur de injectat într-un <script> (evită breakout la "</script>")
@@ -1990,7 +2013,7 @@ header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-fil
 .chip,.city-search-btn,.geo-btn,.sub-nav-tab,.fav-star,.country-flag-btn,.clear-country-btn,a.affiliate-btn,a.amazon-btn,a.ticket-btn,.affiliate-btn-emag,.affiliate-btn-generic{transition:transform .12s ease,opacity .12s ease,background .15s ease,color .15s ease;}
 .chip:active,.city-search-btn:active,.geo-btn:active,.sub-nav-tab:active,.fav-star:active,.country-flag-btn:active,.clear-country-btn:active,a.affiliate-btn:active,a.amazon-btn:active,a.ticket-btn:active,.affiliate-btn-emag:active,.affiliate-btn-generic:active{transform:scale(.96);}
 .status-card:active{transform:scale(.995);}
-.brand-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;color:#fff;font-family:var(--font-display);font-weight:700;font-size:12.5px;margin-right:10px;flex:0 0 auto;vertical-align:middle;}
+.brand-badge{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;margin-right:12px;flex:0 0 auto;vertical-align:middle;box-shadow:0 3px 8px -2px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 1px rgba(0,0,0,.2);}
 .mall-list li{display:flex;align-items:center;padding-left:16px;}
 .city-map{height:280px;border-radius:var(--radius-md);overflow:hidden;margin:14px 18px 0;border:1px solid var(--border);background:var(--surface);}
 .chip.active{background:var(--accent);color:#1A1200;border-color:var(--accent);}
@@ -2024,7 +2047,9 @@ main{padding-top:8px;}
 .secondary-badge.sb-closed .sb-state{color:#F87171;}
 .affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
-.affiliate-btn-emag{background:linear-gradient(135deg,#0058CC,#0086FF);color:#fff;box-shadow:0 12px 26px -10px rgba(0,134,255,.55);}
+.affiliate-btn-emag{background:linear-gradient(135deg,#0058CC 0%,#6A2FD9 55%,#C81ED6 100%);color:#fff;box-shadow:0 12px 26px -10px rgba(106,47,217,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
+.affiliate-btn-emag:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(200,30,214,.55),0 8px 18px -6px rgba(0,88,204,.4);}
+.affiliate-btn-emag svg{width:20px;height:20px;flex:0 0 auto;}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
 .cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
@@ -2047,7 +2072,19 @@ main{padding-top:8px;}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
 .search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
 .fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
-.ticket-mini-btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:17px;line-height:1;padding:8px;min-width:36px;min-height:36px;}
+/* Acordeon de obiective turistice, cu lazy-loading (vezi buildAttractionAccordionScript) */
+.attraction-accordion-list{list-style:none;margin:14px 18px 0;display:flex;flex-direction:column;gap:8px;}
+.attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
+.attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
+.attraction-accordion-header .attraction-name{flex:1 1 auto;}
+.attraction-accordion-header .accordion-chevron{flex:0 0 auto;width:18px;height:18px;transition:transform .2s ease;color:var(--muted);}
+.attraction-accordion-item.is-open .accordion-chevron{transform:rotate(180deg);}
+.attraction-accordion-panel{padding:0 16px 16px;}
+.gyg-widget-slot{min-height:60px;}
+.gyg-widget-fallback{display:none;margin-top:8px;}
+.gyg-widget-fallback a{display:inline-block;color:var(--accent);font-weight:600;font-size:13.5px;text-decoration:underline;}
+.attraction-accordion-header-row{display:flex;align-items:stretch;}
+
 .fav-star.is-fav{color:var(--accent);}
 .fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
 .lang-switcher{margin:10px 18px 0;font-size:12px;color:var(--muted);line-height:1.8;}
@@ -2379,6 +2416,79 @@ function buildTabsScript(nonce) {
 // Script pentru căutarea instant (magazine + atracții, toate țările) și pentru
 // favorite (salvate local, în browser — vezi nota din răspuns despre limitări).
 // Un singur handler delegat pentru toate steluțele ☆/★, oriunde apar pe pagină.
+// Acordeon de obiective turistice, cu lazy-loading — widget-ul GetYourGuide
+// se încarcă DOAR când utilizatorul deschide un anumit obiectiv, nu la
+// încărcarea paginii (321 de widget-uri deodată ar distruge Core Web
+// Vitals). Script-ul GYG se încarcă o singură dată, la prima deschidere,
+// indiferent câte obiective deschide utilizatorul după aceea.
+// Plasă de siguranță: dacă widget-ul nu apare în ~2.5s (script indisponibil,
+// obiectiv fără activități reale pe GetYourGuide etc.), arătăm un link text
+// simplu, funcțional, spre căutarea generală — nu rămâne niciodată un
+// buton "mort".
+function buildAttractionAccordionScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var gygLoaded = false, gygLoading = false, gygQueue = [];
+  function ensureGygScript(cb){
+    if (gygLoaded) { cb(); return; }
+    gygQueue.push(cb);
+    if (gygLoading) return;
+    gygLoading = true;
+    var s = document.createElement("script");
+    s.src = "https://widget.getyourguide.com/dist/pa.umd.production.min.js";
+    s.async = true;
+    s.onload = function(){ gygLoaded = true; gygQueue.forEach(function(fn){ fn(); }); gygQueue = []; };
+    s.onerror = function(){ gygQueue.forEach(function(fn){ fn(true); }); gygQueue = []; };
+    document.head.appendChild(s);
+  }
+
+  document.querySelectorAll(".attraction-accordion-header").forEach(function(header){
+    header.addEventListener("click", function(){
+      var item = header.closest(".attraction-accordion-item");
+      var panel = item.querySelector(".attraction-accordion-panel");
+      var isOpen = item.classList.toggle("is-open");
+      header.setAttribute("aria-expanded", String(isOpen));
+      panel.hidden = !isOpen;
+      if (!isOpen || item.dataset.gygInit) return;
+      item.dataset.gygInit = "1";
+
+      var slot = item.querySelector(".gyg-widget-slot");
+      var fallback = item.querySelector(".gyg-widget-fallback");
+      var query = item.getAttribute("data-query");
+      var partnerId = item.getAttribute("data-partner-id");
+
+      var widgetDiv = document.createElement("div");
+      widgetDiv.setAttribute("data-gyg-href", "https://widget.getyourguide.com/default/activities.frame");
+      widgetDiv.setAttribute("data-gyg-locale-code", (document.documentElement.lang || "en") + "-" + (document.documentElement.lang || "EN").toUpperCase());
+      widgetDiv.setAttribute("data-gyg-widget", "activities");
+      widgetDiv.setAttribute("data-gyg-number-of-items", "3");
+      widgetDiv.setAttribute("data-gyg-partner-id", partnerId);
+      widgetDiv.setAttribute("data-gyg-q", query);
+      slot.appendChild(widgetDiv);
+
+      var revealed = false;
+      function showFallbackIfEmpty(){
+        if (revealed) return;
+        if (slot.querySelector("iframe, img, a")) { revealed = true; return; }
+        fallback.style.display = "block";
+      }
+
+      ensureGygScript(function(failed){
+        if (failed) { showFallbackIfEmpty(); return; }
+        // scriptul GYG scanează automat elementele [data-gyg-widget] deja
+        // prezente în pagină la încărcare; pentru cele adăugate DUPĂ aceea
+        // (exact cazul nostru, lazy-loading), unele integrări necesită un
+        // re-scan manual — încercăm, defensiv, dacă funcția există
+        if (window.GYG && typeof window.GYG.scan === "function") { window.GYG.scan(); }
+        setTimeout(showFallbackIfEmpty, 2500);
+      });
+    });
+  });
+})();
+</script>`;
+}
+
 function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
   return `
 <script nonce="${nonce}">
@@ -2762,7 +2872,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
     const affiliateButtonHtml = linkEmagMall
-      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag">🔥 Vezi magazinele cu reduceri de azi pe eMAG</a>`
+      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Vezi magazinele cu reduceri de azi pe eMAG</a>`
       : "";
 
     mainHtml = `
@@ -3205,10 +3315,10 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="/${code}/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`
+              buildAttractionAccordionItem(a, code, null)
           )
           .join("");
-        return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="mall-list">${items}</ul>`;
+        return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="attraction-accordion-list">${items}</ul>`;
       })
       .join("")}
   </div>`;
@@ -3220,8 +3330,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
       const items = ATTRACTIONS[code]
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
-          const cityAttr = city ? ` data-city="${escapeHtml(normalizeSlug(city))}"` : "";
-          return `<li${cityAttr}><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${code}" data-href="${escapeHtml(a.url)}">☆</button><a href="/${code}/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}${city ? ` <span class="attraction-city-tag">· ${escapeHtml(city)}</span>` : ""}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(((COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk).ticketBtn)}">🎟️</a>` : ""}</li>`;
+          return buildAttractionAccordionItem(a, code, city);
         })
         .join("");
 
@@ -3240,7 +3349,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
     <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
     <h2 class="section-title"><span class="bar"></span>Attractions in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${cityBarHtml}
-    <ul class="mall-list">${items}</ul>
+    <ul class="attraction-accordion-list">${items}</ul>
     ${ticketButtonHtml(code)}
   </div>`;
     })
@@ -3297,7 +3406,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
 </main>
 ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
-${buildCountryFilterScript(nonce, validDetected, detectedCity)}`;
+${buildCountryFilterScript(nonce, validDetected, detectedCity)}
+${buildAttractionAccordionScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
 }
@@ -3458,7 +3568,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const attractionItemsHtml = ATTRACTIONS.ro
     .map(
       (a) =>
-        `<li><button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="ro" data-href="${escapeHtml(a.url)}">☆</button><a href="/obiectiv/${toDbSlug(a.name)}">🎫 ${escapeHtml(a.name)}</a>${linkBileteTurism ? `<a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="ticket-mini-btn" title="${escapeHtml(TRANSLATIONS.ro.ticketBtn)}">🎟️</a>` : ""}</li>`
+        buildAttractionAccordionItem(a, "ro", null)
     )
     .join("");
   const roTicketButtonHtml = linkBileteTurism
@@ -3533,7 +3643,8 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
 ${buildInstallScript(nonce)}
-${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}`;
+${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
+${buildAttractionAccordionScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
