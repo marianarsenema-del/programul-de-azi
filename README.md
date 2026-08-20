@@ -1,66 +1,115 @@
-Programul de Azi
-Server Express care generează dinamic pagini de tipul `programul-de-azi.ro/cluj/kaufland`
-sau `programul-de-azi.ro/bucuresti/mall`, cu status live „deschis/închis” calculat în
-telefonul vizitatorului.
-Structură
+# Place Status Engine
+
+Sistem care calculează, la fiecare vizită de pagină, dacă o locație e
+deschisă ACUM (în fusul ei orar local), afișează programul tradus automat,
+și semnalează zilele cu program special (posibile sărbători) — folosind
+`place_id` deja salvat în baza de date + Google Place Details API, cu
+cache de 12 ore ca să nu plătești de fiecare dată aceeași cerere.
+
+## Fișiere
+
+- `timeMath.js` — calculul „deschis acum" (fus orar local, fără librărie
+  de timezone-uri). **Testat separat, 15 cazuri** (peste miezul nopții,
+  peste granița săptămânii, fus orar diferit de server).
+- `googlePlacesDetails.js` — apelul propriu-zis către Google.
+- `cache.js` — citire/scriere cache (12h, cheie = place_id + limbă).
+- `getLocationStatus.js` — funcția principală, cea pe care o apelezi din
+  pagina ta.
+- `schema.sql` — tabelul de cache, de rulat o singură dată.
+- `enrich-place-ids.js` — scriptul de la pasul anterior, acum în Postgres.
+
+## 1. Pregătește baza de date
+
+```bash
+psql -U <utilizator> -d <baza_ta> -f schema.sql
 ```
-api/server.js   -> tot backend-ul: rute, program implicit, HTML/CSS/JS, SEO
-vercel.json      -> trimite toate cererile către api/server.js (URL-uri curate)
-package.json      -> dependința Express + versiunea de Node cerută
-.gitignore
-```
-1) Rulare locală
-Necesită Node.js 18 sau mai nou.
+
+Asigură-te că tabelul tău de locații are deja coloana `place_id`
+completată (din scriptul `enrich-place-ids.js`).
+
+## 2. Instalează dependințele
+
 ```bash
 npm install
-npm run dev
 ```
-Apoi deschide, de exemplu:
-http://localhost:3000/cluj/kaufland
-http://localhost:3000/bucuresti/mall
-http://localhost:3000/cluj-napoca   (pagină generală, fără magazin ales)
-2) Deploy pe Vercel
-Varianta recomandată — din GitHub:
-`git init && git add . && git commit -m "init"` apoi urcă pe un repo GitHub nou.
-Pe vercel.com → Add New → Project → alege repo-ul.
-Vercel detectează automat `api/server.js` ca serverless function — nu trebuie
-ales niciun framework preset, nu trebuie setat build command. Apasă Deploy.
-La fiecare push, Vercel redeployează automat.
-Varianta din linia de comandă:
-```bash
-npm install -g vercel
-vercel login
-vercel          # deploy de test (preview), primești un link *.vercel.app
-vercel --prod   # deploy pe domeniul de producție
+
+## 3. Configurare
+
+Ai nevoie de aceeași cheie Google Places API de la pasul anterior (dar
+verifică în Google Cloud Console că ai activat și **"Places API"**, nu doar
+partea de Text Search — Place Details e o categorie de cerere separată,
+taxată separat).
+
+```js
+// undeva la pornirea aplicației tale (ex. server.js)
+const { Pool } = require("pg");
+const pool = new Pool({ /* datele tale de conexiune */ });
+
+const { getLocationStatus } = require("./getLocationStatus");
 ```
-3) De ce `vercel.json` e obligatoriu aici
-Fără el, Vercel ar expune funcția doar pe adresa `/api/server`, nu pe
-`/cluj/kaufland`. Regula de `rewrites` din `vercel.json` trimite orice
-cerere către `api/server.js`, păstrând URL-ul original — Express-ul din
-interior face routing-ul real pe baza lui (`req.params.oras`,
-`req.params.magazin`).
-4) Domeniu propriu
-După primul deploy: Project → Settings → Domains → adaugă domeniul tău
-(ex: `programuldeazi.ro`) și urmează instrucțiunile DNS afișate de Vercel
-(de obicei un record `A` sau `CNAME` la registrarul tău de domeniu).
-Domeniul `https://programul-de-azi.ro` e deja setat în `api/server.js`
-(la `canonical` și `og:url`) — nu mai trebuie schimbat nimic acolo.
-5) Cum editezi programul magazinelor
-Deschide `api/server.js` → funcțiile `supermarketWeekly()`, `mallShoppingWeekly()`
-și `mallHyperWeekly()` de la începutul fișierului. Modifică orele acolo — se
-aplică automat pe toate paginile generate.
-6) Monetizare (Google AdSense)
-În HTML-ul generat există deja două marcaje:
-```html
-<!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
-<div class="ad-slot">Spațiu reclamă</div>
+
+## 4. Folosire, în ruta paginii tale
+
+```js
+app.get("/:tara/:oras/:magazin", async (req, res) => {
+  // ... găsești locația în baza ta de date, ai deja place_id-ul ei ...
+  const placeId = locatie.place_id;
+
+  if (!placeId) {
+    // locația n-a fost încă îmbogățită cu place_id — fallback pe orice
+    // ai folosit până acum (programul hardcodat, de exemplu)
+  } else {
+    const status = await getLocationStatus({
+      pool,
+      placeId,
+      apiKey: process.env.GOOGLE_PLACES_API_KEY,
+      language: req.detectedLang || "ro", // codul TĂU intern de limbă
+    });
+
+    // status.isOpenNow          -> true / false / null (null = Google nu are program)
+    // status.weeklyScheduleText -> ["Monday: 9:00 AM – 6:00 PM", ...] deja tradus
+    // status.isSpecialDay       -> true dacă azi pare a fi zi cu program special
+    // status.businessStatus     -> "OPERATIONAL" / "CLOSED_TEMPORARILY" / "CLOSED_PERMANENTLY"
+  }
+
+  res.send(renderPage({ ...status }));
+});
 ```
-Când primești codul de la AdSense, înlocuiește conținutul acelui `<div>` (sau
-`<div>`-ul întreg) cu blocul de anunț furnizat de Google, în ambele locuri din
-`renderStorePage()` și `renderCityPage()`.
-7) Verificare înainte de lansare
-[x] Domeniul real (`programul-de-azi.ro`) e deja setat în `api/server.js`
-[ ] Ai testat câteva URL-uri: `/bucuresti/lidl`, `/cluj/mall`, `/iasi` (general)
-[ ] Ai adăugat domeniul propriu în Vercel și DNS-ul e propagat
-[ ] Ai lipit codul AdSense în cele două `<div class="ad-slot">`
-[ ] Ai adăugat site-ul în Google Search Console
+
+## De ce funcționează corect — cele 3 decizii tehnice esențiale
+
+**1. Cache-uim datele BRUTE, niciodată statusul calculat.** Dacă am fi
+cache-uit boolean-ul „deschis acum" pentru 12 ore, ai fi avut un site care
+zice „DESCHIS" la ora 2 noaptea, pentru că așa era acum 10 ore când s-a
+umplut cache-ul. Cache-uim doar `periods`/`weekday_text`/`utc_offset_minutes`
+(date care se schimbă rar), și recalculăm „acum" din ele, la fiecare
+cerere, în timp real.
+
+**2. Cache-ul ține cont de limbă, nu doar de `place_id`.** `weekday_text`
+vine deja tradus de Google, în funcție de parametrul `language`. Fără
+asta, un vizitator neamț ar fi putut primi orarul cache-uit în spaniolă
+de la un vizitator anterior.
+
+**3. Ora „locală" se calculează din `utc_offset_minutes`, nu din ora
+serverului.** Testat explicit: un magazin din România și unul din New York,
+la aceeași oră UTC, arată corect ore locale complet diferite — esențial
+dacă vreodată extinzi dincolo de Europa, sau dacă serverul tău rulează
+într-un alt fus orar decât locațiile pe care le afișezi.
+
+## O limitare onestă, nu a codului — a datelor
+
+„100% automat pentru sărbători" depinde de cât de bine își completează
+**fiecare afacere** profilul Google Business. Dacă un magazin nu-și pune
+programul special de Crăciun pe Google, sistemul nostru n-are de unde să
+știe — verifică `current_opening_hours.special_days`, dar acel câmp există
+doar dacă proprietarul locației l-a completat. Codul face tot ce poate cu
+datele disponibile; nu poate inventa date pe care Google nu le are.
+
+## Cost
+
+Place Details API se taxează pe **categorii de câmpuri** (Basic/Contact/
+Atmosphere), nu per cerere generică — cerem doar `opening_hours`,
+`current_opening_hours`, `utc_offset_minutes`, `name`, `business_status`
+(categoriile Basic + Contact), nu tot ce oferă API-ul, exact ca să nu
+plătești pentru date pe care nu le folosești. Verifică prețul curent la
+Billing → Pricing în Google Cloud Console.
