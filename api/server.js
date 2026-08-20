@@ -10,7 +10,84 @@ const express = require("express");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { Pool } = require("pg");
 const app = express();
+
+/* ============================================================
+   0.05) STATUS LIVE (Google Places) — conexiune OPȚIONALĂ la baza de
+   date. Dacă lipsește variabila de mediu (POSTGRES_URL/DATABASE_URL) sau
+   baza pică, site-ul TOT funcționează — doar cade elegant pe orele fixe,
+   deja verificate, care au funcționat până acum. Nicio pagină nu depinde
+   STRICT de conexiunea asta ca să se afișeze.
+   ============================================================ */
+const DB_CONNECTION_STRING =
+  process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || "";
+const GOOGLE_PLACES_API_KEY_LIVE = process.env.GOOGLE_PLACES_API_KEY || "";
+const dbPool = DB_CONNECTION_STRING
+  ? new Pool({ connectionString: DB_CONNECTION_STRING, ssl: { rejectUnauthorized: false }, max: 3 })
+  : null;
+const { getLocationStatus } = dbPool ? require("../place-status-engine/getLocationStatus") : {};
+
+// exact același algoritm de slug folosit la generarea insert_locatii.sql —
+// TREBUIE să rămână identic, altfel căutarea în baza de date nu găsește
+// nimic (slug-uri diferite pentru aceeași locație)
+// exact același algoritm de slug folosit la generarea insert_locatii.sql —
+// TREBUIE să rămână identic, altfel căutarea în baza de date nu găsește
+// nimic (slug-uri diferite pentru aceeași locație)
+function toDbSlug(str) {
+  return normalizeSlug(str).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+// Convertește "periods" (formatul Google Places) în formatul nostru intern
+// "weekly" (array de 7, index 0=Duminică...6=Sâmbătă) — ca să reutilizăm
+// EXACT același sistem de afișare/JS live care funcționează deja pentru
+// orele fixe, fără să-l rescriem. Simplificare onestă, semnalată: pentru
+// perioade care trec peste miezul nopții, punem ora reală de deschidere,
+// dar închiderea aproximată la 23:59 — cazul e rar la magazine/obiective
+// turistice (frecvent doar la baruri/cluburi, care nu sunt tipul de
+// locație pe care-l avem în sistem).
+function googlePeriodsToWeekly(periods) {
+  const weekly = [null, null, null, null, null, null, null];
+  if (!Array.isArray(periods)) return weekly;
+  periods.forEach((p) => {
+    if (!p || !p.open || typeof p.open.day !== "number") return;
+    const day = p.open.day;
+    if (day < 0 || day > 6) return;
+    if (!p.close) {
+      // deschis non-stop, fără "close" — convenția Google pentru 24/7
+      for (let d = 0; d < 7; d++) weekly[d] = { open: "00:00", close: "23:59" };
+      return;
+    }
+    const openTime = `${p.open.time.slice(0, 2)}:${p.open.time.slice(2, 4)}`;
+    const closeTime = `${p.close.time.slice(0, 2)}:${p.close.time.slice(2, 4)}`;
+    if (p.close.day === p.open.day) {
+      weekly[day] = { open: openTime, close: closeTime };
+    } else {
+      weekly[day] = { open: openTime, close: "23:59" }; // aproximare, vezi comentariul de mai sus
+    }
+  });
+  return weekly;
+}
+
+
+// Caută statusul live pentru o locație (magazin SAU obiectiv turistic),
+// după exact același slug generat la popularea bazei. Returnează `null`
+// dacă nu există în bază, dacă place_id e unul din valorile "sentinel"
+// (ZERO_RESULTS / ERROR_...), sau dacă orice altceva eșuează — apelantul
+// TREBUIE să trateze `null` ca "nu am date live, folosește fallback-ul".
+async function tryGetLiveStatus(slug, lang) {
+  if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) return null;
+  try {
+    const { rows } = await dbPool.query("SELECT place_id FROM locatii WHERE slug = $1 LIMIT 1", [slug]);
+    if (!rows.length) return null;
+    const placeId = rows[0].place_id;
+    if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return null;
+    return await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang });
+  } catch (err) {
+    console.error("tryGetLiveStatus a eșuat, cad pe fallback:", err.message);
+    return null;
+  }
+}
 
 /* ============================================================
    0) MONETIZARE — cod Google AdSense
@@ -2619,7 +2696,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, nonce }) {
+async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, nonce }) {
   // sufixul de locație hiper-locală (cartier/stradă) — opțional, gol pentru paginile normale de magazin
   const locatieSuffix = locatieDisplay ? ` ${locatieDisplay}` : "";
   const locatieForDescription = locatieDisplay ? ` din ${locatieDisplay},` : "";
@@ -2689,7 +2766,38 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
       ? `<a href="${escapeHtml(catalogLink)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic">🔥 Vezi catalogul cu reduceri ${escapeHtml(magazinDisplay)} de azi</a>`
       : "";
 
-    mainHtml = `
+    // status live (Google), DOAR pentru magazine normale, fără hiper-local
+    // (paginile de cartier nu au propriul place_id, sunt variații ale
+    // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
+    // exact ca înainte, fără nicio schimbare vizibilă.
+    const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}`) : null;
+    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro") : null;
+
+    if (live && live.isOpenNow !== null) {
+      const specialBanner = live.isSpecialDay
+        ? `<div class="geo-country-highlight">📅 Azi pare să fie o zi cu program special (posibilă sărbătoare) — verifică programul de mai jos, actualizat live.</div>`
+        : "";
+      const liveWeeklyHtml = live.weeklyScheduleText.length
+        ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
+        : `<div class="holiday-card"><div class="holiday-row"><span class="holiday-label">Program indisponibil momentan de la Google.</span></div></div>`;
+
+      mainHtml = `
+      <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
+        <div class="status-text">${live.isOpenNow ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
+        <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
+        <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+      </div>
+      ${specialBanner}
+
+      ${affiliateButtonHtml}
+
+      <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
+      ${liveWeeklyHtml}
+      `;
+      dataForClient = { type: "general", weekly: [], holidays: [] }; // ceasul din header rămâne activ; statusul de mai sus e deja calculat corect, la încărcare
+    } else {
+      mainHtml = `
       <div class="status-card" id="statusCard">
         <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
         <div class="status-text">—</div>
@@ -2707,7 +2815,8 @@ function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, l
       <h2 class="section-title"><span class="bar"></span>Program de sărbători</h2>
       <div class="holiday-card">${renderHolidayRows(store.holidays)}</div>
     `;
-    dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays };
+      dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays };
+    }
   }
 
   const breadcrumb = locatieDisplay
@@ -3679,7 +3788,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras", (req, res, next) => {
 // RUTE ROMÂNEȘTI — accesibile DOAR pe programul-de-azi.ro. Pe domeniul
 // internațional, redirect 301 către domeniul RO (nu duplicăm conținutul).
 // ============================================================
-app.get("/:oras/:magazin/:locatie", (req, res, next) => {
+app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
   // pagini hiper-locale: /cluj-napoca/kaufland/manastur — cartierul/strada e
   // inserat dinamic în titlu și în cardul de status, ca să prindem căutările
   // gen "program kaufland manastur" alături de căutările generale pe oraș
@@ -3700,12 +3809,12 @@ app.get("/:oras/:magazin/:locatie", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
 
-app.get("/:oras/:magazin", (req, res, next) => {
+app.get("/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (isIntlHost(req)) {
@@ -3724,7 +3833,7 @@ app.get("/:oras/:magazin", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
