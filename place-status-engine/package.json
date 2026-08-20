@@ -1,16 +1,18 @@
 {
-  "name": "place-status-engine",
+  "name": "programul-de-azi",
   "version": "1.0.0",
-  "description": "Status live (deschis/închis, program tradus, sărbători) pe bază de Google Place Details, cu cache 12h",
-  "main": "getLocationStatus.js",
+  "private": true,
+  "description": "Programul de Azi — status live deschis/inchis pentru magazine si mall-uri din Romania",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node enrich-place-ids.js"
-  },
-  "dependencies": {
-    "pg": "^8.13.0",
-    "dotenv": "^16.4.5"
+    "start": "node api/server.js",
+    "dev": "node api/server.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.x"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.13.0"
   }
 }
