@@ -186,7 +186,7 @@ function ticketUrlFor(attractionName) {
 // valid — sunt frați, într-un rând comun.
 function buildAttractionAccordionItem(a, countryCode, cityLabel) {
   const cityAttr = cityLabel ? ` data-city="${escapeHtml(normalizeSlug(cityLabel))}"` : "";
-  return `<li class="attraction-accordion-item"${cityAttr} data-query="${escapeHtml(a.name)}" data-partner-id="${escapeHtml(GYG_PARTNER_ID)}">
+  return `<li class="attraction-accordion-item"${cityAttr}>
     <div class="attraction-accordion-header-row">
       <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(a.url)}">☆</button>
       <button type="button" class="attraction-accordion-header" aria-expanded="false">
@@ -195,8 +195,7 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel) {
       </button>
     </div>
     <div class="attraction-accordion-panel" hidden>
-      <div class="gyg-widget-slot"></div>
-      <div class="gyg-widget-fallback">Nu am putut încărca lista de activități aici — <a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored">vezi biletele pe GetYourGuide</a>.</div>
+      <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">🎟️ Rezervă bilet online</a><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener" class="accordion-official-link">Vezi site-ul oficial</a></div>
     </div>
   </li>`;
 }
@@ -2080,9 +2079,9 @@ main{padding-top:8px;}
 .attraction-accordion-header .accordion-chevron{flex:0 0 auto;width:18px;height:18px;transition:transform .2s ease;color:var(--muted);}
 .attraction-accordion-item.is-open .accordion-chevron{transform:rotate(180deg);}
 .attraction-accordion-panel{padding:0 16px 16px;}
-.gyg-widget-slot{min-height:60px;}
-.gyg-widget-fallback{display:none;margin-top:8px;}
-.gyg-widget-fallback a{display:inline-block;color:var(--accent);font-weight:600;font-size:13.5px;text-decoration:underline;}
+.gyg-widget-fallback{display:none;margin-top:4px;}
+.accordion-ticket-btn{display:block;text-align:center;width:100%;margin:0 0 10px;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 10px 22px -10px rgba(255,85,51,.5);}
+.accordion-official-link{display:block;text-align:center;font-size:13px;color:var(--muted);text-decoration:underline;}
 .attraction-accordion-header-row{display:flex;align-items:stretch;}
 
 .fav-star.is-fav{color:var(--accent);}
@@ -2429,20 +2428,13 @@ function buildAttractionAccordionScript(nonce) {
   return `
 <script nonce="${nonce}">
 (function(){
-  var gygLoaded = false, gygLoading = false, gygQueue = [];
-  function ensureGygScript(cb){
-    if (gygLoaded) { cb(); return; }
-    gygQueue.push(cb);
-    if (gygLoading) return;
-    gygLoading = true;
-    var s = document.createElement("script");
-    s.src = "https://widget.getyourguide.com/dist/pa.umd.production.min.js";
-    s.async = true;
-    s.onload = function(){ gygLoaded = true; gygQueue.forEach(function(fn){ fn(); }); gygQueue = []; };
-    s.onerror = function(){ gygQueue.forEach(function(fn){ fn(true); }); gygQueue = []; };
-    document.head.appendChild(s);
-  }
-
+  // Widget-ul GetYourGuide nu poate fi parametrizat dinamic, per obiectiv,
+  // din JavaScript — confirmat direct din contul de partener: codul rămas
+  // identic indiferent de textul de căutare introdus în configurator.
+  // Configurarea trăiește pe serverele lor, nu în HTML-ul pe care-l
+  // controlăm. Renunțăm la widget — arătăm direct link-ul de bilete
+  // (real, per obiectiv, unde-l avem — altfel cel general), simplu și
+  // sigur funcțional, imediat ce utilizatorul deschide un obiectiv.
   document.querySelectorAll(".attraction-accordion-header").forEach(function(header){
     header.addEventListener("click", function(){
       var item = header.closest(".attraction-accordion-item");
@@ -2450,39 +2442,10 @@ function buildAttractionAccordionScript(nonce) {
       var isOpen = item.classList.toggle("is-open");
       header.setAttribute("aria-expanded", String(isOpen));
       panel.hidden = !isOpen;
-      if (!isOpen || item.dataset.gygInit) return;
-      item.dataset.gygInit = "1";
-
-      var slot = item.querySelector(".gyg-widget-slot");
-      var fallback = item.querySelector(".gyg-widget-fallback");
-      var query = item.getAttribute("data-query");
-      var partnerId = item.getAttribute("data-partner-id");
-
-      var widgetDiv = document.createElement("div");
-      widgetDiv.setAttribute("data-gyg-href", "https://widget.getyourguide.com/default/activities.frame");
-      widgetDiv.setAttribute("data-gyg-locale-code", (document.documentElement.lang || "en") + "-" + (document.documentElement.lang || "EN").toUpperCase());
-      widgetDiv.setAttribute("data-gyg-widget", "activities");
-      widgetDiv.setAttribute("data-gyg-number-of-items", "3");
-      widgetDiv.setAttribute("data-gyg-partner-id", partnerId);
-      widgetDiv.setAttribute("data-gyg-q", query);
-      slot.appendChild(widgetDiv);
-
-      var revealed = false;
-      function showFallbackIfEmpty(){
-        if (revealed) return;
-        if (slot.querySelector("iframe, img, a")) { revealed = true; return; }
-        fallback.style.display = "block";
+      if (isOpen) {
+        var fallback = item.querySelector(".gyg-widget-fallback");
+        if (fallback) fallback.style.display = "block";
       }
-
-      ensureGygScript(function(failed){
-        if (failed) { showFallbackIfEmpty(); return; }
-        // scriptul GYG scanează automat elementele [data-gyg-widget] deja
-        // prezente în pagină la încărcare; pentru cele adăugate DUPĂ aceea
-        // (exact cazul nostru, lazy-loading), unele integrări necesită un
-        // re-scan manual — încercăm, defensiv, dacă funcția există
-        if (window.GYG && typeof window.GYG.scan === "function") { window.GYG.scan(); }
-        setTimeout(showFallbackIfEmpty, 2500);
-      });
     });
   });
 })();
