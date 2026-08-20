@@ -195,7 +195,7 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel) {
       </button>
     </div>
     <div class="attraction-accordion-panel" hidden>
-      <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">🎟️ Rezervă bilet online</a><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener" class="accordion-official-link">Vezi site-ul oficial</a></div>
+      <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">🎟️ Rezervă bilet online</a></div>
     </div>
   </li>`;
 }
@@ -2081,7 +2081,7 @@ main{padding-top:8px;}
 .attraction-accordion-panel{padding:0 16px 16px;}
 .gyg-widget-fallback{display:none;margin-top:4px;}
 .accordion-ticket-btn{display:block;text-align:center;width:100%;margin:0 0 10px;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 10px 22px -10px rgba(255,85,51,.5);}
-.accordion-official-link{display:block;text-align:center;font-size:13px;color:var(--muted);text-decoration:underline;}
+
 .attraction-accordion-header-row{display:flex;align-items:stretch;}
 
 .fav-star.is-fav{color:var(--accent);}
