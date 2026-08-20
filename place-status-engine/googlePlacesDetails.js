@@ -12,15 +12,20 @@
  *                               excepții — AICI apar sărbătorile/orele
  *                               speciale, dacă afacerea le-a completat pe
  *                               Google Business Profile
- *  - utc_offset_minutes     -> fusul orar local al locației (numele
- *                               corect, actual — "utc_offset", fără
- *                               "_minutes", e depreciat din 2021)
+ *  - utc_offset              -> fusul orar local al locației, ca număr de
+ *                               minute (numele corect pentru Places API
+ *                               LEGACY, versiunea REST/server — NU
+ *                               "utc_offset_minutes", care e valid doar în
+ *                               Places Library (JavaScript, din browser),
+ *                               o versiune complet diferită a API-ului.
+ *                               Confuzie reală, prinsă abia din log-urile
+ *                               reale de producție — corectată aici.)
  *  - name, business_status  -> context util (business_status detectează
  *                               și locații închise definitiv/temporar)
  * -----------------------------------------------------------------------
  */
 
-const FIELDS = ["name", "business_status", "opening_hours", "current_opening_hours", "utc_offset_minutes"].join(
+const FIELDS = ["name", "business_status", "opening_hours", "current_opening_hours", "utc_offset"].join(
   ","
 );
 
