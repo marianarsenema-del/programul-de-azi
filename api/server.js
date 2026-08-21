@@ -286,6 +286,18 @@ function buildGoNowButtonHtml(place, label) {
 // rezervă folosită deja pe paginile individuale de magazin. Suficient de
 // precis pentru o listă, mai ales pentru non-stop, unde răspunsul e mereu
 // "deschis", indiferent de oră.
+// extrage orarul relevant dintr-o configurație de brand, pentru insigna
+// live — magazine și cinematografe au orar direct; mall-urile au 2 zone
+// separate (shopping + hypermarket), folosim zona shopping (orarul general
+// al mall-ului, cel mai relevant pentru "e deschis mall-ul?"); orice alt
+// tip necunoscut => null, sărim insigna live pentru el, onest, fără să
+// presupunem un orar
+function extractStatusEntity(cfg) {
+  if (cfg.type === "mall") return cfg.zones && cfg.zones.shopping ? { weekly: cfg.zones.shopping.weekly, holidays: cfg.zones.shopping.holidays || [] } : null;
+  if (cfg.weekly) return { weekly: cfg.weekly, holidays: cfg.holidays || [] };
+  return null;
+}
+
 function buildListStatusBadgeScript(nonce, statusDataset) {
   return `
 <script nonce="${nonce}">
@@ -2046,10 +2058,10 @@ const STORE_CONFIG = {
   dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   mrbricolage: { name: "Mr. Bricolage", slug: "mr-bricolage", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "cinema", ticketUrl: "https://www.cinemacity.ro/" },
-  cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/" },
-  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/" },
-  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "cinema", ticketUrl: "https://www.movieplex.ro/" },
+  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "cinema", ticketUrl: "https://www.cinemacity.ro/", weekly: cinemaWeekly(), holidays: [] },
+  cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/", weekly: cinemaWeekly(), holidays: [] },
+  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/", weekly: cinemaWeekly(), holidays: [] },
+  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "cinema", ticketUrl: "https://www.movieplex.ro/", weekly: cinemaWeekly(), holidays: [] },
   bcr: { name: "BCR", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   brd: { name: "BRD", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ing: { name: "ING Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
@@ -3448,16 +3460,17 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
-      const statusKey = cfg.type === "store" ? key : null; // mall are 2 programe separate, nu 1 singur — sărim insigna live pentru el
-      return `<li>${brandBadgeHtml(cfg.name, statusKey)}<a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      const statusKey = extractStatusEntity(cfg) ? key : null;
+      const href = `/${orasSlug}/${urlSlug}`;
+      return `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="ro" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
     })
     .join("");
 
   // date pentru insignele live — DOAR cheie->orar, nimic în plus, cât mai mic posibil
   const statusDataset = {};
   Object.keys(STORE_CONFIG).forEach((key) => {
-    const cfg = STORE_CONFIG[key];
-    if (cfg.type === "store") statusDataset[key] = { weekly: cfg.weekly, holidays: cfg.holidays };
+    const entity = extractStatusEntity(STORE_CONFIG[key]);
+    if (entity) statusDataset[key] = entity;
   });
 
   const bodyHtml = `
@@ -3633,9 +3646,19 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
     .map((key) => {
       const cfg = country.config[key];
       const urlSlug = cfg.slug || key;
-      return `<li>${brandBadgeHtml(cfg.name)}<a href="/${countryCode}/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      const statusKey = extractStatusEntity(cfg) ? key : null;
+      const href = `/${countryCode}/${orasSlug}/${urlSlug}`;
+      return `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
     })
     .join("");
+
+  // date pentru insignele live — la fel ca pe RO, funcție comună (vezi
+  // extractStatusEntity), ca site-ul internațional să nu mai rămână în urmă
+  const statusDataset = {};
+  Object.keys(country.config).forEach((key) => {
+    const entity = extractStatusEntity(country.config[key]);
+    if (entity) statusDataset[key] = entity;
+  });
 
   const bodyHtml = `
 <header>
@@ -3650,7 +3673,8 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <ul class="mall-list">${listItems}</ul>
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
-</main>`;
+</main>
+${buildListStatusBadgeScript(nonce, statusDataset)}`;
 
   return pageShell({
     title,
