@@ -171,6 +171,7 @@ const ATTRACTION_TICKET_URLS = {
   "Castelul Corvinilor": "https://www.getyourguide.com/corvin-castle-l127588/",
   "Mănăstirea Voroneț": "https://www.getyourguide.com/voronet-monastery-l129098/",
   "Cetatea Poenari": "https://www.getyourguide.com/poenari-castle-l138468/",
+  "Cetatea Alba Carolina": "https://www.getyourguide.com/alba-carolina-citadel-l127593/",
 };
 const GYG_PARTNER_ID = "LM6J21N";
 
@@ -4186,7 +4187,7 @@ const SITEMAP_CITIES = [
   "Tulcea", "Reșița",
   // adăugate ulterior — verificate real (Lidl/Kaufland/Penny/Carrefour
   // confirmate prin căutare, cu adrese exacte, nu presupuse)
-  "Alba Iulia", "Deva",
+  "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
 ];
 
 // România adăugată în registrul internațional (site-ul .eu) — reutilizează
@@ -4273,6 +4274,9 @@ const CITY_COORDS = {
   "Reșița": [45.2967, 21.89],
   "Alba Iulia": [46.0697, 23.5804],
   "Deva": [45.8785, 22.9099],
+  "Zalău": [47.1911, 23.0574],
+  "Vaslui": [46.6383, 27.7292],
+  "Sfântu Gheorghe": [45.8636, 25.7875],
   "Berlin": [52.52, 13.405],
   "München": [48.1351, 11.582],
   "Hamburg": [53.5511, 9.9937],
