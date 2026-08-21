@@ -40,3 +40,16 @@ CREATE INDEX IF NOT EXISTS idx_place_details_cache_fetched_at ON place_details_c
 -- opțional: curățenie manuală a intrărilor mai vechi de 7 zile (rulează
 -- din când în când, ex. un cron săptămânal — nu e obligatoriu)
 -- DELETE FROM place_details_cache WHERE fetched_at < now() - interval '7 days';
+
+-- ============================================================
+-- 3) Abonați la notificări push (Web Push nativ, vezi send-push-notification.js)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id            SERIAL PRIMARY KEY,
+  endpoint      TEXT NOT NULL UNIQUE,   -- adresa unică a browserului, dată de acesta
+  p256dh        TEXT NOT NULL,          -- cheie publică de criptare, dată de browser
+  auth          TEXT NOT NULL,          -- secret de criptare, dat de browser
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_sent_at  TIMESTAMPTZ             -- completat de send-push-notification.js, ca să
+                                        -- știi ultima dată când ai trimis ceva cui
+);
