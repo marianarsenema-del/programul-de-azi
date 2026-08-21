@@ -169,6 +169,182 @@ const ATTRACTION_TICKET_URLS = {
 };
 const GYG_PARTNER_ID = "LM6J21N";
 
+// Widget contextual de urgență (vezi buildContextualWidgetHtml mai jos) —
+// linkuri de afiliere OPȚIONALE, goale la început. Fără linkuri de
+// afiliere reale confirmate pentru Glovo/Bringo, folosim link-urile lor
+// publice, funcționale — nu inventăm un format de link de afiliere pe care
+// nu l-am verificat (la fel ca la GetYourGuide, mai devreme în proiect).
+const linkGlovoAffiliate = ""; // dacă rămâne gol, cade pe glovoapp.com (link public, funcțional, fără tracking)
+const linkBringoAffiliate = ""; // dacă rămâne gol, cade pe bringo.ro (link public, funcțional, fără tracking)
+// Booking.com CHIAR are un format public, documentat, de link de afiliere —
+// doar ID-ul de partener (aid=), atașat la un link de căutare normal.
+// Programul Booking Partner e la partner.booking.com — cauți acolo "aid"-ul
+// tău din Partner Hub. Gol = link de căutare normal, funcțional, fără comision.
+const BOOKING_AFFILIATE_ID = "";
+
+// zile libere legale REALE, confirmate — România, 2026 (Legea 53/2003, Legea
+// 147/2018) — verificat prin căutare, peste 15 surse independente, inclusiv
+// o corectare (Paștele Ortodox 2026 e pe 12 aprilie, nu altă dată, cum
+// spunea o singură sursă minoritară găsită). Banner-ul de "zi specială"
+// arată DOAR când azi chiar coincide cu una din aceste date reale — nu doar
+// pentru că Google arată o diferență de orar (asta se poate întâmpla și
+// din alte motive, nu neapărat o sărbătoare).
+// IMPORTANT: lista e valabilă DOAR pentru 2026 — sărbătorile cu dată
+// variabilă (Paște, Rusalii) se mută în fiecare an. Trebuie actualizată
+// manual, o dată pe an, la începutul lui ianuarie.
+const ROMANIAN_LEGAL_HOLIDAYS_2026 = [
+  "2026-01-01", "2026-01-02", // Anul Nou
+  "2026-01-06", "2026-01-07", // Boboteaza, Sf. Ioan Botezătorul
+  "2026-01-24", // Ziua Unirii Principatelor Române
+  "2026-04-10", "2026-04-12", "2026-04-13", // Vinerea Mare, Paște, a doua zi de Paște
+  "2026-05-01", // Ziua Muncii
+  "2026-05-31", "2026-06-01", // Rusalii, a doua zi de Rusalii + Ziua Copilului
+  "2026-08-15", // Adormirea Maicii Domnului
+  "2026-11-30", // Sfântul Andrei
+  "2026-12-01", // Ziua Națională a României
+  "2026-12-25", "2026-12-26", // Crăciunul
+];
+
+function isRealRomanianHolidayToday(utcOffsetMinutes) {
+  const now = new Date();
+  const shifted = new Date(now.getTime() + (utcOffsetMinutes || 120) * 60000); // 120 = ora României, dacă lipsește offset-ul
+  const y = shifted.getUTCFullYear();
+  const m = String(shifted.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(shifted.getUTCDate()).padStart(2, "0");
+  return ROMANIAN_LEGAL_HOLIDAYS_2026.includes(`${y}-${m}-${d}`);
+}
+
+function glovoLinkFor() {
+  return linkGlovoAffiliate || "https://glovoapp.com/";
+}
+function bringoLinkFor() {
+  return linkBringoAffiliate || "https://www.bringo.ro/";
+}
+function bookingSearchLinkFor(place) {
+  const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(place)}`;
+  return BOOKING_AFFILIATE_ID ? `${base}&aid=${encodeURIComponent(BOOKING_AFFILIATE_ID)}` : base;
+}
+
+const BOOKING_PLANNING_LABELS_RO = {
+  title: "🅿️ Planifică vizita",
+  stays: "🏨 Vezi cazări în apropiere pe Booking.com",
+  parking: "🅿️ Găsește hoteluri cu parcare inclusă în apropiere",
+  parkingNearby: "🚗 Caută parcare în apropiere",
+};
+const BOOKING_PLANNING_LABELS_EN = {
+  title: "🅿️ Plan your visit",
+  stays: "🏨 See nearby stays on Booking.com",
+  parking: "🅿️ Find hotels with parking included nearby",
+  parkingNearby: "🚗 Search for parking nearby",
+};
+
+// 3 butoane de planificare — cazări + parcare, mereu vizibile pe pagina
+// unui obiectiv turistic (nu doar când e închis, spre deosebire de widget-ul
+// contextual de mai sus). NOTĂ ONESTĂ: butonul de "hoteluri cu parcare" NU
+// filtrează cu adevărat după parcare — Booking.com nu are un parametru
+// public, documentat, de URL pentru asta; face aceeași căutare ca primul
+// buton. Dacă găsești tu parametrul real de filtrare, spune-mi și îl adaug.
+function buildBookingPlanningButtonsHtml({ name, city, labels }) {
+  const t = labels || BOOKING_PLANNING_LABELS_RO;
+  const parkingQuery = city || name;
+  return `
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.title)}</h2>
+  <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="margin-bottom:8px;">${escapeHtml(t.stays)}</a>
+  <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="margin-bottom:8px;background:var(--surface);color:var(--text);border:1px solid var(--border);">${escapeHtml(t.parking)}</a>
+  <a href="${escapeHtml(bookingSearchLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">${escapeHtml(t.parkingNearby)}</a>`;
+}
+// fără API de restaurante propriu, cea mai onestă soluție e o căutare reală
+// Google Maps — arată restaurante CHIAR deschise acum, nu o listă fixă,
+// posibil învechită, pe care ar trebui s-o întreținem noi manual
+function restaurantsOpenNowLinkFor(place) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("restaurante deschise acum " + place)}`;
+}
+
+// Widget contextual — arată alternative diferite în funcție de statusul
+// LIVE (deschis/închis) al paginii curente. Construit ca 2 blocuri, ambele
+// prezente în HTML de la server, comutate vizual de JS (vezi
+// buildContextualWidgetScript) — niciodată nu inventăm STATUSUL, doar
+// reacționăm la ce e deja calculat, corect, în altă parte a paginii.
+const CONTEXTUAL_WIDGET_LABELS_RO = {
+  ticketOpen: "🎟️ Vrei să eviți coada? Cumpără bilet online",
+  closedAlert: "⚠️ Locația este închisă în acest moment. Iată alternativele tale:",
+  booking: "🏨 Cazări active pe Booking, în apropiere",
+  restaurants: "🍽️ Restaurante deschise acum, în apropiere",
+  glovo: "🛵 Comandă cu Glovo",
+  bringo: "🛒 Comandă cu Bringo",
+};
+const CONTEXTUAL_WIDGET_LABELS_EN = {
+  ticketOpen: "🎟️ Want to skip the line? Buy tickets online",
+  closedAlert: "⚠️ This place is closed right now. Here are your alternatives:",
+  booking: "🏨 Available stays on Booking, nearby",
+  restaurants: "🍽️ Restaurants open now, nearby",
+  glovo: "🛵 Order with Glovo",
+  bringo: "🛒 Order with Bringo",
+};
+
+function buildContextualWidgetHtml({ type, name, orasDisplay, labels }) {
+  const t = labels || CONTEXTUAL_WIDGET_LABELS_RO;
+  const place = orasDisplay || name;
+
+  const openContentHtml =
+    type === "attraction" && linkBileteTurism
+      ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.ticketOpen)}</a>`
+      : "";
+
+  const closedContentHtml =
+    type === "attraction"
+      ? `<a href="${escapeHtml(bookingSearchLinkFor(place))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.booking)}</a>
+         <a href="${escapeHtml(restaurantsOpenNowLinkFor(place))}" target="_blank" rel="noopener" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.restaurants)}</a>`
+      : `<a href="${escapeHtml(glovoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.glovo)}</a>
+         <a href="${escapeHtml(bringoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.bringo)}</a>`;
+
+  return `
+  <div id="contextualWidget" class="contextual-widget" hidden>
+    <div class="contextual-widget-open"${openContentHtml ? "" : " hidden"}>
+      ${openContentHtml}
+    </div>
+    <div class="contextual-widget-closed" hidden>
+      <p class="contextual-widget-alert-text">${escapeHtml(t.closedAlert)}</p>
+      ${closedContentHtml}
+    </div>
+  </div>`;
+}
+
+// urmărește #statusCard (deja actualizat corect, live sau la fiecare tick,
+// în altă parte a paginii) și arată/ascunde panoul potrivit al widget-ului —
+// funcționează identic indiferent dacă statusul vine din date live (Google,
+// calculat o dată, la încărcare) sau din calculul local, care ticăie la
+// fiecare secundă (paginile fără date live)
+function buildContextualWidgetScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var widget = document.getElementById("contextualWidget");
+  var card = document.getElementById("statusCard");
+  if (!widget || !card) return;
+  var openPanel = widget.querySelector(".contextual-widget-open");
+  var closedPanel = widget.querySelector(".contextual-widget-closed");
+
+  function sync(){
+    var isOpen = card.classList.contains("is-open");
+    var isClosed = card.classList.contains("is-closed");
+    if (!isOpen && !isClosed) { widget.hidden = true; return; }
+    var hasOpenContent = openPanel && openPanel.textContent.trim();
+    if (isOpen && !hasOpenContent) { widget.hidden = true; return; } // deschis, dar nimic de arătat (ex: magazin) — nu lăsăm caseta goală, vizibilă
+    widget.hidden = false;
+    widget.classList.toggle("is-open", isOpen);
+    widget.classList.toggle("is-closed", isClosed);
+    if (openPanel) openPanel.hidden = !isOpen || !hasOpenContent;
+    if (closedPanel) closedPanel.hidden = !isClosed;
+  }
+
+  sync();
+  var observer = new MutationObserver(sync);
+  observer.observe(card, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>`;
+}
+
 // Notificări push — chei VAPID, din variabile de mediu (NU hardcodate în
 // cod — cheia privată e un secret, la fel ca parola bazei de date). Dacă
 // lipsesc, funcționalitatea de abonare rămâne dezactivată automat, sigur,
@@ -2167,6 +2343,15 @@ main{padding-top:8px;}
 .attraction-accordion-panel{padding:0 16px 16px;}
 .gyg-widget-fallback{display:none;margin-top:4px;}
 .accordion-status-link{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--accent);text-decoration:none;margin-bottom:10px;}
+
+/* Widget contextual — alternative după status (vezi buildContextualWidgetHtml) */
+.contextual-widget{margin:14px 18px 0;padding:16px;border-radius:var(--radius-md);transition:background .25s ease;}
+.contextual-widget.is-open{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);}
+.contextual-widget.is-closed{background:linear-gradient(135deg,#DC2626,#F97316);box-shadow:0 12px 26px -10px rgba(220,38,38,.5);}
+.contextual-widget-alert-text{font-weight:700;font-size:14px;color:#fff;margin-bottom:10px;}
+.contextual-widget-btn{display:block;text-align:center;width:100%;margin-bottom:8px;padding:12px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:var(--accent);color:#fff;}
+.contextual-widget.is-closed .contextual-widget-btn{background:#fff;color:#DC2626;}
+.contextual-widget.is-closed .contextual-widget-btn-secondary{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);}
 .accordion-ticket-btn{display:block;text-align:center;width:100%;margin:0 0 10px;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 10px 22px -10px rgba(255,85,51,.5);}
 
 .attraction-accordion-header-row{display:flex;align-items:stretch;}
@@ -3063,8 +3248,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro") : null;
 
     if (live && live.isOpenNow !== null) {
-      const specialBanner = live.isSpecialDay
-        ? `<div class="geo-country-highlight">📅 Azi pare să fie o zi cu program special (posibilă sărbătoare) — verifică programul de mai jos, actualizat live.</div>`
+      const specialBanner = live.isSpecialDay && isRealRomanianHolidayToday(live.utcOffsetMinutes)
+        ? `<div class="geo-country-highlight">📅 Azi e sărbătoare legală — verifică programul de mai jos, actualizat live.</div>`
         : "";
       const liveWeeklyHtml = live.weeklyScheduleText.length
         ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
@@ -3078,6 +3263,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
       ${specialBanner}
+      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
       ${affiliateButtonHtml}
 
@@ -3094,6 +3280,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
         <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
+      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
       ${affiliateButtonHtml}
 
@@ -3137,7 +3324,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>`;
+</main>
+${buildContextualWidgetScript(nonce)}`;
 
   // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
   // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
@@ -3234,7 +3422,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   let weeklySectionHtml;
 
   if (live && live.isOpenNow !== null) {
-    const specialBanner = live.isSpecialDay
+    const specialBanner = live.isSpecialDay && countryCode === "ro" && isRealRomanianHolidayToday(live.utcOffsetMinutes)
       ? `<div class="geo-country-highlight">📅 ${escapeHtml(t.closedHoliday ? t.closedHoliday.split(" — ")[0] : "Special hours today")}</div>`
       : "";
     statusCardHtml = `
@@ -3244,7 +3432,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-sub">Live · Google</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
-  ${specialBanner}`;
+  ${specialBanner}
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
   <div class="holiday-card">${live.weeklyScheduleText.length ? live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("") : `<div class="holiday-row"><span class="holiday-label">—</span></div>`}</div>`;
@@ -3262,7 +3451,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-sub">${escapeHtml(t.calculating)}</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
-  </div>`;
+  </div>
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
   <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
@@ -3305,7 +3495,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <footer>
     <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
   </footer>
-</main>`;
+</main>
+${buildContextualWidgetScript(nonce)}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -3562,9 +3753,11 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const live = await tryGetLiveStatus(slug, "ro");
 
   let statusHtml;
+  let widgetHtml = "";
+  let widgetScriptHtml = "";
   if (live && live.isOpenNow !== null) {
-    const specialBanner = live.isSpecialDay
-      ? `<div class="geo-country-highlight">📅 Azi pare să fie o zi cu program special (posibilă sărbătoare) — verifică programul de mai jos, actualizat live.</div>`
+    const specialBanner = live.isSpecialDay && isRealRomanianHolidayToday(live.utcOffsetMinutes)
+      ? `<div class="geo-country-highlight">📅 Azi e sărbătoare legală — verifică programul de mai jos, actualizat live.</div>`
       : "";
     const weeklyHtml = live.weeklyScheduleText.length
       ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
@@ -3579,13 +3772,21 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
     ${specialBanner}
     <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
     ${weeklyHtml}`;
+    // widget contextual DOAR când chiar știm dacă e deschis/închis (date live)
+    // — fără date live, nu putem oferi alternative "inteligente", onest
+    widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null });
+    widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
     statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>`;
   }
 
-  const ticketBtnHtml = linkBileteTurism
-    ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
-    : "";
+  // fără date live, păstrăm butonul simplu, necondiționat de status (nu
+  // putem ști dacă e deschis, deci nu putem oferi alternative "de urgență"
+  // — dar tot oferim accesul la bilete, indiferent)
+  const ticketBtnHtml =
+    !widgetHtml && linkBileteTurism
+      ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
+      : "";
 
   const bodyHtml = `
 <header>
@@ -3601,8 +3802,11 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${adSlotHtml()}
 
   ${statusHtml}
+  ${widgetHtml}
 
   ${ticketBtnHtml}
+
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro") })}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
 
@@ -3612,7 +3816,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>`;
+</main>
+${widgetScriptHtml}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -3631,6 +3836,8 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const live = await tryGetLiveStatus(slug, googleLang);
 
   let statusHtml;
+  let widgetHtml = "";
+  let widgetScriptHtml = "";
   if (live && live.isOpenNow !== null) {
     const weeklyHtml = live.weeklyScheduleText.length
       ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
@@ -3644,13 +3851,16 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     </div>
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
     ${weeklyHtml}`;
+    widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: CONTEXTUAL_WIDGET_LABELS_EN });
+    widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
     statusHtml = `<div class="geo-country-highlight">ℹ️ Live hours aren't available yet for this place. Check the <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">official site</a> for up-to-date info.</div>`;
   }
 
-  const ticketBtnHtml = linkBileteTurism
-    ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(t.ticketBtn)}</a>`
-    : "";
+  const ticketBtnHtml =
+    !widgetHtml && linkBileteTurism
+      ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(t.ticketBtn)}</a>`
+      : "";
 
   const bodyHtml = `
 <header>
@@ -3664,13 +3874,17 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${buildLanguageSwitcher(activeLang, `/${countryCode}/obiectiv/${slug}`)}
 
   ${statusHtml}
+  ${widgetHtml}
 
   ${ticketBtnHtml}
+
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN })}
 
   <footer>
     <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
   </footer>
-</main>`;
+</main>
+${widgetScriptHtml}`;
 
   return pageShell({
     title,
