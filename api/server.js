@@ -166,6 +166,11 @@ const ATTRACTION_TICKET_URLS = {
   "Castelul Peleș": "https://www.getyourguide.com/peles-castle-l1571/",
   "Palatul Parlamentului": "https://www.getyourguide.com/palace-of-the-parliament-l4247/",
   "Salina Turda": "https://www.getyourguide.com/salina-turda-l122320/",
+  "Turnul cu Ceas și Cetatea Sighișoara": "https://www.getyourguide.com/clock-tower-sighisoara-l166655/",
+  "Salina Praid": "https://www.getyourguide.com/brasov-l2003/salina-praid-salt-mine-t270447/",
+  "Castelul Corvinilor": "https://www.getyourguide.com/corvin-castle-l127588/",
+  "Mănăstirea Voroneț": "https://www.getyourguide.com/voronet-monastery-l129098/",
+  "Cetatea Poenari": "https://www.getyourguide.com/poenari-castle-l138468/",
 };
 const GYG_PARTNER_ID = "LM6J21N";
 
@@ -260,6 +265,71 @@ function restaurantsOpenNowLinkFor(place) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("restaurante deschise acum " + place)}`;
 }
 
+// link Waze real, funcțional — deschide navigația direct spre căutarea
+// textului dat (nu avem coordonate GPS exacte per magazin/obiectiv, doar
+// nume + oraș, dar Waze rezolvă bine căutări text)
+function wazeLinkFor(place) {
+  return `https://waze.com/ul?q=${encodeURIComponent(place)}&navigate=yes`;
+}
+
+// buton "Mergi acum" — verde-pulsant când locația e deschisă, roșu când e
+// închisă; sincronizat cu #statusCard prin buildContextualWidgetScript
+// (extins mai jos, ca să nu mai avem un al doilea MutationObserver separat)
+function buildGoNowButtonHtml(place, label) {
+  return `<a id="goNowBtn" class="go-now-btn" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(label || "🚗 Mergi acum (Waze)")}</a>`;
+}
+
+// Insigne live, pe pagini de listă (oraș) — verde-pulsant dacă magazinul e
+// deschis ACUM, roșu simplu dacă e închis. Nu folosim date live de la
+// Google aici (ar însemna zeci de cereri pe o singură încărcare de pagină,
+// scump și lent) — calculăm din orele standard, la fel ca varianta de
+// rezervă folosită deja pe paginile individuale de magazin. Suficient de
+// precis pentru o listă, mai ales pentru non-stop, unde răspunsul e mereu
+// "deschis", indiferent de oră.
+function buildListStatusBadgeScript(nonce, statusDataset) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var DATASET = ${safeJson(statusDataset)};
+  var badges = document.querySelectorAll(".brand-badge[data-status-key]");
+  if (!badges.length) return;
+
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function toMinutes(hhmm){ var p = hhmm.split(":"); return (+p[0])*60 + (+p[1]); }
+  function mmdd(d){ return pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+
+  function isOpenNow(entity, now){
+    var md = mmdd(now), full = ymd(now);
+    var holiday = null;
+    for (var i=0;i<entity.holidays.length;i++){
+      var h = entity.holidays[i];
+      if (h.date === md || h.date === full) { holiday = h; break; }
+    }
+    var hours = holiday ? holiday.hours : (function(){ var w = entity.weekly[now.getDay()]; return w ? [w.open, w.close] : null; })();
+    if (!hours) return false;
+    var nowMin = now.getHours()*60 + now.getMinutes();
+    return nowMin >= toMinutes(hours[0]) && nowMin < toMinutes(hours[1]);
+  }
+
+  function syncAll(){
+    var now = new Date();
+    badges.forEach(function(badge){
+      var key = badge.getAttribute("data-status-key");
+      var entity = DATASET[key];
+      if (!entity) return;
+      var open = isOpenNow(entity, now);
+      badge.classList.toggle("status-open", open);
+      badge.classList.toggle("status-closed", !open);
+    });
+  }
+
+  syncAll();
+  setInterval(syncAll, 60000); // suficient pentru o listă — nu are nevoie de precizie per-secundă
+})();
+</script>`;
+}
+
 // Widget contextual — arată alternative diferite în funcție de statusul
 // LIVE (deschis/închis) al paginii curente. Construit ca 2 blocuri, ambele
 // prezente în HTML de la server, comutate vizual de JS (vezi
@@ -319,15 +389,24 @@ function buildContextualWidgetScript(nonce) {
   return `
 <script nonce="${nonce}">
 (function(){
-  var widget = document.getElementById("contextualWidget");
   var card = document.getElementById("statusCard");
-  if (!widget || !card) return;
-  var openPanel = widget.querySelector(".contextual-widget-open");
-  var closedPanel = widget.querySelector(".contextual-widget-closed");
+  if (!card) return;
+  var widget = document.getElementById("contextualWidget");
+  var openPanel = widget ? widget.querySelector(".contextual-widget-open") : null;
+  var closedPanel = widget ? widget.querySelector(".contextual-widget-closed") : null;
+  var goNowBtn = document.getElementById("goNowBtn");
 
   function sync(){
     var isOpen = card.classList.contains("is-open");
     var isClosed = card.classList.contains("is-closed");
+
+    if (goNowBtn) {
+      goNowBtn.hidden = !isOpen && !isClosed;
+      goNowBtn.classList.toggle("is-open", isOpen);
+      goNowBtn.classList.toggle("is-closed", isClosed);
+    }
+
+    if (!widget) return;
     if (!isOpen && !isClosed) { widget.hidden = true; return; }
     var hasOpenContent = openPanel && openPanel.textContent.trim();
     if (isOpen && !hasOpenContent) { widget.hidden = true; return; } // deschis, dar nimic de arătat (ex: magazin) — nu lăsăm caseta goală, vizibilă
@@ -2176,14 +2255,15 @@ function escapeHtml(str) {
 // simplu, determinist), NU logo-ul real al companiei. Logo-urile sunt mărci
 // înregistrate; folosirea lor fără licență e un risc juridic real, nu doar o
 // alegere de design — de-aia nu punem sigla reală Lidl/Carrefour etc.
-function brandBadgeHtml(name) {
+function brandBadgeHtml(name, statusKey) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = (hash * 31 + name.charCodeAt(i)) % 360;
   }
   const hue = hash < 0 ? hash + 360 : hash;
   const initial = escapeHtml(name.trim().charAt(0).toUpperCase());
-  return `<span class="brand-badge" style="background:linear-gradient(135deg,hsl(${hue},68%,50%),hsl(${hue},62%,36%))" aria-hidden="true">${initial}</span>`;
+  const statusAttr = statusKey ? ` data-status-key="${escapeHtml(statusKey)}"` : "";
+  return `<span class="brand-badge" style="background:linear-gradient(135deg,hsl(${hue},68%,50%),hsl(${hue},62%,36%))" aria-hidden="true"${statusAttr}>${initial}</span>`;
 }
 
 // JSON sigur de injectat într-un <script> (evită breakout la "</script>")
@@ -2215,7 +2295,7 @@ function buildCsp(nonce) {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com https://unpkg.com`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com",
     "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com",
@@ -2351,6 +2431,16 @@ main{padding-top:8px;}
 
 /* Widget contextual — alternative după status (vezi buildContextualWidgetHtml) */
 .contextual-widget{margin:14px 18px 0;padding:16px;border-radius:var(--radius-md);transition:background .25s ease;}
+
+/* Buton "Mergi acum" (Waze) — verde-pulsant când e deschis, roșu static când e închis */
+.go-now-btn{display:block;text-align:center;width:calc(100% - 36px);margin:10px 18px 0;padding:14px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14.5px;text-decoration:none;color:#fff;}
+.brand-badge.status-open,.brand-badge.status-closed{position:relative;}
+.brand-badge.status-open{background:#22C55E!important;animation:goNowPulse 1.8s infinite;}
+.brand-badge.status-closed{background:#DC2626!important;}
+.go-now-btn.is-open{background:#22C55E;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:goNowPulse 1.8s infinite;}
+.go-now-btn.is-closed{background:#DC2626;}
+@keyframes goNowPulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55);}70%{box-shadow:0 0 0 14px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
+@media (prefers-reduced-motion: reduce){.go-now-btn.is-open{animation:none;}}
 .contextual-widget.is-open{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);}
 .contextual-widget.is-closed{background:linear-gradient(135deg,#DC2626,#F97316);box-shadow:0 12px 26px -10px rgba(220,38,38,.5);}
 .contextual-widget-alert-text{font-weight:700;font-size:14px;color:#fff;margin-bottom:10px;}
@@ -2409,7 +2499,7 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-suggestion-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border-radius:100px;padding:8px 14px;font-weight:700;font-size:13px;white-space:nowrap;}
 .geo-suggestion-note{margin:6px 18px 0;font-size:12px;color:var(--muted);text-align:center;}
 .disclaimer{margin:14px 18px 0;font-size:12px;color:var(--muted);line-height:1.6;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 14px;text-align:center;}
-footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);}
+footer{margin:36px 18px 0;padding-top:18px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);text-align:center;}
 footer p + p{margin-top:14px;}
 footer strong{color:var(--text);}
 footer a{color:var(--accent);font-weight:600;}
@@ -3358,9 +3448,17 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
-      return `<li>${brandBadgeHtml(cfg.name)}<a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      const statusKey = cfg.type === "store" ? key : null; // mall are 2 programe separate, nu 1 singur — sărim insigna live pentru el
+      return `<li>${brandBadgeHtml(cfg.name, statusKey)}<a href="/${orasSlug}/${urlSlug}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
     })
     .join("");
+
+  // date pentru insignele live — DOAR cheie->orar, nimic în plus, cât mai mic posibil
+  const statusDataset = {};
+  Object.keys(STORE_CONFIG).forEach((key) => {
+    const cfg = STORE_CONFIG[key];
+    if (cfg.type === "store") statusDataset[key] = { weekly: cfg.weekly, holidays: cfg.holidays };
+  });
 
   const bodyHtml = `
 <header>
@@ -3388,7 +3486,8 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>`;
+</main>
+${buildListStatusBadgeScript(nonce, statusDataset)}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
   const cityAlternateLinks = COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))
