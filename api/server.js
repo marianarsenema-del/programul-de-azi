@@ -2074,7 +2074,12 @@ function toDisplayName(rawParam) {
 // acolo (Metro/Auchan într-o comună de câteva sute de locuitori) — o
 // fabricare de date pe care am vrut mereu s-o evităm în acest proiect.
 function isKnownRoCity(orasDisplay) {
-  return SITEMAP_CITIES.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay));
+  // spațiu și cratimă trebuie tratate identic — numele reale au uneori
+  // spațiu ("Baia Mare"), URL-ul are mereu cratimă ("baia-mare"); fără
+  // asta, orașe reale, din lista de 30, ar da fals 404 (bug real, prins
+  // prin testare, nu doar teoretic — afecta Baia Mare, Târgu Mureș etc.)
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  return SITEMAP_CITIES.some((c) => strip(c) === strip(orasDisplay));
 }
 
 // distanța reală (km) dintre două puncte GPS — formula Haversine, standard
@@ -4056,6 +4061,9 @@ const SITEMAP_CITIES = [
   "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
   "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
   "Tulcea", "Reșița",
+  // adăugate ulterior — verificate real (Lidl/Kaufland/Penny/Carrefour
+  // confirmate prin căutare, cu adrese exacte, nu presupuse)
+  "Alba Iulia", "Deva",
 ];
 
 // România adăugată în registrul internațional (site-ul .eu) — reutilizează
@@ -4140,6 +4148,8 @@ const CITY_COORDS = {
   "Bistrița": [47.1362, 24.4998],
   "Tulcea": [45.1667, 28.8],
   "Reșița": [45.2967, 21.89],
+  "Alba Iulia": [46.0697, 23.5804],
+  "Deva": [45.8785, 22.9099],
   "Berlin": [52.52, 13.405],
   "München": [48.1351, 11.582],
   "Hamburg": [53.5511, 9.9937],
