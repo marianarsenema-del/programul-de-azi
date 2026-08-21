@@ -1892,6 +1892,45 @@ function toDisplayName(rawParam) {
     .join("");
 }
 
+// Verifică dacă un nume de oraș e unul din cele 30 REALE, verificate — NU
+// orice localitate din România. Fără asta, orice comună mică ar primi o
+// pagină completă cu toate cele 48 de branduri, ca și cum ar exista real
+// acolo (Metro/Auchan într-o comună de câteva sute de locuitori) — o
+// fabricare de date pe care am vrut mereu s-o evităm în acest proiect.
+function isKnownRoCity(orasDisplay) {
+  return SITEMAP_CITIES.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay));
+}
+
+// distanța reală (km) dintre două puncte GPS — formula Haversine, standard
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// cel mai apropiat, dintre cele 30 de orașe REALE, de o poziție GPS dată —
+// folosit când detectarea automată găsește o localitate mică, necunoscută
+// nouă, ca să sugerăm ceva onest ("cel mai apropiat oraș pe care-l avem"),
+// nu să pretindem că avem date pentru localitatea exactă
+function findNearestRoCity(lat, lon) {
+  let best = null;
+  let bestDist = Infinity;
+  for (const city of SITEMAP_CITIES) {
+    const coords = CITY_COORDS[city];
+    if (!coords) continue;
+    const dist = haversineKm(lat, lon, coords[0], coords[1]);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = city;
+    }
+  }
+  return best ? { city: best, distanceKm: Math.round(bestDist) } : null;
+}
+
 // normalizează un slug pentru comparare: minuscule, fără diacritice, fără spații/cratime
 function normalizeSlug(raw) {
   let decoded;
@@ -2306,6 +2345,15 @@ function buildClientScript(dataForClient, nonce) {
 // o transformă în nume de oraș prin geocoding invers, apoi redirect la /oras.
 // Dacă orice pas eșuează sau utilizatorul refuză, pagina rămâne neschimbată.
 function buildGeoScript(nonce) {
+  // doar cele 30 de orașe reale, cu coordonatele lor — trimise direct în
+  // pagină, ca să calculăm cel mai apropiat FĂRĂ să mai depindem de un API
+  // extern de geocodare inversă (bigdatacloud), care ne dădea orice
+  // localitate reală, inclusiv cele pe care nu le acoperim
+  const roCityCoords = {};
+  SITEMAP_CITIES.forEach((c) => {
+    if (CITY_COORDS[c]) roCityCoords[c] = CITY_COORDS[c];
+  });
+
   return `
 <script nonce="${nonce}">
 (function(){
@@ -2318,6 +2366,9 @@ function buildGeoScript(nonce) {
     return;
   }
 
+  var KNOWN_CITY_COORDS = ${safeJson(roCityCoords)};
+  var MAX_USEFUL_DISTANCE_KM = 60; // dincolo de asta, o sugestie automată nu mai e utilă
+
   function showStatus(msg){
     if (status) { status.style.display = "block"; status.textContent = msg; }
   }
@@ -2329,6 +2380,22 @@ function buildGeoScript(nonce) {
   function slugify(name){
     return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().trim().replace(/\\s+/g, "-");
   }
+  function haversineKm(lat1, lon1, lat2, lon2){
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  function findNearestKnownCity(lat, lon){
+    var best = null, bestDist = Infinity;
+    for (var city in KNOWN_CITY_COORDS) {
+      var c = KNOWN_CITY_COORDS[city];
+      var d = haversineKm(lat, lon, c[0], c[1]);
+      if (d < bestDist) { bestDist = d; best = city; }
+    }
+    return best ? { city: best, distanceKm: Math.round(bestDist) } : null;
+  }
 
   btn.addEventListener("click", function(){
     btn.disabled = true;
@@ -2337,23 +2404,13 @@ function buildGeoScript(nonce) {
 
     navigator.geolocation.getCurrentPosition(
       function(pos){
-        var lat = pos.coords.latitude, lon = pos.coords.longitude;
-        showStatus("Îți identificăm orașul...");
-
-        fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + lon + "&localityLanguage=ro")
-          .then(function(r){ return r.json(); })
-          .then(function(data){
-            var city = (data && (data.city || data.locality)) || null;
-            if (!city && data && data.localityInfo && data.localityInfo.administrative) {
-              var admin = data.localityInfo.administrative;
-              for (var i = admin.length - 1; i >= 0; i--) {
-                if (admin[i] && admin[i].name) { city = admin[i].name; break; }
-              }
-            }
-            if (!city) { resetButton("Nu am putut identifica orașul. Alege manual mai jos."); return; }
-            window.location.href = "/" + slugify(city);
-          })
-          .catch(function(){ resetButton("A apărut o eroare la identificarea orașului. Alege manual mai jos."); });
+        var nearest = findNearestKnownCity(pos.coords.latitude, pos.coords.longitude);
+        if (!nearest) { resetButton("Nu am găsit un oraș acoperit aproape de tine. Alege manual mai jos."); return; }
+        if (nearest.distanceKm > MAX_USEFUL_DISTANCE_KM) {
+          resetButton("Cel mai apropiat oraș acoperit e " + nearest.city + " (~" + nearest.distanceKm + " km) — prea departe pentru o sugestie automată. Alege manual mai jos.");
+          return;
+        }
+        window.location.href = "/" + slugify(nearest.city);
       },
       function(){
         resetButton("Nu am acces la locația ta. Alege manual mai jos.");
@@ -3626,6 +3683,49 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   });
 }
 
+// Pagină onestă pentru orașe pe care NU le acoperim real — nu un 404 rece,
+// dar nici o pagină falsă cu branduri inventate. Status HTTP 404 real
+// (corect pentru motoarele de căutare), conținut prietenos (util pentru om).
+function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
+  const title = `${orasDisplay} — Încă nu avem date verificate`;
+  const description = `Nu avem încă informații verificate despre magazine în ${orasDisplay}. Vezi lista completă de orașe acoperite.`;
+  const canonical = `${baseUrl}/${slugifyCityName(orasDisplay)}`;
+  const allCitiesListHtml = SITEMAP_CITIES.map((c) => `<li><a href="/${slugifyCityName(c)}">${escapeHtml(c)}</a></li>`).join("");
+  const nearestHtml = nearest
+    ? `<div class="geo-country-highlight">📍 Cel mai apropiat oraș pe care-l acoperim e <strong>${escapeHtml(nearest.city)}</strong> (~${nearest.distanceKm} km) — <a href="/${slugifyCityName(nearest.city)}">vezi programul acolo →</a></div>`
+    : "";
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / ${escapeHtml(orasDisplay)}</p>
+  <div class="geo-country-highlight">ℹ️ Încă nu avem date verificate despre magazine în <strong>${escapeHtml(orasDisplay)}</strong>. Deocamdată acoperim orașele mari din România — nu afișăm informații despre localități pe care nu le-am verificat real, ca să nu-ți arătăm branduri care poate nici nu există acolo.</div>
+  ${nearestHtml}
+
+  <h2 class="section-title"><span class="bar"></span>Orașe acoperite</h2>
+  <ul class="mall-list">${allCitiesListHtml}</ul>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> extinde treptat lista de orașe acoperite — verificăm real prezența fiecărui brand înainte să-l adăugăm, nu presupunem.</p>
+  </footer>
+</main>`;
+
+  return pageShell({
+    title,
+    description,
+    canonical,
+    bodyHtml,
+    dataForClient: { type: "general", weekly: [], holidays: [] },
+    nonce,
+    langCode: "ro",
+  });
+}
+
 function renderHomePage(nonce, suggestedCity, baseUrl) {
   const title = `${SITE_NAME} — Este magazinul deschis acum?`;
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
@@ -4281,6 +4381,15 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
   const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
   const locatieDisplay = toDisplayName(req.params.locatie);
 
+  if (!isKnownRoCity(orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
+    const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
+    res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
   const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
 
   const nonce = generateNonce();
@@ -4323,6 +4432,15 @@ app.get("/:oras/:magazin", async (req, res, next) => {
   const found = findStore(req.params.magazin);
   const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
 
+  if (!isKnownRoCity(orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
+    const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
+    res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
   // dacă brand-ul nu e cunoscut, folosim tot programul standard național ca implicit,
   // dar păstrăm numele exact așa cum a fost tastat în URL
   const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
@@ -4346,6 +4464,14 @@ app.get("/:oras", (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
+
+  if (!isKnownRoCity(orasDisplay)) {
+    const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
+    const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
+    res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
   const html = renderCityPage({ orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
