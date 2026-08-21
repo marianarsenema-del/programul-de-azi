@@ -4188,6 +4188,7 @@ const SITEMAP_CITIES = [
   // adăugate ulterior — verificate real (Lidl/Kaufland/Penny/Carrefour
   // confirmate prin căutare, cu adrese exacte, nu presupuse)
   "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+  "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
 ];
 
 // România adăugată în registrul internațional (site-ul .eu) — reutilizează
@@ -4277,6 +4278,12 @@ const CITY_COORDS = {
   "Zalău": [47.1911, 23.0574],
   "Vaslui": [46.6383, 27.7292],
   "Sfântu Gheorghe": [45.8636, 25.7875],
+  "Miercurea Ciuc": [46.3594, 25.8017],
+  "Slatina": [44.4323, 24.3654],
+  "Alexandria": [43.9642, 25.3336],
+  "Giurgiu": [43.9037, 25.9699],
+  "Călărași": [44.2058, 27.3306],
+  "Slobozia": [44.5638, 27.3667],
   "Berlin": [52.52, 13.405],
   "München": [48.1351, 11.582],
   "Hamburg": [53.5511, 9.9937],
