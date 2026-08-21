@@ -12,6 +12,7 @@ const fs = require("fs");
 const path = require("path");
 const { Pool } = require("pg");
 const app = express();
+app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare push (POST cu JSON în body)
 
 /* ============================================================
    0.05) STATUS LIVE (Google Places) — conexiune OPȚIONALĂ la baza de
@@ -168,6 +169,16 @@ const ATTRACTION_TICKET_URLS = {
 };
 const GYG_PARTNER_ID = "LM6J21N";
 
+// Notificări push — chei VAPID, din variabile de mediu (NU hardcodate în
+// cod — cheia privată e un secret, la fel ca parola bazei de date). Dacă
+// lipsesc, funcționalitatea de abonare rămâne dezactivată automat, sigur,
+// fără să crape site-ul. Le generezi tu, o singură dată, local, cu
+// `npx web-push generate-vapid-keys` — vezi instrucțiunile din README.
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || "";
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || "";
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:contact@programul-de-azi.ro";
+const pushEnabled = Boolean(VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY && dbPool);
+
 // construiește link-ul de bilete pentru un obiectiv anume: dacă avem URL
 // real în ATTRACTION_TICKET_URLS, îi atașăm parametrii de tracking; altfel
 // cădem pe linkul general linkBileteTurism, exact comportamentul de dinainte
@@ -190,7 +201,7 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext) 
   const detailHref = isIntlContext ? `/${countryCode}/obiectiv/${slug}` : `/obiectiv/${slug}`;
   return `<li class="attraction-accordion-item"${cityAttr}>
     <div class="attraction-accordion-header-row">
-      <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(a.url)}">☆</button>
+      <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(detailHref)}">☆</button>
       <button type="button" class="attraction-accordion-header" aria-expanded="false">
         <span class="attraction-name">${escapeHtml(a.name)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
         <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1418,7 +1429,7 @@ function buildSearchIndex() {
   });
   Object.keys(ATTRACTIONS).forEach((code) => {
     ATTRACTIONS[code].forEach((a) => {
-      index.push({ name: a.name, type: "attraction", country: code, href: a.url });
+      index.push({ name: a.name, type: "attraction", country: code, href: `/${code}/obiectiv/${toDbSlug(a.name)}` });
     });
   });
   return index;
@@ -1435,7 +1446,7 @@ function buildSearchIndexRO() {
     index.push({ name: cfg.name, type: "store", country: "ro", href: `/${firstCity}/${cfg.slug || key}` });
   });
   ATTRACTIONS.ro.forEach((a) => {
-    index.push({ name: a.name, type: "attraction", country: "ro", href: a.url });
+    index.push({ name: a.name, type: "attraction", country: "ro", href: `/obiectiv/${toDbSlug(a.name)}` });
   });
   return index;
 }
@@ -1522,6 +1533,39 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => caches.match(event.request))
+  );
+});
+
+// notificări push — vine un mesaj de la server (vezi send-push-notification.js),
+// îl afișăm ca notificare reală, chiar dacă site-ul nu e deschis în niciun tab
+self.addEventListener("push", (event) => {
+  let data = { title: "Programul de Azi", body: "Ai o notificare nouă.", url: "/" };
+  try {
+    if (event.data) data = Object.assign(data, event.data.json());
+  } catch (e) {
+    // dacă payload-ul nu e JSON valid, rămânem pe valorile implicite de mai sus
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+      data: { url: data.url || "/" },
+    })
+  );
+});
+
+// click pe notificare — deschide site-ul (sau aduce în față tab-ul deja deschis)
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientsList) => {
+      for (const client of clientsList) {
+        if (client.url.includes(targetUrl) && "focus" in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
+    })
   );
 });
 `;
@@ -2129,6 +2173,7 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .city-search-input:focus{outline:none;border-color:var(--accent);}
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
 .install-btn{display:none;width:calc(100% - 36px);margin:14px 18px 0;background:#2ecc71;color:#ffffff;border:none;border-radius:100px;padding:14px 20px;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
+.push-sub-btn{width:calc(100% - 36px);margin:10px 18px 0;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:100px;padding:13px 20px;font-family:var(--font-display);font-weight:700;font-size:14px;cursor:pointer;}
 .ios-install-hint{display:none;margin:8px 18px 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5;}
 .geo-suggestion{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 18px 0;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-md);padding:12px 16px;font-size:14px;}
 .geo-suggestion strong{color:var(--accent);}
@@ -2350,6 +2395,71 @@ function buildCitySearchScript(nonce) {
 // browserul confirmă că aplicația poate fi instalată, și declanșează
 // promptul nativ la click. Pe iOS (fără beforeinstallprompt), arată în
 // schimb instrucțiunea text pentru Share -> Adaugă pe ecranul de pornire.
+// Abonare/dezabonare de notificări push — verifică la încărcare dacă
+// browserul are deja o subscripție activă (buton arată starea corectă din
+// prima), fără să presupunem nimic. Cheia publică VAPID e injectată direct
+// în pagină (e publică prin design, spre deosebire de cea privată).
+function buildPushSubscribeScript(nonce, vapidPublicKey, labelSubscribe, labelUnsubscribe) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("pushSubBtn");
+  if (!btn) return;
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) { btn.style.display = "none"; return; }
+
+  function urlBase64ToUint8Array(base64String){
+    var padding = "=".repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+    var rawData = atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for (var i = 0; i < rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  function setButtonState(subscribed){
+    btn.textContent = subscribed ? ${safeJson(labelUnsubscribe)} : ${safeJson(labelSubscribe)};
+    btn.dataset.subscribed = subscribed ? "1" : "0";
+  }
+
+  navigator.serviceWorker.ready.then(function(reg){
+    reg.pushManager.getSubscription().then(function(sub){ setButtonState(!!sub); });
+  });
+
+  btn.addEventListener("click", function(){
+    navigator.serviceWorker.ready.then(function(reg){
+      if (btn.dataset.subscribed === "1") {
+        reg.pushManager.getSubscription().then(function(sub){
+          if (!sub) { setButtonState(false); return; }
+          var endpoint = sub.endpoint;
+          sub.unsubscribe().then(function(){
+            fetch("/api/push-unsubscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ endpoint: endpoint }),
+            }).catch(function(){});
+            setButtonState(false);
+          });
+        });
+        return;
+      }
+      reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(${safeJson(vapidPublicKey)}),
+      }).then(function(sub){
+        return fetch("/api/push-subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sub),
+        }).then(function(){ setButtonState(true); });
+      }).catch(function(err){
+        console.error("Abonarea la notificări a eșuat:", err);
+      });
+    });
+  });
+})();
+</script>`;
+}
+
 function buildInstallScript(nonce) {
   return `
 <script nonce="${nonce}">
@@ -2517,7 +2627,6 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
       star.setAttribute("data-country", item.country || "");
       var a = document.createElement("a");
       a.href = item.href;
-      if (item.type === "attraction") { a.target = "_blank"; a.rel = "noopener"; }
       a.style.flex = "1 1 auto";
       a.textContent = (item.type === "store" ? "🛒 " : "🎫 ") + item.name;
       li.appendChild(star);
@@ -2570,7 +2679,6 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
         star.setAttribute("data-href", item.href);
         var a = document.createElement("a");
         a.href = item.href;
-        if (item.type === "attraction") { a.target = "_blank"; a.rel = "noopener"; }
         a.className = "search-result-item";
         a.textContent = (item.type === "store" ? "🛒 " : "🎫 ") + item.name;
         row.appendChild(star);
@@ -3330,6 +3438,10 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   </div>
 </header>
 <main class="wrap">
+  <button type="button" id="installBtn" class="install-btn">${escapeHtml(TRANSLATIONS.uk.installBtn)}</button>
+  <p id="iosInstallHint" class="ios-install-hint" style="display:none">On iPhone: tap the Share button and select "Add to Home Screen".</p>
+  ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">🔔 Subscribe to alerts (holidays, special hours)</button>` : ""}
+
   <h1 class="page-h1">Is the store open right now?</h1>
   <p class="intro-text">Pick a country below to filter everything — Stores and Attractions both — or search directly.</p>
   ${filterBarHtml}
@@ -3374,7 +3486,9 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
 ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}
-${buildAttractionAccordionScript(nonce)}`;
+${buildAttractionAccordionScript(nonce)}
+${buildInstallScript(nonce)}
+${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscribe to alerts (holidays, special hours)", "🔕 Unsubscribe from alerts") : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
 }
@@ -3551,6 +3665,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 <main class="wrap">
   <button type="button" id="installBtn" class="install-btn">📱 Instalează aplicația pentru acces rapid</button>
   <p id="iosInstallHint" class="ios-install-hint" style="display:none">Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.</p>
+  ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">🔔 Abonează-te la notificări (sărbători, program special)</button>` : ""}
 
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
   <p class="intro-text">Alege mai jos ce cauți — magazine, obiective turistice sau favoritele tale — sau caută direct.</p>
@@ -3608,7 +3723,8 @@ ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
 ${buildInstallScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
-${buildAttractionAccordionScript(nonce)}`;
+${buildAttractionAccordionScript(nonce)}
+${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -3893,6 +4009,55 @@ function generateSitemapXml(baseUrl, includeIntl) {
 
 // evită ca cereri de tip /favicon.ico, /robots.txt etc. să fie tratate ca nume de oraș
 app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+// Abonare la notificări push — primește obiectul PushSubscription generat
+// de browser (endpoint + chei de criptare) și îl salvează în bază.
+// "Silent" la orice eroare de business (deja abonat etc.) — răspunde 200
+// oricum, ca frontend-ul să nu tot repete cererea la nesfârșit.
+app.post("/api/push-subscribe", async (req, res) => {
+  if (!pushEnabled) {
+    res.status(503).json({ error: "push_not_configured" });
+    return;
+  }
+  const sub = req.body;
+  if (!sub || !sub.endpoint || !sub.keys || !sub.keys.p256dh || !sub.keys.auth) {
+    res.status(400).json({ error: "invalid_subscription" });
+    return;
+  }
+  try {
+    await dbPool.query(
+      `INSERT INTO push_subscriptions (endpoint, p256dh, auth)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (endpoint) DO NOTHING`,
+      [sub.endpoint, sub.keys.p256dh, sub.keys.auth]
+    );
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error("push-subscribe a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Dezabonare — trimisă de frontend când utilizatorul apasă din nou pe
+// buton, sau când browserul detectează singur o subscripție expirată
+app.post("/api/push-unsubscribe", async (req, res) => {
+  if (!pushEnabled) {
+    res.status(503).json({ error: "push_not_configured" });
+    return;
+  }
+  const { endpoint } = req.body || {};
+  if (!endpoint) {
+    res.status(400).json({ error: "missing_endpoint" });
+    return;
+  }
+  try {
+    await dbPool.query(`DELETE FROM push_subscriptions WHERE endpoint = $1`, [endpoint]);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("push-unsubscribe a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
 
 app.get("/manifest.json", (req, res) => {
   res.set("Content-Type", "application/manifest+json");
