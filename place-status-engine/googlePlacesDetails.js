@@ -22,12 +22,22 @@
  *                               reale de producție — corectată aici.)
  *  - name, business_status  -> context util (business_status detectează
  *                               și locații închise definitiv/temporar)
+ *  - formatted_address       -> adresa completă (categoria Basic — GRATIS,
+ *                               deja plătim această categorie pentru name)
+ *  - formatted_phone_number  -> telefon (categoria Contact — GRATIS, deja
+ *                               plătim această categorie pentru opening_hours)
  * -----------------------------------------------------------------------
  */
 
-const FIELDS = ["name", "business_status", "opening_hours", "current_opening_hours", "utc_offset"].join(
-  ","
-);
+const FIELDS = [
+  "name",
+  "business_status",
+  "opening_hours",
+  "current_opening_hours",
+  "utc_offset",
+  "formatted_address",
+  "formatted_phone_number",
+].join(",");
 
 async function fetchPlaceDetails(placeId, apiKey, language) {
   const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
