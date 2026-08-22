@@ -264,12 +264,14 @@ function bookingSearchLinkFor(place) {
 
 const BOOKING_PLANNING_LABELS_RO = {
   title: "🅿️ Planifică vizita",
+  ticket: "🎟️ Vrei să eviți coada? Cumpără bilet online",
   stays: "🏨 Vezi cazări în apropiere pe Booking.com",
   parking: "🅿️ Găsește hoteluri cu parcare inclusă în apropiere",
   parkingNearby: "🚗 Caută parcare în apropiere",
 };
 const BOOKING_PLANNING_LABELS_EN = {
   title: "🅿️ Plan your visit",
+  ticket: "🎟️ Want to skip the line? Buy tickets online",
   stays: "🏨 See nearby stays on Booking.com",
   parking: "🅿️ Find hotels with parking included nearby",
   parkingNearby: "🚗 Search for parking nearby",
@@ -281,15 +283,40 @@ const BOOKING_PLANNING_LABELS_EN = {
 // filtrează cu adevărat după parcare — Booking.com nu are un parametru
 // public, documentat, de URL pentru asta; face aceeași căutare ca primul
 // buton. Dacă găsești tu parametrul real de filtrare, spune-mi și îl adaug.
+// Pliabil, ca "Cum ajung acolo?" — buton + panou, 4 opțiuni colorate
+// distinct (biletul mutat aici, de sub widget-ul contextual — vezi cererea
+// utilizatorului), niciodată legate de status (le vrei indiferent dacă
+// locul e deschis chiar acum sau nu — planifici dinainte).
 function buildBookingPlanningButtonsHtml({ name, city, labels }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
+  const ticketHtml = linkBileteTurism
+    ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.ticket)}</a>`
+    : "";
   return `
-  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.title)}</h2>
-  <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="margin-bottom:8px;">${escapeHtml(t.stays)}</a>
-  <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="margin-bottom:8px;background:var(--surface);color:var(--text);border:1px solid var(--border);">${escapeHtml(t.parking)}</a>
-  <a href="${escapeHtml(bookingSearchLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">${escapeHtml(t.parkingNearby)}</a>`;
+  <div class="plan-visit-block">
+    <button type="button" class="plan-visit-btn" id="planVisitBtn">${escapeHtml(t.title)}</button>
+    <div class="plan-visit-panel" id="planVisitPanel" hidden>
+      ${ticketHtml}
+      <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
+      <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.parking)}</a>
+      <a href="${escapeHtml(bookingSearchLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>
+    </div>
+  </div>`;
 }
+
+function buildPlanVisitScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("planVisitBtn");
+  var panel = document.getElementById("planVisitPanel");
+  if (!btn || !panel) return;
+  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
+})();
+</script>`;
+}
+
 // fără API de restaurante propriu, cea mai onestă soluție e o căutare reală
 // Google Maps — arată restaurante CHIAR deschise acum, nu o listă fixă,
 // posibil învechită, pe care ar trebui s-o întreținem noi manual
@@ -475,11 +502,13 @@ function omioLinkFor() {
 
 const HOW_TO_GET_THERE_LABELS_RO = {
   btn: "🚗 Cum ajung acolo?",
+  waze: "🧭 Mergi acolo (Waze)",
   optionA: "🚕 Rezervă un Taxi/Transfer local",
   optionB: "🚆 Caută Tren/Autobuz în Europa",
 };
 const HOW_TO_GET_THERE_LABELS_EN = {
   btn: "🚗 How do I get there?",
+  waze: "🧭 Go there (Waze)",
   optionA: "🚕 Book a local Taxi/Transfer",
   optionB: "🚆 Search Train/Bus in Europe",
 };
@@ -487,12 +516,19 @@ const HOW_TO_GET_THERE_LABELS_EN = {
 // Buton + panou cu 2 opțiuni — sub programul zilei, pe pagina de magazin
 // SAU obiectiv. Nu redirectăm direct (ar alege unul pentru utilizator) —
 // arătăm ambele opțiuni, îl lăsăm pe el să aleagă.
-function buildHowToGetThereHtml(labels) {
+function buildHowToGetThereHtml(labels, place) {
   const t = labels || HOW_TO_GET_THERE_LABELS_RO;
+  // Waze e primul, dar ascuns implicit — apare doar când statusul (deschis/
+  // închis) e cunoscut cu adevărat (vezi sync() din buildContextualWidgetScript,
+  // care îl caută pe id, indiferent unde se află pe pagină)
+  const wazeHtml = place
+    ? `<a id="goNowBtn" class="go-now-btn how-to-get-there-option" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(t.waze)}</a>`
+    : "";
   return `
   <div class="how-to-get-there-block">
     <button type="button" class="how-to-get-there-btn" id="howToGetThereBtn">${escapeHtml(t.btn)}</button>
     <div class="how-to-get-there-panel" id="howToGetTherePanel" hidden>
+      ${wazeHtml}
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>
       <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>
     </div>
@@ -604,10 +640,9 @@ function buildContextualWidgetHtml({ type, name, orasDisplay, labels }) {
   const t = labels || CONTEXTUAL_WIDGET_LABELS_RO;
   const place = orasDisplay || name;
 
-  const openContentHtml =
-    type === "attraction" && linkBileteTurism
-      ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.ticketOpen)}</a>`
-      : "";
+  // biletul s-a mutat sub "Planifică vizita" (buildBookingPlanningButtonsHtml)
+  // — nu mai are rost aici, condiționat de status; îl vrei indiferent
+  const openContentHtml = "";
 
   const closedContentHtml =
     type === "attraction"
@@ -2744,6 +2779,16 @@ main{padding-top:8px;}
 
 /* "Cum ajung acolo?" (buildHowToGetThereHtml) */
 .how-to-get-there-block{margin:14px 18px 0;}
+
+/* Planifică vizita (buildBookingPlanningButtonsHtml) — pliabil, culori distincte per opțiune */
+.plan-visit-block{margin:14px 18px 0;}
+.plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
+.plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.plan-visit-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;}
+.plan-visit-ticket{background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;}
+.plan-visit-booking{background:linear-gradient(135deg,#003580,#0057B8);color:#fff;}
+.plan-visit-parking{background:#FEF3C7;color:#78350F;}
+.plan-visit-parking-alt{background:linear-gradient(135deg,#10B981,#047857);color:#fff;}
 .how-to-get-there-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .how-to-get-there-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
 .how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:linear-gradient(135deg,#0EA5E9,#0369A1);color:#fff;}
@@ -2829,7 +2874,7 @@ main{padding-top:8px;}
 .contextual-widget{margin:14px 18px 0;padding:16px;border-radius:var(--radius-md);transition:background .25s ease;}
 
 /* Buton "Mergi acum" (Waze) — verde-pulsant când e deschis, roșu static când e închis */
-.go-now-btn{display:block;text-align:center;width:calc(100% - 36px);margin:10px 18px 0;padding:14px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14.5px;text-decoration:none;color:#fff;}
+.go-now-btn{display:block;text-align:center;width:100%;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;color:#fff;}
 .brand-badge.status-open,.brand-badge.status-closed{position:relative;}
 .brand-badge.status-open{background:#22C55E!important;animation:goNowPulse 1.8s infinite;}
 .brand-badge.status-closed{background:#DC2626!important;}
@@ -3947,6 +3992,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
       ${contactInfoHtml(live)}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${specialBanner}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
@@ -3966,7 +4012,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
         <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
-      ${buildHowToGetThereHtml()}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
@@ -4152,7 +4198,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
   ${contactInfoHtml(live)}
-  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN, `${magazinDisplay} ${orasDisplay}`)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${specialBanner}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
@@ -4174,7 +4220,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
   </div>
-  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN, `${magazinDisplay} ${orasDisplay}`)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
@@ -4535,13 +4581,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
     statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>`;
   }
 
-  // fără date live, păstrăm butonul simplu, necondiționat de status (nu
-  // putem ști dacă e deschis, deci nu putem oferi alternative "de urgență"
-  // — dar tot oferim accesul la bilete, indiferent)
-  const ticketBtnHtml =
-    !widgetHtml && linkBileteTurism
-      ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
-      : "";
+  // biletul e acum mereu în "Planifică vizita" (buildBookingPlanningButtonsHtml)
+  // — nu mai are nevoie de un fallback separat aici
 
   const bodyHtml = `
 <header>
@@ -4559,10 +4600,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${statusHtml}
   ${widgetHtml}
 
-  ${ticketBtnHtml}
-
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro") })}
-  ${buildHowToGetThereHtml()}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
 
@@ -4574,7 +4613,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${adSlotHtml()}
 </main>
 ${widgetScriptHtml}
-${buildHowToGetThereScript(nonce)}`;
+${buildHowToGetThereScript(nonce)}
+${buildPlanVisitScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -4615,10 +4655,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     statusHtml = `<div class="geo-country-highlight">ℹ️ Live hours aren't available yet for this place. Check the <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">official site</a> for up-to-date info.</div>`;
   }
 
-  const ticketBtnHtml =
-    !widgetHtml && linkBileteTurism
-      ? `<a href="${escapeHtml(ticketUrlFor(attraction.name))}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(t.ticketBtn)}</a>`
-      : "";
+  // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
 
   const bodyHtml = `
 <header>
@@ -4634,17 +4671,16 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${statusHtml}
   ${widgetHtml}
 
-  ${ticketBtnHtml}
-
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN })}
-  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN, attraction.name)}
 
   <footer>
     <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
   </footer>
 </main>
 ${widgetScriptHtml}
-${buildHowToGetThereScript(nonce)}`;
+${buildHowToGetThereScript(nonce)}
+${buildPlanVisitScript(nonce)}`;
 
   return pageShell({
     title,
