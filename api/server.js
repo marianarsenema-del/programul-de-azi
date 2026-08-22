@@ -3882,7 +3882,7 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
 <!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts -->
-<script nonce="${nonce}">
+<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
   (function () {
       var script = document.createElement("script");
       script.async = 1;
