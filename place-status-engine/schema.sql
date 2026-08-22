@@ -53,3 +53,19 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
   last_sent_at  TIMESTAMPTZ             -- completat de send-push-notification.js, ca să
                                         -- știi ultima dată când ai trimis ceva cui
 );
+
+-- ============================================================
+-- 4) Raportări comunitare — "Raportează program greșit" (crowdsourcing)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS location_reports (
+  id            SERIAL PRIMARY KEY,
+  slug          VARCHAR(255) NOT NULL,   -- identifică pagina/locația raportată
+  nume_locatie  VARCHAR(255),            -- nume afișat, pentru citire ușoară în listă
+  oras          VARCHAR(255),
+  motiv         VARCHAR(50) NOT NULL,    -- "program_gresit" | "inchis_definitiv" | "altceva"
+  nota          TEXT,                    -- text liber, opțional
+  creat_la      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  rezolvat      BOOLEAN NOT NULL DEFAULT false  -- marchezi manual, după ce verifici și repari
+);
+
+CREATE INDEX IF NOT EXISTS idx_location_reports_nerezolvate ON location_reports (rezolvat) WHERE rezolvat = false;
