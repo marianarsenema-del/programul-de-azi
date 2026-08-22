@@ -889,7 +889,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1389,6 +1389,39 @@ const TRANSLATIONS = {
       closesToday: "Ma {time}-kor zár",
     },
   },
+  hr: {
+    dayNames: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"],
+    home: "Početna",
+    todayLabel: "Danas",
+    calculating: "Izračun radnog vremena...",
+    weeklyTitle: "Tjedno radno vrijeme",
+    holidaysTitle: "Radno vrijeme praznicima",
+    noHolidays: "Trenutno nema posebnog radnog vremena",
+    closedWord: "Zatvoreno",
+    installBtn: "📱 Instalirajte aplikaciju za brzi pristup",
+    iosHint: "Na iPhoneu: dodirnite gumb Podijeli i odaberite \"Dodaj na početni zaslon\".",
+    geoSuggestionPrefix: "📍 Čini se da je vaš grad",
+    geoSuggestionBtn: "Prikaži trgovine ovdje? →",
+    geoSuggestionNote: "Nije vaš grad? Odaberite ispod.",
+    amazonBtn: "🛍️ Pogledajte današnje ponude na Amazonu",
+    ticketBtn: "🎟️ Kupite ulaznice online i izbjegnite red",
+    tabStores: "🛒 Trgovine",
+    tabAttractions: "🏛️ Znamenitosti",
+    attractionsComingSoon: "Naš vodič kroz znamenitosti stiže uskoro — svratite ponovno.",
+    titleTemplate: (brand, city) => `${brand} ${city} Radno Vrijeme Danas – Otvoreno ili Zatvoreno`,
+    descriptionTemplate: (brand, city) => `Provjerite je li ${brand} u gradu ${city} sada otvoren. Tjedno radno vrijeme i radno vrijeme praznicima, ažurirano u stvarnom vremenu.`,
+    disclaimer: (name) => `Prikazano radno vrijeme za ${name} je okvirno, temeljeno na standardnom radnom vremenu lanca. Pojedine trgovine mogu se razlikovati — provjerite radno vrijeme na ulazu.`,
+    footer: (name) => `prikazuje vam u stvarnom vremenu je li ${name} sada otvoren, kao i potpuno tjedno radno vrijeme i radno vrijeme praznicima.`,
+    labels: {
+      openNow: "SADA OTVORENO",
+      closedNow: "SADA ZATVORENO",
+      closedHoliday: "Danas zatvoreno — {label}",
+      closedAllDay: "Zatvoreno cijeli dan",
+      opensToday: "Danas se otvara u {time}",
+      closedComeBack: "Zatvoreno u {time} — dođite sutra",
+      closesToday: "Danas se zatvara u {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1682,6 +1715,47 @@ const HU_STORE_CONFIG = {
   tesco: { name: "Tesco", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
   penny: { name: "Penny", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
   aldi: { name: "Aldi", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+};
+
+// Croația — 14 sărbători legale 2026 (Zakon o blagdanima), verificate pe
+// Wikipedia + surse de presă. Lege strictă: majoritatea magazinelor mari
+// TREBUIE închise complet — confirmat explicit pentru Velika Gospa (15
+// august): doar magazinele din gări, aeroporturi, benzinării rămân deschise.
+const HR_HOLIDAYS = [
+  { date: "01-01", label: "Nova godina (1. siječnja)", hours: null },
+  { date: "01-06", label: "Sveta tri kralja (6. siječnja)", hours: null },
+  { date: "04-05", label: "Uskrs (5. travnja 2026.)", hours: null },
+  { date: "04-06", label: "Uskrsni ponedjeljak (6. travnja 2026.)", hours: null },
+  { date: "05-01", label: "Praznik rada (1. svibnja)", hours: null },
+  { date: "05-30", label: "Dan državnosti (30. svibnja)", hours: null },
+  { date: "06-04", label: "Tijelovo (4. lipnja 2026.)", hours: null },
+  { date: "06-22", label: "Dan antifašističke borbe (22. lipnja)", hours: null },
+  { date: "08-05", label: "Dan pobjede i domovinske zahvalnosti (5. kolovoza)", hours: null },
+  { date: "08-15", label: "Velika Gospa (15. kolovoza)", hours: null },
+  { date: "11-01", label: "Dan svih svetih (1. studenoga)", hours: null },
+  { date: "11-18", label: "Dan sjećanja - Vukovar i Škabrnja (18. studenoga)", hours: null },
+  { date: "12-25", label: "Božić (25. prosinca)", hours: null },
+  { date: "12-26", label: "Sveti Stjepan (26. prosinca)", hours: null },
+];
+function hrSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "13:00" }, // Nedjelja — foarte redus, lege "16 Duminici pe an" limitează operarea normală
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Subota
+  ];
+}
+// Konzum, Lidl, Plodine, Spar, Kaufland — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual, cu adrese reale
+const HR_STORE_CONFIG = {
+  konzum: { name: "Konzum", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  plodine: { name: "Plodine", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  spar: { name: "Spar", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -2110,6 +2184,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.hu,
     cities: ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza", "Kecskemét"],
   },
+  hr: {
+    config: HR_STORE_CONFIG,
+    t: TRANSLATIONS.hr,
+    cities: ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar", "Pula", "Dubrovnik", "Šibenik"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2521,6 +2600,21 @@ const ATTRACTIONS = {
     { name: "Peștera Aggtelek", url: "https://www.google.com/maps/search/?api=1&query=Aggtelek+Cave+Hungary" },
     { name: "Marea Biserică Reformată Debrecen", url: "https://www.google.com/maps/search/?api=1&query=Great+Reformed+Church+Debrecen+Hungary" },
   ],
+  hr: [
+    { name: "Zidurile Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Walls+of+Dubrovnik+Croatia" },
+    { name: "Palatul lui Diocletian Split", url: "https://www.google.com/maps/search/?api=1&query=Diocletian's+Palace+Split+Croatia" },
+    { name: "Parcul Național Plitvice", url: "https://www.google.com/maps/search/?api=1&query=Plitvice+Lakes+National+Park+Croatia" },
+    { name: "Catedrala Sfântul Iacov Šibenik", url: "https://www.google.com/maps/search/?api=1&query=Cathedral+of+St+James+Šibenik+Croatia" },
+    { name: "Arena Pula", url: "https://www.google.com/maps/search/?api=1&query=Pula+Arena+Croatia" },
+    { name: "Insulele Kornati", url: "https://www.google.com/maps/search/?api=1&query=Kornati+Islands+Croatia" },
+    { name: "Catedrala din Zagreb", url: "https://www.google.com/maps/search/?api=1&query=Zagreb+Cathedral+Croatia" },
+    { name: "Piața Ban Jelačić", url: "https://www.google.com/maps/search/?api=1&query=Ban+Jelačić+Square+Zagreb+Croatia" },
+    { name: "Turnul Lotrščak", url: "https://www.google.com/maps/search/?api=1&query=Lotrščak+Tower+Zagreb+Croatia" },
+    { name: "Grota Albastră Biševo", url: "https://www.google.com/maps/search/?api=1&query=Blue+Cave+Biševo+Croatia" },
+    { name: "Insula Hvar", url: "https://www.google.com/maps/search/?api=1&query=Hvar+Island+Croatia" },
+    { name: "Parcul Național Krka", url: "https://www.google.com/maps/search/?api=1&query=Krka+National+Park+Croatia" },
+    { name: "Cetatea Klis", url: "https://www.google.com/maps/search/?api=1&query=Klis+Fortress+Croatia" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -2556,11 +2650,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2568,7 +2662,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -4383,6 +4477,7 @@ const LANG_META = {
   fi: { lang: "fi", locale: "fi_FI" },
   gr: { lang: "el", locale: "el_GR" },
   hu: { lang: "hu", locale: "hu_HU" },
+  hr: { lang: "hr", locale: "hr_HR" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -5013,7 +5108,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -5800,6 +5895,14 @@ const CITY_COORDS = {
   "Győr": [47.6875, 17.6504],
   "Nyíregyháza": [47.9495, 21.7244],
   "Kecskemét": [46.9062, 19.6913],
+  "Zagreb": [45.8150, 15.9819],
+  "Split": [43.5081, 16.4402],
+  "Rijeka": [45.3271, 14.4422],
+  "Osijek": [45.5550, 18.6955],
+  "Zadar": [44.1194, 15.2314],
+  "Pula": [44.8666, 13.8496],
+  "Dubrovnik": [42.6507, 18.0944],
+  "Šibenik": [43.7350, 15.8952],
 };
 
 function slugifyCityName(name) {
@@ -6204,7 +6307,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -6215,7 +6318,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -6234,7 +6337,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/obiectiv/:sl
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -6267,7 +6370,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/:oras/:magaz
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
