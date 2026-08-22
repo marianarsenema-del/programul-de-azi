@@ -891,7 +891,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1193,6 +1193,39 @@ const TRANSLATIONS = {
       closesToday: "Lukker i dag kl. {time}",
     },
   },
+  se: {
+    dayNames: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
+    home: "Hem",
+    todayLabel: "Idag",
+    calculating: "Beräknar öppettider...",
+    weeklyTitle: "Veckans öppettider",
+    holidaysTitle: "Öppettider på helgdagar",
+    noHolidays: "Inga särskilda öppettider just nu",
+    closedWord: "Stängt",
+    installBtn: "📱 Installera appen för snabb åtkomst",
+    iosHint: "På iPhone: tryck på Dela-knappen och välj \"Lägg till på hemskärmen\".",
+    geoSuggestionPrefix: "📍 Din stad verkar vara",
+    geoSuggestionBtn: "Vill du se butiker här? →",
+    geoSuggestionNote: "Inte din stad? Välj nedan.",
+    amazonBtn: "🛍️ Se dagens erbjudanden på Amazon",
+    ticketBtn: "🎟️ Boka biljetter online och undvik kön",
+    tabStores: "🛒 Butiker",
+    tabAttractions: "🏛️ Sevärdheter",
+    attractionsComingSoon: "Vår guide till sevärdheter är på väg — kom tillbaka snart.",
+    titleTemplate: (brand, city) => `${brand} ${city} Öppettider Idag – Öppet eller Stängt Nu`,
+    descriptionTemplate: (brand, city) => `Kolla nu om ${brand} i ${city} har öppet. Veckans öppettider och öppettider på helgdagar, uppdaterat i realtid.`,
+    disclaimer: (name) => `De visade öppettiderna för ${name} är vägledande, baserade på kedjans standardtider. Enskilda butiker kan variera — kontrollera öppettiderna vid entrén.`,
+    footer: (name) => `visar dig i realtid om ${name} har öppet just nu, samt fullständiga veckoöppettider och öppettider på helgdagar.`,
+    labels: {
+      openNow: "ÖPPET NU",
+      closedNow: "STÄNGT NU",
+      closedHoliday: "Stängt idag — {label}",
+      closedAllDay: "Stängt hela dagen",
+      opensToday: "Öppnar idag kl. {time}",
+      closedComeBack: "Stängde kl. {time} — kom tillbaka imorgon",
+      closesToday: "Stänger idag kl. {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1251,7 +1284,44 @@ const DE_STORE_CONFIG = {
   },
 };
 
-// Marea Britanie: legea limitează magazinele mari la 6 ore de vânzare duminica
+// Suedia — 12 sărbători legale 2026, verificate (publicholidays.info). Program
+// de supermarket real, cf. cercetării: L-S 07:00-22:00, Duminică program redus
+// 09:00-21:00 (majoritatea supermarketurilor nordice rămân deschise duminica,
+// spre deosebire de Germania, dar cu ore mai scurte).
+const SE_HOLIDAYS = [
+  { date: "01-01", label: "Nyårsdagen (1 januari)", hours: null },
+  { date: "01-06", label: "Trettondedag jul (6 januari)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-03", label: "Långfredagen (3 april 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-05", label: "Påskdagen (5 april 2026)", hours: null },
+  { date: "04-06", label: "Annandag påsk (6 april 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-01", label: "Första maj (1 maj)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-14", label: "Kristi himmelsfärdsdag (14 maj 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "06-06", label: "Sveriges nationaldag (6 juni)", hours: { open: "10:00", close: "18:00" } },
+  { date: "06-19", label: "Midsommardagen (19 juni 2026)", hours: null },
+  { date: "10-31", label: "Alla helgons dag (31 oktober 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "12-25", label: "Juldagen (25 december)", hours: null },
+  { date: "12-26", label: "Annandag jul (26 december)", hours: { open: "10:00", close: "18:00" } },
+];
+function seSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Söndag
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" }, // Lördag
+  ];
+}
+// ICA, Coop, Willys — cele mai răspândite lanțuri, prezente aproape peste
+// tot; Lidl — confirmat, cu adrese reale, în toate cele 10 orașe alese
+const SE_STORE_CONFIG = {
+  ica: { name: "ICA", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  coop: { name: "Coop", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  willys: { name: "Willys", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+};
+
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
 // nu închis complet. Program unic pentru tot grupul (tesco, sainsburys, asda,
 // morrisons, boots): Luni-Sâmbătă 07:00-22:00, Duminică 10:00-16:00.
@@ -1648,6 +1718,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.da,
     cities: ["København", "Aarhus", "Odense", "Aalborg", "Esbjerg", "Randers", "Kolding", "Horsens", "Vejle", "Roskilde"],
   },
+  se: {
+    config: SE_STORE_CONFIG,
+    t: TRANSLATIONS.se,
+    cities: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro", "Helsingborg", "Linköping", "Norrköping", "Karlstad"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2000,11 +2075,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2012,7 +2087,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -2481,6 +2556,22 @@ function baseUrlFor(req) {
    ============================================================ */
 
 // "cluj-napoca" -> "Cluj-Napoca" ; "kaufland" -> "Kaufland" ; "mega image" -> "Mega Image"
+// Bug vechi, confirmat (nu doar la Suedia — și München era afectat):
+// toDisplayName() doar capitalizează slug-ul, nu recuperează diacriticele
+// pierdute la slugificare (ö, ä, å, ü etc.) — "goteborg" -> "Goteborg", nu
+// "Göteborg". Repar prin căutare: dacă slug-ul din URL se potrivește cu un
+// oraș CUNOSCUT din lista țării (care are diacriticele corecte), folosim
+// numele acela exact — altfel, cădem pe capitalizarea simplă (pentru
+// sub-căi hiper-locale, cartiere etc., care n-au un nume "corect" oricum).
+function resolveIntlCityDisplay(countryCode, orasSlug) {
+  const country = COUNTRIES[countryCode];
+  if (country) {
+    const match = country.cities.find((c) => slugifyCityName(c) === orasSlug);
+    if (match) return match;
+  }
+  return toDisplayName(orasSlug);
+}
+
 function toDisplayName(rawParam) {
   let decoded;
   try {
@@ -2559,6 +2650,16 @@ function isKnownRoCity(orasDisplay) {
   // prin testare, nu doar teoretic — afecta Baia Mare, Târgu Mureș etc.)
   const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
   return SITEMAP_CITIES.some((c) => strip(c) === strip(orasDisplay));
+}
+
+// Același bug ca la INTL (vezi resolveIntlCityDisplay) — confirmat și aici,
+// prin testare: "Brăila" -> slug -> "Braila" (fără diacritic), "Sfântu
+// Gheorghe" -> "Sfantu-Gheorghe" (cratimă în loc de spațiu). Recuperăm
+// numele corect din SITEMAP_CITIES, care are diacriticele și spațiile reale.
+function resolveRoCityDisplay(orasDisplay) {
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  const match = SITEMAP_CITIES.find((c) => strip(c) === strip(orasDisplay));
+  return match || orasDisplay;
 }
 
 // distanța reală (km) dintre două puncte GPS — formula Haversine, standard
@@ -3795,6 +3896,7 @@ const LANG_META = {
   pl: { lang: "pl", locale: "pl_PL" },
   nl: { lang: "nl", locale: "nl_NL" },
   da: { lang: "da", locale: "da_DK" },
+  se: { lang: "sv", locale: "sv_SE" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -5160,6 +5262,16 @@ const CITY_COORDS = {
   "Horsens": [55.8607, 9.8503],
   "Vejle": [55.7091, 9.5357],
   "Roskilde": [55.6415, 12.0803],
+  "Stockholm": [59.3293, 18.0686],
+  "Göteborg": [57.7089, 11.9746],
+  "Malmö": [55.6050, 13.0038],
+  "Uppsala": [59.8586, 17.6389],
+  "Västerås": [59.6099, 16.5448],
+  "Örebro": [59.2753, 15.2134],
+  "Helsingborg": [56.0465, 12.6945],
+  "Linköping": [58.4108, 15.6214],
+  "Norrköping": [58.5877, 16.1924],
+  "Karlstad": [59.3793, 13.5036],
 };
 
 function slugifyCityName(name) {
@@ -5564,7 +5676,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -5575,7 +5687,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -5594,7 +5706,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/obiectiv/:slug", async (req, r
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -5604,7 +5716,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", async (req, r
   const countryCode = req.params.tara;
   const country = COUNTRIES[countryCode];
   const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = toDisplayName(req.params.oras);
+  const orasDisplay = resolveIntlCityDisplay(countryCode, orasSlug);
   const magazinSlug = req.params.magazin.toLowerCase();
   const found = findStoreInConfig(req.params.magazin, country.config);
 
@@ -5627,7 +5739,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras/:magazin", async (req, r
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -5636,7 +5748,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro)/:oras", (req, res, next) => {
 
   const countryCode = req.params.tara;
   const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = toDisplayName(req.params.oras);
+  const orasDisplay = resolveIntlCityDisplay(countryCode, orasSlug);
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
@@ -5661,7 +5773,7 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
   }
 
   const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = toDisplayName(req.params.oras);
+  const orasDisplay = resolveRoCityDisplay(toDisplayName(req.params.oras));
   const magazinSlug = req.params.magazin.toLowerCase();
   const found = findStore(req.params.magazin);
   const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
@@ -5721,7 +5833,7 @@ app.get("/:oras/:magazin", async (req, res, next) => {
   }
 
   const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = toDisplayName(req.params.oras);
+  const orasDisplay = resolveRoCityDisplay(toDisplayName(req.params.oras));
   const magazinSlug = req.params.magazin.toLowerCase();
   const found = findStore(req.params.magazin);
   const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
@@ -5762,7 +5874,7 @@ app.get("/:oras", (req, res, next) => {
   }
 
   const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = toDisplayName(req.params.oras);
+  const orasDisplay = resolveRoCityDisplay(toDisplayName(req.params.oras));
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
