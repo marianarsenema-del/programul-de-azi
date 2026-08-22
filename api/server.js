@@ -276,6 +276,20 @@ function wazeLinkFor(place) {
 // buton "Mergi acum" — verde-pulsant când locația e deschisă, roșu când e
 // închisă; sincronizat cu #statusCard prin buildContextualWidgetScript
 // (extins mai jos, ca să nu mai avem un al doilea MutationObserver separat)
+// Adresă + telefon — afișate DOAR când Google chiar le are completate (nu
+// inventăm, nu punem "N/A"). Categorii deja plătite (Basic pentru adresă,
+// Contact pentru telefon) — cost zero în plus, doar cerem câmpurile.
+function contactInfoHtml(live) {
+  if (!live.formattedAddress && !live.formattedPhoneNumber) return "";
+  const addressHtml = live.formattedAddress
+    ? `<div class="contact-info-row">📍 ${escapeHtml(live.formattedAddress)}</div>`
+    : "";
+  const phoneHtml = live.formattedPhoneNumber
+    ? `<div class="contact-info-row">📞 <a href="tel:${escapeHtml(live.formattedPhoneNumber.replace(/\s+/g, ""))}">${escapeHtml(live.formattedPhoneNumber)}</a></div>`
+    : "";
+  return `<div class="contact-info-block">${addressHtml}${phoneHtml}</div>`;
+}
+
 function buildGoNowButtonHtml(place, label) {
   return `<a id="goNowBtn" class="go-now-btn" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(label || "🚗 Mergi acum (Waze)")}</a>`;
 }
@@ -2432,9 +2446,33 @@ const CSS_STYLES = `
     --glass-bg:rgba(255,255,255,.6); --glass-border:rgba(0,0,0,.06);
   }
 }
+/* Comutator manual — suprascrie alegerea automată de mai sus, DOAR când
+   utilizatorul a apăsat explicit comutatorul (altfel rămâne "auto", legat
+   de telefon, ca înainte) */
+html[data-theme="dark"]{
+  --bg:#0F1115; --surface:#171A21; --surface-2:#1E2330; --border:#2A303D;
+  --text:#F3F5F8; --muted:#8E96AA; --accent-dim:#4A2A16;
+  --header-bg:rgba(15,17,21,.88);
+  --glass-bg:rgba(23,26,33,.6); --glass-border:rgba(255,255,255,.08);
+}
+html[data-theme="light"]{
+  --bg:#FAF8F4; --surface:#FFFFFF; --surface-2:#F3F0EA; --border:#E8E3DA;
+  --text:#1C1E24; --muted:#6B7280; --accent-dim:#FFE4CC;
+  --header-bg:rgba(250,248,244,.88);
+  --glass-bg:rgba(255,255,255,.6); --glass-border:rgba(0,0,0,.06);
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,26,.14),transparent 60%);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:48px;}
+body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,26,.14),transparent 60%);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:calc(48px + 64px + env(safe-area-inset-bottom));}
+
+/* Bottom Navigation Bar — fixă, vizibilă pe mobil pe toate paginile (vezi pageShell) */
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:var(--surface);border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+
+/* Comutator manual de temă — buton plutitor, sus-dreapta */
+.theme-toggle-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));right:14px;z-index:11;width:38px;height:38px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
+.bottom-nav-item{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:11px;font-weight:600;}
+.bottom-nav-icon{font-size:20px;line-height:1;}
+@media (min-width: 900px){.bottom-nav{display:none;}body{padding-bottom:48px;}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
@@ -2469,6 +2507,12 @@ main{padding-top:8px;}
 .store-name{font-family:var(--font-display);font-weight:700;font-size:15px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
 .status-text{font-family:var(--font-display);font-weight:800;font-size:clamp(28px,8vw,36px);color:#fff;letter-spacing:-.01em;margin-bottom:8px;}
 .status-sub{font-family:var(--font-body);font-weight:500;font-size:14.5px;color:rgba(255,255,255,.88);}
+
+/* Adresă + telefon (contactInfoHtml) — sub cardul de status */
+.contact-info-block{margin:10px 18px 0;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
+.contact-info-row{font-size:14px;color:var(--text);}
+.contact-info-row + .contact-info-row{margin-top:6px;}
+.contact-info-row a{color:var(--accent);text-decoration:none;font-weight:600;}
 .status-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:rgba(255,255,255,.16);border-radius:100px;padding:5px 12px;font-family:var(--font-mono);font-size:12.5px;color:#fff;font-weight:600;}
 .status-badge .dotw{width:6px;height:6px;border-radius:50%;background:#fff;}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.5);}70%{box-shadow:0 0 0 7px rgba(255,255,255,0);}}
@@ -2952,15 +2996,24 @@ function buildTabsScript(nonce) {
 (function(){
   var tabs = document.querySelectorAll(".sub-nav-tab");
   if (!tabs.length) return;
-  tabs.forEach(function(tab){
-    tab.addEventListener("click", function(){
-      var target = tab.getAttribute("data-tab");
-      tabs.forEach(function(t){ t.classList.toggle("active", t === tab); });
-      document.querySelectorAll(".sub-nav-panel").forEach(function(panel){
-        panel.classList.toggle("active", panel.getAttribute("data-panel") === target);
-      });
+  function activate(target){
+    tabs.forEach(function(t){ t.classList.toggle("active", t.getAttribute("data-tab") === target); });
+    document.querySelectorAll(".sub-nav-panel").forEach(function(panel){
+      panel.classList.toggle("active", panel.getAttribute("data-panel") === target);
     });
+  }
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){ activate(tab.getAttribute("data-tab")); });
   });
+
+  // vine cineva din bara de jos (#favorites, #search) — activăm tab-ul potrivit
+  // și, pentru căutare, mutăm focusul direct în căsuță
+  var hash = (window.location.hash || "").replace("#", "");
+  if (hash === "favorites") { activate("favorites"); }
+  if (hash === "search") {
+    var input = document.getElementById("siteSearchInput");
+    if (input) { input.focus(); input.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  }
 })();
 </script>`;
 }
@@ -3315,6 +3368,78 @@ const LANG_META = {
   da: { lang: "da", locale: "da_DK" },
 };
 
+// Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
+// pageShell). "Hartă" e inteligent: dacă pagina curentă are deja o hartă
+// (paginile de oraș), derulează la ea; altfel te duce acasă, la alegerea
+// orașului — nu promite o hartă globală pe care n-o avem construită.
+// Comutator manual de temă — buton mic, plutitor, adăugat o singură dată,
+// în pageShell (nu în fiecare header individual — mai sigur, mai puține
+// locuri de greșit). "Auto" rămâne implicit (urmează telefonul) până la
+// primul click; după aceea, alegerea se ține minte (localStorage).
+function buildThemeToggleHtml() {
+  return `<button type="button" id="themeToggle" class="theme-toggle-btn" aria-label="Comută tema deschis/întunecat"><span id="themeToggleIcon">🌙</span></button>`;
+}
+
+function buildThemeToggleScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("themeToggle");
+  var icon = document.getElementById("themeToggleIcon");
+  if (!btn || !icon) return;
+
+  function effectiveTheme(){
+    var explicit = document.documentElement.getAttribute("data-theme");
+    if (explicit) return explicit;
+    return (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+  }
+  function syncIcon(){
+    icon.textContent = effectiveTheme() === "dark" ? "☀️" : "🌙";
+  }
+
+  syncIcon();
+  btn.addEventListener("click", function(){
+    var next = effectiveTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch(e){}
+    syncIcon();
+  });
+})();
+</script>`;
+}
+
+function buildBottomNavHtml(langCode) {
+  const isRo = langCode === "ro";
+  const labels = isRo
+    ? { home: "Acasă", search: "Căutare", favorites: "Favorite", map: "Hartă" }
+    : { home: "Home", search: "Search", favorites: "Favorites", map: "Map" };
+  return `
+<nav class="bottom-nav">
+  <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
+  <a href="/#search" class="bottom-nav-item"><span class="bottom-nav-icon">🔍</span><span>${escapeHtml(labels.search)}</span></a>
+  <a href="/#favorites" class="bottom-nav-item"><span class="bottom-nav-icon">⭐</span><span>${escapeHtml(labels.favorites)}</span></a>
+  <a href="/#harta" class="bottom-nav-item" id="bottomNavMap"><span class="bottom-nav-icon">🗺️</span><span>${escapeHtml(labels.map)}</span></a>
+</nav>`;
+}
+
+function buildBottomNavScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var mapLink = document.getElementById("bottomNavMap");
+  if (!mapLink) return;
+  mapLink.addEventListener("click", function(e){
+    var existingMap = document.getElementById("cityMap");
+    if (existingMap) {
+      e.preventDefault();
+      existingMap.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    // altfel, lasă link-ul să navigheze normal spre acasă
+  });
+})();
+</script>`;
+}
+
 function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
   const meta = LANG_META[langCode] || LANG_META.ro;
   const alternatesHtml = (alternateLinks || [])
@@ -3327,6 +3452,14 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
 <meta charset="UTF-8">
+<script nonce="${nonce}">
+(function(){
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+  } catch(e){}
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
@@ -3354,7 +3487,11 @@ ${adsensePublisherId ? `<script async src="https://pagead2.googlesyndication.com
 </head>
 <body>
 ${bodyHtml}
+${buildThemeToggleHtml()}
+${buildBottomNavHtml(langCode)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
+${buildBottomNavScript(nonce)}
+${buildThemeToggleScript(nonce)}
 <script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function(){
@@ -3459,6 +3596,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
+      ${contactInfoHtml(live)}
       ${specialBanner}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
@@ -3641,6 +3779,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-sub">Live · Google</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
+  ${contactInfoHtml(live)}
   ${specialBanner}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
@@ -3999,6 +4138,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
       <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
       <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
     </div>
+    ${contactInfoHtml(live)}
     ${specialBanner}
     <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
     ${weeklyHtml}`;
@@ -4079,6 +4219,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
       <div class="status-sub">Live · Google</div>
       <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     </div>
+    ${contactInfoHtml(live)}
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
     ${weeklyHtml}`;
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: CONTEXTUAL_WIDGET_LABELS_EN });
