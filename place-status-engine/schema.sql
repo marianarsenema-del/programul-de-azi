@@ -64,8 +64,13 @@ CREATE TABLE IF NOT EXISTS location_reports (
   oras          VARCHAR(255),
   motiv         VARCHAR(50) NOT NULL,    -- "program_gresit" | "inchis_definitiv" | "altceva"
   nota          TEXT,                    -- text liber, opțional
+  ip_hash       VARCHAR(64),             -- hash SHA-256 al IP-ului (NU IP-ul real) — doar pentru limitarea rapoartelor repetate, de la aceeași sursă, în 24h
   creat_la      TIMESTAMPTZ NOT NULL DEFAULT now(),
   rezolvat      BOOLEAN NOT NULL DEFAULT false  -- marchezi manual, după ce verifici și repari
 );
 
+-- pentru instalări existente, unde tabelul exista deja fără coloana asta
+ALTER TABLE location_reports ADD COLUMN IF NOT EXISTS ip_hash VARCHAR(64);
+
 CREATE INDEX IF NOT EXISTS idx_location_reports_nerezolvate ON location_reports (rezolvat) WHERE rezolvat = false;
+CREATE INDEX IF NOT EXISTS idx_location_reports_dedup ON location_reports (slug, ip_hash, creat_la);
