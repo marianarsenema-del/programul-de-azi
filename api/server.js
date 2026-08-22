@@ -14,6 +14,18 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare push (POST cu JSON în body)
 
+// Antete de securitate HTTP, aplicate O SINGURĂ DATĂ, pe toate răspunsurile —
+// mai sigur decât să le repeți în fiecare rută (unde ar fi ușor să uiți una).
+// CSP rămâne separat, per-rută, pentru că are nevoie de nonce unic per pagină.
+app.use((req, res, next) => {
+  res.set("X-Content-Type-Options", "nosniff"); // browserul nu "ghicește" tipul unui fișier, doar pe baza extensiei
+  res.set("X-Frame-Options", "DENY"); // site-ul nu poate fi pus într-un <iframe> pe alt site (clickjacking)
+  res.set("Referrer-Policy", "strict-origin-when-cross-origin"); // nu trimitem URL-ul complet altor site-uri, la click pe linkuri externe
+  res.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains"); // forțează HTTPS, chiar dacă cineva încearcă explicit http://
+  res.set("Permissions-Policy", "geolocation=(self), camera=(), microphone=()"); // geolocația rămâne, restul dezactivat explicit
+  next();
+});
+
 /* ============================================================
    0.05) STATUS LIVE (Google Places) — conexiune OPȚIONALĂ la baza de
    date. Dacă lipsește variabila de mediu (POSTGRES_URL/DATABASE_URL) sau
@@ -364,10 +376,10 @@ const REPORT_ISSUE_LABELS_RO = {
   yes: "Da",
   no: "Nu",
   q2: "Magazinul e închis definitiv, nu mai există la această locație?",
-  thanksOpen: "✅ Mulțumim pentru confirmare!",
-  thanksReport: "✅ Mulțumim! Am primit raportarea.",
+  thanksOpen: "✅ Mulțumim pentru confirmare! Ne ajuți să ținem informația corectă, pentru toată lumea.",
+  thanksReport: "✅ Mulțumim că ești alături de noi pentru cea mai bună experiență a utilizatorilor!",
   error: "Nu am putut trimite raportarea. Încearcă din nou.",
-  alreadyReported: "✅ Ai raportat deja acest loc — mulțumim!",
+  alreadyReported: "Mulțumim, am primit deja mesajul tău — nu poți trimite o altă raportare pentru această locație.",
 };
 const REPORT_ISSUE_LABELS_EN = {
   btn: "🚩 Is the schedule right, or is this place gone? Let us know — help other visitors!",
@@ -375,10 +387,10 @@ const REPORT_ISSUE_LABELS_EN = {
   yes: "Yes",
   no: "No",
   q2: "Is this store permanently closed or gone from this location?",
-  thanksOpen: "✅ Thanks for confirming!",
-  thanksReport: "✅ Thanks! We got your report.",
+  thanksOpen: "✅ Thanks for confirming! You're helping us keep this accurate for everyone.",
+  thanksReport: "✅ Thank you for being with us in building the best experience for our users!",
   error: "Couldn't send the report. Try again.",
-  alreadyReported: "✅ You already reported this place — thanks!",
+  alreadyReported: "Thanks, we already received your report — you can't submit another one for this place.",
 };
 
 // Buton comunitar — flux în 2 pași (Este deschis? Da/Nu -> dacă Nu, Închis
@@ -5259,6 +5271,33 @@ function getClientIp(req) {
   return (req.socket && req.socket.remoteAddress) || "unknown";
 }
 
+// Limitare de cereri — DB-based, nu în memorie (Vercel pornește instanțe noi
+// des, un limitator doar în memorie s-ar reseta constant, fără efect real).
+// "Fail-open": dacă baza de date are o problemă chiar în acest moment, NU
+// blocăm utilizatorii reali — lăsăm cererea să treacă, mai bine decât să
+// stricăm site-ul din cauza propriei protecții.
+async function checkRateLimit(ipHash, endpoint, maxRequests, windowMinutes) {
+  if (!dbPool) return true;
+  try {
+    const { rows } = await dbPool.query(
+      `SELECT COUNT(*)::int AS cnt FROM api_rate_limits WHERE ip_hash = $1 AND endpoint = $2 AND creat_la > now() - ($3 * interval '1 minute')`,
+      [ipHash, endpoint, windowMinutes]
+    );
+    if (rows[0].cnt >= maxRequests) return false;
+    await dbPool.query(`INSERT INTO api_rate_limits (ip_hash, endpoint) VALUES ($1, $2)`, [ipHash, endpoint]);
+    // curățenie oportunistă — nu la fiecare cerere (inutil de costisitor),
+    // doar cam 1 din 50, suficient cât tabelul să nu crească nelimitat,
+    // fără să avem nevoie de un job separat, programat
+    if (Math.random() < 0.02) {
+      dbPool.query(`DELETE FROM api_rate_limits WHERE creat_la < now() - interval '24 hours'`).catch(() => {});
+    }
+    return true;
+  } catch (err) {
+    console.error("checkRateLimit a eșuat:", err.message);
+    return true;
+  }
+}
+
 app.post("/api/report-issue", async (req, res) => {
   if (!dbPool) {
     res.status(503).json({ error: "not_configured" });
@@ -5271,6 +5310,15 @@ app.post("/api/report-issue", async (req, res) => {
   }
   const safeNota = typeof nota === "string" ? nota.slice(0, 500) : null;
   const ipHash = hashIp(getClientIp(req));
+
+  // protecție SEPARATĂ, generală — dincolo de limita per-locație (24h) de
+  // mai jos, care nu oprește pe cineva ce raportează 100 de locații
+  // DIFERITE, rapid; asta limitează volumul total, indiferent de locație
+  const rateOk = await checkRateLimit(ipHash, "report-issue", 20, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
   const safeSlug = slug.slice(0, 255);
   try {
     // aceeași sursă (IP anonimizat), aceeași locație, în ultimele 24h —
@@ -5300,6 +5348,16 @@ app.get("/api/city-live-map", async (req, res) => {
     res.status(503).json({ error: "not_configured" });
     return;
   }
+
+  // 5 cereri pe 10 minute, per sursă — ruta asta poate declanșa zeci de
+  // cereri către Google API la fiecare apel, cel mai costisitor loc de pe
+  // tot site-ul, dacă ar fi bombardat
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-live-map", 5, 10);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
   const orasDisplay = toDisplayName(req.query.oras || "");
   const lang = typeof req.query.lang === "string" ? req.query.lang : "ro";
   if (!orasDisplay) {
@@ -5337,6 +5395,13 @@ app.post("/api/push-subscribe", async (req, res) => {
     res.status(503).json({ error: "push_not_configured" });
     return;
   }
+
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "push-subscribe", 10, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
   const sub = req.body;
   if (!sub || !sub.endpoint || !sub.keys || !sub.keys.p256dh || !sub.keys.auth) {
     res.status(400).json({ error: "invalid_subscription" });
