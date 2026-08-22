@@ -458,6 +458,59 @@ function reportedWrongBannerHtml(text) {
   return `<div class="reported-wrong-banner">${escapeHtml(text || REPORTED_WRONG_LABELS_RO)}</div>`;
 }
 
+// Linkuri opționale pentru "Cum ajung acolo?" — GetTransfer (taxi/transfer
+// local) și Omio (tren/autobuz Europa), prin contul Travelpayouts. Fără
+// linkuri de afiliere specifice confirmate încă, cad pe site-urile publice,
+// funcționale — dacă ai coduri de link reale din Travelpayouts, pune-le
+// aici, direct.
+const linkGetTransferAffiliate = "";
+const linkOmioAffiliate = "";
+
+function getTransferLinkFor() {
+  return linkGetTransferAffiliate || "https://getransfer.com/";
+}
+function omioLinkFor() {
+  return linkOmioAffiliate || "https://www.omio.com/";
+}
+
+const HOW_TO_GET_THERE_LABELS_RO = {
+  btn: "🚗 Cum ajung acolo?",
+  optionA: "🚕 Rezervă un Taxi/Transfer local",
+  optionB: "🚆 Caută Tren/Autobuz în Europa",
+};
+const HOW_TO_GET_THERE_LABELS_EN = {
+  btn: "🚗 How do I get there?",
+  optionA: "🚕 Book a local Taxi/Transfer",
+  optionB: "🚆 Search Train/Bus in Europe",
+};
+
+// Buton + panou cu 2 opțiuni — sub programul zilei, pe pagina de magazin
+// SAU obiectiv. Nu redirectăm direct (ar alege unul pentru utilizator) —
+// arătăm ambele opțiuni, îl lăsăm pe el să aleagă.
+function buildHowToGetThereHtml(labels) {
+  const t = labels || HOW_TO_GET_THERE_LABELS_RO;
+  return `
+  <div class="how-to-get-there-block">
+    <button type="button" class="how-to-get-there-btn" id="howToGetThereBtn">${escapeHtml(t.btn)}</button>
+    <div class="how-to-get-there-panel" id="howToGetTherePanel" hidden>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>
+      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>
+    </div>
+  </div>`;
+}
+
+function buildHowToGetThereScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("howToGetThereBtn");
+  var panel = document.getElementById("howToGetTherePanel");
+  if (!btn || !panel) return;
+  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
+})();
+</script>`;
+}
+
 function buildGoNowButtonHtml(place, label) {
   return `<a id="goNowBtn" class="go-now-btn" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(label || "🚗 Mergi acum (Waze)")}</a>`;
 }
@@ -2574,7 +2627,7 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com",
@@ -2688,6 +2741,13 @@ main{padding-top:8px;}
 
 /* Raportare comunitară (buildReportIssueHtml) */
 .report-issue-block{margin:14px 18px 0;}
+
+/* "Cum ajung acolo?" (buildHowToGetThereHtml) */
+.how-to-get-there-block{margin:14px 18px 0;}
+.how-to-get-there-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
+.how-to-get-there-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:linear-gradient(135deg,#0EA5E9,#0369A1);color:#fff;}
+.how-to-get-there-option-alt{background:linear-gradient(135deg,#8B5CF6,#5B21B6);}
 .report-issue-btn{width:100%;background:none;border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;}
 .report-issue-panel{margin-top:10px;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
 .report-issue-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px;}
@@ -3731,6 +3791,16 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
+<!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts -->
+<script nonce="${nonce}">
+  (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.setAttribute("data-cmp-ab","2");
+      script.src = 'https://tp-em.com/NTY0OTM4.js?t=564938';
+      document.head.appendChild(script);
+  })();
+</script>
 <meta charset="UTF-8">
 <script nonce="${nonce}">
 (function(){
@@ -3896,6 +3966,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
         <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
+      ${buildHowToGetThereHtml()}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
@@ -3959,7 +4030,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   ${adSlotHtml()}
 </main>
 ${buildContextualWidgetScript(nonce)}
-${buildReportIssueScript(nonce)}`;
+${buildReportIssueScript(nonce)}
+${buildHowToGetThereScript(nonce)}`;
 
   // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
   // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
@@ -4080,6 +4152,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
   ${contactInfoHtml(live)}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${specialBanner}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
@@ -4101,6 +4174,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
   </div>
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
@@ -4159,7 +4233,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   </footer>
 </main>
 ${buildContextualWidgetScript(nonce)}
-${buildReportIssueScript(nonce, REPORT_ISSUE_LABELS_EN)}`;
+${buildReportIssueScript(nonce, REPORT_ISSUE_LABELS_EN)}
+${buildHowToGetThereScript(nonce)}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -4487,6 +4562,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${ticketBtnHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro") })}
+  ${buildHowToGetThereHtml()}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
 
@@ -4497,7 +4573,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${widgetScriptHtml}`;
+${widgetScriptHtml}
+${buildHowToGetThereScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -4560,12 +4637,14 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${ticketBtnHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN })}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN)}
 
   <footer>
     <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
   </footer>
 </main>
-${widgetScriptHtml}`;
+${widgetScriptHtml}
+${buildHowToGetThereScript(nonce)}`;
 
   return pageShell({
     title,
