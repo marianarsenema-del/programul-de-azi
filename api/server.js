@@ -889,7 +889,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1356,6 +1356,39 @@ const TRANSLATIONS = {
       closesToday: "Κλείνει σήμερα στις {time}",
     },
   },
+  hu: {
+    dayNames: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"],
+    home: "Kezdőlap",
+    todayLabel: "Ma",
+    calculating: "Nyitvatartás számítása...",
+    weeklyTitle: "Heti nyitvatartás",
+    holidaysTitle: "Nyitvatartás ünnepnapokon",
+    noHolidays: "Jelenleg nincs speciális nyitvatartás",
+    closedWord: "Zárva",
+    installBtn: "📱 Telepítse az alkalmazást a gyors eléréshez",
+    iosHint: "iPhone-on: koppintson a Megosztás gombra, majd válassza a \"Hozzáadás a kezdőképernyőhöz\" lehetőséget.",
+    geoSuggestionPrefix: "📍 Úgy tűnik, az Ön városa",
+    geoSuggestionBtn: "Boltok megjelenítése itt? →",
+    geoSuggestionNote: "Nem ez az Ön városa? Válasszon alább.",
+    amazonBtn: "🛍️ Nézze meg a mai Amazon ajánlatokat",
+    ticketBtn: "🎟️ Vásároljon jegyet online, és kerülje el a sort",
+    tabStores: "🛒 Üzletek",
+    tabAttractions: "🏛️ Látnivalók",
+    attractionsComingSoon: "A látnivaló-útmutatónk hamarosan érkezik — nézzen vissza később.",
+    titleTemplate: (brand, city) => `${brand} ${city} Nyitvatartás Ma – Nyitva vagy Zárva Most`,
+    descriptionTemplate: (brand, city) => `Nézze meg most, hogy a ${brand} ${city} városban nyitva van-e. Heti nyitvatartás és ünnepnapi nyitvatartás, valós időben frissítve.`,
+    disclaimer: (name) => `A megjelenített nyitvatartás a(z) ${name} esetében tájékoztató jellegű, a lánc standard nyitvatartásán alapul. Az egyes üzletek eltérhetnek — kérjük, ellenőrizze a nyitvatartást a bejáratnál.`,
+    footer: (name) => `valós időben mutatja, hogy a(z) ${name} nyitva van-e most, valamint a teljes heti és ünnepnapi nyitvatartást.`,
+    labels: {
+      openNow: "MOST NYITVA",
+      closedNow: "MOST ZÁRVA",
+      closedHoliday: "Ma zárva — {label}",
+      closedAllDay: "Egész nap zárva",
+      opensToday: "Ma {time}-kor nyit",
+      closedComeBack: "{time}-kor zárt — jöjjön vissza holnap",
+      closesToday: "Ma {time}-kor zár",
+    },
+  },
 };
 
 /* ============================================================
@@ -1607,6 +1640,48 @@ const GR_STORE_CONFIG = {
   lidl: { name: "Lidl", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
   abvassilopoulos: { name: "AB Vassilopoulos", slug: "ab-vassilopoulos", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
   masoutis: { name: "Masoutis", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+};
+
+// Ungaria — 13 sărbători 2026, verificate cu surse multiple concordante.
+// Spre deosebire de Grecia, legea ungară e strictă: lanțurile mari sunt
+// ÎNCHISE COMPLET, prin lege, în aproape toate sărbătorile — confirmat
+// explicit pentru Ziua Sfântului Ștefan (20 august): "legea interzice
+// complet deschiderea marilor lanțuri de retail".
+const HU_HOLIDAYS = [
+  { date: "01-01", label: "Újév (január 1.)", hours: null },
+  { date: "01-02", label: "Pihenőnap (január 2.)", hours: null },
+  { date: "03-15", label: "Nemzeti ünnep (március 15.)", hours: null },
+  { date: "04-03", label: "Nagypéntek (2026. április 3.)", hours: null },
+  { date: "04-05", label: "Húsvétvasárnap (2026. április 5.)", hours: null },
+  { date: "04-06", label: "Húsvéthétfő (2026. április 6.)", hours: null },
+  { date: "05-01", label: "A munka ünnepe (május 1.)", hours: null },
+  { date: "05-24", label: "Pünkösdvasárnap (2026. május 24.)", hours: null },
+  { date: "05-25", label: "Pünkösdhétfő (2026. május 25.)", hours: null },
+  { date: "08-20", label: "Államalapítás ünnepe (augusztus 20.)", hours: null },
+  { date: "10-23", label: "Nemzeti ünnep (október 23.)", hours: null },
+  { date: "12-24", label: "Pihenőnap (december 24.) — rövidített nyitvatartás", hours: { open: "07:00", close: "12:00" } },
+  { date: "12-25", label: "Karácsony (december 25.)", hours: null },
+  { date: "12-26", label: "Karácsony másnapja (december 26.)", hours: null },
+];
+function huSupermarketWeekly() {
+  return [
+    { open: "07:00", close: "18:00" }, // Vasárnap
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Szombat
+  ];
+}
+// Lidl, Spar, Tesco, Penny, Aldi — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate, verificate individual
+const HU_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  spar: { name: "Spar", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  tesco: { name: "Tesco", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  penny: { name: "Penny", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -2030,6 +2105,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.gr,
     cities: ["Athens", "Thessaloniki", "Patras", "Heraklion", "Larissa", "Volos", "Ioannina", "Chania"],
   },
+  hu: {
+    config: HU_STORE_CONFIG,
+    t: TRANSLATIONS.hu,
+    cities: ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza", "Kecskemét"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2426,6 +2506,21 @@ const ATTRACTIONS = {
     { name: "Situl Arheologic Delfi", url: "https://www.google.com/maps/search/?api=1&query=Delphi+Archaeological+Site+Greece" },
     { name: "Teatrul Antic Epidaurus", url: "https://www.google.com/maps/search/?api=1&query=Ancient+Theatre+Epidaurus+Greece" },
   ],
+  hu: [
+    { name: "Parlamentul Ungariei Budapest", url: "https://www.google.com/maps/search/?api=1&query=Hungarian+Parliament+Building+Budapest+Hungary" },
+    { name: "Castelul Buda", url: "https://www.google.com/maps/search/?api=1&query=Buda+Castle+Budapest+Hungary" },
+    { name: "Bastionul Pescarilor", url: "https://www.google.com/maps/search/?api=1&query=Fisherman's+Bastion+Budapest+Hungary" },
+    { name: "Băile Széchenyi", url: "https://www.google.com/maps/search/?api=1&query=Széchenyi+Thermal+Bath+Budapest+Hungary" },
+    { name: "Bazilica Sfântul Ștefan", url: "https://www.google.com/maps/search/?api=1&query=St+Stephen's+Basilica+Budapest+Hungary" },
+    { name: "Podul cu Lanțuri", url: "https://www.google.com/maps/search/?api=1&query=Chain+Bridge+Budapest+Hungary" },
+    { name: "Insula Margareta", url: "https://www.google.com/maps/search/?api=1&query=Margaret+Island+Budapest+Hungary" },
+    { name: "Sinagoga Mare Budapest", url: "https://www.google.com/maps/search/?api=1&query=Great+Synagogue+Budapest+Hungary" },
+    { name: "Muzeul Național Maghiar", url: "https://www.google.com/maps/search/?api=1&query=Hungarian+National+Museum+Budapest+Hungary" },
+    { name: "Cetatea Eger", url: "https://www.google.com/maps/search/?api=1&query=Eger+Castle+Hungary" },
+    { name: "Lacul Balaton", url: "https://www.google.com/maps/search/?api=1&query=Lake+Balaton+Hungary" },
+    { name: "Peștera Aggtelek", url: "https://www.google.com/maps/search/?api=1&query=Aggtelek+Cave+Hungary" },
+    { name: "Marea Biserică Reformată Debrecen", url: "https://www.google.com/maps/search/?api=1&query=Great+Reformed+Church+Debrecen+Hungary" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -2461,11 +2556,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2473,7 +2568,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -4287,6 +4382,7 @@ const LANG_META = {
   cz: { lang: "cs", locale: "cs_CZ" },
   fi: { lang: "fi", locale: "fi_FI" },
   gr: { lang: "el", locale: "el_GR" },
+  hu: { lang: "hu", locale: "hu_HU" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -4917,7 +5013,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -5696,6 +5792,14 @@ const CITY_COORDS = {
   "Volos": [39.3622, 22.9425],
   "Ioannina": [39.6650, 20.8537],
   "Chania": [35.5138, 24.0180],
+  "Budapest": [47.4979, 19.0402],
+  "Debrecen": [47.5316, 21.6273],
+  "Szeged": [46.2530, 20.1414],
+  "Miskolc": [48.1035, 20.7784],
+  "Pécs": [46.0727, 18.2323],
+  "Győr": [47.6875, 17.6504],
+  "Nyíregyháza": [47.9495, 21.7244],
+  "Kecskemét": [46.9062, 19.6913],
 };
 
 function slugifyCityName(name) {
@@ -6100,7 +6204,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -6111,7 +6215,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -6130,7 +6234,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/obiectiv/:slug"
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -6163,7 +6267,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/:oras/:magazin"
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
