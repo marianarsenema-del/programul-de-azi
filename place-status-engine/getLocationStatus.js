@@ -104,6 +104,8 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
       isSpecialDay: false,
       specialDayReason: null,
       utcOffsetMinutes: raw.utc_offset ?? null,
+      formattedAddress: raw.formatted_address || null,
+      formattedPhoneNumber: raw.formatted_phone_number || null,
       fromCache,
       note: "Google nu are program orar completat pentru această locație.",
     };
@@ -125,6 +127,8 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
     isSpecialDay: special.isSpecial,
     specialDayReason: special.reason,
     utcOffsetMinutes,
+    formattedAddress: raw.formatted_address || null,
+    formattedPhoneNumber: raw.formatted_phone_number || null,
     fromCache,
   };
 }
