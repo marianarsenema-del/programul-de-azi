@@ -74,3 +74,17 @@ ALTER TABLE location_reports ADD COLUMN IF NOT EXISTS ip_hash VARCHAR(64);
 
 CREATE INDEX IF NOT EXISTS idx_location_reports_nerezolvate ON location_reports (rezolvat) WHERE rezolvat = false;
 CREATE INDEX IF NOT EXISTS idx_location_reports_dedup ON location_reports (slug, ip_hash, creat_la);
+
+-- ============================================================
+-- 5) Limitare de cereri (rate limiting) — protecție împotriva
+--    bombardării cu cereri a rutelor costisitoare (ex: /api/city-live-map,
+--    care poate declanșa zeci de cereri către Google la fiecare apel)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS api_rate_limits (
+  id       SERIAL PRIMARY KEY,
+  ip_hash  VARCHAR(64) NOT NULL,  -- același hash SHA-256, niciodată IP-ul real
+  endpoint VARCHAR(100) NOT NULL,
+  creat_la TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_rate_limits_lookup ON api_rate_limits (ip_hash, endpoint, creat_la);
