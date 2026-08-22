@@ -98,6 +98,37 @@ function googlePeriodsToWeekly(periods) {
 // dacă nu există în bază, dacă place_id e unul din valorile "sentinel"
 // (ZERO_RESULTS / ERROR_...), sau dacă orice altceva eșuează — apelantul
 // TREBUIE să trateze `null` ca "nu am date live, folosește fallback-ul".
+// Praguri pentru raportările comunitare — câte confirmări independente
+// sunt nevoie înainte ca site-ul să AFIȘEZE efectiv concluzia, nu doar
+// s-o rețină. 3 e un compromis rezonabil — suficient cât să nu schimbi
+// statusul după o singură persoană greșită/rău-voitoare, dar nu atât de
+// mare încât o problemă reală să rămână neafișată mult timp.
+const REPORT_THRESHOLD = 3;
+
+// Doar raportările NEREZOLVATE contează — odată ce tu (proprietarul)
+// verifici și marchezi rezolvat=true în bază, acelea nu mai intră la
+// numărătoare data viitoare. Ăsta e mecanismul de "resetare", fără să mai
+// construim ceva separat pentru asta.
+async function getReportCounts(slug) {
+  const empty = { inchisDefinitiv: 0, programGresit: 0 };
+  if (!dbPool) return empty;
+  try {
+    const { rows } = await dbPool.query(
+      `SELECT motiv, COUNT(*)::int AS cnt FROM location_reports WHERE slug = $1 AND rezolvat = false GROUP BY motiv`,
+      [slug]
+    );
+    const counts = { ...empty };
+    rows.forEach((r) => {
+      if (r.motiv === "inchis_definitiv") counts.inchisDefinitiv = r.cnt;
+      if (r.motiv === "program_gresit") counts.programGresit = r.cnt;
+    });
+    return counts;
+  } catch (err) {
+    console.error("getReportCounts a eșuat:", err.message);
+    return empty;
+  }
+}
+
 async function tryGetLiveStatus(slug, lang) {
   if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) return null;
   try {
@@ -291,45 +322,50 @@ function contactInfoHtml(live) {
 }
 
 const REPORT_ISSUE_LABELS_RO = {
-  btn: "🚩 Raportează program greșit",
-  title: "Ce e greșit?",
-  reasonWrong: "Ora e greșită",
-  reasonClosed: "S-a închis definitiv",
-  reasonOther: "Altceva",
-  notePlaceholder: "Detalii (opțional)...",
-  submit: "Trimite raportarea",
-  confirm: "✅ Mulțumim! Am primit raportarea.",
+  btn: "🚩 Este ceva greșit aici?",
+  q1: (name) => `Este ${name} deschis chiar acum?`,
+  yes: "Da",
+  no: "Nu",
+  q2: "Magazinul e închis definitiv, nu mai există la această locație?",
+  thanksOpen: "✅ Mulțumim pentru confirmare!",
+  thanksReport: "✅ Mulțumim! Am primit raportarea.",
   error: "Nu am putut trimite raportarea. Încearcă din nou.",
 };
 const REPORT_ISSUE_LABELS_EN = {
-  btn: "🚩 Report wrong hours",
-  title: "What's wrong?",
-  reasonWrong: "Hours are wrong",
-  reasonClosed: "Permanently closed",
-  reasonOther: "Something else",
-  notePlaceholder: "Details (optional)...",
-  submit: "Send report",
-  confirm: "✅ Thanks! We got your report.",
+  btn: "🚩 Something wrong here?",
+  q1: (name) => `Is ${name} open right now?`,
+  yes: "Yes",
+  no: "No",
+  q2: "Is this store permanently closed or gone from this location?",
+  thanksOpen: "✅ Thanks for confirming!",
+  thanksReport: "✅ Thanks! We got your report.",
   error: "Couldn't send the report. Try again.",
 };
 
-// Buton comunitar — raportează o eroare, direct din pagina magazinului.
-// Fără cont, fără moderare automată (doar captăm datele corect, pentru
-// verificare manuală ulterioară — vezi tabelul location_reports).
+// Buton comunitar — flux în 2 pași (Este deschis? Da/Nu -> dacă Nu, Închis
+// definitiv? Da/Nu), fără cont, fără moderare automată la trimitere — doar
+// captăm datele corect. Agregarea (3 confirmări = schimbare de status
+// afișat) se întâmplă separat, la citire, în getReportCounts().
 function buildReportIssueHtml({ slug, name, oras, labels }) {
   const t = labels || REPORT_ISSUE_LABELS_RO;
   return `
   <div class="report-issue-block">
     <button type="button" class="report-issue-btn" id="reportIssueBtn" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(name)}" data-oras="${escapeHtml(oras || "")}">${escapeHtml(t.btn)}</button>
     <div class="report-issue-panel" id="reportIssuePanel" hidden>
-      <p class="report-issue-title">${escapeHtml(t.title)}</p>
-      <div class="report-reason-chips">
-        <button type="button" class="report-reason-chip" data-reason="program_gresit">${escapeHtml(t.reasonWrong)}</button>
-        <button type="button" class="report-reason-chip" data-reason="inchis_definitiv">${escapeHtml(t.reasonClosed)}</button>
-        <button type="button" class="report-reason-chip" data-reason="altceva">${escapeHtml(t.reasonOther)}</button>
+      <div class="report-step" id="reportStep1">
+        <p class="report-issue-title">${escapeHtml(t.q1(name))}</p>
+        <div class="report-yn-row">
+          <button type="button" class="report-yn-btn" id="reportQ1Yes">${escapeHtml(t.yes)}</button>
+          <button type="button" class="report-yn-btn" id="reportQ1No">${escapeHtml(t.no)}</button>
+        </div>
       </div>
-      <textarea id="reportIssueNote" class="report-issue-note" placeholder="${escapeHtml(t.notePlaceholder)}" maxlength="500"></textarea>
-      <button type="button" class="report-issue-submit" id="reportIssueSubmit" disabled>${escapeHtml(t.submit)}</button>
+      <div class="report-step" id="reportStep2" hidden>
+        <p class="report-issue-title">${escapeHtml(t.q2)}</p>
+        <div class="report-yn-row">
+          <button type="button" class="report-yn-btn" id="reportQ2Yes">${escapeHtml(t.yes)}</button>
+          <button type="button" class="report-yn-btn" id="reportQ2No">${escapeHtml(t.no)}</button>
+        </div>
+      </div>
       <p class="report-issue-msg" id="reportIssueMsg" hidden></p>
     </div>
   </div>`;
@@ -343,26 +379,13 @@ function buildReportIssueScript(nonce, labels) {
   var btn = document.getElementById("reportIssueBtn");
   var panel = document.getElementById("reportIssuePanel");
   if (!btn || !panel) return;
-  var chips = panel.querySelectorAll(".report-reason-chip");
-  var note = document.getElementById("reportIssueNote");
-  var submitBtn = document.getElementById("reportIssueSubmit");
+  var step1 = document.getElementById("reportStep1");
+  var step2 = document.getElementById("reportStep2");
   var msg = document.getElementById("reportIssueMsg");
-  var selectedReason = null;
 
   btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
 
-  chips.forEach(function(chip){
-    chip.addEventListener("click", function(){
-      chips.forEach(function(c){ c.classList.remove("is-selected"); });
-      chip.classList.add("is-selected");
-      selectedReason = chip.getAttribute("data-reason");
-      submitBtn.disabled = false;
-    });
-  });
-
-  submitBtn.addEventListener("click", function(){
-    if (!selectedReason) return;
-    submitBtn.disabled = true;
+  function send(motiv, thanksText){
     fetch("/api/report-issue", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -370,27 +393,69 @@ function buildReportIssueScript(nonce, labels) {
         slug: btn.getAttribute("data-slug"),
         numeLocatie: btn.getAttribute("data-name"),
         oras: btn.getAttribute("data-oras"),
-        motiv: selectedReason,
-        nota: note ? note.value : "",
+        motiv: motiv,
       }),
     })
       .then(function(r){ if (!r.ok) throw new Error("bad status"); return r.json(); })
       .then(function(){
-        msg.textContent = ${safeJson(t.confirm)};
+        step1.hidden = true;
+        step2.hidden = true;
+        msg.textContent = thanksText;
         msg.hidden = false;
         msg.className = "report-issue-msg is-success";
-        chips.forEach(function(c){ c.disabled = true; });
-        if (note) note.disabled = true;
       })
       .catch(function(){
         msg.textContent = ${safeJson(t.error)};
         msg.hidden = false;
         msg.className = "report-issue-msg is-error";
-        submitBtn.disabled = false;
       });
+  }
+
+  document.getElementById("reportQ1Yes").addEventListener("click", function(){
+    send("confirmat_deschis", ${safeJson(t.thanksOpen)});
+  });
+  document.getElementById("reportQ1No").addEventListener("click", function(){
+    step1.hidden = true;
+    step2.hidden = false;
+  });
+  document.getElementById("reportQ2Yes").addEventListener("click", function(){
+    send("inchis_definitiv", ${safeJson(t.thanksReport)});
+  });
+  document.getElementById("reportQ2No").addEventListener("click", function(){
+    send("program_gresit", ${safeJson(t.thanksReport)});
   });
 })();
 </script>`;
+}
+
+const CLOSED_PERMANENTLY_LABELS_RO = {
+  title: "🚫 Magazin închis definitiv sau mutat",
+  text: "Evaluare realizată pe baza confirmărilor de la utilizatori.",
+};
+const CLOSED_PERMANENTLY_LABELS_EN = {
+  title: "🚫 Permanently closed or relocated",
+  text: "Based on confirmations from other users.",
+};
+
+// Suprascrie complet cardul de status obișnuit — apare DOAR când pragul de
+// 3 confirmări independente e atins (vezi REPORT_THRESHOLD). Onest despre
+// sursă chiar în text: "pe baza confirmărilor utilizatorilor", nu pretinde
+// că vine de la Google.
+function renderClosedPermanentlyHtml(name, labels) {
+  const t = labels || CLOSED_PERMANENTLY_LABELS_RO;
+  return `
+  <div class="closed-permanently-card" id="statusCard">
+    <h2>${escapeHtml(t.title)}</h2>
+    <p><strong>${escapeHtml(name)}</strong></p>
+    <p>${escapeHtml(t.text)}</p>
+  </div>`;
+}
+
+const REPORTED_WRONG_LABELS_RO = "⚠️ Mai mulți utilizatori au raportat că programul afișat ar putea fi greșit. Verifică, dacă poți, la fața locului.";
+const REPORTED_WRONG_LABELS_EN = "⚠️ Several users have reported the displayed hours might be wrong. Please double-check if you can.";
+
+function reportedWrongBannerHtml(text) {
+  return `<div class="reported-wrong-banner">${escapeHtml(text || REPORTED_WRONG_LABELS_RO)}</div>`;
 }
 
 function buildGoNowButtonHtml(place, label) {
@@ -2624,12 +2689,18 @@ main{padding-top:8px;}
 .report-reason-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
 .report-reason-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:7px 13px;font-family:var(--font-body);font-size:12.5px;color:var(--text);cursor:pointer;}
 .report-reason-chip.is-selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+.report-yn-row{display:flex;gap:8px;}
+.report-yn-btn{flex:1 1 0;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .report-issue-note{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;color:var(--text);font-family:var(--font-body);font-size:13.5px;resize:vertical;min-height:60px;margin-bottom:10px;}
 .report-issue-submit{width:100%;background:var(--accent);border:none;border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:#fff;cursor:pointer;}
 .report-issue-submit:disabled{opacity:.4;cursor:not-allowed;}
 .report-issue-msg{margin-top:8px;font-size:13px;text-align:center;}
 .report-issue-msg.is-success{color:#22C55E;}
 .report-issue-msg.is-error{color:#DC2626;}
+.closed-permanently-card{margin:14px 18px 0;padding:24px;background:linear-gradient(135deg,#DC2626,#7F1D1D);border-radius:var(--radius-lg);text-align:center;color:#fff;}
+.closed-permanently-card h2{font-family:var(--font-display);font-size:19px;margin-bottom:6px;}
+.closed-permanently-card p{font-size:13.5px;opacity:.9;}
+.reported-wrong-banner{margin:14px 18px 0;padding:14px 16px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.35);border-radius:var(--radius-md);font-size:13.5px;color:var(--text);}
 .contact-info-row{font-size:14px;color:var(--text);}
 .contact-info-row + .contact-info-row{margin-top:6px;}
 .contact-info-row a{color:var(--accent);text-decoration:none;font-weight:600;}
@@ -3828,6 +3899,21 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     }
   }
 
+  // Agregare comunitară — DUPĂ ce toate ramurile de mai sus au construit
+  // mainHtml normal, verificăm dacă pragul de confirmări e atins și, dacă
+  // da, SUPRASCRIEM complet cardul de status (nu doar îl completăm) —
+  // 3 oameni independenți care confirmă "închis definitiv" cântăresc mai
+  // mult decât un program static, posibil vechi.
+  const reportSlug = `${orasSlug}/${canonicalSlug}`;
+  const reportCounts = await getReportCounts(reportSlug);
+  let reportedWrongHtml = "";
+  if (reportCounts.inchisDefinitiv >= REPORT_THRESHOLD) {
+    mainHtml = renderClosedPermanentlyHtml(`${magazinDisplay}${locatieSuffix} ${orasDisplay}`);
+    dataForClient = { type: "general", weekly: [], holidays: [] };
+  } else if (reportCounts.programGresit >= REPORT_THRESHOLD) {
+    reportedWrongHtml = reportedWrongBannerHtml();
+  }
+
   const breadcrumb = locatieDisplay
     ? `<a href="/">Acasă</a> / <a href="/${orasSlug}">${escapeHtml(orasDisplay)}</a> / <a href="/${orasSlug}/${canonicalSlug}">${escapeHtml(magazinDisplay)}</a> / ${escapeHtml(locatieDisplay)}`
     : `<a href="/">Acasă</a> / <a href="/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}`;
@@ -3847,6 +3933,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
+  ${reportedWrongHtml}
   ${mainHtml}
 
   <p class="disclaimer">Programul afișat pentru ${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)} este orientativ, pe baza orarului standard anunțat de rețea. Unele locații pot avea ore diferite — verifică programul afișat la intrarea magazinului.</p>
@@ -4009,6 +4096,17 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <tbody>${weeklyRows}</tbody></table></div>`;
   }
 
+  // Agregare comunitară — vezi comentariul din renderStorePage (RO), aceeași logică
+  const reportSlug = `${countryCode}/${orasSlug}/${magazinSlug}`;
+  const reportCounts = await getReportCounts(reportSlug);
+  let reportedWrongHtml = "";
+  if (reportCounts.inchisDefinitiv >= REPORT_THRESHOLD) {
+    statusCardHtml = renderClosedPermanentlyHtml(`${magazinDisplay} ${orasDisplay}`, CLOSED_PERMANENTLY_LABELS_EN);
+    weeklySectionHtml = "";
+  } else if (reportCounts.programGresit >= REPORT_THRESHOLD) {
+    reportedWrongHtml = reportedWrongBannerHtml(REPORTED_WRONG_LABELS_EN);
+  }
+
   const holidayHtml =
     store.holidays && store.holidays.length
       ? store.holidays
@@ -4031,6 +4129,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
   ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
 
+  ${reportedWrongHtml}
   ${statusCardHtml}
 
   ${amazonButtonHtml}
@@ -4993,7 +5092,7 @@ app.get("/favicon.ico", (req, res) => res.status(204).end());
 // Validare simplă (motiv dintr-o listă fixă, notă limitată la 500 caractere)
 // — nu construim un sistem de moderare/rate-limit complet acum, doar
 // captăm datele corect, ca să le poți vedea și rezolva manual, în bază.
-const ALLOWED_REPORT_REASONS = ["program_gresit", "inchis_definitiv", "altceva"];
+const ALLOWED_REPORT_REASONS = ["confirmat_deschis", "program_gresit", "inchis_definitiv"];
 
 app.post("/api/report-issue", async (req, res) => {
   if (!dbPool) {
