@@ -279,7 +279,7 @@ const BOOKING_PLANNING_LABELS_RO = {
   hint: (name) => `Vezi cazări, parcare și bilete online pentru ${name} — toate într-un singur loc.`,
   ticket: "🎟️ Vrei să eviți coada? Cumpără bilet online",
   stays: "🏨 Vezi cazări în apropiere pe Booking.com",
-  parking: "🅿️ Găsește hoteluri cu parcare inclusă în apropiere",
+  restaurant: "🍽️ Găsește și rezervă la restaurante în apropiere",
   parkingNearby: "🚗 Caută parcare în apropiere",
 };
 const BOOKING_PLANNING_LABELS_EN = {
@@ -287,7 +287,7 @@ const BOOKING_PLANNING_LABELS_EN = {
   hint: (name) => `Find nearby stays, parking, and online tickets for ${name} — all in one place.`,
   ticket: "🎟️ Want to skip the line? Buy tickets online",
   stays: "🏨 See nearby stays on Booking.com",
-  parking: "🅿️ Find hotels with parking included nearby",
+  restaurant: "🍽️ Find and book nearby restaurants",
   parkingNearby: "🚗 Search for parking nearby",
 };
 
@@ -304,7 +304,7 @@ const BOOKING_PLANNING_LABELS_EN = {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels }) {
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   const ticketHtml = linkBileteTurism
@@ -317,7 +317,7 @@ function buildBookingPlanningButtonsHtml({ name, city, labels }) {
     <div class="plan-visit-panel" id="planVisitPanel" hidden>
       ${ticketHtml}
       <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
-      <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.parking)}</a>
+      <a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>
       <a href="${escapeHtml(bookingSearchLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>
     </div>
   </div>`;
@@ -536,6 +536,32 @@ function getTransferLinkFor() {
 }
 function omioLinkFor() {
   return linkOmioAffiliate || "https://www.omio.com/";
+}
+
+// Model hibrid pentru rezervări la restaurant — platforma potrivită depinde
+// de țara obiectivului, nu una singură peste tot (TheFork nu acoperă
+// România, de exemplu — confirmat, nu presupus). Linkuri de afiliere goale
+// acum, cad pe căutări publice, funcționale — pune-le pe cele reale (Awin
+// pentru TheFork, programul propriu OpenTable) când le ai.
+const linkTheForkAffiliate = "";
+const linkOpenTableAffiliate = "";
+
+const RESTAURANT_PLATFORM_BY_COUNTRY = {
+  fr: "thefork", it: "thefork", es: "thefork",
+  uk: "opentable", de: "opentable", ie: "opentable",
+};
+
+function restaurantLinkFor(countryCode, place) {
+  const platform = RESTAURANT_PLATFORM_BY_COUNTRY[countryCode] || "culinary";
+  if (platform === "thefork") {
+    return linkTheForkAffiliate || `https://www.thefork.com/search?q=${encodeURIComponent(place)}`;
+  }
+  if (platform === "opentable") {
+    return linkOpenTableAffiliate || `https://www.opentable.com/s?term=${encodeURIComponent(place)}`;
+  }
+  // restul Europei (inclusiv România) — TheFork/OpenTable nu acoperă sigur
+  // zona, oferim tururi culinare prin GetYourGuide, deja plătit ca afiliat
+  return `https://www.getyourguide.com/s/?q=${encodeURIComponent("food tour " + place)}&partner_id=${GYG_PARTNER_ID}`;
 }
 
 const HOW_TO_GET_THERE_LABELS_RO = {
@@ -2629,37 +2655,15 @@ function escapeHtml(str) {
 // mai căutate orașe (acces rapid, un singur tap) + o căutare live care
 // filtrează lista completă de dedesubt, fără reîncărcare de pagină. Merge
 // identic pe orice listă de orașe (RO cu 41, sau fiecare țară de pe .eu).
-function buildCitySelectorHtml({ popularCities, hrefPrefix, listId, placeholder }) {
+function buildCitySelectorHtml({ popularCities, hrefPrefix }) {
   const chipsHtml = popularCities.map((c) => `<a href="${hrefPrefix}${slugifyCityName(c)}" class="city-chip">${escapeHtml(c)}</a>`).join("");
   return `
-  <div class="city-chips-row">${chipsHtml}</div>
-  <input type="text" class="city-filter-input" placeholder="${escapeHtml(placeholder)}" data-filter-target="${escapeHtml(listId)}" autocomplete="off">`;
+  <div class="city-chips-row">${chipsHtml}</div>`;
 }
 
 // Scriptul care leagă orice căsuță ".city-filter-input" de lista ei
-// (identificată prin data-filter-target) — ascunde/arată <li>-urile pe
-// măsură ce utilizatorul scrie, insensibil la diacritice și majuscule
-function buildCitySelectorFilterScript(nonce) {
-  return `
-<script nonce="${nonce}">
-(function(){
-  function norm(s){ return s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase(); }
-  document.querySelectorAll(".city-filter-input").forEach(function(input){
-    var list = document.getElementById(input.getAttribute("data-filter-target"));
-    if (!list) return;
-    var items = Array.prototype.slice.call(list.querySelectorAll("li"));
-    list.hidden = true; // ascunsă implicit — nu are rost o listă lungă sub bara de căutare, apare doar când tastezi ceva
-    input.addEventListener("input", function(){
-      var q = norm(input.value.trim());
-      list.hidden = q.length === 0;
-      items.forEach(function(li){
-        li.hidden = q.length > 0 && norm(li.textContent).indexOf(q) === -1;
-      });
-    });
-  });
-})();
-</script>`;
-}
+// (buildCitySelectorFilterScript a fost eliminat — nu mai avem input
+// de căutare separat, doar "Scrie orașul tău" existent, deja funcțional)
 
 function brandBadgeHtml(name, statusKey) {
   let hash = 0;
@@ -2979,7 +2983,6 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .city-chips-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 18px 0;padding-bottom:4px;scrollbar-width:none;}
 .city-chips-row::-webkit-scrollbar{display:none;}
 .city-chip{flex:0 0 auto;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:9px 16px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--text);text-decoration:none;white-space:nowrap;}
-.city-filter-input{display:block;width:calc(100% - 36px);margin:10px 18px 0;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:12px 18px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
 .city-search-input::placeholder{color:var(--muted);}
 .city-search-input:focus{outline:none;border-color:var(--accent);}
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
@@ -4461,8 +4464,6 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
       const citySelectorHtml = buildCitySelectorHtml({
         popularCities: COUNTRIES[code].cities.slice(0, 6),
         hrefPrefix: `/${code}/`,
-        listId,
-        placeholder: "Search for your city...",
       });
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
@@ -4579,7 +4580,6 @@ ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}
 ${buildAttractionAccordionScript(nonce)}
-${buildCitySelectorFilterScript(nonce)}
 ${buildInstallScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscribe to alerts (holidays, special hours)", "🔕 Unsubscribe from alerts") : ""}`;
 
@@ -4645,7 +4645,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro") })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro" })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
@@ -4716,7 +4716,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN, countryCode })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN, attraction.name)}
 
   <footer>
@@ -4852,7 +4852,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   // toate cele 41 de orașe, ca listă completă, cu id pentru filtrare live
   const allCitiesListHtml = SITEMAP_CITIES.map((c) => `<li><a href="/${slugifyCityName(c)}">${escapeHtml(c)}</a></li>`).join("");
   const POPULAR_RO_CITIES = ["București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Brașov", "Craiova", "Sibiu"];
-  const citySelectorHtml = buildCitySelectorHtml({ popularCities: POPULAR_RO_CITIES, hrefPrefix: "/", listId: "allCitiesList", placeholder: "Caută orașul tău..." });
+  const citySelectorHtml = buildCitySelectorHtml({ popularCities: POPULAR_RO_CITIES, hrefPrefix: "/" });
 
   // obiective turistice românești — nume + link, cu steluță de favorite,
   // exact ca pe opening-hours-today.eu, dar în română, fără să te trimită
@@ -4940,7 +4940,6 @@ ${buildGeoScript(nonce)}
 ${buildInstallScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
 ${buildAttractionAccordionScript(nonce)}
-${buildCitySelectorFilterScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
