@@ -19,7 +19,11 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // CSP rămâne separat, per-rută, pentru că are nevoie de nonce unic per pagină.
 app.use((req, res, next) => {
   res.set("X-Content-Type-Options", "nosniff"); // browserul nu "ghicește" tipul unui fișier, doar pe baza extensiei
-  res.set("X-Frame-Options", "DENY"); // site-ul nu poate fi pus într-un <iframe> pe alt site (clickjacking)
+  // X-Frame-Options SCOS TEMPORAR — test, ca să confirmăm dacă blochează
+  // verificarea Travelpayouts (posibil să încarce pagina într-un iframe,
+  // ca să inspecteze codul). Dacă testul confirmă asta, revenim cu o
+  // soluție țintită (permitem doar domeniul lor, nu pe oricine).
+  // res.set("X-Frame-Options", "DENY");
   res.set("Referrer-Policy", "strict-origin-when-cross-origin"); // nu trimitem URL-ul complet altor site-uri, la click pe linkuri externe
   res.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains"); // forțează HTTPS, chiar dacă cineva încearcă explicit http://
   res.set("Permissions-Policy", "geolocation=(self), camera=(), microphone=()"); // geolocația rămâne, restul dezactivat explicit
@@ -2714,7 +2718,7 @@ function buildCsp(nonce) {
     "manifest-src 'self'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    // "frame-ancestors 'none'", — scos temporar, același test ca X-Frame-Options
     "object-src 'none'",
     "upgrade-insecure-requests",
   ].join("; ");
