@@ -264,6 +264,7 @@ function bookingSearchLinkFor(place) {
 
 const BOOKING_PLANNING_LABELS_RO = {
   title: "🅿️ Planifică vizita",
+  hint: (name) => `Vezi cazări, parcare și bilete online pentru ${name} — toate într-un singur loc.`,
   ticket: "🎟️ Vrei să eviți coada? Cumpără bilet online",
   stays: "🏨 Vezi cazări în apropiere pe Booking.com",
   parking: "🅿️ Găsește hoteluri cu parcare inclusă în apropiere",
@@ -271,6 +272,7 @@ const BOOKING_PLANNING_LABELS_RO = {
 };
 const BOOKING_PLANNING_LABELS_EN = {
   title: "🅿️ Plan your visit",
+  hint: (name) => `Find nearby stays, parking, and online tickets for ${name} — all in one place.`,
   ticket: "🎟️ Want to skip the line? Buy tickets online",
   stays: "🏨 See nearby stays on Booking.com",
   parking: "🅿️ Find hotels with parking included nearby",
@@ -286,7 +288,10 @@ const BOOKING_PLANNING_LABELS_EN = {
 // Pliabil, ca "Cum ajung acolo?" — buton + panou, 4 opțiuni colorate
 // distinct (biletul mutat aici, de sub widget-ul contextual — vezi cererea
 // utilizatorului), niciodată legate de status (le vrei indiferent dacă
-// locul e deschis chiar acum sau nu — planifici dinainte).
+// locul e deschis chiar acum sau nu — planifici dinainte). Mesajul
+// descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
+// real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
+// cu deschiderea panoului.
 function buildBookingPlanningButtonsHtml({ name, city, labels }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
@@ -296,6 +301,7 @@ function buildBookingPlanningButtonsHtml({ name, city, labels }) {
   return `
   <div class="plan-visit-block">
     <button type="button" class="plan-visit-btn" id="planVisitBtn">${escapeHtml(t.title)}</button>
+    <p class="plan-visit-hint" id="planVisitHint">${escapeHtml(t.hint(name))}</p>
     <div class="plan-visit-panel" id="planVisitPanel" hidden>
       ${ticketHtml}
       <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
@@ -311,8 +317,12 @@ function buildPlanVisitScript(nonce) {
 (function(){
   var btn = document.getElementById("planVisitBtn");
   var panel = document.getElementById("planVisitPanel");
+  var hint = document.getElementById("planVisitHint");
   if (!btn || !panel) return;
-  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
+  btn.addEventListener("click", function(){
+    panel.hidden = !panel.hidden;
+    if (hint) hint.hidden = !panel.hidden;
+  });
 })();
 </script>`;
 }
@@ -2756,6 +2766,7 @@ header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-fil
 .status-card:active{transform:scale(.995);}
 .brand-badge{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;margin-right:12px;flex:0 0 auto;vertical-align:middle;box-shadow:0 3px 8px -2px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 1px rgba(0,0,0,.2);}
 .mall-list li{display:flex;align-items:center;padding-left:16px;}
+.mall-list li[hidden]{display:none;}
 .city-map{height:280px;border-radius:var(--radius-md);overflow:hidden;margin:14px 18px 0;border:1px solid var(--border);background:var(--surface);}
 .map-live-toggle{display:flex;align-items:center;gap:8px;margin:14px 18px 4px;font-size:14px;color:var(--text);}
 .map-live-status{margin:0 18px 4px;font-size:12.5px;color:var(--muted);}
@@ -2783,7 +2794,9 @@ main{padding-top:8px;}
 /* Planifică vizita (buildBookingPlanningButtonsHtml) — pliabil, culori distincte per opțiune */
 .plan-visit-block{margin:14px 18px 0;}
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
+.plan-visit-hint{margin:8px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.plan-visit-panel[hidden]{display:none;}
 .plan-visit-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;}
 .plan-visit-ticket{background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;}
 .plan-visit-booking{background:linear-gradient(135deg,#003580,#0057B8);color:#fff;}
@@ -2791,6 +2804,7 @@ main{padding-top:8px;}
 .plan-visit-parking-alt{background:linear-gradient(135deg,#10B981,#047857);color:#fff;}
 .how-to-get-there-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .how-to-get-there-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.how-to-get-there-panel[hidden]{display:none;}
 .how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:linear-gradient(135deg,#0EA5E9,#0369A1);color:#fff;}
 .how-to-get-there-option-alt{background:linear-gradient(135deg,#8B5CF6,#5B21B6);}
 .report-issue-btn{width:100%;background:none;border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;}
@@ -2875,6 +2889,7 @@ main{padding-top:8px;}
 
 /* Buton "Mergi acum" (Waze) — verde-pulsant când e deschis, roșu static când e închis */
 .go-now-btn{display:block;text-align:center;width:100%;padding:13px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14px;text-decoration:none;color:#fff;}
+.go-now-btn[hidden]{display:none;}
 .brand-badge.status-open,.brand-badge.status-closed{position:relative;}
 .brand-badge.status-open{background:#22C55E!important;animation:goNowPulse 1.8s infinite;}
 .brand-badge.status-closed{background:#DC2626!important;}
@@ -2920,6 +2935,7 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .holiday-hours{font-family:var(--font-mono);color:var(--muted);font-size:13.5px;}
 .holiday-hours.closed{color:#F87171;}
 .mall-list{list-style:none;margin:0 18px;display:flex;flex-direction:column;gap:8px;}
+.mall-list[hidden]{display:none;}
 .mall-list li{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
 .mall-list a{display:block;padding:14px 16px 14px 0;font-weight:600;font-size:14.5px;flex:1 1 auto;}
 .mall-list a:hover{color:var(--accent);}
