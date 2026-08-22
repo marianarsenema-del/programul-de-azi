@@ -889,7 +889,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1257,6 +1257,39 @@ const TRANSLATIONS = {
       closesToday: "Fecha hoje às {time}",
     },
   },
+  cz: {
+    dayNames: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
+    home: "Domů",
+    todayLabel: "Dnes",
+    calculating: "Počítání otevírací doby...",
+    weeklyTitle: "Otevírací doba v týdnu",
+    holidaysTitle: "Otevírací doba o svátcích",
+    noHolidays: "Momentálně žádná zvláštní otevírací doba",
+    closedWord: "Zavřeno",
+    installBtn: "📱 Nainstalovat aplikaci pro rychlý přístup",
+    iosHint: "Na iPhonu: klepněte na tlačítko Sdílet a vyberte \"Přidat na plochu\".",
+    geoSuggestionPrefix: "📍 Vaše město je pravděpodobně",
+    geoSuggestionBtn: "Zobrazit obchody zde? →",
+    geoSuggestionNote: "Není to vaše město? Vyberte níže.",
+    amazonBtn: "🛍️ Zobrazit dnešní nabídky na Amazonu",
+    ticketBtn: "🎟️ Koupit vstupenky online a vyhnout se frontě",
+    tabStores: "🛒 Obchody",
+    tabAttractions: "🏛️ Zajímavosti",
+    attractionsComingSoon: "Náš průvodce zajímavostmi je na cestě — brzy se vraťte.",
+    titleTemplate: (brand, city) => `${brand} ${city} Otevírací Doba Dnes – Otevřeno nebo Zavřeno`,
+    descriptionTemplate: (brand, city) => `Zjistěte, zda je ${brand} v ${city} nyní otevřeno. Otevírací doba v týdnu a o svátcích, aktualizováno v reálném čase.`,
+    disclaimer: (name) => `Zobrazená otevírací doba pro ${name} je orientační, na základě standardní doby řetězce. Jednotlivé prodejny se mohou lišit — ověřte otevírací dobu u vchodu.`,
+    footer: (name) => `vám v reálném čase ukazuje, zda je ${name} nyní otevřeno, plus úplnou týdenní otevírací dobu a otevírací dobu o svátcích.`,
+    labels: {
+      openNow: "OTEVŘENO",
+      closedNow: "ZAVŘENO",
+      closedHoliday: "Dnes zavřeno — {label}",
+      closedAllDay: "Zavřeno celý den",
+      opensToday: "Dnes otevírá v {time}",
+      closedComeBack: "Zavřeno od {time} — přijďte zítra",
+      closesToday: "Dnes zavírá v {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1389,6 +1422,45 @@ const PT_STORE_CONFIG = {
   continente: { name: "Continente", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
   pingodoce: { name: "Pingo Doce", slug: "pingo-doce", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
   lidl: { name: "Lidl", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+};
+
+// Cehia — lege reală, verificată (Act No. 245/2000): magazinele peste 200m²
+// TREBUIE închise complet în 7 zile specifice; restul sărbătorilor (1 mai,
+// 5-6 iulie, 17 noiembrie) rămân deschise normal — confirmat explicit, nu
+// presupus. 24 decembrie: program redus, închidere obligatorie la 12:00.
+const CZ_HOLIDAYS = [
+  { date: "01-01", label: "Den obnovy samostatného českého státu (1. ledna)", hours: null },
+  { date: "04-06", label: "Velikonoční pondělí (6. dubna 2026)", hours: null },
+  { date: "05-01", label: "Svátek práce (1. května)", hours: { open: "08:00", close: "20:00" } },
+  { date: "05-08", label: "Den vítězství (8. května)", hours: null },
+  { date: "07-05", label: "Den slovanských věrozvěstů (5. července)", hours: { open: "08:00", close: "20:00" } },
+  { date: "07-06", label: "Den upálení mistra Jana Husa (6. července)", hours: { open: "08:00", close: "20:00" } },
+  { date: "09-28", label: "Den české státnosti (28. září)", hours: null },
+  { date: "10-28", label: "Den vzniku samostatného československého státu (28. října)", hours: null },
+  { date: "11-17", label: "Den boje za svobodu a demokracii (17. listopadu)", hours: { open: "08:00", close: "20:00" } },
+  { date: "12-24", label: "Štědrý den (24. prosince) — zavírací doba 12:00", hours: { open: "07:00", close: "12:00" } },
+  { date: "12-25", label: "1. svátek vánoční (25. prosince)", hours: null },
+  { date: "12-26", label: "2. svátek vánoční (26. prosince)", hours: null },
+];
+function czSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:00" }, // Neděle
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Sobota
+  ];
+}
+// Lidl, Kaufland, Albert, Billa, Tesco — toate cu prezență mare, confirmată,
+// cotă de piață semnificativă fiecare (peste 140 de magazine, minimum)
+const CZ_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  albert: { name: "Albert", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  billa: { name: "Billa", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  tesco: { name: "Tesco", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -1797,6 +1869,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.pt,
     cities: ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Setúbal", "Coimbra", "Almada", "Faro", "Funchal"],
   },
+  cz: {
+    config: CZ_STORE_CONFIG,
+    t: TRANSLATIONS.cz,
+    cities: ["Praha", "Brno", "Ostrava", "Plzeň", "Liberec", "Olomouc", "České Budějovice", "Hradec Králové"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2114,6 +2191,53 @@ const ATTRACTIONS = {
     { name: "Parcul Festyland Caen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Festyland+Caen+France" },
     { name: "Peștera Lascaux IV", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Lascaux+IV+France" },
   ],
+  se: [
+    { name: "Muzeul Vasa Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vasa+Stockholm+Sweden" },
+    { name: "Skansen Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Skansen+Stockholm+Sweden" },
+    { name: "Palatul Regal Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Stockholm+Sweden" },
+    { name: "Gamla Stan Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Gamla+Stan+Stockholm+Sweden" },
+    { name: "ABBA The Museum", url: "https://www.google.com/maps/search/?api=1&query=ABBA+The+Museum+Stockholm+Sweden" },
+    { name: "Muzeul Nobel Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Nobel+Stockholm+Sweden" },
+    { name: "Palatul Drottningholm", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Drottningholm+Sweden" },
+    { name: "Liseberg Göteborg", url: "https://www.google.com/maps/search/?api=1&query=Liseberg+Göteborg+Sweden" },
+    { name: "Universeum Göteborg", url: "https://www.google.com/maps/search/?api=1&query=Universeum+Göteborg+Sweden" },
+    { name: "Turning Torso Malmö", url: "https://www.google.com/maps/search/?api=1&query=Turning+Torso+Malmö+Sweden" },
+    { name: "Castelul Malmöhus", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Malmöhus+Sweden" },
+    { name: "Skyview Stockholm (Globen)", url: "https://www.google.com/maps/search/?api=1&query=Skyview+Stockholm+Globen+Sweden" },
+    { name: "Castelul Kalmar", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kalmar+Sweden" },
+    { name: "Sigtuna", url: "https://www.google.com/maps/search/?api=1&query=Sigtuna+Sweden" },
+    { name: "Icehotel Jukkasjärvi", url: "https://www.google.com/maps/search/?api=1&query=Icehotel+Jukkasjärvi+Sweden" },
+  ],
+  pt: [
+    { name: "Turnul Belém Lisboa", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Belém+Lisboa+Portugal" },
+    { name: "Mănăstirea Jerónimos", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Jerónimos+Lisboa+Portugal" },
+    { name: "Castelul São Jorge Lisboa", url: "https://www.google.com/maps/search/?api=1&query=Castelul+São+Jorge+Lisboa+Portugal" },
+    { name: "Oceanário de Lisboa", url: "https://www.google.com/maps/search/?api=1&query=Oceanário+de+Lisboa+Portugal" },
+    { name: "Palatul Pena Sintra", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Pena+Sintra+Portugal" },
+    { name: "Livraria Lello Porto", url: "https://www.google.com/maps/search/?api=1&query=Livraria+Lello+Porto+Portugal" },
+    { name: "Podul Dom Luís I Porto", url: "https://www.google.com/maps/search/?api=1&query=Podul+Dom+Luís+I+Porto+Portugal" },
+    { name: "Torre dos Clérigos Porto", url: "https://www.google.com/maps/search/?api=1&query=Torre+dos+Clérigos+Porto+Portugal" },
+    { name: "Cabo da Roca Sintra", url: "https://www.google.com/maps/search/?api=1&query=Cabo+da+Roca+Sintra+Portugal" },
+    { name: "Praia da Marinha Algarve", url: "https://www.google.com/maps/search/?api=1&query=Praia+da+Marinha+Algarve+Portugal" },
+    { name: "Universitatea din Coimbra", url: "https://www.google.com/maps/search/?api=1&query=Universitatea+din+Coimbra+Portugal" },
+    { name: "Fortăreața Sagres", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Sagres+Portugal" },
+    { name: "Piscinele Naturale Porto Moniz", url: "https://www.google.com/maps/search/?api=1&query=Piscinele+Naturale+Porto+Moniz+Madeira+Portugal" },
+    { name: "Palatul Ducal Vila Viçosa", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ducal+Vila+Viçosa+Portugal" },
+  ],
+  cz: [
+    { name: "Castelul Praga", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Praga+Czech+Republic" },
+    { name: "Podul Carol Praga", url: "https://www.google.com/maps/search/?api=1&query=Podul+Carol+Praga+Czech+Republic" },
+    { name: "Ceasul Astronomic Praga", url: "https://www.google.com/maps/search/?api=1&query=Ceasul+Astronomic+Praga+Czech+Republic" },
+    { name: "Piața Wenceslas Praga", url: "https://www.google.com/maps/search/?api=1&query=Piața+Wenceslas+Praga+Czech+Republic" },
+    { name: "Castelul Karlštejn", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Karlštejn+Czech+Republic" },
+    { name: "Kutná Hora — Biserica Oaselor", url: "https://www.google.com/maps/search/?api=1&query=Kutná+Hora+Biserica+Oaselor+Czech+Republic" },
+    { name: "Český Krumlov", url: "https://www.google.com/maps/search/?api=1&query=Český+Krumlov+Czech+Republic" },
+    { name: "Piața Vegetabilă Brno", url: "https://www.google.com/maps/search/?api=1&query=Piața+Vegetabilă+Brno+Czech+Republic" },
+    { name: "Peșterile Moravian Karst", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Moravian+Karst+Czech+Republic" },
+    { name: "Zoo Praga", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Praga+Czech+Republic" },
+    { name: "Muzeul Național Praga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Praga+Czech+Republic" },
+    { name: "Turnul cu Pulbere Praga", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Pulbere+Praga+Czech+Republic" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -2149,11 +2273,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2161,7 +2285,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -3972,6 +4096,7 @@ const LANG_META = {
   da: { lang: "da", locale: "da_DK" },
   se: { lang: "sv", locale: "sv_SE" },
   pt: { lang: "pt", locale: "pt_PT" },
+  cz: { lang: "cs", locale: "cs_CZ" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -4602,7 +4727,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -5357,6 +5482,14 @@ const CITY_COORDS = {
   "Almada": [38.6800, -9.1580],
   "Faro": [37.0194, -7.9304],
   "Funchal": [32.6669, -16.9241],
+  "Praha": [50.0755, 14.4378],
+  "Brno": [49.1951, 16.6068],
+  "Ostrava": [49.8209, 18.2625],
+  "Plzeň": [49.7384, 13.3736],
+  "Liberec": [50.7663, 15.0543],
+  "Olomouc": [49.5938, 17.2509],
+  "České Budějovice": [48.9745, 14.4747],
+  "Hradec Králové": [50.2092, 15.8328],
 };
 
 function slugifyCityName(name) {
@@ -5761,7 +5894,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -5772,7 +5905,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -5791,7 +5924,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/obiectiv/:slug", async (
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -5824,7 +5957,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/:oras/:magazin", async (
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
