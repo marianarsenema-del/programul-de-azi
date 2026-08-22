@@ -889,7 +889,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1224,6 +1224,39 @@ const TRANSLATIONS = {
       closesToday: "Stänger idag kl. {time}",
     },
   },
+  pt: {
+    dayNames: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+    home: "Início",
+    todayLabel: "Hoje",
+    calculating: "A calcular horários...",
+    weeklyTitle: "Horário semanal",
+    holidaysTitle: "Horário em feriados",
+    noHolidays: "Sem horários especiais neste momento",
+    closedWord: "Fechado",
+    installBtn: "📱 Instalar a app para acesso rápido",
+    iosHint: "No iPhone: toque no botão Partilhar e escolha \"Adicionar ao ecrã principal\".",
+    geoSuggestionPrefix: "📍 A sua cidade parece ser",
+    geoSuggestionBtn: "Ver lojas aqui? →",
+    geoSuggestionNote: "Não é a sua cidade? Escolha abaixo.",
+    amazonBtn: "🛍️ Ver ofertas de hoje na Amazon",
+    ticketBtn: "🎟️ Compre bilhetes online e evite a fila",
+    tabStores: "🛒 Lojas",
+    tabAttractions: "🏛️ Pontos turísticos",
+    attractionsComingSoon: "O nosso guia de pontos turísticos está a caminho — volte em breve.",
+    titleTemplate: (brand, city) => `${brand} ${city} Horário Hoje – Aberto ou Fechado Agora`,
+    descriptionTemplate: (brand, city) => `Veja agora se ${brand} em ${city} está aberto. Horário semanal e horário de feriados, atualizado em tempo real.`,
+    disclaimer: (name) => `Os horários apresentados para ${name} são indicativos, com base no horário padrão da cadeia. Lojas individuais podem variar — confirme o horário à entrada.`,
+    footer: (name) => `mostra-lhe em tempo real se ${name} está aberto agora, além do horário semanal completo e do horário de feriados.`,
+    labels: {
+      openNow: "ABERTO AGORA",
+      closedNow: "FECHADO AGORA",
+      closedHoliday: "Fechado hoje — {label}",
+      closedAllDay: "Fechado o dia todo",
+      opensToday: "Abre hoje às {time}",
+      closedComeBack: "Fechou às {time} — volte amanhã",
+      closesToday: "Fecha hoje às {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1318,6 +1351,44 @@ const SE_STORE_CONFIG = {
   coop: { name: "Coop", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
   willys: { name: "Willys", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
   lidl: { name: "Lidl", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+};
+
+// Portugalia — 13 sărbători naționale 2026, verificate. Spre deosebire de
+// Germania, magazinele RĂMÂN DESCHISE aproape de fiecare sărbătoare (confirmat
+// explicit pentru 15 august — Continente, Pingo Doce, Lidl deschise normal);
+// doar 1 ianuarie și 25 decembrie au program redus/închis, universal.
+const PT_HOLIDAYS = [
+  { date: "01-01", label: "Ano Novo (1 de janeiro)", hours: null },
+  { date: "04-03", label: "Sexta-feira Santa (3 de abril 2026)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Páscoa (5 de abril 2026)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-25", label: "Dia da Liberdade (25 de abril)", hours: { open: "08:00", close: "21:00" } },
+  { date: "05-01", label: "Dia do Trabalhador (1 de maio)", hours: { open: "09:00", close: "20:00" } },
+  { date: "06-04", label: "Corpo de Deus (4 de junho 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "06-10", label: "Dia de Portugal (10 de junho)", hours: { open: "08:00", close: "21:00" } },
+  { date: "08-15", label: "Assunção de Nossa Senhora (15 de agosto)", hours: { open: "08:00", close: "21:00" } },
+  { date: "10-05", label: "Implantação da República (5 de outubro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "11-01", label: "Dia de Todos os Santos (1 de novembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-01", label: "Restauração da Independência (1 de dezembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-08", label: "Imaculada Conceição (8 de dezembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-25", label: "Natal (25 de dezembro)", hours: null },
+];
+function ptSupermarketWeekly() {
+  return [
+    { open: "08:30", close: "21:00" }, // Domingo — deschis, spre deosebire de Germania
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sábado
+  ];
+}
+// Continente, Pingo Doce, Lidl — cele 3 branduri universale, confirmate,
+// prezente aproape peste tot (Continente ajunge la 87,5% din gospodării)
+const PT_STORE_CONFIG = {
+  continente: { name: "Continente", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+  pingodoce: { name: "Pingo Doce", slug: "pingo-doce", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -1721,6 +1792,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.se,
     cities: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro", "Helsingborg", "Linköping", "Norrköping", "Karlstad"],
   },
+  pt: {
+    config: PT_STORE_CONFIG,
+    t: TRANSLATIONS.pt,
+    cities: ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Setúbal", "Coimbra", "Almada", "Faro", "Funchal"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2073,11 +2149,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2085,7 +2161,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -3895,6 +3971,7 @@ const LANG_META = {
   nl: { lang: "nl", locale: "nl_NL" },
   da: { lang: "da", locale: "da_DK" },
   se: { lang: "sv", locale: "sv_SE" },
+  pt: { lang: "pt", locale: "pt_PT" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -5270,6 +5347,16 @@ const CITY_COORDS = {
   "Linköping": [58.4108, 15.6214],
   "Norrköping": [58.5877, 16.1924],
   "Karlstad": [59.3793, 13.5036],
+  "Lisboa": [38.7223, -9.1393],
+  "Porto": [41.1579, -8.6291],
+  "Vila Nova de Gaia": [41.1239, -8.6118],
+  "Amadora": [38.7536, -9.2302],
+  "Braga": [41.5454, -8.4265],
+  "Setúbal": [38.5244, -8.8882],
+  "Coimbra": [40.2033, -8.4103],
+  "Almada": [38.6800, -9.1580],
+  "Faro": [37.0194, -7.9304],
+  "Funchal": [32.6669, -16.9241],
 };
 
 function slugifyCityName(name) {
@@ -5674,7 +5761,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -5685,7 +5772,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -5704,7 +5791,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/obiectiv/:slug", async (req
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -5737,7 +5824,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/:oras/:magazin", async (req
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
