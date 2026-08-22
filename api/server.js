@@ -2522,8 +2522,10 @@ function buildCitySelectorFilterScript(nonce) {
     var list = document.getElementById(input.getAttribute("data-filter-target"));
     if (!list) return;
     var items = Array.prototype.slice.call(list.querySelectorAll("li"));
+    list.hidden = true; // ascunsă implicit — nu are rost o listă lungă sub bara de căutare, apare doar când tastezi ceva
     input.addEventListener("input", function(){
       var q = norm(input.value.trim());
+      list.hidden = q.length === 0;
       items.forEach(function(li){
         li.hidden = q.length > 0 && norm(li.textContent).indexOf(q) === -1;
       });
@@ -2645,7 +2647,10 @@ body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,2
 a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
 header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
-.header-row{display:flex;align-items:center;justify-content:space-between;}
+.header-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
+.header-row .brand{justify-self:start;}
+.header-row .live-clock{justify-self:center;}
+.theme-toggle-btn.in-header{position:static;justify-self:end;width:34px;height:34px;font-size:15px;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
 .brand span{color:var(--accent);}
 .live-clock{font-family:var(--font-mono);font-weight:600;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:7px;}
@@ -3655,6 +3660,14 @@ function buildThemeToggleScript(nonce) {
   var icon = document.getElementById("themeToggleIcon");
   if (!btn || !icon) return;
 
+  // mutăm butonul efectiv în interiorul header-ului (nu trebuie atinsă
+  // fiecare pagină individual — se întâmplă o singură dată, aici)
+  var headerRow = document.querySelector(".header-row");
+  if (headerRow) {
+    headerRow.appendChild(btn);
+    btn.classList.add("in-header");
+  }
+
   function effectiveTheme(){
     var explicit = document.documentElement.getAttribute("data-theme");
     if (explicit) return explicit;
@@ -4263,11 +4276,6 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   // textul de rezervare bilete se traduce per țara atracției (COUNTRIES[code].t
   // dacă țara are pagini de magazine — ex. "at"/"be" reutilizează de/nl —
   // altfel engleză implicit) — un singur link general (linkBileteTurism) pentru toate.
-  const ticketButtonHtml = (code) => {
-    if (!linkBileteTurism) return "";
-    const tFor = (COUNTRIES[code] && COUNTRIES[code].t) || TRANSLATIONS.uk;
-    return `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(tFor.ticketBtn)}</a>`;
-  };
 
   // --- STORES: blocul "toate țările" (implicit, vizibil, SEO-friendly — link-uri
   // reale, urmăribile chiar și fără JS) + câte un bloc ascuns per țară, cu orașele ei ---
@@ -4344,7 +4352,6 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
     <h2 class="section-title"><span class="bar"></span>Attractions in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${cityBarHtml}
     <ul class="attraction-accordion-list">${items}</ul>
-    ${ticketButtonHtml(code)}
   </div>`;
     })
     .join("");
@@ -4696,9 +4703,6 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
         buildAttractionAccordionItem(a, "ro", null, false)
     )
     .join("");
-  const roTicketButtonHtml = linkBileteTurism
-    ? `<a href="${escapeHtml(linkBileteTurism)}" target="_blank" rel="noopener sponsored" class="ticket-btn">${escapeHtml(TRANSLATIONS.ro.ticketBtn)}</a>`
-    : "";
 
   // Sugestie pe baza IP-ului — NU redirect forțat. Pe rețele mobile din România,
   // IP-ul apare adesea "din București" indiferent de orașul real al vizitatorului,
@@ -4754,7 +4758,6 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <div class="sub-nav-panel" data-panel="attractions">
     <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
     <ul class="attraction-accordion-list">${attractionItemsHtml}</ul>
-    ${roTicketButtonHtml}
   </div>
 
   <div class="sub-nav-panel" data-panel="favorites">
