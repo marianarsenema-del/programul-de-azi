@@ -889,7 +889,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1323,6 +1323,39 @@ const TRANSLATIONS = {
       closesToday: "Sulkeutuu tänään klo {time}",
     },
   },
+  gr: {
+    dayNames: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
+    home: "Αρχική",
+    todayLabel: "Σήμερα",
+    calculating: "Υπολογισμός ωραρίου...",
+    weeklyTitle: "Εβδομαδιαίο ωράριο",
+    holidaysTitle: "Ωράριο αργιών",
+    noHolidays: "Κανένα ειδικό ωράριο αυτή τη στιγμή",
+    closedWord: "Κλειστό",
+    installBtn: "📱 Εγκατάσταση εφαρμογής για γρήγορη πρόσβαση",
+    iosHint: "Στο iPhone: πατήστε το κουμπί Κοινοποίηση και επιλέξτε \"Προσθήκη στην Αρχική Οθόνη\".",
+    geoSuggestionPrefix: "📍 Η πόλη σας φαίνεται να είναι",
+    geoSuggestionBtn: "Δείτε καταστήματα εδώ; →",
+    geoSuggestionNote: "Δεν είναι η πόλη σας; Επιλέξτε παρακάτω.",
+    amazonBtn: "🛍️ Δείτε τις σημερινές προσφορές στο Amazon",
+    ticketBtn: "🎟️ Αγοράστε εισιτήρια online και αποφύγετε την ουρά",
+    tabStores: "🛒 Καταστήματα",
+    tabAttractions: "🏛️ Αξιοθέατα",
+    attractionsComingSoon: "Ο οδηγός αξιοθέατων μας έρχεται σύντομα — περάστε ξανά.",
+    titleTemplate: (brand, city) => `${brand} ${city} Ωράριο Σήμερα – Ανοιχτό ή Κλειστό Τώρα`,
+    descriptionTemplate: (brand, city) => `Δείτε τώρα αν το ${brand} στην ${city} είναι ανοιχτό. Εβδομαδιαίο ωράριο και ωράριο αργιών, ενημερωμένο σε πραγματικό χρόνο.`,
+    disclaimer: (name) => `Το εμφανιζόμενο ωράριο για ${name} είναι ενδεικτικό, με βάση το τυπικό ωράριο της αλυσίδας. Μεμονωμένα καταστήματα ενδέχεται να διαφέρουν — επιβεβαιώστε το ωράριο στην είσοδο.`,
+    footer: (name) => `σας δείχνει σε πραγματικό χρόνο αν το ${name} είναι ανοιχτό αυτή τη στιγμή, καθώς και το πλήρες εβδομαδιαίο ωράριο και το ωράριο αργιών.`,
+    labels: {
+      openNow: "ΑΝΟΙΧΤΟ ΤΩΡΑ",
+      closedNow: "ΚΛΕΙΣΤΟ ΤΩΡΑ",
+      closedHoliday: "Κλειστό σήμερα — {label}",
+      closedAllDay: "Κλειστό όλη τη μέρα",
+      opensToday: "Ανοίγει σήμερα στις {time}",
+      closedComeBack: "Έκλεισε στις {time} — επιστρέψτε αύριο",
+      closesToday: "Κλείνει σήμερα στις {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1534,6 +1567,46 @@ const FI_STORE_CONFIG = {
   prisma: { name: "Prisma", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
   kcitymarket: { name: "K-Citymarket", slug: "k-citymarket", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
   lidl: { name: "Lidl", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
+};
+
+// Grecia — 13 sărbători 2026, calendar ortodox (Paște 12 aprilie 2026,
+// verificat încrucișat cu data folosită deja pentru România). Confirmat
+// direct, cu surse din presă: Lidl rămâne cel mai adesea deschis, cu ore
+// reduse, chiar și de Luni Curată/Duminica Floriilor, când lanțurile grecești
+// mari (Sklavenitis, AB) închid complet.
+const GR_HOLIDAYS = [
+  { date: "01-01", label: "Πρωτοχρονιά (1 Ιανουαρίου)", hours: null },
+  { date: "01-06", label: "Θεοφάνεια (6 Ιανουαρίου)", hours: { open: "11:00", close: "18:00" } },
+  { date: "02-23", label: "Καθαρά Δευτέρα (23 Φεβρουαρίου 2026)", hours: { open: "07:45", close: "16:00" } },
+  { date: "03-25", label: "Εθνική Εορτή (25 Μαρτίου)", hours: null },
+  { date: "04-10", label: "Μεγάλη Παρασκευή (10 Απριλίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "04-12", label: "Πάσχα (12 Απριλίου 2026)", hours: null },
+  { date: "04-13", label: "Δευτέρα του Πάσχα (13 Απριλίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "05-01", label: "Εργατική Πρωτομαγιά (1 Μαΐου)", hours: null },
+  { date: "06-01", label: "Αγίου Πνεύματος (1 Ιουνίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "08-15", label: "Κοίμηση της Θεοτόκου (15 Αυγούστου)", hours: null },
+  { date: "10-28", label: "Ημέρα του Όχι (28 Οκτωβρίου)", hours: null },
+  { date: "12-25", label: "Χριστούγεννα (25 Δεκεμβρίου)", hours: null },
+  { date: "12-26", label: "Σύναξις Θεοτόκου (26 Δεκεμβρίου)", hours: null },
+];
+function grSupermarketWeekly() {
+  return [
+    null, // Κυριακή — majoritatea închise, în afara zonelor turistice/Duminicilor de vânzări speciale
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "20:00" }, // Σάββατο
+  ];
+}
+// Sklavenitis, Lidl, AB Vassilopoulos (Alfa-Beta), Masoutis — cele 4
+// branduri cu cea mai mare prezență națională, confirmate
+const GR_STORE_CONFIG = {
+  sklavenitis: { name: "Sklavenitis", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  abvassilopoulos: { name: "AB Vassilopoulos", slug: "ab-vassilopoulos", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  masoutis: { name: "Masoutis", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -1952,6 +2025,11 @@ const COUNTRIES = {
     t: TRANSLATIONS.fi,
     cities: ["Helsinki", "Tampere", "Turku", "Oulu", "Jyväskylä", "Kuopio", "Lahti", "Rovaniemi"],
   },
+  gr: {
+    config: GR_STORE_CONFIG,
+    t: TRANSLATIONS.gr,
+    cities: ["Athens", "Thessaloniki", "Patras", "Heraklion", "Larissa", "Volos", "Ioannina", "Chania"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2332,6 +2410,22 @@ const ATTRACTIONS = {
     { name: "Muzeul Arktikum Rovaniemi", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arktikum+Rovaniemi+Finland" },
     { name: "Zoo Ähtäri", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Ähtäri+Finland" },
   ],
+  gr: [
+    { name: "Acropolis Athens", url: "https://www.google.com/maps/search/?api=1&query=Acropolis+Athens+Greece" },
+    { name: "Muzeul Acropolei", url: "https://www.google.com/maps/search/?api=1&query=Acropolis+Museum+Athens+Greece" },
+    { name: "Templul lui Zeus Olympian", url: "https://www.google.com/maps/search/?api=1&query=Temple+of+Olympian+Zeus+Athens+Greece" },
+    { name: "Agora Antică Athens", url: "https://www.google.com/maps/search/?api=1&query=Ancient+Agora+Athens+Greece" },
+    { name: "Muzeul Național Arheologic", url: "https://www.google.com/maps/search/?api=1&query=National+Archaeological+Museum+Athens+Greece" },
+    { name: "Colina Lycabettus", url: "https://www.google.com/maps/search/?api=1&query=Lycabettus+Hill+Athens+Greece" },
+    { name: "Turnul Alb Thessaloniki", url: "https://www.google.com/maps/search/?api=1&query=White+Tower+Thessaloniki+Greece" },
+    { name: "Rotonda Galerius", url: "https://www.google.com/maps/search/?api=1&query=Rotunda+of+Galerius+Thessaloniki+Greece" },
+    { name: "Muzeul Arheologic Thessaloniki", url: "https://www.google.com/maps/search/?api=1&query=Archaeological+Museum+Thessaloniki+Greece" },
+    { name: "Palatul Knossos", url: "https://www.google.com/maps/search/?api=1&query=Palace+of+Knossos+Heraklion+Greece" },
+    { name: "Muzeul Arheologic Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Archaeological+Museum+Heraklion+Greece" },
+    { name: "Mănăstirile Meteora", url: "https://www.google.com/maps/search/?api=1&query=Meteora+Monasteries+Greece" },
+    { name: "Situl Arheologic Delfi", url: "https://www.google.com/maps/search/?api=1&query=Delphi+Archaeological+Site+Greece" },
+    { name: "Teatrul Antic Epidaurus", url: "https://www.google.com/maps/search/?api=1&query=Ancient+Theatre+Epidaurus+Greece" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -2367,11 +2461,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2379,7 +2473,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -4192,6 +4286,7 @@ const LANG_META = {
   pt: { lang: "pt", locale: "pt_PT" },
   cz: { lang: "cs", locale: "cs_CZ" },
   fi: { lang: "fi", locale: "fi_FI" },
+  gr: { lang: "el", locale: "el_GR" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -4822,7 +4917,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -5593,6 +5688,14 @@ const CITY_COORDS = {
   "Kuopio": [62.8924, 27.6770],
   "Lahti": [60.9827, 25.6612],
   "Rovaniemi": [66.5039, 25.7294],
+  "Athens": [37.9838, 23.7275],
+  "Thessaloniki": [40.6401, 22.9444],
+  "Patras": [38.2466, 21.7346],
+  "Heraklion": [35.3387, 25.1442],
+  "Larissa": [39.6390, 22.4191],
+  "Volos": [39.3622, 22.9425],
+  "Ioannina": [39.6650, 20.8537],
+  "Chania": [35.5138, 24.0180],
 };
 
 function slugifyCityName(name) {
@@ -5997,7 +6100,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -6008,7 +6111,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -6027,7 +6130,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/obiectiv/:slug", a
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -6060,7 +6163,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/:oras/:magazin", a
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
