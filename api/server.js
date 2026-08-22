@@ -290,6 +290,109 @@ function contactInfoHtml(live) {
   return `<div class="contact-info-block">${addressHtml}${phoneHtml}</div>`;
 }
 
+const REPORT_ISSUE_LABELS_RO = {
+  btn: "🚩 Raportează program greșit",
+  title: "Ce e greșit?",
+  reasonWrong: "Ora e greșită",
+  reasonClosed: "S-a închis definitiv",
+  reasonOther: "Altceva",
+  notePlaceholder: "Detalii (opțional)...",
+  submit: "Trimite raportarea",
+  confirm: "✅ Mulțumim! Am primit raportarea.",
+  error: "Nu am putut trimite raportarea. Încearcă din nou.",
+};
+const REPORT_ISSUE_LABELS_EN = {
+  btn: "🚩 Report wrong hours",
+  title: "What's wrong?",
+  reasonWrong: "Hours are wrong",
+  reasonClosed: "Permanently closed",
+  reasonOther: "Something else",
+  notePlaceholder: "Details (optional)...",
+  submit: "Send report",
+  confirm: "✅ Thanks! We got your report.",
+  error: "Couldn't send the report. Try again.",
+};
+
+// Buton comunitar — raportează o eroare, direct din pagina magazinului.
+// Fără cont, fără moderare automată (doar captăm datele corect, pentru
+// verificare manuală ulterioară — vezi tabelul location_reports).
+function buildReportIssueHtml({ slug, name, oras, labels }) {
+  const t = labels || REPORT_ISSUE_LABELS_RO;
+  return `
+  <div class="report-issue-block">
+    <button type="button" class="report-issue-btn" id="reportIssueBtn" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(name)}" data-oras="${escapeHtml(oras || "")}">${escapeHtml(t.btn)}</button>
+    <div class="report-issue-panel" id="reportIssuePanel" hidden>
+      <p class="report-issue-title">${escapeHtml(t.title)}</p>
+      <div class="report-reason-chips">
+        <button type="button" class="report-reason-chip" data-reason="program_gresit">${escapeHtml(t.reasonWrong)}</button>
+        <button type="button" class="report-reason-chip" data-reason="inchis_definitiv">${escapeHtml(t.reasonClosed)}</button>
+        <button type="button" class="report-reason-chip" data-reason="altceva">${escapeHtml(t.reasonOther)}</button>
+      </div>
+      <textarea id="reportIssueNote" class="report-issue-note" placeholder="${escapeHtml(t.notePlaceholder)}" maxlength="500"></textarea>
+      <button type="button" class="report-issue-submit" id="reportIssueSubmit" disabled>${escapeHtml(t.submit)}</button>
+      <p class="report-issue-msg" id="reportIssueMsg" hidden></p>
+    </div>
+  </div>`;
+}
+
+function buildReportIssueScript(nonce, labels) {
+  const t = labels || REPORT_ISSUE_LABELS_RO;
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("reportIssueBtn");
+  var panel = document.getElementById("reportIssuePanel");
+  if (!btn || !panel) return;
+  var chips = panel.querySelectorAll(".report-reason-chip");
+  var note = document.getElementById("reportIssueNote");
+  var submitBtn = document.getElementById("reportIssueSubmit");
+  var msg = document.getElementById("reportIssueMsg");
+  var selectedReason = null;
+
+  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
+
+  chips.forEach(function(chip){
+    chip.addEventListener("click", function(){
+      chips.forEach(function(c){ c.classList.remove("is-selected"); });
+      chip.classList.add("is-selected");
+      selectedReason = chip.getAttribute("data-reason");
+      submitBtn.disabled = false;
+    });
+  });
+
+  submitBtn.addEventListener("click", function(){
+    if (!selectedReason) return;
+    submitBtn.disabled = true;
+    fetch("/api/report-issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        slug: btn.getAttribute("data-slug"),
+        numeLocatie: btn.getAttribute("data-name"),
+        oras: btn.getAttribute("data-oras"),
+        motiv: selectedReason,
+        nota: note ? note.value : "",
+      }),
+    })
+      .then(function(r){ if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function(){
+        msg.textContent = ${safeJson(t.confirm)};
+        msg.hidden = false;
+        msg.className = "report-issue-msg is-success";
+        chips.forEach(function(c){ c.disabled = true; });
+        if (note) note.disabled = true;
+      })
+      .catch(function(){
+        msg.textContent = ${safeJson(t.error)};
+        msg.hidden = false;
+        msg.className = "report-issue-msg is-error";
+        submitBtn.disabled = false;
+      });
+  });
+})();
+</script>`;
+}
+
 function buildGoNowButtonHtml(place, label) {
   return `<a id="goNowBtn" class="go-now-btn" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(label || "🚗 Mergi acum (Waze)")}</a>`;
 }
@@ -2496,6 +2599,8 @@ header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-fil
 .brand-badge{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;margin-right:12px;flex:0 0 auto;vertical-align:middle;box-shadow:0 3px 8px -2px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 1px rgba(0,0,0,.2);}
 .mall-list li{display:flex;align-items:center;padding-left:16px;}
 .city-map{height:280px;border-radius:var(--radius-md);overflow:hidden;margin:14px 18px 0;border:1px solid var(--border);background:var(--surface);}
+.map-live-toggle{display:flex;align-items:center;gap:8px;margin:14px 18px 4px;font-size:14px;color:var(--text);}
+.map-live-status{margin:0 18px 4px;font-size:12.5px;color:var(--muted);}
 .chip.active{background:var(--accent);color:#1A1200;border-color:var(--accent);}
 main{padding-top:8px;}
 .ad-slot{margin:14px 18px 0;border-radius:var(--radius-md);overflow:hidden;text-align:center;}
@@ -2510,6 +2615,21 @@ main{padding-top:8px;}
 
 /* Adresă + telefon (contactInfoHtml) — sub cardul de status */
 .contact-info-block{margin:10px 18px 0;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
+
+/* Raportare comunitară (buildReportIssueHtml) */
+.report-issue-block{margin:14px 18px 0;}
+.report-issue-btn{width:100%;background:none;border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;}
+.report-issue-panel{margin-top:10px;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
+.report-issue-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.report-reason-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.report-reason-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:7px 13px;font-family:var(--font-body);font-size:12.5px;color:var(--text);cursor:pointer;}
+.report-reason-chip.is-selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+.report-issue-note{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;color:var(--text);font-family:var(--font-body);font-size:13.5px;resize:vertical;min-height:60px;margin-bottom:10px;}
+.report-issue-submit{width:100%;background:var(--accent);border:none;border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:#fff;cursor:pointer;}
+.report-issue-submit:disabled{opacity:.4;cursor:not-allowed;}
+.report-issue-msg{margin-top:8px;font-size:13px;text-align:center;}
+.report-issue-msg.is-success{color:#22C55E;}
+.report-issue-msg.is-error{color:#DC2626;}
 .contact-info-row{font-size:14px;color:var(--text);}
 .contact-info-row + .contact-info-row{margin-top:6px;}
 .contact-info-row a{color:var(--accent);text-decoration:none;font-weight:600;}
@@ -3206,24 +3326,29 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
 function buildCityMapHtml(coords, cityName, nonce) {
   if (!coords) return "";
 
+  const toggleHtml = `<label class="map-live-toggle"><input type="checkbox" id="mapOpenOnlyToggle"> Doar magazinele deschise acum</label>
+<p id="mapLiveStatus" class="map-live-status">Se încarcă statusul live al magazinelor...</p>`;
+
   // dacă avem cheie Google Maps, o folosim pe aceea — altfel, fallback automat
   // pe OpenStreetMap + Leaflet (gratuit, fără cont/cheie necesară)
   if (googleMapsApiKey) {
     return `
+${toggleHtml}
 <div id="cityMap" class="city-map"></div>
 <script nonce="${nonce}">
   window.__initCityMap_${cityName.replace(/[^a-zA-Z0-9]/g, "")} = function(){
     var el = document.getElementById("cityMap");
     if (!el || typeof google === "undefined") return;
     var center = { lat: ${coords[0]}, lng: ${coords[1]} };
-    var map = new google.maps.Map(el, { center: center, zoom: 12, disableDefaultUI: false });
-    new google.maps.Marker({ position: center, map: map, title: ${safeJson(cityName)} });
+    window.__cityMapInstance = new google.maps.Map(el, { center: center, zoom: 12, disableDefaultUI: false });
+    window.__cityMapBackend = "google";
   };
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=${escapeHtml(googleMapsApiKey)}&callback=__initCityMap_${cityName.replace(/[^a-zA-Z0-9]/g, "")}" async defer></script>`;
   }
 
   return `
+${toggleHtml}
 <div id="cityMap" class="city-map"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -3232,15 +3357,86 @@ function buildCityMapHtml(coords, cityName, nonce) {
   if (typeof L === "undefined") return;
   var el = document.getElementById("cityMap");
   if (!el) return;
-  var map = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([${coords[0]}, ${coords[1]}], 12);
+  window.__cityMapInstance = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([${coords[0]}, ${coords[1]}], 12);
+  window.__cityMapBackend = "leaflet";
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
     maxZoom: 18,
-  }).addTo(map);
-  L.marker([${coords[0]}, ${coords[1]}]).addTo(map).bindPopup(${safeJson(cityName)});
+  }).addTo(window.__cityMapInstance);
 })();
 </script>`;
 }
+
+// Pinuri live, per magazin — cere /api/city-live-map (vezi ruta din
+// server.js), așteaptă ca harta de bază să fie gata (Google Maps se
+// inițializează asincron, Leaflet sincron — verificăm periodic, simplu,
+// nu presupunem care dintre ele), apoi adaugă un pin verde/roșu per
+// magazin, cu comutator "doar deschise acum" care le filtrează pe loc,
+// fără o nouă cerere către server.
+function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var statusEl = document.getElementById("mapLiveStatus");
+  var toggle = document.getElementById("mapOpenOnlyToggle");
+  if (!statusEl) return;
+
+  function whenMapReady(cb, attemptsLeft){
+    if (window.__cityMapInstance) { cb(); return; }
+    if (attemptsLeft <= 0) return;
+    setTimeout(function(){ whenMapReady(cb, attemptsLeft - 1); }, 200);
+  }
+
+  whenMapReady(function(){
+    fetch("/api/city-live-map?oras=" + encodeURIComponent(${safeJson(orasDisplay)}) + "&lang=" + encodeURIComponent(${safeJson(lang)}))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var stores = (data && data.stores) || [];
+        if (!stores.length) { statusEl.textContent = "Nu am găsit magazine cu poziție confirmată pentru harta live."; return; }
+        statusEl.textContent = stores.length + " magazine găsite — " + stores.filter(function(s){ return s.isOpenNow; }).length + " deschise acum.";
+
+        var markers = [];
+        var backend = window.__cityMapBackend;
+
+        stores.forEach(function(store){
+          var color = store.isOpenNow ? "#22C55E" : "#DC2626";
+          var marker;
+          if (backend === "google" && typeof google !== "undefined") {
+            marker = new google.maps.Marker({
+              position: { lat: store.lat, lng: store.lng },
+              map: window.__cityMapInstance,
+              title: store.name,
+              icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: color, fillOpacity: 1, strokeWeight: 0, scale: 8 },
+            });
+          } else if (backend === "leaflet" && typeof L !== "undefined") {
+            marker = L.circleMarker([store.lat, store.lng], { radius: 8, color: color, fillColor: color, fillOpacity: 0.9 })
+              .addTo(window.__cityMapInstance)
+              .bindPopup(store.name + (store.isOpenNow ? " — deschis acum" : " — închis acum"));
+          }
+          if (marker) markers.push({ marker: marker, isOpenNow: store.isOpenNow, backend: backend });
+        });
+
+        function applyFilter(){
+          var onlyOpen = toggle && toggle.checked;
+          markers.forEach(function(m){
+            var visible = !onlyOpen || m.isOpenNow;
+            if (m.backend === "google") {
+              m.marker.setVisible(visible);
+            } else {
+              var el = m.marker.getElement && m.marker.getElement();
+              if (el) el.style.display = visible ? "" : "none";
+            }
+          });
+        }
+
+        if (toggle) toggle.addEventListener("change", applyFilter);
+      })
+      .catch(function(){ statusEl.textContent = "Nu am putut încărca statusul live al magazinelor."; });
+  }, 25); // ~5 secunde, la 200ms interval — suficient pentru orice mod de inițializare
+})();
+</script>`;
+}
+
 
 function buildCountryFilterScript(nonce, initialCountry, initialCity) {
   return `
@@ -3597,6 +3793,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
       ${contactInfoHtml(live)}
+      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${specialBanner}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
@@ -3615,6 +3812,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
         <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
+      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
       ${affiliateButtonHtml}
@@ -3660,7 +3858,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${buildContextualWidgetScript(nonce)}`;
+${buildContextualWidgetScript(nonce)}
+${buildReportIssueScript(nonce)}`;
 
   // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
   // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
@@ -3730,6 +3929,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   ${adSlotHtml()}
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildLiveMapPinsScript(orasDisplay, "ro", nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1")}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
@@ -3780,6 +3980,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
   ${contactInfoHtml(live)}
+  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${specialBanner}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
@@ -3800,6 +4001,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
   </div>
+  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: REPORT_ISSUE_LABELS_EN })}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: CONTEXTUAL_WIDGET_LABELS_EN })}`;
     weeklySectionHtml = `
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
@@ -3844,7 +4046,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
   </footer>
 </main>
-${buildContextualWidgetScript(nonce)}`;
+${buildContextualWidgetScript(nonce)}
+${buildReportIssueScript(nonce, REPORT_ISSUE_LABELS_EN)}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -3906,6 +4109,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1")}`;
 
   return pageShell({
@@ -4780,6 +4984,77 @@ app.get("/favicon.ico", (req, res) => res.status(204).end());
 // de browser (endpoint + chei de criptare) și îl salvează în bază.
 // "Silent" la orice eroare de business (deja abonat etc.) — răspunde 200
 // oricum, ca frontend-ul să nu tot repete cererea la nesfârșit.
+// Statusul live + coordonatele reale ale TUTUROR magazinelor dintr-un
+// oraș, pentru harta cu pinuri (nu doar centrul orașului). Cereri în
+// paralel, ca să nu aștepți 48 de răspunsuri unul după altul — dar tot
+// costă real, către Google, la fiecare vizitare după expirarea cache-ului
+// de 12h (decizie asumată explicit, nu ascunsă).
+// Raportare comunitară — "program greșit", văzută pe pagina unui magazin.
+// Validare simplă (motiv dintr-o listă fixă, notă limitată la 500 caractere)
+// — nu construim un sistem de moderare/rate-limit complet acum, doar
+// captăm datele corect, ca să le poți vedea și rezolva manual, în bază.
+const ALLOWED_REPORT_REASONS = ["program_gresit", "inchis_definitiv", "altceva"];
+
+app.post("/api/report-issue", async (req, res) => {
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const { slug, numeLocatie, oras, motiv, nota } = req.body || {};
+  if (!slug || typeof slug !== "string" || !ALLOWED_REPORT_REASONS.includes(motiv)) {
+    res.status(400).json({ error: "invalid_input" });
+    return;
+  }
+  const safeNota = typeof nota === "string" ? nota.slice(0, 500) : null;
+  try {
+    await dbPool.query(
+      `INSERT INTO location_reports (slug, nume_locatie, oras, motiv, nota) VALUES ($1, $2, $3, $4, $5)`,
+      [slug.slice(0, 255), (numeLocatie || "").slice(0, 255), (oras || "").slice(0, 255), motiv, safeNota]
+    );
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error("report-issue a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+app.get("/api/city-live-map", async (req, res) => {
+  if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const orasDisplay = toDisplayName(req.query.oras || "");
+  const lang = typeof req.query.lang === "string" ? req.query.lang : "ro";
+  if (!orasDisplay) {
+    res.status(400).json({ error: "missing_oras" });
+    return;
+  }
+  try {
+    const { rows } = await dbPool.query(
+      "SELECT nume_locatie, slug, place_id FROM locatii WHERE oras = $1 AND tip = 'store'",
+      [orasDisplay]
+    );
+    const validRows = rows.filter((r) => r.place_id && r.place_id !== "ZERO_RESULTS" && !r.place_id.startsWith("ERROR_"));
+
+    const results = await Promise.all(
+      validRows.map(async (row) => {
+        try {
+          const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang });
+          if (status.lat == null || status.lng == null) return null;
+          return { name: row.nume_locatie, slug: row.slug, lat: status.lat, lng: status.lng, isOpenNow: status.isOpenNow };
+        } catch (e) {
+          return null; // o locație eșuată nu blochează restul hărții
+        }
+      })
+    );
+
+    res.status(200).json({ stores: results.filter(Boolean) });
+  } catch (err) {
+    console.error("city-live-map a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.post("/api/push-subscribe", async (req, res) => {
   if (!pushEnabled) {
     res.status(503).json({ error: "push_not_configured" });
