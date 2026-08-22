@@ -19,11 +19,9 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // CSP rămâne separat, per-rută, pentru că are nevoie de nonce unic per pagină.
 app.use((req, res, next) => {
   res.set("X-Content-Type-Options", "nosniff"); // browserul nu "ghicește" tipul unui fișier, doar pe baza extensiei
-  // X-Frame-Options SCOS TEMPORAR — test, ca să confirmăm dacă blochează
-  // verificarea Travelpayouts (posibil să încarce pagina într-un iframe,
-  // ca să inspecteze codul). Dacă testul confirmă asta, revenim cu o
-  // soluție țintită (permitem doar domeniul lor, nu pe oricine).
-  // res.set("X-Frame-Options", "DENY");
+  // Testul cu iframe s-a încheiat — Travelpayouts a confirmat cauza reală
+  // (connect-src, nu iframe/frame-ancestors) — restaurăm protecția.
+  res.set("X-Frame-Options", "DENY");
   res.set("Referrer-Policy", "strict-origin-when-cross-origin"); // nu trimitem URL-ul complet altor site-uri, la click pe linkuri externe
   res.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains"); // forțează HTTPS, chiar dacă cineva încearcă explicit http://
   res.set("Permissions-Policy", "geolocation=(self), camera=(), microphone=()"); // geolocația rămâne, restul dezactivat explicit
@@ -2813,13 +2811,13 @@ function buildCsp(nonce) {
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "worker-src 'self'",
     "manifest-src 'self'",
     "base-uri 'self'",
     "form-action 'self'",
-    // "frame-ancestors 'none'", — scos temporar, același test ca X-Frame-Options
+    "frame-ancestors 'none'",
     "object-src 'none'",
     "upgrade-insecure-requests",
   ].join("; ");
