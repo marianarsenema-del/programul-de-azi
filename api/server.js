@@ -359,7 +359,7 @@ function contactInfoHtml(live) {
 }
 
 const REPORT_ISSUE_LABELS_RO = {
-  btn: "🚩 Este ceva greșit aici?",
+  btn: "🚩 Programul e corect sau locul nu mai există? Spune-ne, ajuți alți vizitatori!",
   q1: (name) => `Este ${name} deschis chiar acum?`,
   yes: "Da",
   no: "Nu",
@@ -367,9 +367,10 @@ const REPORT_ISSUE_LABELS_RO = {
   thanksOpen: "✅ Mulțumim pentru confirmare!",
   thanksReport: "✅ Mulțumim! Am primit raportarea.",
   error: "Nu am putut trimite raportarea. Încearcă din nou.",
+  alreadyReported: "✅ Ai raportat deja acest loc — mulțumim!",
 };
 const REPORT_ISSUE_LABELS_EN = {
-  btn: "🚩 Something wrong here?",
+  btn: "🚩 Is the schedule right, or is this place gone? Let us know — help other visitors!",
   q1: (name) => `Is ${name} open right now?`,
   yes: "Yes",
   no: "No",
@@ -377,6 +378,7 @@ const REPORT_ISSUE_LABELS_EN = {
   thanksOpen: "✅ Thanks for confirming!",
   thanksReport: "✅ Thanks! We got your report.",
   error: "Couldn't send the report. Try again.",
+  alreadyReported: "✅ You already reported this place — thanks!",
 };
 
 // Buton comunitar — flux în 2 pași (Este deschis? Da/Nu -> dacă Nu, Închis
@@ -419,6 +421,19 @@ function buildReportIssueScript(nonce, labels) {
   var step1 = document.getElementById("reportStep1");
   var step2 = document.getElementById("reportStep2");
   var msg = document.getElementById("reportIssueMsg");
+  var slug = btn.getAttribute("data-slug");
+  var storageKey = "reported_" + slug;
+
+  // deja raportat din ACEST browser, cândva — nu mai deschidem fluxul de
+  // întrebări, arătăm direct mulțumirea (ocolit ușor din incognito, dar nu
+  // are rost să enervăm un utilizator normal care a raportat deja o dată)
+  try {
+    if (localStorage.getItem(storageKey)) {
+      btn.textContent = ${safeJson(t.alreadyReported)};
+      btn.disabled = true;
+      return;
+    }
+  } catch(e){}
 
   btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
 
@@ -427,19 +442,20 @@ function buildReportIssueScript(nonce, labels) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        slug: btn.getAttribute("data-slug"),
+        slug: slug,
         numeLocatie: btn.getAttribute("data-name"),
         oras: btn.getAttribute("data-oras"),
         motiv: motiv,
       }),
     })
       .then(function(r){ if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function(){
+      .then(function(data){
         step1.hidden = true;
         step2.hidden = true;
-        msg.textContent = thanksText;
+        msg.textContent = (data && data.alreadyReported) ? ${safeJson(t.alreadyReported)} : thanksText;
         msg.hidden = false;
         msg.className = "report-issue-msg is-success";
+        try { localStorage.setItem(storageKey, "1"); } catch(e){}
       })
       .catch(function(){
         msg.textContent = ${safeJson(t.error)};
@@ -2808,6 +2824,7 @@ main{padding-top:8px;}
 .how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:linear-gradient(135deg,#0EA5E9,#0369A1);color:#fff;}
 .how-to-get-there-option-alt{background:linear-gradient(135deg,#8B5CF6,#5B21B6);}
 .report-issue-btn{width:100%;background:none;border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;}
+.report-issue-btn:disabled{opacity:.6;cursor:default;}
 .report-issue-panel{margin-top:10px;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
 .report-issue-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px;}
 .report-reason-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
@@ -5228,6 +5245,20 @@ app.get("/favicon.ico", (req, res) => res.status(204).end());
 // captăm datele corect, ca să le poți vedea și rezolva manual, în bază.
 const ALLOWED_REPORT_REASONS = ["confirmat_deschis", "program_gresit", "inchis_definitiv"];
 
+// Salt fix pentru hash-ul de IP — NU e un secret critic (scopul e doar
+// să nu poți face un tabel invers direct din hash-uri cunoscute de IP-uri
+// comune, nu să reziste unui atac dedicat); poate veni și din variabilă de
+// mediu, dacă vrei unul propriu, altfel merge cu cel implicit
+const REPORT_IP_SALT = process.env.REPORT_IP_SALT || "programul-de-azi-report-salt-implicit";
+function hashIp(ip) {
+  return crypto.createHash("sha256").update(REPORT_IP_SALT + "|" + ip).digest("hex");
+}
+function getClientIp(req) {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return (req.socket && req.socket.remoteAddress) || "unknown";
+}
+
 app.post("/api/report-issue", async (req, res) => {
   if (!dbPool) {
     res.status(503).json({ error: "not_configured" });
@@ -5239,10 +5270,23 @@ app.post("/api/report-issue", async (req, res) => {
     return;
   }
   const safeNota = typeof nota === "string" ? nota.slice(0, 500) : null;
+  const ipHash = hashIp(getClientIp(req));
+  const safeSlug = slug.slice(0, 255);
   try {
+    // aceeași sursă (IP anonimizat), aceeași locație, în ultimele 24h —
+    // nu mai înregistrăm din nou, dar tot răspundem prietenos, nu cu eroare
+    const { rows: recent } = await dbPool.query(
+      `SELECT 1 FROM location_reports WHERE slug = $1 AND ip_hash = $2 AND creat_la > now() - interval '24 hours' LIMIT 1`,
+      [safeSlug, ipHash]
+    );
+    if (recent.length > 0) {
+      res.status(200).json({ ok: true, alreadyReported: true });
+      return;
+    }
+
     await dbPool.query(
-      `INSERT INTO location_reports (slug, nume_locatie, oras, motiv, nota) VALUES ($1, $2, $3, $4, $5)`,
-      [slug.slice(0, 255), (numeLocatie || "").slice(0, 255), (oras || "").slice(0, 255), motiv, safeNota]
+      `INSERT INTO location_reports (slug, nume_locatie, oras, motiv, nota, ip_hash) VALUES ($1, $2, $3, $4, $5, $6)`,
+      [safeSlug, (numeLocatie || "").slice(0, 255), (oras || "").slice(0, 255), motiv, safeNota, ipHash]
     );
     res.status(201).json({ ok: true });
   } catch (err) {
