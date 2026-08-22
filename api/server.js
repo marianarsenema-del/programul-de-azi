@@ -144,7 +144,7 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
    butonul corespunzător nu apare deloc — fără spații goale pe pagină.
    Completează-le direct aici, în cod, când primești aprobările.
    ============================================================ */
-const linkEmagMall = "https://l.profitshare.ro/l/16330318";
+const linkEmagMall = ""; // profitshare.ro a respins colaborarea — gol, deliberat, până punem altceva; butonul dispare automat când e gol
 const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 // link Amazon Affiliate — folosit DOAR pe paginile internaționale (DE/UK/ES),
@@ -2165,6 +2165,55 @@ function toDisplayName(rawParam) {
 // pagină completă cu toate cele 48 de branduri, ca și cum ar exista real
 // acolo (Metro/Auchan într-o comună de câteva sute de locuitori) — o
 // fabricare de date pe care am vrut mereu s-o evităm în acest proiect.
+// Branduri SELECTIVE — nu sunt în toate cele 41 de orașe, spre deosebire de
+// Lidl/Kaufland/Penny. Fără lista asta, sistemul ar arăta Metro/Selgros/IKEA
+// ca și cum ar exista peste tot — exact genul de fabricare de date pe care
+// am vrut mereu s-o evităm. Fiecare oraș din listele de mai jos a fost
+// verificat real, prin căutare, cu adresă exactă găsită. Liste incomplete,
+// deliberat conservatoare — mai bine lipsă un oraș real decât unul inventat.
+const SELECTIVE_BRAND_CITIES = {
+  metro: [
+    "București", "Brașov", "Constanța", "Timișoara", "Cluj-Napoca", "Bacău",
+    "Iași", "Craiova", "Baia Mare", "Pitești", "Galați", "Ploiești", "Oradea",
+    "Sibiu", "Suceava", "Târgu Mureș", "Arad", "Deva", "Satu Mare",
+    "Piatra Neamț", "Buzău", "Târgoviște",
+  ],
+  selgros: [
+    "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Brașov",
+    "Brăila", "București", "Cluj-Napoca", "Constanța", "Craiova", "Galați",
+    "Sibiu", "Târgu Mureș",
+  ],
+  ikea: ["București", "Timișoara"],
+  cinemacity: [
+    "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+    "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+    "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+    "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+  ],
+  cineplexx: ["București", "Craiova", "Sibiu", "Satu Mare", "Târgu Mureș"],
+  happycinema: [
+    "București", "Alexandria", "Focșani", "Buzău", "Bistrița", "Bacău",
+    "Vaslui", "Botoșani", "Slobozia",
+  ],
+  movieplex: ["București"],
+  // "Mall" e o intrare generică — nu o marcă anume — folosim aceeași listă
+  // ca Cinema City, pentru că aproape toate sălile lor sunt în interiorul
+  // unui mall mare; o corelație rezonabilă, nu o presupunere oarbă
+  mall: [
+    "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+    "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+    "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+    "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+  ],
+};
+
+function isSelectiveBrandAllowedInCity(magazinKey, orasDisplay) {
+  const allowedCities = SELECTIVE_BRAND_CITIES[magazinKey];
+  if (!allowedCities) return true; // brand nerestricționat — universal, ca înainte
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  return allowedCities.some((c) => strip(c) === strip(orasDisplay));
+}
+
 function isKnownRoCity(orasDisplay) {
   // spațiu și cratimă trebuie tratate identic — numele reale au uneori
   // spațiu ("Baia Mare"), URL-ul are mereu cratimă ("baia-mare"); fără
@@ -2268,6 +2317,40 @@ function escapeHtml(str) {
 // simplu, determinist), NU logo-ul real al companiei. Logo-urile sunt mărci
 // înregistrate; folosirea lor fără licență e un risc juridic real, nu doar o
 // alegere de design — de-aia nu punem sigla reală Lidl/Carrefour etc.
+// Selector de orașe reutilizabil — cipuri orizontale, glisante, pentru cele
+// mai căutate orașe (acces rapid, un singur tap) + o căutare live care
+// filtrează lista completă de dedesubt, fără reîncărcare de pagină. Merge
+// identic pe orice listă de orașe (RO cu 41, sau fiecare țară de pe .eu).
+function buildCitySelectorHtml({ popularCities, hrefPrefix, listId, placeholder }) {
+  const chipsHtml = popularCities.map((c) => `<a href="${hrefPrefix}${slugifyCityName(c)}" class="city-chip">${escapeHtml(c)}</a>`).join("");
+  return `
+  <div class="city-chips-row">${chipsHtml}</div>
+  <input type="text" class="city-filter-input" placeholder="${escapeHtml(placeholder)}" data-filter-target="${escapeHtml(listId)}" autocomplete="off">`;
+}
+
+// Scriptul care leagă orice căsuță ".city-filter-input" de lista ei
+// (identificată prin data-filter-target) — ascunde/arată <li>-urile pe
+// măsură ce utilizatorul scrie, insensibil la diacritice și majuscule
+function buildCitySelectorFilterScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  function norm(s){ return s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase(); }
+  document.querySelectorAll(".city-filter-input").forEach(function(input){
+    var list = document.getElementById(input.getAttribute("data-filter-target"));
+    if (!list) return;
+    var items = Array.prototype.slice.call(list.querySelectorAll("li"));
+    input.addEventListener("input", function(){
+      var q = norm(input.value.trim());
+      items.forEach(function(li){
+        li.hidden = q.length > 0 && norm(li.textContent).indexOf(q) === -1;
+      });
+    });
+  });
+})();
+</script>`;
+}
+
 function brandBadgeHtml(name, statusKey) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -2501,6 +2584,12 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
 .city-search-form{display:flex;gap:8px;margin:16px 18px 0;}
 .city-search-input{flex:1 1 auto;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
+
+/* Selector de orașe — cipuri orizontale + căutare live (buildCitySelectorHtml) */
+.city-chips-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 18px 0;padding-bottom:4px;scrollbar-width:none;}
+.city-chips-row::-webkit-scrollbar{display:none;}
+.city-chip{flex:0 0 auto;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:9px 16px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--text);text-decoration:none;white-space:nowrap;}
+.city-filter-input{display:block;width:calc(100% - 36px);margin:10px 18px 0;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:12px 18px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
 .city-search-input::placeholder{color:var(--muted);}
 .city-search-input:focus{outline:none;border-color:var(--accent);}
 .city-search-btn{flex:0 0 auto;background:var(--accent);color:#1A1200;border:none;border-radius:100px;padding:12px 20px;font-family:var(--font-display);font-weight:700;font-size:14.5px;cursor:pointer;}
@@ -3458,6 +3547,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const canonical = `${baseUrl}/${orasSlug}`;
 
   const listItems = Object.keys(STORE_CONFIG)
+    .filter((key) => isSelectiveBrandAllowedInCity(key, orasDisplay))
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
@@ -3501,7 +3591,8 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${buildListStatusBadgeScript(nonce, statusDataset)}`;
+${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1")}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
   const cityAlternateLinks = COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))
@@ -3675,7 +3766,8 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   <ul class="mall-list">${listItems}</ul>
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 </main>
-${buildListStatusBadgeScript(nonce, statusDataset)}`;
+${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1")}`;
 
   return pageShell({
     title,
@@ -3749,11 +3841,19 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
       const cityItems = COUNTRIES[code].cities
         .map((city) => `<li><a href="/${code}/${slugifyCityName(city)}">${escapeHtml(city)}</a></li>`)
         .join("");
+      const listId = `allCitiesList-${code}`;
+      const citySelectorHtml = buildCitySelectorHtml({
+        popularCities: COUNTRIES[code].cities.slice(0, 6),
+        hrefPrefix: `/${code}/`,
+        listId,
+        placeholder: "Search for your city...",
+      });
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
     <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
     <h2 class="section-title"><span class="bar"></span>Stores in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
-    <ul class="mall-list">${cityItems}</ul>
+    ${citySelectorHtml}
+    <ul class="mall-list" id="${listId}">${cityItems}</ul>
   </div>`;
     })
     .join("");
@@ -3864,6 +3964,7 @@ ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}
 ${buildAttractionAccordionScript(nonce)}
+${buildCitySelectorFilterScript(nonce)}
 ${buildInstallScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscribe to alerts (holidays, special hours)", "🔕 Unsubscribe from alerts") : ""}`;
 
@@ -4029,6 +4130,69 @@ ${widgetScriptHtml}`;
 // Pagină onestă pentru orașe pe care NU le acoperim real — nu un 404 rece,
 // dar nici o pagină falsă cu branduri inventate. Status HTTP 404 real
 // (corect pentru motoarele de căutare), conținut prietenos (util pentru om).
+// Pagină onestă pentru un brand SELECTIV (Metro, Selgros, IKEA) cerut
+// într-un oraș unde nu are confirmat un magazin — diferită de "oraș
+// necunoscut", pentru că orașul chiar există, doar brandul nu e acolo
+function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, baseUrl, nonce }) {
+  const allowedCities = SELECTIVE_BRAND_CITIES[magazinKey] || [];
+  const requestedCoords = CITY_COORDS[orasDisplay];
+  let nearest = null;
+  if (requestedCoords) {
+    let bestDist = Infinity;
+    allowedCities.forEach((c) => {
+      const coords = CITY_COORDS[c];
+      if (!coords) return;
+      const dist = haversineKm(requestedCoords[0], requestedCoords[1], coords[0], coords[1]);
+      if (dist < bestDist) {
+        bestDist = dist;
+        nearest = { city: c, distanceKm: Math.round(dist) };
+      }
+    });
+  }
+
+  const title = `${magazinDisplay} ${orasDisplay} — nu există aici`;
+  const description = nearest
+    ? `${magazinDisplay} nu are magazin în ${orasDisplay}. Cel mai apropiat e în ${nearest.city}.`
+    : `${magazinDisplay} nu are un magazin confirmat în ${orasDisplay}.`;
+  const canonical = `${baseUrl}/${slugifyCityName(orasDisplay)}/${magazinKey}`;
+  const allowedListHtml = allowedCities.map((c) => `<li><a href="/${slugifyCityName(c)}/${magazinKey}">${escapeHtml(magazinDisplay)} ${escapeHtml(c)}</a></li>`).join("");
+
+  const nearestBlockHtml = nearest
+    ? `<div class="geo-country-highlight">ℹ️ Acest magazin nu există în <strong>${escapeHtml(orasDisplay)}</strong>, dar există în <strong>${escapeHtml(nearest.city)}</strong> (~${nearest.distanceKm} km).</div>
+       <a href="${escapeHtml(wazeLinkFor(`${magazinDisplay} ${nearest.city}`))}" target="_blank" rel="noopener" class="go-now-btn is-open">🚗 Mergi acolo (Waze)</a>
+       <a href="/${slugifyCityName(nearest.city)}/${magazinKey}" class="accordion-status-link">🕐 Vezi programul ${escapeHtml(magazinDisplay)} ${escapeHtml(nearest.city)} →</a>`
+    : `<div class="geo-country-highlight">ℹ️ Nu avem confirmat niciun magazin ${escapeHtml(magazinDisplay)} în <strong>${escapeHtml(orasDisplay)}</strong>.</div>`;
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / <a href="/${slugifyCityName(orasDisplay)}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+  ${nearestBlockHtml}
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(magazinDisplay)} — toate orașele confirmate</h2>
+  <ul class="mall-list">${allowedListHtml}</ul>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> arată doar branduri cu prezență reală, verificată, în fiecare oraș.</p>
+  </footer>
+</main>`;
+
+  return pageShell({
+    title,
+    description,
+    canonical,
+    bodyHtml,
+    dataForClient: { type: "general", weekly: [], holidays: [] },
+    nonce,
+    langCode: "ro",
+  });
+}
+
 function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const title = `${orasDisplay} — Încă nu avem date verificate`;
   const description = `Nu avem încă informații verificate despre magazine în ${orasDisplay}. Vezi lista completă de orașe acoperite.`;
@@ -4074,9 +4238,10 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
   const canonical = `${baseUrl}/`;
 
-  // toate cele 30 de orașe, ca listă completă — exact structura de pe .eu
-  // (acolo, fiecare țară arată lista completă de orașe, nu doar câteva exemple)
+  // toate cele 41 de orașe, ca listă completă, cu id pentru filtrare live
   const allCitiesListHtml = SITEMAP_CITIES.map((c) => `<li><a href="/${slugifyCityName(c)}">${escapeHtml(c)}</a></li>`).join("");
+  const POPULAR_RO_CITIES = ["București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Brașov", "Craiova", "Sibiu"];
+  const citySelectorHtml = buildCitySelectorHtml({ popularCities: POPULAR_RO_CITIES, hrefPrefix: "/", listId: "allCitiesList", placeholder: "Caută orașul tău..." });
 
   // obiective turistice românești — nume + link, cu steluță de favorite,
   // exact ca pe opening-hours-today.eu, dar în română, fără să te trimită
@@ -4138,7 +4303,8 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
     <p id="geoStatus" class="geo-status" style="display:none"></p>
 
     <h2 class="section-title"><span class="bar"></span>Alege orașul</h2>
-    <ul class="mall-list">${allCitiesListHtml}</ul>
+    ${citySelectorHtml}
+    <ul class="mall-list" id="allCitiesList">${allCitiesListHtml}</ul>
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
@@ -4167,6 +4333,7 @@ ${buildGeoScript(nonce)}
 ${buildInstallScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
 ${buildAttractionAccordionScript(nonce)}
+${buildCitySelectorFilterScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
@@ -4748,6 +4915,14 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
     return;
   }
 
+  if (found && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
+    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
   const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
 
   const nonce = generateNonce();
@@ -4796,6 +4971,14 @@ app.get("/:oras/:magazin", async (req, res, next) => {
     const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
     const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
     res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
+  if (found && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
+    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
     return;
   }
 
