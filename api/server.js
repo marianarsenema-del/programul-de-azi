@@ -5038,7 +5038,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5141,7 +5141,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5220,7 +5220,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5368,7 +5368,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5556,6 +5556,122 @@ function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
 
+// Echivalentul englezesc, pentru .eu — engleză, nu 17 limbi (același
+// compromis pragmatic ca la mall/cinema: EN acoperă toți vizitatorii,
+// traducerea în 17 limbi ar fi volum enorm pentru câștig marginal aici).
+const TRAVEL_GUIDES_EN = [
+  {
+    slug: "transport",
+    title: "How to get to the big tourist sights, efficiently",
+    intro: "Urban and regional transport guide",
+    body: `
+    <p>A good itinerary depends a lot on how you move between sights. When you want to visit museums, castles, or historic monuments, the connection between cities and the local logistics make the difference between a relaxed day and one lost in stations and stops.</p>
+    <p>For long distances or between historic regions, trains remain the most popular option — Europe's rail network connects most capitals with smaller towns, often along scenic routes. Coaches fill in the gaps well, especially toward towns or mountain areas trains don't reach directly, and usually cost less.</p>
+    <p>If you land at the airport with a lot of luggage or travel as a group, a pre-booked private transfer removes the hassle of switching between modes of transport — it takes you straight from the terminal to the castle gate or the hotel. Planning these connections ahead is what turns a hectic trip into a stress-free one.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Search train and coach tickets</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Book a private transfer</a>
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "How to handle parking near historic areas",
+    intro: "A driver's guide to parking in old town centres",
+    body: `
+    <p>Driving your own or a rental car gives you a freedom of movement other transport modes can't match — but historic city centres are known for traffic restrictions and a chronic shortage of parking.</p>
+    <p>Leaving your car just anywhere risks a fine, or even a tow. The safest option remains a secure, privately-run underground or above-ground car park — many let you book a spot ahead of time, which matters most on weekends or during peak season, when the sights are busiest.</p>
+    <p>A well-chosen car park, a short walk from the museum or the old town, leaves you free to explore at your own pace, without worrying about the car. Check availability ahead of time and book online — it's worth it, especially on a busy weekend.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("city centre"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Book a secure parking spot</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "How to plan a perfect day out",
+    intro: "Matching opening hours with meal times",
+    body: `
+    <p>A great day out is about balancing culture and rest. If you build your day around a museum's or a gallery's hours, it's worth planning your meal breaks in advance too — otherwise you risk showing up hungry right when every place nearby is full.</p>
+    <p>Major sights draw thousands of visitors daily, and the areas around them get busy fast, especially at lunch and dinner. Booking ahead through an online platform guarantees you a table without queueing or scrambling for a free spot at the last minute.</p>
+    <p>The most efficient pattern: visit exhibitions early in the morning, when it's quiet, then close the day with a meal booked in advance at a local restaurant — a simple day out becomes a memory worth keeping.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Search on TheFork (France, Italy, Spain)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Search on OpenTable (UK, Germany)</a>
+    </div>`,
+  },
+];
+
+function buildTravelGuidesBoxHtmlIntl() {
+  return `
+  <div class="plan-visit-block" style="display:block">
+    <p class="intro-text"><strong>📖 Useful info for your visit</strong></p>
+    <a href="/guides/transport" class="plan-visit-option plan-visit-ticket">🚆 How do I get here? Train &amp; coach guide</a>
+    <a href="/guides/parking" class="plan-visit-option plan-visit-parking">🅿️ Where do I park? Secure parking guide</a>
+    <a href="/guides/restaurants" class="plan-visit-option plan-visit-parking-alt">🍽️ Where do I eat nearby? Restaurant bookings</a>
+  </div>`;
+}
+
+async function renderTravelGuidePageIntl({ guide, baseUrl, nonce }) {
+  const title = `${guide.title} — Travel Guides`;
+  const description = `${guide.intro}. Practical tips for travellers, plus direct booking links.`;
+  const canonical = `${baseUrl}/guides/${guide.slug}`;
+
+  const otherGuides = TRAVEL_GUIDES_EN.filter((g) => g.slug !== guide.slug)
+    .map((g) => `<li><a href="/guides/${g.slug}">${escapeHtml(g.title)}</a></li>`)
+    .join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Home</a> / <a href="/guides">Travel Guides</a> / ${escapeHtml(guide.title)}</p>
+
+  <h1 class="page-h1">${escapeHtml(guide.title)}</h1>
+  <p class="intro-text">${escapeHtml(guide.intro)}</p>
+
+  ${guide.body}
+
+  <h2 class="section-title"><span class="bar"></span>Other guides</h2>
+  <ul class="mall-list">${otherGuides}</ul>
+
+  <footer>
+    <p><strong>Opening Hours Today</strong> — practical travel guides, alongside up-to-date opening hours for every sight.</p>
+  </footer>
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
+}
+
+function renderTravelGuidesIndexPageIntl({ baseUrl, nonce }) {
+  const title = "Travel Guides — Opening Hours Today";
+  const description = "Practical tips for travellers: transport, parking, and restaurant bookings near the big tourist sights.";
+  const canonical = `${baseUrl}/guides`;
+
+  const items = TRAVEL_GUIDES_EN.map((g) => `<li><a href="/guides/${g.slug}">${escapeHtml(g.title)}</a></li>`).join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Home</a> / Travel Guides</p>
+  <h1 class="page-h1">Travel Guides</h1>
+  <p class="intro-text">Practical tips for travellers — transport, parking, and restaurant bookings near the big tourist sights.</p>
+  <ul class="mall-list">${items}</ul>
+  <footer>
+    <p><strong>Opening Hours Today</strong> — practical travel guides, alongside up-to-date opening hours for every sight.</p>
+  </footer>
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
+}
+
 
 async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const slug = toDbSlug(attraction.name);
@@ -5674,7 +5790,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5687,6 +5803,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: BOOKING_PLANNING_LABELS_EN, countryCode })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_EN, attraction.name)}
+  ${buildTravelGuidesBoxHtmlIntl()}
 
   <footer>
     <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
@@ -6798,6 +6915,33 @@ app.get("/ghiduri/:slug", async (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const html = await renderTravelGuidePage({ guide, baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+app.get("/guides", (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderTravelGuidesIndexPageIntl({ baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+app.get("/guides/:slug", async (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+  const guide = TRAVEL_GUIDES_EN.find((g) => g.slug === req.params.slug.toLowerCase());
+  if (!guide) {
+    res.status(404).send("Guide not found.");
+    return;
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderTravelGuidePageIntl({ guide, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
