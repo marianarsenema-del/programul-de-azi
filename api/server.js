@@ -3322,6 +3322,43 @@ function findNearestRoCity(lat, lon) {
   return best ? { city: best, distanceKm: Math.round(bestDist) } : null;
 }
 
+// La fel, dar peste TOATE orașele acoperite, din toate țările (RO + cele 17
+// de pe .eu) — pentru butonul "Hartă" din bara de jos ("lângă mine", oriunde
+// ai fi pe site) — găsește cel mai apropiat oraș acoperit, indiferent de
+// domeniul pe care ești, apoi trimite spre harta live a acelui oraș
+// (reutilizează harta cu pin-uri deja construită, nu una nouă, separată).
+function findNearestCityGlobal(lat, lon) {
+  let best = null;
+  let bestDist = Infinity;
+  let bestCountry = null;
+  for (const city of SITEMAP_CITIES) {
+    const coords = CITY_COORDS[city];
+    if (!coords) continue;
+    const dist = haversineKm(lat, lon, coords[0], coords[1]);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = city;
+      bestCountry = "ro";
+    }
+  }
+  for (const code of Object.keys(COUNTRIES)) {
+    if (code === "ro") continue; // deja acoperit mai sus, cu lista completă (41 orașe, nu doar primele din COUNTRIES.ro)
+    for (const city of COUNTRIES[code].cities) {
+      const coords = CITY_COORDS[city];
+      if (!coords) continue;
+      const dist = haversineKm(lat, lon, coords[0], coords[1]);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = city;
+        bestCountry = code;
+      }
+    }
+  }
+  if (!best) return null;
+  const href = bestCountry === "ro" ? `/${slugifyCityName(best)}` : `/${bestCountry}/${slugifyCityName(best)}`;
+  return { city: best, countryCode: bestCountry, distanceKm: Math.round(bestDist), href };
+}
+
 // normalizează un slug pentru comparare: minuscule, fără diacritice, fără spații/cratime
 function normalizeSlug(raw) {
   let decoded;
@@ -3516,7 +3553,7 @@ header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-fil
 .header-row .brand{justify-self:start;}
 .guides-link{font-size:12.5px;color:var(--muted);text-decoration:none;margin-left:10px;white-space:nowrap;}
 .guides-link:hover{color:var(--text);}
-@media (max-width:480px){.guides-link{display:none;}} /* pe mobil, spațiu insuficient lângă brand+ceas — rămâne accesibil prin footer/ghiduri direct */
+@media (max-width:480px){.guides-link{font-size:10.5px;margin-left:6px;}}
 .header-row .live-clock{justify-self:center;}
 .theme-toggle-btn.in-header{position:static;justify-self:end;width:34px;height:34px;font-size:15px;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
@@ -4604,14 +4641,11 @@ function buildBottomNavScript(nonce) {
   return `
 <script nonce="${nonce}">
 (function(){
-  // pentru fiecare buton (căutare/favorite/hartă): dacă elementul țintă
-  // există CHIAR PE PAGINA CURENTĂ, doar derulăm până la el (fără navigare,
-  // fără reîncărcare) — altfel, dacă elementul nu există nicăieri accesibil
-  // de-aici (ex: harta pe o pagină de magazin, sau căutarea pe homepage-ul
-  // .eu, care n-are o căsuță unică), ascundem butonul, în loc să-l lăsăm
-  // "mort" (navigare care nu duce nicăieri relevant — bug prins prin
+  // căutare/favorite: dacă elementul țintă există CHIAR PE PAGINA CURENTĂ,
+  // doar derulăm până la el — altfel, navigăm spre homepage (unde există),
+  // sau ascundem butonul dacă nici homepage-ul nu-l are (bug prins prin
   // testare, nu doar teoretic, semnalat direct de la utilizator).
-  [["bottomNavSearch","citySearchInput"],["bottomNavFavorites","favoritesList"],["bottomNavMap","cityMap"]].forEach(function(pair){
+  [["bottomNavSearch","citySearchInput"],["bottomNavFavorites","favoritesList"]].forEach(function(pair){
     var link = document.getElementById(pair[0]);
     var target = document.getElementById(pair[1]);
     if (!link) return;
@@ -4620,19 +4654,50 @@ function buildBottomNavScript(nonce) {
         e.preventDefault();
         target.scrollIntoView({ behavior: "smooth", block: "center" });
       });
-    } else if (window.location.pathname !== "/") {
-      // nu suntem pe homepage și elementul nu-i aici — lăsăm link-ul să
-      // navigheze normal spre "/#id"; pe homepage-ul RO există toate 3,
-      // pe cel .eu doar favoritesList (căutarea de-acolo e prin cipuri,
-      // nu căsuță unică) — dacă nici acolo nu există, pur și simplu
-      // ajunge pe homepage, fără sări nicăieri, nu-i un "buton mort".
-    } else {
-      // suntem deja pe homepage și elementul tot nu există aici (ex.
-      // căsuța de căutare pe homepage-ul .eu) — nu are unde să navigheze
-      // util, ascundem butonul, nu-l lăsăm să pară că face ceva
+    } else if (window.location.pathname === "/") {
       link.style.display = "none";
     }
+    // altfel (nu suntem pe homepage, elementul nu-i aici) — lăsăm link-ul
+    // să navigheze normal spre "/#id", unde de regulă există
   });
+
+  // hartă: dacă suntem deja pe o pagină cu hartă (de oraș), doar derulăm la
+  // ea — altfel, cerem geolocația browserului și navigăm spre harta live a
+  // celui mai apropiat oraș ACOPERIT (din orice țară), nu doar spre homepage
+  // (unde n-ar exista nicio hartă oricum) — "lângă mine", de pe orice pagină.
+  var mapLink = document.getElementById("bottomNavMap");
+  var mapTarget = document.getElementById("cityMap");
+  if (mapLink) {
+    if (mapTarget) {
+      mapLink.addEventListener("click", function(e){
+        e.preventDefault();
+        mapTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    } else {
+      mapLink.addEventListener("click", function(e){
+        e.preventDefault();
+        if (!("geolocation" in navigator)) {
+          window.location.href = "/";
+          return;
+        }
+        mapLink.querySelector("span:last-child").textContent = "…";
+        navigator.geolocation.getCurrentPosition(function(pos){
+          fetch("/api/nearest-city?lat=" + pos.coords.latitude + "&lon=" + pos.coords.longitude)
+            .then(function(r){ return r.ok ? r.json() : null; })
+            .then(function(data){
+              if (data && data.href) { window.location.href = data.href; }
+              else { window.location.href = "/"; }
+            })
+            .catch(function(){ window.location.href = "/"; });
+        }, function(){
+          // utilizatorul a refuzat geolocația, sau a eșuat — mergem la
+          // homepage, unde poate alege orașul manual, nu rămânem blocați
+          window.location.href = "/";
+        }, { timeout: 8000 });
+      });
+    }
+  }
+
 })();
 </script>`;
 }
@@ -6535,6 +6600,30 @@ app.get("/api/city-live-map", async (req, res) => {
     console.error("city-live-map a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
   }
+});
+
+// "Hartă lângă mine" — butonul din bara de jos, accesibil de pe orice pagină.
+// Primește geolocația browserului, găsește cel mai apropiat oraș ACOPERIT
+// (din toate țările), întoarce URL-ul paginii aceluia — care are deja harta
+// live cu pin-uri (verde/roșu, deschis/închis), construită mai demult.
+app.get("/api/nearest-city", async (req, res) => {
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "nearest-city", 20, 10);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+  const lat = Number(req.query.lat);
+  const lon = Number(req.query.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    res.status(400).json({ error: "invalid_coordinates" });
+    return;
+  }
+  const nearest = findNearestCityGlobal(lat, lon);
+  if (!nearest) {
+    res.status(404).json({ error: "no_coverage" });
+    return;
+  }
+  res.json({ href: `${nearest.href}#cityMap`, city: nearest.city, distanceKm: nearest.distanceKm });
 });
 
 app.post("/api/push-subscribe", async (req, res) => {
