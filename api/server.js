@@ -18,20 +18,27 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // CONSOLIDARE .ro -> .eu (Redirecționare 301 permanentă) — comutator
 // central, DEZACTIVAT implicit. Când e pus pe true, TOATE paginile de pe
 // programul-de-azi.ro redirecționează permanent (301) către echivalentul
-// lor de pe opening-hours-today.eu/ro/... . Construit și testat exhaustiv,
-// dar NU se activează pe producție până la confirmarea Travelpayouts +
-// AdSense pe noul domeniu (comisioane/reclame trebuie mutate/reconfirmate
-// întâi, altfel riscăm o fereastră fără venituri).
+// lor de pe opening-hours-today.eu/ro/... . AdSense scos complet din site
+// (decizie separată, nemaifiind un blocaj), Travelpayouts confirmat pe
+// ambele domenii — nu mai există motiv să amânăm.
 //
 // Excepții, care NU se redirecționează (rămân active pe .ro, chiar și cu
 // comutatorul pornit): /api/*, fișierele tehnice (manifest, service worker,
 // iconițe) și robots.txt/ads.txt/sitemap.xml — astea trebuie să rămână
 // accesibile, ca Google/crawlerele să vadă corect tranziția, nu erori.
-const RO_TO_EU_MIGRATION_ACTIVE = false;
+//
+// Ghidurile sunt un caz SPECIAL — conținut complet diferit, în rute
+// SEPARATE pe .eu (/guides/*, engleză, nu /ro/ghiduri/*, care nu există)
+// — bug real, prins prin testare, înainte de activare, nu doar teoretic.
+const RO_TO_EU_MIGRATION_ACTIVE = true;
 const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png"];
+const RO_TO_EU_GUIDES_MAP = { "/ghiduri": "/guides", "/ghiduri/transport": "/guides/transport", "/ghiduri/parcari": "/guides/parking", "/ghiduri/restaurante": "/guides/restaurants" };
 app.use((req, res, next) => {
   if (!RO_TO_EU_MIGRATION_ACTIVE || isIntlHost(req)) return next();
   if (RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES.some((p) => req.path === p || req.path.startsWith(p))) return next();
+  if (RO_TO_EU_GUIDES_MAP[req.path]) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${RO_TO_EU_GUIDES_MAP[req.path]}`);
+  }
   const target = req.path === "/" ? `https://${INTL_DOMAIN}/` : `https://${INTL_DOMAIN}/ro${req.path}`;
   return res.redirect(301, target);
 });
