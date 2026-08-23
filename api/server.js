@@ -588,6 +588,14 @@ function restaurantLinkFor(countryCode, place) {
   return `https://www.getyourguide.com/s/?q=${encodeURIComponent("food tour " + place)}&partner_id=${GYG_PARTNER_ID}`;
 }
 
+// Parcări rezervabile în avans (ParkVia) — link gol acum, cade pe site-ul
+// public, funcțional; pune codul de afiliat real când îl ai (același tipar
+// ca restul: TheFork, OpenTable, GetTransfer, Omio)
+const linkParkviaAffiliate = "";
+function parkviaLinkFor(place) {
+  return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
+}
+
 const HOW_TO_GET_THERE_LABELS_RO = {
   btn: "🚗 Cum ajung acolo?",
   waze: "🧭 Mergi acolo (Waze)",
@@ -3506,6 +3514,9 @@ a{color:inherit;text-decoration:none;}
 header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
 .header-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
 .header-row .brand{justify-self:start;}
+.guides-link{font-size:12.5px;color:var(--muted);text-decoration:none;margin-left:10px;white-space:nowrap;}
+.guides-link:hover{color:var(--text);}
+@media (max-width:480px){.guides-link{display:none;}} /* pe mobil, spațiu insuficient lângă brand+ceas — rămâne accesibil prin footer/ghiduri direct */
 .header-row .live-clock{justify-self:center;}
 .theme-toggle-btn.in-header{position:static;justify-self:end;width:34px;height:34px;font-size:15px;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
@@ -4852,7 +4863,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -4923,7 +4934,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5420,6 +5431,132 @@ ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscrib
 // Pagină de obiectiv turistic — RO — status live (dacă avem place_id
 // valid) + buton de bilete. Dacă nu avem date live, NU inventăm program —
 // arătăm clar că nu avem, cu link spre sursa oficială.
+// Ghiduri Utile — secțiune editorială, cerută explicit pentru validarea
+// Travelpayouts (verifică dacă site-ul are conținut editorial, nu doar
+// pagini automate de program). Butoanele din interior reutilizează EXACT
+// funcțiile deja construite (omioLinkFor, getTransferLinkFor, parkviaLinkFor,
+// linkTheForkAffiliate/linkOpenTableAffiliate) — quando pui codurile reale
+// de afiliat, aceste pagini le folosesc automat, fără nicio altă modificare.
+const TRAVEL_GUIDES_RO = [
+  {
+    slug: "transport",
+    title: "Cum ajungi eficient la marile obiective turistice",
+    intro: "Ghid de transport urban și regional",
+    body: `
+    <p>Un itinerar turistic reușit depinde în mare măsură de cum te miști între obiective. Când vrei să vizitezi muzee, castele sau monumente istorice, conexiunea dintre orașe și logistica locală fac diferența dintre o zi relaxată și una pierdută prin gări și stații.</p>
+    <p>Pentru distanțe lungi sau între regiuni istorice, trenul rămâne varianta cea mai populară — rețeaua feroviară europeană leagă majoritatea capitalelor de orașele mai mici, cu rute adesea pitorești. Autocarele completează bine acoperirea, mai ales spre localități sau zone montane unde trenul nu ajunge direct, și costă de regulă mai puțin.</p>
+    <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>
+    </div>`,
+  },
+  {
+    slug: "parcari",
+    title: "Cum gestionezi parcarea în apropierea zonelor istorice",
+    intro: "Ghid pentru șoferi — parcare în centrele vechi",
+    body: `
+    <p>Cu mașina proprie sau închiriată ai o libertate de mișcare pe care alte mijloace de transport n-o pot oferi — dar centrele istorice ale marilor orașe sunt cunoscute pentru restricțiile de trafic și lipsa cronică de locuri de parcare.</p>
+    <p>Lăsată la întâmplare, mașina riscă amendă sau chiar ridicare. Cea mai sigură variantă rămâne o parcare securizată, subterană sau supraterană, administrată privat — multe dintre ele permit rezervarea unui loc din timp, ceea ce contează mai ales în weekend sau în plin sezon, când obiectivele sunt aglomerate.</p>
+    <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>
+    </div>`,
+  },
+  {
+    slug: "restaurante",
+    title: "Cum organizezi o zi perfectă de vacanță",
+    intro: "Corelarea programului de vizitare cu mesele",
+    body: `
+    <p>O zi de vacanță reușită înseamnă un echilibru între cultură și relaxare. Dacă îți construiești ziua în jurul programului unui muzeu sau al unei galerii, merită să incluzi din timp și pauzele de masă — altfel riști să ajungi flămând exact când toate localurile din apropiere sunt pline.</p>
+    <p>Marile obiective atrag mii de vizitatori zilnic, iar zonele din jurul lor devin rapid aglomerate, mai ales la prânz și seara. O rezervare făcută din timp, printr-o platformă online, îți garantează o masă fără să stai la coadă sau să cauți disperat un loc liber.</p>
+    <p>Cel mai eficient tipar: vizitează expozițiile dimineața devreme, când e liniște, apoi încheie ziua cu o masă la un restaurant local, rezervat din timp — o simplă zi de vacanță devine, așa, o amintire pe care chiar vrei s-o ții minte.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Caută pe TheFork (Franța, Italia, Spania)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Caută pe OpenTable (UK, Germania)</a>
+    </div>`,
+  },
+];
+
+function buildTravelGuidesBoxHtml() {
+  return `
+  <div class="plan-visit-block" style="display:block">
+    <p class="intro-text"><strong>📖 Informații utile pentru vizită</strong></p>
+    <a href="/ghiduri/transport" class="plan-visit-option plan-visit-ticket">🚆 Cum ajungi aici? Ghid de tren și autocar</a>
+    <a href="/ghiduri/parcari" class="plan-visit-option plan-visit-parking">🅿️ Unde parchezi mașina? Ghid parcări securizate</a>
+    <a href="/ghiduri/restaurante" class="plan-visit-option plan-visit-parking-alt">🍽️ Unde mănânci în apropiere? Rezervări restaurante</a>
+  </div>`;
+}
+
+async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
+  const title = `${guide.title} — Ghiduri Utile`;
+  const description = `${guide.intro}. Sfaturi practice pentru turiști, plus linkuri directe către rezervări.`;
+  const canonical = `${baseUrl}/ghiduri/${guide.slug}`;
+
+  const otherGuides = TRAVEL_GUIDES_RO.filter((g) => g.slug !== guide.slug)
+    .map((g) => `<li><a href="/ghiduri/${g.slug}">${escapeHtml(g.title)}</a></li>`)
+    .join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / <a href="/ghiduri">Ghiduri Utile</a> / ${escapeHtml(guide.title)}</p>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+
+  <h1 class="page-h1">${escapeHtml(guide.title)}</h1>
+  <p class="intro-text">${escapeHtml(guide.intro)}</p>
+
+  ${guide.body}
+
+  <h2 class="section-title"><span class="bar"></span>Alte ghiduri utile</h2>
+  <ul class="mall-list">${otherGuides}</ul>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> — ghiduri practice pentru vizitatori, alături de programul actualizat al fiecărui obiectiv.</p>
+  </footer>
+
+  <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
+  ${adSlotHtml()}
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+}
+
+function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
+  const title = "Ghiduri Utile pentru Călătorii — Programul de Azi";
+  const description = "Sfaturi practice pentru turiști: transport, parcare și rezervări la restaurant, lângă marile obiective turistice.";
+  const canonical = `${baseUrl}/ghiduri`;
+
+  const items = TRAVEL_GUIDES_RO.map((g) => `<li><a href="/ghiduri/${g.slug}">${escapeHtml(g.title)}</a></li>`).join("");
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / Ghiduri Utile</p>
+  <h1 class="page-h1">Ghiduri Utile</h1>
+  <p class="intro-text">Sfaturi practice pentru vizitatori — transport, parcare și rezervări, lângă marile obiective turistice.</p>
+  <ul class="mall-list">${items}</ul>
+  <footer>
+    <p><strong>Programul de Azi</strong> — ghiduri practice pentru vizitatori, alături de programul actualizat al fiecărui obiectiv.</p>
+  </footer>
+</main>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+}
+
+
 async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const slug = toDbSlug(attraction.name);
   const title = `${attraction.name} — Program și Bilete`;
@@ -5463,7 +5600,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5478,6 +5615,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro" })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
+  ${buildTravelGuidesBoxHtml()}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
 
@@ -5608,7 +5746,7 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5647,7 +5785,7 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5705,7 +5843,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a>
+    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6637,6 +6775,33 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
 // ruta de obiectiv turistic RO — ÎNAINTEA rutei generice de magazin
 // (aceeași formă, 2 segmente: /:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
+app.get("/ghiduri", (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderTravelGuidesIndexPage({ baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+app.get("/ghiduri/:slug", async (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+  const guide = TRAVEL_GUIDES_RO.find((g) => g.slug === req.params.slug.toLowerCase());
+  if (!guide) {
+    res.status(404).send("Ghid negăsit.");
+    return;
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderTravelGuidePage({ guide, baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 app.get("/obiectiv/:slug", async (req, res) => {
   if (isIntlHost(req)) {
     return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
