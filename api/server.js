@@ -4926,12 +4926,19 @@ ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1")}`;
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, store, baseUrl, lang, nonce }) {
+async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, baseUrl, lang, nonce }) {
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
-  const title = t.titleTemplate(magazinDisplay, orasDisplay);
-  const description = t.descriptionTemplate(magazinDisplay, orasDisplay);
-  const canonical = `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`; // canonical rămâne mereu fără ?lang, indiferent ce limbă se afișează
+  // pagină hiper-locală (cartier) — același program ca pagina de oraș, doar
+  // titlul/descrierea/canonical-ul includ cartierul, la fel ca pe .ro nativ
+  // (renderStorePage) — nu date noi, doar o variantă SEO a acelorași date
+  const locatieSlug = locatieDisplay ? slugifyCityName(locatieDisplay) : "";
+  const effectiveMagazinLabel = locatieDisplay ? `${magazinDisplay} ${locatieDisplay}` : magazinDisplay;
+  const title = t.titleTemplate(effectiveMagazinLabel, orasDisplay);
+  const description = t.descriptionTemplate(effectiveMagazinLabel, orasDisplay);
+  const canonical = locatieDisplay
+    ? `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}/${locatieSlug}`
+    : `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`; // canonical rămâne mereu fără ?lang, indiferent ce limbă se afișează
 
   // Mall și cinema au structuri de date + logică de afișare complet diferite
   // de un magazin normal (mall: zone multiple cu programe separate; cinema:
@@ -5007,7 +5014,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
 
   // status live (Google) — același slug generat la popularea bazei
   // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
-  const liveSlug = toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`);
+  const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`) : null;
   const googleLang = toGoogleLang(activeLang);
   const live = await tryGetLiveStatus(liveSlug, googleLang);
 
@@ -5020,7 +5027,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
       : "";
     statusCardHtml = `
   <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
-    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
     <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
     <div class="status-sub">Live · Google</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
@@ -5042,7 +5049,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
       .join("");
     statusCardHtml = `
   <div class="status-card" id="statusCard">
-    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
     <div class="status-text">—</div>
     <div class="status-sub">${escapeHtml(t.calculating)}</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
@@ -5087,7 +5094,9 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+  <p class="breadcrumb">${locatieDisplay
+    ? `<a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / <a href="/${countryCode}/${orasSlug}/${magazinSlug}">${escapeHtml(magazinDisplay)}</a> / ${escapeHtml(locatieDisplay)}`
+    : `<a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}`}</p>
   ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
 
   ${reportedWrongHtml}
@@ -6429,6 +6438,50 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/obiectiv/
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
   const html = await renderAttractionPageIntl({ attraction: found.attraction, countryCode, lang: requestedLang, baseUrl: baseUrlFor(req), nonce });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// Pagină hiper-locală internațională: /:tara/:oras/:magazin/:locatie — cartier
+// inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
+// ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
+// piață cu acest tipar de căutare construit), dar generică pentru orice țară.
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:magazin/:locatie", async (req, res, next) => {
+  if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
+
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+
+  const countryCode = req.params.tara;
+  const country = COUNTRIES[countryCode];
+  const orasSlug = req.params.oras.toLowerCase();
+  const orasDisplay = resolveIntlCityDisplay(countryCode, orasSlug);
+  const magazinSlug = req.params.magazin.toLowerCase();
+  const found = findStoreInConfig(req.params.magazin, country.config);
+  const locatieDisplay = toDisplayName(req.params.locatie);
+
+  if (!found) {
+    res.status(404).send("Pagină negăsită.");
+    return;
+  }
+
+  if (countryCode === "ro" && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+    res.status(404).send("Pagină negăsită.");
+    return;
+  }
+
+  // mall/cinema nu au sens hiper-local (structuri de zone/orar de filme,
+  // nu program simplu de magazin) — 404, nu randare greșită
+  if (found.config.type === "mall" || found.config.type === "cinema") {
+    res.status(404).send("Pagină negăsită.");
+    return;
+  }
+
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
