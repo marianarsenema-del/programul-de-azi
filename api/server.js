@@ -188,9 +188,17 @@ async function tryGetLiveStatus(slug, lang) {
    ============================================================ */
 const codAdSense = "";
 
-// ID-ul de publisher AdSense (ex: "pub-1234567890123456") — folosit doar
-// pentru generarea automată a /ads.txt. Completează-l după aprobare.
+// ID-ul de publisher AdSense (ex: "pub-1234567890123456") — folosit pentru
+// generarea automată a /ads.txt. Completează-l după aprobare.
 const adsensePublisherId = "ca-pub-7945793092031366";
+
+// Comutator dedicat — decizie: fără AdSense pe site, "îngreunează fără
+// beneficii mari" la stadiul actual de trafic. Dezactivat aici, dar
+// adsensePublisherId RĂMÂNE completat (nu-l șterg), ca reactivarea să fie
+// simplă, o singură linie, dacă te răzgândești vreodată. ads.txt rămâne
+// funcțional (nu afectează performanța site-ului) — doar scriptul care
+// chiar încarcă biblioteca Google (impactul real) e blocat mai jos.
+const ADSENSE_ENABLED = false;
 
 // Google Analytics (GA4) — codul exact primit, păstrat ca atare. La randare,
 // nonce-ul curent se injectează automat pe <script>-ul inline de mai jos (vezi
@@ -4879,6 +4887,7 @@ function renderHolidayRows(holidays) {
 
 // container pentru reclamă — gol dacă codAdSense nu e completat încă (CSS îl ascunde automat)
 function adSlotHtml() {
+  if (!ADSENSE_ENABLED) return "";
   return `<div class="ad-slot">${codAdSense}</div>`;
 }
 
@@ -5111,7 +5120,7 @@ ${alternatesHtml}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-${adsensePublisherId ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}" crossorigin="anonymous"></script>` : ""}
+${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}" crossorigin="anonymous"></script>` : ""}
 <style nonce="${nonce}">${CSS_STYLES}</style>
 </head>
 <body>
