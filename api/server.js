@@ -5051,12 +5051,19 @@ function buildTabsScript(nonce) {
     tab.addEventListener("click", function(){ activate(tab.getAttribute("data-tab")); });
   });
 
-  // vine cineva din bara de jos (#favorites, #search) — activăm tab-ul potrivit
-  // și, pentru căutare, mutăm focusul direct în căsuță
+  // vine cineva din bara de jos (#favoritesList, #citySearchInput) —
+  // activăm tab-ul potrivit și facem scroll manual, DUPĂ activare — browserul
+  // încearcă să sară la ancoră imediat, înainte ca tab-ul să fie activat,
+  // deci elementul e încă ascuns în acel moment (bug real, prins prin
+  // testare, nu doar teoretic — semnalat direct de la utilizator).
   var hash = (window.location.hash || "").replace("#", "");
-  if (hash === "favorites") { activate("favorites"); }
-  if (hash === "search") {
-    var input = document.getElementById("siteSearchInput");
+  if (hash === "favorites" || hash === "favoritesList") {
+    activate("favorites");
+    var favEl = document.getElementById("favoritesList");
+    if (favEl) favEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  if (hash === "search" || hash === "citySearchInput") {
+    var input = document.getElementById("siteSearchInput") || document.getElementById("citySearchInput");
     if (input) { input.focus(); input.scrollIntoView({ behavior: "smooth", block: "center" }); }
   }
 })();
@@ -5550,11 +5557,33 @@ function buildThemeToggleScript(nonce) {
 </script>`;
 }
 
+// Etichete scurte, pentru bara de jos, în toate limbile — separate de restul
+// traducerilor (acelea sunt fraze lungi, nepotrivite pentru un buton mic).
+const BOTTOM_NAV_LABELS = {
+  ro: { home: "Acasă", search: "Căutare", favorites: "Favorite", map: "Hartă" },
+  uk: { home: "Home", search: "Search", favorites: "Favorites", map: "Map" },
+  de: { home: "Start", search: "Suche", favorites: "Favoriten", map: "Karte" },
+  es: { home: "Inicio", search: "Buscar", favorites: "Favoritos", map: "Mapa" },
+  fr: { home: "Accueil", search: "Recherche", favorites: "Favoris", map: "Carte" },
+  it: { home: "Home", search: "Cerca", favorites: "Preferiti", map: "Mappa" },
+  pl: { home: "Start", search: "Szukaj", favorites: "Ulubione", map: "Mapa" },
+  nl: { home: "Home", search: "Zoeken", favorites: "Favorieten", map: "Kaart" },
+  da: { home: "Hjem", search: "Søg", favorites: "Favoritter", map: "Kort" },
+  se: { home: "Hem", search: "Sök", favorites: "Favoriter", map: "Karta" },
+  pt: { home: "Início", search: "Pesquisar", favorites: "Favoritos", map: "Mapa" },
+  cz: { home: "Domů", search: "Hledat", favorites: "Oblíbené", map: "Mapa" },
+  fi: { home: "Koti", search: "Haku", favorites: "Suosikit", map: "Kartta" },
+  gr: { home: "Αρχική", search: "Αναζήτηση", favorites: "Αγαπημένα", map: "Χάρτης" },
+  hu: { home: "Kezdőlap", search: "Keresés", favorites: "Kedvencek", map: "Térkép" },
+  hr: { home: "Početna", search: "Pretraga", favorites: "Favoriti", map: "Karta" },
+  sk: { home: "Domov", search: "Hľadať", favorites: "Obľúbené", map: "Mapa" },
+  si: { home: "Domov", search: "Iskanje", favorites: "Priljubljene", map: "Zemljevid" },
+  lt: { home: "Pradžia", search: "Paieška", favorites: "Mėgstami", map: "Žemėlapis" },
+  lv: { home: "Sākums", search: "Meklēt", favorites: "Iecienītie", map: "Karte" },
+  ee: { home: "Avaleht", search: "Otsi", favorites: "Lemmikud", map: "Kaart" },
+};
 function buildBottomNavHtml(langCode) {
-  const isRo = langCode === "ro";
-  const labels = isRo
-    ? { home: "Acasă", search: "Căutare", favorites: "Favorite", map: "Hartă" }
-    : { home: "Home", search: "Search", favorites: "Favorites", map: "Map" };
+  const labels = BOTTOM_NAV_LABELS[langCode] || BOTTOM_NAV_LABELS.uk;
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
@@ -5569,16 +5598,21 @@ function buildBottomNavScript(nonce) {
 <script nonce="${nonce}">
 (function(){
   // căutare/favorite: dacă elementul țintă există CHIAR PE PAGINA CURENTĂ,
-  // doar derulăm până la el — altfel, navigăm spre homepage (unde există),
-  // sau ascundem butonul dacă nici homepage-ul nu-l are (bug prins prin
-  // testare, nu doar teoretic, semnalat direct de la utilizator).
-  [["bottomNavSearch","citySearchInput"],["bottomNavFavorites","favoritesList"]].forEach(function(pair){
-    var link = document.getElementById(pair[0]);
-    var target = document.getElementById(pair[1]);
+  // activăm mai întâi tab-ul asociat (dacă e ascuns într-un tab, ex. pe
+  // homepage — bug real, prins prin testare, semnalat direct de la
+  // utilizator: scroll spre un element ascuns nu face nimic vizibil), apoi
+  // derulăm până la el — altfel, navigăm spre homepage, sau ascundem
+  // butonul dacă nici homepage-ul nu-l are.
+  [["bottomNavSearch","citySearchInput","stores"],["bottomNavFavorites","favoritesList","favorites"]].forEach(function(triple){
+    var link = document.getElementById(triple[0]);
+    var target = document.getElementById(triple[1]);
+    var tabName = triple[2];
     if (!link) return;
     if (target) {
       link.addEventListener("click", function(e){
         e.preventDefault();
+        var tabBtn = document.querySelector('[data-tab="' + tabName + '"]');
+        if (tabBtn && !tabBtn.classList.contains("active")) { tabBtn.click(); }
         target.scrollIntoView({ behavior: "smooth", block: "center" });
       });
     } else if (window.location.pathname === "/") {
