@@ -3069,12 +3069,49 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
 const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski", sk: "Slovenčina", si: "Slovenščina" };
+const LANGUAGE_FLAGS = { uk: "🇬🇧", de: "🇩🇪", es: "🇪🇸", fr: "🇫🇷", it: "🇮🇹", pl: "🇵🇱", nl: "🇳🇱", da: "🇩🇰", ro: "🇷🇴", se: "🇸🇪", pt: "🇵🇹", cz: "🇨🇿", fi: "🇫🇮", gr: "🇬🇷", hu: "🇭🇺", hr: "🇭🇷", sk: "🇸🇰", si: "🇸🇮" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
-  const items = Object.keys(LANGUAGE_LABELS)
-    .filter((code) => code !== currentLang)
-    .map((code) => `<a href="${escapeHtml(pathWithoutQuery)}?lang=${code}">${escapeHtml(LANGUAGE_LABELS[code])}</a>`)
-    .join(" · ");
-  return `<p class="lang-switcher">🌐 ${escapeHtml(LANGUAGE_LABELS[currentLang] || currentLang)} — ${items}</p>`;
+  const options = Object.keys(LANGUAGE_LABELS)
+    .map((code) => `<option value="${escapeHtml(code)}" ${code === currentLang ? "selected" : ""}>${LANGUAGE_FLAGS[code] || ""} ${escapeHtml(LANGUAGE_LABELS[code])}</option>`)
+    .join("");
+  return `
+  <div class="lang-switcher">
+    <select id="langSwitcherSelect" data-path="${escapeHtml(pathWithoutQuery)}" aria-label="Choose language">${options}</select>
+  </div>`;
+}
+
+// alegerea de limbă persistă pe TOT site-ul (nu doar pagina curentă) — la
+// schimbare, salvăm în localStorage; pe orice altă pagină .eu încărcată
+// ulterior, dacă URL-ul nu are deja limba salvată, redirectăm automat spre
+// aceeași pagină cu ?lang=X — o singură dată, nu creează buclă (verifică
+// întâi dacă limba curentă din URL se potrivește deja).
+function buildLanguageSwitcherScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var STORAGE_KEY = "oht_lang_pref";
+  var select = document.getElementById("langSwitcherSelect");
+  if (select) {
+    select.addEventListener("change", function(){
+      var lang = select.value;
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
+      var path = select.getAttribute("data-path");
+      window.location.href = path + "?lang=" + lang;
+    });
+  }
+  // aplicare automată pe orice altă pagină, dacă utilizatorul a ales deja o limbă
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("lang") !== saved) {
+        params.set("lang", saved);
+        window.location.href = window.location.pathname + "?" + params.toString();
+      }
+    }
+  } catch(e){}
+})();
+</script>`;
 }
 
 // index combinat de căutare (magazine + atracții, toate țările internaționale)
@@ -3901,10 +3938,9 @@ a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
 header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
 .header-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
-.header-row .brand{justify-self:start;}
-.guides-link{font-size:12.5px;color:var(--muted);text-decoration:none;margin-left:10px;white-space:nowrap;}
-.guides-link:hover{color:var(--text);}
-@media (max-width:480px){.guides-link{font-size:10.5px;margin-left:6px;}}
+.header-row .brand-stack{justify-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.guides-link{font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;}
+.guides-link:hover{opacity:0.85;}
 .header-row .live-clock{justify-self:center;}
 .theme-toggle-btn.in-header{position:static;justify-self:end;width:34px;height:34px;font-size:15px;}
 .brand{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;}
@@ -4068,8 +4104,8 @@ main{padding-top:8px;}
 
 .fav-star.is-fav{color:var(--accent);}
 .fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
-.lang-switcher{margin:10px 18px 0;font-size:12px;color:var(--muted);line-height:1.8;}
-.lang-switcher a{color:var(--accent);margin:0 2px;}
+.lang-switcher{margin:10px 18px 0;}
+.lang-switcher select{width:100%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;cursor:pointer;}
 .clear-country-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:var(--font-body);font-weight:600;font-size:13px;padding:8px 14px;border-radius:100px;cursor:pointer;}
 .country-filter-bar{margin-top:0;}
 .attraction-city-tag{color:var(--muted);font-size:12px;font-weight:500;}
@@ -5137,6 +5173,7 @@ ${buildBottomNavHtml(langCode)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
 ${buildBottomNavScript(nonce)}
 ${buildThemeToggleScript(nonce)}
+${canonical.includes(INTL_DOMAIN) ? buildLanguageSwitcherScript(nonce) : ""}
 <script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function(){
@@ -5303,7 +5340,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5375,7 +5412,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5481,7 +5518,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5585,7 +5622,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5665,7 +5702,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5814,7 +5851,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5825,6 +5862,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
 
   <h1 class="page-h1">Is the store open right now?</h1>
   <p class="intro-text">Pick a country below to filter everything — Stores and Attractions both — or search directly.</p>
+  ${buildLanguageSwitcher("uk", "/")}
   ${filterBarHtml}
 
   <nav class="sub-nav-tabs">
@@ -5946,7 +5984,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -5985,7 +6023,7 @@ function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6068,7 +6106,7 @@ async function renderTravelGuidePageIntl({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6101,7 +6139,7 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6163,7 +6201,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6239,7 +6277,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">📖 Guides</a>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6313,7 +6351,7 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6352,7 +6390,7 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -6410,7 +6448,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">📖 Ghiduri</a>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
