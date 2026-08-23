@@ -394,6 +394,50 @@ function contactInfoHtml(live) {
   return `<div class="contact-info-block">${addressHtml}${phoneHtml}</div>`;
 }
 
+// Schema.org LocalBusiness — date structurate (JSON-LD), cerute explicit
+// pentru SEO: îi spun direct lui Google programul exact, fără să se bazeze
+// doar pe textul din pagină. Zilele săptămânii sunt ÎNTOTDEAUNA în engleză
+// (cerință schema.org, indiferent de limba paginii). Adresa/telefon/coordo-
+// natele apar DOAR când avem date reale, verificate (din Google Places) —
+// nu inventăm niciodată o adresă, ca să nu transmitem informații false.
+const SCHEMA_DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+function buildLocalBusinessSchema({ name, weekly, live }) {
+  if (!weekly && !live) return "";
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name,
+  };
+  const addr = live && live.formattedAddress;
+  if (addr) {
+    schema.address = { "@type": "PostalAddress", streetAddress: addr };
+  }
+  if (live && Number.isFinite(live.lat) && Number.isFinite(live.lng)) {
+    schema.geo = { "@type": "GeoCoordinates", latitude: live.lat, longitude: live.lng };
+  }
+  if (live && live.formattedPhoneNumber) {
+    schema.telephone = live.formattedPhoneNumber;
+  }
+  // programul STANDARD, verificat (nu cel live-parsat din text, ca să nu
+  // riscăm o structurare greșită) — deja etichetat "orientativ" în pagină
+  if (weekly && weekly.some((w) => w)) {
+    const grouped = {};
+    weekly.forEach((w, i) => {
+      if (!w) return;
+      const key = `${w.open}-${w.close}`;
+      if (!grouped[key]) grouped[key] = { open: w.open, close: w.close, days: [] };
+      grouped[key].days.push(SCHEMA_DAY_NAMES[i]);
+    });
+    schema.openingHoursSpecification = Object.values(grouped).map((g) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: g.days,
+      opens: g.open,
+      closes: g.close,
+    }));
+  }
+  return `<script type="application/ld+json">${safeJson(schema)}</script>`;
+}
+
 const REPORT_ISSUE_LABELS_RO = {
   btn: "🚩 Programul e corect sau locul nu mai există? Spune-ne, ajuți alți vizitatori!",
   q1: (name) => `Este ${name} deschis chiar acum?`,
@@ -4791,6 +4835,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
 
   let mainHtml = "";
   let dataForClient;
+  let schemaHtml = "";
 
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
@@ -4852,6 +4897,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     // exact ca înainte, fără nicio schimbare vizibilă.
     const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}`) : null;
     const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro") : null;
+    schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, weekly: store.weekly, live });
 
     if (live && live.isOpenNow !== null) {
       const specialBanner = live.isSpecialDay && isRealRomanianHolidayToday(live.utcOffsetMinutes)
@@ -4952,6 +4998,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
+${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce)}
 ${buildHowToGetThereScript(nonce)}`;
@@ -5134,6 +5181,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`) : null;
   const googleLang = toGoogleLang(activeLang);
   const live = await tryGetLiveStatus(liveSlug, googleLang);
+  const schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay} ${orasDisplay}`, weekly: store.weekly, live });
 
   let statusCardHtml;
   let weeklySectionHtml;
@@ -5232,6 +5280,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
   </footer>
 </main>
+${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce, REPORT_ISSUE_LABELS_EN)}
 ${buildHowToGetThereScript(nonce)}`;
