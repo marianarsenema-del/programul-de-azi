@@ -693,6 +693,31 @@ const CONTEXTUAL_WIDGET_LABELS_RO = {
   glovo: "🛵 Comandă cu Glovo",
   bringo: "🛒 Comandă cu Bringo",
 };
+// Etichete pentru mall/cinema pe rutele INTL — doar EN+RO (limbile relevante
+// pentru RO pe .eu), cu fallback sigur la EN pentru orice altă limbă aleasă,
+// ca să nu rupem nimic dacă cineva schimbă limba pe o pagină de mall/cinema.
+const MALL_CINEMA_LABELS = {
+  uk: {
+    shoppingZone: "Shopping zone",
+    hypermarketZone: "Hypermarket in the mall",
+    mallScheduleTitle: "Mall store hours",
+    mallHypermarketTitle: "Mall hypermarket hours",
+    cinemaNote: "Movie schedules change daily depending on the week's releases — we don't show a fixed \"open\" or \"closed\" status here, to avoid giving you approximate information.",
+    cinemaBtn: "🎬 See today's movie schedule",
+  },
+  ro: {
+    shoppingZone: "Zonă shopping",
+    hypermarketZone: "Hipermarket din mall",
+    mallScheduleTitle: "Orar magazine mall",
+    mallHypermarketTitle: "Program hipermarket din mall",
+    cinemaNote: "Programul de filme se schimbă zilnic, în funcție de premierele săptămânii — nu afișăm aici un status fix „deschis” sau „închis”, ca să nu-ți dăm o informație aproximativă.",
+    cinemaBtn: "🎬 Vezi orarul filmelor de azi",
+  },
+};
+function mallCinemaLabelsFor(lang) {
+  return MALL_CINEMA_LABELS[lang] || MALL_CINEMA_LABELS.uk;
+}
+
 const CONTEXTUAL_WIDGET_LABELS_EN = {
   ticketOpen: "🎟️ Want to skip the line? Buy tickets online",
   closedAlert: "⚠️ This place is closed right now. Here are your alternatives:",
@@ -4908,6 +4933,74 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   const description = t.descriptionTemplate(magazinDisplay, orasDisplay);
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}/${magazinSlug}`; // canonical rămâne mereu fără ?lang, indiferent ce limbă se afișează
 
+  // Mall și cinema au structuri de date + logică de afișare complet diferite
+  // de un magazin normal (mall: zone multiple cu programe separate; cinema:
+  // fără status live fix, doar link spre orarul de filme) — ramură separată,
+  // by-pass complet peste restul funcției, ca la .ro nativ (renderStorePage).
+  if (store.type === "mall" || store.type === "cinema") {
+    const mc = mallCinemaLabelsFor(activeLang);
+    let mainHtml;
+    let dataForClient;
+    if (store.type === "mall") {
+      mainHtml = `
+  <div class="status-card" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)} — ${escapeHtml(mc.shoppingZone)}</div>
+    <div class="status-text">—</div>
+    <div class="status-sub">${escapeHtml(t.calculating)}</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
+  </div>
+  <div class="secondary-badge" id="secondaryBadge">
+    <span class="sb-dot"></span>
+    <div class="sb-text"><span class="sb-label">${escapeHtml(mc.hypermarketZone)}</span><span class="sb-sub">${escapeHtml(t.calculating)}</span></div>
+    <span class="sb-state">…</span>
+  </div>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(mc.mallScheduleTitle)}</h2>
+  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
+  <tbody>${store.zones.shopping.weekly.map((w, i) => `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${w ? `${w.open} – ${w.close}` : t.closedWord}</td></tr>`).join("")}</tbody></table></div>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(mc.mallHypermarketTitle)}</h2>
+  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
+  <tbody>${store.zones.hypermarket.weekly.map((w, i) => `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${w ? `${w.open} – ${w.close}` : t.closedWord}</td></tr>`).join("")}</tbody></table></div>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.holidaysTitle)}</h2>
+  <div class="holiday-card">${store.zones.shopping.holidays.map((h) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(h.label)}</span><span class="holiday-hours ${h.hours ? "" : "closed"}">${h.hours ? `${h.hours[0]} – ${h.hours[1]}` : t.closedWord}</span></div>`).join("")}</div>`;
+      dataForClient = { type: "mall", zones: store.zones };
+    } else {
+      mainHtml = `
+  <div class="cinema-card">
+    <div class="store-name">${escapeHtml(magazinDisplay)} ${escapeHtml(orasDisplay)}</div>
+    <p class="cinema-note">${escapeHtml(mc.cinemaNote)}</p>
+    <a href="${escapeHtml(store.ticketUrl)}" target="_blank" rel="noopener" class="cinema-btn">${escapeHtml(mc.cinemaBtn)}</a>
+  </div>`;
+      dataForClient = { type: "general", weekly: [], holidays: [] };
+    }
+    const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="/">Opening<span>HoursToday</span></a>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
+  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
+  ${mainHtml}
+  <footer>
+    <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
+  </footer>
+</main>`;
+    let mcAlternateLinks;
+    if (countryCode === "ro") {
+      mcAlternateLinks = [
+        { hreflang: "en", href: canonical },
+        { hreflang: "ro", href: `https://${RO_DOMAIN}/${orasSlug}/${magazinSlug}` },
+      ];
+    }
+    return pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode: activeLang, alternateLinks: mcAlternateLinks });
+  }
+
   const amazonButtonHtml = linkAmazonAffiliate
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
     : "";
@@ -5653,17 +5746,19 @@ const SITEMAP_CITIES = [
 ];
 
 // România adăugată în registrul internațional (site-ul .eu) — reutilizează
-// EXACT aceleași date reale, deja verificate (STORE_CONFIG, 30 de orașe),
-// nu date noi, inventate separat. Motiv: un turist aflat în România care nu
-// vorbește română caută pe opening-hours-today.eu, nu știe de domeniul RO —
-// acum găsește aceleași magazine reale, în engleză. Momentan doar magazine
-// simple (fără mall-uri/cinematografe — acelea au structuri diferite de date
-// și ar necesita extinderea renderIntlStorePage, nu doar copierea listei).
+// EXACT aceleași date reale, deja verificate (STORE_CONFIG, toate cele 41
+// orașe). Include acum și mall-uri/cinematografe — renderIntlStorePage a
+// fost extinsă să le suporte, cu structura lor completă de date.
 const RO_INTL_STORE_CONFIG = {};
 Object.keys(STORE_CONFIG).forEach((key) => {
   const cfg = STORE_CONFIG[key];
-  if (cfg.type === "mall" || cfg.type === "cinema") return;
-  RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, weekly: cfg.weekly, holidays: cfg.holidays };
+  if (cfg.type === "mall") {
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "mall", zones: cfg.zones };
+  } else if (cfg.type === "cinema") {
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "cinema", ticketUrl: cfg.ticketUrl, weekly: cfg.weekly, holidays: cfg.holidays };
+  } else {
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, weekly: cfg.weekly, holidays: cfg.holidays };
+  }
 });
 COUNTRIES.ro = {
   config: RO_INTL_STORE_CONFIG,
