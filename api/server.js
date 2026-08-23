@@ -4583,9 +4583,9 @@ function buildBottomNavHtml(langCode) {
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
-  <a href="/#search" class="bottom-nav-item"><span class="bottom-nav-icon">🔍</span><span>${escapeHtml(labels.search)}</span></a>
-  <a href="/#favorites" class="bottom-nav-item"><span class="bottom-nav-icon">⭐</span><span>${escapeHtml(labels.favorites)}</span></a>
-  <a href="/#harta" class="bottom-nav-item" id="bottomNavMap"><span class="bottom-nav-icon">🗺️</span><span>${escapeHtml(labels.map)}</span></a>
+  <a href="/#citySearchInput" class="bottom-nav-item" id="bottomNavSearch"><span class="bottom-nav-icon">🔍</span><span>${escapeHtml(labels.search)}</span></a>
+  <a href="/#favoritesList" class="bottom-nav-item" id="bottomNavFavorites"><span class="bottom-nav-icon">⭐</span><span>${escapeHtml(labels.favorites)}</span></a>
+  <a href="/#cityMap" class="bottom-nav-item" id="bottomNavMap"><span class="bottom-nav-icon">🗺️</span><span>${escapeHtml(labels.map)}</span></a>
 </nav>`;
 }
 
@@ -4593,15 +4593,34 @@ function buildBottomNavScript(nonce) {
   return `
 <script nonce="${nonce}">
 (function(){
-  var mapLink = document.getElementById("bottomNavMap");
-  if (!mapLink) return;
-  mapLink.addEventListener("click", function(e){
-    var existingMap = document.getElementById("cityMap");
-    if (existingMap) {
-      e.preventDefault();
-      existingMap.scrollIntoView({ behavior: "smooth", block: "center" });
+  // pentru fiecare buton (căutare/favorite/hartă): dacă elementul țintă
+  // există CHIAR PE PAGINA CURENTĂ, doar derulăm până la el (fără navigare,
+  // fără reîncărcare) — altfel, dacă elementul nu există nicăieri accesibil
+  // de-aici (ex: harta pe o pagină de magazin, sau căutarea pe homepage-ul
+  // .eu, care n-are o căsuță unică), ascundem butonul, în loc să-l lăsăm
+  // "mort" (navigare care nu duce nicăieri relevant — bug prins prin
+  // testare, nu doar teoretic, semnalat direct de la utilizator).
+  [["bottomNavSearch","citySearchInput"],["bottomNavFavorites","favoritesList"],["bottomNavMap","cityMap"]].forEach(function(pair){
+    var link = document.getElementById(pair[0]);
+    var target = document.getElementById(pair[1]);
+    if (!link) return;
+    if (target) {
+      link.addEventListener("click", function(e){
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    } else if (window.location.pathname !== "/") {
+      // nu suntem pe homepage și elementul nu-i aici — lăsăm link-ul să
+      // navigheze normal spre "/#id"; pe homepage-ul RO există toate 3,
+      // pe cel .eu doar favoritesList (căutarea de-acolo e prin cipuri,
+      // nu căsuță unică) — dacă nici acolo nu există, pur și simplu
+      // ajunge pe homepage, fără sări nicăieri, nu-i un "buton mort".
+    } else {
+      // suntem deja pe homepage și elementul tot nu există aici (ex.
+      // căsuța de căutare pe homepage-ul .eu) — nu are unde să navigheze
+      // util, ascundem butonul, nu-l lăsăm să pară că face ceva
+      link.style.display = "none";
     }
-    // altfel, lasă link-ul să navigheze normal spre acasă
   });
 })();
 </script>`;
