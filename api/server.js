@@ -5139,7 +5139,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   <div class="country-filter-block active" data-country-block="all">
     ${geoHighlightHtml}
     <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
-    <ul class="mall-list">${countryLinks.map((c) => `<li><a href="${c.href}" class="country-pick" data-country="${c.code}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("")}</ul>
+    <ul class="mall-list" hidden>${countryLinks.map((c) => `<li><a href="${c.href}" class="country-pick" data-country="${c.code}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("")}</ul>
   </div>`;
 
   const storesByCountryHtml = allCodes
