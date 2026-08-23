@@ -5045,6 +5045,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
 
   const listItems = Object.keys(country.config)
+    .filter((key) => countryCode !== "ro" || isSelectiveBrandAllowedInCity(key, orasDisplay))
     .map((key) => {
       const cfg = country.config[key];
       const urlSlug = cfg.slug || key;
@@ -5667,7 +5668,7 @@ Object.keys(STORE_CONFIG).forEach((key) => {
 COUNTRIES.ro = {
   config: RO_INTL_STORE_CONFIG,
   t: TRANSLATIONS.uk, // implicit engleză pe site-ul internațional — vezi mai jos comutatorul de limbă
-  cities: SITEMAP_CITIES.slice(0, 10),
+  cities: SITEMAP_CITIES,
 };
 
 // brandurile combinate cu fiecare oraș de mai sus (slug-uri identice cu STORE_CONFIG/STORE_ALIASES)
@@ -6358,6 +6359,14 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:ma
     // pentru un brand internațional necunoscut — legile de închidere diferă
     // radical între țări, spre deosebire de magazinele RO unde avem un
     // implicit național sigur (07-22/08-20).
+    res.status(404).send("Pagină negăsită.");
+    return;
+  }
+
+  // Pentru RO, aceleași restricții de brand ca pe .ro (Metro, Selgros, IKEA
+  // etc. nu sunt peste tot) — fără asta, ar apărea greșit peste tot pe
+  // varianta internațională, o regresie față de .ro unde funcționează corect
+  if (countryCode === "ro" && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
     res.status(404).send("Pagină negăsită.");
     return;
   }
