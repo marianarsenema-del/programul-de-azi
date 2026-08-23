@@ -5312,7 +5312,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
     <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
     <h2 class="section-title"><span class="bar"></span>Stores in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${citySelectorHtml}
-    <ul class="mall-list" id="${listId}">${cityItems}</ul>
+    <ul class="mall-list" id="${listId}" hidden>${cityItems}</ul>
   </div>`;
     })
     .join("");
@@ -5998,7 +5998,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 
     <h2 class="section-title"><span class="bar"></span>Alege orașul</h2>
     ${citySelectorHtml}
-    <ul class="mall-list" id="allCitiesList">${allCitiesListHtml}</ul>
+    <ul class="mall-list" id="allCitiesList" hidden>${allCitiesListHtml}</ul>
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
