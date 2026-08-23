@@ -1043,7 +1043,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1576,6 +1576,72 @@ const TRANSLATIONS = {
       closesToday: "Danas se zatvara u {time}",
     },
   },
+  sk: {
+    dayNames: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
+    home: "Domov",
+    todayLabel: "Dnes",
+    calculating: "Počítanie otváracích hodín...",
+    weeklyTitle: "Týždenné otváracie hodiny",
+    holidaysTitle: "Otváracie hodiny cez sviatky",
+    noHolidays: "Momentálne žiadne špeciálne otváracie hodiny",
+    closedWord: "Zatvorené",
+    installBtn: "📱 Nainštalujte aplikáciu pre rýchly prístup",
+    iosHint: "Na iPhone: ťuknite na tlačidlo Zdieľať a vyberte \"Pridať na plochu\".",
+    geoSuggestionPrefix: "📍 Vaše mesto je pravdepodobne",
+    geoSuggestionBtn: "Zobraziť obchody tu? →",
+    geoSuggestionNote: "Nie je to vaše mesto? Vyberte nižšie.",
+    amazonBtn: "🛍️ Pozrite si dnešné ponuky na Amazone",
+    ticketBtn: "🎟️ Kúpte si lístky online a vyhnite sa radu",
+    tabStores: "🛒 Obchody",
+    tabAttractions: "🏛️ Zaujímavosti",
+    attractionsComingSoon: "Náš sprievodca zaujímavosťami sa pripravuje — pozrite sa znova čoskoro.",
+    titleTemplate: (brand, city) => `${brand} ${city} Otváracie Hodiny Dnes – Otvorené alebo Zatvorené`,
+    descriptionTemplate: (brand, city) => `Zistite, či je ${brand} v meste ${city} teraz otvorené. Týždenné otváracie hodiny a otváracie hodiny cez sviatky, aktualizované v reálnom čase.`,
+    disclaimer: (name) => `Zobrazené otváracie hodiny pre ${name} sú orientačné, na základe štandardných hodín reťazca. Jednotlivé predajne sa môžu líšiť — overte si otváracie hodiny pri vchode.`,
+    footer: (name) => `vám v reálnom čase ukazuje, či je ${name} teraz otvorené, ako aj kompletné týždenné otváracie hodiny a otváracie hodiny cez sviatky.`,
+    labels: {
+      openNow: "TERAZ OTVORENÉ",
+      closedNow: "TERAZ ZATVORENÉ",
+      closedHoliday: "Dnes zatvorené — {label}",
+      closedAllDay: "Zatvorené celý deň",
+      opensToday: "Dnes otvára o {time}",
+      closedComeBack: "Zatvorené o {time} — príďte zajtra",
+      closesToday: "Dnes zatvára o {time}",
+    },
+  },
+  si: {
+    dayNames: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"],
+    home: "Domov",
+    todayLabel: "Danes",
+    calculating: "Izračunavanje delovnega časa...",
+    weeklyTitle: "Tedenski delovni čas",
+    holidaysTitle: "Delovni čas ob praznikih",
+    noHolidays: "Trenutno ni posebnega delovnega časa",
+    closedWord: "Zaprto",
+    installBtn: "📱 Namestite aplikacijo za hiter dostop",
+    iosHint: "Na iPhonu: tapnite gumb Deli in izberite \"Dodaj na začetni zaslon\".",
+    geoSuggestionPrefix: "📍 Vaše mesto je verjetno",
+    geoSuggestionBtn: "Prikaži trgovine tukaj? →",
+    geoSuggestionNote: "Ni vaše mesto? Izberite spodaj.",
+    amazonBtn: "🛍️ Oglejte si današnje ponudbe na Amazonu",
+    ticketBtn: "🎟️ Kupite vstopnice online in se izognite vrsti",
+    tabStores: "🛒 Trgovine",
+    tabAttractions: "🏛️ Znamenitosti",
+    attractionsComingSoon: "Naš vodnik po znamenitostih prihaja kmalu — oglejte si ponovno kmalu.",
+    titleTemplate: (brand, city) => `${brand} ${city} Delovni Čas Danes – Odprto ali Zaprto`,
+    descriptionTemplate: (brand, city) => `Preverite, ali je ${brand} v mestu ${city} zdaj odprto. Tedenski delovni čas in delovni čas ob praznikih, posodobljeno v realnem času.`,
+    disclaimer: (name) => `Prikazan delovni čas za ${name} je okviren, na podlagi standardnega delovnega časa verige. Posamezne trgovine se lahko razlikujejo — preverite delovni čas pri vhodu.`,
+    footer: (name) => `vam v realnem času prikazuje, ali je ${name} zdaj odprto, ter celoten tedenski delovni čas in delovni čas ob praznikih.`,
+    labels: {
+      openNow: "ZDAJ ODPRTO",
+      closedNow: "ZDAJ ZAPRTO",
+      closedHoliday: "Danes zaprto — {label}",
+      closedAllDay: "Zaprto ves dan",
+      opensToday: "Danes odpre ob {time}",
+      closedComeBack: "Zaprto ob {time} — pridite jutri",
+      closesToday: "Danes zapre ob {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -1910,6 +1976,129 @@ const HR_STORE_CONFIG = {
   plodine: { name: "Plodine", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
   spar: { name: "Spar", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
   kaufland: { name: "Kaufland", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+};
+
+// Irlanda — 10 sărbători oficiale 2026, verificate. Particularitate reală,
+// confirmată (nu presupusă): Vinerea Mare NU e sărbătoare legală în
+// Irlanda, spre deosebire de restul Europei — magazinele funcționează
+// normal în acea zi. Doar 1 ianuarie și 25 decembrie sunt închise complet
+// — restul sărbătorilor ("bank holidays" de luni), magazinele mari rămân
+// deschise, cu ore apropiate de cele normale (confirmat pentru Tesco/Dunnes).
+const IE_HOLIDAYS = [
+  { date: "01-01", label: "New Year's Day (1 January)", hours: null },
+  { date: "02-02", label: "St Brigid's Day (2 February 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "03-17", label: "St Patrick's Day (17 March)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Easter Monday (6 April 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-04", label: "May Bank Holiday (4 May 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "06-01", label: "June Bank Holiday (1 June 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "08-03", label: "August Bank Holiday (3 August 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "10-26", label: "October Bank Holiday (26 October 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+  { date: "12-26", label: "St Stephen's Day (26 December)", hours: { open: "10:00", close: "18:00" } },
+];
+function ieSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "19:00" }, // Sunday
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Saturday
+  ];
+}
+// Tesco, Dunnes Stores, SuperValu, Aldi, Lidl — cele 5 branduri cu cea mai
+// mare prezență națională, confirmate individual
+const IE_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  dunnesstores: { name: "Dunnes Stores", slug: "dunnes-stores", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  supervalu: { name: "SuperValu", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+};
+
+// Slovacia — 15 sărbători legale 2026 (cele mai multe din UE), lege strictă
+// confirmată explicit: "Slovak law permits 24-hour and Sunday shopping but
+// requires stores to be closed on public holidays" — și confirmat separat
+// pentru Paște (Tesco închis complet Vinerea Mare, Duminică, Luni).
+const SK_HOLIDAYS = [
+  { date: "01-01", label: "Deň vzniku Slovenskej republiky (1. januára)", hours: null },
+  { date: "01-06", label: "Zjavenie Pána (6. januára)", hours: null },
+  { date: "04-03", label: "Veľký piatok (3. apríla 2026)", hours: null },
+  { date: "04-06", label: "Veľkonočný pondelok (6. apríla 2026)", hours: null },
+  { date: "05-01", label: "Sviatok práce (1. mája)", hours: null },
+  { date: "05-08", label: "Deň víťazstva nad fašizmom (8. mája)", hours: null },
+  { date: "07-05", label: "Sviatok svätého Cyrila a svätého Metoda (5. júla)", hours: null },
+  { date: "08-29", label: "Výročie SNP (29. augusta)", hours: null },
+  { date: "09-01", label: "Deň Ústavy SR (1. septembra)", hours: null },
+  { date: "09-15", label: "Sedembolestná Panna Mária (15. septembra)", hours: null },
+  { date: "11-01", label: "Sviatok všetkých svätých (1. novembra)", hours: null },
+  { date: "11-17", label: "Deň boja za slobodu a demokraciu (17. novembra)", hours: null },
+  { date: "12-24", label: "Štedrý deň (24. decembra)", hours: null },
+  { date: "12-25", label: "Prvý sviatok vianočný (25. decembra)", hours: null },
+  { date: "12-26", label: "Druhý sviatok vianočný (26. decembra)", hours: null },
+];
+function skSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:00" }, // Nedeľa
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Sobota
+  ];
+}
+// Tesco, Lidl, Kaufland, Billa, COOP Jednota — cele 5 branduri cu cea mai
+// mare prezență națională, confirmate individual
+const SK_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  billa: { name: "Billa", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  coopjednota: { name: "COOP Jednota", slug: "coop-jednota", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+};
+
+// Slovenia — 15 sărbători 2026, verificate. Particularitate legală
+// distinctivă, confirmată explicit (Legea Comerțului, ZT-1, în vigoare din
+// 2025): DUMINICA magazinele sunt închise prin lege, aproape peste tot —
+// nu doar obicei, ca în alte țări. La fel, toate sărbătorile legale.
+const SI_HOLIDAYS = [
+  { date: "01-01", label: "Novo leto (1. januar)", hours: null },
+  { date: "01-02", label: "Novo leto (2. januar)", hours: null },
+  { date: "02-08", label: "Prešernov dan (8. februar)", hours: null },
+  { date: "04-05", label: "Velika noč (5. april 2026)", hours: null },
+  { date: "04-06", label: "Velikonočni ponedeljek (6. april 2026)", hours: null },
+  { date: "04-27", label: "Dan upora proti okupatorju (27. april)", hours: null },
+  { date: "05-01", label: "Praznik dela (1. maj)", hours: null },
+  { date: "05-02", label: "Praznik dela (2. maj)", hours: null },
+  { date: "05-25", label: "Binkošti (25. maj 2026)", hours: null },
+  { date: "06-25", label: "Dan državnosti (25. junij)", hours: null },
+  { date: "08-15", label: "Marijino vnebovzetje (15. avgust)", hours: null },
+  { date: "10-31", label: "Dan reformacije (31. oktober)", hours: null },
+  { date: "11-01", label: "Dan spomina na mrtve (1. november)", hours: null },
+  { date: "12-25", label: "Božič (25. december)", hours: null },
+  { date: "12-26", label: "Dan samostojnosti in enotnosti (26. december)", hours: null },
+];
+function siSupermarketWeekly() {
+  return [
+    null, // Nedelja — prin lege, aproape toate magazinele sunt închise
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "17:00" }, // Sobota
+  ];
+}
+// Mercator, Spar, Hofer (Aldi), Lidl, Tuš — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual
+const SI_STORE_CONFIG = {
+  mercator: { name: "Mercator", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  spar: { name: "Spar", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  hofer: { name: "Hofer", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  tus: { name: "Tuš", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
 };
 
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
@@ -2343,6 +2532,21 @@ const COUNTRIES = {
     t: TRANSLATIONS.hr,
     cities: ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar", "Pula", "Dubrovnik", "Šibenik"],
   },
+  ie: {
+    config: IE_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Dublin", "Cork", "Limerick", "Galway", "Waterford", "Drogheda", "Dundalk", "Swords"],
+  },
+  sk: {
+    config: SK_STORE_CONFIG,
+    t: TRANSLATIONS.sk,
+    cities: ["Bratislava", "Košice", "Prešov", "Žilina", "Nitra", "Banská Bystrica", "Trnava", "Trenčín"],
+  },
+  si: {
+    config: SI_STORE_CONFIG,
+    t: TRANSLATIONS.si,
+    cities: ["Ljubljana", "Maribor", "Celje", "Kranj", "Koper", "Novo Mesto", "Velenje", "Nova Gorica"],
+  },
 };
 
 // Obiective turistice — DOAR nume + link către site-ul oficial real, fără ore.
@@ -2769,6 +2973,39 @@ const ATTRACTIONS = {
     { name: "Parcul Național Krka", url: "https://www.google.com/maps/search/?api=1&query=Krka+National+Park+Croatia" },
     { name: "Cetatea Klis", url: "https://www.google.com/maps/search/?api=1&query=Klis+Fortress+Croatia" },
   ],
+  ie: [
+    { name: "Book of Kells, Trinity College Dublin", url: "https://www.google.com/maps/search/?api=1&query=Book+of+Kells+Trinity+College+Dublin+Ireland" },
+    { name: "Guinness Storehouse", url: "https://www.google.com/maps/search/?api=1&query=Guinness+Storehouse+Dublin+Ireland" },
+    { name: "Cliffs of Moher", url: "https://www.google.com/maps/search/?api=1&query=Cliffs+of+Moher+Ireland" },
+    { name: "Blarney Castle", url: "https://www.google.com/maps/search/?api=1&query=Blarney+Castle+Ireland" },
+    { name: "Kilkenny Castle", url: "https://www.google.com/maps/search/?api=1&query=Kilkenny+Castle+Ireland" },
+    { name: "Dublin Castle", url: "https://www.google.com/maps/search/?api=1&query=Dublin+Castle+Ireland" },
+    { name: "St Patrick's Cathedral Dublin", url: "https://www.google.com/maps/search/?api=1&query=St+Patrick's+Cathedral+Dublin+Ireland" },
+    { name: "Rock of Cashel", url: "https://www.google.com/maps/search/?api=1&query=Rock+of+Cashel+Ireland" },
+    { name: "Newgrange", url: "https://www.google.com/maps/search/?api=1&query=Newgrange+Ireland" },
+    { name: "National Gallery of Ireland", url: "https://www.google.com/maps/search/?api=1&query=National+Gallery+of+Ireland+Dublin" },
+  ],
+  sk: [
+    { name: "Castelul Bratislava", url: "https://www.google.com/maps/search/?api=1&query=Bratislava+Castle+Slovakia" },
+    { name: "Castelul Spiš", url: "https://www.google.com/maps/search/?api=1&query=Spis+Castle+Slovakia" },
+    { name: "Munții Tatra Înalți", url: "https://www.google.com/maps/search/?api=1&query=High+Tatras+Slovakia" },
+    { name: "Castelul Devín", url: "https://www.google.com/maps/search/?api=1&query=Devin+Castle+Slovakia" },
+    { name: "Catedrala Sfânta Elisabeta Košice", url: "https://www.google.com/maps/search/?api=1&query=St+Elizabeth+Cathedral+Kosice+Slovakia" },
+    { name: "Muzeul Național Slovac", url: "https://www.google.com/maps/search/?api=1&query=Slovak+National+Museum+Bratislava" },
+    { name: "Castelul Orava", url: "https://www.google.com/maps/search/?api=1&query=Orava+Castle+Slovakia" },
+    { name: "Peștera Demänovská", url: "https://www.google.com/maps/search/?api=1&query=Demanovska+Cave+Slovakia" },
+    { name: "Catedrala Sfântul Martin Bratislava", url: "https://www.google.com/maps/search/?api=1&query=St+Martin's+Cathedral+Bratislava+Slovakia" },
+  ],
+  si: [
+    { name: "Lacul Bled", url: "https://www.google.com/maps/search/?api=1&query=Lake+Bled+Slovenia" },
+    { name: "Castelul Ljubljana", url: "https://www.google.com/maps/search/?api=1&query=Ljubljana+Castle+Slovenia" },
+    { name: "Peștera Postojna", url: "https://www.google.com/maps/search/?api=1&query=Postojna+Cave+Slovenia" },
+    { name: "Castelul Predjama", url: "https://www.google.com/maps/search/?api=1&query=Predjama+Castle+Slovenia" },
+    { name: "Orașul vechi Piran", url: "https://www.google.com/maps/search/?api=1&query=Piran+Old+Town+Slovenia" },
+    { name: "Parcul Național Triglav", url: "https://www.google.com/maps/search/?api=1&query=Triglav+National+Park+Slovenia" },
+    { name: "Defileul Vintgar", url: "https://www.google.com/maps/search/?api=1&query=Vintgar+Gorge+Slovenia" },
+    { name: "Peșterile Škocjan", url: "https://www.google.com/maps/search/?api=1&query=Skocjan+Caves+Slovenia" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -2804,11 +3041,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -2816,7 +3053,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski", sk: "Slovenčina", si: "Slovenščina" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const items = Object.keys(LANGUAGE_LABELS)
     .filter((code) => code !== currentLang)
@@ -4676,6 +4913,8 @@ const LANG_META = {
   gr: { lang: "el", locale: "el_GR" },
   hu: { lang: "hu", locale: "hu_HU" },
   hr: { lang: "hr", locale: "hr_HR" },
+  sk: { lang: "sk", locale: "sk_SK" },
+  si: { lang: "sl", locale: "sl_SI" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -5454,7 +5693,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -6499,6 +6738,30 @@ const CITY_COORDS = {
   "Pula": [44.8666, 13.8496],
   "Dubrovnik": [42.6507, 18.0944],
   "Šibenik": [43.7350, 15.8952],
+  "Dublin": [53.3498, -6.2603],
+  "Cork": [51.8985, -8.4756],
+  "Limerick": [52.6638, -8.6267],
+  "Galway": [53.2707, -9.0568],
+  "Waterford": [52.2593, -7.1101],
+  "Drogheda": [53.7189, -6.3478],
+  "Dundalk": [54.0011, -6.4083],
+  "Swords": [53.4597, -6.2181],
+  "Bratislava": [48.1486, 17.1077],
+  "Košice": [48.7164, 21.2611],
+  "Prešov": [49.0018, 21.2393],
+  "Žilina": [49.2231, 18.7394],
+  "Nitra": [48.3061, 18.0764],
+  "Banská Bystrica": [48.7395, 19.1531],
+  "Trnava": [48.3709, 17.5886],
+  "Trenčín": [48.8945, 18.0444],
+  "Ljubljana": [46.0569, 14.5058],
+  "Maribor": [46.5547, 15.6459],
+  "Celje": [46.2311, 15.2683],
+  "Kranj": [46.2437, 14.3557],
+  "Koper": [45.5481, 13.7302],
+  "Novo Mesto": [45.8039, 15.1697],
+  "Velenje": [46.3592, 15.1103],
+  "Nova Gorica": [45.9558, 13.6483],
 };
 
 function slugifyCityName(name) {
@@ -6927,7 +7190,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -6938,7 +7201,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -6961,7 +7224,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/obiectiv/
 // inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
 // ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
 // piață cu acest tipar de căutare construit), dar generică pentru orice țară.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:magazin/:locatie", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras/:magazin/:locatie", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -7001,7 +7264,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:ma
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -7042,7 +7305,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras/:ma
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
