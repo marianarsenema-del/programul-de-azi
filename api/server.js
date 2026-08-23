@@ -1058,7 +1058,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -1657,6 +1657,105 @@ const TRANSLATIONS = {
       closesToday: "Danes zapre ob {time}",
     },
   },
+  lt: {
+    dayNames: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"],
+    home: "Pradžia",
+    todayLabel: "Šiandien",
+    calculating: "Skaičiuojamos darbo valandos...",
+    weeklyTitle: "Savaitės darbo laikas",
+    holidaysTitle: "Darbo laikas švenčių dienomis",
+    noHolidays: "Šiuo metu specialaus darbo laiko nėra",
+    closedWord: "Uždaryta",
+    installBtn: "📱 Įdiekite programėlę greitam prieigai",
+    iosHint: "„iPhone“: bakstelėkite mygtuką „Bendrinti“ ir pasirinkite „Įtraukti į pagrindinį ekraną“.",
+    geoSuggestionPrefix: "📍 Panašu, kad jūsų miestas yra",
+    geoSuggestionBtn: "Rodyti parduotuves čia? →",
+    geoSuggestionNote: "Ne jūsų miestas? Pasirinkite žemiau.",
+    amazonBtn: "🛍️ Peržiūrėkite šiandienos pasiūlymus „Amazon“",
+    ticketBtn: "🎟️ Pirkite bilietus internetu ir išvenkite eilės",
+    tabStores: "🛒 Parduotuvės",
+    tabAttractions: "🏛️ Lankytinos vietos",
+    attractionsComingSoon: "Mūsų lankytinų vietų gidas jau ruošiamas — netrukus sugrįžkite.",
+    titleTemplate: (brand, city) => `${brand} ${city} Darbo Laikas Šiandien – Atidaryta ar Uždaryta`,
+    descriptionTemplate: (brand, city) => `Sužinokite, ar ${brand} mieste ${city} dabar atidaryta. Savaitės darbo laikas ir darbo laikas švenčių dienomis, atnaujinama realiuoju laiku.`,
+    disclaimer: (name) => `Rodomas ${name} darbo laikas yra orientacinis, pagrįstas standartiniu tinklo darbo laiku. Atskiros parduotuvės gali skirtis — patikrinkite darbo laiką prie įėjimo.`,
+    footer: (name) => `realiuoju laiku rodo, ar ${name} dabar atidaryta, taip pat pilną savaitės darbo laiką ir darbo laiką švenčių dienomis.`,
+    labels: {
+      openNow: "DABAR ATIDARYTA",
+      closedNow: "DABAR UŽDARYTA",
+      closedHoliday: "Šiandien uždaryta — {label}",
+      closedAllDay: "Uždaryta visą dieną",
+      opensToday: "Šiandien atidaroma {time}",
+      closedComeBack: "Uždaryta nuo {time} — ateikite rytoj",
+      closesToday: "Šiandien uždaroma {time}",
+    },
+  },
+  lv: {
+    dayNames: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"],
+    home: "Sākums",
+    todayLabel: "Šodien",
+    calculating: "Aprēķina darba laiku...",
+    weeklyTitle: "Nedēļas darba laiks",
+    holidaysTitle: "Darba laiks svētkos",
+    noHolidays: "Šobrīd nav īpaša darba laika",
+    closedWord: "Slēgts",
+    installBtn: "📱 Instalējiet lietotni ātrai piekļuvei",
+    iosHint: "iPhone: pieskarieties pogai Dalīties un izvēlieties \"Pievienot sākuma ekrānam\".",
+    geoSuggestionPrefix: "📍 Šķiet, ka jūsu pilsēta ir",
+    geoSuggestionBtn: "Rādīt veikalus šeit? →",
+    geoSuggestionNote: "Nav jūsu pilsēta? Izvēlieties zemāk.",
+    amazonBtn: "🛍️ Skatiet šodienas piedāvājumus Amazon",
+    ticketBtn: "🎟️ Pērciet biļetes tiešsaistē un izvairieties no rindas",
+    tabStores: "🛒 Veikali",
+    tabAttractions: "🏛️ Apskates vietas",
+    attractionsComingSoon: "Mūsu apskates vietu ceļvedis jau tiek gatavots — apmeklējiet drīzumā vēlreiz.",
+    titleTemplate: (brand, city) => `${brand} ${city} Darba Laiks Šodien – Atvērts vai Slēgts`,
+    descriptionTemplate: (brand, city) => `Uzziniet, vai ${brand} pilsētā ${city} tagad ir atvērts. Nedēļas darba laiks un darba laiks svētkos, atjaunināts reāllaikā.`,
+    disclaimer: (name) => `Norādītais darba laiks ${name} ir orientējošs, balstīts uz tīkla standarta darba laiku. Atsevišķi veikali var atšķirties — pārbaudiet darba laiku pie ieejas.`,
+    footer: (name) => `reāllaikā rāda, vai ${name} tagad ir atvērts, kā arī pilnu nedēļas darba laiku un darba laiku svētkos.`,
+    labels: {
+      openNow: "TAGAD ATVĒRTS",
+      closedNow: "TAGAD SLĒGTS",
+      closedHoliday: "Šodien slēgts — {label}",
+      closedAllDay: "Slēgts visu dienu",
+      opensToday: "Šodien atveras {time}",
+      closedComeBack: "Slēgts kopš {time} — atgriezieties rīt",
+      closesToday: "Šodien slēdzas {time}",
+    },
+  },
+  ee: {
+    dayNames: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"],
+    home: "Avaleht",
+    todayLabel: "Täna",
+    calculating: "Lahtiolekuaegade arvutamine...",
+    weeklyTitle: "Nädala lahtiolekuajad",
+    holidaysTitle: "Lahtiolekuajad pühade ajal",
+    noHolidays: "Praegu erilisi lahtiolekuaegu ei ole",
+    closedWord: "Suletud",
+    installBtn: "📱 Paigalda rakendus kiireks ligipääsuks",
+    iosHint: "iPhone'is: puuduta jagamisnuppu ja vali \"Lisa avakuvale\".",
+    geoSuggestionPrefix: "📍 Tundub, et sinu linn on",
+    geoSuggestionBtn: "Näita poode siin? →",
+    geoSuggestionNote: "Pole sinu linn? Vali allpool.",
+    amazonBtn: "🛍️ Vaata tänaseid pakkumisi Amazonis",
+    ticketBtn: "🎟️ Osta piletid veebis ja väldi järjekorda",
+    tabStores: "🛒 Poed",
+    tabAttractions: "🏛️ Vaatamisväärsused",
+    attractionsComingSoon: "Meie vaatamisväärsuste juht on valmimas — vaata varsti uuesti.",
+    titleTemplate: (brand, city) => `${brand} ${city} Lahtiolekuajad Täna – Avatud või Suletud`,
+    descriptionTemplate: (brand, city) => `Vaata, kas ${brand} linnas ${city} on praegu avatud. Nädala lahtiolekuajad ja lahtiolekuajad pühade ajal, uuendatud reaalajas.`,
+    disclaimer: (name) => `Kuvatud ${name} lahtiolekuajad on suunavad, põhinedes keti standardsel lahtiolekuajal. Üksikud poed võivad erineda — kontrolli lahtiolekuaega sissepääsu juures.`,
+    footer: (name) => `näitab sulle reaalajas, kas ${name} on praegu avatud, samuti täielikke nädala lahtiolekuaegu ja lahtiolekuaegu pühade ajal.`,
+    labels: {
+      openNow: "PRAEGU AVATUD",
+      closedNow: "PRAEGU SULETUD",
+      closedHoliday: "Täna suletud — {label}",
+      closedAllDay: "Terve päev suletud",
+      opensToday: "Täna avaneb {time}",
+      closedComeBack: "Suletud alates {time} — tule homme tagasi",
+      closesToday: "Täna suletakse {time}",
+    },
+  },
 };
 
 /* ============================================================
@@ -2116,6 +2215,124 @@ const SI_STORE_CONFIG = {
   tus: { name: "Tuš", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
 };
 
+// Lituania — 13 sărbători 2026, verificate. Spre deosebire de Slovacia/
+// Slovenia, magazinele mari RĂMÂN DESCHISE de sărbători, cu ore reduse —
+// confirmat explicit: doar 25 decembrie complet închis; 1 ianuarie, Ajunul
+// și 26 decembrie au program redus, nu închidere.
+const LT_HOLIDAYS = [
+  { date: "01-01", label: "Naujieji metai (sausio 1 d.)", hours: { open: "10:00", close: "20:00" } },
+  { date: "02-16", label: "Lietuvos valstybės atkūrimo diena (vasario 16 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "03-11", label: "Nepriklausomybės atkūrimo diena (kovo 11 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "04-05", label: "Velykos (2026 m. balandžio 5 d.)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Velykų antroji diena (2026 m. balandžio 6 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-01", label: "Tarptautinė darbo diena (gegužės 1 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "07-06", label: "Valstybės diena (liepos 6 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "08-15", label: "Žolinė (rugpjūčio 15 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "11-01", label: "Visų šventųjų diena (lapkričio 1 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "11-02", label: "Vėlinės (lapkričio 2 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Šv. Kūčios (gruodžio 24 d.) — trumpiau", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Šv. Kalėdos (gruodžio 25 d.)", hours: null },
+  { date: "12-26", label: "Antroji Kalėdų diena (gruodžio 26 d.)", hours: { open: "09:00", close: "21:00" } },
+];
+function ltSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Sekmadienis
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Šeštadienis
+  ];
+}
+// Maxima, Lidl, IKI, Norfa, Rimi — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual
+const LT_STORE_CONFIG = {
+  maxima: { name: "Maxima", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  iki: { name: "IKI", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  norfa: { name: "Norfa", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  rimi: { name: "Rimi", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+};
+
+// Letonia — 14 sărbători 2026, verificate. Similar cu Lituania — magazinele
+// mari (Rimi, Maxima) rămân majoritar DESCHISE de sărbători, cu ore reduse,
+// confirmat explicit; doar 25 decembrie tratat ca închis complet.
+const LV_HOLIDAYS = [
+  { date: "01-01", label: "Jaunais gads (1. janvāris)", hours: { open: "10:00", close: "20:00" } },
+  { date: "04-03", label: "Lielā Piektdiena (2026. gada 3. aprīlis)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Lieldienas (2026. gada 5. aprīlis)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Otrās Lieldienas (2026. gada 6. aprīlis)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-01", label: "Darba svētki (1. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-04", label: "Neatkarības atjaunošanas diena (4. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-24", label: "Vasarsvētki (2026. gada 24. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-23", label: "Līgo diena (23. jūnijs)", hours: { open: "08:00", close: "18:00" } },
+  { date: "06-24", label: "Jāņi (24. jūnijs)", hours: { open: "10:00", close: "18:00" } },
+  { date: "11-18", label: "Latvijas Republikas proklamēšanas diena (18. novembris)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Ziemassvētku vakars (24. decembris) — īsāk", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Ziemassvētki (25. decembris)", hours: null },
+  { date: "12-26", label: "Otrie Ziemassvētki (26. decembris)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-31", label: "Vecgada vakars (31. decembris) — īsāk", hours: { open: "08:00", close: "20:00" } },
+];
+function lvSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Svētdiena
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Sestdiena
+  ];
+}
+// Rimi, Maxima, Lidl, Spar — cele 4 branduri cu cea mai mare prezență
+// națională, confirmate individual
+const LV_STORE_CONFIG = {
+  rimi: { name: "Rimi", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  maxima: { name: "Maxima", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  spar: { name: "Spar", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+};
+
+// Estonia — 12 sărbători 2026, verificate. La fel ca restul Balticelor,
+// magazinele mari rămân majoritar DESCHISE de sărbători, chiar și de
+// Ziua Victoriei și Solstițiul de Vară (Jaanipäev) — confirmat explicit:
+// "Rimi, Coop, Maxima, Selver and Prisma... will largely be open".
+const EE_HOLIDAYS = [
+  { date: "01-01", label: "Uusaasta (1. jaanuar)", hours: { open: "10:00", close: "20:00" } },
+  { date: "02-24", label: "Iseseisvuspäev (24. veebruar)", hours: { open: "09:00", close: "21:00" } },
+  { date: "04-03", label: "Suur Reede (2026. aasta 3. aprill)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Ülestõusmispühad (2026. aasta 5. aprill)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-01", label: "Kevadpüha (1. mai)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-24", label: "Nelipühad (2026. aasta 24. mai)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-23", label: "Võidupüha (23. juuni)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-24", label: "Jaanipäev (24. juuni)", hours: { open: "10:00", close: "18:00" } },
+  { date: "08-20", label: "Taasiseseisvumispäev (20. august)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Jõululaupäev (24. detsember) — lühem", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Esimene jõulupüha (25. detsember)", hours: null },
+  { date: "12-26", label: "Teine jõulupüha (26. detsember)", hours: { open: "09:00", close: "21:00" } },
+];
+function eeSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Pühapäev
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Laupäev
+  ];
+}
+// Selver, Coop, Maxima, Rimi, Lidl — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual
+const EE_STORE_CONFIG = {
+  selver: { name: "Selver", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  coop: { name: "Coop", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  maxima: { name: "Maxima", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  rimi: { name: "Rimi", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+};
+
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
 // nu închis complet. Program unic pentru tot grupul (tesco, sainsburys, asda,
 // morrisons, boots): Luni-Sâmbătă 07:00-22:00, Duminică 10:00-16:00.
@@ -2561,6 +2778,21 @@ const COUNTRIES = {
     config: SI_STORE_CONFIG,
     t: TRANSLATIONS.si,
     cities: ["Ljubljana", "Maribor", "Celje", "Kranj", "Koper", "Novo Mesto", "Velenje", "Nova Gorica"],
+  },
+  lt: {
+    config: LT_STORE_CONFIG,
+    t: TRANSLATIONS.lt,
+    cities: ["Vilnius", "Kaunas", "Klaipėda", "Šiauliai", "Panevėžys", "Alytus", "Marijampolė", "Mažeikiai"],
+  },
+  lv: {
+    config: LV_STORE_CONFIG,
+    t: TRANSLATIONS.lv,
+    cities: ["Riga", "Daugavpils", "Liepāja", "Jelgava", "Jūrmala", "Ventspils", "Rēzekne", "Ogre"],
+  },
+  ee: {
+    config: EE_STORE_CONFIG,
+    t: TRANSLATIONS.ee,
+    cities: ["Tallinn", "Tartu", "Narva", "Pärnu", "Kohtla-Järve", "Viljandi", "Rakvere", "Maardu"],
   },
 };
 
@@ -3021,6 +3253,31 @@ const ATTRACTIONS = {
     { name: "Defileul Vintgar", url: "https://www.google.com/maps/search/?api=1&query=Vintgar+Gorge+Slovenia" },
     { name: "Peșterile Škocjan", url: "https://www.google.com/maps/search/?api=1&query=Skocjan+Caves+Slovenia" },
   ],
+  lt: [
+    { name: "Turnul Gediminas Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Gediminas+Tower+Vilnius+Lithuania" },
+    { name: "Catedrala Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Vilnius+Cathedral+Lithuania" },
+    { name: "Poarta Zorilor (Aušros Vartai)", url: "https://www.google.com/maps/search/?api=1&query=Gate+of+Dawn+Vilnius+Lithuania" },
+    { name: "Castelul Trakai", url: "https://www.google.com/maps/search/?api=1&query=Trakai+Island+Castle+Lithuania" },
+    { name: "Muzeul Diavolilor Kaunas", url: "https://www.google.com/maps/search/?api=1&query=Devils+Museum+Kaunas+Lithuania" },
+    { name: "Colina Crucilor", url: "https://www.google.com/maps/search/?api=1&query=Hill+of+Crosses+Lithuania" },
+    { name: "Catedrala Kaunas", url: "https://www.google.com/maps/search/?api=1&query=Kaunas+Cathedral+Lithuania" },
+  ],
+  lv: [
+    { name: "Orașul vechi Riga", url: "https://www.google.com/maps/search/?api=1&query=Riga+Old+Town+Latvia" },
+    { name: "Casa Neagră a Capetelor", url: "https://www.google.com/maps/search/?api=1&query=House+of+the+Blackheads+Riga+Latvia" },
+    { name: "Catedrala Riga", url: "https://www.google.com/maps/search/?api=1&query=Riga+Cathedral+Latvia" },
+    { name: "Palatul Rundāle", url: "https://www.google.com/maps/search/?api=1&query=Rundale+Palace+Latvia" },
+    { name: "Cetatea Turaida", url: "https://www.google.com/maps/search/?api=1&query=Turaida+Castle+Latvia" },
+    { name: "Piața Centrală Riga", url: "https://www.google.com/maps/search/?api=1&query=Riga+Central+Market+Latvia" },
+  ],
+  ee: [
+    { name: "Orașul vechi Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Tallinn+Old+Town+Estonia" },
+    { name: "Turnul Pikk Hermann", url: "https://www.google.com/maps/search/?api=1&query=Pikk+Hermann+Tower+Tallinn+Estonia" },
+    { name: "Catedrala Alexander Nevsky Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Alexander+Nevsky+Cathedral+Tallinn+Estonia" },
+    { name: "Muzeul în aer liber Rocca al Mare", url: "https://www.google.com/maps/search/?api=1&query=Estonian+Open+Air+Museum+Tallinn+Estonia" },
+    { name: "Cetatea Narva", url: "https://www.google.com/maps/search/?api=1&query=Narva+Castle+Estonia" },
+    { name: "Parcul Național Lahemaa", url: "https://www.google.com/maps/search/?api=1&query=Lahemaa+National+Park+Estonia" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -3056,11 +3313,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -3068,8 +3325,8 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 // ?lang=xx — fără să schimbe ce magazin/oraș vezi, doar cum e scris textul.
 // "uk" e cheia noastră internă pentru engleză (moștenită din codul de țară),
 // dar aici o etichetăm corect, ca opțiune de limbă, nu de țară.
-const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski", sk: "Slovenčina", si: "Slovenščina" };
-const LANGUAGE_FLAGS = { uk: "🇬🇧", de: "🇩🇪", es: "🇪🇸", fr: "🇫🇷", it: "🇮🇹", pl: "🇵🇱", nl: "🇳🇱", da: "🇩🇰", ro: "🇷🇴", se: "🇸🇪", pt: "🇵🇹", cz: "🇨🇿", fi: "🇫🇮", gr: "🇬🇷", hu: "🇭🇺", hr: "🇭🇷", sk: "🇸🇰", si: "🇸🇮" };
+const LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski", sk: "Slovenčina", si: "Slovenščina", lt: "Lietuvių", lv: "Latviešu", ee: "Eesti" };
+const LANGUAGE_FLAGS = { uk: "🇬🇧", de: "🇩🇪", es: "🇪🇸", fr: "🇫🇷", it: "🇮🇹", pl: "🇵🇱", nl: "🇳🇱", da: "🇩🇰", ro: "🇷🇴", se: "🇸🇪", pt: "🇵🇹", cz: "🇨🇿", fi: "🇫🇮", gr: "🇬🇷", hu: "🇭🇺", hr: "🇭🇷", sk: "🇸🇰", si: "🇸🇮", lt: "🇱🇹", lv: "🇱🇻", ee: "🇪🇪" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const options = Object.keys(LANGUAGE_LABELS)
     .map((code) => `<option value="${escapeHtml(code)}" ${code === currentLang ? "selected" : ""}>${LANGUAGE_FLAGS[code] || ""} ${escapeHtml(LANGUAGE_LABELS[code])}</option>`)
@@ -4967,6 +5224,9 @@ const LANG_META = {
   hr: { lang: "hr", locale: "hr_HR" },
   sk: { lang: "sk", locale: "sk_SK" },
   si: { lang: "sl", locale: "sl_SI" },
+  lt: { lang: "lt", locale: "lt_LT" },
+  lv: { lang: "lv", locale: "lv_LV" },
+  ee: { lang: "et", locale: "et_EE" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -5746,7 +6006,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si", "lt", "lv", "ee"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -6816,6 +7076,30 @@ const CITY_COORDS = {
   "Novo Mesto": [45.8039, 15.1697],
   "Velenje": [46.3592, 15.1103],
   "Nova Gorica": [45.9558, 13.6483],
+  "Vilnius": [54.6872, 25.2797],
+  "Kaunas": [54.8985, 23.9036],
+  "Klaipėda": [55.7033, 21.1443],
+  "Šiauliai": [55.9349, 23.3144],
+  "Panevėžys": [55.7333, 24.3575],
+  "Alytus": [54.3969, 24.0447],
+  "Marijampolė": [54.5599, 23.3555],
+  "Mažeikiai": [56.3097, 22.3350],
+  "Riga": [56.9496, 24.1052],
+  "Daugavpils": [55.8748, 26.5361],
+  "Liepāja": [56.5089, 21.0104],
+  "Jelgava": [56.6511, 23.7214],
+  "Jūrmala": [56.9679, 23.7796],
+  "Ventspils": [57.3894, 21.5606],
+  "Rēzekne": [56.5097, 27.3319],
+  "Ogre": [56.8181, 24.6047],
+  "Tallinn": [59.4370, 24.7536],
+  "Tartu": [58.3780, 26.7290],
+  "Narva": [59.3773, 28.1903],
+  "Pärnu": [58.3859, 24.4971],
+  "Kohtla-Järve": [59.3986, 27.2739],
+  "Viljandi": [58.3639, 25.5900],
+  "Rakvere": [59.3467, 26.3592],
+  "Maardu": [59.4761, 25.0181],
 };
 
 function slugifyCityName(name) {
@@ -7244,7 +7528,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -7255,7 +7539,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -7278,7 +7562,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/
 // inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
 // ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
 // piață cu acest tipar de căutare construit), dar generică pentru orice țară.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras/:magazin/:locatie", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras/:magazin/:locatie", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -7318,7 +7602,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -7359,7 +7643,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
