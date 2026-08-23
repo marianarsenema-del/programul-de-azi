@@ -4807,6 +4807,29 @@ function buildBottomNavScript(nonce) {
 
 function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
   const meta = LANG_META[langCode] || LANG_META.ro;
+  // Travelpayouts Drive — Project SEPARAT per domeniu (coduri de urmărire
+  // diferite, confirmat de utilizator), determinat din domeniul din canonical
+  // (mereu URL complet, nu doar cale relativă) — fără să atingem restul
+  // apelurilor către pageShell, care sunt foarte multe.
+  const travelpayoutsScript = canonical.includes(INTL_DOMAIN)
+    ? `<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
+  (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.setAttribute("data-cmp-ab","2");
+      script.src = 'https://tp-em.com/NTY1MjQx.js?t=565241';
+      document.head.appendChild(script);
+  })();
+</script>`
+    : `<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
+  (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.setAttribute("data-cmp-ab","2");
+      script.src = 'https://tp-em.com/NTY0OTM4.js?t=564938';
+      document.head.appendChild(script);
+  })();
+</script>`;
   const alternatesHtml = (alternateLinks || [])
     .map((l) => `<link rel="alternate" hreflang="${escapeHtml(l.hreflang)}" href="${escapeHtml(l.href)}">`)
     .join("\n");
@@ -4816,16 +4839,8 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
-<!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts -->
-<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
-  (function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = 'https://tp-em.com/NTY0OTM4.js?t=564938';
-      document.head.appendChild(script);
-  })();
-</script>
+<!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts, cod diferit per domeniu (Project separat) -->
+${travelpayoutsScript}
 <meta charset="UTF-8">
 <script nonce="${nonce}">
 (function(){
