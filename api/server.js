@@ -438,6 +438,61 @@ function buildLocalBusinessSchema({ name, weekly, live }) {
   return `<script type="application/ld+json">${safeJson(schema)}</script>`;
 }
 
+// FAQ Schema — întrebări generice, per oraș, cu răspuns vizibil pe pagină
+// (obligatoriu: Google penalizează markup ascuns, fără conținut real
+// corespunzător). Din 2023, Google arată "Rich Snippets" FAQ doar pentru
+// site-uri guvernamentale/medicale — pentru noi, markup-ul rămâne valid și
+// citit de Google, dar fără căsuțe extinse vizibile în rezultate.
+function buildCityFaqHtml({ orasDisplay, lang }) {
+  const isRo = !lang || lang === "ro";
+  const faqs = isRo
+    ? [
+        { q: `Cum pot afla dacă un magazin este deschis acum în ${orasDisplay}?`, a: `Alege magazinul din lista de mai sus — vezi instant statusul live, "deschis" sau "închis" chiar acum, actualizat automat pe baza orarului standard sau a datelor live de la Google.` },
+        { q: "Care este programul magazinelor de sărbători legale?", a: "Fiecare pagină de magazin arată programul special pentru sărbătorile legale (Paște, Crăciun, 1 Mai și altele), actualizat pentru anul curent — inclusiv zilele cu program redus sau cu magazinul închis complet." },
+      ]
+    : [
+        { q: `How can I find out if a store is open right now in ${orasDisplay}?`, a: `Pick a store from the list above — you'll see its live status, "open" or "closed" right now, updated automatically based on standard hours or live Google data.` },
+        { q: "What are store hours during public holidays?", a: "Each store's page shows its special hours for public holidays, updated for the current year — including reduced hours or full closures." },
+      ];
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  const visibleHtml = `
+  <h2 class="section-title"><span class="bar"></span>${isRo ? "Întrebări frecvente" : "Frequently asked questions"}</h2>
+  <div class="holiday-card">${faqs.map((f) => `<details class="faq-item"><summary>${escapeHtml(f.q)}</summary><p>${escapeHtml(f.a)}</p></details>`).join("")}</div>
+  <script type="application/ld+json">${safeJson(schema)}</script>`;
+
+  return visibleHtml;
+}
+
+// TouristAttraction Schema — pentru obiective (castele, muzee, saline etc.),
+// tip mai potrivit decât LocalBusiness (care presupune "afacere", nu un loc
+// de vizitat). Adresă/coordonate DOAR când avem date live reale — la fel ca
+// la magazine, nu inventăm niciodată.
+function buildTouristAttractionSchema({ name, officialUrl, live }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    name,
+  };
+  if (officialUrl) schema.url = officialUrl;
+  if (live && live.formattedAddress) {
+    schema.address = { "@type": "PostalAddress", streetAddress: live.formattedAddress };
+  }
+  if (live && Number.isFinite(live.lat) && Number.isFinite(live.lng)) {
+    schema.geo = { "@type": "GeoCoordinates", latitude: live.lat, longitude: live.lng };
+  }
+  return `<script type="application/ld+json">${safeJson(schema)}</script>`;
+}
+
 const REPORT_ISSUE_LABELS_RO = {
   btn: "🚩 Programul e corect sau locul nu mai există? Spune-ne, ajuți alți vizitatori!",
   q1: (name) => `Este ${name} deschis chiar acum?`,
@@ -3781,6 +3836,10 @@ tbody tr.today{background:var(--accent-dim);}
 tbody tr.today .day-cell,tbody tr.today .hours-cell{color:var(--accent);}
 tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);font-weight:600;font-size:11px;opacity:.85;}
 .holiday-card{margin:12px 18px 0;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;}
+.faq-item{padding:10px 0;border-bottom:1px solid var(--glass-border);}
+.faq-item:last-child{border-bottom:none;}
+.faq-item summary{font-weight:600;cursor:pointer;font-size:14.5px;}
+.faq-item p{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.5;}
 .holiday-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;}
 .holiday-row + .holiday-row{border-top:1px solid var(--border);}
 .holiday-label{font-weight:600;}
@@ -5063,6 +5122,8 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 
+  ${buildCityFaqHtml({ orasDisplay, lang: "ro" })}
+
   <footer>
     <p><strong>Programul de Azi</strong> îți arată în timp real programul magazinelor din ${escapeHtml(orasDisplay)}: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan și mall-uri.</p>
   </footer>
@@ -5344,6 +5405,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <ul class="mall-list">${listItems}</ul>
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
+  ${buildCityFaqHtml({ orasDisplay, lang: activeLang === "ro" ? "ro" : "en" })}
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
@@ -5826,6 +5888,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
 
   // biletul e acum mereu în "Planifică vizita" (buildBookingPlanningButtonsHtml)
   // — nu mai are nevoie de un fallback separat aici
+  const schemaHtml = buildTouristAttractionSchema({ name: attraction.name, officialUrl: attraction.url, live });
 
   const bodyHtml = `
 <header>
@@ -5856,6 +5919,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
+${schemaHtml}
 ${widgetScriptHtml}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}`;
@@ -5900,6 +5964,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   }
 
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
+  const schemaHtml = buildTouristAttractionSchema({ name: attraction.name, officialUrl: attraction.url, live });
 
   const bodyHtml = `
 <header>
@@ -5923,6 +5988,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
   </footer>
 </main>
+${schemaHtml}
 ${widgetScriptHtml}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}`;
