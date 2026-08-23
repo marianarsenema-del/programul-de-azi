@@ -1065,6 +1065,19 @@ const STORE_AFFILIATE_LINKS = {
 const TRANSLATIONS = {
   ro: {
     dayNames: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
+    homeH1: "Este magazinul deschis chiar acum?",
+    homeIntro: "Alege o țară mai jos ca să filtrezi tot — magazine și obiective deopotrivă — sau caută direct.",
+    chooseCountry: "Alege o țară",
+    showAllCountries: "🌍 Arată toate țările",
+    storesIn: "Magazine în",
+    attractionsIn: "Obiective în",
+    attractionsIntro: "Pagini oficiale de bilete și informații — verifică mereu programul live afișat acolo înainte să vizitezi. Apasă ☆ ca să-l salvezi la favorite.",
+    allPrefix: "Toate",
+    geoLooksLike: "📍 Se pare că ești în",
+    geoShowingFirst: "— ți-l arătăm primul. Apasă 🌍 ca să răsfoiești tot, sau alege alt steag mai jos oricând.",
+    pushSubBtn: "🔔 Abonează-te la alerte (sărbători, program special)",
+    favoritesLabel: "⭐ Favorite",
+    searchPlaceholder: "Caută un magazin sau un obiectiv...",
     home: "Acasă",
     todayLabel: "Azi",
     calculating: "Se calculează programul...",
@@ -1098,6 +1111,19 @@ const TRANSLATIONS = {
   },
   de: {
     dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+    homeH1: "Ist der Laden gerade geöffnet?",
+    homeIntro: "Wähle unten ein Land, um alles zu filtern — Geschäfte und Sehenswürdigkeiten — oder suche direkt.",
+    chooseCountry: "Länder auswählen",
+    showAllCountries: "🌍 Alle Länder anzeigen",
+    storesIn: "Geschäfte in",
+    attractionsIn: "Sehenswürdigkeiten in",
+    attractionsIntro: "Offizielle Ticket- und Informationsseiten — prüfe vor deinem Besuch immer die dort angezeigten Live-Öffnungszeiten. Tippe auf ☆, um zu deinen Favoriten hinzuzufügen.",
+    allPrefix: "Alle",
+    geoLooksLike: "📍 Sieht so aus, als wärst du in",
+    geoShowingFirst: "— zeigen wir dir zuerst. Tippe auf 🌍, um alles zu durchsuchen, oder wähle unten jederzeit eine andere Flagge.",
+    pushSubBtn: "🔔 Benachrichtigungen abonnieren (Feiertage, Sonderöffnungszeiten)",
+    favoritesLabel: "⭐ Favoriten",
+    searchPlaceholder: "Geschäft oder Sehenswürdigkeit suchen...",
     home: "Startseite",
     todayLabel: "Heute",
     calculating: "Öffnungszeiten werden berechnet...",
@@ -1131,6 +1157,19 @@ const TRANSLATIONS = {
   },
   uk: {
     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    homeH1: "Is the store open right now?",
+    homeIntro: "Pick a country below to filter everything — Stores and Attractions both — or search directly.",
+    chooseCountry: "Choose a country",
+    showAllCountries: "🌍 Show all countries",
+    storesIn: "Stores in",
+    attractionsIn: "Attractions in",
+    attractionsIntro: "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.",
+    allPrefix: "All",
+    geoLooksLike: "📍 Looks like you're in",
+    geoShowingFirst: "— showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.",
+    pushSubBtn: "🔔 Subscribe to alerts (holidays, special hours)",
+    favoritesLabel: "⭐ Favorites",
+    searchPlaceholder: "Search a store or attraction...",
     home: "Home",
     todayLabel: "Today",
     calculating: "Calculating opening hours...",
@@ -1164,6 +1203,19 @@ const TRANSLATIONS = {
   },
   es: {
     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+    homeH1: "¿Está la tienda abierta ahora mismo?",
+    homeIntro: "Elige un país abajo para filtrar todo — Tiendas y Atracciones — o busca directamente.",
+    chooseCountry: "Elige un país",
+    showAllCountries: "🌍 Mostrar todos los países",
+    storesIn: "Tiendas en",
+    attractionsIn: "Atracciones en",
+    attractionsIntro: "Páginas oficiales de entradas e información — comprueba siempre el horario en vivo mostrado allí antes de visitar. Toca ☆ para guardarlo en tus favoritos.",
+    allPrefix: "Todo",
+    geoLooksLike: "📍 Parece que estás en",
+    geoShowingFirst: "— mostrando eso primero. Toca 🌍 para ver todo, o elige otra bandera abajo cuando quieras.",
+    pushSubBtn: "🔔 Suscríbete a alertas (festivos, horarios especiales)",
+    favoritesLabel: "⭐ Favoritos",
+    searchPlaceholder: "Buscar una tienda o atracción...",
     home: "Inicio",
     todayLabel: "Hoy",
     calculating: "Calculando el horario...",
@@ -1197,6 +1249,19 @@ const TRANSLATIONS = {
   },
   fr: {
     dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+    homeH1: "Le magasin est-il ouvert maintenant ?",
+    homeIntro: "Choisissez un pays ci-dessous pour tout filtrer — Magasins et Attractions — ou recherchez directement.",
+    chooseCountry: "Choisir un pays",
+    showAllCountries: "🌍 Afficher tous les pays",
+    storesIn: "Magasins en",
+    attractionsIn: "Attractions en",
+    attractionsIntro: "Pages officielles de billets et d'informations — vérifiez toujours les horaires en direct affichés avant votre visite. Appuyez sur ☆ pour l'ajouter à vos favoris.",
+    allPrefix: "Tout",
+    geoLooksLike: "📍 Il semble que vous soyez à",
+    geoShowingFirst: "— on vous le montre en premier. Appuyez sur 🌍 pour tout parcourir, ou choisissez un autre drapeau ci-dessous à tout moment.",
+    pushSubBtn: "🔔 S'abonner aux alertes (jours fériés, horaires spéciaux)",
+    favoritesLabel: "⭐ Favoris",
+    searchPlaceholder: "Rechercher un magasin ou une attraction...",
     home: "Accueil",
     todayLabel: "Aujourd'hui",
     calculating: "Calcul des horaires...",
@@ -1230,6 +1295,19 @@ const TRANSLATIONS = {
   },
   it: {
     dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+    homeH1: "Il negozio è aperto proprio ora?",
+    homeIntro: "Scegli un paese qui sotto per filtrare tutto — Negozi e Attrazioni — oppure cerca direttamente.",
+    chooseCountry: "Scegli un paese",
+    showAllCountries: "🌍 Mostra tutti i paesi",
+    storesIn: "Negozi in",
+    attractionsIn: "Attrazioni in",
+    attractionsIntro: "Pagine ufficiali di biglietti e informazioni — controlla sempre gli orari in tempo reale mostrati lì prima di visitare. Tocca ☆ per salvarlo nei preferiti.",
+    allPrefix: "Tutti",
+    geoLooksLike: "📍 Sembra che tu sia a",
+    geoShowingFirst: "— te lo mostriamo per primo. Tocca 🌍 per sfogliare tutto, o scegli un'altra bandiera qui sotto in qualsiasi momento.",
+    pushSubBtn: "🔔 Iscriviti agli avvisi (festività, orari speciali)",
+    favoritesLabel: "⭐ Preferiti",
+    searchPlaceholder: "Cerca un negozio o un'attrazione...",
     home: "Home",
     todayLabel: "Oggi",
     calculating: "Calcolo degli orari in corso...",
@@ -1263,6 +1341,19 @@ const TRANSLATIONS = {
   },
   pl: {
     dayNames: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+    homeH1: "Czy sklep jest teraz otwarty?",
+    homeIntro: "Wybierz kraj poniżej, aby wszystko filtrować — zarówno sklepy, jak i atrakcje — albo wyszukaj bezpośrednio.",
+    chooseCountry: "Wybierz kraj",
+    showAllCountries: "🌍 Pokaż wszystkie kraje",
+    storesIn: "Sklepy w",
+    attractionsIn: "Atrakcje w",
+    attractionsIntro: "Oficjalne strony z biletami i informacjami — zawsze sprawdź tam aktualne godziny otwarcia przed wizytą. Dotknij ☆, aby dodać do ulubionych.",
+    allPrefix: "Wszystkie",
+    geoLooksLike: "📍 Wygląda na to, że jesteś w",
+    geoShowingFirst: "— pokazujemy to jako pierwsze. Dotknij 🌍, aby przeglądać wszystko, lub wybierz inną flagę poniżej w dowolnym momencie.",
+    pushSubBtn: "🔔 Subskrybuj powiadomienia (święta, specjalne godziny)",
+    favoritesLabel: "⭐ Ulubione",
+    searchPlaceholder: "Szukaj sklepu lub atrakcji...",
     home: "Strona główna",
     todayLabel: "Dziś",
     calculating: "Obliczanie godzin otwarcia...",
@@ -1296,6 +1387,19 @@ const TRANSLATIONS = {
   },
   nl: {
     dayNames: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+    homeH1: "Is de winkel nu open?",
+    homeIntro: "Kies hieronder een land om alles te filteren — winkels en attracties — of zoek direct.",
+    chooseCountry: "Kies een land",
+    showAllCountries: "🌍 Toon alle landen",
+    storesIn: "Winkels in",
+    attractionsIn: "Attracties in",
+    attractionsIntro: "Officiële ticket- en informatiepagina's — controleer altijd de live openingstijden daar voordat je gaat. Tik op ☆ om toe te voegen aan favorieten.",
+    allPrefix: "Alle",
+    geoLooksLike: "📍 Het lijkt erop dat je in",
+    geoShowingFirst: "bent — dat tonen we eerst. Tik op 🌍 om alles te doorzoeken, of kies hieronder altijd een andere vlag.",
+    pushSubBtn: "🔔 Abonneer op meldingen (feestdagen, speciale tijden)",
+    favoritesLabel: "⭐ Favorieten",
+    searchPlaceholder: "Zoek een winkel of attractie...",
     home: "Home",
     todayLabel: "Vandaag",
     calculating: "Openingstijden worden berekend...",
@@ -1329,6 +1433,19 @@ const TRANSLATIONS = {
   },
   da: {
     dayNames: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
+    homeH1: "Har butikken åbent lige nu?",
+    homeIntro: "Vælg et land nedenfor for at filtrere alt — både butikker og seværdigheder — eller søg direkte.",
+    chooseCountry: "Vælg et land",
+    showAllCountries: "🌍 Vis alle lande",
+    storesIn: "Butikker i",
+    attractionsIn: "Seværdigheder i",
+    attractionsIntro: "Officielle billet- og informationssider — tjek altid de viste åbningstider live, før du besøger. Tryk på ☆ for at gemme til dine favoritter.",
+    allPrefix: "Alle",
+    geoLooksLike: "📍 Det ser ud til, at du er i",
+    geoShowingFirst: "— viser vi det først. Tryk på 🌍 for at gennemse alt, eller vælg et andet flag nedenfor når som helst.",
+    pushSubBtn: "🔔 Abonnér på alarmer (helligdage, særlige tider)",
+    favoritesLabel: "⭐ Favoritter",
+    searchPlaceholder: "Søg efter en butik eller seværdighed...",
     home: "Hjem",
     todayLabel: "I dag",
     calculating: "Beregner åbningstider...",
@@ -1362,6 +1479,19 @@ const TRANSLATIONS = {
   },
   se: {
     dayNames: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
+    homeH1: "Är butiken öppen just nu?",
+    homeIntro: "Välj ett land nedan för att filtrera allt — både butiker och sevärdheter — eller sök direkt.",
+    chooseCountry: "Välj ett land",
+    showAllCountries: "🌍 Visa alla länder",
+    storesIn: "Butiker i",
+    attractionsIn: "Sevärdheter i",
+    attractionsIntro: "Officiella biljett- och informationssidor — kontrollera alltid de live-öppettider som visas där innan du besöker. Tryck på ☆ för att spara till favoriter.",
+    allPrefix: "Alla",
+    geoLooksLike: "📍 Det ser ut som att du är i",
+    geoShowingFirst: "— visar vi det först. Tryck på 🌍 för att bläddra bland allt, eller välj en annan flagga nedan när som helst.",
+    pushSubBtn: "🔔 Prenumerera på aviseringar (helgdagar, särskilda tider)",
+    favoritesLabel: "⭐ Favoriter",
+    searchPlaceholder: "Sök efter en butik eller sevärdhet...",
     home: "Hem",
     todayLabel: "Idag",
     calculating: "Beräknar öppettider...",
@@ -1395,6 +1525,19 @@ const TRANSLATIONS = {
   },
   pt: {
     dayNames: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+    homeH1: "A loja está aberta agora mesmo?",
+    homeIntro: "Escolha um país abaixo para filtrar tudo — lojas e pontos turísticos — ou pesquise diretamente.",
+    chooseCountry: "Escolha um país",
+    showAllCountries: "🌍 Mostrar todos os países",
+    storesIn: "Lojas em",
+    attractionsIn: "Pontos turísticos em",
+    attractionsIntro: "Páginas oficiais de bilhetes e informações — verifique sempre o horário em tempo real mostrado lá antes de visitar. Toque em ☆ para guardar nos favoritos.",
+    allPrefix: "Todos",
+    geoLooksLike: "📍 Parece que você está em",
+    geoShowingFirst: "— mostramos isso primeiro. Toque em 🌍 para explorar tudo, ou escolha outra bandeira abaixo a qualquer momento.",
+    pushSubBtn: "🔔 Inscreva-se para alertas (feriados, horários especiais)",
+    favoritesLabel: "⭐ Favoritos",
+    searchPlaceholder: "Pesquisar uma loja ou ponto turístico...",
     home: "Início",
     todayLabel: "Hoje",
     calculating: "A calcular horários...",
@@ -1428,6 +1571,19 @@ const TRANSLATIONS = {
   },
   cz: {
     dayNames: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
+    homeH1: "Je obchod právě teď otevřený?",
+    homeIntro: "Vyberte níže zemi a filtrujte vše — obchody i zajímavosti — nebo hledejte přímo.",
+    chooseCountry: "Vyberte zemi",
+    showAllCountries: "🌍 Zobrazit všechny země",
+    storesIn: "Obchody v",
+    attractionsIn: "Zajímavosti v",
+    attractionsIntro: "Oficiální stránky se vstupenkami a informacemi — vždy si před návštěvou ověřte tam zobrazenou aktuální otevírací dobu. Klepnutím na ☆ uložíte do oblíbených.",
+    allPrefix: "Vše",
+    geoLooksLike: "📍 Vypadá to, že jste v",
+    geoShowingFirst: "— zobrazujeme to jako první. Klepněte na 🌍 pro procházení všeho, nebo kdykoli vyberte jinou vlajku níže.",
+    pushSubBtn: "🔔 Přihlásit se k odběru upozornění (svátky, zvláštní doby)",
+    favoritesLabel: "⭐ Oblíbené",
+    searchPlaceholder: "Hledat obchod nebo zajímavost...",
     home: "Domů",
     todayLabel: "Dnes",
     calculating: "Počítání otevírací doby...",
@@ -1461,6 +1617,19 @@ const TRANSLATIONS = {
   },
   fi: {
     dayNames: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"],
+    homeH1: "Onko kauppa auki juuri nyt?",
+    homeIntro: "Valitse maa alta suodattaaksesi kaiken — sekä kaupat että nähtävyydet — tai hae suoraan.",
+    chooseCountry: "Valitse maa",
+    showAllCountries: "🌍 Näytä kaikki maat",
+    storesIn: "Kaupat maassa",
+    attractionsIn: "Nähtävyydet maassa",
+    attractionsIntro: "Viralliset lippu- ja tietosivut — tarkista aina siellä näytetyt reaaliaikaiset aukioloajat ennen vierailua. Napauta ☆ tallentaaksesi suosikkeihin.",
+    allPrefix: "Kaikki",
+    geoLooksLike: "📍 Näyttää siltä, että olet",
+    geoShowingFirst: "— näytämme sen ensin. Napauta 🌍 selataksesi kaikkea, tai valitse toinen lippu alta milloin tahansa.",
+    pushSubBtn: "🔔 Tilaa ilmoitukset (pyhät, erikoisajat)",
+    favoritesLabel: "⭐ Suosikit",
+    searchPlaceholder: "Hae kauppaa tai nähtävyyttä...",
     home: "Koti",
     todayLabel: "Tänään",
     calculating: "Lasketaan aukioloaikoja...",
@@ -1494,6 +1663,19 @@ const TRANSLATIONS = {
   },
   gr: {
     dayNames: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
+    homeH1: "Είναι ανοιχτό το κατάστημα αυτή τη στιγμή;",
+    homeIntro: "Επιλέξτε μια χώρα παρακάτω για να φιλτράρετε όλα — καταστήματα και αξιοθέατα — ή αναζητήστε απευθείας.",
+    chooseCountry: "Επιλέξτε χώρα",
+    showAllCountries: "🌍 Εμφάνιση όλων των χωρών",
+    storesIn: "Καταστήματα στην",
+    attractionsIn: "Αξιοθέατα στην",
+    attractionsIntro: "Επίσημες σελίδες εισιτηρίων και πληροφοριών — ελέγχετε πάντα το ζωντανό ωράριο που εμφανίζεται εκεί πριν επισκεφθείτε. Πατήστε ☆ για αποθήκευση στα αγαπημένα.",
+    allPrefix: "Όλα",
+    geoLooksLike: "📍 Φαίνεται ότι είστε στη",
+    geoShowingFirst: "— σας το δείχνουμε πρώτο. Πατήστε 🌍 για να περιηγηθείτε όλα, ή επιλέξτε άλλη σημαία παρακάτω οποτεδήποτε.",
+    pushSubBtn: "🔔 Εγγραφείτε για ειδοποιήσεις (αργίες, ειδικά ωράρια)",
+    favoritesLabel: "⭐ Αγαπημένα",
+    searchPlaceholder: "Αναζητήστε κατάστημα ή αξιοθέατο...",
     home: "Αρχική",
     todayLabel: "Σήμερα",
     calculating: "Υπολογισμός ωραρίου...",
@@ -1527,6 +1709,19 @@ const TRANSLATIONS = {
   },
   hu: {
     dayNames: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"],
+    homeH1: "Most éppen nyitva van az üzlet?",
+    homeIntro: "Válassz országot lent, hogy mindent szűrj — üzleteket és látnivalókat egyaránt — vagy keress közvetlenül.",
+    chooseCountry: "Válassz országot",
+    showAllCountries: "🌍 Összes ország megjelenítése",
+    storesIn: "Üzletek itt:",
+    attractionsIn: "Látnivalók itt:",
+    attractionsIntro: "Hivatalos jegy- és információs oldalak — látogatás előtt mindig ellenőrizd az ott megjelenített valós idejű nyitvatartást. Koppints a ☆ gombra a kedvencekhez adáshoz.",
+    allPrefix: "Összes",
+    geoLooksLike: "📍 Úgy tűnik, itt vagy:",
+    geoShowingFirst: "— ezt mutatjuk először. Koppints a 🌍 gombra az összes böngészéséhez, vagy válassz más zászlót lent bármikor.",
+    pushSubBtn: "🔔 Iratkozz fel értesítésekre (ünnepek, különleges nyitvatartás)",
+    favoritesLabel: "⭐ Kedvencek",
+    searchPlaceholder: "Üzlet vagy látnivaló keresése...",
     home: "Kezdőlap",
     todayLabel: "Ma",
     calculating: "Nyitvatartás számítása...",
@@ -1560,6 +1755,19 @@ const TRANSLATIONS = {
   },
   hr: {
     dayNames: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"],
+    homeH1: "Je li trgovina sada otvorena?",
+    homeIntro: "Odaberite državu ispod za filtriranje svega — trgovina i znamenitosti — ili pretražite izravno.",
+    chooseCountry: "Odaberite državu",
+    showAllCountries: "🌍 Prikaži sve države",
+    storesIn: "Trgovine u",
+    attractionsIn: "Znamenitosti u",
+    attractionsIntro: "Službene stranice s ulaznicama i informacijama — uvijek provjerite tamo prikazano radno vrijeme uživo prije posjeta. Dodirnite ☆ za spremanje u favorite.",
+    allPrefix: "Sve",
+    geoLooksLike: "📍 Čini se da ste u",
+    geoShowingFirst: "— to prikazujemo prvo. Dodirnite 🌍 za pregled svega, ili odaberite drugu zastavu ispod bilo kada.",
+    pushSubBtn: "🔔 Pretplatite se na obavijesti (praznici, posebno radno vrijeme)",
+    favoritesLabel: "⭐ Favoriti",
+    searchPlaceholder: "Pretražite trgovinu ili znamenitost...",
     home: "Početna",
     todayLabel: "Danas",
     calculating: "Izračun radnog vremena...",
@@ -1593,6 +1801,19 @@ const TRANSLATIONS = {
   },
   sk: {
     dayNames: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
+    homeH1: "Je obchod práve teraz otvorený?",
+    homeIntro: "Vyberte nižšie krajinu a filtrujte všetko — obchody aj zaujímavosti — alebo hľadajte priamo.",
+    chooseCountry: "Vyberte krajinu",
+    showAllCountries: "🌍 Zobraziť všetky krajiny",
+    storesIn: "Obchody v",
+    attractionsIn: "Zaujímavosti v",
+    attractionsIntro: "Oficiálne stránky so vstupenkami a informáciami — pred návštevou si vždy overte tam zobrazený aktuálny otvárací čas. Klepnutím na ☆ uložíte do obľúbených.",
+    allPrefix: "Všetko",
+    geoLooksLike: "📍 Vyzerá to, že ste v",
+    geoShowingFirst: "— zobrazujeme to ako prvé. Klepnite na 🌍 na prezeranie všetkého, alebo kedykoľvek vyberte inú vlajku nižšie.",
+    pushSubBtn: "🔔 Prihlásiť sa na odber upozornení (sviatky, špeciálny čas)",
+    favoritesLabel: "⭐ Obľúbené",
+    searchPlaceholder: "Hľadať obchod alebo zaujímavosť...",
     home: "Domov",
     todayLabel: "Dnes",
     calculating: "Počítanie otváracích hodín...",
@@ -1626,6 +1847,19 @@ const TRANSLATIONS = {
   },
   si: {
     dayNames: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"],
+    homeH1: "Je trgovina zdaj odprta?",
+    homeIntro: "Spodaj izberite državo za filtriranje vsega — trgovin in znamenitosti — ali iščite neposredno.",
+    chooseCountry: "Izberite državo",
+    showAllCountries: "🌍 Pokaži vse države",
+    storesIn: "Trgovine v",
+    attractionsIn: "Znamenitosti v",
+    attractionsIntro: "Uradne strani z vstopnicami in informacijami — pred obiskom vedno preverite tam prikazan trenutni delovni čas. Tapnite ☆ za shranjevanje med priljubljene.",
+    allPrefix: "Vse",
+    geoLooksLike: "📍 Videti je, da ste v",
+    geoShowingFirst: "— to prikažemo najprej. Tapnite 🌍 za brskanje po vsem, ali kadar koli izberite drugo zastavo spodaj.",
+    pushSubBtn: "🔔 Naročite se na obvestila (prazniki, posebni delovni čas)",
+    favoritesLabel: "⭐ Priljubljene",
+    searchPlaceholder: "Iščite trgovino ali znamenitost...",
     home: "Domov",
     todayLabel: "Danes",
     calculating: "Izračunavanje delovnega časa...",
@@ -1659,6 +1893,19 @@ const TRANSLATIONS = {
   },
   lt: {
     dayNames: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"],
+    homeH1: "Ar parduotuvė dabar atidaryta?",
+    homeIntro: "Pasirinkite šalį žemiau, kad filtruotumėte viską — parduotuves ir lankytinas vietas — arba ieškokite tiesiogiai.",
+    chooseCountry: "Pasirinkite šalį",
+    showAllCountries: "🌍 Rodyti visas šalis",
+    storesIn: "Parduotuvės",
+    attractionsIn: "Lankytinos vietos",
+    attractionsIntro: "Oficialūs bilietų ir informacijos puslapiai — prieš lankydamiesi visada patikrinkite ten rodomą gyvą darbo laiką. Bakstelėkite ☆, kad išsaugotumėte mėgstamiausiuose.",
+    allPrefix: "Visos",
+    geoLooksLike: "📍 Panašu, kad esate",
+    geoShowingFirst: "— rodome tai pirmiausia. Bakstelėkite 🌍, kad peržiūrėtumėte viską, arba bet kada pasirinkite kitą vėliavą žemiau.",
+    pushSubBtn: "🔔 Prenumeruokite įspėjimus (švenčių, specialaus darbo laiko)",
+    favoritesLabel: "⭐ Mėgstamiausi",
+    searchPlaceholder: "Ieškoti parduotuvės ar lankytinos vietos...",
     home: "Pradžia",
     todayLabel: "Šiandien",
     calculating: "Skaičiuojamos darbo valandos...",
@@ -1692,6 +1939,19 @@ const TRANSLATIONS = {
   },
   lv: {
     dayNames: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"],
+    homeH1: "Vai veikals ir atvērts pašlaik?",
+    homeIntro: "Izvēlieties valsti zemāk, lai filtrētu visu — veikalus un apskates vietas — vai meklējiet tieši.",
+    chooseCountry: "Izvēlieties valsti",
+    showAllCountries: "🌍 Rādīt visas valstis",
+    storesIn: "Veikali",
+    attractionsIn: "Apskates vietas",
+    attractionsIntro: "Oficiālas biļešu un informācijas lapas — pirms apmeklējuma vienmēr pārbaudiet tur rādīto tiešsaistes darba laiku. Pieskarieties ☆, lai saglabātu iecienītajās.",
+    allPrefix: "Visi",
+    geoLooksLike: "📍 Izskatās, ka esat",
+    geoShowingFirst: "— to rādām vispirms. Pieskarieties 🌍, lai pārlūkotu visu, vai jebkurā brīdī izvēlieties citu karogu zemāk.",
+    pushSubBtn: "🔔 Abonēt brīdinājumus (svētki, īpašs darba laiks)",
+    favoritesLabel: "⭐ Iecienītie",
+    searchPlaceholder: "Meklēt veikalu vai apskates vietu...",
     home: "Sākums",
     todayLabel: "Šodien",
     calculating: "Aprēķina darba laiku...",
@@ -1725,6 +1985,19 @@ const TRANSLATIONS = {
   },
   ee: {
     dayNames: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"],
+    homeH1: "Kas pood on praegu avatud?",
+    homeIntro: "Vali allpool riik, et filtreerida kõike — nii poode kui vaatamisväärsusi — või otsi otse.",
+    chooseCountry: "Vali riik",
+    showAllCountries: "🌍 Näita kõiki riike",
+    storesIn: "Poed riigis",
+    attractionsIn: "Vaatamisväärsused riigis",
+    attractionsIntro: "Ametlikud pileti- ja infoleheküljed — kontrolli enne külastust alati sealt reaalajas kuvatud lahtiolekuaega. Puuduta ☆, et salvestada lemmikutesse.",
+    allPrefix: "Kõik",
+    geoLooksLike: "📍 Tundub, et oled",
+    geoShowingFirst: "— näitame seda esimesena. Puuduta 🌍, et sirvida kõike, või vali allpool alati mõni teine lipp.",
+    pushSubBtn: "🔔 Telli teavitused (pühad, erilised lahtiolekuajad)",
+    favoritesLabel: "⭐ Lemmikud",
+    searchPlaceholder: "Otsi poodi või vaatamisväärsust...",
     home: "Avaleht",
     todayLabel: "Täna",
     calculating: "Lahtiolekuaegade arvutamine...",
@@ -6001,7 +6274,9 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1")}`;
 // simplu selector de țară, în engleză (punct de intrare neutru, înainte să
 // știm limba vizitatorului). Minimală, deliberat — o pagină completă de tip
 // homepage RO (geolocație, PWA, căutare) pentru fiecare piață e un pas separat.
-function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
+function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang) {
+  const t = (lang && TRANSLATIONS[lang]) || TRANSLATIONS.uk;
+  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : "uk";
   const title = "Opening Hours Today — Is the store open now?";
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
@@ -6016,7 +6291,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
 
   const validDetected = detectedCountry && COUNTRIES[detectedCountry] ? detectedCountry : null;
   const geoHighlightHtml = validDetected
-    ? `<div class="geo-country-highlight">📍 Looks like you're in <strong>${escapeHtml(detectedCity ? `${detectedCity}, ${COUNTRY_LABELS[validDetected].split(" ").slice(1).join(" ")}` : COUNTRY_LABELS[validDetected])}</strong> — showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.</div>`
+    ? `<div class="geo-country-highlight">${escapeHtml(t.geoLooksLike || "📍 Looks like you're in")} <strong>${escapeHtml(detectedCity ? `${detectedCity}, ${COUNTRY_LABELS[validDetected].split(" ").slice(1).join(" ")}` : COUNTRY_LABELS[validDetected])}</strong> ${escapeHtml(t.geoShowingFirst || "— showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.")}</div>`
     : "";
 
   // bară persistentă de filtrare — vizibilă indiferent pe ce tab ești (Stores
@@ -6036,7 +6311,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   const storesAllBlockHtml = `
   <div class="country-filter-block active" data-country-block="all">
     ${geoHighlightHtml}
-    <h2 class="section-title"><span class="bar"></span>Choose a country</h2>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.chooseCountry || "Choose a country")}</h2>
     <ul class="mall-list" hidden>${countryLinks.map((c) => `<li><a href="${c.href}" class="country-pick" data-country="${c.code}">${c.flag} ${escapeHtml(c.name)}</a></li>`).join("")}</ul>
   </div>`;
 
@@ -6052,8 +6327,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
       });
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
-    <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
-    <h2 class="section-title"><span class="bar"></span>Stores in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
+    <p class="intro-text"><button type="button" class="clear-country-btn">${escapeHtml(t.showAllCountries || "🌍 Show all countries")}</button></p>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.storesIn || "Stores in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${citySelectorHtml}
     <ul class="mall-list" id="${listId}" hidden>${cityItems}</ul>
   </div>`;
@@ -6063,7 +6338,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   // --- ATTRACTIONS: la fel — blocul "toate țările" (implicit) + câte un bloc ascuns per țară ---
   const attractionsAllBlockHtml = `
   <div class="country-filter-block active" data-country-block="all">
-    <p class="intro-text">Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.</p>
+    <p class="intro-text">${escapeHtml(t.attractionsIntro || "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.")}</p>
     ${Object.keys(ATTRACTIONS)
       .map((code) => {
         const items = ATTRACTIONS[code]
@@ -6100,8 +6375,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
 
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
-    <p class="intro-text"><button type="button" class="clear-country-btn">🌍 Show all countries</button></p>
-    <h2 class="section-title"><span class="bar"></span>Attractions in ${escapeHtml(COUNTRY_LABELS[code])}</h2>
+    <p class="intro-text"><button type="button" class="clear-country-btn">${escapeHtml(t.showAllCountries || "🌍 Show all countries")}</button></p>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.attractionsIn || "Attractions in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${cityBarHtml}
     <ul class="attraction-accordion-list">${items}</ul>
   </div>`;
@@ -6116,23 +6391,23 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   </div>
 </header>
 <main class="wrap">
-  <button type="button" id="installBtn" class="install-btn">${escapeHtml(TRANSLATIONS.uk.installBtn)}</button>
-  <p id="iosInstallHint" class="ios-install-hint" style="display:none">On iPhone: tap the Share button and select "Add to Home Screen".</p>
-  ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">🔔 Subscribe to alerts (holidays, special hours)</button>` : ""}
+  <button type="button" id="installBtn" class="install-btn">${escapeHtml(t.installBtn)}</button>
+  <p id="iosInstallHint" class="ios-install-hint" style="display:none">${escapeHtml(t.iosHint)}</p>
+  ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">${escapeHtml(t.pushSubBtn || "🔔 Subscribe to alerts (holidays, special hours)")}</button>` : ""}
 
-  <h1 class="page-h1">Is the store open right now?</h1>
-  <p class="intro-text">Pick a country below to filter everything — Stores and Attractions both — or search directly.</p>
-  ${buildLanguageSwitcher("uk", "/")}
+  <h1 class="page-h1">${escapeHtml(t.homeH1 || "Is the store open right now?")}</h1>
+  <p class="intro-text">${escapeHtml(t.homeIntro || "Pick a country below to filter everything — Stores and Attractions both — or search directly.")}</p>
+  ${buildLanguageSwitcher(activeLang, "/")}
   ${filterBarHtml}
 
   <nav class="sub-nav-tabs">
-    <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(TRANSLATIONS.uk.tabStores)}</button>
-    <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(TRANSLATIONS.uk.tabAttractions)}</button>
-    <button type="button" class="sub-nav-tab" data-tab="favorites">⭐ Favorites</button>
+    <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(t.tabStores)}</button>
+    <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(t.tabAttractions)}</button>
+    <button type="button" class="sub-nav-tab" data-tab="favorites">${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</button>
   </nav>
 
   <div class="search-box-wrap">
-    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="Search a store or attraction..." autocomplete="off">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
   </div>
 
@@ -6150,7 +6425,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity) {
   </div>
 
   <div class="sub-nav-panel" data-panel="favorites">
-    <h2 class="section-title"><span class="bar"></span>⭐ Your Favorites</h2>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</h2>
     <p class="intro-text">Planning a trip? Tap ☆ next to any store or attraction — say, 3 places you want to see in Berlin — and they'll all be right here, ready to go, no need to search again. Add as many as you like, and tap ★ again anytime to remove one. Saved on this device only, not in an account.</p>
     <div id="favoritesList"></div>
   </div>
@@ -6169,7 +6444,7 @@ ${buildAttractionAccordionScript(nonce)}
 ${buildInstallScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscribe to alerts (holidays, special hours)", "🔕 Unsubscribe from alerts") : ""}`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
 }
 
 // Pagină de obiectiv turistic — RO — status live (dacă avem place_id
@@ -7500,7 +7775,7 @@ app.get("/", (req, res) => {
       if (match) detectedCity = match;
     }
     res.set("Content-Type", "text/html; charset=utf-8");
-    res.send(renderIntlHomePage(nonce, baseUrlFor(req), detectedCountry, detectedCity));
+    res.send(renderIntlHomePage(nonce, baseUrlFor(req), detectedCountry, detectedCity, req.query.lang));
     return;
   }
 
