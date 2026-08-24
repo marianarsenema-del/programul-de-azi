@@ -4589,6 +4589,21 @@ main{padding-top:8px;}
 .sub-nav-panel.active{display:block;}
 .attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
 .geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);text-align:center;}
+.install-banner{display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,var(--accent),#FF9A4D);color:#fff;font-size:13px;cursor:pointer;}
+.install-banner-icon{font-size:18px;flex-shrink:0;}
+.install-banner-text{flex:1;line-height:1.4;}
+.install-banner-close{background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:4px 8px;flex-shrink:0;opacity:0.85;}
+.install-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:none;align-items:flex-end;justify-content:center;}
+.install-overlay.active{display:flex;}
+.install-modal{background:var(--surface);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:24px;border:1px solid var(--border);}
+.install-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.install-modal-header h3{font-family:var(--font-display);font-size:19px;margin:0;}
+.install-modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;}
+.install-step-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px;margin-bottom:14px;}
+.install-step-card p{margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--muted);}
+.install-safari-btn{display:block;width:100%;background:var(--accent);color:#fff;text-align:center;padding:14px;border-radius:var(--radius-md);text-decoration:none;font-weight:700;border:none;font-size:15px;cursor:pointer;box-sizing:border-box;}
+.install-fallback-text{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center;}
+.install-confirm-btn{display:block;width:100%;background:var(--accent);color:#fff;text-align:center;padding:14px;border-radius:var(--radius-md);border:none;font-weight:700;font-size:15px;cursor:pointer;}
 .geo-country-highlight strong{color:var(--accent);}
 .search-box-wrap{position:relative;margin:14px 18px 0;}
 .search-box-wrap .city-search-input{width:100%;}
@@ -5027,6 +5042,151 @@ function buildInstallScript(nonce) {
 
   if (isIOS() && !isStandalone() && iosHint) {
     iosHint.style.display = "block";
+  }
+})();
+</script>`;
+}
+
+// Sistem nou, complet — banner sus + modal cu detectare Safari/alt browser,
+// exact ca modelul confirmat de utilizator (sosreparatii.ro): dacă e pe iOS
+// dar NU în Safari, arată buton "Deschide în Safari" (schema x-safari-https://,
+// funcție nativă iOS, nu un hack) — dacă e deja în Safari, arată instrucțiuni
+// exacte. Pe Android/Chrome, folosește promptul nativ direct.
+const SMART_INSTALL_TEXTS_RO = {
+  bannerText: "e o aplicație web! Instalează-o pe ecranul telefonului pentru acces instant.",
+  guideLabel: "Apasă pentru Ghid",
+  installTitle: "Instalează",
+  needSafari: "Pe iPhone, instalarea funcționează doar din Safari. Acum ești într-un alt browser — apasă butonul de mai jos ca să continui direct în Safari.",
+  openInSafari: "🧭 Deschide în Safari",
+  fallbackText: "Dacă nu s-a întâmplat nimic, deschide manual Safari și scrie adresa",
+  forIphone: "🍎 Pentru iPhone (Safari)",
+  safariSteps: "Apasă pe butonul de Partajare (iconița cu pătrățel și săgeată în sus) din bara de jos, derulează lista în jos și selectează „Adaugă pe ecranul principal”.",
+  gotIt: "Am înțeles, închide",
+  installNow: "⬇️ Instalează aplicația",
+  genericHint: "Adaugă acest site la ecranul principal, din meniul browserului.",
+};
+const SMART_INSTALL_TEXTS_EN = {
+  bannerText: "is a web app! Install it on your phone's home screen for instant access.",
+  guideLabel: "Tap for the guide",
+  installTitle: "Install",
+  needSafari: "On iPhone, installation only works from Safari. You're currently in another browser — tap the button below to continue directly in Safari.",
+  openInSafari: "🧭 Open in Safari",
+  fallbackText: "If nothing happened, open Safari manually and type in the address",
+  forIphone: "🍎 For iPhone (Safari)",
+  safariSteps: "Tap the Share button (the square with an arrow pointing up) in the bottom bar, scroll down, and select \"Add to Home Screen\".",
+  gotIt: "Got it, close",
+  installNow: "⬇️ Install the app",
+  genericHint: "Add this site to your home screen from your browser's menu.",
+};
+
+function buildSmartInstallHtml(brandName, isRo) {
+  const texts = isRo ? SMART_INSTALL_TEXTS_RO : SMART_INSTALL_TEXTS_EN;
+  return `
+<div id="installBanner" class="install-banner" style="display:none">
+  <span class="install-banner-icon">📱</span>
+  <span class="install-banner-text"><strong>${escapeHtml(brandName)}</strong> ${escapeHtml(texts.bannerText)} <u>${escapeHtml(texts.guideLabel)}</u></span>
+  <button type="button" id="installBannerClose" class="install-banner-close" aria-label="Close">✕</button>
+</div>
+<div id="installOverlay" class="install-overlay">
+  <div class="install-modal">
+    <div class="install-modal-header">
+      <h3>${escapeHtml(texts.installTitle)} ${escapeHtml(brandName)}</h3>
+      <button type="button" id="installModalClose" class="install-modal-close" aria-label="Close">✕</button>
+    </div>
+    <div id="installModalBody"></div>
+  </div>
+</div>`;
+}
+
+function buildSmartInstallScript(nonce, isRo) {
+  const texts = isRo ? SMART_INSTALL_TEXTS_RO : SMART_INSTALL_TEXTS_EN;
+  return `
+<script nonce="${nonce}">
+(function(){
+  function isStandalone(){ return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
+  if (isStandalone()) return;
+
+  var ua = window.navigator.userAgent;
+  function isIOS(){ return /iphone|ipad|ipod/i.test(ua); }
+  function isIOSSafari(){ return isIOS() && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua); }
+
+  var banner = document.getElementById("installBanner");
+  var overlay = document.getElementById("installOverlay");
+  var modalBody = document.getElementById("installModalBody");
+  var closeBtn = document.getElementById("installBannerClose");
+  var modalCloseBtn = document.getElementById("installModalClose");
+  var deferredPrompt = null;
+
+  var DISMISS_KEY = "oht_install_dismissed";
+  function dismissed(){
+    try { return localStorage.getItem(DISMISS_KEY) === "1"; } catch(e){ return false; }
+  }
+
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    if (banner && !dismissed()) banner.style.display = "flex";
+  });
+  window.addEventListener("appinstalled", function(){
+    if (banner) banner.style.display = "none";
+    deferredPrompt = null;
+  });
+
+  if (isIOS() && !dismissed() && banner) {
+    banner.style.display = "flex";
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      banner.style.display = "none";
+      try { localStorage.setItem(DISMISS_KEY, "1"); } catch(err){}
+    });
+  }
+
+  function openModal(){
+    if (!overlay || !modalBody) return;
+    var html = "";
+    if (deferredPrompt) {
+      html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">${texts.installNow}</button>\';
+    } else if (isIOS() && !isIOSSafari()) {
+      html = \'<p>${texts.needSafari}</p>\' +
+             \'<a href="x-safari-\' + window.location.href + \'" class="install-safari-btn">${texts.openInSafari}</a>\' +
+             \'<p class="install-fallback-text">${texts.fallbackText} <strong>\' + window.location.hostname + \'</strong>.</p>\';
+    } else if (isIOSSafari()) {
+      html = \'<div class="install-step-card"><strong>${texts.forIphone}</strong><p>${texts.safariSteps}</p></div>\' +
+             \'<button type="button" class="install-confirm-btn" id="installGotItBtn">${texts.gotIt}</button>\';
+    } else {
+      html = \'<p>${texts.genericHint}</p>\';
+    }
+    modalBody.innerHTML = html;
+    overlay.classList.add("active");
+
+    var nativeBtn = document.getElementById("installNativeBtn");
+    if (nativeBtn) {
+      nativeBtn.addEventListener("click", function(){
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(function(){ deferredPrompt = null; overlay.classList.remove("active"); if (banner) banner.style.display = "none"; });
+      });
+    }
+    var gotItBtn = document.getElementById("installGotItBtn");
+    if (gotItBtn) {
+      gotItBtn.addEventListener("click", function(){ overlay.classList.remove("active"); });
+    }
+  }
+
+  if (banner) {
+    banner.addEventListener("click", function(e){
+      if (e.target === closeBtn) return;
+      openModal();
+    });
+  }
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener("click", function(){ overlay.classList.remove("active"); });
+  }
+  if (overlay) {
+    overlay.addEventListener("click", function(e){ if (e.target === overlay) overlay.classList.remove("active"); });
   }
 })();
 </script>`;
@@ -5665,6 +5825,14 @@ function buildBottomNavScript(nonce) {
 
 function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
   const meta = LANG_META[langCode] || LANG_META.ro;
+  // banner + modal de instalare — nume de brand corect, per domeniu; textul
+  // respectă limba paginii curente (langCode), nu doar domeniul — un vizitator
+  // care alege română pe .eu vede și acest mesaj tot în română, coerent.
+  const isIntlDomain = canonical.includes(INTL_DOMAIN);
+  const smartInstallBrand = isIntlDomain ? "Opening Hours Today" : "Programul de Azi";
+  const smartInstallIsRo = langCode === "ro";
+  const smartInstallHtml = buildSmartInstallHtml(smartInstallBrand, smartInstallIsRo);
+  const smartInstallScript = buildSmartInstallScript(nonce, smartInstallIsRo);
   // Travelpayouts Drive — Project SEPARAT per domeniu (coduri de urmărire
   // diferite, confirmat de utilizator), determinat din domeniul din canonical
   // (mereu URL complet, nu doar cale relativă) — fără să atingem restul
@@ -5734,12 +5902,14 @@ ${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.go
 <style nonce="${nonce}">${CSS_STYLES}</style>
 </head>
 <body>
+${smartInstallHtml}
 ${bodyHtml}
 ${buildThemeToggleHtml()}
 ${buildBottomNavHtml(langCode)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
 ${buildBottomNavScript(nonce)}
 ${buildThemeToggleScript(nonce)}
+${smartInstallScript}
 ${canonical.includes(INTL_DOMAIN) ? buildLanguageSwitcherScript(nonce) : ""}
 <script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
@@ -6425,8 +6595,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   </div>
 </header>
 <main class="wrap">
-  <button type="button" id="installBtn" class="install-btn">${escapeHtml(t.installBtn)}</button>
-  <p id="iosInstallHint" class="ios-install-hint" style="display:none">${escapeHtml(t.iosHint)}</p>
+
   ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">${escapeHtml(t.pushSubBtn || "🔔 Subscribe to alerts (holidays, special hours)")}</button>` : ""}
 
   <h1 class="page-h1">${escapeHtml(t.homeH1 || "Is the store open right now?")}</h1>
@@ -6475,7 +6644,6 @@ ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}
 ${buildAttractionAccordionScript(nonce)}
-${buildInstallScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Subscribe to alerts (holidays, special hours)", "🔕 Unsubscribe from alerts") : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
@@ -7022,8 +7190,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   </div>
 </header>
 <main class="wrap">
-  <button type="button" id="installBtn" class="install-btn">📱 Instalează aplicația pentru acces rapid</button>
-  <p id="iosInstallHint" class="ios-install-hint" style="display:none">Pe iPhone: apasă pe butonul de Partajare (Share) și selectează „Adaugă pe ecranul de pornire”.</p>
+
   ${pushEnabled ? `<button type="button" id="pushSubBtn" class="push-sub-btn">🔔 Abonează-te la notificări (sărbători, program special)</button>` : ""}
 
   <h1 class="page-h1">Este magazinul deschis acum?</h1>
@@ -7080,7 +7247,6 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 ${buildTabsScript(nonce)}
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
-${buildInstallScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
 ${buildAttractionAccordionScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
