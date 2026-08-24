@@ -357,7 +357,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Unde parchez mașina? Ghid parcări securizate",
     "tgRestaurant": "🍽️ Unde mănânc în apropiere? Rezervări restaurante",
     "pushSub": "🔔 Abonează-te la notificări (sărbători, program special)",
-    "pushUnsub": "🔕 Dezabonează-te de la notificări"
+    "pushUnsub": "🔕 Dezabonează-te de la notificări",
+    "instBanner": "e o aplicație web! Instalează-o pe ecranul telefonului pentru acces instant.",
+    "instGuide": "Apasă pentru Ghid",
+    "instTitle": "Instalează",
+    "instNeedSafari": "Pe iPhone, instalarea funcționează doar din Safari. Acum ești într-un alt browser — apasă butonul de mai jos ca să continui direct în Safari.",
+    "instOpenSafari": "🧭 Deschide în Safari",
+    "instFallback": "Dacă nu s-a întâmplat nimic, deschide manual Safari și scrie adresa",
+    "instForIphone": "🍎 Pentru iPhone (Safari)",
+    "instSteps": "Apasă pe butonul de Partajare (iconița cu pătrățel și săgeată în sus) din bara de jos, derulează lista în jos și selectează „Adaugă pe ecranul principal”.",
+    "instGotIt": "Am înțeles, închide",
+    "instNow": "⬇️ Instalează aplicația",
+    "instGeneric": "Adaugă acest site la ecranul principal, din meniul browserului."
   },
   "uk": {
     "bpTitle": "🅿️ Plan your visit",
@@ -397,7 +408,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Where do I park? Secure parking guide",
     "tgRestaurant": "🍽️ Where do I eat nearby? Restaurant bookings",
     "pushSub": "🔔 Subscribe to alerts (holidays, special hours)",
-    "pushUnsub": "🔕 Unsubscribe from alerts"
+    "pushUnsub": "🔕 Unsubscribe from alerts",
+    "instBanner": "is a web app! Install it on your phone's home screen for instant access.",
+    "instGuide": "Tap for the guide",
+    "instTitle": "Install",
+    "instNeedSafari": "On iPhone, installation only works from Safari. You're currently in another browser — tap the button below to continue directly in Safari.",
+    "instOpenSafari": "🧭 Open in Safari",
+    "instFallback": "If nothing happened, open Safari manually and type in the address",
+    "instForIphone": "🍎 For iPhone (Safari)",
+    "instSteps": "Tap the Share button (the square with an arrow pointing up) in the bottom bar, scroll down, and select \"Add to Home Screen\".",
+    "instGotIt": "Got it, close",
+    "instNow": "⬇️ Install the app",
+    "instGeneric": "Add this site to your home screen from your browser's menu."
   },
   "de": {
     "bpTitle": "🅿️ Planen Sie Ihren Besuch",
@@ -437,7 +459,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Wo parke ich? Sicherer Parkplatz-Guide",
     "tgRestaurant": "🍽️ Wo esse ich in der Nähe? Restaurantreservierungen",
     "pushSub": "🔔 Benachrichtigungen abonnieren (Feiertage, Sonderöffnungszeiten)",
-    "pushUnsub": "🔕 Benachrichtigungen abbestellen"
+    "pushUnsub": "🔕 Benachrichtigungen abbestellen",
+    "instBanner": "ist eine Web-App! Installiere sie auf deinem Homescreen für sofortigen Zugriff.",
+    "instGuide": "Tippen für Anleitung",
+    "instTitle": "Installieren",
+    "instNeedSafari": "Auf dem iPhone funktioniert die Installation nur über Safari. Du bist gerade in einem anderen Browser — tippe unten, um direkt in Safari fortzufahren.",
+    "instOpenSafari": "🧭 In Safari öffnen",
+    "instFallback": "Falls nichts passiert ist, öffne Safari manuell und gib die Adresse ein",
+    "instForIphone": "🍎 Für iPhone (Safari)",
+    "instSteps": "Tippe auf das Teilen-Symbol (Quadrat mit Pfeil nach oben) in der unteren Leiste, scrolle nach unten und wähle „Zum Home-Bildschirm“.",
+    "instGotIt": "Verstanden, schließen",
+    "instNow": "⬇️ App installieren",
+    "instGeneric": "Füge diese Seite über das Browsermenü zu deinem Homescreen hinzu."
   },
   "es": {
     "bpTitle": "🅿️ Planifica tu visita",
@@ -477,7 +510,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ ¿Dónde aparco? Guía de aparcamientos seguros",
     "tgRestaurant": "🍽️ ¿Dónde como cerca? Reservas de restaurantes",
     "pushSub": "🔔 Suscríbete a alertas (festivos, horarios especiales)",
-    "pushUnsub": "🔕 Cancelar suscripción a alertas"
+    "pushUnsub": "🔕 Cancelar suscripción a alertas",
+    "instBanner": "¡es una aplicación web! Instálala en tu pantalla de inicio para acceso instantáneo.",
+    "instGuide": "Toca para ver la guía",
+    "instTitle": "Instalar",
+    "instNeedSafari": "En iPhone, la instalación solo funciona desde Safari. Ahora estás en otro navegador — toca el botón de abajo para continuar directamente en Safari.",
+    "instOpenSafari": "🧭 Abrir en Safari",
+    "instFallback": "Si no ha pasado nada, abre Safari manualmente y escribe la dirección",
+    "instForIphone": "🍎 Para iPhone (Safari)",
+    "instSteps": "Toca el botón Compartir (el cuadrado con una flecha hacia arriba) en la barra inferior, desplázate hacia abajo y selecciona \"Añadir a pantalla de inicio\".",
+    "instGotIt": "Entendido, cerrar",
+    "instNow": "⬇️ Instalar la aplicación",
+    "instGeneric": "Añade este sitio a tu pantalla de inicio desde el menú de tu navegador."
   },
   "fr": {
     "bpTitle": "🅿️ Planifiez votre visite",
@@ -517,7 +561,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Où me garer ? Guide des parkings sécurisés",
     "tgRestaurant": "🍽️ Où manger à proximité ? Réservations de restaurants",
     "pushSub": "🔔 S'abonner aux alertes (jours fériés, horaires spéciaux)",
-    "pushUnsub": "🔕 Se désabonner des alertes"
+    "pushUnsub": "🔕 Se désabonner des alertes",
+    "instBanner": "est une application web ! Installez-la sur l'écran d'accueil pour un accès instantané.",
+    "instGuide": "Appuyez pour le guide",
+    "instTitle": "Installer",
+    "instNeedSafari": "Sur iPhone, l'installation ne fonctionne que depuis Safari. Vous êtes actuellement dans un autre navigateur — appuyez sur le bouton ci-dessous pour continuer directement dans Safari.",
+    "instOpenSafari": "🧭 Ouvrir dans Safari",
+    "instFallback": "Si rien ne s'est passé, ouvrez Safari manuellement et saisissez l'adresse",
+    "instForIphone": "🍎 Pour iPhone (Safari)",
+    "instSteps": "Appuyez sur le bouton Partager (le carré avec une flèche vers le haut) dans la barre du bas, faites défiler vers le bas et sélectionnez \"Sur l'écran d'accueil\".",
+    "instGotIt": "Compris, fermer",
+    "instNow": "⬇️ Installer l'application",
+    "instGeneric": "Ajoutez ce site à votre écran d'accueil depuis le menu de votre navigateur."
   },
   "it": {
     "bpTitle": "🅿️ Pianifica la tua visita",
@@ -557,7 +612,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Dove parcheggio? Guida ai parcheggi sicuri",
     "tgRestaurant": "🍽️ Dove mangio nelle vicinanze? Prenotazioni ristoranti",
     "pushSub": "🔔 Iscriviti agli avvisi (festività, orari speciali)",
-    "pushUnsub": "🔕 Annulla iscrizione agli avvisi"
+    "pushUnsub": "🔕 Annulla iscrizione agli avvisi",
+    "instBanner": "è un'app web! Installala sulla schermata Home per un accesso immediato.",
+    "instGuide": "Tocca per la guida",
+    "instTitle": "Installa",
+    "instNeedSafari": "Su iPhone, l'installazione funziona solo da Safari. Al momento sei in un altro browser — tocca il pulsante qui sotto per continuare direttamente in Safari.",
+    "instOpenSafari": "🧭 Apri in Safari",
+    "instFallback": "Se non è successo nulla, apri Safari manualmente e digita l'indirizzo",
+    "instForIphone": "🍎 Per iPhone (Safari)",
+    "instSteps": "Tocca il pulsante Condividi (il quadrato con la freccia verso l'alto) nella barra inferiore, scorri verso il basso e seleziona \"Aggiungi alla schermata Home\".",
+    "instGotIt": "Capito, chiudi",
+    "instNow": "⬇️ Installa l'app",
+    "instGeneric": "Aggiungi questo sito alla schermata Home dal menu del browser."
   },
   "pl": {
     "bpTitle": "🅿️ Zaplanuj wizytę",
@@ -597,7 +663,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Gdzie zaparkować? Przewodnik po bezpiecznych parkingach",
     "tgRestaurant": "🍽️ Gdzie zjeść w pobliżu? Rezerwacje restauracji",
     "pushSub": "🔔 Subskrybuj powiadomienia (święta, specjalne godziny)",
-    "pushUnsub": "🔕 Anuluj subskrypcję powiadomień"
+    "pushUnsub": "🔕 Anuluj subskrypcję powiadomień",
+    "instBanner": "to aplikacja webowa! Zainstaluj ją na ekranie głównym telefonu dla natychmiastowego dostępu.",
+    "instGuide": "Dotknij, aby zobaczyć przewodnik",
+    "instTitle": "Zainstaluj",
+    "instNeedSafari": "Na iPhonie instalacja działa tylko z Safari. Jesteś teraz w innej przeglądarce — dotknij przycisku poniżej, aby przejść bezpośrednio do Safari.",
+    "instOpenSafari": "🧭 Otwórz w Safari",
+    "instFallback": "Jeśli nic się nie stało, otwórz Safari ręcznie i wpisz adres",
+    "instForIphone": "🍎 Dla iPhone'a (Safari)",
+    "instSteps": "Dotknij przycisku Udostępnij (kwadrat ze strzałką w górę) na dolnym pasku, przewiń w dół i wybierz \"Dodaj do ekranu głównego\".",
+    "instGotIt": "Rozumiem, zamknij",
+    "instNow": "⬇️ Zainstaluj aplikację",
+    "instGeneric": "Dodaj tę stronę do ekranu głównego z menu przeglądarki."
   },
   "nl": {
     "bpTitle": "🅿️ Plan je bezoek",
@@ -637,7 +714,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Waar parkeer ik? Gids voor veilig parkeren",
     "tgRestaurant": "🍽️ Waar eet ik in de buurt? Restaurantreserveringen",
     "pushSub": "🔔 Abonneer op meldingen (feestdagen, speciale tijden)",
-    "pushUnsub": "🔕 Uitschrijven van meldingen"
+    "pushUnsub": "🔕 Uitschrijven van meldingen",
+    "instBanner": "is een webapp! Installeer het op je startscherm voor directe toegang.",
+    "instGuide": "Tik voor de gids",
+    "instTitle": "Installeer",
+    "instNeedSafari": "Op iPhone werkt installeren alleen vanuit Safari. Je bent nu in een andere browser — tik op de knop hieronder om direct in Safari verder te gaan.",
+    "instOpenSafari": "🧭 Open in Safari",
+    "instFallback": "Als er niets is gebeurd, open Safari dan handmatig en typ het adres",
+    "instForIphone": "🍎 Voor iPhone (Safari)",
+    "instSteps": "Tik op de deelknop (het vierkant met pijl omhoog) in de onderste balk, scroll naar beneden en kies \"Zet op beginscherm\".",
+    "instGotIt": "Begrepen, sluiten",
+    "instNow": "⬇️ Installeer de app",
+    "instGeneric": "Voeg deze site toe aan je startscherm via het menu van je browser."
   },
   "da": {
     "bpTitle": "🅿️ Planlæg dit besøg",
@@ -677,7 +765,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Hvor parkerer jeg? Guide til sikker parkering",
     "tgRestaurant": "🍽️ Hvor spiser jeg i nærheden? Restaurantreservationer",
     "pushSub": "🔔 Abonnér på alarmer (helligdage, særlige tider)",
-    "pushUnsub": "🔕 Afmeld alarmer"
+    "pushUnsub": "🔕 Afmeld alarmer",
+    "instBanner": "er en webapp! Installer den på din hjemmeskærm for øjeblikkelig adgang.",
+    "instGuide": "Tryk for guiden",
+    "instTitle": "Installer",
+    "instNeedSafari": "På iPhone virker installation kun fra Safari. Du er lige nu i en anden browser — tryk på knappen nedenfor for at fortsætte direkte i Safari.",
+    "instOpenSafari": "🧭 Åbn i Safari",
+    "instFallback": "Hvis der ikke skete noget, så åbn Safari manuelt og indtast adressen",
+    "instForIphone": "🍎 Til iPhone (Safari)",
+    "instSteps": "Tryk på Del-knappen (firkanten med pilen opad) i bunden, rul ned, og vælg \"Føj til hjemmeskærm\".",
+    "instGotIt": "Forstået, luk",
+    "instNow": "⬇️ Installer appen",
+    "instGeneric": "Tilføj denne side til din hjemmeskærm via din browsers menu."
   },
   "se": {
     "bpTitle": "🅿️ Planera ditt besök",
@@ -717,7 +816,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Var parkerar jag? Guide för säker parkering",
     "tgRestaurant": "🍽️ Var äter jag i närheten? Restaurangbokningar",
     "pushSub": "🔔 Prenumerera på aviseringar (helgdagar, särskilda tider)",
-    "pushUnsub": "🔕 Avsluta prenumeration på aviseringar"
+    "pushUnsub": "🔕 Avsluta prenumeration på aviseringar",
+    "instBanner": "är en webbapp! Installera den på hemskärmen för snabb åtkomst.",
+    "instGuide": "Tryck för guiden",
+    "instTitle": "Installera",
+    "instNeedSafari": "På iPhone fungerar installationen bara från Safari. Du är just nu i en annan webbläsare — tryck på knappen nedan för att fortsätta direkt i Safari.",
+    "instOpenSafari": "🧭 Öppna i Safari",
+    "instFallback": "Om inget hände, öppna Safari manuellt och skriv in adressen",
+    "instForIphone": "🍎 För iPhone (Safari)",
+    "instSteps": "Tryck på Dela-knappen (fyrkanten med pil uppåt) i nedre fältet, bläddra ner och välj \"Lägg till på hemskärmen\".",
+    "instGotIt": "Uppfattat, stäng",
+    "instNow": "⬇️ Installera appen",
+    "instGeneric": "Lägg till den här sidan på hemskärmen via webbläsarens meny."
   },
   "pt": {
     "bpTitle": "🅿️ Planeie a sua visita",
@@ -757,7 +867,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Onde estaciono? Guia de estacionamentos seguros",
     "tgRestaurant": "🍽️ Onde como perto? Reservas de restaurantes",
     "pushSub": "🔔 Subscrever alertas (feriados, horários especiais)",
-    "pushUnsub": "🔕 Cancelar subscrição de alertas"
+    "pushUnsub": "🔕 Cancelar subscrição de alertas",
+    "instBanner": "é uma aplicação web! Instale-a no ecrã principal para acesso instantâneo.",
+    "instGuide": "Toque para o guia",
+    "instTitle": "Instalar",
+    "instNeedSafari": "No iPhone, a instalação só funciona a partir do Safari. Está agora noutro navegador — toque no botão abaixo para continuar diretamente no Safari.",
+    "instOpenSafari": "🧭 Abrir no Safari",
+    "instFallback": "Se nada aconteceu, abra o Safari manualmente e escreva o endereço",
+    "instForIphone": "🍎 Para iPhone (Safari)",
+    "instSteps": "Toque no botão Partilhar (o quadrado com a seta para cima) na barra inferior, deslize para baixo e selecione \"Adicionar ao ecrã principal\".",
+    "instGotIt": "Entendi, fechar",
+    "instNow": "⬇️ Instalar a aplicação",
+    "instGeneric": "Adicione este site ao ecrã principal a partir do menu do seu navegador."
   },
   "cz": {
     "bpTitle": "🅿️ Naplánujte si návštěvu",
@@ -797,7 +918,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kde zaparkuji? Průvodce bezpečným parkováním",
     "tgRestaurant": "🍽️ Kde se najím v okolí? Rezervace restaurací",
     "pushSub": "🔔 Přihlásit se k odběru upozornění (svátky, zvláštní doby)",
-    "pushUnsub": "🔕 Odhlásit se z odběru upozornění"
+    "pushUnsub": "🔕 Odhlásit se z odběru upozornění",
+    "instBanner": "je webová aplikace! Nainstalujte si ji na plochu telefonu pro okamžitý přístup.",
+    "instGuide": "Klepněte pro návod",
+    "instTitle": "Nainstalovat",
+    "instNeedSafari": "Na iPhonu funguje instalace pouze ze Safari. Nyní jste v jiném prohlížeči — klepněte na tlačítko níže pro pokračování přímo v Safari.",
+    "instOpenSafari": "🧭 Otevřít v Safari",
+    "instFallback": "Pokud se nic nestalo, otevřete Safari ručně a zadejte adresu",
+    "instForIphone": "🍎 Pro iPhone (Safari)",
+    "instSteps": "Klepněte na tlačítko Sdílet (čtverec se šipkou nahoru) ve spodní liště, přejděte dolů a vyberte \"Přidat na plochu\".",
+    "instGotIt": "Rozumím, zavřít",
+    "instNow": "⬇️ Nainstalovat aplikaci",
+    "instGeneric": "Přidejte tento web na plochu z nabídky prohlížeče."
   },
   "fi": {
     "bpTitle": "🅿️ Suunnittele vierailusi",
@@ -837,7 +969,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Missä pysäköin? Turvallisen pysäköinnin opas",
     "tgRestaurant": "🍽️ Missä syön lähistöllä? Ravintolavaraukset",
     "pushSub": "🔔 Tilaa ilmoitukset (pyhät, erikoisajat)",
-    "pushUnsub": "🔕 Peruuta ilmoitustilaus"
+    "pushUnsub": "🔕 Peruuta ilmoitustilaus",
+    "instBanner": "on verkkosovellus! Asenna se aloitusnäytölle nopeaa pääsyä varten.",
+    "instGuide": "Napauta nähdäksesi ohjeet",
+    "instTitle": "Asenna",
+    "instNeedSafari": "iPhonessa asennus toimii vain Safarista. Olet nyt toisessa selaimessa — napauta alla olevaa painiketta jatkaaksesi suoraan Safarissa.",
+    "instOpenSafari": "🧭 Avaa Safarissa",
+    "instFallback": "Jos mitään ei tapahtunut, avaa Safari manuaalisesti ja kirjoita osoite",
+    "instForIphone": "🍎 iPhonelle (Safari)",
+    "instSteps": "Napauta Jaa-painiketta (neliö, jossa nuoli ylöspäin) alapalkissa, vieritä alas ja valitse \"Lisää Koti-valikkoon\".",
+    "instGotIt": "Selvä, sulje",
+    "instNow": "⬇️ Asenna sovellus",
+    "instGeneric": "Lisää tämä sivusto aloitusnäytölle selaimesi valikosta."
   },
   "gr": {
     "bpTitle": "🅿️ Προγραμματίστε την επίσκεψή σας",
@@ -877,7 +1020,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Πού παρκάρω; Οδηγός ασφαλούς πάρκινγκ",
     "tgRestaurant": "🍽️ Πού τρώω κοντά; Κρατήσεις εστιατορίων",
     "pushSub": "🔔 Εγγραφείτε για ειδοποιήσεις (αργίες, ειδικά ωράρια)",
-    "pushUnsub": "🔕 Απεγγραφή από ειδοποιήσεις"
+    "pushUnsub": "🔕 Απεγγραφή από ειδοποιήσεις",
+    "instBanner": "είναι μια εφαρμογή web! Εγκαταστήστε την στην αρχική οθόνη για άμεση πρόσβαση.",
+    "instGuide": "Πατήστε για τον οδηγό",
+    "instTitle": "Εγκατάσταση",
+    "instNeedSafari": "Στο iPhone, η εγκατάσταση λειτουργεί μόνο από το Safari. Αυτή τη στιγμή είστε σε άλλο πρόγραμμα περιήγησης — πατήστε το κουμπί παρακάτω για να συνεχίσετε απευθείας στο Safari.",
+    "instOpenSafari": "🧭 Άνοιγμα στο Safari",
+    "instFallback": "Αν δεν συνέβη τίποτα, ανοίξτε το Safari χειροκίνητα και πληκτρολογήστε τη διεύθυνση",
+    "instForIphone": "🍎 Για iPhone (Safari)",
+    "instSteps": "Πατήστε το κουμπί Κοινοποίηση (το τετράγωνο με το βέλος προς τα πάνω) στην κάτω μπάρα, μετακινηθείτε προς τα κάτω και επιλέξτε \"Προσθήκη στην Αρχική οθόνη\".",
+    "instGotIt": "Το κατάλαβα, κλείσιμο",
+    "instNow": "⬇️ Εγκατάσταση εφαρμογής",
+    "instGeneric": "Προσθέστε αυτόν τον ιστότοπο στην αρχική οθόνη από το μενού του προγράμματος περιήγησης."
   },
   "hu": {
     "bpTitle": "🅿️ Tervezze meg látogatását",
@@ -917,7 +1071,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Hol parkoljak? Biztonságos parkolás útmutató",
     "tgRestaurant": "🍽️ Hol egyek a közelben? Étteremfoglalások",
     "pushSub": "🔔 Iratkozzon fel értesítésekre (ünnepek, különleges nyitvatartás)",
-    "pushUnsub": "🔕 Leiratkozás az értesítésekről"
+    "pushUnsub": "🔕 Leiratkozás az értesítésekről",
+    "instBanner": "webalkalmazás! Telepítsd a kezdőképernyőre az azonnali hozzáféréshez.",
+    "instGuide": "Koppints az útmutatóért",
+    "instTitle": "Telepítés",
+    "instNeedSafari": "iPhone-on a telepítés csak Safariból működik. Jelenleg egy másik böngészőben vagy — koppints az alábbi gombra, hogy közvetlenül a Safariban folytasd.",
+    "instOpenSafari": "🧭 Megnyitás Safariban",
+    "instFallback": "Ha semmi nem történt, nyisd meg a Safarit manuálisan és írd be a címet",
+    "instForIphone": "🍎 iPhone-hoz (Safari)",
+    "instSteps": "Koppints a Megosztás gombra (a felfelé mutató nyilas négyzet) az alsó sávban, görgess le, és válaszd a \"Hozzáadás a kezdőképernyőhöz\" opciót.",
+    "instGotIt": "Értem, bezárás",
+    "instNow": "⬇️ Alkalmazás telepítése",
+    "instGeneric": "Add hozzá ezt az oldalt a kezdőképernyőhöz a böngésző menüjéből."
   },
   "hr": {
     "bpTitle": "🅿️ Planirajte svoj posjet",
@@ -957,7 +1122,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Gdje parkirati? Vodič za sigurno parkiranje",
     "tgRestaurant": "🍽️ Gdje jesti u blizini? Rezervacije restorana",
     "pushSub": "🔔 Pretplatite se na obavijesti (praznici, posebno radno vrijeme)",
-    "pushUnsub": "🔕 Odjavite se s obavijesti"
+    "pushUnsub": "🔕 Odjavite se s obavijesti",
+    "instBanner": "je web aplikacija! Instalirajte je na početni zaslon telefona za trenutni pristup.",
+    "instGuide": "Dodirnite za vodič",
+    "instTitle": "Instaliraj",
+    "instNeedSafari": "Na iPhoneu instalacija radi samo iz Safarija. Trenutno ste u drugom pregledniku — dodirnite gumb ispod za nastavak izravno u Safariju.",
+    "instOpenSafari": "🧭 Otvori u Safariju",
+    "instFallback": "Ako se ništa nije dogodilo, otvorite Safari ručno i upišite adresu",
+    "instForIphone": "🍎 Za iPhone (Safari)",
+    "instSteps": "Dodirnite gumb Podijeli (kvadrat sa strelicom prema gore) u donjoj traci, pomaknite se prema dolje i odaberite \"Dodaj na početni zaslon\".",
+    "instGotIt": "Razumijem, zatvori",
+    "instNow": "⬇️ Instaliraj aplikaciju",
+    "instGeneric": "Dodajte ovu stranicu na početni zaslon iz izbornika preglednika."
   },
   "sk": {
     "bpTitle": "🅿️ Naplánujte si návštevu",
@@ -997,7 +1173,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kde zaparkujem? Sprievodca bezpečným parkovaním",
     "tgRestaurant": "🍽️ Kde sa najem v okolí? Rezervácie reštaurácií",
     "pushSub": "🔔 Prihlásiť sa na odber upozornení (sviatky, špeciálny čas)",
-    "pushUnsub": "🔕 Odhlásiť sa z odberu upozornení"
+    "pushUnsub": "🔕 Odhlásiť sa z odberu upozornení",
+    "instBanner": "je webová aplikácia! Nainštalujte si ju na plochu telefónu pre okamžitý prístup.",
+    "instGuide": "Klepnite pre návod",
+    "instTitle": "Nainštalovať",
+    "instNeedSafari": "Na iPhone funguje inštalácia iba zo Safari. Teraz ste v inom prehliadači — klepnite na tlačidlo nižšie pre pokračovanie priamo v Safari.",
+    "instOpenSafari": "🧭 Otvoriť v Safari",
+    "instFallback": "Ak sa nič nestalo, otvorte Safari ručne a zadajte adresu",
+    "instForIphone": "🍎 Pre iPhone (Safari)",
+    "instSteps": "Klepnite na tlačidlo Zdieľať (štvorec so šípkou nahor) v spodnej lište, prejdite nadol a vyberte \"Pridať na plochu\".",
+    "instGotIt": "Rozumiem, zavrieť",
+    "instNow": "⬇️ Nainštalovať aplikáciu",
+    "instGeneric": "Pridajte tento web na plochu z ponuky prehliadača."
   },
   "si": {
     "bpTitle": "🅿️ Načrtujte svoj obisk",
@@ -1037,7 +1224,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kje parkiram? Vodnik za varno parkiranje",
     "tgRestaurant": "🍽️ Kje jem v bližini? Rezervacije restavracij",
     "pushSub": "🔔 Naročite se na obvestila (prazniki, posebni delovni čas)",
-    "pushUnsub": "🔕 Odjavite se od obvestil"
+    "pushUnsub": "🔕 Odjavite se od obvestil",
+    "instBanner": "je spletna aplikacija! Namestite jo na začetni zaslon za takojšen dostop.",
+    "instGuide": "Tapnite za vodnik",
+    "instTitle": "Namesti",
+    "instNeedSafari": "Na iPhonu namestitev deluje samo iz Safarija. Trenutno ste v drugem brskalniku — tapnite spodnji gumb za nadaljevanje neposredno v Safariju.",
+    "instOpenSafari": "🧭 Odpri v Safariju",
+    "instFallback": "Če se ni nič zgodilo, ročno odprite Safari in vnesite naslov",
+    "instForIphone": "🍎 Za iPhone (Safari)",
+    "instSteps": "Tapnite gumb Deli (kvadrat s puščico navzgor) v spodnji vrstici, pomaknite se navzdol in izberite \"Dodaj na začetni zaslon\".",
+    "instGotIt": "Razumem, zapri",
+    "instNow": "⬇️ Namesti aplikacijo",
+    "instGeneric": "Dodajte to stran na začetni zaslon iz menija brskalnika."
   },
   "lt": {
     "bpTitle": "🅿️ Suplanuokite savo apsilankymą",
@@ -1077,7 +1275,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kur pastatyti automobilį? Saugaus parkavimo gidas",
     "tgRestaurant": "🍽️ Kur pavalgyti netoliese? Restoranų rezervacijos",
     "pushSub": "🔔 Prenumeruokite įspėjimus (švenčių, specialaus darbo laiko)",
-    "pushUnsub": "🔕 Atsisakyti įspėjimų prenumeratos"
+    "pushUnsub": "🔕 Atsisakyti įspėjimų prenumeratos",
+    "instBanner": "yra žiniatinklio programa! Įdiekite ją pradžios ekrane greitai prieigai.",
+    "instGuide": "Bakstelėkite dėl gidas",
+    "instTitle": "Įdiegti",
+    "instNeedSafari": "„iPhone“ diegimas veikia tik iš Safari. Šiuo metu esate kitoje naršyklėje — bakstelėkite žemiau esantį mygtuką, kad tęstumėte tiesiai Safari.",
+    "instOpenSafari": "🧭 Atidaryti Safari",
+    "instFallback": "Jei nieko neįvyko, atidarykite Safari rankiniu būdu ir įveskite adresą",
+    "instForIphone": "🍎 „iPhone“ (Safari)",
+    "instSteps": "Apatinėje juostoje bakstelėkite mygtuką Bendrinti (kvadratas su rodykle aukštyn), slinkite žemyn ir pasirinkite \"Į pradžios ekraną\".",
+    "instGotIt": "Supratau, uždaryti",
+    "instNow": "⬇️ Įdiegti programėlę",
+    "instGeneric": "Pridėkite šią svetainę prie pradžios ekrano naršyklės meniu."
   },
   "lv": {
     "bpTitle": "🅿️ Plānojiet savu apmeklējumu",
@@ -1117,7 +1326,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kur novietot automašīnu? Drošas stāvvietas ceļvedis",
     "tgRestaurant": "🍽️ Kur paēst tuvumā? Restorānu rezervācijas",
     "pushSub": "🔔 Abonēt brīdinājumus (svētki, īpašs darba laiks)",
-    "pushUnsub": "🔕 Atteikties no brīdinājumu abonēšanas"
+    "pushUnsub": "🔕 Atteikties no brīdinājumu abonēšanas",
+    "instBanner": "ir tīmekļa lietotne! Instalējiet to sākuma ekrānā ātrai piekļuvei.",
+    "instGuide": "Pieskarieties ceļvedim",
+    "instTitle": "Instalēt",
+    "instNeedSafari": "iPhone tālrunī instalēšana darbojas tikai no Safari. Pašlaik atrodaties citā pārlūkā — pieskarieties zemāk esošajai pogai, lai turpinātu tieši Safari.",
+    "instOpenSafari": "🧭 Atvērt Safari",
+    "instFallback": "Ja nekas nenotika, atveriet Safari manuāli un ierakstiet adresi",
+    "instForIphone": "🍎 iPhone tālrunim (Safari)",
+    "instSteps": "Apakšējā joslā pieskarieties pogai Kopīgot (kvadrāts ar bultu uz augšu), ritiniet uz leju un izvēlieties \"Pievienot sākuma ekrānam\".",
+    "instGotIt": "Sapratu, aizvērt",
+    "instNow": "⬇️ Instalēt lietotni",
+    "instGeneric": "Pievienojiet šo vietni sākuma ekrānam no pārlūka izvēlnes."
   },
   "ee": {
     "bpTitle": "🅿️ Planeeri oma külastust",
@@ -1157,7 +1377,18 @@ const EXTRA_LABELS = {
     "tgParking": "🅿️ Kus ma pargin? Turvalise parkimise juhend",
     "tgRestaurant": "🍽️ Kus ma lähedal söön? Restoranide broneeringud",
     "pushSub": "🔔 Telli teavitused (pühad, erilised lahtiolekuajad)",
-    "pushUnsub": "🔕 Loobu teavitustest"
+    "pushUnsub": "🔕 Loobu teavitustest",
+    "instBanner": "on veebirakendus! Paigalda see avakuvale kiireks juurdepääsuks.",
+    "instGuide": "Puuduta juhendi jaoks",
+    "instTitle": "Paigalda",
+    "instNeedSafari": "iPhone'is töötab paigaldamine ainult Safarist. Sa oled praegu teises brauseris — puuduta allolevat nuppu, et jätkata otse Safaris.",
+    "instOpenSafari": "🧭 Ava Safaris",
+    "instFallback": "Kui midagi ei juhtunud, ava Safari käsitsi ja sisesta aadress",
+    "instForIphone": "🍎 iPhone'ile (Safari)",
+    "instSteps": "Puuduta alumises ribas jagamisnuppu (ruut koos üles suunatud noolega), keri alla ja vali \"Lisa avakuvale\".",
+    "instGotIt": "Selge, sulge",
+    "instNow": "⬇️ Paigalda rakendus",
+    "instGeneric": "Lisa see sait avakuvale brauseri menüüst."
   }
 };
 function getExtraLabels(lang) {
@@ -6212,18 +6443,18 @@ const SMART_INSTALL_TEXTS_EN = {
   genericHint: "Add this site to your home screen from your browser's menu.",
 };
 
-function buildSmartInstallHtml(brandName, isRo) {
-  const texts = isRo ? SMART_INSTALL_TEXTS_RO : SMART_INSTALL_TEXTS_EN;
+function buildSmartInstallHtml(brandName, lang) {
+  const texts = getExtraLabels(lang);
   return `
 <div id="installBanner" class="install-banner" style="display:none">
   <span class="install-banner-icon">📱</span>
-  <span class="install-banner-text"><strong>${escapeHtml(brandName)}</strong> ${escapeHtml(texts.bannerText)} <u>${escapeHtml(texts.guideLabel)}</u></span>
+  <span class="install-banner-text"><strong>${escapeHtml(brandName)}</strong> ${escapeHtml(texts.instBanner)} <u>${escapeHtml(texts.instGuide)}</u></span>
   <button type="button" id="installBannerClose" class="install-banner-close" aria-label="Close">✕</button>
 </div>
 <div id="installOverlay" class="install-overlay">
   <div class="install-modal">
     <div class="install-modal-header">
-      <h3>${escapeHtml(texts.installTitle)} ${escapeHtml(brandName)}</h3>
+      <h3>${escapeHtml(texts.instTitle)} ${escapeHtml(brandName)}</h3>
       <button type="button" id="installModalClose" class="install-modal-close" aria-label="Close">✕</button>
     </div>
     <div id="installModalBody"></div>
@@ -6231,8 +6462,8 @@ function buildSmartInstallHtml(brandName, isRo) {
 </div>`;
 }
 
-function buildSmartInstallScript(nonce, isRo) {
-  const texts = isRo ? SMART_INSTALL_TEXTS_RO : SMART_INSTALL_TEXTS_EN;
+function buildSmartInstallScript(nonce, lang) {
+  const texts = getExtraLabels(lang);
   return `
 <script nonce="${nonce}">
 (function(){
@@ -6281,16 +6512,16 @@ function buildSmartInstallScript(nonce, isRo) {
     if (!overlay || !modalBody) return;
     var html = "";
     if (deferredPrompt) {
-      html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">${texts.installNow}</button>\';
+      html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">${texts.instNow}</button>\';
     } else if (isIOS() && !isIOSSafari()) {
-      html = \'<p>${texts.needSafari}</p>\' +
-             \'<a href="x-safari-\' + window.location.href.split("#")[0] + \'#_install" class="install-safari-btn">${texts.openInSafari}</a>\' +
-             \'<p class="install-fallback-text">${texts.fallbackText} <strong>\' + window.location.hostname + \'</strong>.</p>\';
+      html = \'<p>${texts.instNeedSafari}</p>\' +
+             \'<a href="x-safari-\' + window.location.href.split("#")[0] + \'#_install" class="install-safari-btn">${texts.instOpenSafari}</a>\' +
+             \'<p class="install-fallback-text">${texts.instFallback} <strong>\' + window.location.hostname + \'</strong>.</p>\';
     } else if (isIOSSafari()) {
-      html = \'<div class="install-step-card"><strong>${texts.forIphone}</strong><p>${texts.safariSteps}</p></div>\' +
-             \'<button type="button" class="install-confirm-btn" id="installGotItBtn">${texts.gotIt}</button>\';
+      html = \'<div class="install-step-card"><strong>${texts.instForIphone}</strong><p>${texts.instSteps}</p></div>\' +
+             \'<button type="button" class="install-confirm-btn" id="installGotItBtn">${texts.instGotIt}</button>\';
     } else {
-      html = \'<p>${texts.genericHint}</p>\';
+      html = \'<p>${texts.instGeneric}</p>\';
     }
     modalBody.innerHTML = html;
     overlay.classList.add("active");
@@ -6977,9 +7208,8 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
   // care alege română pe .eu vede și acest mesaj tot în română, coerent.
   const isIntlDomain = canonical.includes(INTL_DOMAIN);
   const smartInstallBrand = isIntlDomain ? "Opening Hours Today" : "Programul de Azi";
-  const smartInstallIsRo = langCode === "ro";
-  const smartInstallHtml = buildSmartInstallHtml(smartInstallBrand, smartInstallIsRo);
-  const smartInstallScript = buildSmartInstallScript(nonce, smartInstallIsRo);
+  const smartInstallHtml = buildSmartInstallHtml(smartInstallBrand, langCode);
+  const smartInstallScript = buildSmartInstallScript(nonce, langCode);
   // Travelpayouts Drive — Project SEPARAT per domeniu (coduri de urmărire
   // diferite, confirmat de utilizator), determinat din domeniul din canonical
   // (mereu URL complet, nu doar cale relativă) — fără să atingem restul
