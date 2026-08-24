@@ -1467,12 +1467,36 @@ function liveGoogleLabelFor(lang) {
 // și EN au propoziție completă tradusă — restul limbilor folosesc
 // "${name}?", simplu, dat fiind opțiunile Da/Nu de lângă sunt deja traduse
 // corect și contextul (buton de raportare, deja tradus) rămâne clar.
+const BOOKING_HINT_TEMPLATES = {
+  ro: (n) => `Vezi cazări, parcare și bilete online pentru ${n} — toate într-un singur loc.`,
+  uk: (n) => `Find nearby stays, parking, and online tickets for ${n} — all in one place.`,
+  de: (n) => `Finde Unterkünfte, Parkplätze und Online-Tickets für ${n} — alles an einem Ort.`,
+  es: (n) => `Encuentra alojamientos, aparcamiento y entradas online para ${n} — todo en un solo lugar.`,
+  fr: (n) => `Trouvez des hébergements, un parking et des billets en ligne pour ${n} — le tout au même endroit.`,
+  it: (n) => `Trova alloggi, parcheggi e biglietti online per ${n} — tutto in un unico posto.`,
+  pl: (n) => `Znajdź noclegi, parking i bilety online dla ${n} — wszystko w jednym miejscu.`,
+  nl: (n) => `Vind verblijven, parkeren en online tickets voor ${n} — allemaal op één plek.`,
+  da: (n) => `Find overnatning, parkering og billetter online til ${n} — alt på ét sted.`,
+  se: (n) => `Hitta boenden, parkering och biljetter online för ${n} — allt på ett ställe.`,
+  pt: (n) => `Encontra alojamentos, estacionamento e bilhetes online para ${n} — tudo num só lugar.`,
+  cz: (n) => `Najdi ubytování, parkování a vstupenky online pro ${n} — vše na jednom místě.`,
+  fi: (n) => `Löydä majoitus, pysäköinti ja liput verkosta kohteelle ${n} — kaikki yhdessä paikassa.`,
+  gr: (n) => `Βρες διαμονή, πάρκινγκ και εισιτήρια online για ${n} — όλα σε ένα μέρος.`,
+  hu: (n) => `Találj szállást, parkolást és online jegyeket ehhez: ${n} — minden egy helyen.`,
+  hr: (n) => `Pronađi smještaj, parking i ulaznice online za ${n} — sve na jednom mjestu.`,
+  sk: (n) => `Nájdi ubytovanie, parkovanie a lístky online pre ${n} — všetko na jednom mieste.`,
+  si: (n) => `Poišči nastanitev, parkiranje in vstopnice online za ${n} — vse na enem mestu.`,
+  lt: (n) => `Rask apgyvendinimą, parkavimą ir bilietus internetu vietai ${n} — viskas vienoje vietoje.`,
+  lv: (n) => `Atrodi apmešanos, stāvvietu un biļetes tiešsaistē vietai ${n} — viss vienuviet.`,
+  ee: (n) => `Leia majutus, parkimine ja piletid veebist kohale ${n} — kõik ühes kohas.`,
+};
+
 function bookingPlanningLabelsFor(lang) {
   const e = getExtraLabels(lang);
   const isRo = lang === "ro";
   return {
     title: e.bpTitle,
-    hint: (name) => (isRo ? `Vezi cazări, parcare și bilete online pentru ${name} — toate într-un singur loc.` : `Find nearby stays, parking, and online tickets for ${name} — all in one place.`),
+    hint: (name) => (BOOKING_HINT_TEMPLATES[lang] || BOOKING_HINT_TEMPLATES.uk)(name),
     ticket: e.bpTicket,
     stays: e.bpStays,
     restaurant: e.bpRestaurant,
@@ -2313,7 +2337,95 @@ function ticketUrlFor(attractionName) {
 // "umplută" de JS la primul click. Nu punem fav-star ÎN INTERIORUL
 // butonului de acordeon — două elemente <button> imbricate nu sunt HTML
 // valid — sunt frați, într-un rând comun.
-function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext) {
+const ACCORDION_TEXTS = {
+  "ro": {
+    "status": "🕐 Vezi dacă e deschis acum, live",
+    "ticket": "🎟️ Rezervă bilet online"
+  },
+  "uk": {
+    "status": "🕐 See if it's open right now, live",
+    "ticket": "🎟️ Book tickets online"
+  },
+  "de": {
+    "status": "🕐 Sieh, ob es gerade geöffnet ist, live",
+    "ticket": "🎟️ Ticket online buchen"
+  },
+  "es": {
+    "status": "🕐 Ve si está abierto ahora mismo, en vivo",
+    "ticket": "🎟️ Reserva entrada online"
+  },
+  "fr": {
+    "status": "🕐 Voyez si c'est ouvert en ce moment, en direct",
+    "ticket": "🎟️ Réservez un billet en ligne"
+  },
+  "it": {
+    "status": "🕐 Scopri se è aperto proprio ora, live",
+    "ticket": "🎟️ Prenota il biglietto online"
+  },
+  "pl": {
+    "status": "🕐 Sprawdź, czy jest teraz otwarte, na żywo",
+    "ticket": "🎟️ Zarezerwuj bilet online"
+  },
+  "nl": {
+    "status": "🕐 Bekijk of het nu open is, live",
+    "ticket": "🎟️ Boek een ticket online"
+  },
+  "da": {
+    "status": "🕐 Se om der har åbent lige nu, live",
+    "ticket": "🎟️ Book billet online"
+  },
+  "se": {
+    "status": "🕐 Se om det är öppet just nu, live",
+    "ticket": "🎟️ Boka biljett online"
+  },
+  "pt": {
+    "status": "🕐 Veja se está aberto agora mesmo, ao vivo",
+    "ticket": "🎟️ Reserve bilhete online"
+  },
+  "cz": {
+    "status": "🕐 Zjistěte, zda je právě teď otevřeno, živě",
+    "ticket": "🎟️ Rezervovat vstupenku online"
+  },
+  "fi": {
+    "status": "🕐 Katso, onko auki juuri nyt, reaaliajassa",
+    "ticket": "🎟️ Varaa lippu verkossa"
+  },
+  "gr": {
+    "status": "🕐 Δείτε αν είναι ανοιχτό αυτή τη στιγμή, ζωντανά",
+    "ticket": "🎟️ Κλείστε εισιτήριο online"
+  },
+  "hu": {
+    "status": "🕐 Nézd meg, hogy most nyitva van-e, élőben",
+    "ticket": "🎟️ Foglalj jegyet online"
+  },
+  "hr": {
+    "status": "🕐 Pogledajte je li sada otvoreno, uživo",
+    "ticket": "🎟️ Rezervirajte ulaznicu online"
+  },
+  "sk": {
+    "status": "🕐 Pozrite, či je práve teraz otvorené, naživo",
+    "ticket": "🎟️ Rezervovať lístok online"
+  },
+  "si": {
+    "status": "🕐 Poglejte, ali je zdaj odprto, v živo",
+    "ticket": "🎟️ Rezervirajte vstopnico online"
+  },
+  "lt": {
+    "status": "🕐 Sužinokite, ar dabar atidaryta, tiesiogiai",
+    "ticket": "🎟️ Rezervuoti bilietą internetu"
+  },
+  "lv": {
+    "status": "🕐 Uzziniet, vai tagad ir atvērts, tiešraidē",
+    "ticket": "🎟️ Rezervēt biļeti tiešsaistē"
+  },
+  "ee": {
+    "status": "🕐 Vaata, kas praegu on avatud, reaalajas",
+    "ticket": "🎟️ Broneeri pilet veebis"
+  }
+};
+
+function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext, lang) {
+  const at = ACCORDION_TEXTS[lang] || ACCORDION_TEXTS.uk;
   const cityAttr = cityLabel ? ` data-city="${escapeHtml(normalizeSlug(cityLabel))}"` : "";
   const slug = toDbSlug(a.name);
   const detailHref = isIntlContext ? `/${countryCode}/obiectiv/${slug}` : `/obiectiv/${slug}`;
@@ -2326,8 +2438,8 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext) 
       </button>
     </div>
     <div class="attraction-accordion-panel" hidden>
-      <a href="${escapeHtml(detailHref)}" class="accordion-status-link">🕐 Vezi dacă e deschis acum, live</a>
-      <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">🎟️ Rezervă bilet online</a></div>
+      <a href="${escapeHtml(detailHref)}" class="accordion-status-link">${escapeHtml(at.status)}</a>
+      <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">${escapeHtml(at.ticket)}</a></div>
     </div>
   </li>`;
 }
@@ -6789,7 +6901,78 @@ function buildAttractionAccordionScript(nonce) {
 </script>`;
 }
 
-function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
+const FAV_EMPTY_TEXTS = {
+  "ro": "Nimic salvat încă. Pleci undeva? Apasă ☆ lângă orice magazin sau obiectiv — de exemplu, salvează 3 locuri pe care vrei să le vezi în Berlin — și construiește-ți propria listă pentru călătorie, chiar aici.",
+  "uk": "Nothing saved yet. Going somewhere? Tap ☆ next to any store or attraction — for example, save 3 places you want to see in Berlin — and build your own list for the trip, right here.",
+  "de": "Noch nichts gespeichert. Reist du irgendwohin? Tippe auf ☆ neben einem Geschäft oder einer Sehenswürdigkeit — speichere zum Beispiel 3 Orte, die du in Berlin sehen möchtest — und erstelle hier deine eigene Liste für die Reise.",
+  "es": "Aún no has guardado nada. ¿Vas a algún sitio? Toca ☆ junto a cualquier tienda o atracción — por ejemplo, guarda 3 lugares que quieras ver en Berlín — y crea aquí tu propia lista para el viaje.",
+  "fr": "Rien d'enregistré pour l'instant. Vous partez quelque part ? Appuyez sur ☆ à côté d'un magasin ou d'une attraction — par exemple, enregistrez 3 lieux que vous voulez voir à Berlin — et créez ici votre propre liste pour le voyage.",
+  "it": "Non hai ancora salvato nulla. Stai andando da qualche parte? Tocca ☆ accanto a un negozio o un'attrazione — ad esempio, salva 3 luoghi che vuoi vedere a Berlino — e crea qui la tua lista per il viaggio.",
+  "pl": "Nic jeszcze nie zapisano. Wybierasz się gdzieś? Dotknij ☆ obok dowolnego sklepu lub atrakcji — na przykład zapisz 3 miejsca, które chcesz zobaczyć w Berlinie — i stwórz tutaj własną listę na podróż.",
+  "nl": "Nog niets opgeslagen. Ga je ergens naartoe? Tik op ☆ naast een winkel of attractie — sla bijvoorbeeld 3 plekken op die je in Berlijn wilt zien — en bouw hier je eigen lijst voor de reis.",
+  "da": "Intet gemt endnu. Skal du et sted hen? Tryk på ☆ ved siden af en butik eller seværdighed — gem for eksempel 3 steder, du vil se i Berlin — og byg din egen liste til turen lige her.",
+  "se": "Inget sparat än. Ska du någonstans? Tryck på ☆ bredvid en butik eller sevärdhet — spara till exempel 3 platser du vill se i Berlin — och bygg din egen lista för resan här.",
+  "pt": "Ainda não guardaste nada. Vais a algum lado? Toca em ☆ junto a qualquer loja ou ponto turístico — por exemplo, guarda 3 locais que queres ver em Berlim — e cria aqui a tua própria lista para a viagem.",
+  "cz": "Zatím nic uloženo. Chystáte se někam? Klepněte na ☆ vedle libovolného obchodu nebo zajímavosti — například si uložte 3 místa, která chcete vidět v Berlíně — a vytvořte si zde svůj vlastní seznam na cestu.",
+  "fi": "Ei vielä mitään tallennettu. Oletko menossa jonnekin? Napauta ☆ minkä tahansa kaupan tai nähtävyyden vieressä — tallenna esimerkiksi 3 paikkaa, jotka haluat nähdä Berliinissä — ja rakenna oma listasi matkalle tässä.",
+  "gr": "Δεν έχεις αποθηκεύσει τίποτα ακόμα. Πηγαίνεις κάπου; Πάτησε ☆ δίπλα σε οποιοδήποτε κατάστημα ή αξιοθέατο — αποθήκευσε για παράδειγμα 3 μέρη που θέλεις να δεις στο Βερολίνο — και φτιάξε τη δική σου λίστα για το ταξίδι εδώ.",
+  "hu": "Még nincs semmi mentve. Utazol valahova? Koppints a ☆ gombra bármelyik üzlet vagy látnivaló mellett — például mentsd el a 3 helyet, amit meg szeretnél nézni Berlinben — és itt hozd létre saját listádat az utazáshoz.",
+  "hr": "Još ništa nije spremljeno. Idete negdje? Dodirnite ☆ pored bilo koje trgovine ili znamenitosti — na primjer, spremite 3 mjesta koja želite vidjeti u Berlinu — i ovdje izradite vlastiti popis za putovanje.",
+  "sk": "Zatiaľ nič uložené. Chystáte sa niekam? Klepnite na ☆ vedľa ľubovoľného obchodu alebo zaujímavosti — napríklad si uložte 3 miesta, ktoré chcete vidieť v Berlíne — a vytvorte si tu svoj vlastný zoznam na cestu.",
+  "si": "Še nič shranjenega. Greste kam? Tapnite ☆ ob kateri koli trgovini ali znamenitosti — na primer shranite 3 kraje, ki jih želite videti v Berlinu — in tukaj ustvarite svoj seznam za potovanje.",
+  "lt": "Kol kas nieko neišsaugota. Kur nors vykstate? Bakstelėkite ☆ šalia bet kurios parduotuvės ar lankytinos vietos — pavyzdžiui, išsaugokite 3 vietas, kurias norite pamatyti Berlyne — ir sukurkite savo sąrašą kelionei čia.",
+  "lv": "Vēl nekas nav saglabāts. Kaut kur dodaties? Pieskarieties ☆ blakus jebkuram veikalam vai apskates vietai — piemēram, saglabājiet 3 vietas, ko vēlaties redzēt Berlīnē — un izveidojiet savu sarakstu ceļojumam šeit.",
+  "ee": "Veel pole midagi salvestatud. Lähed kuhugi? Puuduta ☆ mis tahes poe või vaatamisväärsuse kõrval — näiteks salvesta 3 kohta, mida soovid Berliinis näha — ja koosta siin oma nimekiri reisiks."
+};
+const FAV_INTRO_TEXTS = {
+  "ro": "Planifici o călătorie? Apasă ☆ lângă orice magazin sau obiectiv — să zicem, 3 locuri pe care vrei să le vezi în Berlin — și le ai pe toate aici, gata, fără să mai cauți din nou. Adaugă câte vrei, și apasă ★ din nou oricând, ca să elimini unul. Salvat doar pe acest dispozitiv, nu într-un cont.",
+  "uk": "Planning a trip? Tap ☆ next to any store or attraction — say, 3 places you want to see in Berlin — and they'll all be right here, ready to go, no need to search again. Add as many as you like, and tap ★ again anytime to remove one. Saved on this device only, not in an account.",
+  "de": "Planst du eine Reise? Tippe auf ☆ neben einem Geschäft oder einer Sehenswürdigkeit — zum Beispiel 3 Orte, die du in Berlin sehen möchtest — und sie sind alle hier, bereit, ohne erneut zu suchen. Füge so viele hinzu, wie du willst, und tippe jederzeit erneut auf ★, um eines zu entfernen. Nur auf diesem Gerät gespeichert, nicht in einem Konto.",
+  "es": "¿Planeando un viaje? Toca ☆ junto a cualquier tienda o atracción — digamos, 3 lugares que quieras ver en Berlín — y estarán todos aquí, listos, sin buscar de nuevo. Añade tantos como quieras, y toca ★ de nuevo en cualquier momento para eliminar uno. Guardado solo en este dispositivo, no en una cuenta.",
+  "fr": "Vous planifiez un voyage ? Appuyez sur ☆ à côté d'un magasin ou d'une attraction — par exemple, 3 lieux que vous voulez voir à Berlin — et ils seront tous ici, prêts, sans avoir à rechercher à nouveau. Ajoutez-en autant que vous voulez, et appuyez à nouveau sur ★ à tout moment pour en supprimer un. Enregistré uniquement sur cet appareil, pas dans un compte.",
+  "it": "Stai pianificando un viaggio? Tocca ☆ accanto a un negozio o un'attrazione — ad esempio, 3 luoghi che vuoi vedere a Berlino — e saranno tutti qui, pronti, senza dover cercare di nuovo. Aggiungine quanti vuoi, e tocca di nuovo ★ in qualsiasi momento per rimuoverne uno. Salvato solo su questo dispositivo, non in un account.",
+  "pl": "Planujesz podróż? Dotknij ☆ obok dowolnego sklepu lub atrakcji — powiedzmy, 3 miejsca, które chcesz zobaczyć w Berlinie — i będą tu wszystkie, gotowe, bez ponownego wyszukiwania. Dodaj ich tyle, ile chcesz, i dotknij ★ ponownie w dowolnym momencie, aby usunąć jedno. Zapisane tylko na tym urządzeniu, nie na koncie.",
+  "nl": "Ben je een reis aan het plannen? Tik op ☆ naast een winkel of attractie — bijvoorbeeld 3 plekken die je in Berlijn wilt zien — en ze staan hier allemaal klaar, zonder opnieuw te zoeken. Voeg er zoveel toe als je wilt, en tik op elk moment opnieuw op ★ om er een te verwijderen. Alleen op dit apparaat opgeslagen, niet in een account.",
+  "da": "Planlægger du en rejse? Tryk på ☆ ved siden af en butik eller seværdighed — sig, 3 steder du vil se i Berlin — og de er alle her, klar, uden at søge igen. Tilføj lige så mange du vil, og tryk på ★ igen når som helst for at fjerne en. Kun gemt på denne enhed, ikke i en konto.",
+  "se": "Planerar du en resa? Tryck på ☆ bredvid en butik eller sevärdhet — säg 3 platser du vill se i Berlin — och de är alla här, redo, utan att söka igen. Lägg till så många du vill, och tryck på ★ igen när som helst för att ta bort en. Sparat endast på den här enheten, inte i ett konto.",
+  "pt": "A planear uma viagem? Toca em ☆ junto a qualquer loja ou ponto turístico — digamos, 3 locais que queres ver em Berlim — e estarão todos aqui, prontos, sem procurar de novo. Adiciona quantos quiseres, e toca em ★ novamente a qualquer momento para remover um. Guardado apenas neste dispositivo, não numa conta.",
+  "cz": "Plánujete cestu? Klepněte na ☆ vedle libovolného obchodu nebo zajímavosti — řekněme 3 místa, která chcete vidět v Berlíně — a budou zde všechna připravena, bez dalšího hledání. Přidejte jich, kolik chcete, a kdykoli klepněte znovu na ★ pro odebrání jednoho. Uloženo pouze na tomto zařízení, ne v účtu.",
+  "fi": "Suunnitteletko matkaa? Napauta ☆ minkä tahansa kaupan tai nähtävyyden vieressä — sano, 3 paikkaa, jotka haluat nähdä Berliinissä — ja ne kaikki ovat täällä valmiina, ilman uutta hakua. Lisää niin monta kuin haluat, ja napauta ★ uudelleen milloin tahansa poistaaksesi yhden. Tallennettu vain tähän laitteeseen, ei tilille.",
+  "gr": "Σχεδιάζεις ταξίδι; Πάτησε ☆ δίπλα σε οποιοδήποτε κατάστημα ή αξιοθέατο — ας πούμε, 3 μέρη που θέλεις να δεις στο Βερολίνο — και θα είναι όλα εδώ, έτοιμα, χωρίς να χρειάζεται νέα αναζήτηση. Πρόσθεσε όσα θέλεις, και πάτησε ξανά ★ οποιαδήποτε στιγμή για να αφαιρέσεις ένα. Αποθηκευμένο μόνο σε αυτή τη συσκευή, όχι σε λογαριασμό.",
+  "hu": "Utazást tervezel? Koppints a ☆ gombra bármelyik üzlet vagy látnivaló mellett — mondjuk 3 hely, amit meg szeretnél nézni Berlinben — és mind itt lesznek, készen állva, újbóli keresés nélkül. Adj hozzá annyit, amennyit szeretnél, és bármikor koppints újra a ★ gombra egy eltávolításához. Csak ezen az eszközön mentve, nem fiókban.",
+  "hr": "Planirate putovanje? Dodirnite ☆ pored bilo koje trgovine ili znamenitosti — recimo, 3 mjesta koja želite vidjeti u Berlinu — i sva će biti ovdje, spremna, bez ponovnog pretraživanja. Dodajte ih koliko želite, i bilo kada ponovno dodirnite ★ za uklanjanje jednog. Spremljeno samo na ovom uređaju, ne u računu.",
+  "sk": "Plánujete cestu? Klepnite na ☆ vedľa ľubovoľného obchodu alebo zaujímavosti — povedzme 3 miesta, ktoré chcete vidieť v Berlíne — a budú tu všetky pripravené, bez opätovného hľadania. Pridajte ich, koľko chcete, a kedykoľvek klepnite znova na ★ na odstránenie jedného. Uložené len na tomto zariadení, nie v účte.",
+  "si": "Načrtujete potovanje? Tapnite ☆ ob kateri koli trgovini ali znamenitosti — recimo 3 kraje, ki jih želite videti v Berlinu — in vsi bodo tukaj, pripravljeni, brez ponovnega iskanja. Dodajte jih kolikor želite, in kadar koli znova tapnite ★, da odstranite enega. Shranjeno samo v tej napravi, ne v računu.",
+  "lt": "Planuojate kelionę? Bakstelėkite ☆ šalia bet kurios parduotuvės ar lankytinos vietos — tarkime, 3 vietas, kurias norite pamatyti Berlyne — ir jos visos bus čia, paruoštos, be naujos paieškos. Pridėkite tiek, kiek norite, ir bet kada bakstelėkite ★ dar kartą, kad pašalintumėte vieną. Išsaugota tik šiame įrenginyje, ne paskyroje.",
+  "lv": "Plānojat ceļojumu? Pieskarieties ☆ blakus jebkuram veikalam vai apskates vietai — teiksim, 3 vietas, ko vēlaties redzēt Berlīnē — un tās visas būs šeit, gatavas, bez atkārtotas meklēšanas. Pievienojiet, cik vien vēlaties, un jebkurā laikā pieskarieties ★ vēlreiz, lai noņemtu vienu. Saglabāts tikai šajā ierīcē, nevis kontā.",
+  "ee": "Kas planeerid reisi? Puuduta ☆ mis tahes poe või vaatamisväärsuse kõrval — ütleme, 3 kohta, mida soovid Berliinis näha — ja need kõik on siin, valmis, ilma uue otsinguta. Lisa nii palju kui soovid ja puuduta ★ uuesti igal ajal, et ühe eemaldada. Salvestatud ainult sellesse seadmesse, mitte kontole."
+};
+const HOMEPAGE_FOOTER_TEXTS = {
+  "ro": "îți arată în timp real dacă marile magazine și obiective turistice din Europa sunt deschise chiar acum, plus programul complet săptămânal și de sărbători — caută, răsfoiește pe țară, sau salvează-ți favoritele pentru data viitoare.",
+  "uk": "shows you in real time whether major stores and tourist attractions across Europe are currently open, plus full weekly and holiday opening hours — search, browse by country, or save your favorites for next time.",
+  "de": "zeigt dir in Echtzeit, ob große Geschäfte und Sehenswürdigkeiten in ganz Europa gerade geöffnet sind, sowie vollständige wöchentliche und feiertägliche Öffnungszeiten — suche, durchsuche nach Land, oder speichere deine Favoriten für das nächste Mal.",
+  "es": "te muestra en tiempo real si las principales tiendas y atracciones turísticas de toda Europa están abiertas ahora mismo, además del horario semanal y festivo completo — busca, explora por país, o guarda tus favoritos para la próxima vez.",
+  "fr": "vous indique en temps réel si les grands magasins et attractions touristiques d'Europe sont actuellement ouverts, ainsi que les horaires hebdomadaires et fériés complets — recherchez, parcourez par pays, ou enregistrez vos favoris pour la prochaine fois.",
+  "it": "ti mostra in tempo reale se i principali negozi e attrazioni turistiche in tutta Europa sono attualmente aperti, oltre agli orari settimanali e festivi completi — cerca, sfoglia per paese, o salva i tuoi preferiti per la prossima volta.",
+  "pl": "pokazuje w czasie rzeczywistym, czy główne sklepy i atrakcje turystyczne w całej Europie są obecnie otwarte, oraz pełne godziny tygodniowe i świąteczne — szukaj, przeglądaj według kraju lub zapisz swoje ulubione na następny raz.",
+  "nl": "laat je in real time zien of grote winkels en toeristische attracties in heel Europa nu open zijn, plus volledige wekelijkse en feestdagopeningstijden — zoek, blader per land, of sla je favorieten op voor de volgende keer.",
+  "da": "viser dig i realtid, om store butikker og turistattraktioner i hele Europa har åbent lige nu, plus fulde ugentlige og helligdagsåbningstider — søg, gennemse efter land, eller gem dine favoritter til næste gang.",
+  "se": "visar dig i realtid om stora butiker och turistattraktioner i hela Europa är öppna just nu, plus fullständiga vecko- och helgdagsöppettider — sök, bläddra efter land, eller spara dina favoriter till nästa gång.",
+  "pt": "mostra-te em tempo real se as principais lojas e pontos turísticos em toda a Europa estão abertos agora mesmo, além do horário semanal e feriados completo — pesquisa, navega por país, ou guarda os teus favoritos para a próxima vez.",
+  "cz": "ti v reálném čase ukazuje, zda jsou hlavní obchody a turistické zajímavosti po celé Evropě právě teď otevřené, plus kompletní týdenní a sváteční otevírací dobu — hledej, procházej podle země, nebo si ulož oblíbené na příště.",
+  "fi": "näyttää sinulle reaaliajassa, ovatko Euroopan suuret kaupat ja nähtävyydet juuri nyt auki, sekä täydelliset viikoittaiset ja pyhäpäivien aukioloajat — hae, selaa maittain tai tallenna suosikkisi seuraavaa kertaa varten.",
+  "gr": "σου δείχνει σε πραγματικό χρόνο αν τα μεγάλα καταστήματα και τα τουριστικά αξιοθέατα σε όλη την Ευρώπη είναι ανοιχτά αυτή τη στιγμή, καθώς και το πλήρες εβδομαδιαίο και εορταστικό ωράριο — αναζήτησε, περιήγηση ανά χώρα, ή αποθήκευσε τα αγαπημένα σου για την επόμενη φορά.",
+  "hu": "valós időben megmutatja, hogy Európa nagy üzletei és turisztikai látványosságai éppen nyitva vannak-e, valamint a teljes heti és ünnepnapi nyitvatartást — keress, böngéssz ország szerint, vagy mentsd el kedvenceidet a következő alkalomra.",
+  "hr": "pokazuje ti u stvarnom vremenu jesu li velike trgovine i turističke znamenitosti diljem Europe trenutno otvorene, uz potpuno tjedno i blagdansko radno vrijeme — pretraži, pregledaj po državi, ili spremi svoje favorite za sljedeći put.",
+  "sk": "ti v reálnom čase ukazuje, či sú veľké obchody a turistické zaujímavosti v celej Európe práve teraz otvorené, plus kompletný týždenný a sviatočný otvárací čas — hľadaj, prezeraj podľa krajiny, alebo si ulož obľúbené na nabudúce.",
+  "si": "ti v realnem času prikazuje, ali so velike trgovine in turistične znamenitosti po vsej Evropi trenutno odprte, ter celoten tedenski in praznični delovni čas — išči, brskaj po državah, ali shrani svoje priljubljene za naslednjič.",
+  "lt": "realiuoju laiku rodo, ar didelės parduotuvės ir turistų lankomos vietos visoje Europoje šiuo metu yra atviros, taip pat visą savaitės ir švenčių darbo laiką — ieškokite, naršykite pagal šalį arba išsaugokite mėgstamiausius kitam kartui.",
+  "lv": "reāllaikā parāda, vai lielie veikali un tūrisma apskates vietas visā Eiropā pašlaik ir atvērti, kā arī pilnu nedēļas un svētku darba laiku — meklējiet, pārlūkojiet pēc valsts vai saglabājiet iecienītākos nākamajai reizei.",
+  "ee": "näitab sulle reaalajas, kas suured poed ja vaatamisväärsused kogu Euroopas on praegu avatud, samuti täielikke nädala- ja pühadeaegseid lahtiolekuaegu — otsi, sirvi riigi järgi või salvesta oma lemmikud järgmiseks korraks."
+};
+
+function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang) {
+  const favEmptyText = FAV_EMPTY_TEXTS[lang] || FAV_EMPTY_TEXTS.uk;
   return `
 <script nonce="${nonce}">
 (function(){
@@ -6830,7 +7013,7 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey) {
     if (!panel) return;
     var favs = getFavorites();
     if (!favs.length) {
-      panel.innerHTML = '<p class="fav-empty">Nothing saved yet. Going somewhere? Tap ☆ next to any store or attraction — for example, save 3 places you want to see in Berlin — and build your own list for the trip, right here.</p>';
+      panel.innerHTML = '<p class="fav-empty">' + ${JSON.stringify(favEmptyText)} + '</p>';
       return;
     }
     panel.innerHTML = "";
@@ -7698,7 +7881,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, "ro", nonce)}
-${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1")}`;
+${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
   const cityAlternateLinks = COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))
@@ -7974,7 +8157,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
-${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1")}`;
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang)}`;
 
   return pageShell({
     title,
@@ -8069,7 +8252,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
         const items = ATTRACTIONS[code]
           .map(
             (a) =>
-              buildAttractionAccordionItem(a, code, null, true)
+              buildAttractionAccordionItem(a, code, null, true, activeLang)
           )
           .join("");
         return `<h3 class="attractions-country">${COUNTRY_LABELS[code]}</h3><ul class="attraction-accordion-list">${items}</ul>`;
@@ -8084,7 +8267,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
       const items = ATTRACTIONS[code]
         .map((a) => {
           const city = detectAttractionCity(a.name, code);
-          return buildAttractionAccordionItem(a, code, city, true);
+          return buildAttractionAccordionItem(a, code, city, true, activeLang);
         })
         .join("");
 
@@ -8150,19 +8333,19 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
 
   <div class="sub-nav-panel" data-panel="favorites">
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</h2>
-    <p class="intro-text">Planning a trip? Tap ☆ next to any store or attraction — say, 3 places you want to see in Berlin — and they'll all be right here, ready to go, no need to search again. Add as many as you like, and tap ★ again anytime to remove one. Saved on this device only, not in an account.</p>
+    <p class="intro-text">${escapeHtml(FAV_INTRO_TEXTS[activeLang] || FAV_INTRO_TEXTS.uk)}</p>
     <div id="favoritesList"></div>
   </div>
 
   <footer>
-    <p><strong>Opening Hours Today</strong> shows you in real time whether major stores and tourist attractions across Europe are currently open, plus full weekly and holiday opening hours — search, browse by country, or save your favorites for next time.</p>
+    <p><strong>Opening Hours Today</strong> ${escapeHtml(HOMEPAGE_FOOTER_TEXTS[activeLang] || HOMEPAGE_FOOTER_TEXTS.uk)}</p>
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
 ${buildTabsScript(nonce)}
-${buildSearchAndFavoritesScript(nonce)}
+${buildSearchAndFavoritesScript(nonce, [], null, activeLang)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity)}
 ${buildAttractionAccordionScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, getExtraLabels(activeLang).pushSub, getExtraLabels(activeLang).pushUnsub) : ""}`;
@@ -8693,7 +8876,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const attractionItemsHtml = ATTRACTIONS.ro
     .map(
       (a) =>
-        buildAttractionAccordionItem(a, "ro", null, false)
+        buildAttractionAccordionItem(a, "ro", null, false, "ro")
     )
     .join("");
 
@@ -8769,7 +8952,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
 ${buildTabsScript(nonce)}
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
-${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1")}
+${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1", "ro")}
 ${buildAttractionAccordionScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
 
