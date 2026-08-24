@@ -1163,6 +1163,71 @@ const EXTRA_LABELS = {
 function getExtraLabels(lang) {
   return EXTRA_LABELS[lang] || EXTRA_LABELS.uk;
 }
+const ATTRACTION_FOOTER_TEMPLATES = {
+  ro: (n) => `îți arată dacă ${n} este deschis chiar acum, plus acces rapid la bilete.`,
+  uk: (n) => `shows if ${n} is open right now, plus quick access to tickets.`,
+  de: (n) => `zeigt dir, ob ${n} gerade geöffnet ist, sowie schnellen Zugang zu Tickets.`,
+  es: (n) => `te muestra si ${n} está abierto ahora mismo, además de acceso rápido a entradas.`,
+  fr: (n) => `vous indique si ${n} est ouvert en ce moment, avec un accès rapide aux billets.`,
+  it: (n) => `ti mostra se ${n} è aperto proprio ora, con accesso rapido ai biglietti.`,
+  pl: (n) => `pokazuje, czy ${n} jest teraz otwarte, oraz szybki dostęp do biletów.`,
+  nl: (n) => `laat je zien of ${n} nu open is, plus snelle toegang tot tickets.`,
+  da: (n) => `viser dig, om ${n} har åbent lige nu, plus hurtig adgang til billetter.`,
+  se: (n) => `visar dig om ${n} är öppet just nu, plus snabb åtkomst till biljetter.`,
+  pt: (n) => `mostra-te se ${n} está aberto agora mesmo, além de acesso rápido a bilhetes.`,
+  cz: (n) => `ti ukáže, zda je ${n} právě teď otevřeno, plus rychlý přístup ke vstupenkám.`,
+  fi: (n) => `näyttää, onko ${n} auki juuri nyt, sekä nopean pääsyn lippuihin.`,
+  gr: (n) => `σου δείχνει αν το ${n} είναι ανοιχτό αυτή τη στιγμή, καθώς και γρήγορη πρόσβαση σε εισιτήρια.`,
+  hu: (n) => `megmutatja, hogy a(z) ${n} most éppen nyitva van-e, valamint gyors hozzáférést biztosít a jegyekhez.`,
+  hr: (n) => `pokazuje ti je li ${n} sada otvoreno, uz brz pristup ulaznicama.`,
+  sk: (n) => `ti ukáže, či je ${n} práve teraz otvorené, plus rýchly prístup k lístkom.`,
+  si: (n) => `ti pokaže, ali je ${n} zdaj odprto, ter hiter dostop do vstopnic.`,
+  lt: (n) => `parodo, ar ${n} dabar atidaryta, taip pat greitą prieigą prie bilietų.`,
+  lv: (n) => `parāda, vai ${n} tagad ir atvērts, kā arī ātru piekļuvi biļetēm.`,
+  ee: (n) => `näitab, kas ${n} on praegu avatud, samuti kiiret ligipääsu piletitele.`,
+};
+function attractionFooterTextFor(lang, name) {
+  const fn = ATTRACTION_FOOTER_TEMPLATES[lang] || ATTRACTION_FOOTER_TEMPLATES.uk;
+  return fn(name);
+}
+
+const NO_LIVE_DATA_TEXT = {
+  ro: (url) => `ℹ️ Programul live nu e încă disponibil pentru acest loc. Verifică <a href="${url}" target="_blank" rel="noopener">site-ul oficial</a> pentru informații actualizate.`,
+  uk: (url) => `ℹ️ Live hours aren't available yet for this place. Check the <a href="${url}" target="_blank" rel="noopener">official site</a> for up-to-date info.`,
+  de: (url) => `ℹ️ Für diesen Ort sind noch keine Live-Öffnungszeiten verfügbar. Prüfe die <a href="${url}" target="_blank" rel="noopener">offizielle Website</a> für aktuelle Infos.`,
+  es: (url) => `ℹ️ El horario en vivo aún no está disponible para este lugar. Consulta el <a href="${url}" target="_blank" rel="noopener">sitio oficial</a> para información actualizada.`,
+  fr: (url) => `ℹ️ Les horaires en direct ne sont pas encore disponibles pour cet endroit. Consultez le <a href="${url}" target="_blank" rel="noopener">site officiel</a> pour des informations à jour.`,
+  it: (url) => `ℹ️ Gli orari in tempo reale non sono ancora disponibili per questo luogo. Controlla il <a href="${url}" target="_blank" rel="noopener">sito ufficiale</a> per informazioni aggiornate.`,
+  pl: (url) => `ℹ️ Godziny na żywo nie są jeszcze dostępne dla tego miejsca. Sprawdź <a href="${url}" target="_blank" rel="noopener">oficjalną stronę</a>, aby uzyskać aktualne informacje.`,
+  nl: (url) => `ℹ️ Live openingstijden zijn nog niet beschikbaar voor deze plek. Bekijk de <a href="${url}" target="_blank" rel="noopener">officiële site</a> voor actuele informatie.`,
+  da: (url) => `ℹ️ Live åbningstider er endnu ikke tilgængelige for dette sted. Tjek den <a href="${url}" target="_blank" rel="noopener">officielle side</a> for opdateret info.`,
+  se: (url) => `ℹ️ Direktöppettider är inte tillgängliga för denna plats än. Kolla den <a href="${url}" target="_blank" rel="noopener">officiella webbplatsen</a> för aktuell info.`,
+  pt: (url) => `ℹ️ O horário em tempo real ainda não está disponível para este local. Consulte o <a href="${url}" target="_blank" rel="noopener">site oficial</a> para informações atualizadas.`,
+  cz: (url) => `ℹ️ Živá otevírací doba pro toto místo zatím není k dispozici. Zkontrolujte <a href="${url}" target="_blank" rel="noopener">oficiální stránky</a> pro aktuální informace.`,
+  fi: (url) => `ℹ️ Reaaliaikaiset aukioloajat eivät ole vielä saatavilla tälle paikalle. Tarkista <a href="${url}" target="_blank" rel="noopener">virallinen sivusto</a> ajantasaisia tietoja varten.`,
+  gr: (url) => `ℹ️ Το ζωντανό ωράριο δεν είναι ακόμα διαθέσιμο για αυτό το μέρος. Ελέγξτε την <a href="${url}" target="_blank" rel="noopener">επίσημη ιστοσελίδα</a> για ενημερωμένες πληροφορίες.`,
+  hu: (url) => `ℹ️ Az élő nyitvatartás még nem érhető el ehhez a helyhez. Nézd meg a <a href="${url}" target="_blank" rel="noopener">hivatalos oldalt</a> a friss információkért.`,
+  hr: (url) => `ℹ️ Radno vrijeme uživo još nije dostupno za ovo mjesto. Provjerite <a href="${url}" target="_blank" rel="noopener">službenu stranicu</a> za ažurirane informacije.`,
+  sk: (url) => `ℹ️ Živý otvárací čas pre toto miesto zatiaľ nie je k dispozícii. Skontrolujte <a href="${url}" target="_blank" rel="noopener">oficiálnu stránku</a> pre aktuálne informácie.`,
+  si: (url) => `ℹ️ Delovni čas v živo za to mesto še ni na voljo. Preverite <a href="${url}" target="_blank" rel="noopener">uradno stran</a> za posodobljene informacije.`,
+  lt: (url) => `ℹ️ Šiai vietai kol kas nėra prieinamas gyvas darbo laikas. Patikrinkite <a href="${url}" target="_blank" rel="noopener">oficialią svetainę</a> dėl naujausios informacijos.`,
+  lv: (url) => `ℹ️ Šai vietai vēl nav pieejams tiešraides darba laiks. Pārbaudiet <a href="${url}" target="_blank" rel="noopener">oficiālo vietni</a>, lai iegūtu jaunāko informāciju.`,
+  ee: (url) => `ℹ️ Selle koha kohta pole veel reaalajas lahtiolekuaegu saadaval. Vaata <a href="${url}" target="_blank" rel="noopener">ametlikku veebisaiti</a> värske info saamiseks.`,
+};
+function noLiveDataTextFor(lang, url) {
+  const fn = NO_LIVE_DATA_TEXT[lang] || NO_LIVE_DATA_TEXT.uk;
+  return fn(url);
+}
+
+const LIVE_GOOGLE_LABEL = {
+  ro: "Live · Google", uk: "Live · Google", de: "Live · Google", es: "En vivo · Google", fr: "En direct · Google",
+  it: "Live · Google", pl: "Na żywo · Google", nl: "Live · Google", da: "Live · Google", se: "Live · Google",
+  pt: "Em direto · Google", cz: "Živě · Google", fi: "Live · Google", gr: "Ζωντανά · Google", hu: "Élő · Google",
+  hr: "Uživo · Google", sk: "Naživo · Google", si: "V živo · Google", lt: "Tiesiogiai · Google", lv: "Tiešraidē · Google", ee: "Otse · Google",
+};
+function liveGoogleLabelFor(lang) {
+  return LIVE_GOOGLE_LABEL[lang] || LIVE_GOOGLE_LABEL.uk;
+}
 
 // Funcții "adapter" — transformă EXTRA_LABELS[lang] (chei scurte, unificate)
 // în formatul exact așteptat de fiecare funcție de randare deja existentă,
@@ -7381,7 +7446,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
     <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
     <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
-    <div class="status-sub">Live · Google</div>
+    <div class="status-sub">${escapeHtml(liveGoogleLabelFor(activeLang))}</div>
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
   ${contactInfoHtml(live)}
@@ -8079,7 +8144,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
       <div class="store-name">${escapeHtml(attraction.name)}</div>
       <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
-      <div class="status-sub">Live · Google</div>
+      <div class="status-sub">${escapeHtml(liveGoogleLabelFor(activeLang))}</div>
       <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     </div>
     ${contactInfoHtml(live)}
@@ -8088,7 +8153,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: contextualWidgetLabelsFor(activeLang) });
     widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    statusHtml = `<div class="geo-country-highlight">ℹ️ Live hours aren't available yet for this place. Check the <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">official site</a> for up-to-date info.</div>`;
+    statusHtml = `<div class="geo-country-highlight">${noLiveDataTextFor(activeLang, escapeHtml(attraction.url))}</div>`;
   }
 
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
@@ -8108,12 +8173,12 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(countryCode === "ro" ? "ro" : activeLang), countryCode })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name)}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
   <footer>
-    <p><strong>Opening Hours Today</strong> shows if ${escapeHtml(attraction.name)} is open right now, plus quick access to tickets.</p>
+    <p><strong>Opening Hours Today</strong> ${attractionFooterTextFor(activeLang, escapeHtml(attraction.name))}</p>
   </footer>
 </main>
 ${schemaHtml}
