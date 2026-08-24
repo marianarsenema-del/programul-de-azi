@@ -1963,7 +1963,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -3511,6 +3511,127 @@ const EE_STORE_CONFIG = {
   lidl: { name: "Lidl", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
 };
 
+// Cipru — 15 sărbători 2026, verificate. Magazinele mari rămân majoritar
+// DESCHISE de sărbători, confirmat explicit: "In tourist areas, supermarkets
+// and shops often remain open on holidays (except usually Easter Sunday and
+// Christmas Day)" — doar Paștele Ortodox (Duminică) și Crăciunul sunt
+// tratate ca zile de închidere completă.
+const CY_HOLIDAYS = [
+  { date: "01-01", label: "Πρωτοχρονιά (1 Ιανουαρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "01-06", label: "Θεοφάνεια (6 Ιανουαρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "02-23", label: "Καθαρά Δευτέρα (23 Φεβρουαρίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-25", label: "Ελληνική Ημέρα Ανεξαρτησίας (25 Μαρτίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-01", label: "Εθνική Ημέρα Κύπρου (1 Απριλίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-10", label: "Μεγάλη Παρασκευή (10 Απριλίου 2026)", hours: { open: "09:00", close: "15:00" } },
+  { date: "04-12", label: "Κυριακή του Πάσχα (12 Απριλίου 2026)", hours: null },
+  { date: "04-13", label: "Δευτέρα του Πάσχα (13 Απριλίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-01", label: "Πρωτομαγιά (1 Μαΐου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-01", label: "Αγίου Πνεύματος (1 Ιουνίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "08-15", label: "Κοίμηση της Θεοτόκου (15 Αυγούστου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "10-01", label: "Ημέρα Ανεξαρτησίας της Κύπρου (1 Οκτωβρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "10-28", label: "Ημέρα του Όχι (28 Οκτωβρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Χριστούγεννα (25 Δεκεμβρίου)", hours: null },
+  { date: "12-26", label: "Δεύτερη μέρα Χριστουγέννων (26 Δεκεμβρίου)", hours: { open: "09:00", close: "18:00" } },
+];
+function cySupermarketWeekly() {
+  return [
+    { open: "08:00", close: "21:00" }, // Κυριακή
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Σάββατο
+  ];
+}
+// Lidl, AlphaMega, Papantoniou, Sklavenitis, Metro — cele 5 branduri cu cea
+// mai mare prezență națională, confirmate individual
+const CY_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  alphamega: { name: "AlphaMega", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  papantoniou: { name: "Papantoniou", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  sklavenitis: { name: "Sklavenitis", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  metro: { name: "Metro", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+};
+
+// Malta — 14 sărbători 2026, verificate (număr mare, cunoscut pentru
+// Malta). Magazinele mari (Lidl, PAVI/PAMA) rămân majoritar deschise, cu
+// ore reduse — doar Crăciunul tratat ca zi de închidere completă.
+const MT_HOLIDAYS = [
+  { date: "01-01", label: "New Year's Day (1 January)", hours: { open: "09:00", close: "18:00" } },
+  { date: "02-10", label: "Feast of St Paul's Shipwreck (10 February)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-19", label: "St Joseph's Day (19 March)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-31", label: "Freedom Day (31 March)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-03", label: "Good Friday (3 April 2026)", hours: { open: "09:00", close: "15:00" } },
+  { date: "05-01", label: "Worker's Day (1 May)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-07", label: "Sette Giugno (7 June)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-29", label: "St Peter and St Paul — Imnarja (29 June)", hours: { open: "09:00", close: "18:00" } },
+  { date: "08-15", label: "Assumption Day (15 August)", hours: { open: "09:00", close: "18:00" } },
+  { date: "09-08", label: "Victory Day (8 September)", hours: { open: "09:00", close: "18:00" } },
+  { date: "09-21", label: "Independence Day (21 September)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-08", label: "Immaculate Conception (8 December)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-13", label: "Republic Day (13 December)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+];
+function mtSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "18:00" }, // Sunday
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" }, // Saturday
+  ];
+}
+// Lidl, PAVI, PAMA, Welbee's, Greens — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual
+const MT_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  pavi: { name: "PAVI", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  pama: { name: "PAMA", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  welbees: { name: "Welbee's", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  greens: { name: "Greens", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+};
+
+// Luxemburg — 11 sărbători 2026, verificate. Magazinele rareori deschise
+// duminica (nu-i interdicție legală strictă ca-n Slovenia, doar obicei —
+// confirmat: "sometimes even on Sundays" pentru unele Delhaize) — program
+// de duminică redus, nu complet închis.
+const LU_HOLIDAYS = [
+  { date: "01-01", label: "Jour de l'An (1er janvier)", hours: { open: "09:00", close: "13:00" } },
+  { date: "04-06", label: "Lundi de Pâques (6 avril 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-01", label: "Fête du Travail (1er mai)", hours: null },
+  { date: "05-09", label: "Journée de l'Europe (9 mai)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-14", label: "Ascension (14 mai 2026)", hours: null },
+  { date: "05-25", label: "Lundi de Pentecôte (25 mai 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-23", label: "Fête Nationale (23 juin)", hours: null },
+  { date: "08-15", label: "Assomption (15 août)", hours: { open: "09:00", close: "18:00" } },
+  { date: "11-01", label: "Toussaint (1er novembre)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "12-26", label: "Saint-Étienne (26 décembre)", hours: { open: "09:00", close: "18:00" } },
+];
+function luSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "13:00" }, // Dimanche
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "18:00" }, // Samedi
+  ];
+}
+// Cactus, Auchan, Delhaize, Aldi, Colruyt — cele 5 branduri cu cea mai mare
+// prezență națională, confirmate individual
+const LU_STORE_CONFIG = {
+  cactus: { name: "Cactus", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  delhaize: { name: "Delhaize", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  colruyt: { name: "Colruyt", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+};
+
 // ("Sunday Trading Act 1994") — de-aia programul de duminică e mult mai scurt,
 // nu închis complet. Program unic pentru tot grupul (tesco, sainsburys, asda,
 // morrisons, boots): Luni-Sâmbătă 07:00-22:00, Duminică 10:00-16:00.
@@ -3971,6 +4092,21 @@ const COUNTRIES = {
     config: EE_STORE_CONFIG,
     t: TRANSLATIONS.ee,
     cities: ["Tallinn", "Tartu", "Narva", "Pärnu", "Kohtla-Järve", "Viljandi", "Rakvere", "Maardu"],
+  },
+  cy: {
+    config: CY_STORE_CONFIG,
+    t: TRANSLATIONS.gr,
+    cities: ["Nicosia", "Limassol", "Larnaca", "Paphos", "Paralimni", "Aradippou", "Strovolos", "Lakatamia"],
+  },
+  mt: {
+    config: MT_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Valletta", "Birkirkara", "Mosta", "Qormi", "Sliema", "Naxxar", "San Ġwann", "Żabbar"],
+  },
+  lu: {
+    config: LU_STORE_CONFIG,
+    t: TRANSLATIONS.fr,
+    cities: ["Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Ettelbruck", "Diekirch", "Wiltz", "Grevenmacher"],
   },
 };
 
@@ -4456,6 +4592,33 @@ const ATTRACTIONS = {
     { name: "Cetatea Narva", url: "https://www.google.com/maps/search/?api=1&query=Narva+Castle+Estonia" },
     { name: "Parcul Național Lahemaa", url: "https://www.google.com/maps/search/?api=1&query=Lahemaa+National+Park+Estonia" },
   ],
+  cy: [
+    { name: "Cetatea Kolossi", url: "https://www.google.com/maps/search/?api=1&query=Kolossi+Castle+Cyprus" },
+    { name: "Situl arheologic Kourion", url: "https://www.google.com/maps/search/?api=1&query=Kourion+Cyprus" },
+    { name: "Mormintele Regilor, Paphos", url: "https://www.google.com/maps/search/?api=1&query=Tombs+of+the+Kings+Paphos+Cyprus" },
+    { name: "Zidurile Venețiene ale Nicosiei", url: "https://www.google.com/maps/search/?api=1&query=Venetian+Walls+Nicosia+Cyprus" },
+    { name: "Muntele Olimp (Troodos)", url: "https://www.google.com/maps/search/?api=1&query=Mount+Olympus+Troodos+Cyprus" },
+    { name: "Situl arheologic Choirokoitia", url: "https://www.google.com/maps/search/?api=1&query=Choirokoitia+Cyprus" },
+    { name: "Mănăstirea Kykkos", url: "https://www.google.com/maps/search/?api=1&query=Kykkos+Monastery+Cyprus" },
+  ],
+  mt: [
+    { name: "Orașul vechi Valletta", url: "https://www.google.com/maps/search/?api=1&query=Valletta+Old+Town+Malta" },
+    { name: "Templele megalitice Ħaġar Qim", url: "https://www.google.com/maps/search/?api=1&query=Hagar+Qim+Malta" },
+    { name: "Cetatea Mdina", url: "https://www.google.com/maps/search/?api=1&query=Mdina+Malta" },
+    { name: "Laguna Albastră, Comino", url: "https://www.google.com/maps/search/?api=1&query=Blue+Lagoon+Comino+Malta" },
+    { name: "Templele Tarxien", url: "https://www.google.com/maps/search/?api=1&query=Tarxien+Temples+Malta" },
+    { name: "Catedrala St John's Co-Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+John's+Co-Cathedral+Valletta+Malta" },
+    { name: "Peșterile Għar Dalam", url: "https://www.google.com/maps/search/?api=1&query=Ghar+Dalam+Malta" },
+  ],
+  lu: [
+    { name: "Cazematele Bock", url: "https://www.google.com/maps/search/?api=1&query=Bock+Casemates+Luxembourg" },
+    { name: "Palatul Marelui Duce", url: "https://www.google.com/maps/search/?api=1&query=Grand+Ducal+Palace+Luxembourg" },
+    { name: "Castelul Vianden", url: "https://www.google.com/maps/search/?api=1&query=Vianden+Castle+Luxembourg" },
+    { name: "Valea Mullerthal", url: "https://www.google.com/maps/search/?api=1&query=Mullerthal+Luxembourg" },
+    { name: "Catedrala Notre-Dame Luxembourg", url: "https://www.google.com/maps/search/?api=1&query=Notre-Dame+Cathedral+Luxembourg" },
+    { name: "Podul Adolphe", url: "https://www.google.com/maps/search/?api=1&query=Adolphe+Bridge+Luxembourg" },
+    { name: "Castelul Bourscheid", url: "https://www.google.com/maps/search/?api=1&query=Bourscheid+Castle+Luxembourg" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -4491,11 +4654,11 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee", CY: "cy", MT: "mt", LU: "lu" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -6583,6 +6746,9 @@ const LANG_META = {
   lt: { lang: "lt", locale: "lt_LT" },
   lv: { lang: "lv", locale: "lv_LV" },
   ee: { lang: "et", locale: "et_EE" },
+  cy: { lang: "el", locale: "el_CY" },
+  mt: { lang: "en", locale: "en_MT" },
+  lu: { lang: "fr", locale: "fr_LU" },
 };
 
 // Bară de navigare jos, fixă, pe mobil — vizibilă pe toate paginile (vezi
@@ -7401,7 +7567,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si", "lt", "lv", "ee"];
+  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si", "lt", "lv", "ee", "cy", "mt", "lu"];
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
@@ -8492,6 +8658,30 @@ const CITY_COORDS = {
   "Viljandi": [58.3639, 25.5900],
   "Rakvere": [59.3467, 26.3592],
   "Maardu": [59.4761, 25.0181],
+  "Nicosia": [35.1856, 33.3823],
+  "Limassol": [34.7071, 33.0226],
+  "Larnaca": [34.9167, 33.6333],
+  "Paphos": [34.7761, 32.4247],
+  "Paralimni": [35.0392, 33.9822],
+  "Aradippou": [34.9500, 33.5833],
+  "Strovolos": [35.1333, 33.3333],
+  "Lakatamia": [35.1167, 33.3167],
+  "Valletta": [35.8989, 14.5146],
+  "Birkirkara": [35.8972, 14.4611],
+  "Mosta": [35.9089, 14.4256],
+  "Qormi": [35.8767, 14.4719],
+  "Sliema": [35.9122, 14.5017],
+  "Naxxar": [35.9106, 14.4494],
+  "San Ġwann": [35.9022, 14.4728],
+  "Żabbar": [35.8756, 14.5361],
+  "Luxembourg": [49.6116, 6.1319],
+  "Esch-sur-Alzette": [49.4958, 5.9806],
+  "Differdange": [49.5244, 5.8917],
+  "Dudelange": [49.4783, 6.0872],
+  "Ettelbruck": [49.8478, 6.1042],
+  "Diekirch": [49.8686, 6.1594],
+  "Wiltz": [49.9667, 5.9333],
+  "Grevenmacher": [49.6800, 6.4408],
 };
 
 function slugifyCityName(name) {
@@ -8920,7 +9110,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -8931,7 +9121,7 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -8954,7 +9144,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
 // inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
 // ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
 // piață cu acest tipar de căutare construit), dar generică pentru orice țară.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras/:magazin/:locatie", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras/:magazin/:locatie", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -8994,7 +9184,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -9035,7 +9225,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
