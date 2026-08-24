@@ -5151,7 +5151,7 @@ function buildSmartInstallScript(nonce, isRo) {
       html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">${texts.installNow}</button>\';
     } else if (isIOS() && !isIOSSafari()) {
       html = \'<p>${texts.needSafari}</p>\' +
-             \'<a href="x-safari-\' + window.location.href + \'" class="install-safari-btn">${texts.openInSafari}</a>\' +
+             \'<a href="x-safari-\' + window.location.href.split("#")[0] + \'#_install" class="install-safari-btn">${texts.openInSafari}</a>\' +
              \'<p class="install-fallback-text">${texts.fallbackText} <strong>\' + window.location.hostname + \'</strong>.</p>\';
     } else if (isIOSSafari()) {
       html = \'<div class="install-step-card"><strong>${texts.forIphone}</strong><p>${texts.safariSteps}</p></div>\' +
@@ -5173,6 +5173,17 @@ function buildSmartInstallScript(nonce, isRo) {
     var gotItBtn = document.getElementById("installGotItBtn");
     if (gotItBtn) {
       gotItBtn.addEventListener("click", function(){ overlay.classList.remove("active"); });
+    }
+  }
+
+  // vine cineva de la redirectul "Deschide în Safari" (marcaj #_install în URL)
+  // — deschide direct instrucțiunile, fără să mai ceară un al doilea click pe
+  // banner (bug real, prins prin testare directă cu utilizatorul, semnalat
+  // clar: la modelul de referință, instrucțiunile apar automat, nu la cerere).
+  if (window.location.hash === "#_install" && isIOSSafari()) {
+    openModal();
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
     }
   }
 
