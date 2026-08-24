@@ -1659,17 +1659,161 @@ function buildLocalBusinessSchema({ name, weekly, live }) {
 // corespunzător). Din 2023, Google arată "Rich Snippets" FAQ doar pentru
 // site-uri guvernamentale/medicale — pentru noi, markup-ul rămâne valid și
 // citit de Google, dar fără căsuțe extinse vizibile în rezultate.
+const CITY_FAQ_TEXTS = {
+  ro: {
+    title: "Întrebări frecvente",
+    q1: (c) => `Cum pot afla dacă un magazin este deschis acum în ${c}?`,
+    a1: "Alege magazinul din lista de mai sus — vezi instant statusul live, \"deschis\" sau \"închis\" chiar acum, actualizat automat pe baza orarului standard sau a datelor live de la Google.",
+    q2: "Care este programul magazinelor de sărbători legale?",
+    a2: "Fiecare pagină de magazin arată programul special pentru sărbătorile legale (Paște, Crăciun, 1 Mai și altele), actualizat pentru anul curent — inclusiv zilele cu program redus sau cu magazinul închis complet.",
+  },
+  uk: {
+    title: "Frequently asked questions",
+    q1: (c) => `How can I find out if a store is open right now in ${c}?`,
+    a1: "Pick a store from the list above — you'll see its live status, \"open\" or \"closed\" right now, updated automatically based on standard hours or live Google data.",
+    q2: "What are store hours during public holidays?",
+    a2: "Each store's page shows its special hours for public holidays, updated for the current year — including reduced hours or full closures.",
+  },
+  de: {
+    title: "Häufig gestellte Fragen",
+    q1: (c) => `Wie kann ich herausfinden, ob ein Geschäft in ${c} gerade geöffnet ist?`,
+    a1: "Wähle ein Geschäft aus der Liste oben — du siehst sofort den Live-Status, \"geöffnet\" oder \"geschlossen\", automatisch aktualisiert basierend auf den Standardöffnungszeiten oder Live-Daten von Google.",
+    q2: "Wie sind die Öffnungszeiten an gesetzlichen Feiertagen?",
+    a2: "Jede Geschäftsseite zeigt die speziellen Öffnungszeiten an Feiertagen, aktualisiert für das laufende Jahr — einschließlich reduzierter Öffnungszeiten oder vollständiger Schließungen.",
+  },
+  es: {
+    title: "Preguntas frecuentes",
+    q1: (c) => `¿Cómo puedo saber si una tienda está abierta ahora en ${c}?`,
+    a1: "Elige una tienda de la lista de arriba — verás su estado en vivo, \"abierto\" o \"cerrado\" ahora mismo, actualizado automáticamente según el horario estándar o datos en vivo de Google.",
+    q2: "¿Cuál es el horario de las tiendas en días festivos?",
+    a2: "Cada página de tienda muestra su horario especial para los festivos, actualizado para el año en curso — incluyendo horarios reducidos o cierres completos.",
+  },
+  fr: {
+    title: "Questions fréquentes",
+    q1: (c) => `Comment puis-je savoir si un magasin est ouvert maintenant à ${c} ?`,
+    a1: "Choisissez un magasin dans la liste ci-dessus — vous verrez son statut en direct, \"ouvert\" ou \"fermé\" à l'instant, mis à jour automatiquement selon les horaires standards ou les données en direct de Google.",
+    q2: "Quels sont les horaires des magasins pendant les jours fériés ?",
+    a2: "Chaque page de magasin affiche ses horaires spéciaux pour les jours fériés, mis à jour pour l'année en cours — y compris les horaires réduits ou les fermetures complètes.",
+  },
+  it: {
+    title: "Domande frequenti",
+    q1: (c) => `Come posso sapere se un negozio è aperto adesso a ${c}?`,
+    a1: "Scegli un negozio dall'elenco sopra — vedrai il suo stato in tempo reale, \"aperto\" o \"chiuso\" in questo momento, aggiornato automaticamente in base agli orari standard o ai dati live di Google.",
+    q2: "Quali sono gli orari dei negozi nei giorni festivi?",
+    a2: "Ogni pagina del negozio mostra i suoi orari speciali per i giorni festivi, aggiornati per l'anno in corso — inclusi orari ridotti o chiusure complete.",
+  },
+  pl: {
+    title: "Najczęściej zadawane pytania",
+    q1: (c) => `Jak mogę sprawdzić, czy sklep jest teraz otwarty w ${c}?`,
+    a1: "Wybierz sklep z listy powyżej — zobaczysz jego aktualny status na żywo, \"otwarte\" lub \"zamknięte\" w tej chwili, aktualizowany automatycznie na podstawie standardowych godzin lub danych na żywo z Google.",
+    q2: "Jakie są godziny otwarcia sklepów w święta?",
+    a2: "Każda strona sklepu pokazuje specjalne godziny otwarcia w święta, aktualizowane na bieżący rok — w tym skrócone godziny lub całkowite zamknięcia.",
+  },
+  nl: {
+    title: "Veelgestelde vragen",
+    q1: (c) => `Hoe kan ik zien of een winkel nu open is in ${c}?`,
+    a1: "Kies een winkel uit de lijst hierboven — je ziet direct de live status, \"open\" of \"gesloten\" op dit moment, automatisch bijgewerkt op basis van standaardtijden of live gegevens van Google.",
+    q2: "Wat zijn de openingstijden tijdens feestdagen?",
+    a2: "Elke winkelpagina toont de speciale openingstijden voor feestdagen, bijgewerkt voor het huidige jaar — inclusief verkorte openingstijden of volledige sluitingen.",
+  },
+  da: {
+    title: "Ofte stillede spørgsmål",
+    q1: (c) => `Hvordan kan jeg finde ud af, om en butik har åbent lige nu i ${c}?`,
+    a1: "Vælg en butik fra listen ovenfor — du ser dens live-status, \"åben\" eller \"lukket\" lige nu, opdateret automatisk baseret på standardåbningstider eller live-data fra Google.",
+    q2: "Hvad er butikkernes åbningstider i helligdage?",
+    a2: "Hver butiksside viser dens særlige åbningstider for helligdage, opdateret for det aktuelle år — inklusive reducerede timer eller fuld lukning.",
+  },
+  se: {
+    title: "Vanliga frågor",
+    q1: (c) => `Hur kan jag ta reda på om en butik är öppen just nu i ${c}?`,
+    a1: "Välj en butik från listan ovan — du ser dess live-status, \"öppet\" eller \"stängt\" just nu, automatiskt uppdaterad baserat på standardtider eller live-data från Google.",
+    q2: "Vilka är butikernas öppettider under helgdagar?",
+    a2: "Varje butikssida visar dess särskilda öppettider för helgdagar, uppdaterad för innevarande år — inklusive begränsade tider eller full stängning.",
+  },
+  pt: {
+    title: "Perguntas frequentes",
+    q1: (c) => `Como posso saber se uma loja está aberta agora em ${c}?`,
+    a1: "Escolha uma loja da lista acima — verá o seu estado em tempo real, \"aberto\" ou \"fechado\" agora mesmo, atualizado automaticamente com base no horário padrão ou em dados em tempo real do Google.",
+    q2: "Qual é o horário das lojas nos feriados?",
+    a2: "Cada página de loja mostra o seu horário especial para feriados, atualizado para o ano atual — incluindo horários reduzidos ou encerramentos completos.",
+  },
+  cz: {
+    title: "Často kladené otázky",
+    q1: (c) => `Jak zjistím, zda je obchod v ${c} nyní otevřený?`,
+    a1: "Vyberte obchod ze seznamu výše — uvidíte jeho aktuální stav v reálném čase, \"otevřeno\" nebo \"zavřeno\" právě teď, automaticky aktualizovaný na základě standardní otevírací doby nebo živých dat z Google.",
+    q2: "Jaká je otevírací doba obchodů o státních svátcích?",
+    a2: "Každá stránka obchodu zobrazuje svou zvláštní otevírací dobu pro státní svátky, aktualizovanou pro aktuální rok — včetně zkrácené doby nebo úplného uzavření.",
+  },
+  fi: {
+    title: "Usein kysytyt kysymykset",
+    q1: (c) => `Miten voin selvittää, onko kauppa auki juuri nyt kaupungissa ${c}?`,
+    a1: "Valitse kauppa yllä olevasta listasta — näet sen reaaliaikaisen tilan, \"auki\" tai \"kiinni\" juuri nyt, automaattisesti päivitettynä vakioaukioloaikojen tai Googlen reaaliaikaisten tietojen perusteella.",
+    q2: "Mitkä ovat kauppojen aukioloajat pyhäpäivinä?",
+    a2: "Jokainen kaupan sivu näyttää sen erityisen aukioloajan pyhäpäivinä, päivitettynä kuluvalle vuodelle — mukaan lukien lyhennetyt ajat tai täydelliset sulkemiset.",
+  },
+  gr: {
+    title: "Συχνές ερωτήσεις",
+    q1: (c) => `Πώς μπορώ να μάθω αν ένα κατάστημα είναι ανοιχτό αυτή τη στιγμή στην ${c};`,
+    a1: "Επιλέξτε ένα κατάστημα από τη λίστα παραπάνω — θα δείτε αμέσως την ζωντανή κατάστασή του, \"ανοιχτό\" ή \"κλειστό\" αυτή τη στιγμή, ενημερωμένη αυτόματα βάσει του τυπικού ωραρίου ή ζωντανών δεδομένων από την Google.",
+    q2: "Ποιο είναι το ωράριο των καταστημάτων τις επίσημες αργίες;",
+    a2: "Κάθε σελίδα καταστήματος εμφανίζει το ειδικό της ωράριο για τις επίσημες αργίες, ενημερωμένο για το τρέχον έτος — συμπεριλαμβανομένων μειωμένων ωρών ή πλήρους κλεισίματος.",
+  },
+  hu: {
+    title: "Gyakran ismételt kérdések",
+    q1: (c) => `Honnan tudhatom meg, hogy egy üzlet most éppen nyitva van-e ${c} városban?`,
+    a1: "Válassz egy üzletet a fenti listából — azonnal láthatod az élő állapotát, \"nyitva\" vagy \"zárva\" éppen most, automatikusan frissítve a szokásos nyitvatartás vagy a Google élő adatai alapján.",
+    q2: "Milyen a boltok nyitvatartása munkaszüneti napokon?",
+    a2: "Minden üzlet oldala megjeleníti a munkaszüneti napokra vonatkozó speciális nyitvatartását, frissítve a jelenlegi évre — beleértve a csökkentett nyitvatartást vagy a teljes zárva tartást.",
+  },
+  hr: {
+    title: "Često postavljana pitanja",
+    q1: (c) => `Kako mogu saznati je li trgovina sada otvorena u ${c}?`,
+    a1: "Odaberite trgovinu s popisa iznad — vidjet ćete njezin trenutni status uživo, \"otvoreno\" ili \"zatvoreno\" upravo sada, automatski ažuriran na temelju standardnog radnog vremena ili podataka uživo s Googlea.",
+    q2: "Koje je radno vrijeme trgovina za državne praznike?",
+    a2: "Svaka stranica trgovine prikazuje svoje posebno radno vrijeme za državne praznike, ažurirano za tekuću godinu — uključujući skraćeno radno vrijeme ili potpuno zatvaranje.",
+  },
+  sk: {
+    title: "Často kladené otázky",
+    q1: (c) => `Ako zistím, či je obchod v meste ${c} teraz otvorený?`,
+    a1: "Vyberte obchod zo zoznamu vyššie — okamžite uvidíte jeho aktuálny stav naživo, \"otvorené\" alebo \"zatvorené\" práve teraz, automaticky aktualizovaný na základe štandardného otváracieho času alebo živých údajov z Google.",
+    q2: "Aký je otvárací čas obchodov počas štátnych sviatkov?",
+    a2: "Každá stránka obchodu zobrazuje jeho špeciálny otvárací čas počas štátnych sviatkov, aktualizovaný pre aktuálny rok — vrátane skráteného času alebo úplného zatvorenia.",
+  },
+  si: {
+    title: "Pogosta vprašanja",
+    q1: (c) => `Kako lahko izvem, ali je trgovina zdaj odprta v mestu ${c}?`,
+    a1: "Izberite trgovino s seznama zgoraj — takoj boste videli njen trenutni status v živo, \"odprto\" ali \"zaprto\" ravno zdaj, samodejno posodobljen na podlagi standardnega delovnega časa ali podatkov v živo iz Googla.",
+    q2: "Kakšen je delovni čas trgovin ob državnih praznikih?",
+    a2: "Vsaka stran trgovine prikazuje svoj poseben delovni čas ob državnih praznikih, posodobljen za trenutno leto — vključno s skrajšanim delovnim časom ali popolnim zaprtjem.",
+  },
+  lt: {
+    title: "Dažnai užduodami klausimai",
+    q1: (c) => `Kaip galiu sužinoti, ar parduotuvė dabar atidaryta mieste ${c}?`,
+    a1: "Pasirinkite parduotuvę iš aukščiau esančio sąrašo — iš karto pamatysite jos gyvą būseną, \"atidaryta\" arba \"uždaryta\" dabar, automatiškai atnaujinamą pagal standartinį darbo laiką arba gyvus „Google“ duomenis.",
+    q2: "Koks yra parduotuvių darbo laikas švenčių dienomis?",
+    a2: "Kiekvienas parduotuvės puslapis rodo specialų darbo laiką švenčių dienomis, atnaujintą einamiesiems metams — įskaitant sutrumpintą darbo laiką arba visišką uždarymą.",
+  },
+  lv: {
+    title: "Biežāk uzdotie jautājumi",
+    q1: (c) => `Kā es varu uzzināt, vai veikals tagad ir atvērts pilsētā ${c}?`,
+    a1: "Izvēlieties veikalu no saraksta augstāk — jūs uzreiz redzēsiet tā tiešraides statusu, \"atvērts\" vai \"slēgts\" pašlaik, automātiski atjaunināts, pamatojoties uz standarta darba laiku vai Google tiešraides datiem.",
+    q2: "Kāds ir veikalu darba laiks svētku dienās?",
+    a2: "Katra veikala lapa parāda savu īpašo darba laiku svētku dienās, atjauninātu pašreizējam gadam — ieskaitot samazinātu darba laiku vai pilnīgu slēgšanu.",
+  },
+  ee: {
+    title: "Korduma kippuvad küsimused",
+    q1: (c) => `Kuidas ma saan teada, kas pood on linnas ${c} praegu avatud?`,
+    a1: "Vali pood ülaltoodud loendist — näed kohe selle reaalajas olekut, \"avatud\" või \"suletud\" praegu, automaatselt uuendatud standardse lahtiolekuaja või Google'i reaalajas andmete alusel.",
+    q2: "Millised on poodide lahtiolekuajad riigipühadel?",
+    a2: "Iga poe lehekülg näitab selle erilist lahtiolekuaega riigipühadel, uuendatud käesolevaks aastaks — sealhulgas lühendatud aegu või täielikku sulgemist.",
+  },
+};
 function buildCityFaqHtml({ orasDisplay, lang }) {
-  const isRo = !lang || lang === "ro";
-  const faqs = isRo
-    ? [
-        { q: `Cum pot afla dacă un magazin este deschis acum în ${orasDisplay}?`, a: `Alege magazinul din lista de mai sus — vezi instant statusul live, "deschis" sau "închis" chiar acum, actualizat automat pe baza orarului standard sau a datelor live de la Google.` },
-        { q: "Care este programul magazinelor de sărbători legale?", a: "Fiecare pagină de magazin arată programul special pentru sărbătorile legale (Paște, Crăciun, 1 Mai și altele), actualizat pentru anul curent — inclusiv zilele cu program redus sau cu magazinul închis complet." },
-      ]
-    : [
-        { q: `How can I find out if a store is open right now in ${orasDisplay}?`, a: `Pick a store from the list above — you'll see its live status, "open" or "closed" right now, updated automatically based on standard hours or live Google data.` },
-        { q: "What are store hours during public holidays?", a: "Each store's page shows its special hours for public holidays, updated for the current year — including reduced hours or full closures." },
-      ];
+  const texts = CITY_FAQ_TEXTS[lang] || CITY_FAQ_TEXTS.uk;
+  const faqs = [
+    { q: texts.q1(orasDisplay), a: texts.a1 },
+    { q: texts.q2, a: texts.a2 },
+  ];
 
   const schema = {
     "@context": "https://schema.org",
@@ -1682,7 +1826,7 @@ function buildCityFaqHtml({ orasDisplay, lang }) {
   };
 
   const visibleHtml = `
-  <h2 class="section-title"><span class="bar"></span>${isRo ? "Întrebări frecvente" : "Frequently asked questions"}</h2>
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(texts.title)}</h2>
   <div class="holiday-card">${faqs.map((f) => `<details class="faq-item"><summary>${escapeHtml(f.q)}</summary><p>${escapeHtml(f.a)}</p></details>`).join("")}</div>
   <script type="application/ld+json">${safeJson(schema)}</script>`;
 
@@ -7826,7 +7970,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <ul class="mall-list">${listItems}</ul>
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
-  ${buildCityFaqHtml({ orasDisplay, lang: activeLang === "ro" ? "ro" : "en" })}
+  ${buildCityFaqHtml({ orasDisplay, lang: activeLang })}
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
