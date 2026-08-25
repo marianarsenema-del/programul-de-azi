@@ -6768,16 +6768,16 @@ function buildSmartInstallScript(nonce, lang) {
     if (!overlay || !modalBody) return;
     var html = "";
     if (deferredPrompt) {
-      html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">${texts.instNow}</button>\';
+      html = \'<button type="button" class="install-confirm-btn" id="installNativeBtn">\' + ${JSON.stringify(texts.instNow)} + \'</button>\';
     } else if (isIOS() && !isIOSSafari()) {
-      html = \'<p>${texts.instNeedSafari}</p>\' +
-             \'<a href="x-safari-\' + window.location.href.split("#")[0] + \'#_install" class="install-safari-btn">${texts.instOpenSafari}</a>\' +
-             \'<p class="install-fallback-text">${texts.instFallback} <strong>\' + window.location.hostname + \'</strong>.</p>\';
+      html = \'<p>\' + ${JSON.stringify(texts.instNeedSafari)} + \'</p>\' +
+             \'<a href="x-safari-\' + window.location.href.split("#")[0] + \'#_install" class="install-safari-btn">\' + ${JSON.stringify(texts.instOpenSafari)} + \'</a>\' +
+             \'<p class="install-fallback-text">\' + ${JSON.stringify(texts.instFallback)} + \' <strong>\' + window.location.hostname + \'</strong>.</p>\';
     } else if (isIOSSafari()) {
-      html = \'<div class="install-step-card"><strong>${texts.instForIphone}</strong><p>${texts.instSteps}</p></div>\' +
-             \'<button type="button" class="install-confirm-btn" id="installGotItBtn">${texts.instGotIt}</button>\';
+      html = \'<div class="install-step-card"><strong>\' + ${JSON.stringify(texts.instForIphone)} + \'</strong><p>\' + ${JSON.stringify(texts.instSteps)} + \'</p></div>\' +
+             \'<button type="button" class="install-confirm-btn" id="installGotItBtn">\' + ${JSON.stringify(texts.instGotIt)} + \'</button>\';
     } else {
-      html = \'<p>${texts.instGeneric}</p>\';
+      html = \'<p>\' + ${JSON.stringify(texts.instGeneric)} + \'</p>\';
     }
     modalBody.innerHTML = html;
     overlay.classList.add("active");
