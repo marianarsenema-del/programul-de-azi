@@ -2455,10 +2455,233 @@ const CATEGORY_LABELS = {
     cladiri_teatre: "🏛️ Monumental Buildings, Theatres and Squares",
     parcuri_agrement: "🎢 Amusement and Leisure Parks",
   },
+  de: {
+    castele_palate: "🏰 Burgen, Paläste und Herrenhäuser",
+    cetati_turnuri: "🏯 Zitadellen, Festungen und historische Türme",
+    manastiri: "⛪ Klöster und monumentale Gotteshäuser",
+    biserici_cimitire: "🛖 Wehrkirchen und einzigartige Friedhöfe",
+    natura: "🏔️ Naturdenkmäler, Höhlen und Reservate",
+    infrastructura: "🚗 Bergstraßen und touristische Infrastruktur",
+    muzee: "🖼️ Kunst-, Geschichts- und Volkskundemuseen",
+    cladiri_teatre: "🏛️ Monumentale Gebäude, Theater und Plätze",
+    parcuri_agrement: "🎢 Freizeitparks und Erholung",
+  },
+  es: {
+    castele_palate: "🏰 Castillos, Palacios y Casas Solariegas",
+    cetati_turnuri: "🏯 Ciudadelas, Fortalezas y Torres Históricas",
+    manastiri: "⛪ Monasterios y Lugares de Culto Monumentales",
+    biserici_cimitire: "🛖 Iglesias Fortificadas y Cementerios Únicos",
+    natura: "🏔️ Monumentos Naturales, Cuevas y Reservas",
+    infrastructura: "🚗 Carreteras de Montaña e Infraestructura Turística",
+    muzee: "🖼️ Museos de Arte, Historia y Etnografía",
+    cladiri_teatre: "🏛️ Edificios Monumentales, Teatros y Plazas",
+    parcuri_agrement: "🎢 Parques de Atracciones y Ocio",
+  },
+  fr: {
+    castele_palate: "🏰 Châteaux, Palais et Manoirs",
+    cetati_turnuri: "🏯 Citadelles, Forteresses et Tours Historiques",
+    manastiri: "⛪ Monastères et Lieux de Culte Monumentaux",
+    biserici_cimitire: "🛖 Églises Fortifiées et Cimetières Uniques",
+    natura: "🏔️ Monuments Naturels, Grottes et Réserves",
+    infrastructura: "🚗 Routes de Montagne et Infrastructures Touristiques",
+    muzee: "🖼️ Musées d'Art, d'Histoire et d'Ethnographie",
+    cladiri_teatre: "🏛️ Bâtiments Monumentaux, Théâtres et Places",
+    parcuri_agrement: "🎢 Parcs d'Attractions et de Loisirs",
+  },
+  it: {
+    castele_palate: "🏰 Castelli, Palazzi e Manieri",
+    cetati_turnuri: "🏯 Cittadelle, Fortezze e Torri Storiche",
+    manastiri: "⛪ Monasteri e Luoghi di Culto Monumentali",
+    biserici_cimitire: "🛖 Chiese Fortificate e Cimiteri Unici",
+    natura: "🏔️ Monumenti Naturali, Grotte e Riserve",
+    infrastructura: "🚗 Strade di Montagna e Infrastrutture Turistiche",
+    muzee: "🖼️ Musei d'Arte, Storia ed Etnografia",
+    cladiri_teatre: "🏛️ Edifici Monumentali, Teatri e Piazze",
+    parcuri_agrement: "🎢 Parchi Divertimento e Tempo Libero",
+  },
+  pl: {
+    castele_palate: "🏰 Zamki, Pałace i Dwory",
+    cetati_turnuri: "🏯 Cytadele, Twierdze i Historyczne Wieże",
+    manastiri: "⛪ Klasztory i Monumentalne Miejsca Kultu",
+    biserici_cimitire: "🛖 Kościoły Warowne i Wyjątkowe Cmentarze",
+    natura: "🏔️ Pomniki Przyrody, Jaskinie i Rezerwaty",
+    infrastructura: "🚗 Drogi Górskie i Infrastruktura Turystyczna",
+    muzee: "🖼️ Muzea Sztuki, Historii i Etnografii",
+    cladiri_teatre: "🏛️ Budowle Monumentalne, Teatry i Place",
+    parcuri_agrement: "🎢 Parki Rozrywki i Rekreacji",
+  },
+  nl: {
+    castele_palate: "🏰 Kastelen, Paleizen en Landhuizen",
+    cetati_turnuri: "🏯 Citadellen, Vestingen en Historische Torens",
+    manastiri: "⛪ Kloosters en Monumentale Gebedshuizen",
+    biserici_cimitire: "🛖 Versterkte Kerken en Unieke Begraafplaatsen",
+    natura: "🏔️ Natuurmonumenten, Grotten en Reservaten",
+    infrastructura: "🚗 Bergwegen en Toeristische Infrastructuur",
+    muzee: "🖼️ Kunst-, Geschiedenis- en Etnografiemusea",
+    cladiri_teatre: "🏛️ Monumentale Gebouwen, Theaters en Pleinen",
+    parcuri_agrement: "🎢 Pretparken en Recreatie",
+  },
+  da: {
+    castele_palate: "🏰 Slotte, Paladser og Herregårde",
+    cetati_turnuri: "🏯 Citadeller, Fæstninger og Historiske Tårne",
+    manastiri: "⛪ Klostre og Monumentale Gudshuse",
+    biserici_cimitire: "🛖 Befæstede Kirker og Unikke Kirkegårde",
+    natura: "🏔️ Naturmonumenter, Grotter og Reservater",
+    infrastructura: "🚗 Bjergveje og Turistinfrastruktur",
+    muzee: "🖼️ Kunst-, Historie- og Etnografimuseer",
+    cladiri_teatre: "🏛️ Monumentale Bygninger, Teatre og Pladser",
+    parcuri_agrement: "🎢 Forlystelsesparker og Fritid",
+  },
+  se: {
+    castele_palate: "🏰 Slott, Palats och Herrgårdar",
+    cetati_turnuri: "🏯 Citadeller, Fästningar och Historiska Torn",
+    manastiri: "⛪ Kloster och Monumentala Gudshus",
+    biserici_cimitire: "🛖 Befästa Kyrkor och Unika Kyrkogårdar",
+    natura: "🏔️ Naturminnen, Grottor och Reservat",
+    infrastructura: "🚗 Bergsvägar och Turistinfrastruktur",
+    muzee: "🖼️ Konst-, Historia- och Etnografimuseer",
+    cladiri_teatre: "🏛️ Monumentala Byggnader, Teatrar och Torg",
+    parcuri_agrement: "🎢 Nöjesparker och Rekreation",
+  },
+  pt: {
+    castele_palate: "🏰 Castelos, Palácios e Solares",
+    cetati_turnuri: "🏯 Cidadelas, Fortalezas e Torres Históricas",
+    manastiri: "⛪ Mosteiros e Locais de Culto Monumentais",
+    biserici_cimitire: "🛖 Igrejas Fortificadas e Cemitérios Únicos",
+    natura: "🏔️ Monumentos Naturais, Grutas e Reservas",
+    infrastructura: "🚗 Estradas de Montanha e Infraestrutura Turística",
+    muzee: "🖼️ Museus de Arte, História e Etnografia",
+    cladiri_teatre: "🏛️ Edifícios Monumentais, Teatros e Praças",
+    parcuri_agrement: "🎢 Parques de Diversão e Lazer",
+  },
+  cz: {
+    castele_palate: "🏰 Hrady, Paláce a Zámky",
+    cetati_turnuri: "🏯 Citadely, Pevnosti a Historické Věže",
+    manastiri: "⛪ Kláštery a Monumentální Bohoslužebná Místa",
+    biserici_cimitire: "🛖 Opevněné Kostely a Jedinečné Hřbitovy",
+    natura: "🏔️ Přírodní Památky, Jeskyně a Rezervace",
+    infrastructura: "🚗 Horské Silnice a Turistická Infrastruktura",
+    muzee: "🖼️ Muzea Umění, Historie a Etnografie",
+    cladiri_teatre: "🏛️ Monumentální Budovy, Divadla a Náměstí",
+    parcuri_agrement: "🎢 Zábavní Parky a Rekreace",
+  },
+  fi: {
+    castele_palate: "🏰 Linnat, Palatsit ja Kartanot",
+    cetati_turnuri: "🏯 Linnoitukset, Varustukset ja Historialliset Tornit",
+    manastiri: "⛪ Luostarit ja Monumentaaliset Uskonnolliset Paikat",
+    biserici_cimitire: "🛖 Linnoitetut Kirkot ja Ainutlaatuiset Hautausmaat",
+    natura: "🏔️ Luonnonmuistomerkit, Luolat ja Suojelualueet",
+    infrastructura: "🚗 Vuoristotiet ja Matkailuinfrastruktuuri",
+    muzee: "🖼️ Taide-, Historia- ja Kansatieteen Museot",
+    cladiri_teatre: "🏛️ Monumentaaliset Rakennukset, Teatterit ja Aukiot",
+    parcuri_agrement: "🎢 Huvipuistot ja Vapaa-aika",
+  },
+  gr: {
+    castele_palate: "🏰 Κάστρα, Παλάτια και Αρχοντικά",
+    cetati_turnuri: "🏯 Ακροπόλεις, Φρούρια και Ιστορικοί Πύργοι",
+    manastiri: "⛪ Μοναστήρια και Μνημειακοί Χώροι Λατρείας",
+    biserici_cimitire: "🛖 Οχυρωμένες Εκκλησίες και Μοναδικά Νεκροταφεία",
+    natura: "🏔️ Φυσικά Μνημεία, Σπήλαια και Καταφύγια",
+    infrastructura: "🚗 Ορεινοί Δρόμοι και Τουριστικές Υποδομές",
+    muzee: "🖼️ Μουσεία Τέχνης, Ιστορίας και Εθνογραφίας",
+    cladiri_teatre: "🏛️ Μνημειακά Κτίρια, Θέατρα και Πλατείες",
+    parcuri_agrement: "🎢 Πάρκα Αναψυχής και Ψυχαγωγίας",
+  },
+  hu: {
+    castele_palate: "🏰 Kastélyok, Paloták és Kúriák",
+    cetati_turnuri: "🏯 Fellegvárak, Erődök és Történelmi Tornyok",
+    manastiri: "⛪ Kolostorok és Monumentális Vallási Helyek",
+    biserici_cimitire: "🛖 Erődtemplomok és Egyedülálló Temetők",
+    natura: "🏔️ Természeti Emlékek, Barlangok és Rezervátumok",
+    infrastructura: "🚗 Hegyi Utak és Turisztikai Infrastruktúra",
+    muzee: "🖼️ Művészeti, Történeti és Néprajzi Múzeumok",
+    cladiri_teatre: "🏛️ Monumentális Épületek, Színházak és Terek",
+    parcuri_agrement: "🎢 Vidámparkok és Szabadidő",
+  },
+  hr: {
+    castele_palate: "🏰 Dvorci, Palače i Vlastelinstva",
+    cetati_turnuri: "🏯 Utvrde, Tvrđave i Povijesni Tornjevi",
+    manastiri: "⛪ Samostani i Monumentalna Sveta Mjesta",
+    biserici_cimitire: "🛖 Utvrđene Crkve i Jedinstvena Groblja",
+    natura: "🏔️ Prirodni Spomenici, Špilje i Rezervati",
+    infrastructura: "🚗 Planinske Ceste i Turistička Infrastruktura",
+    muzee: "🖼️ Muzeji Umjetnosti, Povijesti i Etnografije",
+    cladiri_teatre: "🏛️ Monumentalne Zgrade, Kazališta i Trgovi",
+    parcuri_agrement: "🎢 Zabavni Parkovi i Rekreacija",
+  },
+  sk: {
+    castele_palate: "🏰 Hrady, Paláce a Kaštiele",
+    cetati_turnuri: "🏯 Citadely, Pevnosti a Historické Veže",
+    manastiri: "⛪ Kláštory a Monumentálne Bohoslužobné Miesta",
+    biserici_cimitire: "🛖 Opevnené Kostoly a Jedinečné Cintoríny",
+    natura: "🏔️ Prírodné Pamiatky, Jaskyne a Rezervácie",
+    infrastructura: "🚗 Horské Cesty a Turistická Infraštruktúra",
+    muzee: "🖼️ Múzeá Umenia, Histórie a Etnografie",
+    cladiri_teatre: "🏛️ Monumentálne Budovy, Divadlá a Námestia",
+    parcuri_agrement: "🎢 Zábavné Parky a Rekreácia",
+  },
+  si: {
+    castele_palate: "🏰 Gradovi, Palače in Dvorci",
+    cetati_turnuri: "🏯 Citadele, Trdnjave in Zgodovinski Stolpi",
+    manastiri: "⛪ Samostani in Monumentalni Verski Objekti",
+    biserici_cimitire: "🛖 Utrjene Cerkve in Edinstvena Pokopališča",
+    natura: "🏔️ Naravni Spomeniki, Jame in Rezervati",
+    infrastructura: "🚗 Gorske Ceste in Turistična Infrastruktura",
+    muzee: "🖼️ Muzeji Umetnosti, Zgodovine in Etnografije",
+    cladiri_teatre: "🏛️ Monumentalne Stavbe, Gledališča in Trgi",
+    parcuri_agrement: "🎢 Zabaviščni Parki in Rekreacija",
+  },
+  lt: {
+    castele_palate: "🏰 Pilys, Rūmai ir Dvarai",
+    cetati_turnuri: "🏯 Citadelės, Tvirtovės ir Istoriniai Bokštai",
+    manastiri: "⛪ Vienuolynai ir Monumentalios Kulto Vietos",
+    biserici_cimitire: "🛖 Įtvirtintos Bažnyčios ir Unikalios Kapinės",
+    natura: "🏔️ Gamtos Paminklai, Urvai ir Rezervatai",
+    infrastructura: "🚗 Kalnų Keliai ir Turizmo Infrastruktūra",
+    muzee: "🖼️ Meno, Istorijos ir Etnografijos Muziejai",
+    cladiri_teatre: "🏛️ Monumentalūs Pastatai, Teatrai ir Aikštės",
+    parcuri_agrement: "🎢 Pramogų Parkai ir Poilsis",
+  },
+  lv: {
+    castele_palate: "🏰 Pilis un Muižas",
+    cetati_turnuri: "🏯 Citadeles, Cietokšņi un Vēsturiski Torņi",
+    manastiri: "⛪ Klosteri un Monumentālas Kulta Vietas",
+    biserici_cimitire: "🛖 Nocietinātas Baznīcas un Unikāli Kapsētas",
+    natura: "🏔️ Dabas Pieminekļi, Alas un Rezervāti",
+    infrastructura: "🚗 Kalnu Ceļi un Tūrisma Infrastruktūra",
+    muzee: "🖼️ Mākslas, Vēstures un Etnogrāfijas Muzeji",
+    cladiri_teatre: "🏛️ Monumentālas Ēkas, Teātri un Laukumi",
+    parcuri_agrement: "🎢 Atrakciju Parki un Atpūta",
+  },
+  ee: {
+    castele_palate: "🏰 Lossid, Paleed ja Mõisad",
+    cetati_turnuri: "🏯 Kindlused, Linnused ja Ajaloolised Tornid",
+    manastiri: "⛪ Kloostrid ja Monumentaalsed Kultuskohad",
+    biserici_cimitire: "🛖 Kindlustatud Kirikud ja Unikaalsed Kalmistud",
+    natura: "🏔️ Looduslikud Mälestised, Koopad ja Kaitsealad",
+    infrastructura: "🚗 Mägiteed ja Turismiinfrastruktuur",
+    muzee: "🖼️ Kunsti-, Ajaloo- ja Etnograafiamuuseumid",
+    cladiri_teatre: "🏛️ Monumentaalsed Hooned, Teatrid ja Väljakud",
+    parcuri_agrement: "🎢 Lõbustuspargid ja Vaba Aeg",
+  },
 };
 function categoryLabelFor(categoryKey, lang) {
   const set = CATEGORY_LABELS[lang] || CATEGORY_LABELS.uk;
   return set[categoryKey] || categoryKey;
+}
+
+// Textul "Se încarcă..." pentru <details> lazy-load (obiective pe țară,
+// pe homepage-ul .eu) — separat de restul TRANSLATIONS, ca un adaos mic,
+// să nu ating restul obiectelor mari deja existente
+const LOADING_TEXTS = {
+  ro: "Se încarcă…", uk: "Loading…", de: "Wird geladen…", es: "Cargando…",
+  fr: "Chargement…", it: "Caricamento…", pl: "Ładowanie…", nl: "Laden…",
+  da: "Indlæser…", se: "Laddar…", pt: "A carregar…", cz: "Načítání…",
+  fi: "Ladataan…", gr: "Φόρτωση…", hu: "Betöltés…", hr: "Učitavanje…",
+  sk: "Načítava sa…", si: "Nalaganje…", lt: "Kraunama…", lv: "Ielādē…", ee: "Laadimine…",
+};
+function loadingTextFor(lang) {
+  return LOADING_TEXTS[lang] || LOADING_TEXTS.uk;
 }
 
 // Grupează lista de obiective ale unei țări pe categorii (dacă au câmpul
@@ -8059,14 +8282,17 @@ const BOTTOM_NAV_LABELS = {
   lv: { home: "Sākums", search: "Meklēt", favorites: "Iecienītie", map: "Karte" },
   ee: { home: "Avaleht", search: "Otsi", favorites: "Lemmikud", map: "Kaart" },
 };
-function buildBottomNavHtml(langCode, isIntlDomain) {
+function buildBottomNavHtml(langCode) {
   const labels = BOTTOM_NAV_LABELS[langCode] || BOTTOM_NAV_LABELS.uk;
-  // "Creează itinerar" — funcționează doar cu date despre România (cele 500
-  // de obiective + județe), deci apare doar pe programul-de-azi.ro, nu și pe
-  // domeniul internațional, ca să nu promitem o funcție care n-ar avea date.
-  const itineraryBtn = isIntlDomain
-    ? ""
-    : `<a href="/itinerar" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>Itinerar</span></a>`;
+  // "Creează itinerar" — conținutul generat de AI e mereu în română (promptul
+  // e fix, în română — nu are sens localizat pe 21 de limbi doar pentru un
+  // buton), deci arătăm linkul DOAR când limba activă a paginii e chiar
+  // română — indiferent de domeniu (funcționează la fel de bine dacă cineva
+  // navighează pe .eu, dar cu limba setată pe română; ruta /itinerar oricum
+  // redirecționează automat spre programul-de-azi.ro).
+  const itineraryBtn = langCode === "ro"
+    ? `<a href="/itinerar" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>Itinerar</span></a>`
+    : "";
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
@@ -8228,7 +8454,7 @@ ${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.go
 ${smartInstallHtml}
 ${bodyHtml}
 ${buildThemeToggleHtml()}
-${buildBottomNavHtml(langCode, isIntlDomain)}
+${buildBottomNavHtml(langCode)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
 ${buildBottomNavScript(nonce)}
 ${buildThemeToggleScript(nonce)}
@@ -8871,10 +9097,17 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   // real se aduce printr-un fetch la /api/attractions/:tara.json, DOAR dacă
   // utilizatorul chiar deschide acea țară (vezi buildAttractionLazyScript).
   const primaryAttractionCountry = validDetected || "ro";
+  // țara principală apare mereu PRIMA în listă — nu doar accesibilă prin
+  // scroll (fragil, poate eșua din motive diverse) — pur și simplu prima
+  // din ordinea de randare, garantat vizibilă imediat, fără JS.
+  const orderedAttractionCodes = [
+    primaryAttractionCountry,
+    ...Object.keys(ATTRACTIONS).filter((c) => c !== primaryAttractionCountry),
+  ];
   const attractionsAllBlockHtml = `
   <div class="country-filter-block active" data-country-block="all">
     <p class="intro-text">${escapeHtml(t.attractionsIntro || "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.")}</p>
-    ${Object.keys(ATTRACTIONS)
+    ${orderedAttractionCodes
       .map((code) => {
         if (code === primaryAttractionCountry) {
           const items = buildAttractionListForCountry(ATTRACTIONS[code], code, true, activeLang);
@@ -8882,7 +9115,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
         }
         return `<details class="attraction-country-lazy" data-lazy-country="${code}">
           <summary class="attractions-country">${COUNTRY_LABELS[code]} <span class="attraction-category-count">(${ATTRACTIONS[code].length})</span></summary>
-          <div class="lazy-attraction-target" data-loading-text="${escapeHtml(t.loadingText || "Loading…")}"></div>
+          <div class="lazy-attraction-target" data-loading-text="${escapeHtml(loadingTextFor(activeLang))}"></div>
         </details>`;
       })
       .join("")}
@@ -8901,7 +9134,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   <div class="country-filter-block" data-country-block="${code}" data-lazy-country="${code}" style="display:none">
     <p class="intro-text"><button type="button" class="clear-country-btn">${escapeHtml(t.showAllCountries || "🌍 Show all countries")}</button></p>
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.attractionsIn || "Attractions in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
-    <div class="lazy-attraction-target" data-loading-text="${escapeHtml(t.loadingText || "Loading…")}"></div>
+    <div class="lazy-attraction-target" data-loading-text="${escapeHtml(loadingTextFor(activeLang))}"></div>
   </div>`;
     })
     .join("");
