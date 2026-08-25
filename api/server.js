@@ -9219,7 +9219,12 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null });
     widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>`;
+    // Nu avem orarul (Google nu-l are postat pentru acest loc — frecvent la
+    // obiective mici, din sate) — dar dacă tot am reușit să găsim locul pe
+    // Google, adresa și telefonul sunt utile oricum. NU le mai aruncăm doar
+    // pentru că lipsește orarul, exact ca la magazine.
+    statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>
+    ${live ? contactInfoHtml(live) : ""}`;
   }
 
   // biletul e acum mereu în "Planifică vizita" (buildBookingPlanningButtonsHtml)
@@ -9296,7 +9301,10 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: contextualWidgetLabelsFor(activeLang) });
     widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    statusHtml = `<div class="geo-country-highlight">${noLiveDataTextFor(activeLang, escapeHtml(attraction.url))}</div>`;
+    // vezi comentariul din renderAttractionPageRO — adresa/telefonul rămân
+    // utile chiar și fără orarul live
+    statusHtml = `<div class="geo-country-highlight">${noLiveDataTextFor(activeLang, escapeHtml(attraction.url))}</div>
+    ${live ? contactInfoHtml(live) : ""}`;
   }
 
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
