@@ -31,7 +31,7 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // SEPARATE pe .eu (/guides/*, engleză, nu /ro/ghiduri/*, care nu există)
 // — bug real, prins prin testare, înainte de activare, nu doar teoretic.
 const RO_TO_EU_MIGRATION_ACTIVE = true;
-const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png"];
+const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png", "/itinerar"];
 const RO_TO_EU_GUIDES_MAP = { "/ghiduri": "/guides", "/ghiduri/transport": "/guides/transport", "/ghiduri/parcari": "/guides/parking", "/ghiduri/restaurante": "/guides/restaurants" };
 app.use((req, res, next) => {
   if (!RO_TO_EU_MIGRATION_ACTIVE || isIntlHost(req)) return next();
@@ -10896,6 +10896,29 @@ app.get("/:oras/:magazin", async (req, res, next) => {
   res.send(html);
 });
 
+// ÎNAINTEA rutei generice "/:oras" de mai jos, deliberat — Express verifică
+// rutele în ordinea în care sunt scrise în cod, nu după cât de specifice
+// sunt. Dacă "/itinerar" ar fi rămas DUPĂ "/:oras", acea rută generică ar
+// fi interceptat-o prima, tratând "itinerar" ca pe un nume de oraș necunoscut
+// — exact bug-ul real, prins prin testare directă (pagina arăta lista de
+// magazine, nu formularul de itinerar).
+//
+// NU redirecționăm spre RO_DOMAIN — migrarea .ro -> .eu e activă și
+// redirecționează AUTOMAT (301) orice cerere de pe .ro către .eu, în afara
+// unei liste scurte de excepții (vezi RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES,
+// sus în fișier) — "/itinerar" NU e în acea listă. Un redirect explicit spre
+// .ro aici ar crea o buclă infinită (.eu -> .ro -> .eu -> ...), exact ca
+// bug-ul găsit prin testare directă. Servim pagina direct, pe orice domeniu
+// ajunge cererea — la fel ca paginile de obiective turistice, deja
+// funcționale pe ambele domenii, fără niciun redirect forțat.
+app.get("/itinerar", (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderItineraryPage(nonce, baseUrlFor(req));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 app.get("/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next(); // cereri de tip fișier (css/js/ico) ignorate aici
 
@@ -11809,16 +11832,5 @@ function renderItineraryPage(nonce, baseUrl) {
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
-
-app.get("/itinerar", (req, res) => {
-  if (isIntlHost(req)) {
-    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
-  }
-  const nonce = generateNonce();
-  res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderItineraryPage(nonce, baseUrlFor(req));
-  res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(html);
-});
 
 module.exports = app;
