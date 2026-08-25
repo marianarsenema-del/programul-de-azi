@@ -8036,13 +8036,20 @@ const BOTTOM_NAV_LABELS = {
   lv: { home: "Sākums", search: "Meklēt", favorites: "Iecienītie", map: "Karte" },
   ee: { home: "Avaleht", search: "Otsi", favorites: "Lemmikud", map: "Kaart" },
 };
-function buildBottomNavHtml(langCode) {
+function buildBottomNavHtml(langCode, isIntlDomain) {
   const labels = BOTTOM_NAV_LABELS[langCode] || BOTTOM_NAV_LABELS.uk;
+  // "Creează itinerar" — funcționează doar cu date despre România (cele 500
+  // de obiective + județe), deci apare doar pe programul-de-azi.ro, nu și pe
+  // domeniul internațional, ca să nu promitem o funcție care n-ar avea date.
+  const itineraryBtn = isIntlDomain
+    ? ""
+    : `<a href="/itinerar" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>Itinerar</span></a>`;
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
   <a href="/#citySearchInput" class="bottom-nav-item" id="bottomNavSearch"><span class="bottom-nav-icon">🔍</span><span>${escapeHtml(labels.search)}</span></a>
   <a href="/#favoritesList" class="bottom-nav-item" id="bottomNavFavorites"><span class="bottom-nav-icon">⭐</span><span>${escapeHtml(labels.favorites)}</span></a>
+  ${itineraryBtn}
   <a href="/#cityMap" class="bottom-nav-item" id="bottomNavMap"><span class="bottom-nav-icon">🗺️</span><span>${escapeHtml(labels.map)}</span></a>
 </nav>`;
 }
@@ -8198,7 +8205,7 @@ ${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.go
 ${smartInstallHtml}
 ${bodyHtml}
 ${buildThemeToggleHtml()}
-${buildBottomNavHtml(langCode)}
+${buildBottomNavHtml(langCode, isIntlDomain)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
 ${buildBottomNavScript(nonce)}
 ${buildThemeToggleScript(nonce)}
@@ -10673,5 +10680,889 @@ if (require.main === module) {
     console.log(`Server local pornit: http://localhost:${PORT}/bucuresti/lidl`);
   });
 }
+
+
+/* ============================================================
+   9) GENERATOR DE ITINERARII (AI) — filtrare locală + OpenAI
+   Nu trimitem toate cele 500 de obiective la fiecare cerere (cost mare,
+   inutil) — filtrăm local, în Node, doar obiectivele din județul detectat
+   + județele vecine, ÎNAINTE să construim promptul. Modelul primește doar
+   ce chiar are nevoie.
+   ============================================================ */
+const OBIECTIVE_ITINERAR = [
+  { nume: "Castelul Bran", localitate: "Bran", judet: "Brasov" },
+  { nume: "Castelul Peles", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Palatul Parlamentului", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Salina Turda", localitate: "Turda", judet: "Cluj" },
+  { nume: "Muzeul National de Istorie Naturala „Grigore Antipa”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Therme Bucuresti", localitate: "Balotesti", judet: "Ilfov" },
+  { nume: "Dino Parc Rasnov", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cetatea Alba Carolina", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Castelul Corvinilor", localitate: "Hunedoara", judet: "Hunedoara" },
+  { nume: "Muzeul National al Satului „Dimitrie Gusti”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cetatea Deva", localitate: "Deva", judet: "Hunedoara" },
+  { nume: "Cetatea Rasnov", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cetatea de Scaun a Sucevei", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Salina Praid", localitate: "Praid", judet: "Harghita" },
+  { nume: "Ansamblul Sculptural Constantin Brancusi", localitate: "Targu Jiu", judet: "Gorj" },
+  { nume: "Castelul Cantacuzino", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Turnul cu Ceas si Cetatea Sighisoara", localitate: "Sighisoara", judet: "Mures" },
+  { nume: "Cetatea Fagaras", localitate: "Fagaras", judet: "Brasov" },
+  { nume: "Muzeul National Brukenthal", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Palatul Culturii", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Aquapark Nymphaea", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Muzeul National al Taranului Roman", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cetatea Neamt", localitate: "Targu Neamt", judet: "Neamt" },
+  { nume: "Castelul Sturdza", localitate: "Miclauseni", judet: "Iasi" },
+  { nume: "Muzeul National de Istorie a Romaniei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Libearty Bear Sanctuary", localitate: "Zarnesti", judet: "Brasov" },
+  { nume: "Palatul Mogosoaia", localitate: "Mogosoaia", judet: "Ilfov" },
+  { nume: "Cetatea Poenari", localitate: "Arefu", judet: "Arges" },
+  { nume: "Catedrala Mantuirii Neamului", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Manastirea Voronet", localitate: "Gura Humorului", judet: "Suceava" },
+  { nume: "Palatul Brancovenesc", localitate: "Sambata de Sus", judet: "Brasov" },
+  { nume: "MNAR (Muzeul National de Arta al Romaniei)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Parc Aventura Brasov", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Planetariul Baia Mare", localitate: "Baia Mare", judet: "Maramures" },
+  { nume: "Complexul de Agrement Cheile Gradistei", localitate: "Moieciu", judet: "Brasov" },
+  { nume: "Salina Slanic Prahova", localitate: "Slanic", judet: "Prahova" },
+  { nume: "Cetatea Enisala", localitate: "Enisala", judet: "Tulcea" },
+  { nume: "Rosia Montana (Sit UNESCO)", localitate: "Rosia Montana", judet: "Alba" },
+  { nume: "Palatul Ghika", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Castelul de Lut Valea Zanelor", localitate: "Porumbacu de Sus", judet: "Sibiu" },
+  { nume: "Castelul Karolyi", localitate: "Carei", judet: "Satu Mare" },
+  { nume: "Castelul Banffy", localitate: "Bontida", judet: "Cluj" },
+  { nume: "Castelul Josika", localitate: "Surduc", judet: "Salaj" },
+  { nume: "Castelul Teleki", localitate: "Gornesti", judet: "Mures" },
+  { nume: "Castelul Bethlen-Haller", localitate: "Cetatea de Balta", judet: "Alba" },
+  { nume: "Palatul Roznovanu (Primaria)", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Palatul Baroc (Muzeul de Arta)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Palatul Dicasterial", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Palatul Vulturul Negru", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Palatul Episcopiei Romano-Catolice", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Palatul Apollo", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Palatul Culturii", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Palatul Administrativ", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Palatul Jean Mihail (Muzeul de Arta)", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Palatul Marincu", localitate: "Calafat", judet: "Dolj" },
+  { nume: "Palatul Domnesc de la Curtea Noua", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Cotroceni", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Regal", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Stirbey", localitate: "Buftea", judet: "Ilfov" },
+  { nume: "Palatul Snagov", localitate: "Snagov", judet: "Ilfov" },
+  { nume: "Castelul Iulia Hasdeu", localitate: "Campina", judet: "Prahova" },
+  { nume: "Castelul Marta", localitate: "Arad", judet: "Arad" },
+  { nume: "Palatul Administrativ", localitate: "Arad", judet: "Arad" },
+  { nume: "Castelul Nopcsa", localitate: "Sacel", judet: "Hunedoara" },
+  { nume: "Castelul Kendeffy", localitate: "Santamaria-Orlea", judet: "Hunedoara" },
+  { nume: "Castelul Magna Curia", localitate: "Deva", judet: "Hunedoara" },
+  { nume: "Castelul Rhedey", localitate: "Sangeorgiu de Padure", judet: "Mures" },
+  { nume: "Castelul Haller", localitate: "Ogra", judet: "Mures" },
+  { nume: "Castelul Apafi", localitate: "Malancrav", judet: "Sibiu" },
+  { nume: "Palatul Brukenthal", localitate: "Avrig", judet: "Sibiu" },
+  { nume: "Castelul Sukosd-Bethlen", localitate: "Racos", judet: "Brasov" },
+  { nume: "Castelul Beldy Ladislau", localitate: "Budila", judet: "Brasov" },
+  { nume: "Castelul Mikes", localitate: "Zabala", judet: "Covasna" },
+  { nume: "Castelul Kalnoky", localitate: "Miclosoara", judet: "Covasna" },
+  { nume: "Castelul Daniel", localitate: "Talisoara", judet: "Covasna" },
+  { nume: "Castelul Szentkereszty", localitate: "Arcus", judet: "Covasna" },
+  { nume: "Conacul Bellu", localitate: "Urlati", judet: "Prahova" },
+  { nume: "Conacul Pana Filipescu", localitate: "Filipestii de Targ", judet: "Prahova" },
+  { nume: "Conacul Octavian Goga", localitate: "Ciucea", judet: "Cluj" },
+  { nume: "Castelul Bocskai", localitate: "Aghiresu", judet: "Cluj" },
+  { nume: "Castelul Kemeny", localitate: "Brancovenesti", judet: "Mures" },
+  { nume: "Palatul Domnesc", localitate: "Cotnari", judet: "Iasi" },
+  { nume: "Palatul Cuza", localitate: "Ruginoasa", judet: "Iasi" },
+  { nume: "Palatul Comisiei Europene a Dunarii", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Palatul Episcopal", localitate: "Galati", judet: "Galati" },
+  { nume: "Hanul lui Manuc", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Hanul Gabroveni", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Cazinoului", localitate: "Vatra Dornei", judet: "Suceava" },
+  { nume: "Castelul Wesselényi", localitate: "Jibou", judet: "Salaj" },
+  { nume: "Castelul Teleki", localitate: "Pribilesti", judet: "Maramures" },
+  { nume: "Cetatea Rupea", localitate: "Rupea", judet: "Brasov" },
+  { nume: "Cetatea Sighisoara", localitate: "Sighisoara", judet: "Mures" },
+  { nume: "Cetatea Ciceu", localitate: "Ciceu-Corabia", judet: "Bistrita-Nasaud" },
+  { nume: "Cetatea Bistritei (Turnul Dogarilor)", localitate: "Bistrita", judet: "Bistrita-Nasaud" },
+  { nume: "Cetatea Medievala", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Cetatea Feldioara", localitate: "Feldioara", judet: "Brasov" },
+  { nume: "Cetatea Hoghiz", localitate: "Hoghiz", judet: "Brasov" },
+  { nume: "Cetatea Fetei", localitate: "Floresti", judet: "Cluj" },
+  { nume: "Cetatea Bologa", localitate: "Poieni", judet: "Cluj" },
+  { nume: "Cetatea Liteni", localitate: "Liteni", judet: "Cluj" },
+  { nume: "Cetatea Coltesti", localitate: "Coltesti", judet: "Alba" },
+  { nume: "Cetatea Calnic (UNESCO)", localitate: "Calnic", judet: "Alba" },
+  { nume: "Cetatea Soimos", localitate: "Lipova", judet: "Arad" },
+  { nume: "Cetatea Siria", localitate: "Siria", judet: "Arad" },
+  { nume: "Cetatea Dezna", localitate: "Dezna", judet: "Arad" },
+  { nume: "Cetatea Ineu", localitate: "Ineu", judet: "Arad" },
+  { nume: "Cetatea Aradului", localitate: "Arad", judet: "Arad" },
+  { nume: "Cetatea Timisoara (Bastionul Theresia)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Cetatea Severinului", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Cetatea Oradea", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Cetatea Porolissum", localitate: "Moigrad-Porolissum", judet: "Salaj" },
+  { nume: "Cetatea Buciumi", localitate: "Buciumi", judet: "Salaj" },
+  { nume: "Cetatea Almasului", localitate: "Almasu", judet: "Salaj" },
+  { nume: "Cetatea Chioarului", localitate: "Remetea Chioarului", judet: "Maramures" },
+  { nume: "Sarmizegetusa Regia (UNESCO)", localitate: "Gradistea de Munte", judet: "Hunedoara" },
+  { nume: "Cetatea Costesti-Blidaru (UNESCO)", localitate: "Costesti", judet: "Hunedoara" },
+  { nume: "Cetatea Costesti-Cetatuie (UNESCO)", localitate: "Costesti", judet: "Hunedoara" },
+  { nume: "Cetatea Piatra Rosie (UNESCO)", localitate: "Alun", judet: "Hunedoara" },
+  { nume: "Cetatea Banita (UNESCO)", localitate: "Banita", judet: "Hunedoara" },
+  { nume: "Ulpia Traiana Sarmizegetusa", localitate: "Sarmizegetusa", judet: "Hunedoara" },
+  { nume: "Cetatea Malaiesti", localitate: "Malaiesti", judet: "Hunedoara" },
+  { nume: "Cetatea Giurgiu", localitate: "Giurgiu", judet: "Giurgiu" },
+  { nume: "Cetatea Chilia Noua", localitate: "Chilia Veche", judet: "Tulcea" },
+  { nume: "Cetatea Argamum", localitate: "Jurilovca", judet: "Tulcea" },
+  { nume: "Cetatea Ibida", localitate: "Slava Rusa", judet: "Tulcea" },
+  { nume: "Cetatea Noviodunum", localitate: "Isaccea", judet: "Tulcea" },
+  { nume: "Cetatea Dinogetia", localitate: "Garvan", judet: "Tulcea" },
+  { nume: "Cetatea Histria", localitate: "Istria", judet: "Constanta" },
+  { nume: "Cetatea Capidava", localitate: "Topalu", judet: "Constanta" },
+  { nume: "Cetatea Carsium", localitate: "Harsova", judet: "Constanta" },
+  { nume: "Cetatea Callatis", localitate: "Mangalia", judet: "Constanta" },
+  { nume: "Cetatea Tomis", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Tropaeum Traiani", localitate: "Adamclisi", judet: "Constanta" },
+  { nume: "Cetatea Sacidava", localitate: "Alimanesti", judet: "Constanta" },
+  { nume: "Cetatea Sucidava", localitate: "Celeiu", judet: "Olt" },
+  { nume: "Cetatea Turnu", localitate: "Turnu Magurele", judet: "Teleorman" },
+  { nume: "Curtea Domneasca din Targoviste (Turnul Chindiei)", localitate: "Targoviste", judet: "Dambovita" },
+  { nume: "Curtea Domneasca din Suceava", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Curtea Domneasca din Piatra Neamt", localitate: "Piatra Neamt", judet: "Neamt" },
+  { nume: "Curtea Veche", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Turnul Sfatului", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Dulgherilor", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Olarilor", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Pompierilor", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Turnul Croitorilor", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Turnul Alb", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Turnul Negru", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Bastionul Tesatorilor", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Cetatuia de pe Straja", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Cetatuia Clujului", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Manastirea Sucevita (UNESCO)", localitate: "Sucevita", judet: "Suceava" },
+  { nume: "Manastirea Moldovita (UNESCO)", localitate: "Vatra Moldovitei", judet: "Suceava" },
+  { nume: "Manastirea Humor (UNESCO)", localitate: "Manastirea Humorului", judet: "Suceava" },
+  { nume: "Manastirea Arbore (UNESCO)", localitate: "Arbore", judet: "Suceava" },
+  { nume: "Manastirea Patrauti (UNESCO)", localitate: "Patrauti", judet: "Suceava" },
+  { nume: "Manastirea Putna", localitate: "Putna", judet: "Suceava" },
+  { nume: "Manastirea Dragomirna", localitate: "Mitocu Dragomirnei", judet: "Suceava" },
+  { nume: "Manastirea Bogdana", localitate: "Radauti", judet: "Suceava" },
+  { nume: "Manastirea Risca", localitate: "Risca", judet: "Suceava" },
+  { nume: "Manastirea Slatina", localitate: "Slatina", judet: "Suceava" },
+  { nume: "Manastirea Agapia", localitate: "Agapia", judet: "Neamt" },
+  { nume: "Manastirea Varatec", localitate: "Varatec", judet: "Neamt" },
+  { nume: "Manastirea Secu", localitate: "Vanatori-Neamt", judet: "Neamt" },
+  { nume: "Manastirea Sihastria", localitate: "Vanatori-Neamt", judet: "Neamt" },
+  { nume: "Manastirea Bistrita", localitate: "Alexandru cel Bun", judet: "Neamt" },
+  { nume: "Manastirea Durau", localitate: "Ceahlau", judet: "Neamt" },
+  { nume: "Manastirea Pangarati", localitate: "Pangarati", judet: "Neamt" },
+  { nume: "Manastirea Tazlau", localitate: "Tazlau", judet: "Neamt" },
+  { nume: "Manastirea Horezu (UNESCO)", localitate: "Horezu", judet: "Vâlcea" },
+  { nume: "Manastirea Cozia", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Dintr-un Lemn", localitate: "Francesti", judet: "Vâlcea" },
+  { nume: "Manastirea Govora", localitate: "Mihaesti", judet: "Vâlcea" },
+  { nume: "Manastirea Bistrita", localitate: "Costesti", judet: "Vâlcea" },
+  { nume: "Manastirea Arnota", localitate: "Costesti", judet: "Vâlcea" },
+  { nume: "Manastirea Turnu", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Stanisora", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Curtea de Arges", localitate: "Curtea de Arges", judet: "Arges" },
+  { nume: "Manastirea Aninoasa", localitate: "Aninoasa", judet: "Arges" },
+  { nume: "Manastirea Slanic", localitate: "Aninoasa", judet: "Arges" },
+  { nume: "Manastirea Robaia", localitate: "Musatesti", judet: "Arges" },
+  { nume: "Manastirea Namaesti (Rupestra)", localitate: "Namaesti", judet: "Arges" },
+  { nume: "Manastirea Corbii de Piatra (Rupestra)", localitate: "Corbi", judet: "Arges" },
+  { nume: "Manastirea Cetatuia Negru Voda", localitate: "Cetateni", judet: "Arges" },
+  { nume: "Manastirea Tismana", localitate: "Tismana", judet: "Gorj" },
+  { nume: "Manastirea Polovragi", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Manastirea Lainici", localitate: "Schela", judet: "Gorj" },
+  { nume: "Manastirea Crasna", localitate: "Crasna", judet: "Gorj" },
+  { nume: "Manastirea Barsana (UNESCO)", localitate: "Barsana", judet: "Maramures" },
+  { nume: "Manastirea Peri-Sapanta", localitate: "Sapanta", judet: "Maramures" },
+  { nume: "Manastirea Rohia", localitate: "Targu Lapus", judet: "Maramures" },
+  { nume: "Manastirea Moisei", localitate: "Moisei", judet: "Maramures" },
+  { nume: "Biserica Ieud Deal (UNESCO)", localitate: "Ieud", judet: "Maramures" },
+  { nume: "Biserica Poienile Izei (UNESCO)", localitate: "Poienile Izei", judet: "Maramures" },
+  { nume: "Biserica Surdesti (UNESCO)", localitate: "Sisesti", judet: "Maramures" },
+  { nume: "Biserica Plopis (UNESCO)", localitate: "Sisesti", judet: "Maramures" },
+  { nume: "Biserica Desesti (UNESCO)", localitate: "Desesti", judet: "Maramures" },
+  { nume: "Biserica Budesti Josani (UNESCO)", localitate: "Budesti", judet: "Maramures" },
+  { nume: "Manastirea Nicula", localitate: "Nicula", judet: "Cluj" },
+  { nume: "Manastirea Ramet", localitate: "Ramet", judet: "Alba" },
+  { nume: "Manastirea Prislop", localitate: "Silvasu de Sus", judet: "Hunedoara" },
+  { nume: "Manastirea Crisan", localitate: "Crisan", judet: "Hunedoara" },
+  { nume: "Manastirea Bodrog (Hodos-Bodrog)", localitate: "Bodrogu Nou", judet: "Arad" },
+  { nume: "Manastirea Radna (Maria Radna)", localitate: "Lipova", judet: "Arad" },
+  { nume: "Manastirea Sfanta Maria", localitate: "Techirghiol", judet: "Constanta" },
+  { nume: "Manastirea Dervent", localitate: "Galita", judet: "Constanta" },
+  { nume: "Manastirea Pestera Sfantului Andrei", localitate: "Ion Corvin", judet: "Constanta" },
+  { nume: "Manastirea Celic-Dere", localitate: "Frecatei", judet: "Tulcea" },
+  { nume: "Manastirea Saon", localitate: "Frecatei", judet: "Tulcea" },
+  { nume: "Manastirea Cocos", localitate: "Niculitel", judet: "Tulcea" },
+  { nume: "Manastirea Cernica", localitate: "Pantelimon", judet: "Ilfov" },
+  { nume: "Manastirea Pasarea", localitate: "Branesti", judet: "Ilfov" },
+  { nume: "Manastirea Caldarusani", localitate: "Gruiu", judet: "Ilfov" },
+  { nume: "Manastirea Snagov", localitate: "Snagov", judet: "Ilfov" },
+  { nume: "Manastirea Caraiman", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Manastirea Ghighiu", localitate: "Barcanesti", judet: "Prahova" },
+  { nume: "Manastirea Sinaia", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Manastirea Zamfira", localitate: "Lipanesti", judet: "Prahova" },
+  { nume: "Manastirea Crasna", localitate: "Crasna", judet: "Prahova" },
+  { nume: "Manastirea Ciolanu", localitate: "Tisau", judet: "Buzau" },
+  { nume: "Manastirea Frasinei", localitate: "Muereasca", judet: "Vâlcea" },
+  { nume: "Biserica Neagra", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Biserica Sfantul Nicolae", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Catedrala Evanghelica Ciriac", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Catedrala Mitopolitana Ortodoxa", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Biserica Sfantul Mihail", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Catedrala Mitropolitana Ortodoxa", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Catedrala Romano-Catolica Sfantul Mihail", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Catedrala Incoronarii", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Catedrala Mitropolitana", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Catedrala Mitropolitana", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Biserica Fortificata Viscri (UNESCO)", localitate: "Viscri", judet: "Brasov" },
+  { nume: "Biserica Fortificata Prejmer (UNESCO)", localitate: "Prejmer", judet: "Brasov" },
+  { nume: "Biserica Fortificata Biertan (UNESCO)", localitate: "Biertan", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Saschiz (UNESCO)", localitate: "Saschiz", judet: "Mures" },
+  { nume: "Biserica Fortificata Darjiu (UNESCO)", localitate: "Darjiu", judet: "Harghita" },
+  { nume: "Biserica Fortificata Calnic (UNESCO)", localitate: "Calnic", judet: "Alba" },
+  { nume: "Biserica Fortificata Valea Viilor (UNESCO)", localitate: "Valea Viilor", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Harman", localitate: "Harman", judet: "Brasov" },
+  { nume: "Biserica Fortificata Cristian", localitate: "Cristian", judet: "Brasov" },
+  { nume: "Biserica Fortificata Codlea", localitate: "Codlea", judet: "Brasov" },
+  { nume: "Biserica Fortificata Bod", localitate: "Bod", judet: "Brasov" },
+  { nume: "Biserica Fortificata Vulcan", localitate: "Vulcan", judet: "Brasov" },
+  { nume: "Biserica Fortificata Sanpetru", localitate: "Sanpetru", judet: "Brasov" },
+  { nume: "Biserica Fortificata Cisnadioara", localitate: "Cisnadioara", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Cisnadie", localitate: "Cisnadie", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Cristian", localitate: "Cristian", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Axente Sever", localitate: "Axente Sever", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Medias (Castelul Margarete)", localitate: "Medias", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Agnita", localitate: "Agnita", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Moardas", localitate: "Moardas", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Richis", localitate: "Richis", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Alma Vii", localitate: "Alma Vii", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Bazna", localitate: "Bazna", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Hosman", localitate: "Hosman", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Dealu Frumos", localitate: "Dealu Frumos", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Stejarisu", localitate: "Stejarisu", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Iacobeni", localitate: "Iacobeni", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Carta (Abatia Cisterciana)", localitate: "Carta", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Apold", localitate: "Apold", judet: "Mures" },
+  { nume: "Biserica Fortificata Archita", localitate: "Archita", judet: "Mures" },
+  { nume: "Biserica Fortificata Cloasterf", localitate: "Cloasterf", judet: "Mures" },
+  { nume: "Biserica Fortificata Danes", localitate: "Danes", judet: "Mures" },
+  { nume: "Biserica Fortificata Nades", localitate: "Nades", judet: "Mures" },
+  { nume: "Biserica Fortificata Bagaciu", localitate: "Bagaciu", judet: "Mures" },
+  { nume: "Biserica Fortificata Aiud", localitate: "Aiud", judet: "Alba" },
+  { nume: "Cimitirul Vesel", localitate: "Sapanta", judet: "Maramures" },
+  { nume: "Cimitirul Central (Hajongard)", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Cimitirul Bellu", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cimitirul Evreiesc", localitate: "Siret", judet: "Suceava" },
+  { nume: "Cimitirul International al Eroilor", localitate: "Valea Uzului", judet: "Harghita" },
+  { nume: "Sfinxul si Babele", localitate: "Muntii Bucegi", judet: "Prahova" },
+  { nume: "Pestera Scarisoara (Ghetarul)", localitate: "Garda de Sus", judet: "Alba" },
+  { nume: "Pestera Ursilor", localitate: "Chiscau", judet: "Bihor" },
+  { nume: "Pestera Muierilor", localitate: "Baia de Fier", judet: "Gorj" },
+  { nume: "Pestera Polovragi", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Pestera Dambovicioara", localitate: "Dambovicioara", judet: "Arges" },
+  { nume: "Pestera Meziad", localitate: "Meziad", judet: "Bihor" },
+  { nume: "Pestera Vantului", localitate: "Suncuius", judet: "Bihor" },
+  { nume: "Pestera Crystal din Mina Farcu", localitate: "Rosia", judet: "Bihor" },
+  { nume: "Pestera Limanu", localitate: "Limanu", judet: "Constanta" },
+  { nume: "Pestera Hodos (Gura Dobrogei)", localitate: "Targusor", judet: "Constanta" },
+  { nume: "Pestera Sfantului Ioan Casian", localitate: "Targusor", judet: "Constanta" },
+  { nume: "Pestera Ialomitei", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Pestera Bolii", localitate: "Petrosani", judet: "Hunedoara" },
+  { nume: "Pestera Comarnic", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Pestera Popovât", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Pestera Veterani", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Pestera Ponicova", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Pestera Topolnita", localitate: "Ciresu", judet: "Mehedinti" },
+  { nume: "Pestera Sugau", localitate: "Voslabeni", judet: "Harghita" },
+  { nume: "Pestera Valea Cetatii", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Vulcanii Noroiosi (Paclele Mari si Mici)", localitate: "Berca", judet: "Buzau" },
+  { nume: "Gradina Zmeilor", localitate: "Galgau Almasului", judet: "Salaj" },
+  { nume: "Detunatele (Detunata Goala si Detunata Flocoasa)", localitate: "Bucium", judet: "Alba" },
+  { nume: "Rapa Rosie", localitate: "Sebes", judet: "Alba" },
+  { nume: "Cheile Turzii", localitate: "Petrestii de Jos", judet: "Cluj" },
+  { nume: "Cheile Bicazului", localitate: "Bicaz-Chei, Judetele Neamt / Harghita", judet: "Neamt" },
+  { nume: "Cheile Nerei", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Cheile Carasului", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Cheile Sohodolului", localitate: "Runcu", judet: "Gorj" },
+  { nume: "Cheile Oltetului", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Cheile Tisitei", localitate: "Tulnici", judet: "Vrancea" },
+  { nume: "Cheile Zanoagei", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Cheile Rametului", localitate: "Ramet", judet: "Alba" },
+  { nume: "Cheile Gradistei", localitate: "Moieciu", judet: "Brasov" },
+  { nume: "Cheile Rasnoavei", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cascada Bigar", localitate: "Bozovici", judet: "Caras-Severin" },
+  { nume: "Cascada Cailor", localitate: "Borsa", judet: "Maramures" },
+  { nume: "Cascada Beusnita", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Cascada Duruitoarea", localitate: "Ceahlau", judet: "Neamt" },
+  { nume: "Cascada Balea", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Cascada Valul Miresei", localitate: "Rachitele", judet: "Cluj" },
+  { nume: "Cascada Urlatoarea", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Cascada Putnei", localitate: "Tulnici", judet: "Vrancea" },
+  { nume: "Cascada Lotrisor", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Cascada Scorus", localitate: "Malaia", judet: "Vâlcea" },
+  { nume: "Cascada Ciucas", localitate: "Mihai Viteazu", judet: "Cluj" },
+  { nume: "Lacul Rosu", localitate: "Lacu Rosu", judet: "Harghita" },
+  { nume: "Lacul Sfanta Ana", localitate: "Bixad", judet: "Harghita" },
+  { nume: "Lacul Bâlea", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Lacul Bucura", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Lacul Zanoaga", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Lacul Ochiul Beiului", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Lacul Dracului", localitate: "Carbunari", judet: "Caras-Severin" },
+  { nume: "Lacul Vidraru", localitate: "Arefu", judet: "Arges" },
+  { nume: "Lacul Izvorul Muntelui (Bicaz)", localitate: "Bicaz", judet: "Neamt" },
+  { nume: "Lacul Colibita", localitate: "Colibita", judet: "Bistrita-Nasaud" },
+  { nume: "Lacul Iezer", localitate: "Muntii Rodnei", judet: "Maramures" },
+  { nume: "Lacul Albastru", localitate: "Baia Sprie", judet: "Maramures" },
+  { nume: "Lacul Siriu", localitate: "Siriu", judet: "Buzau" },
+  { nume: "Lacul Razim-Sinoe", localitate: "Jurilovca", judet: "Tulcea" },
+  { nume: "Focul Viu de la Andreiasu de Jos", localitate: "Andreiasu de Jos", judet: "Vrancea" },
+  { nume: "Focurile Vii de la Lopatari", localitate: "Lopatari", judet: "Buzau" },
+  { nume: "Cazanele Dunarii (Mari si Mici)", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Chipul lui Decebal", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Podul lui Dumnezeu", localitate: "Ponoarele", judet: "Mehedinti" },
+  { nume: "Padurea Letea", localitate: "C.A. Rosetti", judet: "Tulcea" },
+  { nume: "Padurea Caraorman", localitate: "Crisan", judet: "Tulcea" },
+  { nume: "Gradina Botanica „Alexandru Borza”", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Gradina Botanica „Anastasie Fatu”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Gradina Botanica „Dimitrie Brândza”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Gradina Botanica Jibou", localitate: "Jibou", judet: "Salaj" },
+  { nume: "Gradina Botanica Bucov", localitate: "Bucov", judet: "Prahova" },
+  { nume: "Delta Dunarii (Rezervatie Biosfera)", localitate: "Judetul Tulcea", judet: "Tulcea" },
+  { nume: "Parcul National Retezat", localitate: "Judetul Hunedoara", judet: "Hunedoara" },
+  { nume: "Parcul National Piatra Craiului", localitate: "Zarnesti", judet: "Brasov" },
+  { nume: "Parcul National Cheile Nerei-Beusnita", localitate: "Judetul Caras-Severin", judet: "Caras-Severin" },
+  { nume: "Parcul National Ceahlau", localitate: "Izvoru Muntelui", judet: "Neamt" },
+  { nume: "Parcul National Cozia", localitate: "Brezoi", judet: "Vâlcea" },
+  { nume: "Sfinxul din Banat", localitate: "Toplet", judet: "Caras-Severin" },
+  { nume: "Transfagarasan (Soseaua DN7C)", localitate: "Judetele Arges / Sibiu", judet: "Arges" },
+  { nume: "Transalpina (Soseaua DN67C)", localitate: "Judetele Gorj / Alba", judet: "Gorj" },
+  { nume: "Transbucegi (Soseaua DJ713)", localitate: "Judetele Dambovita / Prahova", judet: "Dambovita" },
+  { nume: "Transrarau (Soseaua DJ175B)", localitate: "Pojorata / Chiril", judet: "Suceava" },
+  { nume: "Transursoaia (Soseaua DN1R)", localitate: "Albac / Huedin, Judetele Alba / Cluj", judet: "Alba" },
+  { nume: "Transsemenic (Soseaua DJ582)", localitate: "Slatina-Timis / Resita", judet: "Caras-Severin" },
+  { nume: "Pasul Tihuta", localitate: "Piatra Fantanele", judet: "Bistrita-Nasaud" },
+  { nume: "Pasul Prislop", localitate: "Borsa", judet: "Maramures" },
+  { nume: "Mocanita de pe Valea Vaserului", localitate: "Viseu de Sus", judet: "Maramures" },
+  { nume: "Mocanita Hutulca", localitate: "Moldovita", judet: "Suceava" },
+  { nume: "Mocanita Apusenilor", localitate: "Abrud", judet: "Alba" },
+  { nume: "Calea Ferata Oravita-Anina", localitate: "Oravita", judet: "Caras-Severin" },
+  { nume: "Podul Anghel Saligny", localitate: "Cernavoda", judet: "Constanta" },
+  { nume: "Canalul Dunare-Marea Neagra", localitate: "Judetul Constanta", judet: "Constanta" },
+  { nume: "Barajul Vidraru", localitate: "Arefu", judet: "Arges" },
+  { nume: "Barajul Bicaz", localitate: "Bicaz", judet: "Neamt" },
+  { nume: "Barajul Portile de Fier I", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Barajul Gura Apelor", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Barajul Paltinu", localitate: "Valea Doftanei", judet: "Prahova" },
+  { nume: "Barajul Bolboci", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Salina Ocnele Mari", localitate: "Ocnele Mari", judet: "Vâlcea" },
+  { nume: "Salina Cacica", localitate: "Cacica", judet: "Suceava" },
+  { nume: "Telegondola Mamaia", localitate: "Mamaia", judet: "Constanta" },
+  { nume: "Telecabina Bâlea Lac", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Telecabina Busteni-Babele", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Telecabina Sinaia", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Funicularul din Resita", localitate: "Resita", judet: "Caras-Severin" },
+  { nume: "Portul Turistic Tomis", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Faleza Dunarii", localitate: "Galati", judet: "Galati" },
+  { nume: "Faleza Dunarii", localitate: "Braila", judet: "Braila" },
+  { nume: "Muzeul Recordurilor Romanesti", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Hartilor si Cartii Vechi", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National de Artă Contemporana (MNAC)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Literaturii Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National Filatelic", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Municipiului Bucuresti (Palatul Sutu)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National Tehnic „Dimitrie Leonida”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Aviatiei Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Cailor Ferate Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Kitsch-ului Romanesc", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National „George Enescu”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Theodor Pallady", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Zambaccian", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul de Arta „Vasile Grigore”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Casa Memoriala „Tudor Arghezi", localitate: "Martisor” – Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Satului Maramuresean", localitate: "Sighetu Marmatiei", judet: "Maramures" },
+  { nume: "Muzeul Satului Banatean", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Muzeul Satului Bucovinean", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Muzeul ASTRA (Civilizatiei Populare Traditionale)", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul Etnografic al Transilvaniei", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Muzeul Tarii Crisurilor", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Muzeul Regiunii Portilor de Fier", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Muzeul Olteniei", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Muzeul Ceasului „Nicolae Simache”", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Muzeul National al Petrolului", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Muzeul Judetean de Istorie si Arheologie", localitate: "Prahova", judet: "Prahova" },
+  { nume: "Muzeul Chihlimbarului", localitate: "Colti", judet: "Buzau" },
+  { nume: "Muzeul National al Carpatilor Rasariteni", localitate: "Sfântu Gheorghe", judet: "Covasna" },
+  { nume: "Muzeul Secuiesc al Ciucului", localitate: "Miercurea Ciuc", judet: "Harghita" },
+  { nume: "Muzeul de Arta Comparata", localitate: "Sângeorz-Bai", judet: "Bistrita-Nasaud" },
+  { nume: "Muzeul Memorial „Octavian Goga”", localitate: "Ciucea", judet: "Cluj" },
+  { nume: "Muzeul Memorial „Ioan Slavici si Emil Montia”", localitate: "Siria", judet: "Arad" },
+  { nume: "Muzeul Aurului", localitate: "Brad", judet: "Hunedoara" },
+  { nume: "Muzeul Mineritului", localitate: "Petrosani", judet: "Hunedoara" },
+  { nume: "Muzeul Judetean de Istorie", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul Casa Muresenilor", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul Primei Scoli Romanesti", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul National al Unirii", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Muzeul de Istorie a Farmaciei", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul de Istorie Naturala", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul Cinegetic", localitate: "Posada", judet: "Prahova" },
+  { nume: "Muzeul Etnografic Samuil si Eugenia Ionel", localitate: "Radauti", judet: "Suceava" },
+  { nume: "Muzeul Oului", localitate: "Vama", judet: "Suceava" },
+  { nume: "Muzeul Oului Încondeiat Lucia Condrea", localitate: "Moldovita", judet: "Suceava" },
+  { nume: "Muzeul Arta Lemnului", localitate: "Câmpulung Moldovenesc", judet: "Suceava" },
+  { nume: "Muzeul Apelor „Mihai Bacescu”", localitate: "Falticeni", judet: "Suceava" },
+  { nume: "Muzeul Popa (Arta Naiva)", localitate: "Tarpesti", judet: "Neamt" },
+  { nume: "Muzeul de Istorie si Etnografie", localitate: "Targu Neamt", judet: "Neamt" },
+  { nume: "Muzeul Vasile Pârvan", localitate: "Bârlad", judet: "Vaslui" },
+  { nume: "Muzeul Municipal", localitate: "Husi", judet: "Vaslui" },
+  { nume: "Muzeul de Istorie „Paul Paltanea”", localitate: "Galati", judet: "Galati" },
+  { nume: "Muzeul de Stiinte ale Naturii", localitate: "Galati", judet: "Galati" },
+  { nume: "Muzeul Brailei „Carol I”", localitate: "Braila", judet: "Braila" },
+  { nume: "Muzeul de Istorie Nationala si Arheologie", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul de Arta Populara", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul Marinei Romane", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Edificiul Roman cu Mozaic", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul Farului", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Centrul Eco-Turism Delta Dunarii", localitate: "Tulcea", judet: "Tulcea" },
+  { nume: "Muzeul de Istorie si Arheologie", localitate: "Tulcea", judet: "Tulcea" },
+  { nume: "Ateneul Roman", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Arcul de Triumf", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cazinoul din Constanta", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Teatrul National „Vasile Alecsandri”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Teatrul National „Mihai Eminescu”", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Teatrul National Cluj-Napoca", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Teatrul National „Radu Stanca”", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Teatrul National Targu Mures", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Teatrul National „Marin Sorescu”", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Teatrul Clasic „Ioan Slavici”", localitate: "Arad", judet: "Arad" },
+  { nume: "Teatrul de Stat", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Opera Nationala Bucuresti", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Opera Nationala Romana", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Opera Nationala Romana", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Opera Nationala Romana", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Piata Sfatului", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Piata Mare", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Mica (Podul Minciunilor)", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Huet", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Unirii", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Piata Muzeului", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Piata Unirii", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Victoriei (Operei)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Libertatii", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Unirii", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Piata Avram Iancu", localitate: "Arad", judet: "Arad" },
+  { nume: "Piata Revolutiei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Piata Universitatii", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Piata Unirii", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Cazinoul Vatra Dornei", localitate: "Vatra Dornei", judet: "Suceava" },
+  { nume: "Palatul Prefecturii", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Palatul Comunal", localitate: "Buzau", judet: "Buzau" },
+  { nume: "Cladirea Universitatii", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cladirea Universitatii „Alexandru Ioan Cuza”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Cladirea Universitatii Babes-Bolyai", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Palatul Culturii", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Complexul Monumental Memorial Drobeta", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Monumentul Eroilor Patriei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Crucea Eroilor de pe Vârful Caraiman", localitate: "Muntii Bucegi", judet: "Prahova" },
+  { nume: "Mausoleul de la Marasesti", localitate: "Marasesti", judet: "Vrancea" },
+  { nume: "Mausoleul de la Marasti", localitate: "Marasti", judet: "Vrancea" },
+  { nume: "Mausoleul de la Soveja", localitate: "Soveja", judet: "Vrancea" },
+  { nume: "Mausoleul Mateias", localitate: "Valea Mare-Pravat", judet: "Arges" },
+  { nume: "Memorialul Victimelor Comunismului si al Rezistentei", localitate: "Sighetu Marmatiei", judet: "Maramures" },
+  { nume: "Inchisoarea Pitesti (Memorial)", localitate: "Pitesti", judet: "Arges" },
+  { nume: "Inchisoarea Râmnicu Sărat (Memorial)", localitate: "Râmnicu Sărat", judet: "Buzău" },
+  { nume: "Monumentul Revolutiei", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Farul Vechi", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Farul Genovez", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Moscheea Carol I", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Sinagoga Mare", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Sinagoga din Sion", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Templul Coral", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Sinagoga Mare", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Biserica de Piatra Sfantul Mihail", localitate: "Densus", judet: "Hunedoara" },
+  { nume: "Ansamblul Rupestru de la Murfatlar", localitate: "Murfatlar", judet: "Constanta" },
+  { nume: "Complexul Rupestru Alunis", localitate: "Colti", judet: "Buzau" },
+  { nume: "Rezervația de Zimbri „Dragos Voda”", localitate: "Vânători-Neamt", judet: "Neamt" },
+  { nume: "Rezervația de Zimbri Vama Buzaului", localitate: "Vama Buzaului", judet: "Brasov" },
+  { nume: "Rezervația de Zimbri „Neagra”", localitate: "Bucsani", judet: "Dâmbovița" },
+];
+
+// Vecinătatea reală a județelor României (geografie administrativă,
+// verificată) — folosită DOAR ca să lărgim puțin selecția când județul cerut
+// are prea puține obiective proprii; niciodată ca să inventăm date turistice.
+const JUDET_NEIGHBORS = {
+  "Alba": ["Cluj", "Mures", "Harghita", "Sibiu", "Valcea", "Hunedoara", "Bihor", "Arad"],
+  "Arad": ["Bihor", "Cluj", "Alba", "Hunedoara", "Timis"],
+  "Arges": ["Valcea", "Sibiu", "Brasov", "Dambovita", "Teleorman", "Olt"],
+  "Bacau": ["Neamt", "Harghita", "Covasna", "Vrancea", "Vaslui", "Iasi"],
+  "Bihor": ["Satu Mare", "Salaj", "Cluj", "Arad"],
+  "Bistrita-Nasaud": ["Maramures", "Suceava", "Mures", "Cluj", "Salaj"],
+  "Botosani": ["Iasi", "Suceava"],
+  "Brasov": ["Covasna", "Harghita", "Mures", "Sibiu", "Arges", "Dambovita", "Prahova", "Buzau"],
+  "Braila": ["Galati", "Vrancea", "Buzau", "Ialomita", "Tulcea"],
+  "Buzau": ["Vrancea", "Braila", "Ialomita", "Prahova", "Brasov", "Covasna"],
+  "Caras-Severin": ["Timis", "Hunedoara", "Gorj", "Mehedinti"],
+  "Calarasi": ["Ialomita", "Constanta", "Giurgiu"],
+  "Cluj": ["Salaj", "Maramures", "Bistrita-Nasaud", "Mures", "Alba", "Bihor"],
+  "Constanta": ["Tulcea", "Ialomita", "Calarasi"],
+  "Covasna": ["Harghita", "Brasov", "Buzau", "Vrancea"],
+  "Dambovita": ["Arges", "Brasov", "Prahova", "Giurgiu", "Teleorman"],
+  "Dolj": ["Gorj", "Valcea", "Olt", "Mehedinti"],
+  "Galati": ["Vrancea", "Braila", "Vaslui", "Tulcea"],
+  "Giurgiu": ["Teleorman", "Dambovita", "Ilfov", "Calarasi"],
+  "Gorj": ["Valcea", "Dolj", "Mehedinti", "Hunedoara", "Caras-Severin"],
+  "Harghita": ["Mures", "Neamt", "Bacau", "Covasna", "Brasov"],
+  "Hunedoara": ["Alba", "Arad", "Timis", "Caras-Severin", "Gorj", "Valcea"],
+  "Ialomita": ["Prahova", "Buzau", "Braila", "Calarasi", "Constanta"],
+  "Iasi": ["Botosani", "Suceava", "Neamt", "Vaslui"],
+  "Ilfov": ["Bucuresti", "Prahova", "Dambovita", "Giurgiu", "Calarasi", "Ialomita"],
+  "Maramures": ["Satu Mare", "Salaj", "Bistrita-Nasaud", "Suceava"],
+  "Mehedinti": ["Gorj", "Dolj", "Caras-Severin"],
+  "Mures": ["Bistrita-Nasaud", "Cluj", "Alba", "Sibiu", "Brasov", "Harghita"],
+  "Neamt": ["Suceava", "Iasi", "Bacau", "Harghita"],
+  "Olt": ["Valcea", "Arges", "Teleorman", "Dolj"],
+  "Prahova": ["Buzau", "Brasov", "Dambovita", "Ilfov", "Ialomita"],
+  "Salaj": ["Satu Mare", "Maramures", "Cluj", "Bihor", "Bistrita-Nasaud"],
+  "Satu Mare": ["Maramures", "Salaj", "Bihor"],
+  "Sibiu": ["Alba", "Mures", "Brasov", "Valcea", "Arges"],
+  "Suceava": ["Maramures", "Bistrita-Nasaud", "Neamt", "Iasi", "Botosani"],
+  "Teleorman": ["Olt", "Arges", "Dambovita", "Giurgiu"],
+  "Timis": ["Arad", "Hunedoara", "Caras-Severin"],
+  "Tulcea": ["Constanta", "Braila", "Galati"],
+  "Valcea": ["Gorj", "Hunedoara", "Sibiu", "Arges", "Olt", "Dolj"],
+  "Vaslui": ["Iasi", "Bacau", "Vrancea", "Galati"],
+  "Vrancea": ["Bacau", "Vaslui", "Galati", "Braila", "Buzau", "Covasna"],
+  "Bucuresti": ["Ilfov"],
+};
+
+// normalizează un nume de județ/oraș pentru comparare (fără diacritice, minuscule)
+function normalizeJudetInput(s) {
+  return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+// index localitate -> județ, construit o singură dată, din datele deja
+// existente (OBIECTIVE_ITINERAR) — acoperă orașele care apar în lista de
+// obiective; pentru orice alt oraș, cădem pe SITEMAP_CITIES + CITY_COORDS,
+// unde nu avem județ direct, deci recunoaștem doar ce apare deja aici
+const LOCALITATE_TO_JUDET = {};
+OBIECTIVE_ITINERAR.forEach((o) => {
+  const key = normalizeJudetInput(o.localitate);
+  if (key && !LOCALITATE_TO_JUDET[key]) LOCALITATE_TO_JUDET[key] = o.judet;
+});
+const ALL_JUDETE_NORMALIZED = {};
+Object.keys(JUDET_NEIGHBORS).forEach((j) => { ALL_JUDETE_NORMALIZED[normalizeJudetInput(j)] = j; });
+
+// găsește județul unui input scris de utilizator — încearcă întâi potrivire
+// directă cu un județ, apoi cu o localitate cunoscută din lista de obiective
+function detecteazaJudet(orasInput) {
+  const norm = normalizeJudetInput(orasInput);
+  if (!norm) return null;
+  if (ALL_JUDETE_NORMALIZED[norm]) return ALL_JUDETE_NORMALIZED[norm];
+  if (LOCALITATE_TO_JUDET[norm]) return LOCALITATE_TO_JUDET[norm];
+  // potrivire parțială — "cluj" găsește "Cluj-Napoca" dacă apare ca localitate
+  const partialLocalitate = Object.keys(LOCALITATE_TO_JUDET).find((k) => k.includes(norm) || norm.includes(k));
+  if (partialLocalitate) return LOCALITATE_TO_JUDET[partialLocalitate];
+  const partialJudet = Object.keys(ALL_JUDETE_NORMALIZED).find((k) => k.includes(norm) || norm.includes(k));
+  if (partialJudet) return ALL_JUDETE_NORMALIZED[partialJudet];
+  return null;
+}
+
+// Filtrare locală — NU trimitem toate cele 500 către OpenAI. Găsim județul
+// cerut, luăm obiectivele din el; dacă sunt prea puține (sub 12, insuficient
+// pentru un itinerar pe mai multe zile), completăm cu județele vecine, în
+// ordine, până avem suficiente. Limită tare la 70 de linii trimise către AI —
+// suficient pentru orice itinerar rezonabil, ține promptul mic și ieftin.
+const MAX_OBIECTIVE_PROMPT = 70;
+const MIN_OBIECTIVE_UTILE = 12;
+function filtreazaObiectivePentruOras(orasInput) {
+  const judetPrincipal = detecteazaJudet(orasInput);
+  if (!judetPrincipal) return { judet: null, obiective: [] };
+
+  const dejaAdaugate = new Set();
+  const rezultat = [];
+  function adauga(judet) {
+    OBIECTIVE_ITINERAR.forEach((o) => {
+      if (o.judet === judet && !dejaAdaugate.has(o.nume)) {
+        dejaAdaugate.add(o.nume);
+        rezultat.push(o);
+      }
+    });
+  }
+
+  adauga(judetPrincipal);
+  if (rezultat.length < MIN_OBIECTIVE_UTILE) {
+    const vecini = JUDET_NEIGHBORS[judetPrincipal] || [];
+    for (const v of vecini) {
+      if (rezultat.length >= MAX_OBIECTIVE_PROMPT) break;
+      adauga(v);
+    }
+  }
+
+  return { judet: judetPrincipal, obiective: rezultat.slice(0, MAX_OBIECTIVE_PROMPT) };
+}
+
+// promptul trimis către OpenAI — cerem explicit format JSON, structură fixă,
+// ca frontend-ul să poată randa direct, fără parsare fragilă de text liber
+function buildItineraryPrompt(oras, zile, obiective) {
+  const listaText = obiective.map((o) => `- ${o.nume} (${o.localitate})`).join("\n");
+  return `Ești un ghid turistic român, expert în România. Creează un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras}.
+
+Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici:
+${listaText}
+
+Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, în română.
+
+Răspunde STRICT în acest format JSON, fără text în afara JSON-ului:
+{
+  "oras": "${oras}",
+  "zile": [
+    {
+      "ziua": 1,
+      "titlu": "un titlu scurt și atractiv pentru ziua respectivă",
+      "dimineata": [{ "nume": "...", "descriere": "..." }],
+      "pranz": [{ "nume": "...", "descriere": "..." }],
+      "seara": [{ "nume": "...", "descriere": "..." }]
+    }
+  ]
+}`;
+}
+
+app.post("/api/genereaza-itinerar", async (req, res) => {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+  if (!OPENAI_API_KEY) {
+    res.status(503).json({ error: "not_configured", message: "Lipsește OPENAI_API_KEY din variabilele de mediu." });
+    return;
+  }
+
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 15, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
+  const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
+  let zile = Number(req.body?.zile);
+  if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
+  if (!Number.isFinite(zile) || zile < 1) zile = 1;
+  if (zile > 7) zile = 7; // limită sensibilă — un itinerar de 7+ zile cu date filtrate local nu mai are sens practic
+
+  const { judet, obiective } = filtreazaObiectivePentruOras(oras);
+  if (!judet || !obiective.length) {
+    res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
+    return;
+  }
+
+  const prompt = buildItineraryPrompt(oras, zile, obiective);
+
+  try {
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!openaiRes.ok) {
+      const errText = await openaiRes.text().catch(() => "");
+      console.error("OpenAI a răspuns cu eroare:", openaiRes.status, errText.slice(0, 300));
+      res.status(502).json({ error: "openai_error", message: "Generarea a eșuat. Încearcă din nou." });
+      return;
+    }
+
+    const data = await openaiRes.json();
+    const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!rawContent) {
+      res.status(502).json({ error: "openai_empty_response" });
+      return;
+    }
+
+    let itinerar;
+    try {
+      itinerar = JSON.parse(rawContent);
+    } catch (e) {
+      console.error("Răspunsul OpenAI nu era JSON valid:", rawContent.slice(0, 300));
+      res.status(502).json({ error: "invalid_json_from_ai" });
+      return;
+    }
+
+    res.status(200).json(itinerar);
+  } catch (err) {
+    console.error("genereaza-itinerar a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Pagină frontend — formular simplu + randare carduri pe zile. Cod separat,
+// autonom (fără dependențe de restul paginii), exact cum a fost cerut.
+function renderItineraryPage(nonce, baseUrl) {
+  const title = "Creează un itinerar turistic — Programul de Azi";
+  const description = "Generează automat un itinerar turistic pe zile, pentru orice oraș din România, din cele 500 de obiective verificate.";
+  const canonical = `${baseUrl}/itinerar`;
+
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / Creează itinerar</p>
+  <h1 class="page-h1">🗺️ Creează-ți itinerarul</h1>
+  <p class="intro-text">Spune-ne orașul sau județul și câte zile ai la dispoziție — construim un traseu logic, din obiectivele turistice verificate pe care le avem deja.</p>
+
+  <form id="itineraryForm" class="city-search-form" style="flex-direction:column;gap:12px;align-items:stretch">
+    <input type="text" id="itinOras" class="city-search-input" placeholder="Oraș sau județ (ex: Brașov, Sibiu, Maramureș)" required>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label for="itinZile" style="font-size:14px;color:var(--muted);white-space:nowrap">Număr de zile:</label>
+      <select id="itinZile" class="city-search-input" style="flex:0 0 90px">
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <button type="submit" id="itinSubmitBtn" class="geo-btn" style="margin:0">Generează itinerarul</button>
+  </form>
+
+  <div id="itinLoading" style="display:none;text-align:center;margin:24px 18px;color:var(--muted);font-family:var(--font-display);font-weight:600">
+    <div style="font-size:28px;margin-bottom:10px">🧭</div>
+    <div id="itinLoadingText">Se calculează traseul...</div>
+  </div>
+
+  <div id="itinError" class="geo-country-highlight" style="display:none;border-color:#DC2626"></div>
+
+  <div id="itinResults"></div>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> — itinerarii generate automat, din obiectivele turistice verificate deja de noi. Verifică mereu programul live al fiecărui loc înainte de vizită.</p>
+  </footer>
+</main>
+<style nonce="${nonce}">
+  .itin-day-card{margin:20px 18px 0;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:20px;}
+  .itin-day-title{font-family:var(--font-display);font-weight:800;font-size:18px;margin-bottom:14px;color:var(--accent);}
+  .itin-interval-label{font-family:var(--font-display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:14px 0 8px;}
+  .itin-interval-label:first-of-type{margin-top:0;}
+  .itin-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:8px;}
+  .itin-item-name{font-weight:700;font-size:14.5px;margin-bottom:4px;}
+  .itin-item-desc{font-size:13.5px;color:var(--muted);line-height:1.5;}
+</style>
+<script nonce="${nonce}">
+(function(){
+  var form = document.getElementById("itineraryForm");
+  var loading = document.getElementById("itinLoading");
+  var loadingText = document.getElementById("itinLoadingText");
+  var errorBox = document.getElementById("itinError");
+  var results = document.getElementById("itinResults");
+  var submitBtn = document.getElementById("itinSubmitBtn");
+
+  var LOADING_MESSAGES = ["Se calculează traseul...", "Verificăm obiectivele din zonă...", "Aranjăm zilele logic...", "Aproape gata..."];
+  var loadingInterval = null;
+
+  function escapeHtml(s){
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : String(s);
+    return d.innerHTML;
+  }
+
+  function renderItems(items){
+    if (!items || !items.length) return "";
+    return items.map(function(it){
+      return '<div class="itin-item"><div class="itin-item-name">' + escapeHtml(it.nume) + '</div><div class="itin-item-desc">' + escapeHtml(it.descriere) + '</div></div>';
+    }).join("");
+  }
+
+  function renderItinerary(data){
+    results.innerHTML = "";
+    if (!data || !Array.isArray(data.zile)) {
+      errorBox.textContent = "Răspuns neașteptat. Încearcă din nou.";
+      errorBox.style.display = "block";
+      return;
+    }
+    var html = data.zile.map(function(zi){
+      var morningHtml = renderItems(zi.dimineata);
+      var lunchHtml = renderItems(zi.pranz);
+      var eveningHtml = renderItems(zi.seara);
+      return '<div class="itin-day-card">' +
+        '<div class="itin-day-title">Ziua ' + escapeHtml(zi.ziua) + (zi.titlu ? ' — ' + escapeHtml(zi.titlu) : '') + '</div>' +
+        (morningHtml ? '<div class="itin-interval-label">🌅 Dimineața</div>' + morningHtml : '') +
+        (lunchHtml ? '<div class="itin-interval-label">🍽️ Prânz</div>' + lunchHtml : '') +
+        (eveningHtml ? '<div class="itin-interval-label">🌙 Seara</div>' + eveningHtml : '') +
+        '</div>';
+    }).join("");
+    results.innerHTML = html;
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var oras = document.getElementById("itinOras").value.trim();
+    var zile = document.getElementById("itinZile").value;
+    if (!oras) return;
+
+    errorBox.style.display = "none";
+    results.innerHTML = "";
+    submitBtn.disabled = true;
+    loading.style.display = "block";
+    var msgIdx = 0;
+    loadingText.textContent = LOADING_MESSAGES[0];
+    loadingInterval = setInterval(function(){
+      msgIdx = (msgIdx + 1) % LOADING_MESSAGES.length;
+      loadingText.textContent = LOADING_MESSAGES[msgIdx];
+    }, 1800);
+
+    fetch("/api/genereaza-itinerar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ oras: oras, zile: Number(zile) }),
+    })
+      .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
+      .then(function(res){
+        clearInterval(loadingInterval);
+        loading.style.display = "none";
+        submitBtn.disabled = false;
+        if (!res.ok) {
+          errorBox.textContent = (res.data && res.data.message) || "Nu am putut genera itinerarul. Încearcă din nou.";
+          errorBox.style.display = "block";
+          return;
+        }
+        renderItinerary(res.data);
+      })
+      .catch(function(){
+        clearInterval(loadingInterval);
+        loading.style.display = "none";
+        submitBtn.disabled = false;
+        errorBox.textContent = "A apărut o eroare de rețea. Încearcă din nou.";
+        errorBox.style.display = "block";
+      });
+  });
+})();
+</script>`;
+
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+}
+
+app.get("/itinerar", (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = renderItineraryPage(nonce, baseUrlFor(req));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
 
 module.exports = app;
