@@ -7263,7 +7263,7 @@ function buildSmartInstallScript(nonce, lang) {
   // browser intern, complet diferit de Safari, deși mulți cred că-i "Chrome"),
   // plus browserele integrate din aplicații (Facebook, Instagram, Messenger,
   // Google) care se deschid ca un "mini-browser" în interiorul aplicației.
-  function isIOSSafari(){ return isIOS() && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line\/|MicroMessenger/i.test(ua); }
+  function isIOSSafari(){ return isIOS() && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line\\/|MicroMessenger/i.test(ua); }
 
   var banner = document.getElementById("installBanner");
   var overlay = document.getElementById("installOverlay");
