@@ -7506,12 +7506,19 @@ const HOMEPAGE_FOOTER_TEXTS = {
   "ee": "näitab sulle reaalajas, kas suured poed ja vaatamisväärsused kogu Euroopas on praegu avatud, samuti täielikke nädala- ja pühadeaegseid lahtiolekuaegu — otsi, sirvi riigi järgi või salvesta oma lemmikud järgmiseks korraks."
 };
 
-function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang) {
+function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, primaryCountry) {
   const favEmptyText = FAV_EMPTY_TEXTS[lang] || FAV_EMPTY_TEXTS.uk;
+  // decisă O SINGURĂ DATĂ, pe server, care listă chiar se trimite — niciodată
+  // ambele deodată (ar fi dublat exact bug-ul de greutate a paginii, reparat
+  // mai devreme). FIX real, găsit prin testare: "[] || X" e mereu adevărat în
+  // JS (un array gol tot e "truthy"), deci vechiul fallback pe buildSearchIndex()
+  // nu se activa NICIODATĂ — căutarea globală de pe .eu întorcea mereu 0 rezultate.
+  const effectiveIndex = customSearchIndex && customSearchIndex.length ? customSearchIndex : buildSearchIndex();
   return `
 <script nonce="${nonce}">
 (function(){
-  var SEARCH_INDEX = ${safeJson(customSearchIndex || buildSearchIndex())};
+  var SEARCH_INDEX = ${safeJson(effectiveIndex)};
+  var PRIMARY_COUNTRY = ${safeJson(primaryCountry || null)};
   var FAV_KEY = ${safeJson(favKey || "oht_favorites_v1")};
 
   function getFavorites(){
@@ -7602,7 +7609,17 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang) {
       var q = norm(input.value.trim());
       results.innerHTML = "";
       if (!q) { results.style.display = "none"; return; }
-      var matches = SEARCH_INDEX.filter(function(item){ return norm(item.name).indexOf(q) !== -1; }).slice(0, 8);
+      var matches = SEARCH_INDEX.filter(function(item){ return norm(item.name).indexOf(q) !== -1; });
+      if (PRIMARY_COUNTRY) {
+        // țara curentă/detectată apare mereu prima — restul, după, în ordinea
+        // găsită; nu ascundem celelalte țări, doar le trecem la coadă
+        matches.sort(function(a, b){
+          var aPrimary = a.country === PRIMARY_COUNTRY ? 0 : 1;
+          var bPrimary = b.country === PRIMARY_COUNTRY ? 0 : 1;
+          return aPrimary - bPrimary;
+        });
+      }
+      matches = matches.slice(0, 8);
       if (!matches.length) {
         results.innerHTML = '<div class="search-result-empty">No matches</div>';
         results.style.display = "block";
@@ -8759,7 +8776,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
-${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang)}`;
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
 
   return pageShell({
     title,
@@ -8943,7 +8960,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   ${adSlotHtml()}
 </main>
 ${buildTabsScript(nonce)}
-${buildSearchAndFavoritesScript(nonce, [], null, activeLang)}
+${buildSearchAndFavoritesScript(nonce, [], null, activeLang, primaryAttractionCountry)}
 ${buildAttractionLazyScript(nonce, activeLang)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity, primaryAttractionCountry)}
 ${buildAttractionAccordionScript(nonce)}
