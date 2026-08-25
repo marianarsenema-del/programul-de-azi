@@ -2840,7 +2840,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nu e orașul tău? Alege mai jos.",
     amazonBtn: "🛍️ Vezi ofertele de azi pe Amazon",
     ticketBtn: "🎟️ Rezervă bilet online și evită coada",
-    tabStores: "🛒 Magazine",
+    tabStores: "🛒 Magazine și Servicii",
     tabAttractions: "🏛️ Obiective Turistice",
     attractionsComingSoon: "Ghidul de obiective turistice este în lucru — revino curând.",
     titleTemplate: (brand, city) => `Program ${brand} ${city} Azi – Deschis sau Închis Acum`,
@@ -2886,7 +2886,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nicht Ihre Stadt? Unten auswählen.",
     amazonBtn: "🛍️ Heutige Angebote bei Amazon ansehen",
     ticketBtn: "🎟️ Tickets online buchen",
-    tabStores: "🛒 Geschäfte",
+    tabStores: "🛒 Geschäfte und Dienstleistungen",
     tabAttractions: "🏛️ Sehenswürdigkeiten",
     attractionsComingSoon: "Der Sehenswürdigkeiten-Guide wird gerade erstellt — schauen Sie bald wieder vorbei.",
     titleTemplate: (brand, city) => `Öffnungszeiten ${brand} ${city} Heute – Geöffnet oder Geschlossen`,
@@ -2932,7 +2932,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Not your city? Choose below.",
     amazonBtn: "🛍️ Check today's deals on Amazon",
     ticketBtn: "🎟️ Book tickets online & skip the line",
-    tabStores: "🛒 Stores",
+    tabStores: "🛒 Stores and Services",
     tabAttractions: "🏛️ Attractions",
     attractionsComingSoon: "Our attractions guide is on its way — check back soon.",
     titleTemplate: (brand, city) => `${brand} ${city} Opening Hours Today – Open or Closed Now`,
@@ -2978,7 +2978,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "¿No es tu ciudad? Elige abajo.",
     amazonBtn: "🛍️ Ver las ofertas de hoy en Amazon",
     ticketBtn: "🎟️ Reserva entradas online y evita la cola",
-    tabStores: "🛒 Tiendas",
+    tabStores: "🛒 Tiendas y Servicios",
     tabAttractions: "🏛️ Atracciones",
     attractionsComingSoon: "Nuestra guía de atracciones está en camino — vuelve pronto.",
     titleTemplate: (brand, city) => `Horario ${brand} ${city} Hoy – Abierto o Cerrado Ahora`,
@@ -3024,7 +3024,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Ce n'est pas votre ville ? Choisissez ci-dessous.",
     amazonBtn: "🛍️ Voir les offres du jour sur Amazon",
     ticketBtn: "🎟️ Réservez vos billets en ligne et évitez la file d'attente",
-    tabStores: "🛒 Magasins",
+    tabStores: "🛒 Magasins et Services",
     tabAttractions: "🏛️ Attractions",
     attractionsComingSoon: "Notre guide des attractions arrive bientôt — revenez vite.",
     titleTemplate: (brand, city) => `Horaires ${brand} ${city} Aujourd'hui – Ouvert ou Fermé`,
@@ -3070,7 +3070,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Non è la tua città? Scegli qui sotto.",
     amazonBtn: "🛍️ Vedi le offerte di oggi su Amazon",
     ticketBtn: "🎟️ Prenota i biglietti online e salta la fila",
-    tabStores: "🛒 Negozi",
+    tabStores: "🛒 Negozi e Servizi",
     tabAttractions: "🏛️ Attrazioni",
     attractionsComingSoon: "La nostra guida alle attrazioni sta arrivando — torna presto.",
     titleTemplate: (brand, city) => `Orari ${brand} ${city} Oggi – Aperto o Chiuso Ora`,
@@ -3116,7 +3116,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "To nie twoje miasto? Wybierz poniżej.",
     amazonBtn: "🛍️ Zobacz dzisiejsze oferty na Amazon",
     ticketBtn: "🎟️ Zarezerwuj bilety online i unikaj kolejki",
-    tabStores: "🛒 Sklepy",
+    tabStores: "🛒 Sklepy i Usługi",
     tabAttractions: "🏛️ Atrakcje",
     attractionsComingSoon: "Nasz przewodnik po atrakcjach już wkrótce — zajrzyj ponownie.",
     titleTemplate: (brand, city) => `Godziny otwarcia ${brand} ${city} Dziś – Otwarte czy Zamknięte`,
@@ -3162,7 +3162,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Niet uw stad? Kies hieronder.",
     amazonBtn: "🛍️ Bekijk de aanbiedingen van vandaag op Amazon",
     ticketBtn: "🎟️ Boek tickets online en sla de wachtrij over",
-    tabStores: "🛒 Winkels",
+    tabStores: "🛒 Winkels en Diensten",
     tabAttractions: "🏛️ Attracties",
     attractionsComingSoon: "Onze attractiegids komt eraan — kom snel terug.",
     titleTemplate: (brand, city) => `Openingstijden ${brand} ${city} Vandaag – Open of Gesloten`,
@@ -3208,7 +3208,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Ikke din by? Vælg nedenfor.",
     amazonBtn: "🛍️ Se dagens tilbud på Amazon",
     ticketBtn: "🎟️ Bestil billetter online og undgå køen",
-    tabStores: "🛒 Butikker",
+    tabStores: "🛒 Butikker og Tjenester",
     tabAttractions: "🏛️ Seværdigheder",
     attractionsComingSoon: "Vores guide til seværdigheder er på vej — kig forbi snart igen.",
     titleTemplate: (brand, city) => `${brand} ${city} Åbningstider I Dag – Åbent eller Lukket Nu`,
@@ -3254,7 +3254,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Inte din stad? Välj nedan.",
     amazonBtn: "🛍️ Se dagens erbjudanden på Amazon",
     ticketBtn: "🎟️ Boka biljetter online och undvik kön",
-    tabStores: "🛒 Butiker",
+    tabStores: "🛒 Butiker och Tjänster",
     tabAttractions: "🏛️ Sevärdheter",
     attractionsComingSoon: "Vår guide till sevärdheter är på väg — kom tillbaka snart.",
     titleTemplate: (brand, city) => `${brand} ${city} Öppettider Idag – Öppet eller Stängt Nu`,
@@ -3300,7 +3300,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Não é a sua cidade? Escolha abaixo.",
     amazonBtn: "🛍️ Ver ofertas de hoje na Amazon",
     ticketBtn: "🎟️ Compre bilhetes online e evite a fila",
-    tabStores: "🛒 Lojas",
+    tabStores: "🛒 Lojas e Serviços",
     tabAttractions: "🏛️ Pontos turísticos",
     attractionsComingSoon: "O nosso guia de pontos turísticos está a caminho — volte em breve.",
     titleTemplate: (brand, city) => `${brand} ${city} Horário Hoje – Aberto ou Fechado Agora`,
@@ -3346,7 +3346,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Není to vaše město? Vyberte níže.",
     amazonBtn: "🛍️ Zobrazit dnešní nabídky na Amazonu",
     ticketBtn: "🎟️ Koupit vstupenky online a vyhnout se frontě",
-    tabStores: "🛒 Obchody",
+    tabStores: "🛒 Obchody a Služby",
     tabAttractions: "🏛️ Zajímavosti",
     attractionsComingSoon: "Náš průvodce zajímavostmi je na cestě — brzy se vraťte.",
     titleTemplate: (brand, city) => `${brand} ${city} Otevírací Doba Dnes – Otevřeno nebo Zavřeno`,
@@ -3392,7 +3392,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Eikö tämä ole kaupunkisi? Valitse alta.",
     amazonBtn: "🛍️ Katso päivän tarjoukset Amazonissa",
     ticketBtn: "🎟️ Osta liput verkossa ja vältä jono",
-    tabStores: "🛒 Kaupat",
+    tabStores: "🛒 Kaupat ja Palvelut",
     tabAttractions: "🏛️ Nähtävyydet",
     attractionsComingSoon: "Nähtävyysoppaamme on tulossa — käy pian uudelleen.",
     titleTemplate: (brand, city) => `${brand} ${city} Aukioloajat Tänään – Auki tai Kiinni Nyt`,
@@ -3438,7 +3438,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Δεν είναι η πόλη σας; Επιλέξτε παρακάτω.",
     amazonBtn: "🛍️ Δείτε τις σημερινές προσφορές στο Amazon",
     ticketBtn: "🎟️ Αγοράστε εισιτήρια online και αποφύγετε την ουρά",
-    tabStores: "🛒 Καταστήματα",
+    tabStores: "🛒 Καταστήματα και Υπηρεσίες",
     tabAttractions: "🏛️ Αξιοθέατα",
     attractionsComingSoon: "Ο οδηγός αξιοθέατων μας έρχεται σύντομα — περάστε ξανά.",
     titleTemplate: (brand, city) => `${brand} ${city} Ωράριο Σήμερα – Ανοιχτό ή Κλειστό Τώρα`,
@@ -3484,7 +3484,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nem ez az Ön városa? Válasszon alább.",
     amazonBtn: "🛍️ Nézze meg a mai Amazon ajánlatokat",
     ticketBtn: "🎟️ Vásároljon jegyet online, és kerülje el a sort",
-    tabStores: "🛒 Üzletek",
+    tabStores: "🛒 Üzletek és Szolgáltatások",
     tabAttractions: "🏛️ Látnivalók",
     attractionsComingSoon: "A látnivaló-útmutatónk hamarosan érkezik — nézzen vissza később.",
     titleTemplate: (brand, city) => `${brand} ${city} Nyitvatartás Ma – Nyitva vagy Zárva Most`,
@@ -3530,7 +3530,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nije vaš grad? Odaberite ispod.",
     amazonBtn: "🛍️ Pogledajte današnje ponude na Amazonu",
     ticketBtn: "🎟️ Kupite ulaznice online i izbjegnite red",
-    tabStores: "🛒 Trgovine",
+    tabStores: "🛒 Trgovine i Usluge",
     tabAttractions: "🏛️ Znamenitosti",
     attractionsComingSoon: "Naš vodič kroz znamenitosti stiže uskoro — svratite ponovno.",
     titleTemplate: (brand, city) => `${brand} ${city} Radno Vrijeme Danas – Otvoreno ili Zatvoreno`,
@@ -3576,7 +3576,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nie je to vaše mesto? Vyberte nižšie.",
     amazonBtn: "🛍️ Pozrite si dnešné ponuky na Amazone",
     ticketBtn: "🎟️ Kúpte si lístky online a vyhnite sa radu",
-    tabStores: "🛒 Obchody",
+    tabStores: "🛒 Obchody a Služby",
     tabAttractions: "🏛️ Zaujímavosti",
     attractionsComingSoon: "Náš sprievodca zaujímavosťami sa pripravuje — pozrite sa znova čoskoro.",
     titleTemplate: (brand, city) => `${brand} ${city} Otváracie Hodiny Dnes – Otvorené alebo Zatvorené`,
@@ -3622,7 +3622,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Ni vaše mesto? Izberite spodaj.",
     amazonBtn: "🛍️ Oglejte si današnje ponudbe na Amazonu",
     ticketBtn: "🎟️ Kupite vstopnice online in se izognite vrsti",
-    tabStores: "🛒 Trgovine",
+    tabStores: "🛒 Trgovine in Storitve",
     tabAttractions: "🏛️ Znamenitosti",
     attractionsComingSoon: "Naš vodnik po znamenitostih prihaja kmalu — oglejte si ponovno kmalu.",
     titleTemplate: (brand, city) => `${brand} ${city} Delovni Čas Danes – Odprto ali Zaprto`,
@@ -3668,7 +3668,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Ne jūsų miestas? Pasirinkite žemiau.",
     amazonBtn: "🛍️ Peržiūrėkite šiandienos pasiūlymus „Amazon“",
     ticketBtn: "🎟️ Pirkite bilietus internetu ir išvenkite eilės",
-    tabStores: "🛒 Parduotuvės",
+    tabStores: "🛒 Parduotuvės ir Paslaugos",
     tabAttractions: "🏛️ Lankytinos vietos",
     attractionsComingSoon: "Mūsų lankytinų vietų gidas jau ruošiamas — netrukus sugrįžkite.",
     titleTemplate: (brand, city) => `${brand} ${city} Darbo Laikas Šiandien – Atidaryta ar Uždaryta`,
@@ -3714,7 +3714,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Nav jūsu pilsēta? Izvēlieties zemāk.",
     amazonBtn: "🛍️ Skatiet šodienas piedāvājumus Amazon",
     ticketBtn: "🎟️ Pērciet biļetes tiešsaistē un izvairieties no rindas",
-    tabStores: "🛒 Veikali",
+    tabStores: "🛒 Veikali un Pakalpojumi",
     tabAttractions: "🏛️ Apskates vietas",
     attractionsComingSoon: "Mūsu apskates vietu ceļvedis jau tiek gatavots — apmeklējiet drīzumā vēlreiz.",
     titleTemplate: (brand, city) => `${brand} ${city} Darba Laiks Šodien – Atvērts vai Slēgts`,
@@ -3760,7 +3760,7 @@ const TRANSLATIONS = {
     geoSuggestionNote: "Pole sinu linn? Vali allpool.",
     amazonBtn: "🛍️ Vaata tänaseid pakkumisi Amazonis",
     ticketBtn: "🎟️ Osta piletid veebis ja väldi järjekorda",
-    tabStores: "🛒 Poed",
+    tabStores: "🛒 Poed ja Teenused",
     tabAttractions: "🏛️ Vaatamisväärsused",
     attractionsComingSoon: "Meie vaatamisväärsuste juht on valmimas — vaata varsti uuesti.",
     titleTemplate: (brand, city) => `${brand} ${city} Lahtiolekuajad Täna – Avatud või Suletud`,
@@ -6433,6 +6433,273 @@ const STORE_CONFIG = {
   },
 };
 
+// Categorii pentru "Magazine și Servicii" — grupare pe categorii, exact ca la
+// obiectivele turistice (aceeași logică de <details>, la scară, cu 48 de
+// branduri într-un oraș, o listă plată devine greu de parcurs). Aplicată
+// PROGRAMATIC peste STORE_CONFIG (nu editat manual, 48 de linii, risc mare
+// de greșeală) — fiecare cheie capătă un câmp "categorie".
+const STORE_CATEGORY_BY_KEY = {
+  lidl: "magazine", kaufland: "magazine", penny: "magazine", megaimage: "magazine",
+  carrefour: "magazine", auchan: "magazine", profi: "magazine", metro: "magazine", selgros: "magazine",
+  dedeman: "bricolaj_electro", leroymerlin: "bricolaj_electro", bricodepot: "bricolaj_electro",
+  hornbach: "bricolaj_electro", jysk: "bricolaj_electro", ikea: "bricolaj_electro",
+  altex: "bricolaj_electro", flanco: "bricolaj_electro", mrbricolage: "bricolaj_electro", dm: "farmacii",
+  drmax: "farmacii", farmaciatei: "farmacii", remedia: "farmacii", springpharma: "farmacii",
+  catena: "farmacii", sensiblu: "farmacii", helpnet: "farmacii", dona: "farmacii", ropharma: "farmacii",
+  cinemacity: "cinema", cineplexx: "cinema", happycinema: "cinema", movieplex: "cinema",
+  bcr: "banci", brd: "banci", ing: "banci", raiffeisen: "banci", bancatransilvania: "banci", cec: "banci",
+  posta: "posta_curieri", fancourier: "posta_curieri", cargus: "posta_curieri",
+  sameday: "posta_curieri", dpd: "posta_curieri", gls: "posta_curieri",
+  mcdonalds: "fastfood", kfc: "fastfood", burgerking: "fastfood",
+  mall: "mall",
+};
+Object.keys(STORE_CONFIG).forEach((key) => {
+  if (STORE_CATEGORY_BY_KEY[key]) STORE_CONFIG[key].categorie = STORE_CATEGORY_BY_KEY[key];
+});
+
+const STORE_CATEGORY_LABELS = {
+  ro: {
+    magazine: "🛒 Magazine și Supermarketuri",
+    bricolaj_electro: "🔨 Bricolaj și Electrocasnice",
+    farmacii: "💊 Farmacii și Sănătate",
+    mall: "🏬 Mall-uri",
+    cinema: "🎬 Cinematografe",
+    banci: "🏦 Servicii Financiare / Bănci",
+    posta_curieri: "📦 Poștă și Curierat",
+    fastfood: "🍔 Restaurante Fast-Food",
+  },
+  uk: {
+    magazine: "🛒 Stores and Supermarkets",
+    bricolaj_electro: "🔨 DIY and Electronics",
+    farmacii: "💊 Pharmacies and Health",
+    mall: "🏬 Malls",
+    cinema: "🎬 Cinemas",
+    banci: "🏦 Financial Services / Banks",
+    posta_curieri: "📦 Post and Courier",
+    fastfood: "🍔 Fast-Food Restaurants",
+  },
+  de: {
+    magazine: "🛒 Geschäfte und Supermärkte",
+    bricolaj_electro: "🔨 Baumarkt und Elektronik",
+    farmacii: "💊 Apotheken und Gesundheit",
+    mall: "🏬 Einkaufszentren",
+    cinema: "🎬 Kinos",
+    banci: "🏦 Finanzdienstleistungen / Banken",
+    posta_curieri: "📦 Post und Kurierdienste",
+    fastfood: "🍔 Fast-Food-Restaurants",
+  },
+  es: {
+    magazine: "🛒 Tiendas y Supermercados",
+    bricolaj_electro: "🔨 Bricolaje y Electrónica",
+    farmacii: "💊 Farmacias y Salud",
+    mall: "🏬 Centros Comerciales",
+    cinema: "🎬 Cines",
+    banci: "🏦 Servicios Financieros / Bancos",
+    posta_curieri: "📦 Correos y Mensajería",
+    fastfood: "🍔 Restaurantes de Comida Rápida",
+  },
+  fr: {
+    magazine: "🛒 Magasins et Supermarchés",
+    bricolaj_electro: "🔨 Bricolage et Électronique",
+    farmacii: "💊 Pharmacies et Santé",
+    mall: "🏬 Centres Commerciaux",
+    cinema: "🎬 Cinémas",
+    banci: "🏦 Services Financiers / Banques",
+    posta_curieri: "📦 Poste et Coursiers",
+    fastfood: "🍔 Restaurants Rapides",
+  },
+  it: {
+    magazine: "🛒 Negozi e Supermercati",
+    bricolaj_electro: "🔨 Bricolage ed Elettronica",
+    farmacii: "💊 Farmacie e Salute",
+    mall: "🏬 Centri Commerciali",
+    cinema: "🎬 Cinema",
+    banci: "🏦 Servizi Finanziari / Banche",
+    posta_curieri: "📦 Posta e Corrieri",
+    fastfood: "🍔 Ristoranti Fast-Food",
+  },
+  pl: {
+    magazine: "🛒 Sklepy i Supermarkety",
+    bricolaj_electro: "🔨 Majsterkowanie i Elektronika",
+    farmacii: "💊 Apteki i Zdrowie",
+    mall: "🏬 Centra Handlowe",
+    cinema: "🎬 Kina",
+    banci: "🏦 Usługi Finansowe / Banki",
+    posta_curieri: "📦 Poczta i Kurierzy",
+    fastfood: "🍔 Restauracje Fast-Food",
+  },
+  nl: {
+    magazine: "🛒 Winkels en Supermarkten",
+    bricolaj_electro: "🔨 Doe-het-zelf en Elektronica",
+    farmacii: "💊 Apotheken en Gezondheid",
+    mall: "🏬 Winkelcentra",
+    cinema: "🎬 Bioscopen",
+    banci: "🏦 Financiële Diensten / Banken",
+    posta_curieri: "📦 Post en Koeriers",
+    fastfood: "🍔 Fastfoodrestaurants",
+  },
+  da: {
+    magazine: "🛒 Butikker og Supermarkeder",
+    bricolaj_electro: "🔨 Gør-det-selv og Elektronik",
+    farmacii: "💊 Apoteker og Sundhed",
+    mall: "🏬 Indkøbscentre",
+    cinema: "🎬 Biografer",
+    banci: "🏦 Finansielle Tjenester / Banker",
+    posta_curieri: "📦 Post og Kurerer",
+    fastfood: "🍔 Fastfood-restauranter",
+  },
+  se: {
+    magazine: "🛒 Butiker och Stormarknader",
+    bricolaj_electro: "🔨 Gör-det-själv och Elektronik",
+    farmacii: "💊 Apotek och Hälsa",
+    mall: "🏬 Köpcentrum",
+    cinema: "🎬 Biografer",
+    banci: "🏦 Finansiella Tjänster / Banker",
+    posta_curieri: "📦 Post och Kurirer",
+    fastfood: "🍔 Snabbmatsrestauranger",
+  },
+  pt: {
+    magazine: "🛒 Lojas e Supermercados",
+    bricolaj_electro: "🔨 Bricolage e Eletrónica",
+    farmacii: "💊 Farmácias e Saúde",
+    mall: "🏬 Centros Comerciais",
+    cinema: "🎬 Cinemas",
+    banci: "🏦 Serviços Financeiros / Bancos",
+    posta_curieri: "📦 Correios e Estafetas",
+    fastfood: "🍔 Restaurantes Fast-Food",
+  },
+  cz: {
+    magazine: "🛒 Obchody a Supermarkety",
+    bricolaj_electro: "🔨 Kutilství a Elektronika",
+    farmacii: "💊 Lékárny a Zdraví",
+    mall: "🏬 Nákupní Centra",
+    cinema: "🎬 Kina",
+    banci: "🏦 Finanční Služby / Banky",
+    posta_curieri: "📦 Pošta a Kurýři",
+    fastfood: "🍔 Restaurace Rychlého Občerstvení",
+  },
+  fi: {
+    magazine: "🛒 Kaupat ja Supermarketit",
+    bricolaj_electro: "🔨 Askartelu ja Elektroniikka",
+    farmacii: "💊 Apteekit ja Terveys",
+    mall: "🏬 Ostoskeskukset",
+    cinema: "🎬 Elokuvateatterit",
+    banci: "🏦 Rahoituspalvelut / Pankit",
+    posta_curieri: "📦 Posti ja Kuriirit",
+    fastfood: "🍔 Pikaruokaravintolat",
+  },
+  gr: {
+    magazine: "🛒 Καταστήματα και Σούπερ Μάρκετ",
+    bricolaj_electro: "🔨 Είδη Σπιτιού και Ηλεκτρονικά",
+    farmacii: "💊 Φαρμακεία και Υγεία",
+    mall: "🏬 Εμπορικά Κέντρα",
+    cinema: "🎬 Κινηματογράφοι",
+    banci: "🏦 Χρηματοοικονομικές Υπηρεσίες / Τράπεζες",
+    posta_curieri: "📦 Ταχυδρομείο και Ταχυμεταφορές",
+    fastfood: "🍔 Εστιατόρια Fast-Food",
+  },
+  hu: {
+    magazine: "🛒 Üzletek és Szupermarketek",
+    bricolaj_electro: "🔨 Barkácsolás és Elektronika",
+    farmacii: "💊 Gyógyszertárak és Egészség",
+    mall: "🏬 Bevásárlóközpontok",
+    cinema: "🎬 Mozik",
+    banci: "🏦 Pénzügyi Szolgáltatások / Bankok",
+    posta_curieri: "📦 Posta és Futárok",
+    fastfood: "🍔 Gyorséttermek",
+  },
+  hr: {
+    magazine: "🛒 Trgovine i Supermarketi",
+    bricolaj_electro: "🔨 Majstorski Alat i Elektronika",
+    farmacii: "💊 Ljekarne i Zdravlje",
+    mall: "🏬 Trgovački Centri",
+    cinema: "🎬 Kina",
+    banci: "🏦 Financijske Usluge / Banke",
+    posta_curieri: "📦 Pošta i Dostava",
+    fastfood: "🍔 Restorani Brze Hrane",
+  },
+  sk: {
+    magazine: "🛒 Obchody a Supermarkety",
+    bricolaj_electro: "🔨 Kutilstvo a Elektronika",
+    farmacii: "💊 Lekárne a Zdravie",
+    mall: "🏬 Nákupné Centrá",
+    cinema: "🎬 Kiná",
+    banci: "🏦 Finančné Služby / Banky",
+    posta_curieri: "📦 Pošta a Kuriéri",
+    fastfood: "🍔 Reštaurácie Rýchleho Občerstvenia",
+  },
+  si: {
+    magazine: "🛒 Trgovine in Supermarketi",
+    bricolaj_electro: "🔨 Hišni Mojster in Elektronika",
+    farmacii: "💊 Lekarne in Zdravje",
+    mall: "🏬 Nakupovalni Centri",
+    cinema: "🎬 Kina",
+    banci: "🏦 Finančne Storitve / Banke",
+    posta_curieri: "📦 Pošta in Kurirji",
+    fastfood: "🍔 Restavracije s Hitro Hrano",
+  },
+  lt: {
+    magazine: "🛒 Parduotuvės ir Prekybos Centrai",
+    bricolaj_electro: "🔨 Buitinė Technika ir Elektronika",
+    farmacii: "💊 Vaistinės ir Sveikata",
+    mall: "🏬 Prekybos Centrai",
+    cinema: "🎬 Kino Teatrai",
+    banci: "🏦 Finansinės Paslaugos / Bankai",
+    posta_curieri: "📦 Paštas ir Kurjeriai",
+    fastfood: "🍔 Greito Maisto Restoranai",
+  },
+  lv: {
+    magazine: "🛒 Veikali un Lielveikali",
+    bricolaj_electro: "🔨 Mājas Remonts un Elektronika",
+    farmacii: "💊 Aptiekas un Veselība",
+    mall: "🏬 Tirdzniecības Centri",
+    cinema: "🎬 Kinoteātri",
+    banci: "🏦 Finanšu Pakalpojumi / Bankas",
+    posta_curieri: "📦 Pasts un Kurjeri",
+    fastfood: "🍔 Ātrās Ēdināšanas Restorāni",
+  },
+  ee: {
+    magazine: "🛒 Poed ja Supermarketid",
+    bricolaj_electro: "🔨 Ehitus ja Elektroonika",
+    farmacii: "💊 Apteegid ja Tervis",
+    mall: "🏬 Kaubanduskeskused",
+    cinema: "🎬 Kinod",
+    banci: "🏦 Finantsteenused / Pangad",
+    posta_curieri: "📦 Post ja Kullerid",
+    fastfood: "🍔 Kiirtoidurestoranid",
+  },
+};
+function storeCategoryLabelFor(categoryKey, lang) {
+  const set = STORE_CATEGORY_LABELS[lang] || STORE_CATEGORY_LABELS.uk;
+  return set[categoryKey] || categoryKey;
+}
+
+// Grupează lista de magazine ale unui oraș pe categorii — la fel ca
+// buildAttractionListForCountry, dar pentru magazine/servicii. Orașele fără
+// date de categorie (țările internaționale, cu doar 5 branduri) cad automat
+// pe lista plată de dinainte — nu are rost să grupezi 5 elemente.
+function buildStoreListHtmlGrouped(items, lang) {
+  const hasCategories = items.length && items.every((it) => it.categorie);
+  if (!hasCategories) {
+    return `<ul class="mall-list">${items.map((it) => it.html).join("")}</ul>`;
+  }
+  const order = [];
+  const byCategory = {};
+  items.forEach((it) => {
+    if (!byCategory[it.categorie]) { byCategory[it.categorie] = []; order.push(it.categorie); }
+    byCategory[it.categorie].push(it);
+  });
+  return order
+    .map((cat) => {
+      const inner = byCategory[cat].map((it) => it.html).join("");
+      return `<details class="attraction-category-group">
+        <summary class="attraction-category-summary">${escapeHtml(storeCategoryLabelFor(cat, lang))} <span class="attraction-category-count">(${byCategory[cat].length})</span></summary>
+        <ul class="mall-list">${inner}</ul>
+      </details>`;
+    })
+    .join("");
+}
+
 // Slug-uri alternative care trebuie recunoscute și mapate la cheia canonică de mai sus.
 // "displayName" e opțional — folosit când slug-ul se referă la o locație anume
 // (ex: un mall concret), ca numele afișat să rămână cel real, nu genericul "Mall".
@@ -8684,9 +8951,10 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
       const urlSlug = cfg.slug || key;
       const statusKey = extractStatusEntity(cfg) ? key : null;
       const href = `/${orasSlug}/${urlSlug}`;
-      return `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="ro" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
-    })
-    .join("");
+      const html = `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="ro" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      return { html, categorie: cfg.categorie };
+    });
+  const listItemsGroupedHtml = buildStoreListHtmlGrouped(listItems, "ro");
 
   // date pentru insignele live — DOAR cheie->orar, nimic în plus, cât mai mic posibil
   const statusDataset = {};
@@ -8711,7 +8979,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 
   <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
 
-  <ul class="mall-list">${listItems}</ul>
+  ${listItemsGroupedHtml}
 
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
 
@@ -8810,12 +9078,16 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
-  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
   ${mainHtml}
   <footer>
     <p><strong>Opening Hours Today</strong> ${escapeHtml(t.footer(`${magazinDisplay} ${orasDisplay}`))}</p>
   </footer>
-</main>`;
+</main>
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
     let mcAlternateLinks;
     if (countryCode === "ro") {
       mcAlternateLinks = [
@@ -8916,7 +9188,10 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <p class="breadcrumb">${locatieDisplay
     ? `<a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / <a href="/${countryCode}/${orasSlug}/${magazinSlug}">${escapeHtml(magazinDisplay)}</a> / ${escapeHtml(locatieDisplay)}`
     : `<a href="/">${escapeHtml(t.home)}</a> / <a href="/${countryCode}/${orasSlug}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}`}</p>
-  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}/${magazinSlug}`)}
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
 
   ${reportedWrongHtml}
   ${statusCardHtml}
@@ -8937,7 +9212,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
 ${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce, reportIssueLabelsFor(activeLang))}
-${buildHowToGetThereScript(nonce)}`;
+${buildHowToGetThereScript(nonce)}
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -8973,9 +9249,10 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
       const urlSlug = cfg.slug || key;
       const statusKey = extractStatusEntity(cfg) ? key : null;
       const href = `/${countryCode}/${orasSlug}/${urlSlug}`;
-      return `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
-    })
-    .join("");
+      const html = `<li><button type="button" class="fav-star" data-name="${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}" data-type="store" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(href)}">☆</button>${brandBadgeHtml(cfg.name, statusKey)}<a href="${href}">${escapeHtml(cfg.name)} ${escapeHtml(orasDisplay)}</a></li>`;
+      return { html, categorie: cfg.categorie };
+    });
+  const listItemsGroupedHtml = buildStoreListHtmlGrouped(listItems, activeLang);
 
   // date pentru insignele live — la fel ca pe RO, funcție comună (vezi
   // extractStatusEntity), ca site-ul internațional să nu mai rămână în urmă
@@ -8994,9 +9271,12 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(orasDisplay)}</p>
-  ${buildLanguageSwitcher(activeLang, `/${countryCode}/${orasSlug}`)}
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
-  <ul class="mall-list">${listItems}</ul>
+  ${listItemsGroupedHtml}
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
   ${buildCityFaqHtml({ orasDisplay, lang: activeLang })}
 </main>
@@ -9051,7 +9331,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   // sau Attractions), aceeași selecție se aplică simultan la amândouă.
   const filterBarHtml = `
   <nav class="store-scroll country-filter-bar">
-    <button type="button" class="chip country-flag-btn" data-country-select="all">🌍 All</button>
+    <span class="chip">🌍 All</span>
     ${countryLinks.map((c) => `<button type="button" class="chip country-flag-btn" data-country-select="${c.code}">${c.flag} ${escapeHtml(c.name)}</button>`).join("")}
   </nav>`;
 
@@ -9080,7 +9360,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
       });
       return `
   <div class="country-filter-block" data-country-block="${code}" style="display:none">
-    <p class="intro-text"><button type="button" class="clear-country-btn">${escapeHtml(t.showAllCountries || "🌍 Show all countries")}</button></p>
+    
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.storesIn || "Stores in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     ${citySelectorHtml}
     <ul class="mall-list" id="${listId}" hidden>${cityItems}</ul>
@@ -9132,7 +9412,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     .map((code) => {
       return `
   <div class="country-filter-block" data-country-block="${code}" data-lazy-country="${code}" style="display:none">
-    <p class="intro-text"><button type="button" class="clear-country-btn">${escapeHtml(t.showAllCountries || "🌍 Show all countries")}</button></p>
+    
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.attractionsIn || "Attractions in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     <div class="lazy-attraction-target" data-loading-text="${escapeHtml(loadingTextFor(activeLang))}"></div>
   </div>`;
@@ -9582,7 +9862,10 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(attraction.name)}</p>
-  ${buildLanguageSwitcher(activeLang, `/${countryCode}/obiectiv/${slug}`)}
+  <div class="search-box-wrap">
+    <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
+    <div id="siteSearchResults" class="search-results"></div>
+  </div>
 
   ${statusHtml}
   ${widgetHtml}
@@ -9598,7 +9881,8 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 ${schemaHtml}
 ${widgetScriptHtml}
 ${buildHowToGetThereScript(nonce)}
-${buildPlanVisitScript(nonce)}`;
+${buildPlanVisitScript(nonce)}
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
 
   return pageShell({
     title,
@@ -9755,7 +10039,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   ${geoSuggestionHtml}
 
   <nav class="sub-nav-tabs">
-    <button type="button" class="sub-nav-tab active" data-tab="stores">🛒 Magazine</button>
+    <button type="button" class="sub-nav-tab active" data-tab="stores">🛒 Magazine și Servicii</button>
     <button type="button" class="sub-nav-tab" data-tab="attractions">🏰 Obiective turistice</button>
     <button type="button" class="sub-nav-tab" data-tab="favorites">⭐ Favorite</button>
   </nav>
@@ -9838,11 +10122,11 @@ const RO_INTL_STORE_CONFIG = {};
 Object.keys(STORE_CONFIG).forEach((key) => {
   const cfg = STORE_CONFIG[key];
   if (cfg.type === "mall") {
-    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "mall", zones: cfg.zones };
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "mall", zones: cfg.zones, categorie: cfg.categorie };
   } else if (cfg.type === "cinema") {
-    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "cinema", ticketUrl: cfg.ticketUrl, weekly: cfg.weekly, holidays: cfg.holidays };
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, type: "cinema", ticketUrl: cfg.ticketUrl, weekly: cfg.weekly, holidays: cfg.holidays, categorie: cfg.categorie };
   } else {
-    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, weekly: cfg.weekly, holidays: cfg.holidays };
+    RO_INTL_STORE_CONFIG[key] = { name: cfg.name, slug: cfg.slug, weekly: cfg.weekly, holidays: cfg.holidays, categorie: cfg.categorie };
   }
 });
 COUNTRIES.ro = {
@@ -11726,6 +12010,8 @@ function renderItineraryPage(nonce, baseUrl) {
 
   <div id="itinResults"></div>
 
+  <button type="button" id="itinResetBtn" class="clear-country-btn" style="display:none;margin:20px 18px 0">🗑️ Șterge și creează un itinerar nou</button>
+
   <footer>
     <p><strong>Programul de Azi</strong> — itinerarii generate automat, din obiectivele turistice verificate deja de noi. Verifică mereu programul live al fiecărui loc înainte de vizită.</p>
   </footer>
@@ -11747,6 +12033,16 @@ function renderItineraryPage(nonce, baseUrl) {
   var errorBox = document.getElementById("itinError");
   var results = document.getElementById("itinResults");
   var submitBtn = document.getElementById("itinSubmitBtn");
+  var resetBtn = document.getElementById("itinResetBtn");
+
+  resetBtn.addEventListener("click", function(){
+    results.innerHTML = "";
+    errorBox.style.display = "none";
+    resetBtn.style.display = "none";
+    form.reset();
+    form.style.display = "";
+    document.getElementById("itinOras").focus();
+  });
 
   var LOADING_MESSAGES = ["Se calculează traseul...", "Verificăm obiectivele din zonă...", "Aranjăm zilele logic...", "Aproape gata..."];
   var loadingInterval = null;
@@ -11783,6 +12079,7 @@ function renderItineraryPage(nonce, baseUrl) {
         '</div>';
     }).join("");
     results.innerHTML = html;
+    resetBtn.style.display = "block";
   }
 
   form.addEventListener("submit", function(e){
