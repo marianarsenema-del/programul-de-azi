@@ -7257,7 +7257,13 @@ function buildSmartInstallScript(nonce, lang) {
 
   var ua = window.navigator.userAgent;
   function isIOS(){ return /iphone|ipad|ipod/i.test(ua); }
-  function isIOSSafari(){ return isIOS() && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua); }
+  // Toate browserele iOS "non-Safari" recunoscute prin identificatorul lor
+  // real din user agent — CriOS (Chrome), FxiOS (Firefox), EdgiOS (Edge),
+  // OPiOS (Opera), GSA (aplicația Google — are propriul motor de căutare +
+  // browser intern, complet diferit de Safari, deși mulți cred că-i "Chrome"),
+  // plus browserele integrate din aplicații (Facebook, Instagram, Messenger,
+  // Google) care se deschid ca un "mini-browser" în interiorul aplicației.
+  function isIOSSafari(){ return isIOS() && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line\/|MicroMessenger/i.test(ua); }
 
   var banner = document.getElementById("installBanner");
   var overlay = document.getElementById("installOverlay");
