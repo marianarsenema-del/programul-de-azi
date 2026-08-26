@@ -11405,7 +11405,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     if (!openaiRes.ok) {
       const errText = await openaiRes.text().catch(() => "");
       console.error("OpenAI a răspuns cu eroare:", openaiRes.status, errText.slice(0, 300));
-      res.status(502).json({ error: "openai_error", message: "Generarea a eșuat. Încearcă din nou." });
+      res.status(502).json({ error: "openai_error", message: "DEBUG TEMPORAR — status " + openaiRes.status + ": " + errText.slice(0, 300) });
       return;
     }
 
