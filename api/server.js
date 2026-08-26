@@ -12231,7 +12231,17 @@ function renderItineraryPage(nonce, baseUrl) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ oras: oras, zile: Number(zile) }),
     })
-      .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
+      .then(function(r){
+        // DEBUG TEMPORAR — arată direct, într-un mesaj imposibil de ratat,
+        // ce răspunde serverul, ca să găsim exact cauza. Se elimină după
+        // ce găsim problema reală.
+        return r.text().then(function(rawText){
+          window.alert("DEBUG — status: " + r.status + " " + r.statusText + "\n\nrăspuns brut:\n" + rawText.slice(0, 500));
+          var data;
+          try { data = JSON.parse(rawText); } catch(e) { data = null; }
+          return { ok: r.ok, data: data };
+        });
+      })
       .then(function(res){
         clearInterval(loadingInterval);
         loading.style.display = "none";
@@ -12243,10 +12253,13 @@ function renderItineraryPage(nonce, baseUrl) {
         }
         renderItinerary(res.data);
       })
-      .catch(function(){
+      .catch(function(err){
         clearInterval(loadingInterval);
         loading.style.display = "none";
         submitBtn.disabled = false;
+        // DEBUG TEMPORAR — dacă fetch() însuși eșuează (nu doar răspunsul),
+        // arătăm eroarea exactă, nu doar mesajul generic
+        window.alert("DEBUG — fetch a eșuat complet: " + (err && err.message ? err.message : String(err)));
         errorBox.textContent = "A apărut o eroare de rețea. Încearcă din nou.";
         errorBox.style.display = "block";
       });
