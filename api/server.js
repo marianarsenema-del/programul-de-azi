@@ -9399,7 +9399,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
         .join("");
       const listId = `allCitiesList-${code}`;
       const citySelectorHtml = buildCitySelectorHtml({
-        popularCities: COUNTRIES[code].cities.slice(0, 6),
+        popularCities: COUNTRIES[code].cities,
         hrefPrefix: `/${code}/`,
       });
       return `
