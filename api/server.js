@@ -14,13 +14,6 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare push (POST cu JSON în body)
 
-// RUTĂ DE TEST TEMPORARĂ — verifică simplu, direct din bara de adrese a
-// browserului, dacă rutele nou-adăugate chiar ajung la server. Se elimină
-// după ce confirmăm.
-app.get("/api/test-itinerar", (req, res) => {
-  res.json({ ok: true, mesaj: "Ruta funcționează — server.js chiar rulează versiunea asta." });
-});
-
 // ============================================================
 // CONSOLIDARE .ro -> .eu (Redirecționare 301 permanentă) — comutator
 // central, DEZACTIVAT implicit. Când e pus pe true, TOATE paginile de pe
@@ -11362,6 +11355,83 @@ app.get("/:oras", (req, res, next) => {
   res.send(html);
 });
 
+// MUTAT aici, deliberat, ÎNAINTE de catch-all-ul final de mai jos —
+// era poziționat mult mai jos în fișier, DUPĂ acel catch-all, deci
+// Express nu ajungea NICIODATĂ la el (catch-all-ul răspunde 404 la
+// orice n-a fost deja prins de o rută de mai sus) — bug real, prins
+// prin testare directă, nu doar teoretic.
+app.post("/api/genereaza-itinerar", async (req, res) => {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+  if (!OPENAI_API_KEY) {
+    res.status(503).json({ error: "not_configured", message: "Lipsește OPENAI_API_KEY din variabilele de mediu." });
+    return;
+  }
+
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 15, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
+  const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
+  let zile = Number(req.body?.zile);
+  if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
+  if (!Number.isFinite(zile) || zile < 1) zile = 1;
+  if (zile > 7) zile = 7; // limită sensibilă — un itinerar de 7+ zile cu date filtrate local nu mai are sens practic
+
+  const { judet, obiective } = filtreazaObiectivePentruOras(oras);
+  if (!judet || !obiective.length) {
+    res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
+    return;
+  }
+
+  const prompt = buildItineraryPrompt(oras, zile, obiective);
+
+  try {
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!openaiRes.ok) {
+      const errText = await openaiRes.text().catch(() => "");
+      console.error("OpenAI a răspuns cu eroare:", openaiRes.status, errText.slice(0, 300));
+      res.status(502).json({ error: "openai_error", message: "Generarea a eșuat. Încearcă din nou." });
+      return;
+    }
+
+    const data = await openaiRes.json();
+    const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!rawContent) {
+      res.status(502).json({ error: "openai_empty_response" });
+      return;
+    }
+
+    let itinerar;
+    try {
+      itinerar = JSON.parse(rawContent);
+    } catch (e) {
+      console.error("Răspunsul OpenAI nu era JSON valid:", rawContent.slice(0, 300));
+      res.status(502).json({ error: "invalid_json_from_ai" });
+      return;
+    }
+
+    res.status(200).json(itinerar);
+  } catch (err) {
+    console.error("genereaza-itinerar a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.use((req, res) => {
   res.status(404).send("Pagină negăsită.");
 });
@@ -12028,78 +12098,6 @@ Răspunde STRICT în acest format JSON, fără text în afara JSON-ului:
   ]
 }`;
 }
-
-app.post("/api/genereaza-itinerar", async (req, res) => {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
-  if (!OPENAI_API_KEY) {
-    res.status(503).json({ error: "not_configured", message: "Lipsește OPENAI_API_KEY din variabilele de mediu." });
-    return;
-  }
-
-  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 15, 60);
-  if (!rateOk) {
-    res.status(429).json({ error: "too_many_requests" });
-    return;
-  }
-
-  const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
-  let zile = Number(req.body?.zile);
-  if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
-  if (!Number.isFinite(zile) || zile < 1) zile = 1;
-  if (zile > 7) zile = 7; // limită sensibilă — un itinerar de 7+ zile cu date filtrate local nu mai are sens practic
-
-  const { judet, obiective } = filtreazaObiectivePentruOras(oras);
-  if (!judet || !obiective.length) {
-    res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
-    return;
-  }
-
-  const prompt = buildItineraryPrompt(oras, zile, obiective);
-
-  try {
-    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        response_format: { type: "json_object" },
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
-      }),
-    });
-
-    if (!openaiRes.ok) {
-      const errText = await openaiRes.text().catch(() => "");
-      console.error("OpenAI a răspuns cu eroare:", openaiRes.status, errText.slice(0, 300));
-      res.status(502).json({ error: "openai_error", message: "Generarea a eșuat. Încearcă din nou." });
-      return;
-    }
-
-    const data = await openaiRes.json();
-    const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!rawContent) {
-      res.status(502).json({ error: "openai_empty_response" });
-      return;
-    }
-
-    let itinerar;
-    try {
-      itinerar = JSON.parse(rawContent);
-    } catch (e) {
-      console.error("Răspunsul OpenAI nu era JSON valid:", rawContent.slice(0, 300));
-      res.status(502).json({ error: "invalid_json_from_ai" });
-      return;
-    }
-
-    res.status(200).json(itinerar);
-  } catch (err) {
-    console.error("genereaza-itinerar a eșuat:", err.message);
-    res.status(500).json({ error: "server_error" });
-  }
-});
 
 // Pagină frontend — formular simplu + randare carduri pe zile. Cod separat,
 // autonom (fără dependențe de restul paginii), exact cum a fost cerut.
