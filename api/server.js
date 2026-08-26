@@ -243,6 +243,38 @@ function comingSoonTextFor(lang) {
   return COMING_SOON_TEXTS[lang] || COMING_SOON_TEXTS.uk;
 }
 
+// Traducerile paginii de itinerar (formular, butoane, mesaje) — brand-ul
+// și link-ul de ghiduri NU depind de limbă, depind de DOMENIU (vezi
+// isIntlDomain mai jos, în renderItineraryPage) — pe .eu rămâne mereu
+// "OpeningHoursToday", indiferent ce limbă alege cineva, exact ca la
+// restul paginilor de pe site.
+const ITINERARY_LABELS = {
+  ro: { title: "Creează un itinerar turistic", description: "Generează automat un itinerar turistic pe zile, pentru orice oraș din România, din cele 500 de obiective verificate.", breadcrumbCurrent: "Creează itinerar", h1: "🗺️ Creează-ți itinerarul", intro: "Spune-ne orașul sau județul și câte zile ai la dispoziție — construim un traseu logic, din obiectivele turistice verificate pe care le avem deja.", placeholder: "Oraș sau județ (ex: Brașov, Sibiu, Maramureș)", daysLabel: "Număr de zile:", submitBtn: "Generează itinerarul", loadingMessages: ["Se calculează traseul...", "Verificăm obiectivele din zonă...", "Aranjăm zilele logic...", "Aproape gata..."], errorUnexpected: "Răspuns neașteptat. Încearcă din nou.", errorNetwork: "A apărut o eroare de rețea. Încearcă din nou.", errorGeneric: "Nu am putut genera itinerarul. Încearcă din nou.", resetBtn: "🗑️ Șterge și creează un itinerar nou", footer: "itinerarii generate automat, din obiectivele turistice verificate deja de noi. Verifică mereu programul live al fiecărui loc înainte de vizită.", dayPrefix: "Ziua", morning: "🌅 Dimineața", lunch: "🍽️ Prânz", evening: "🌙 Seara", aiLangName: "română" },
+  uk: { title: "Create a travel itinerary", description: "Automatically generate a day-by-day travel itinerary for any city in Romania, from our 500 verified attractions.", breadcrumbCurrent: "Create itinerary", h1: "🗺️ Create your itinerary", intro: "Tell us the city or county and how many days you have — we'll build a logical route, from the tourist attractions we've already verified.", placeholder: "City or county (e.g. Brașov, Sibiu, Maramureș)", daysLabel: "Number of days:", submitBtn: "Generate itinerary", loadingMessages: ["Calculating the route...", "Checking nearby attractions...", "Organizing the days...", "Almost done..."], errorUnexpected: "Unexpected response. Please try again.", errorNetwork: "A network error occurred. Please try again.", errorGeneric: "We couldn't generate the itinerary. Please try again.", resetBtn: "🗑️ Clear and create a new itinerary", footer: "automatically generated itineraries, from tourist attractions we've already verified. Always check the live hours of each place before visiting.", dayPrefix: "Day", morning: "🌅 Morning", lunch: "🍽️ Lunch", evening: "🌙 Evening", aiLangName: "English" },
+  de: { title: "Reiseroute erstellen", description: "Erstelle automatisch eine tägliche Reiseroute für jede Stadt in Rumänien, aus unseren 500 geprüften Sehenswürdigkeiten.", breadcrumbCurrent: "Reiseroute erstellen", h1: "🗺️ Erstelle deine Reiseroute", intro: "Sag uns die Stadt oder den Landkreis und wie viele Tage du hast — wir erstellen eine logische Route, aus den bereits geprüften Sehenswürdigkeiten.", placeholder: "Stadt oder Landkreis (z.B. Brașov, Sibiu, Maramureș)", daysLabel: "Anzahl der Tage:", submitBtn: "Reiseroute erstellen", loadingMessages: ["Route wird berechnet...", "Sehenswürdigkeiten werden geprüft...", "Tage werden organisiert...", "Fast fertig..."], errorUnexpected: "Unerwartete Antwort. Bitte versuche es erneut.", errorNetwork: "Ein Netzwerkfehler ist aufgetreten. Bitte versuche es erneut.", errorGeneric: "Die Reiseroute konnte nicht erstellt werden. Bitte versuche es erneut.", resetBtn: "🗑️ Löschen und neue Reiseroute erstellen", footer: "automatisch erstellte Reiserouten, aus bereits geprüften Sehenswürdigkeiten. Prüfe immer die aktuellen Öffnungszeiten vor deinem Besuch.", dayPrefix: "Tag", morning: "🌅 Morgen", lunch: "🍽️ Mittag", evening: "🌙 Abend", aiLangName: "Deutsch" },
+  es: { title: "Crea un itinerario turístico", description: "Genera automáticamente un itinerario turístico diario para cualquier ciudad de Rumanía, a partir de nuestras 500 atracciones verificadas.", breadcrumbCurrent: "Crear itinerario", h1: "🗺️ Crea tu itinerario", intro: "Dinos la ciudad o el condado y cuántos días tienes — construiremos una ruta lógica, a partir de las atracciones turísticas ya verificadas.", placeholder: "Ciudad o condado (ej: Brașov, Sibiu, Maramureș)", daysLabel: "Número de días:", submitBtn: "Generar itinerario", loadingMessages: ["Calculando la ruta...", "Comprobando atracciones cercanas...", "Organizando los días...", "Casi listo..."], errorUnexpected: "Respuesta inesperada. Inténtalo de nuevo.", errorNetwork: "Se produjo un error de red. Inténtalo de nuevo.", errorGeneric: "No pudimos generar el itinerario. Inténtalo de nuevo.", resetBtn: "🗑️ Borrar y crear un nuevo itinerario", footer: "itinerarios generados automáticamente, a partir de atracciones turísticas ya verificadas. Comprueba siempre el horario en vivo de cada lugar antes de visitarlo.", dayPrefix: "Día", morning: "🌅 Mañana", lunch: "🍽️ Mediodía", evening: "🌙 Noche", aiLangName: "español" },
+  fr: { title: "Créez un itinéraire touristique", description: "Générez automatiquement un itinéraire touristique jour par jour pour n'importe quelle ville de Roumanie, à partir de nos 500 attractions vérifiées.", breadcrumbCurrent: "Créer un itinéraire", h1: "🗺️ Créez votre itinéraire", intro: "Indiquez-nous la ville ou le comté et le nombre de jours dont vous disposez — nous construirons un itinéraire logique, à partir des attractions déjà vérifiées.", placeholder: "Ville ou comté (ex: Brașov, Sibiu, Maramureș)", daysLabel: "Nombre de jours :", submitBtn: "Générer l'itinéraire", loadingMessages: ["Calcul de l'itinéraire...", "Vérification des attractions à proximité...", "Organisation des jours...", "Presque terminé..."], errorUnexpected: "Réponse inattendue. Veuillez réessayer.", errorNetwork: "Une erreur réseau s'est produite. Veuillez réessayer.", errorGeneric: "Nous n'avons pas pu générer l'itinéraire. Veuillez réessayer.", resetBtn: "🗑️ Effacer et créer un nouvel itinéraire", footer: "itinéraires générés automatiquement, à partir d'attractions touristiques déjà vérifiées. Vérifiez toujours les horaires en direct de chaque lieu avant votre visite.", dayPrefix: "Jour", morning: "🌅 Matin", lunch: "🍽️ Midi", evening: "🌙 Soir", aiLangName: "français" },
+  it: { title: "Crea un itinerario turistico", description: "Genera automaticamente un itinerario turistico giorno per giorno per qualsiasi città della Romania, dalle nostre 500 attrazioni verificate.", breadcrumbCurrent: "Crea itinerario", h1: "🗺️ Crea il tuo itinerario", intro: "Dicci la città o la contea e quanti giorni hai a disposizione — costruiremo un percorso logico, dalle attrazioni turistiche già verificate.", placeholder: "Città o contea (es: Brașov, Sibiu, Maramureș)", daysLabel: "Numero di giorni:", submitBtn: "Genera itinerario", loadingMessages: ["Calcolo del percorso...", "Verifica delle attrazioni vicine...", "Organizzazione dei giorni...", "Quasi fatto..."], errorUnexpected: "Risposta inaspettata. Riprova.", errorNetwork: "Si è verificato un errore di rete. Riprova.", errorGeneric: "Non siamo riusciti a generare l'itinerario. Riprova.", resetBtn: "🗑️ Cancella e crea un nuovo itinerario", footer: "itinerari generati automaticamente, dalle attrazioni turistiche già verificate. Controlla sempre l'orario in tempo reale di ogni luogo prima di visitarlo.", dayPrefix: "Giorno", morning: "🌅 Mattina", lunch: "🍽️ Pranzo", evening: "🌙 Sera", aiLangName: "italiano" },
+  pl: { title: "Stwórz plan podróży", description: "Automatycznie generuj plan podróży dzień po dniu dla dowolnego miasta w Rumunii, z naszych 500 zweryfikowanych atrakcji.", breadcrumbCurrent: "Stwórz plan podróży", h1: "🗺️ Stwórz swój plan podróży", intro: "Powiedz nam miasto lub powiat i ile masz dni — zbudujemy logiczną trasę, z już zweryfikowanych atrakcji turystycznych.", placeholder: "Miasto lub powiat (np. Brașov, Sibiu, Maramureș)", daysLabel: "Liczba dni:", submitBtn: "Generuj plan podróży", loadingMessages: ["Obliczanie trasy...", "Sprawdzanie pobliskich atrakcji...", "Organizowanie dni...", "Prawie gotowe..."], errorUnexpected: "Nieoczekiwana odpowiedź. Spróbuj ponownie.", errorNetwork: "Wystąpił błąd sieci. Spróbuj ponownie.", errorGeneric: "Nie udało się wygenerować planu podróży. Spróbuj ponownie.", resetBtn: "🗑️ Wyczyść i stwórz nowy plan podróży", footer: "automatycznie generowane plany podróży, z już zweryfikowanych atrakcji turystycznych. Zawsze sprawdzaj aktualne godziny otwarcia każdego miejsca przed odwiedzinami.", dayPrefix: "Dzień", morning: "🌅 Rano", lunch: "🍽️ Południe", evening: "🌙 Wieczór", aiLangName: "polski" },
+  nl: { title: "Maak een reisroute", description: "Genereer automatisch een dagelijkse reisroute voor elke stad in Roemenië, uit onze 500 geverifieerde bezienswaardigheden.", breadcrumbCurrent: "Reisroute maken", h1: "🗺️ Maak je reisroute", intro: "Vertel ons de stad of het district en hoeveel dagen je hebt — we bouwen een logische route, uit de al geverifieerde bezienswaardigheden.", placeholder: "Stad of district (bijv. Brașov, Sibiu, Maramureș)", daysLabel: "Aantal dagen:", submitBtn: "Reisroute genereren", loadingMessages: ["Route wordt berekend...", "Bezienswaardigheden in de buurt controleren...", "Dagen organiseren...", "Bijna klaar..."], errorUnexpected: "Onverwacht antwoord. Probeer het opnieuw.", errorNetwork: "Er is een netwerkfout opgetreden. Probeer het opnieuw.", errorGeneric: "We konden de reisroute niet genereren. Probeer het opnieuw.", resetBtn: "🗑️ Wissen en nieuwe reisroute maken", footer: "automatisch gegenereerde reisroutes, uit al geverifieerde bezienswaardigheden. Controleer altijd de actuele openingstijden van elke plek voor je bezoek.", dayPrefix: "Dag", morning: "🌅 Ochtend", lunch: "🍽️ Middag", evening: "🌙 Avond", aiLangName: "Nederlands" },
+  da: { title: "Opret en rejseplan", description: "Generer automatisk en daglig rejseplan for enhver by i Rumænien, fra vores 500 verificerede seværdigheder.", breadcrumbCurrent: "Opret rejseplan", h1: "🗺️ Opret din rejseplan", intro: "Fortæl os byen eller amtet og hvor mange dage du har — vi bygger en logisk rute, fra de allerede verificerede seværdigheder.", placeholder: "By eller amt (f.eks. Brașov, Sibiu, Maramureș)", daysLabel: "Antal dage:", submitBtn: "Generer rejseplan", loadingMessages: ["Beregner ruten...", "Tjekker seværdigheder i nærheden...", "Organiserer dagene...", "Næsten færdig..."], errorUnexpected: "Uventet svar. Prøv igen.", errorNetwork: "Der opstod en netværksfejl. Prøv igen.", errorGeneric: "Vi kunne ikke generere rejseplanen. Prøv igen.", resetBtn: "🗑️ Ryd og opret ny rejseplan", footer: "automatisk genererede rejseplaner, fra allerede verificerede seværdigheder. Tjek altid de aktuelle åbningstider for hvert sted før besøget.", dayPrefix: "Dag", morning: "🌅 Morgen", lunch: "🍽️ Middag", evening: "🌙 Aften", aiLangName: "dansk" },
+  se: { title: "Skapa en reseplan", description: "Generera automatiskt en daglig reseplan för valfri stad i Rumänien, från våra 500 verifierade sevärdheter.", breadcrumbCurrent: "Skapa reseplan", h1: "🗺️ Skapa din reseplan", intro: "Berätta för oss staden eller länet och hur många dagar du har — vi bygger en logisk rutt, från de redan verifierade sevärdheterna.", placeholder: "Stad eller län (t.ex. Brașov, Sibiu, Maramureș)", daysLabel: "Antal dagar:", submitBtn: "Generera reseplan", loadingMessages: ["Beräknar rutten...", "Kontrollerar sevärdheter i närheten...", "Organiserar dagarna...", "Nästan klart..."], errorUnexpected: "Oväntat svar. Försök igen.", errorNetwork: "Ett nätverksfel uppstod. Försök igen.", errorGeneric: "Vi kunde inte generera reseplanen. Försök igen.", resetBtn: "🗑️ Rensa och skapa ny reseplan", footer: "automatiskt genererade reseplaner, från redan verifierade sevärdheter. Kontrollera alltid de aktuella öppettiderna för varje plats före besöket.", dayPrefix: "Dag", morning: "🌅 Morgon", lunch: "🍽️ Lunch", evening: "🌙 Kväll", aiLangName: "svenska" },
+  pt: { title: "Crie um itinerário turístico", description: "Gere automaticamente um itinerário turístico diário para qualquer cidade da Roménia, a partir das nossas 500 atrações verificadas.", breadcrumbCurrent: "Criar itinerário", h1: "🗺️ Crie o seu itinerário", intro: "Diga-nos a cidade ou o condado e quantos dias tem — vamos construir uma rota lógica, a partir das atrações turísticas já verificadas.", placeholder: "Cidade ou condado (ex: Brașov, Sibiu, Maramureș)", daysLabel: "Número de dias:", submitBtn: "Gerar itinerário", loadingMessages: ["A calcular a rota...", "A verificar atrações próximas...", "A organizar os dias...", "Quase pronto..."], errorUnexpected: "Resposta inesperada. Tente novamente.", errorNetwork: "Ocorreu um erro de rede. Tente novamente.", errorGeneric: "Não conseguimos gerar o itinerário. Tente novamente.", resetBtn: "🗑️ Limpar e criar novo itinerário", footer: "itinerários gerados automaticamente, a partir de atrações turísticas já verificadas. Verifique sempre o horário em tempo real de cada local antes de visitar.", dayPrefix: "Dia", morning: "🌅 Manhã", lunch: "🍽️ Almoço", evening: "🌙 Noite", aiLangName: "português" },
+  cz: { title: "Vytvořte cestovní itinerář", description: "Automaticky vygenerujte denní cestovní itinerář pro jakékoli město v Rumunsku, z našich 500 ověřených atrakcí.", breadcrumbCurrent: "Vytvořit itinerář", h1: "🗺️ Vytvořte si itinerář", intro: "Řekněte nám město nebo okres a kolik dní máte — sestavíme logickou trasu, z již ověřených turistických atrakcí.", placeholder: "Město nebo okres (např. Brašov, Sibiu, Maramureš)", daysLabel: "Počet dní:", submitBtn: "Vygenerovat itinerář", loadingMessages: ["Počítání trasy...", "Kontrola blízkých atrakcí...", "Organizování dní...", "Skoro hotovo..."], errorUnexpected: "Neočekávaná odpověď. Zkuste to znovu.", errorNetwork: "Došlo k síťové chybě. Zkuste to znovu.", errorGeneric: "Nepodařilo se nám vygenerovat itinerář. Zkuste to znovu.", resetBtn: "🗑️ Vymazat a vytvořit nový itinerář", footer: "automaticky generované itineráře, z již ověřených turistických atrakcí. Před návštěvou vždy zkontrolujte aktuální otevírací dobu daného místa.", dayPrefix: "Den", morning: "🌅 Ráno", lunch: "🍽️ Poledne", evening: "🌙 Večer", aiLangName: "čeština" },
+  fi: { title: "Luo matkareitti", description: "Luo automaattisesti päiväkohtainen matkareitti mihin tahansa Romanian kaupunkiin, 500 tarkistetusta nähtävyydestämme.", breadcrumbCurrent: "Luo matkareitti", h1: "🗺️ Luo matkareittisi", intro: "Kerro meille kaupunki tai maakunta ja kuinka monta päivää sinulla on — rakennamme loogisen reitin jo tarkistetuista nähtävyyksistä.", placeholder: "Kaupunki tai maakunta (esim. Brašov, Sibiu, Maramureș)", daysLabel: "Päivien määrä:", submitBtn: "Luo matkareitti", loadingMessages: ["Lasketaan reittiä...", "Tarkistetaan lähellä olevia nähtävyyksiä...", "Järjestetään päiviä...", "Melkein valmis..."], errorUnexpected: "Odottamaton vastaus. Yritä uudelleen.", errorNetwork: "Tapahtui verkkovirhe. Yritä uudelleen.", errorGeneric: "Emme voineet luoda matkareittiä. Yritä uudelleen.", resetBtn: "🗑️ Tyhjennä ja luo uusi matkareitti", footer: "automaattisesti luotuja matkareittejä, jo tarkistetuista nähtävyyksistä. Tarkista aina kunkin paikan reaaliaikaiset aukioloajat ennen vierailua.", dayPrefix: "Päivä", morning: "🌅 Aamu", lunch: "🍽️ Lounas", evening: "🌙 Ilta", aiLangName: "suomi" },
+  gr: { title: "Δημιουργήστε ένα ταξιδιωτικό δρομολόγιο", description: "Δημιουργήστε αυτόματα ένα ημερήσιο ταξιδιωτικό δρομολόγιο για οποιαδήποτε πόλη στη Ρουμανία, από τα 500 επαληθευμένα αξιοθέατά μας.", breadcrumbCurrent: "Δημιουργία δρομολογίου", h1: "🗺️ Δημιουργήστε το δρομολόγιό σας", intro: "Πείτε μας την πόλη ή την περιφέρεια και πόσες μέρες έχετε — θα φτιάξουμε μια λογική διαδρομή, από τα ήδη επαληθευμένα αξιοθέατα.", placeholder: "Πόλη ή περιφέρεια (π.χ. Μπρασόβ, Σίμπιου, Μαραμούρες)", daysLabel: "Αριθμός ημερών:", submitBtn: "Δημιουργία δρομολογίου", loadingMessages: ["Υπολογισμός διαδρομής...", "Έλεγχος κοντινών αξιοθέατων...", "Οργάνωση ημερών...", "Σχεδόν έτοιμο..."], errorUnexpected: "Μη αναμενόμενη απόκριση. Δοκιμάστε ξανά.", errorNetwork: "Παρουσιάστηκε σφάλμα δικτύου. Δοκιμάστε ξανά.", errorGeneric: "Δεν μπορέσαμε να δημιουργήσουμε το δρομολόγιο. Δοκιμάστε ξανά.", resetBtn: "🗑️ Καθαρισμός και δημιουργία νέου δρομολογίου", footer: "αυτόματα δημιουργημένα δρομολόγια, από ήδη επαληθευμένα αξιοθέατα. Ελέγχετε πάντα το ζωντανό ωράριο κάθε τοποθεσίας πριν την επίσκεψη.", dayPrefix: "Ημέρα", morning: "🌅 Πρωί", lunch: "🍽️ Μεσημέρι", evening: "🌙 Βράδυ", aiLangName: "ελληνικά" },
+  hu: { title: "Készítsen útitervet", description: "Automatikusan készítsen napi útitervet Románia bármely városához, az 500 ellenőrzött látványosságunkból.", breadcrumbCurrent: "Útiterv készítése", h1: "🗺️ Készítsd el az útitervedet", intro: "Mondd el nekünk a várost vagy megyét és hány napod van — logikus útvonalat építünk, a már ellenőrzött látványosságokból.", placeholder: "Város vagy megye (pl. Brassó, Nagyszeben, Máramaros)", daysLabel: "Napok száma:", submitBtn: "Útiterv készítése", loadingMessages: ["Útvonal kiszámítása...", "Közeli látványosságok ellenőrzése...", "Napok rendszerezése...", "Mindjárt kész..."], errorUnexpected: "Váratlan válasz. Próbáld újra.", errorNetwork: "Hálózati hiba történt. Próbáld újra.", errorGeneric: "Nem sikerült elkészíteni az útitervet. Próbáld újra.", resetBtn: "🗑️ Törlés és új útiterv készítése", footer: "automatikusan generált útitervek, már ellenőrzött látványosságokból. Mindig ellenőrizd az adott hely aktuális nyitvatartását látogatás előtt.", dayPrefix: "Nap", morning: "🌅 Reggel", lunch: "🍽️ Dél", evening: "🌙 Este", aiLangName: "magyar" },
+  hr: { title: "Izradite turistički itinerar", description: "Automatski generirajte dnevni turistički itinerar za bilo koji grad u Rumunjskoj, iz naših 500 provjerenih atrakcija.", breadcrumbCurrent: "Izradi itinerar", h1: "🗺️ Izradite svoj itinerar", intro: "Recite nam grad ili županiju i koliko dana imate — izgradit ćemo logičnu rutu, iz već provjerenih turističkih atrakcija.", placeholder: "Grad ili županija (npr. Brašov, Sibiu, Maramureš)", daysLabel: "Broj dana:", submitBtn: "Generiraj itinerar", loadingMessages: ["Izračunavanje rute...", "Provjera obližnjih atrakcija...", "Organiziranje dana...", "Skoro gotovo..."], errorUnexpected: "Neočekivan odgovor. Pokušajte ponovno.", errorNetwork: "Došlo je do mrežne pogreške. Pokušajte ponovno.", errorGeneric: "Nismo uspjeli generirati itinerar. Pokušajte ponovno.", resetBtn: "🗑️ Obriši i izradi novi itinerar", footer: "automatski generirani itinerari, iz već provjerenih turističkih atrakcija. Uvijek provjerite trenutno radno vrijeme svakog mjesta prije posjeta.", dayPrefix: "Dan", morning: "🌅 Jutro", lunch: "🍽️ Podne", evening: "🌙 Večer", aiLangName: "hrvatski" },
+  sk: { title: "Vytvorte cestovný itinerár", description: "Automaticky vygenerujte denný cestovný itinerár pre akékoľvek mesto v Rumunsku, z našich 500 overených atrakcií.", breadcrumbCurrent: "Vytvoriť itinerár", h1: "🗺️ Vytvorte si itinerár", intro: "Povedzte nám mesto alebo okres a koľko dní máte — zostavíme logickú trasu, z už overených turistických atrakcií.", placeholder: "Mesto alebo okres (napr. Brašov, Sibiu, Maramureš)", daysLabel: "Počet dní:", submitBtn: "Vygenerovať itinerár", loadingMessages: ["Počítanie trasy...", "Kontrola blízkych atrakcií...", "Organizovanie dní...", "Takmer hotovo..."], errorUnexpected: "Neočakávaná odpoveď. Skúste to znova.", errorNetwork: "Došlo k sieťovej chybe. Skúste to znova.", errorGeneric: "Nepodarilo sa nám vygenerovať itinerár. Skúste to znova.", resetBtn: "🗑️ Vymazať a vytvoriť nový itinerár", footer: "automaticky generované itineráre, z už overených turistických atrakcií. Pred návštevou vždy skontrolujte aktuálne otváracie hodiny daného miesta.", dayPrefix: "Deň", morning: "🌅 Ráno", lunch: "🍽️ Obed", evening: "🌙 Večer", aiLangName: "slovenčina" },
+  si: { title: "Ustvarite turistični itinerar", description: "Samodejno ustvarite dnevni turistični itinerar za katero koli mesto v Romuniji, iz naših 500 preverjenih znamenitosti.", breadcrumbCurrent: "Ustvari itinerar", h1: "🗺️ Ustvarite svoj itinerar", intro: "Povejte nam mesto ali županijo in koliko dni imate — zgradili bomo logično pot, iz že preverjenih turističnih znamenitosti.", placeholder: "Mesto ali županija (npr. Brašov, Sibiu, Maramureš)", daysLabel: "Število dni:", submitBtn: "Ustvari itinerar", loadingMessages: ["Izračunavanje poti...", "Preverjanje bližnjih znamenitosti...", "Organiziranje dni...", "Skoraj končano..."], errorUnexpected: "Nepričakovan odgovor. Poskusite znova.", errorNetwork: "Prišlo je do napake omrežja. Poskusite znova.", errorGeneric: "Itinerarja nismo mogli ustvariti. Poskusite znova.", resetBtn: "🗑️ Počisti in ustvari nov itinerar", footer: "samodejno ustvarjeni itinerarji, iz že preverjenih turističnih znamenitosti. Pred obiskom vedno preverite trenutni delovni čas posameznega mesta.", dayPrefix: "Dan", morning: "🌅 Jutro", lunch: "🍽️ Opoldne", evening: "🌙 Večer", aiLangName: "slovenščina" },
+  lt: { title: "Sukurkite kelionės maršrutą", description: "Automatiškai sukurkite dienos kelionės maršrutą bet kuriam Rumunijos miestui, iš mūsų 500 patikrintų lankytinų vietų.", breadcrumbCurrent: "Sukurti maršrutą", h1: "🗺️ Sukurkite savo maršrutą", intro: "Pasakykite mums miestą ar apskritį ir kiek dienų turite — sukursime logišką maršrutą, iš jau patikrintų lankytinų vietų.", placeholder: "Miestas ar apskritis (pvz., Brašovas, Sibiu, Maramuriešas)", daysLabel: "Dienų skaičius:", submitBtn: "Sukurti maršrutą", loadingMessages: ["Skaičiuojamas maršrutas...", "Tikrinamos netoliese esančios lankytinos vietos...", "Organizuojamos dienos...", "Beveik baigta..."], errorUnexpected: "Netikėtas atsakymas. Bandykite dar kartą.", errorNetwork: "Įvyko tinklo klaida. Bandykite dar kartą.", errorGeneric: "Nepavyko sukurti maršruto. Bandykite dar kartą.", resetBtn: "🗑️ Išvalyti ir sukurti naują maršrutą", footer: "automatiškai sukurti maršrutai, iš jau patikrintų lankytinų vietų. Prieš apsilankymą visada patikrinkite kiekvienos vietos gyvą darbo laiką.", dayPrefix: "Diena", morning: "🌅 Rytas", lunch: "🍽️ Pietūs", evening: "🌙 Vakaras", aiLangName: "lietuvių" },
+  lv: { title: "Izveidojiet ceļojuma maršrutu", description: "Automātiski izveidojiet ikdienas ceļojuma maršrutu jebkurai Rumānijas pilsētai, no mūsu 500 pārbaudītajām apskates vietām.", breadcrumbCurrent: "Izveidot maršrutu", h1: "🗺️ Izveidojiet savu maršrutu", intro: "Pasakiet mums pilsētu vai novadu un cik dienu jums ir — mēs izveidosim loģisku maršrutu no jau pārbaudītajām apskates vietām.", placeholder: "Pilsēta vai novads (piem., Brašova, Sibiu, Maramuresa)", daysLabel: "Dienu skaits:", submitBtn: "Izveidot maršrutu", loadingMessages: ["Aprēķina maršrutu...", "Pārbauda tuvējās apskates vietas...", "Organizē dienas...", "Gandrīz gatavs..."], errorUnexpected: "Negaidīta atbilde. Mēģiniet vēlreiz.", errorNetwork: "Radās tīkla kļūda. Mēģiniet vēlreiz.", errorGeneric: "Mēs nevarējām izveidot maršrutu. Mēģiniet vēlreiz.", resetBtn: "🗑️ Notīrīt un izveidot jaunu maršrutu", footer: "automātiski izveidoti maršruti, no jau pārbaudītajām apskates vietām. Pirms apmeklējuma vienmēr pārbaudiet katras vietas aktuālo darba laiku.", dayPrefix: "Diena", morning: "🌅 Rīts", lunch: "🍽️ Pusdienas", evening: "🌙 Vakars", aiLangName: "latviešu" },
+  ee: { title: "Loo reisimarsruut", description: "Loo automaatselt päevapõhine reisimarsruut mis tahes Rumeenia linna jaoks, meie 500 kontrollitud vaatamisväärsuse hulgast.", breadcrumbCurrent: "Loo marsruut", h1: "🗺️ Loo oma marsruut", intro: "Ütle meile linn või maakond ja mitu päeva sul on — koostame loogilise marsruudi juba kontrollitud vaatamisväärsustest.", placeholder: "Linn või maakond (nt Brasov, Sibiu, Maramures)", daysLabel: "Päevade arv:", submitBtn: "Loo marsruut", loadingMessages: ["Arvutame marsruuti...", "Kontrollime lähedal asuvaid vaatamisväärsusi...", "Korraldame päevi...", "Peaaegu valmis..."], errorUnexpected: "Ootamatu vastus. Proovi uuesti.", errorNetwork: "Ilmnes võrgu viga. Proovi uuesti.", errorGeneric: "Marsruuti ei õnnestunud luua. Proovi uuesti.", resetBtn: "🗑️ Tühjenda ja loo uus marsruut", footer: "automaatselt loodud marsruudid, juba kontrollitud vaatamisväärsustest. Kontrolli alati koha reaalajas lahtiolekuaegu enne külastamist.", dayPrefix: "Päev", morning: "🌅 Hommik", lunch: "🍽️ Lõuna", evening: "🌙 Õhtu", aiLangName: "eesti" },
+};
+function itineraryLabelsFor(lang) {
+  return ITINERARY_LABELS[lang] || ITINERARY_LABELS.uk;
+}
+
 // Google Analytics (GA4) — codul exact primit, păstrat ca atare. La randare,
 // nonce-ul curent se injectează automat pe <script>-ul inline de mai jos (vezi
 // withNonce mai jos) — altfel CSP-ul strict (fără unsafe-inline) l-ar bloca.
@@ -8607,15 +8639,13 @@ const BOTTOM_NAV_LABELS = {
 };
 function buildBottomNavHtml(langCode) {
   const labels = BOTTOM_NAV_LABELS[langCode] || BOTTOM_NAV_LABELS.uk;
-  // "Creează itinerar" — conținutul generat de AI e mereu în română (promptul
-  // e fix, în română — nu are sens localizat pe 21 de limbi doar pentru un
-  // buton), deci arătăm linkul DOAR când limba activă a paginii e chiar
-  // română — indiferent de domeniu (funcționează la fel de bine dacă cineva
-  // navighează pe .eu, dar cu limba setată pe română; ruta /itinerar oricum
-  // redirecționează automat spre programul-de-azi.ro).
-  const itineraryBtn = langCode === "ro"
-    ? `<a href="/itinerar" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>Itinerar</span></a>`
-    : "";
+  // "Creează itinerar" — acum tradus complet, în toate limbile (formular +
+  // răspunsul AI); href-ul rămâne simplu "/itinerar" pentru română (rută
+  // implicită), iar pentru celelalte limbi adaugă ?lang=xx, ca pagina să se
+  // deschidă direct în limba în care naviga deja utilizatorul.
+  const itineraryLabel = itineraryLabelsFor(langCode).breadcrumbCurrent;
+  const itineraryHref = langCode === "ro" ? "/itinerar" : `/itinerar?lang=${langCode}`;
+  const itineraryBtn = `<a href="${escapeHtml(itineraryHref)}" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>${escapeHtml(itineraryLabel)}</span></a>`;
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
@@ -11325,7 +11355,8 @@ app.get("/:oras/:magazin", async (req, res, next) => {
 app.get("/itinerar", (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderItineraryPage(nonce, baseUrlFor(req));
+  const lang = ITINERARY_LABELS[req.query.lang] ? req.query.lang : "ro";
+  const html = renderItineraryPage(nonce, baseUrlFor(req), lang);
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -11374,6 +11405,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   }
 
   const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
+  const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
   let zile = Number(req.body?.zile);
   if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
   if (!Number.isFinite(zile) || zile < 1) zile = 1;
@@ -11385,7 +11417,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     return;
   }
 
-  const prompt = buildItineraryPrompt(oras, zile, obiective);
+  const prompt = buildItineraryPrompt(oras, zile, obiective, lang);
 
   try {
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -12075,77 +12107,95 @@ function filtreazaObiectivePentruOras(orasInput) {
 
 // promptul trimis către OpenAI — cerem explicit format JSON, structură fixă,
 // ca frontend-ul să poată randa direct, fără parsare fragilă de text liber
-function buildItineraryPrompt(oras, zile, obiective) {
+function buildItineraryPrompt(oras, zile, obiective, lang) {
   const listaText = obiective.map((o) => `- ${o.nume} (${o.localitate})`).join("\n");
-  return `Ești un ghid turistic român, expert în România. Creează un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras}.
+  const langName = itineraryLabelsFor(lang).aiLangName;
+  // Numele obiectivelor rămân în română, sunt nume proprii de locuri (nu se
+  // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
+  // cerută. Instrucțiunea de limbă e pusă explicit, de trei ori (la început,
+  // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
+  // limbă dacă apare o singură dată la începutul unui prompt lung.
+  return `Ești un ghid turistic expert în România. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras}. TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii românești, nu se traduc).
 
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici:
 ${listaText}
 
-Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, în română.
+Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
 
-Răspunde STRICT în acest format JSON, fără text în afara JSON-ului:
+Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile JSON (oras, zile, ziua, titlu, dimineata, pranz, seara, nume, descriere) rămân EXACT așa cum sunt aici, neschimbate — doar VALORILE pentru "titlu" și "descriere" trebuie scrise în ${langName}:
 {
   "oras": "${oras}",
   "zile": [
     {
       "ziua": 1,
-      "titlu": "un titlu scurt și atractiv pentru ziua respectivă",
-      "dimineata": [{ "nume": "...", "descriere": "..." }],
-      "pranz": [{ "nume": "...", "descriere": "..." }],
-      "seara": [{ "nume": "...", "descriere": "..." }]
+      "titlu": "un titlu scurt și atractiv pentru ziua respectivă, în ${langName}",
+      "dimineata": [{ "nume": "...", "descriere": "descriere în ${langName}" }],
+      "pranz": [{ "nume": "...", "descriere": "descriere în ${langName}" }],
+      "seara": [{ "nume": "...", "descriere": "descriere în ${langName}" }]
     }
   ]
-}`;
+}
+
+Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${langName}, nu în română, cu excepția cazului în care ${langName} chiar este română.`;
 }
 
 // Pagină frontend — formular simplu + randare carduri pe zile. Cod separat,
 // autonom (fără dependențe de restul paginii), exact cum a fost cerut.
-function renderItineraryPage(nonce, baseUrl) {
-  const title = "Creează un itinerar turistic — Programul de Azi";
-  const description = "Generează automat un itinerar turistic pe zile, pentru orice oraș din România, din cele 500 de obiective verificate.";
-  const canonical = `${baseUrl}/itinerar`;
+// Pagină frontend — formular simplu + randare carduri pe zile. Cod separat,
+// autonom (fără dependențe de restul paginii). Brand-ul (Programul de Azi /
+// Opening Hours Today) depinde de DOMENIU, nu de limbă — la fel ca restul
+// paginilor de pe site; limba în sine controlează formularul, mesajele și
+// (prin buildItineraryPrompt) chiar textul generat de AI.
+function renderItineraryPage(nonce, baseUrl, lang) {
+  const t = itineraryLabelsFor(lang);
+  const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
+  const brandHtml = isIntlDomain
+    ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a>`
+    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a>`;
+  const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
+  const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
+  const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
+  const description = t.description;
+  const canonical = isIntlDomain ? `${baseUrl}/itinerar?lang=${lang}` : `${baseUrl}/itinerar`;
+
+  const daysOptionsHtml = [1, 2, 3, 4, 5].map((n) => `<option value="${n}"${n === 2 ? " selected" : ""}>${n}</option>`).join("");
 
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack">${brandHtml}</div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">Acasă</a> / Creează itinerar</p>
-  <h1 class="page-h1">🗺️ Creează-ți itinerarul</h1>
-  <p class="intro-text">Spune-ne orașul sau județul și câte zile ai la dispoziție — construim un traseu logic, din obiectivele turistice verificate pe care le avem deja.</p>
+  <p class="breadcrumb"><a href="${escapeHtml(homeHref)}">${escapeHtml(breadcrumbHomeLabel)}</a> / ${escapeHtml(t.breadcrumbCurrent)}</p>
+  <h1 class="page-h1">${escapeHtml(t.h1)}</h1>
+  <p class="intro-text">${escapeHtml(t.intro)}</p>
 
   <form id="itineraryForm" class="city-search-form" style="flex-direction:column;gap:12px;align-items:stretch">
-    <input type="text" id="itinOras" class="city-search-input" placeholder="Oraș sau județ (ex: Brașov, Sibiu, Maramureș)" required>
+    <input type="text" id="itinOras" class="city-search-input" placeholder="${escapeHtml(t.placeholder)}" required>
     <div style="display:flex;gap:8px;align-items:center">
-      <label for="itinZile" style="font-size:14px;color:var(--muted);white-space:nowrap">Număr de zile:</label>
+      <label for="itinZile" style="font-size:14px;color:var(--muted);white-space:nowrap">${escapeHtml(t.daysLabel)}</label>
       <select id="itinZile" class="city-search-input" style="flex:0 0 90px">
-        <option value="1">1</option>
-        <option value="2" selected>2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        ${daysOptionsHtml}
       </select>
     </div>
-    <button type="submit" id="itinSubmitBtn" class="geo-btn" style="margin:0">Generează itinerarul</button>
+    <button type="submit" id="itinSubmitBtn" class="geo-btn" style="margin:0">${escapeHtml(t.submitBtn)}</button>
   </form>
 
   <div id="itinLoading" style="display:none;text-align:center;margin:24px 18px;color:var(--muted);font-family:var(--font-display);font-weight:600">
     <div style="font-size:28px;margin-bottom:10px">🧭</div>
-    <div id="itinLoadingText">Se calculează traseul...</div>
+    <div id="itinLoadingText">${escapeHtml(t.loadingMessages[0])}</div>
   </div>
 
   <div id="itinError" class="geo-country-highlight" style="display:none;border-color:#DC2626"></div>
 
   <div id="itinResults"></div>
 
-  <button type="button" id="itinResetBtn" class="clear-country-btn" style="display:none;margin:20px 18px 0">🗑️ Șterge și creează un itinerar nou</button>
+  <button type="button" id="itinResetBtn" class="clear-country-btn" style="display:none;margin:20px 18px 0">${escapeHtml(t.resetBtn)}</button>
 
   <footer>
-    <p><strong>Programul de Azi</strong> — itinerarii generate automat, din obiectivele turistice verificate deja de noi. Verifică mereu programul live al fiecărui loc înainte de vizită.</p>
+    <p><strong>${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}</strong> — ${escapeHtml(t.footer)}</p>
   </footer>
 </main>
 <style nonce="${nonce}">
@@ -12159,6 +12209,16 @@ function renderItineraryPage(nonce, baseUrl) {
 </style>
 <script nonce="${nonce}">
 (function(){
+  var LANG = ${safeJson(lang)};
+  var DAY_PREFIX = ${safeJson(t.dayPrefix)};
+  var MORNING_LABEL = ${safeJson(t.morning)};
+  var LUNCH_LABEL = ${safeJson(t.lunch)};
+  var EVENING_LABEL = ${safeJson(t.evening)};
+  var ERROR_UNEXPECTED = ${safeJson(t.errorUnexpected)};
+  var ERROR_NETWORK = ${safeJson(t.errorNetwork)};
+  var ERROR_GENERIC = ${safeJson(t.errorGeneric)};
+  var LOADING_MESSAGES = ${safeJson(t.loadingMessages)};
+
   var form = document.getElementById("itineraryForm");
   var loading = document.getElementById("itinLoading");
   var loadingText = document.getElementById("itinLoadingText");
@@ -12176,10 +12236,9 @@ function renderItineraryPage(nonce, baseUrl) {
     document.getElementById("itinOras").focus();
   });
 
-  var LOADING_MESSAGES = ["Se calculează traseul...", "Verificăm obiectivele din zonă...", "Aranjăm zilele logic...", "Aproape gata..."];
   var loadingInterval = null;
 
-  function escapeHtml(s){
+  function escapeHtmlClient(s){
     var d = document.createElement("div");
     d.textContent = s == null ? "" : String(s);
     return d.innerHTML;
@@ -12188,14 +12247,14 @@ function renderItineraryPage(nonce, baseUrl) {
   function renderItems(items){
     if (!items || !items.length) return "";
     return items.map(function(it){
-      return '<div class="itin-item"><div class="itin-item-name">' + escapeHtml(it.nume) + '</div><div class="itin-item-desc">' + escapeHtml(it.descriere) + '</div></div>';
+      return '<div class="itin-item"><div class="itin-item-name">' + escapeHtmlClient(it.nume) + '</div><div class="itin-item-desc">' + escapeHtmlClient(it.descriere) + '</div></div>';
     }).join("");
   }
 
   function renderItinerary(data){
     results.innerHTML = "";
     if (!data || !Array.isArray(data.zile)) {
-      errorBox.textContent = "Răspuns neașteptat. Încearcă din nou.";
+      errorBox.textContent = ERROR_UNEXPECTED;
       errorBox.style.display = "block";
       return;
     }
@@ -12204,10 +12263,10 @@ function renderItineraryPage(nonce, baseUrl) {
       var lunchHtml = renderItems(zi.pranz);
       var eveningHtml = renderItems(zi.seara);
       return '<div class="itin-day-card">' +
-        '<div class="itin-day-title">Ziua ' + escapeHtml(zi.ziua) + (zi.titlu ? ' — ' + escapeHtml(zi.titlu) : '') + '</div>' +
-        (morningHtml ? '<div class="itin-interval-label">🌅 Dimineața</div>' + morningHtml : '') +
-        (lunchHtml ? '<div class="itin-interval-label">🍽️ Prânz</div>' + lunchHtml : '') +
-        (eveningHtml ? '<div class="itin-interval-label">🌙 Seara</div>' + eveningHtml : '') +
+        '<div class="itin-day-title">' + DAY_PREFIX + ' ' + escapeHtmlClient(zi.ziua) + (zi.titlu ? ' — ' + escapeHtmlClient(zi.titlu) : '') + '</div>' +
+        (morningHtml ? '<div class="itin-interval-label">' + MORNING_LABEL + '</div>' + morningHtml : '') +
+        (lunchHtml ? '<div class="itin-interval-label">' + LUNCH_LABEL + '</div>' + lunchHtml : '') +
+        (eveningHtml ? '<div class="itin-interval-label">' + EVENING_LABEL + '</div>' + eveningHtml : '') +
         '</div>';
     }).join("");
     results.innerHTML = html;
@@ -12234,7 +12293,7 @@ function renderItineraryPage(nonce, baseUrl) {
     fetch("/api/genereaza-itinerar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oras: oras, zile: Number(zile) }),
+      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG }),
     })
       .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
       .then(function(res){
@@ -12242,7 +12301,7 @@ function renderItineraryPage(nonce, baseUrl) {
         loading.style.display = "none";
         submitBtn.disabled = false;
         if (!res.ok) {
-          errorBox.textContent = (res.data && res.data.message) || "Nu am putut genera itinerarul. Încearcă din nou.";
+          errorBox.textContent = (res.data && res.data.message) || ERROR_GENERIC;
           errorBox.style.display = "block";
           return;
         }
@@ -12252,14 +12311,15 @@ function renderItineraryPage(nonce, baseUrl) {
         clearInterval(loadingInterval);
         loading.style.display = "none";
         submitBtn.disabled = false;
-        errorBox.textContent = "A apărut o eroare de rețea. Încearcă din nou.";
+        errorBox.textContent = ERROR_NETWORK;
         errorBox.style.display = "block";
       });
   });
 })();
 </script>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: lang });
 }
+
 
 module.exports = app;
