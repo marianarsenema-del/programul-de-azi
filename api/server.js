@@ -14,6 +14,13 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare push (POST cu JSON în body)
 
+// RUTĂ DE TEST TEMPORARĂ — verifică simplu, direct din bara de adrese a
+// browserului, dacă rutele nou-adăugate chiar ajung la server. Se elimină
+// după ce confirmăm.
+app.get("/api/test-itinerar", (req, res) => {
+  res.json({ ok: true, mesaj: "Ruta funcționează — server.js chiar rulează versiunea asta." });
+});
+
 // ============================================================
 // CONSOLIDARE .ro -> .eu (Redirecționare 301 permanentă) — comutator
 // central, DEZACTIVAT implicit. Când e pus pe true, TOATE paginile de pe
