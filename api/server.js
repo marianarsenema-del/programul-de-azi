@@ -6066,10 +6066,13 @@ function buildSearchIndex() {
   const index = [];
   Object.keys(COUNTRIES).forEach((code) => {
     const country = COUNTRIES[code];
-    const firstCity = slugifyCityName(country.cities[0]);
     Object.keys(country.config).forEach((key) => {
       const cfg = country.config[key];
-      index.push({ name: cfg.name, type: "store", country: code, href: `/${code}/${firstCity}/${cfg.slug || key}` });
+      country.cities.forEach((city) => {
+        if (code === "ro" && !isSelectiveBrandAllowedInCity(key, city)) return;
+        const citySlug = slugifyCityName(city);
+        index.push({ name: `${cfg.name} ${city}`, type: "store", country: code, href: `/${code}/${citySlug}/${cfg.slug || key}` });
+      });
     });
   });
   Object.keys(ATTRACTIONS).forEach((code) => {
@@ -6083,12 +6086,21 @@ function buildSearchIndex() {
 // index de căutare DOAR pentru România (magazine + obiective turistice
 // românești) — folosit pe programul-de-azi.ro, ca să nu amestece magazine
 // din toată Europa, în engleză, pe un site în română
+//
+// FIX real, găsit prin testare: fiecare intrare de magazin includea DOAR
+// numele brandului (ex. "Lidl"), niciodată și orașul — deci nu puteai
+// căuta după oraș (ex. "Brad") și link-ul mergea mereu spre primul oraș
+// din listă (București), indiferent ce brand căutai. Acum fiecare
+// combinație brand+oraș e o intrare proprie, exact ca paginile reale.
 function buildSearchIndexRO() {
   const index = [];
-  const firstCity = slugifyCityName(SITEMAP_CITIES[0]);
   Object.keys(RO_INTL_STORE_CONFIG).forEach((key) => {
     const cfg = RO_INTL_STORE_CONFIG[key];
-    index.push({ name: cfg.name, type: "store", country: "ro", href: `/${firstCity}/${cfg.slug || key}` });
+    SITEMAP_CITIES.forEach((city) => {
+      if (!isSelectiveBrandAllowedInCity(key, city)) return;
+      const citySlug = slugifyCityName(city);
+      index.push({ name: `${cfg.name} ${city}`, type: "store", country: "ro", href: `/${citySlug}/${cfg.slug || key}` });
+    });
   });
   ATTRACTIONS.ro.forEach((a) => {
     index.push({ name: a.name, type: "attraction", country: "ro", href: `/obiectiv/${toDbSlug(a.name)}` });
