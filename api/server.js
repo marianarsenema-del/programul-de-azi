@@ -207,6 +207,42 @@ const adsensePublisherId = "ca-pub-7945793092031366";
 // chiar încarcă biblioteca Google (impactul real) e blocat mai jos.
 const ADSENSE_ENABLED = false;
 
+// Ghidurile de călătorie (transport, parcare, restaurante) folosesc linkuri
+// de afiliere GetTransfer/Omio/ParkVia/TheFork/OpenTable — TOATE goale
+// momentan (vezi constantele lor mai jos), deci cad pe site-uri publice,
+// nemonetizate. Nu are sens să arătăm butoane peste tot pe site care nu
+// aduc niciun venit — comutator central: cât timp rămâne false, oriunde
+// ar fi apărut cele 3 butoane, arătăm un mesaj scurt "urmează în curând"
+// în loc. Pune-l pe true (o singură linie) când ai completat măcar unul
+// din linkurile de afiliere de mai jos.
+const TRAVEL_GUIDES_MONETIZATION_READY = false;
+const COMING_SOON_TEXTS = {
+  ro: "🔜 Ghiduri de transport, parcare și restaurante — urmează în curând.",
+  uk: "🔜 Transport, parking, and restaurant guides — coming soon.",
+  de: "🔜 Reiseführer für Transport, Parken und Restaurants — demnächst verfügbar.",
+  es: "🔜 Guías de transporte, aparcamiento y restaurantes — próximamente.",
+  fr: "🔜 Guides de transport, stationnement et restaurants — bientôt disponibles.",
+  it: "🔜 Guide su trasporti, parcheggi e ristoranti — in arrivo.",
+  pl: "🔜 Przewodniki po transporcie, parkingach i restauracjach — wkrótce.",
+  nl: "🔜 Gidsen voor vervoer, parkeren en restaurants — binnenkort beschikbaar.",
+  da: "🔜 Guider til transport, parkering og restauranter — kommer snart.",
+  se: "🔜 Guider för transport, parkering och restauranger — kommer snart.",
+  pt: "🔜 Guias de transporte, estacionamento e restaurantes — brevemente.",
+  cz: "🔜 Průvodce dopravou, parkováním a restauracemi — již brzy.",
+  fi: "🔜 Oppaat liikenteeseen, pysäköintiin ja ravintoloihin — tulossa pian.",
+  gr: "🔜 Οδηγοί μεταφοράς, στάθμευσης και εστιατορίων — σύντομα διαθέσιμοι.",
+  hu: "🔜 Útmutatók közlekedéshez, parkoláshoz és éttermekhez — hamarosan.",
+  hr: "🔜 Vodiči za prijevoz, parkiranje i restorane — uskoro.",
+  sk: "🔜 Sprievodcovia dopravou, parkovaním a reštauráciami — už čoskoro.",
+  si: "🔜 Vodniki za prevoz, parkiranje in restavracije — kmalu na voljo.",
+  lt: "🔜 Transporto, parkavimo ir restoranų gidai — netrukus.",
+  lv: "🔜 Ceļveži par transportu, stāvvietām un restorāniem — drīzumā.",
+  ee: "🔜 Transpordi-, parkimis- ja restoranijuhised — peagi saadaval.",
+};
+function comingSoonTextFor(lang) {
+  return COMING_SOON_TEXTS[lang] || COMING_SOON_TEXTS.uk;
+}
+
 // Google Analytics (GA4) — codul exact primit, păstrat ca atare. La randare,
 // nonce-ul curent se injectează automat pe <script>-ul inline de mai jos (vezi
 // withNonce mai jos) — altfel CSP-ul strict (fără unsafe-inline) l-ar bloca.
@@ -2103,13 +2139,21 @@ function buildHowToGetThereHtml(labels, place) {
   const wazeHtml = place
     ? `<a id="goNowBtn" class="go-now-btn how-to-get-there-option" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener" hidden>${escapeHtml(t.waze)}</a>`
     : "";
+  // Taxi/Transfer (GetTransfer) și Tren/Autobuz (Omio) — linkuri de
+  // afiliere GOALE momentan (vezi TRAVEL_GUIDES_MONETIZATION_READY, sus în
+  // fișier) — ascunse cât timp rămân necompletate, ca să nu trimitem
+  // vizitatori spre site-uri publice, nemonetizate, prezentate ca linkuri
+  // "ale noastre". Waze rămâne — e navigație reală, nu monetizare.
+  const affiliateOptionsHtml = TRAVEL_GUIDES_MONETIZATION_READY
+    ? `<a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>
+      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>`
+    : "";
   return `
   <div class="how-to-get-there-block">
     <button type="button" class="how-to-get-there-btn" id="howToGetThereBtn">${escapeHtml(t.btn)}</button>
     <div class="how-to-get-there-panel" id="howToGetTherePanel" hidden>
       ${wazeHtml}
-      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>
-      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>
+      ${affiliateOptionsHtml}
     </div>
   </div>`;
 }
@@ -9533,6 +9577,9 @@ const TRAVEL_GUIDES_RO = [
 ];
 
 function buildTravelGuidesBoxHtml() {
+  if (!TRAVEL_GUIDES_MONETIZATION_READY) {
+    return `<p class="intro-text">${escapeHtml(comingSoonTextFor("ro"))}</p>`;
+  }
   return `
   <div class="plan-visit-block" style="display:block">
     <p class="intro-text"><strong>📖 Informații utile pentru vizită</strong></p>
@@ -9655,6 +9702,9 @@ const TRAVEL_GUIDES_EN = [
 ];
 
 function buildTravelGuidesBoxHtmlIntl(lang) {
+  if (!TRAVEL_GUIDES_MONETIZATION_READY) {
+    return `<p class="intro-text">${escapeHtml(comingSoonTextFor(lang))}</p>`;
+  }
   const t = travelGuidesBoxLabelsFor(lang);
   return `
   <div class="plan-visit-block" style="display:block">
