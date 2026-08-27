@@ -4925,8 +4925,16 @@ const BE_STORE_CONFIG = {
   lidl: { name: "Lidl", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   spar: { name: "Spar", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   intermarche: { name: "Intermarché", slug: "intermarche", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
-  cora: { name: "Cora", weekly: beHyperWeekly(), holidays: BE_HOLIDAYS },
-  match: { name: "Match", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  // NOTĂ: "cora" și "match" au fost eliminate deliberat — verificate prin
+  // căutare, NU mai există ca branduri active în Belgia. Cora și-a închis
+  // definitiv toate cele 7 hipermarketuri belgiene pe 31 ianuarie 2026
+  // (falimentul anunțat aprilie 2025, confirmat prin presă belgiană —
+  // rtbf.be, journalessentiel.be). Match/Smatch au fost vândute către
+  // Colruyt în 2024 și rebranduite "Comarché"/"Comarkt" (sau închise
+  // definitiv, 19 magazine fără cumpărător) — brandul "Match" nu mai
+  // există ca atare din 2024. Dacă adaugi vreodată "Comarché"/"Comarkt"
+  // ca branduri noi, verifică din nou statusul lor, e un lanț tânăr,
+  // aflat încă în tranziție spre un nume final.
   // Magazine de proximitate — format mic, ore extinse, adesea deschise și
   // duminica dimineața
   okay: { name: "Okay", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
@@ -6385,7 +6393,7 @@ function buildSearchIndex() {
     Object.keys(country.config).forEach((key) => {
       const cfg = country.config[key];
       country.cities.forEach((city) => {
-        if (code === "ro" && !isSelectiveBrandAllowedInCity(key, city)) return;
+        if (!isSelectiveBrandAllowedInCity(code, key, city)) return;
         const citySlug = slugifyCityName(city);
         index.push({ name: `${cfg.name} ${city}`, type: "store", country: code, href: `/${code}/${citySlug}/${cfg.slug || key}` });
       });
@@ -6413,7 +6421,7 @@ function buildSearchIndexRO() {
   Object.keys(RO_INTL_STORE_CONFIG).forEach((key) => {
     const cfg = RO_INTL_STORE_CONFIG[key];
     SITEMAP_CITIES.forEach((city) => {
-      if (!isSelectiveBrandAllowedInCity(key, city)) return;
+      if (!isSelectiveBrandAllowedInCity("ro", key, city)) return;
       const citySlug = slugifyCityName(city);
       index.push({ name: `${cfg.name} ${city}`, type: "store", country: "ro", href: `/${citySlug}/${cfg.slug || key}` });
     });
@@ -7159,44 +7167,128 @@ function toDisplayName(rawParam) {
 // am vrut mereu s-o evităm. Fiecare oraș din listele de mai jos a fost
 // verificat real, prin căutare, cu adresă exactă găsită. Liste incomplete,
 // deliberat conservatoare — mai bine lipsă un oraș real decât unul inventat.
+//
+// STRUCTURĂ: cheie de nivel 1 = codul țării (ro, be, ...), cheie de nivel 2 =
+// cheia brandului. OBLIGATORIU imbricat așa, NU un singur nivel plat — chei
+// de brand precum "carrefour" există în MAI MULTE țări simultan (RO, BE,
+// FR...), cu liste de orașe complet diferite; un singur nivel ar amesteca
+// orașele unei țări cu magazinele altei țări.
 const SELECTIVE_BRAND_CITIES = {
-  metro: [
-    "București", "Brașov", "Constanța", "Timișoara", "Cluj-Napoca", "Bacău",
-    "Iași", "Craiova", "Baia Mare", "Pitești", "Galați", "Ploiești", "Oradea",
-    "Sibiu", "Suceava", "Târgu Mureș", "Arad", "Deva", "Satu Mare",
-    "Piatra Neamț", "Buzău", "Târgoviște",
-  ],
-  selgros: [
-    "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Brașov",
-    "Brăila", "București", "Cluj-Napoca", "Constanța", "Craiova", "Galați",
-    "Sibiu", "Târgu Mureș",
-  ],
-  ikea: ["București", "Timișoara"],
-  cinemacity: [
-    "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
-    "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
-    "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
-    "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
-  ],
-  cineplexx: ["București", "Craiova", "Sibiu", "Satu Mare", "Târgu Mureș"],
-  happycinema: [
-    "București", "Alexandria", "Focșani", "Buzău", "Bistrița", "Bacău",
-    "Vaslui", "Botoșani", "Slobozia",
-  ],
-  movieplex: ["București"],
-  // "Mall" e o intrare generică — nu o marcă anume — folosim aceeași listă
-  // ca Cinema City, pentru că aproape toate sălile lor sunt în interiorul
-  // unui mall mare; o corelație rezonabilă, nu o presupunere oarbă
-  mall: [
-    "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
-    "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
-    "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
-    "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
-  ],
+  ro: {
+    metro: [
+      "București", "Brașov", "Constanța", "Timișoara", "Cluj-Napoca", "Bacău",
+      "Iași", "Craiova", "Baia Mare", "Pitești", "Galați", "Ploiești", "Oradea",
+      "Sibiu", "Suceava", "Târgu Mureș", "Arad", "Deva", "Satu Mare",
+      "Piatra Neamț", "Buzău", "Târgoviște",
+    ],
+    selgros: [
+      "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Brașov",
+      "Brăila", "București", "Cluj-Napoca", "Constanța", "Craiova", "Galați",
+      "Sibiu", "Târgu Mureș",
+    ],
+    ikea: ["București", "Timișoara"],
+    cinemacity: [
+      "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+      "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+      "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+      "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+    ],
+    cineplexx: ["București", "Craiova", "Sibiu", "Satu Mare", "Târgu Mureș"],
+    happycinema: [
+      "București", "Alexandria", "Focșani", "Buzău", "Bistrița", "Bacău",
+      "Vaslui", "Botoșani", "Slobozia",
+    ],
+    movieplex: ["București"],
+    // "Mall" e o intrare generică — nu o marcă anume — folosim aceeași listă
+    // ca Cinema City, pentru că aproape toate sălile lor sunt în interiorul
+    // unui mall mare; o corelație rezonabilă, nu o presupunere oarbă
+    mall: [
+      "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+      "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+      "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+      "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+    ],
+    // Mega Image — bug real, prins prin raportare directă (apărea în Brad,
+    // unde n-are niciun magazin). Rețeaua e extrem de concentrată pe
+    // București (~430 din ~600+ magazine, conform ZF), cu prezență
+    // secundară doar în câteva orașe mari. Listă verificată prin căutare
+    // (mega-image.ro/companie + articole retail-fmcg.ro), nu presupusă —
+    // conservatoare deliberat, ca la celelalte branduri de mai sus.
+    megaimage: [
+      "București", "Cluj-Napoca", "Iași", "Constanța", "Ploiești", "Brașov",
+      "Târgoviște", "Timișoara", "Bacău", "Focșani", "Oradea",
+    ],
+    // Auchan — cel mai concentrat dintre hipermarketuri: doar 26 de
+    // hipermarketuri clasice, în ~14-18 orașe mari (nu 41, cum eram
+    // presupuși implicit înainte). Listă verificată prin căutare
+    // (auchan.ro/magazine-auchan + wall-street.ro), oraș cu adresă exactă
+    // confirmată pentru fiecare intrare de mai jos.
+    auchan: [
+      "București", "Cluj-Napoca", "Iași", "Constanța", "Brașov", "Bacău",
+      "Oradea", "Sibiu", "Târgu Mureș", "Deva",
+    ],
+    // Carrefour — mai răspândit decât Mega Image/Auchan (formatele Market/
+    // Express ajung și în orașe medii, sub 100.000 locuitori), dar TOT nu
+    // e universal — confirmat direct ABSENT din Brad (verificat: Carrefour
+    // are magazine în Deva, Petroșani, Simeria, Hațeg, Călan — județul
+    // Hunedoara — dar nu și în Brad). Refolosim lista celor 41 de orașe deja
+    // verificate real pentru Lidl/Kaufland/Penny/Carrefour (comentariul de
+    // la SITEMAP_CITIES, secțiunea "adăugate ulterior") — cele 30 de orașe
+    // mari inițiale + cele 11 adăugate cu verificare explicită.
+    carrefour: [
+      "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+      "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+      "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+      "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+      "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+      "Tulcea", "Reșița",
+      "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+      "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+    ],
+  },
+  be: {
+    // Alvo (grup Colruyt) — verificat prin căutare (alvo.be/winkels +
+    // geodruid.com): concentrat aproape exclusiv în Flandra (Anvers,
+    // Flandra de Est/Vest) + o singură locație în zona Bruxelles.
+    // ZERO magazine găsite în Valonia (Charleroi, Liège, Namur, Mons) sau
+    // în Leuven/Aalst, deși apărea înainte ca "universal" pe toate cele
+    // 10 orașe din listă — corectat aici, nu presupus.
+    alvo: ["Brussels", "Antwerpen", "Gent", "Brugge"],
+  },
 };
 
-function isSelectiveBrandAllowedInCity(magazinKey, orasDisplay) {
-  const allowedCities = SELECTIVE_BRAND_CITIES[magazinKey];
+// NOTĂ IMPORTANTĂ, valabilă pentru toate cele 3 liste de mai sus
+// (megaimage/auchan/carrefour): verificate prin căutare web, la nivel de
+// oraș — NU verificate exhaustiv magazin-cu-magazin, la fel de riguros ca
+// metro/selgros mai sus. E posibil să lipsească un oraș real (ex. dacă un
+// lanț a mai deschis o sucursală de atunci) — mai bine lipsă un oraș real
+// decât unul inventat, ca peste tot în fișierul ăsta. Dacă vezi un oraș
+// unde lipsește un brand pe care-l știi sigur că există, spune și-l
+// adăugăm.
+//
+// ALTE BRANDURI CU ACEEAȘI PROBLEMĂ TEORETICĂ, ÎNCĂ NEVERIFICATE — rămân
+// "universale" (apar în toate cele 103 municipii) până la o verificare
+// separată: Dedeman, Leroy Merlin, Brico Depot, Hornbach, Jysk, Altex,
+// Flanco, Dm, Dr. Max, Farmacia Tei, Remedia, Spring Pharma, Catena,
+// Sensiblu, Help Net, Dona, Ropharma, Mr. Bricolage, toate băncile (BCR,
+// BRD, ING, Raiffeisen, Banca Transilvania, CEC), McDonald's, KFC, Burger
+// King, FAN Courier, Cargus, Sameday, DPD, GLS, Poșta Română. Unele
+// dintre astea (CEC, Poșta Română, Profi, Lidl, Penny, Kaufland) chiar
+// SUNT aproape universale în România — dar altele (Altex, Flanco, bănci
+// mari, fast-food) sigur nu sunt, în orașe mici ca Brad. Necesită o
+// verificare separată, brand cu brand, la fel ca mai sus.
+
+
+
+// GENERALIZAT — acceptă countryCode explicit, ca să nu amestece listele de
+// orașe ale unei țări cu magazinele altei țări (vezi structura imbricată de
+// la SELECTIVE_BRAND_CITIES mai sus). Un brand fără intrare pentru țara
+// respectivă, SAU o țară fără nicio intrare deloc în SELECTIVE_BRAND_CITIES,
+// rămâne "universal" (fallback sigur, ca înainte de generalizare).
+function isSelectiveBrandAllowedInCity(countryCode, magazinKey, orasDisplay) {
+  const countryRestrictions = SELECTIVE_BRAND_CITIES[countryCode];
+  if (!countryRestrictions) return true; // țară fără liste definite — universal
+  const allowedCities = countryRestrictions[magazinKey];
   if (!allowedCities) return true; // brand nerestricționat — universal, ca înainte
   const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
   return allowedCities.some((c) => strip(c) === strip(orasDisplay));
@@ -9315,7 +9407,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const canonical = `${baseUrl}/${orasSlug}`;
 
   const listItems = Object.keys(STORE_CONFIG)
-    .filter((key) => isSelectiveBrandAllowedInCity(key, orasDisplay))
+    .filter((key) => isSelectiveBrandAllowedInCity("ro", key, orasDisplay))
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
@@ -9613,7 +9705,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
 
   const listItems = Object.keys(country.config)
-    .filter((key) => countryCode !== "ro" || isSelectiveBrandAllowedInCity(key, orasDisplay))
+    .filter((key) => isSelectiveBrandAllowedInCity(countryCode, key, orasDisplay))
     .map((key) => {
       const cfg = country.config[key];
       const urlSlug = cfg.slug || key;
@@ -11379,7 +11471,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
     return;
   }
 
-  if (countryCode === "ro" && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+  if (!isSelectiveBrandAllowedInCity(countryCode, found.key, orasDisplay)) {
     res.status(404).send("Pagină negăsită.");
     return;
   }
@@ -11424,10 +11516,11 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
     return;
   }
 
-  // Pentru RO, aceleași restricții de brand ca pe .ro (Metro, Selgros, IKEA
-  // etc. nu sunt peste tot) — fără asta, ar apărea greșit peste tot pe
-  // varianta internațională, o regresie față de .ro unde funcționează corect
-  if (countryCode === "ro" && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+  // Aceleași restricții de brand, pentru orice țară care are liste definite
+  // în SELECTIVE_BRAND_CITIES (Metro, Selgros, IKEA etc. la RO; Alvo la BE)
+  // — fără asta, ar apărea greșit peste tot pe varianta internațională, o
+  // regresie față de .ro unde funcționează corect
+  if (!isSelectiveBrandAllowedInCity(countryCode, found.key, orasDisplay)) {
     res.status(404).send("Pagină negăsită.");
     return;
   }
@@ -11489,7 +11582,7 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
     return;
   }
 
-  if (found && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+  if (found && !isSelectiveBrandAllowedInCity("ro", found.key, orasDisplay)) {
     const nonce = generateNonce();
     res.set("Content-Security-Policy", buildCsp(nonce));
     const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
@@ -11602,7 +11695,7 @@ app.get("/:oras/:magazin", async (req, res, next) => {
     return;
   }
 
-  if (found && !isSelectiveBrandAllowedInCity(found.key, orasDisplay)) {
+  if (found && !isSelectiveBrandAllowedInCity("ro", found.key, orasDisplay)) {
     const nonce = generateNonce();
     res.set("Content-Security-Policy", buildCsp(nonce));
     const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
