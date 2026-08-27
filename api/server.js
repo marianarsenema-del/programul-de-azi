@@ -7245,6 +7245,55 @@ const SELECTIVE_BRAND_CITIES = {
       "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
       "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
     ],
+    // Dedeman — 65 de magazine, prezent "în aproape toate județele" (site
+    // oficial dedeman.ro/compania), dar tot nu literalmente în toate cele
+    // 103 municipii — un magazin per reședință de județ, nu per oraș mic.
+    // Refolosim aceeași listă de 41 orașe mari, deja verificate pentru
+    // Lidl/Kaufland/Penny/Carrefour — cea mai bună aproximare conservatoare
+    // disponibilă fără o listă exhaustivă magazin-cu-magazin.
+    dedeman: [
+      "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+      "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+      "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+      "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+      "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+      "Tulcea", "Reșița",
+      "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+      "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+    ],
+    // Leroy Merlin — 23 de magazine în exact 16 orașe (confirmat prin
+    // retail.ro, 2025), listă completă, nu aproximare.
+    leroymerlin: [
+      "București", "Cluj-Napoca", "Craiova", "Ploiești", "Pitești", "Brașov",
+      "Constanța", "Sibiu", "Suceava", "Târgu Mureș", "Bacău", "Iași",
+      "Timișoara", "Oradea", "Târgoviște", "Arad",
+    ],
+    // Brico Depot — ~30-35 de magazine în ~25 de orașe (conform
+    // bricodepot.ro); listă conservatoare cu orașele confirmate individual
+    // prin căutare — probabil incompletă față de cele 25 reale, dar mai
+    // bine lipsă un oraș real decât unul inventat.
+    bricodepot: [
+      "București", "Oradea", "Deva", "Drobeta-Turnu Severin", "Cluj-Napoca",
+      "Satu Mare", "Baia Mare", "Târgu Mureș", "Brăila", "Iași", "Suceava",
+      "Târgoviște", "Constanța", "Piatra Neamț",
+    ],
+    // Hornbach — cel mai concentrat brand de bricolaj: doar 11 magazine
+    // fizice (confirmat direct pe hornbach.ro), în doar 7 orașe.
+    hornbach: [
+      "București", "Brașov", "Timișoara", "Sibiu", "Oradea", "Cluj-Napoca",
+      "Constanța",
+    ],
+    // Farmacia Tei — bug real, prins prin verificare (hartafarmacii.ro,
+    // 27 aug. 2026): doar 13 farmacii în toată țara, concentrate în
+    // București (8) + câte una în Brașov, Aiud, Florești (Cluj), Popești-
+    // Leordeni (Ilfov) și o comună din Prahova. Rămân doar orașele din
+    // SITEMAP_CITIES — Florești/Popești-Leordeni sunt comune, nu municipii.
+    farmaciatei: ["București", "Brașov", "Aiud"],
+    // Remedia — lanț regional, NU național: doar 23 farmacii proprii,
+    // concentrate explicit "în special în județele Hunedoara, Alba și
+    // Sibiu" (corporate.remedia.ro/en/) — nu în restul țării. Aici lista
+    // e restrânsă la orașele mari din exact aceste 3 județe.
+    remedia: ["Deva", "Hunedoara", "Petroșani", "Alba Iulia", "Sibiu"],
   },
   be: {
     // Alvo (grup Colruyt) — verificat prin căutare (alvo.be/winkels +
