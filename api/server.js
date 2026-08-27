@@ -4855,12 +4855,92 @@ function beSupermarketWeekly() {
     { open: "08:30", close: "19:00" }, // Samedi
   ];
 }
+// Magazine de proximitate (Okay, Proxy Delhaize, Alvo) — format mic, deschise
+// și duminica dimineața în multe locații (excepție reală de la regula
+// marilor lanțuri), program prelungit seara. Reprezentativ, nu universal —
+// variază pe francizat, la fel ca la Delhaize normal.
+function beProximityWeekly() {
+  return [
+    { open: "09:00", close: "13:00" }, // Dimanche — multe puncte de proximitate deschise doar dimineața
+    { open: "08:00", close: "20:00" }, // Lundi
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Samedi
+  ];
+}
+
+// Bricolaj (Brico, Gamma, Hubo) — sub aceeași lege belgiană de închidere
+// duminicală ca marile magazine nealimentare; Luni-Sâmbătă cu program mai
+// lung vinerea în multe locații, simplificat aici la un interval uniform.
+const BE_DIY_HOLIDAYS = BE_HOLIDAYS;
+function beDiyWeekly() {
+  return [
+    null, // Dimanche — închis, lege belgiană de închidere duminicală pentru nealimentar
+    { open: "09:00", close: "18:30" }, // Lundi
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "20:00" }, // Vendredi — nocturnă, frecventă la lanțurile de bricolaj
+    { open: "09:00", close: "18:30" }, // Samedi
+  ];
+}
+
+// Electronice (MediaMarkt, Krëfel, Vanden Borre) — aceeași lege de închidere
+// duminicală; unele locații din mall-uri fac excepție (vezi STORE_ALIASES
+// pentru echivalentul românesc al acestei logici).
+function beElectroWeekly() {
+  return [
+    null, // Dimanche — închis
+    { open: "10:00", close: "19:00" }, // Lundi
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" }, // Samedi
+  ];
+}
+
+// Cora — hipermarketuri, program puțin mai lung decât supermarketul standard;
+// unele deschid și duminică dimineața, la fel ca Carrefour recent (vezi mai sus).
+function beHyperWeekly() {
+  return [
+    { open: "09:00", close: "12:30" }, // Dimanche — deschidere parțială, ca la Carrefour
+    { open: "08:30", close: "20:00" }, // Lundi
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" }, // Samedi
+  ];
+}
+
 const BE_STORE_CONFIG = {
+  // Supermarketuri și hipermarketuri
   colruyt: { name: "Colruyt", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   delhaize: { name: "Delhaize", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   carrefour: { name: "Carrefour", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   aldi: { name: "Aldi", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
   lidl: { name: "Lidl", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  spar: { name: "Spar", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  intermarche: { name: "Intermarché", slug: "intermarche", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  cora: { name: "Cora", weekly: beHyperWeekly(), holidays: BE_HOLIDAYS },
+  match: { name: "Match", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  // Magazine de proximitate — format mic, ore extinse, adesea deschise și
+  // duminica dimineața
+  okay: { name: "Okay", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  proxydelhaize: { name: "Proxy Delhaize", slug: "proxy-delhaize", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  alvo: { name: "Alvo", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  // Bricolaj / amenajări
+  brico: { name: "Brico", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  gamma: { name: "Gamma", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  hubo: { name: "Hubo", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  ikea: { name: "Ikea", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  // Electronice / electrocasnice
+  mediamarkt: { name: "MediaMarkt", slug: "media-markt", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
+  krefel: { name: "Krëfel", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
+  vandenborre: { name: "Vanden Borre", slug: "vanden-borre", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
 };
 
 // Danemarca: fără interdicție de duminică — magazinele sunt deschise 7 zile
@@ -5066,25 +5146,229 @@ const ATTRACTIONS = {
     { name: "Ars Electronica Center", url: "https://www.google.com/maps/search/?api=1&query=Ars+Electronica+Center+Austria" },
   ],
   be: [
-    { name: "Atomium Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Atomium+Bruxelles+Belgium" },
-    { name: "Walibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Belgium+Belgium" },
-    { name: "Grădina Zoologică Pairi Daiza", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+Pairi+Daiza+Belgium" },
-    { name: "Mini-Europe Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Mini-Europe+Bruxelles+Belgium" },
-    { name: "Castelul Gravensteen Gent", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Gravensteen+Gent+Belgium" },
-    { name: "Plopsaland De Panne", url: "https://www.google.com/maps/search/?api=1&query=Plopsaland+De+Panne+Belgium" },
-    { name: "Turnul Belfry din Bruges", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Belfry+din+Bruges+Belgium" },
-    { name: "Muzeul Magritte Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Magritte+Bruxelles+Belgium" },
-    { name: "Castelul Bouillon", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bouillon+Belgium" },
-    { name: "Aqualibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Aqualibi+Belgium+Belgium" },
-    { name: "Castelul Vêves", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vêves+Belgium" },
-    { name: "Boudewijn Seapark Bruges", url: "https://www.google.com/maps/search/?api=1&query=Boudewijn+Seapark+Bruges+Belgium" },
-    { name: "Plopsa Coo Stavelot", url: "https://www.google.com/maps/search/?api=1&query=Plopsa+Coo+Stavelot+Belgium" },
-    { name: "Bellewaerde Ieper", url: "https://www.google.com/maps/search/?api=1&query=Bellewaerde+Ieper+Belgium" },
-    { name: "Muzeul Regal al Africii Centrale", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Africii+Centrale+Belgium" },
-    { name: "Citadela din Namur", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Namur+Belgium" },
-    { name: "Centrul de Arte Frumoase BOZAR", url: "https://www.google.com/maps/search/?api=1&query=Centrul+de+Arte+Frumoase+BOZAR+Belgium" },
-    { name: "Peșterile Han-sur-Lesse", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Han-sur-Lesse+Belgium" },
-    { name: "Plopsaqua Hannut-Landen", url: "https://www.google.com/maps/search/?api=1&query=Plopsaqua+Hannut-Landen+Belgium" },
+    { name: "Palatul Regal din Bruxelles (Palais Royal)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Bruxelles+(Palais+Royal)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
+    { name: "Palatul Națiunii (Palais de la Nation)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Națiunii+(Palais+de+la+Nation)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
+    { name: "Castelul Regal din Laeken (Château de Laeken)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+din+Laeken+(Château+de+Laeken)+Laeken+Belgium", category: "castele_palate" }, // Laeken
+    { name: "Palatul Egmont (Palais d'Egmont)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Egmont+(Palais+d'Egmont)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
+    { name: "Palacio de Charles de Lorraine", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Charles+de+Lorraine+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
+    { name: "Castelul Rivieren", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rivieren+Ganshoren+Belgium", category: "castele_palate" }, // Ganshoren
+    { name: "Poarta Hal (Porte de Hal - Turn fortificat medieval)", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Hal+(Porte+de+Hal+-+Turn+fortificat+medieval)+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
+    { name: "Turnul Negru (Tour Noire - Fragment de zid medieval)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Negru+(Tour+Noire+-+Fragment+de+zid+medieval)+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
+    { name: "Turnul de Televiziune din Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Televiziune+din+Bruxelles+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
+    { name: "Catedrala Sfântul Mihail și Sfânta Gudula", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Mihail+și+Sfânta+Gudula+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
+    { name: "Bazilica Națională Sacré-Cœur din Koekelberg (A cincea ca mărime din lume)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Națională+Sacré-Cœur+din+Koekelberg+(A+cincea+ca+mărime+din+lume)+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
+    { name: "Biserica Notre-Dame du Sablon", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+du+Sablon+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
+    { name: "Biserica Saint-Jacques-sur-Coudenberg", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques-sur-Coudenberg+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
+    { name: "Biserica Notre-Dame de Laeken", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+de+Laeken+Laeken+Belgium", category: "manastiri" }, // Laeken
+    { name: "Biserica Sainte-Catherine", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sainte-Catherine+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
+    { name: "Parcul din Bruxelles (Parc de Bruxelles)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+din+Bruxelles+(Parc+de+Bruxelles)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
+    { name: "Parcul Cinquantenaire (Parc du Cinquantenaire)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Cinquantenaire+(Parc+du+Cinquantenaire)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
+    { name: "Parcul Leopold (Parc Léopold)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Leopold+(Parc+Léopold)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
+    { name: "Grădina Botanică Națională a Belgiei", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+Națională+a+Belgiei+Meise+(Zona+metropolitană)+Belgium", category: "natura" }, // Meise (Zona metropolitană)
+    { name: "Pădurea Soignes (Forêt de Soignes - Fagi seculari UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Pădurea+Soignes+(Forêt+de+Soignes+-+Fagi+seculari+UNESCO)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
+    { name: "Serele Regale din Laeken (Serres Royales)", url: "https://www.google.com/maps/search/?api=1&query=Serele+Regale+din+Laeken+(Serres+Royales)+Laeken+Belgium", category: "natura" }, // Laeken
+    { name: "Gara Centrală din Bruxelles (Bruxelles-Central)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Bruxelles+(Bruxelles-Central)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
+    { name: "Gara de Sud (Bruxelles-Midi)", url: "https://www.google.com/maps/search/?api=1&query=Gara+de+Sud+(Bruxelles-Midi)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
+    { name: "Tunelul Leopold II (Infrastructură subterană majoră)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Leopold+II+(Infrastructură+subterană+majoră)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
+    { name: "Muzeele Regale de Arte Frumoase ale Belgiei", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Regale+de+Arte+Frumoase+ale+Belgiei+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Muzeul Magritte", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Magritte+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Muzeul Instrumentelor Muzicale (MIM - Clădire Art Nouveau)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Instrumentelor+Muzicale+(MIM+-+Clădire+Art+Nouveau)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Lumea Auto (AutoWorld Museum)", url: "https://www.google.com/maps/search/?api=1&query=Lumea+Auto+(AutoWorld+Museum)+Bruxelles,+Parcul+Cinquantenaire+Belgium", category: "muzee" }, // Bruxelles, Parcul Cinquantenaire
+    { name: "Muzeul Regal al Armatei și de Istorie Militară", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Armatei+și+de+Istorie+Militară+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Centrul Belgian al Benzilor Desenate (Comic Strip Center)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Belgian+al+Benzilor+Desenate+(Comic+Strip+Center)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Muzeul de Istorie Naturală (Institutul Regal)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+(Institutul+Regal)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Muzeul Orașului Bruxelles (Maison du Roi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Orașului+Bruxelles+(Maison+du+Roi)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
+    { name: "Atomium (Simbolul arhitectural monumental)", url: "https://www.google.com/maps/search/?api=1&query=Atomium+(Simbolul+arhitectural+monumental)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Piața Mare (Grand-Place / Grote Markt - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+(Grand-Place+/+Grote+Markt+-+UNESCO)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Clădirea Primăriei (Hôtel de Ville)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Hôtel+de+Ville)+Bruxelles,+Grand-Place+Belgium", category: "cladiri_teatre" }, // Bruxelles, Grand-Place
+    { name: "Palatul de Justiție (Palais de Justice - Cea mai mare clădire din sec. XIX)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Palais+de+Justice+-+Cea+mai+mare+clădire+din+sec.+XIX)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Galeriile Regale Saint-Hubert (Printre primele galerii comerciale acoperite)", url: "https://www.google.com/maps/search/?api=1&query=Galeriile+Regale+Saint-Hubert+(Printre+primele+galerii+comerciale+acoperite)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Manneken Pis (Celebra statuie-simbol)", url: "https://www.google.com/maps/search/?api=1&query=Manneken+Pis+(Celebra+statuie-simbol)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Jeanneke Pis (Varianta feminină a statuii)", url: "https://www.google.com/maps/search/?api=1&query=Jeanneke+Pis+(Varianta+feminină+a+statuii)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Parcul Europa în Miniatură (Mini-Europe)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Europa+în+Miniatură+(Mini-Europe)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Arcul de Triumf din Parcul Cinquantenaire", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Parcul+Cinquantenaire+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Teatrul Regal de la Monnaie (La Monnaie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+de+la+Monnaie+(La+Monnaie)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Castelul Loppem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loppem+Loppem+Belgium", category: "castele_palate" }, // Loppem
+    { name: "Castelul Wijnendale", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wijnendale+Torhout+Belgium", category: "castele_palate" }, // Torhout
+    { name: "Castelul Beauvoorde", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beauvoorde+Veurne+Belgium", category: "castele_palate" }, // Veurne
+    { name: "Castelul Male", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Male+Bruges+Belgium", category: "castele_palate" }, // Bruges
+    { name: "Palatul Provincial (Provinciaal Hof)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Provincial+(Provinciaal+Hof)+Bruges,+Grote+Markt+Belgium", category: "castele_palate" }, // Bruges, Grote Markt
+    { name: "Castelul Tillegem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Tillegem+Bruges+Belgium", category: "castele_palate" }, // Bruges
+    { name: "Turnul cu Ceas din Bruges (Belfort - Simbolul medieval UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Bruges+(Belfort+-+Simbolul+medieval+UNESCO)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
+    { name: "Turnul Bisericii Maicii Domnului (Cel mai înalt turn de cărămidă)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Bisericii+Maicii+Domnului+(Cel+mai+înalt+turn+de+cărămidă)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
+    { name: "Porțile Medievale ale Orașului (Gentpoort, Kruispoort, Smedenpoort)", url: "https://www.google.com/maps/search/?api=1&query=Porțile+Medievale+ale+Orașului+(Gentpoort,+Kruispoort,+Smedenpoort)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
+    { name: "Turnul de Pulbere (Poertoren)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Pulbere+(Poertoren)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
+    { name: "Bazilica Sângelui Sfânt (Heilig-Bloedbasiliek)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sângelui+Sfânt+(Heilig-Bloedbasiliek)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Catedrala Sfântul Salvator (Sint-Salvatorskathedraal)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Salvator+(Sint-Salvatorskathedraal)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Biserica Maicii Domnului (Onze-Lieve-Vrouwekerk - Statuia de Michelangelo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Maicii+Domnului+(Onze-Lieve-Vrouwekerk+-+Statuia+de+Michelangelo)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Mănăstirea Beguinage (Pridvorul de mănăstire prințesesc - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+(Pridvorul+de+mănăstire+prințesesc+-+UNESCO)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Ierusalimkerk (Biserica Ierusalim)", url: "https://www.google.com/maps/search/?api=1&query=Ierusalimkerk+(Biserica+Ierusalim)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Abația Sfântul Andrei", url: "https://www.google.com/maps/search/?api=1&query=Abația+Sfântul+Andrei+Zevenkerken+Belgium", category: "manastiri" }, // Zevenkerken
+    { name: "Lacul Iubirii (Minnewater și Parcul Minnewaterpark)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iubirii+(Minnewater+și+Parcul+Minnewaterpark)+Bruges+Belgium", category: "natura" }, // Bruges
+    { name: "Rezervația Naturală Zwin (Zonă protejată de coastă pe mare)", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Zwin+(Zonă+protejată+de+coastă+pe+mare)+Knokke-Heist+Belgium", category: "natura" }, // Knokke-Heist
+    { name: "Canalele din Bruges (Canalele verzi și rețeaua acvatică)", url: "https://www.google.com/maps/search/?api=1&query=Canalele+din+Bruges+(Canalele+verzi+și+rețeaua+acvatică)+Bruges+Belgium", category: "natura" }, // Bruges
+    { name: "Parcul Natural Het Zwin", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Het+Zwin+Knokke+Belgium", category: "natura" }, // Knokke
+    { name: "Plaja din Oostende", url: "https://www.google.com/maps/search/?api=1&query=Plaja+din+Oostende+Oostende+Belgium", category: "natura" }, // Oostende
+    { name: "Podul Bonifacius (Ponte Bonifacio - Cel mai fotografiat pod romantic)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Bonifacius+(Ponte+Bonifacio+-+Cel+mai+fotografiat+pod+romantic)+Bruges+Belgium", category: "infrastructura" }, // Bruges
+    { name: "Portul Zeebrugge (Mare port maritim și terminal)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Zeebrugge+(Mare+port+maritim+și+terminal)+Zeebrugge+Belgium", category: "infrastructura" }, // Zeebrugge
+    { name: "Gara din Bruges (Station Brugge)", url: "https://www.google.com/maps/search/?api=1&query=Gara+din+Bruges+(Station+Brugge)+Bruges+Belgium", category: "infrastructura" }, // Bruges
+    { name: "Debarcaderul istoric Rozenhoedkaai", url: "https://www.google.com/maps/search/?api=1&query=Debarcaderul+istoric+Rozenhoedkaai+Bruges+Belgium", category: "infrastructura" }, // Bruges
+    { name: "Muzeul Groeninge (Groeningemuseum - Pictorii Primitivi Flamanzi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Groeninge+(Groeningemuseum+-+Pictorii+Primitivi+Flamanzi)+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Spitalul Sfântul Ioan (Sint-Janshospitaal - Muzeul Memling)", url: "https://www.google.com/maps/search/?api=1&query=Spitalul+Sfântul+Ioan+(Sint-Janshospitaal+-+Muzeul+Memling)+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Muzeul Ciocolatei (Choco-Story)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ciocolatei+(Choco-Story)+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Muzeul Cartofilor Prăjiți (Frietmuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cartofilor+Prăjiți+(Frietmuseum)+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Muzeul Chihlimbarului și Diamantelor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Chihlimbarului+și+Diamantelor+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Muzeul Istoric Historium Bruges", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoric+Historium+Bruges+Bruges+Belgium", category: "muzee" }, // Bruges
+    { name: "Piața Centrală din Bruges (Grote Markt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Bruges+(Grote+Markt)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
+    { name: "Piața Burg (Cu clădirile administrative istorice)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Burg+(Cu+clădirile+administrative+istorice)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
+    { name: "Clădirea Primăriei din Bruges (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+din+Bruges+(Stadhuis)+Bruges,+Piața+Burg+Belgium", category: "cladiri_teatre" }, // Bruges, Piața Burg
+    { name: "Casele Breslelor Medievale", url: "https://www.google.com/maps/search/?api=1&query=Casele+Breslelor+Medievale+Bruges,+Grote+Markt+Belgium", category: "cladiri_teatre" }, // Bruges, Grote Markt
+    { name: "Vechea Hală de Pește (Vismarkt)", url: "https://www.google.com/maps/search/?api=1&query=Vechea+Hală+de+Pește+(Vismarkt)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
+    { name: "Clădirea Libertății din Bruges (Brugse Vrije)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Libertății+din+Bruges+(Brugse+Vrije)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
+    { name: "Castelul Conților de Flandra (Gravensteen - Fortăreață medievală masivă)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Conților+de+Flandra+(Gravensteen+-+Fortăreață+medievală+masivă)+Gent+Belgium", category: "castele_palate" }, // Gent
+    { name: "Castelul lui Gerald Diavolul (Geeraard de Duivelsteen)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+lui+Gerald+Diavolul+(Geeraard+de+Duivelsteen)+Gent+Belgium", category: "castele_palate" }, // Gent
+    { name: "Castelul Ooidonk", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ooidonk+Deinze+Belgium", category: "castele_palate" }, // Deinze
+    { name: "Castelul Laarne", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Laarne+Laarne+Belgium", category: "castele_palate" }, // Laarne
+    { name: "Palatul de Justiție (Oude Justitiepaleis)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Oude+Justitiepaleis)+Gent+Belgium", category: "castele_palate" }, // Gent
+    { name: "Turnul cu Ceas din Gent (Belfort - Turnul independenței UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Gent+(Belfort+-+Turnul+independenței+UNESCO)+Gent+Belgium", category: "cetati_turnuri" }, // Gent
+    { name: "Turnul Catedralei Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+Sfântului+Bavo+Gent+Belgium", category: "cetati_turnuri" }, // Gent
+    { name: "Zidurile Porții Rabot (Monument fortificat pe canal)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Porții+Rabot+(Monument+fortificat+pe+canal)+Gent+Belgium", category: "cetati_turnuri" }, // Gent
+    { name: "Catedrala Sfântul Bavo (Sint-Baafskathedraal - Altarul din Gent de Van Eyck)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Bavo+(Sint-Baafskathedraal+-+Altarul+din+Gent+de+Van+Eyck)+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Biserica Sfântul Nicolae (Sint-Niklaasker)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Nicolae+(Sint-Niklaasker)+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Mănăstirea Sfântul Petru (Sint-Pietersabdij)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Sfântul+Petru+(Sint-Pietersabdij)+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Biserica Sfântul Mihail (Sint-Michielskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Mihail+(Sint-Michielskerk)+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Mănăstirea Beguinage Sfânta Elisabeta (Klein Begijnhof)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+Sfânta+Elisabeta+(Klein+Begijnhof)+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Ruinele Abației Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Ruinele+Abației+Sfântului+Bavo+Gent+Belgium", category: "manastiri" }, // Gent
+    { name: "Rezervația Naturală Bourgoyen-Ossemeersen", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Bourgoyen-Ossemeersen+Gent+Belgium", category: "natura" }, // Gent
+    { name: "Parcul Citadelei (Citadelpark)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Citadelei+(Citadelpark)+Gent+Belgium", category: "natura" }, // Gent
+    { name: "Rețeaua de Canale Graslei și Korenlei", url: "https://www.google.com/maps/search/?api=1&query=Rețeaua+de+Canale+Graslei+și+Korenlei+Gent+Belgium", category: "natura" }, // Gent
+    { name: "Parcul Natural Blaarmeersen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Blaarmeersen+Gent+Belgium", category: "natura" }, // Gent
+    { name: "Podul Sfântul Mihail (Sint-Michielsbrug - Punct panoramic major)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Sfântul+Mihail+(Sint-Michielsbrug+-+Punct+panoramic+major)+Gent+Belgium", category: "infrastructura" }, // Gent
+    { name: "Portul Comercial din Gent", url: "https://www.google.com/maps/search/?api=1&query=Portul+Comercial+din+Gent+Gent+Belgium", category: "infrastructura" }, // Gent
+    { name: "Gara Gent-Sint-Pieters", url: "https://www.google.com/maps/search/?api=1&query=Gara+Gent-Sint-Pieters+Gent+Belgium", category: "infrastructura" }, // Gent
+    { name: "Muzeul de Arte Frumoase (MSK)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arte+Frumoase+(MSK)+Gent+Belgium", category: "muzee" }, // Gent
+    { name: "Muzeul de Artă Contemporană (S.M.A.K.)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(S.M.A.K.)+Gent+Belgium", category: "muzee" }, // Gent
+    { name: "Muzeul de Industrie și Textile (Industriemuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Industrie+și+Textile+(Industriemuseum)+Gent+Belgium", category: "muzee" }, // Gent
+    { name: "STAM (Muzeul de Istorie al Orașului Gent)", url: "https://www.google.com/maps/search/?api=1&query=STAM+(Muzeul+de+Istorie+al+Orașului+Gent)+Gent+Belgium", category: "muzee" }, // Gent
+    { name: "Muzeul de Etnografie și Folclor (Huis van Alijn)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Etnografie+și+Folclor+(Huis+van+Alijn)+Gent+Belgium", category: "muzee" }, // Gent
+    { name: "Faleza Graslei și Korenlei (Casele monumentale ale breslelor)", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Graslei+și+Korenlei+(Casele+monumentale+ale+breslelor)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
+    { name: "Primăria din Gent (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Primăria+din+Gent+(Stadhuis)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
+    { name: "Hala de Carne (Groot Vleeshuis)", url: "https://www.google.com/maps/search/?api=1&query=Hala+de+Carne+(Groot+Vleeshuis)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
+    { name: "Piața Vineri (Vrijdagmarkt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Vineri+(Vrijdagmarkt)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
+    { name: "Hala Orașului (Stadshal - Arhitectură modernă)", url: "https://www.google.com/maps/search/?api=1&query=Hala+Orașului+(Stadshal+-+Arhitectură+modernă)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
+    { name: "Castelul Steen (Het Steen - Cetatea de pe malul râului Scheldt)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Steen+(Het+Steen+-+Cetatea+de+pe+malul+râului+Scheldt)+Anvers+Belgium", category: "castele_palate" }, // Anvers
+    { name: "Palatul Regal de pe Meir (Paleis op Meir)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+de+pe+Meir+(Paleis+op+Meir)+Anvers+Belgium", category: "castele_palate" }, // Anvers
+    { name: "Castelul Sterckshof", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sterckshof+Deurne,+Anvers+Belgium", category: "castele_palate" }, // Deurne, Anvers
+    { name: "Palatul Bursei (Handelsbeurs)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Bursei+(Handelsbeurs)+Anvers+Belgium", category: "castele_palate" }, // Anvers
+    { name: "Turnul Catedralei (Cel mai înalt turn de biserică din Benelux UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+(Cel+mai+înalt+turn+de+biserică+din+Benelux+UNESCO)+Anvers+Belgium", category: "cetati_turnuri" }, // Anvers
+    { name: "Turnul Boerentoren (Primul zgârie-nori din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Boerentoren+(Primul+zgârie-nori+din+Europa)+Anvers+Belgium", category: "cetati_turnuri" }, // Anvers
+    { name: "Fortăreața Lillo", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Lillo+Zona+Portuară,+Anvers+Belgium", category: "cetati_turnuri" }, // Zona Portuară, Anvers
+    { name: "Catedrala Maicii Domnului (Onze-Lieve-Vrouwekathedraal - Picturi de Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Maicii+Domnului+(Onze-Lieve-Vrouwekathedraal+-+Picturi+de+Rubens)+Anvers+Belgium", category: "manastiri" }, // Anvers
+    { name: "Biserica Sfântul Carol Borromeo (Iezuită barocă superbă)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Carol+Borromeo+(Iezuită+barocă+superbă)+Anvers+Belgium", category: "manastiri" }, // Anvers
+    { name: "Biserica Sfântul Iacob (Sint-Jacobskerk - Mormântul lui Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Iacob+(Sint-Jacobskerk+-+Mormântul+lui+Rubens)+Anvers+Belgium", category: "manastiri" }, // Anvers
+    { name: "Biserica Sfântul Pavel (Sint-Pauluskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Pavel+(Sint-Pauluskerk)+Anvers+Belgium", category: "manastiri" }, // Anvers
+    { name: "Biserica Sfântul Andrei (Sint-Andrieskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Andrei+(Sint-Andrieskerk)+Anvers+Belgium", category: "manastiri" }, // Anvers
+    { name: "Grădina Zoologică din Anvers (ZOO Antwerpen - Printre cele mai vechi)", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+din+Anvers+(ZOO+Antwerpen+-+Printre+cele+mai+vechi)+Anvers+Belgium", category: "natura" }, // Anvers
+    { name: "Parcul Middelheim (Parc monumental de sculpturi în aer liber)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Middelheim+(Parc+monumental+de+sculpturi+în+aer+liber)+Anvers+Belgium", category: "natura" }, // Anvers
+    { name: "Râul Scheldt și Faleza de mers", url: "https://www.google.com/maps/search/?api=1&query=Râul+Scheldt+și+Faleza+de+mers+Anvers+Belgium", category: "natura" }, // Anvers
+    { name: "Parcul Stadspark", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Stadspark+Anvers+Belgium", category: "natura" }, // Anvers
+    { name: "Gara Centrală din Anvers (Antwerpen-Centraal - Catedrala Gărilor)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Anvers+(Antwerpen-Centraal+-+Catedrala+Gărilor)+Anvers+Belgium", category: "infrastructura" }, // Anvers
+    { name: "Tunelul Sfântul Ana (Tunel pietonal subteran istoric pe sub râu)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Sfântul+Ana+(Tunel+pietonal+subteran+istoric+pe+sub+râu)+Anvers+Belgium", category: "infrastructura" }, // Anvers
+    { name: "Portul Anvers (Al doilea ca mărime din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Anvers+(Al+doilea+ca+mărime+din+Europa)+Anvers+Belgium", category: "infrastructura" }, // Anvers
+    { name: "Portul de iahturi Willemdok", url: "https://www.google.com/maps/search/?api=1&query=Portul+de+iahturi+Willemdok+Anvers+Belgium", category: "infrastructura" }, // Anvers
+    { name: "Casa Memorială Rubens (Rubenshuis)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memorială+Rubens+(Rubenshuis)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul MAS (Museum aan de Stroom - Clădire avangardistă)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+MAS+(Museum+aan+de+Stroom+-+Clădire+avangardistă)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul Plantin-Moretus (Tipografie istorică unică UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Plantin-Moretus+(Tipografie+istorică+unică+UNESCO)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul Regal de Arte Frumoase (KMSKA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+de+Arte+Frumoase+(KMSKA)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul Diamantelor (DIVA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Diamantelor+(DIVA)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul Modei (MoMu)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Modei+(MoMu)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Muzeul Red Star Line (Istoria emigrației)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Red+Star+Line+(Istoria+emigrației)+Anvers+Belgium", category: "muzee" }, // Anvers
+    { name: "Piața Mare din Anvers (Grote Markt și Fântâna Brabo)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+din+Anvers+(Grote+Markt+și+Fântâna+Brabo)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Clădirea Primăriei (Stadhuis - Stil Renaștere UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Stadhuis+-+Stil+Renaștere+UNESCO)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Bulevardul Comercial Meir", url: "https://www.google.com/maps/search/?api=1&query=Bulevardul+Comercial+Meir+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Cartierul Diamantelor (Diamond Quarter)", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Diamantelor+(Diamond+Quarter)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Teatrul Bourla (Bourlaschouwburg)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Bourla+(Bourlaschouwburg)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Clădirea Tribunalului (Justitiepaleis - Acoperiș futurist)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Tribunalului+(Justitiepaleis+-+Acoperiș+futurist)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
+    { name: "Palatul Prinților-Episcopi din Liège", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prinților-Episcopi+din+Liège+Liège+Belgium", category: "castele_palate" }, // Liège
+    { name: "Castelul Modave", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Modave+Modave,+Liège+Belgium", category: "castele_palate" }, // Modave, Liège
+    { name: "Castelul Jehay", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Jehay+Amay,+Liège+Belgium", category: "castele_palate" }, // Amay, Liège
+    { name: "Castelul Corroy-le-Château", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corroy-le-Château+Gembloux,+Namur+Belgium", category: "castele_palate" }, // Gembloux, Namur
+    { name: "Palatul Episcopal din Tournai", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopal+din+Tournai+Tournai+Belgium", category: "castele_palate" }, // Tournai
+    { name: "Castelul Beloeil (Versailles-ul Valoniei)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beloeil+(Versailles-ul+Valoniei)+Beloeil,+Hainaut+Belgium", category: "castele_palate" }, // Beloeil, Hainaut
+    { name: "Castelul Attre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Attre+Brugelette+Belgium", category: "castele_palate" }, // Brugelette
+    { name: "Citadela din Namur (Una dintre cele mai mari fortărețe din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Namur+(Una+dintre+cele+mai+mari+fortărețe+din+Europa)+Namur+Belgium", category: "cetati_turnuri" }, // Namur
+    { name: "Citadela din Liège", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Liège+Liège+Belgium", category: "cetati_turnuri" }, // Liège
+    { name: "Turnul cu Ceas din Tournai (Belfort - Cel mai vechi din Belgia UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Tournai+(Belfort+-+Cel+mai+vechi+din+Belgia+UNESCO)+Tournai+Belgium", category: "cetati_turnuri" }, // Tournai
+    { name: "Turnul de pază Tour de la Passerelle", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+pază+Tour+de+la+Passerelle+Tournai+Belgium", category: "cetati_turnuri" }, // Tournai
+    { name: "Fortul Flémalle", url: "https://www.google.com/maps/search/?api=1&query=Fortul+Flémalle+Liège+Belgium", category: "cetati_turnuri" }, // Liège
+    { name: "Catedrala Sfântul Paul", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Paul+Liège+Belgium", category: "manastiri" }, // Liège
+    { name: "Catedrala Notre-Dame din Tournai (UNESCO - 5 turnuri monumentale)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Notre-Dame+din+Tournai+(UNESCO+-+5+turnuri+monumentale)+Tournai+Belgium", category: "manastiri" }, // Tournai
+    { name: "Catedrala Sfântul Albin", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Albin+Namur+Belgium", category: "manastiri" }, // Namur
+    { name: "Biserica Saint-Jacques", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques+Liège+Belgium", category: "manastiri" }, // Liège
+    { name: "Biserica Colegiată Saint-Barthélemy (Faimosul bazin baptismal)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Colegiată+Saint-Barthélemy+(Faimosul+bazin+baptismal)+Liège+Belgium", category: "manastiri" }, // Liège
+    { name: "Mănăstirea Maredsous", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Maredsous+Anhée+Belgium", category: "manastiri" }, // Anhée
+    { name: "Parcul Natural High Fens (Hautes Fagnes - Platou montan și mlaștini)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+High+Fens+(Hautes+Fagnes+-+Platou+montan+și+mlaștini)+Liège+Belgium", category: "natura" }, // Liège
+    { name: "Peșterile din Remouchamps (Cel mai lung traseu navigabil subteran)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Remouchamps+(Cel+mai+lung+traseu+navigabil+subteran)+Aywaille+Belgium", category: "natura" }, // Aywaille
+    { name: "Muntele Bueren (Scara monumentală cu 374 de trepte)", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Bueren+(Scara+monumentală+cu+374+de+trepte)+Liège+Belgium", category: "natura" }, // Liège
+    { name: "Parcul Natural din Văile Burdinale și Mehaigne", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+din+Văile+Burdinale+și+Mehaigne+Liège+Belgium", category: "natura" }, // Liège
+    { name: "Parcul Natural al Văii Attert", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+al+Văii+Attert+Regiunea+de+Sud+Belgium", category: "natura" }, // Regiunea de Sud
+    { name: "Gara Liège-Guillemins (Capodoperă futuristă de Santiago Calatrava)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Liège-Guillemins+(Capodoperă+futuristă+de+Santiago+Calatrava)+Liège+Belgium", category: "infrastructura" }, // Liège
+    { name: "Șoseaua panoramică de pe malul fluviului Meuse", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+de+pe+malul+fluviului+Meuse+Namur+la+Liège+Belgium", category: "infrastructura" }, // Namur la Liège
+    { name: "Podul Albert I", url: "https://www.google.com/maps/search/?api=1&query=Podul+Albert+I+Liège+Belgium", category: "infrastructura" }, // Liège
+    { name: "Podul de la Fragnée", url: "https://www.google.com/maps/search/?api=1&query=Podul+de+la+Fragnée+Liège+Belgium", category: "infrastructura" }, // Liège
+    { name: "Telecabina din Namur", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+din+Namur+Namur+Belgium", category: "infrastructura" }, // Namur
+    { name: "Muzeul Curtius (Grand Curtius - Complex muzeal major)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Curtius+(Grand+Curtius+-+Complex+muzeal+major)+Liège+Belgium", category: "muzee" }, // Liège
+    { name: "Muzeul de Artă Valonă (La Boverie)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Valonă+(La+Boverie)+Liège+Belgium", category: "muzee" }, // Liège
+    { name: "Muzeul de Istorie și Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+și+Arheologie+Tournai+Belgium", category: "muzee" }, // Tournai
+    { name: "Muzeul de Arte Frumoase din Tournai (Clădire de Victor Horta)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arte+Frumoase+din+Tournai+(Clădire+de+Victor+Horta)+Tournai+Belgium", category: "muzee" }, // Tournai
+    { name: "Situl Industrial Istoric Grand-Hornu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Industrial+Istoric+Grand-Hornu+(UNESCO)+Boussu+Belgium", category: "muzee" }, // Boussu
+    { name: "Piața Saint-Lambert", url: "https://www.google.com/maps/search/?api=1&query=Piața+Saint-Lambert+Liège+Belgium", category: "cladiri_teatre" }, // Liège
+    { name: "Piața Mare din Tournai (Grand-Place)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+din+Tournai+(Grand-Place)+Tournai+Belgium", category: "cladiri_teatre" }, // Tournai
+    { name: "Piața Armelor (Place d'Armes)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Armelor+(Place+d'Armes)+Namur+Belgium", category: "cladiri_teatre" }, // Namur
+    { name: "Teatrul Regal din Liège (Opéra Royal de Wallonie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+din+Liège+(Opéra+Royal+de+Wallonie)+Liège+Belgium", category: "cladiri_teatre" }, // Liège
+    { name: "Monumentul Perron (Simbolul libertății orașului)", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Perron+(Simbolul+libertății+orașului)+Liège,+Piața+du+Marché+Belgium", category: "cladiri_teatre" }, // Liège, Piața du Marché
+    { name: "Castelul Bouillon (Fortăreața medievală a lui Godfrey de Bouillon)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bouillon+(Fortăreața+medievală+a+lui+Godfrey+de+Bouillon)+Bouillon,+Luxemburg+Belgium", category: "castele_palate" }, // Bouillon, Luxemburg
+    { name: "Castelul Vêves (Castelul de basm cu turnuri ascuțite)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vêves+(Castelul+de+basm+cu+turnuri+ascuțite)+Celles,+Namur+Belgium", category: "castele_palate" }, // Celles, Namur
+    { name: "Castelul Walzin (Ridicată dramatic pe o stâncă verticală deasupra râului)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Walzin+(Ridicată+dramatic+pe+o+stâncă+verticală+deasupra+râului)+Dinant+Belgium", category: "castele_palate" }, // Dinant
+    { name: "Castelul Lavaux-Sainte-Anne", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Lavaux-Sainte-Anne+Rochefort+Belgium", category: "castele_palate" }, // Rochefort
+    { name: "Castelul Freÿr (Și grădinile sale în stil Versailles)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Freÿr+(Și+grădinile+sale+în+stil+Versailles)+Hastière+/+Dinant+Belgium", category: "castele_palate" }, // Hastière / Dinant
+    { name: "Castelul Spontin", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Spontin+Yvoir+Belgium", category: "castele_palate" }, // Yvoir
+    { name: "Citadela din Dinant (Ridicată pe stânca verticală simbol)", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Dinant+(Ridicată+pe+stânca+verticală+simbol)+Dinant+Belgium", category: "cetati_turnuri" }, // Dinant
+    { name: "Turnul istoric Tour de la Monnaie", url: "https://www.google.com/maps/search/?api=1&query=Turnul+istoric+Tour+de+la+Monnaie+Bouillon+Belgium", category: "cetati_turnuri" }, // Bouillon
+    { name: "Fortul Rochefort", url: "https://www.google.com/maps/search/?api=1&query=Fortul+Rochefort+Rochefort+Belgium", category: "cetati_turnuri" }, // Rochefort
+    { name: "Biserica Colegiată Notre-Dame de Dinant (Cu domul sub formă de pară)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Colegiată+Notre-Dame+de+Dinant+(Cu+domul+sub+formă+de+pară)+Dinant+Belgium", category: "manastiri" }, // Dinant
+    { name: "Abația Orval (Renumită pentru berea trapistă și ruinele istorice)", url: "https://www.google.com/maps/search/?api=1&query=Abația+Orval+(Renumită+pentru+berea+trapistă+și+ruinele+istorice)+Florenville+Belgium", category: "manastiri" }, // Florenville
+    { name: "Biserica Saint-Hubert (Biserica Colegiată)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Hubert+(Biserica+Colegiată)+Saint-Hubert+Belgium", category: "manastiri" }, // Saint-Hubert
+    { name: "Mănăstirea Chevetogne", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Chevetogne+Ciney+Belgium", category: "manastiri" }, // Ciney
+    { name: "Biserica Saint-Hadelin", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Hadelin+Celles+Belgium", category: "manastiri" }, // Celles
+    { name: "Peșterile din Han-sur-Lesse (Grottes de Han - Complex subteran uriaș)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Han-sur-Lesse+(Grottes+de+Han+-+Complex+subteran+uriaș)+Rochefort+Belgium", category: "natura" }, // Rochefort
+    { name: "Peștera Lorette-Rochefort", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Lorette-Rochefort+Rochefort+Belgium", category: "natura" }, // Rochefort
+    { name: "Parcul Național din Valea Semois", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+din+Valea+Semois+Bouillon+Belgium", category: "natura" }, // Bouillon
+    { name: "Stânca Bayard (Rocher Bayard - Acul de piatră despicat)", url: "https://www.google.com/maps/search/?api=1&query=Stânca+Bayard+(Rocher+Bayard+-+Acul+de+piatră+despicat)+Dinant+Belgium", category: "natura" }, // Dinant
+    { name: "Izvoarele Termale din Spa (Orașul istoric fondator al conceptului SPA - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Izvoarele+Termale+din+Spa+(Orașul+istoric+fondator+al+conceptului+SPA+-+UNESCO)+Spa+Belgium", category: "natura" }, // Spa
+    { name: "Parcul Natural al Celor Două Ourthes", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+al+Celor+Două+Ourthes+Houffalize+Belgium", category: "natura" }, // Houffalize
+    { name: "Cascada Coo (Cea mai înaltă cascadă naturală din Belgia)", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Coo+(Cea+mai+înaltă+cascadă+naturală+din+Belgia)+Stavelot+Belgium", category: "natura" }, // Stavelot
+    { name: "Circuitul de Curse Spa-Francorchamps (Faimosul traseu de Formula 1)", url: "https://www.google.com/maps/search/?api=1&query=Circuitul+de+Curse+Spa-Francorchamps+(Faimosul+traseu+de+Formula+1)+Francorchamps+Belgium", category: "infrastructura" }, // Francorchamps
+    { name: "Șoseaua panoramică a Văii Semois", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+a+Văii+Semois+Regiunea+Ardeni+Belgium", category: "infrastructura" }, // Regiunea Ardeni
+    { name: "Podul de pe râul Meuse", url: "https://www.google.com/maps/search/?api=1&query=Podul+de+pe+râul+Meuse+Dinant+Belgium", category: "infrastructura" }, // Dinant
+    { name: "Croazierele fluviale pe Meuse", url: "https://www.google.com/maps/search/?api=1&query=Croazierele+fluviale+pe+Meuse+Dinant+Belgium", category: "infrastructura" }, // Dinant
+    { name: "Casa Memorială Adolphe Sax (Inventatorul saxofonului)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memorială+Adolphe+Sax+(Inventatorul+saxofonului)+Dinant+Belgium", category: "muzee" }, // Dinant
+    { name: "Muzeul Abației din Stavelot", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Abației+din+Stavelot+Stavelot+Belgium", category: "muzee" }, // Stavelot
+    { name: "Baza Arheologică a Castelului Bouillon", url: "https://www.google.com/maps/search/?api=1&query=Baza+Arheologică+a+Castelului+Bouillon+Bouillon+Belgium", category: "muzee" }, // Bouillon
+    { name: "Muzeul Circuitului Spa-Francorchamps", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Circuitului+Spa-Francorchamps+Stavelot+Belgium", category: "muzee" }, // Stavelot
+    { name: "Bulevardul de pe malul apei din Dinant (Cu saxofoane gigantice colorate)", url: "https://www.google.com/maps/search/?api=1&query=Bulevardul+de+pe+malul+apei+din+Dinant+(Cu+saxofoane+gigantice+colorate)+Dinant+Belgium", category: "cladiri_teatre" }, // Dinant
+    { name: "Piața Centrală din Spa", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Spa+Spa+Belgium", category: "cladiri_teatre" }, // Spa
+    { name: "Piața Centrală din Bouillon", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Bouillon+Bouillon+Belgium", category: "cladiri_teatre" }, // Bouillon
+    { name: "Walibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Belgium+Belgium", category: "parcuri_agrement" },
+    { name: "Grădina Zoologică Pairi Daiza", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+Pairi+Daiza+Belgium", category: "parcuri_agrement" },
+    { name: "Plopsaland De Panne", url: "https://www.google.com/maps/search/?api=1&query=Plopsaland+De+Panne+Belgium", category: "parcuri_agrement" },
+    { name: "Aqualibi Belgium", url: "https://www.google.com/maps/search/?api=1&query=Aqualibi+Belgium+Belgium", category: "parcuri_agrement" },
+    { name: "Boudewijn Seapark Bruges", url: "https://www.google.com/maps/search/?api=1&query=Boudewijn+Seapark+Bruges+Belgium", category: "parcuri_agrement" },
+    { name: "Plopsa Coo Stavelot", url: "https://www.google.com/maps/search/?api=1&query=Plopsa+Coo+Stavelot+Belgium", category: "parcuri_agrement" },
+    { name: "Bellewaerde Ieper", url: "https://www.google.com/maps/search/?api=1&query=Bellewaerde+Ieper+Belgium", category: "parcuri_agrement" },
+    { name: "Muzeul Regal al Africii Centrale", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Africii+Centrale+Belgium", category: "muzee" },
+    { name: "Centrul de Arte Frumoase BOZAR", url: "https://www.google.com/maps/search/?api=1&query=Centrul+de+Arte+Frumoase+BOZAR+Belgium", category: "cladiri_teatre" },
+    { name: "Plopsaqua Hannut-Landen", url: "https://www.google.com/maps/search/?api=1&query=Plopsaqua+Hannut-Landen+Belgium", category: "parcuri_agrement" },
   ],
   dk: [
     { name: "Grădinile Tivoli Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+Copenhaga+Denmark" },
