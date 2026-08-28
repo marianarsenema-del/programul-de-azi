@@ -6328,6 +6328,13 @@ function detectAttractionCity(attractionName, countryCode) {
 
 const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg" };
 
+// Nume de țară ÎN ROMÂNĂ — folosite doar la construirea promptului pentru AI
+// (instrucțiunea în sine e scrisă în română, indiferent de limba cerută
+// pentru rezultat — vezi buildItineraryPrompt) și în mesajele de eroare ale
+// generatorului de itinerarii. Diferite de COUNTRY_LABELS (engleză, folosit
+// pentru UI-ul de selecție a țării).
+const COUNTRY_NAMES_RO = { ro: "România", de: "Germania", uk: "Regatul Unit", es: "Spania", fr: "Franța", it: "Italia", pl: "Polonia", nl: "Olanda", at: "Austria", be: "Belgia", dk: "Danemarca", se: "Suedia", pt: "Portugalia", cz: "Cehia", fi: "Finlanda", gr: "Grecia", hu: "Ungaria", hr: "Croația", ie: "Irlanda", sk: "Slovacia", si: "Slovenia", lt: "Lituania", lv: "Letonia", ee: "Estonia", cy: "Cipru", mt: "Malta", lu: "Luxemburg" };
+
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
 const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee", CY: "cy", MT: "mt", LU: "lu" };
@@ -11477,6 +11484,26 @@ app.get("/", (req, res) => {
 // ruta de obiectiv turistic — ÎNAINTEA rutei generice de magazin (aceeași
 // formă, 3 segmente: /:tara/:oras/:magazin) — altfel "obiectiv" ar fi
 // interpretat greșit ca nume de oraș
+// Varianta internațională a paginii de itinerar (vezi mai jos ruta simplă
+// "/itinerar", pentru România) — GENERALIZATĂ pentru oricare din cele 27 de
+// țări listate în COUNTRY_LABELS. Trebuie să fie ÎNAINTE de
+// "/:tara/:oras/..." de mai jos, EXACT din același motiv documentat acolo
+// pentru "/itinerar" vs "/:oras" — altfel ruta generică de oraș ar
+// intercepta "itinerar" ca nume de oraș necunoscut, înainte să ajungă aici.
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/itinerar", (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
+  }
+  const countryCode = req.params.tara;
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
+  const lang = ITINERARY_LABELS[requestedLang] ? requestedLang : "uk";
+  const html = renderItineraryPage(nonce, baseUrlFor(req), lang, countryCode);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
 app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
@@ -11782,10 +11809,13 @@ app.get("/itinerar", (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const lang = ITINERARY_LABELS[req.query.lang] ? req.query.lang : "ro";
-  const html = renderItineraryPage(nonce, baseUrlFor(req), lang);
+  const html = renderItineraryPage(nonce, baseUrlFor(req), lang, "ro");
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
+// (Varianta internațională — "/:tara/itinerar" — e definită mai sus, lângă
+// "/:tara/obiectiv/:slug", din motive de ordine a rutelor Express; vezi
+// comentariul de acolo.)
 
 app.get("/:oras", (req, res, next) => {
   if (req.params.oras.includes(".")) return next(); // cereri de tip fișier (css/js/ico) ignorate aici
@@ -11832,18 +11862,35 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
 
   const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
   const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
+  // GENERALIZAT — acceptă orice țară din COUNTRY_LABELS, nu doar România.
+  // Fără parametru (sau necunoscut), cade pe "ro" — comportamentul de
+  // dinainte, neschimbat, ca să nu stricăm nimic deja funcțional.
+  const tara = typeof req.body?.tara === "string" && COUNTRY_LABELS[req.body.tara] ? req.body.tara : "ro";
   let zile = Number(req.body?.zile);
   if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
   if (!Number.isFinite(zile) || zile < 1) zile = 1;
   if (zile > 7) zile = 7; // limită sensibilă — un itinerar de 7+ zile cu date filtrate local nu mai are sens practic
 
-  const { judet, obiective } = filtreazaObiectivePentruOras(oras);
-  if (!judet || !obiective.length) {
-    res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
-    return;
+  let obiectiveText;
+  const numeTara = COUNTRY_NAMES_RO[tara] || "România";
+
+  if (tara === "ro") {
+    const { judet, obiective } = filtreazaObiectivePentruOras(oras);
+    if (!judet || !obiective.length) {
+      res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
+      return;
+    }
+    obiectiveText = obiective.map((o) => `${o.nume} (${o.localitate})`);
+  } else {
+    const { obiective } = filtreazaObiectivePentruOrasIntl(tara, oras);
+    if (!obiective.length) {
+      res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un alt oraș din ${numeTara}.` });
+      return;
+    }
+    obiectiveText = obiective.map((a) => a.name);
   }
 
-  const prompt = buildItineraryPrompt(oras, zile, obiective, lang);
+  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara);
 
   try {
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -12531,19 +12578,53 @@ function filtreazaObiectivePentruOras(orasInput) {
   return { judet: judetPrincipal, obiective: rezultat.slice(0, MAX_OBIECTIVE_PROMPT) };
 }
 
+// Echivalentul de mai sus, pentru orice țară ÎN AFARĂ de România. Nu avem
+// (încă) o structură fină localitate->județ + vecini pentru celelalte 27
+// de țări, ca la România — ATTRACTIONS[countryCode] are doar {name, url,
+// category}, fără regiune. În loc să inventăm date geografice pe care nu
+// le avem, folosim o abordare mai simplă, dar corectă: căutăm în numele
+// obiectivului textul orașului cerut (multe nume includ orașul explicit,
+// ex. "Palatul Regal din Bruxelles"); dacă găsim prea puține, trimitem
+// modelului AI restul obiectivelor țării (plafonate) și îl lăsăm pe el să
+// aleagă/organizeze rezonabil, cu instrucțiune explicită în prompt.
+const MIN_OBIECTIVE_UTILE_INTL = 6;
+function filtreazaObiectivePentruOrasIntl(countryCode, orasInput) {
+  const lista = ATTRACTIONS[countryCode];
+  if (!lista || !lista.length) return { obiective: [], gasitExactInOras: false };
+
+  const normOras = normalizeJudetInput(orasInput);
+  const potrivite = lista.filter((a) => normalizeJudetInput(a.name).includes(normOras));
+
+  if (potrivite.length >= MIN_OBIECTIVE_UTILE_INTL) {
+    return { obiective: potrivite.slice(0, MAX_OBIECTIVE_PROMPT), gasitExactInOras: true };
+  }
+  // prea puține potriviri directe — trimitem restul obiectivelor țării,
+  // punând mai întâi cele deja potrivite (dacă există), completate cu
+  // restul, plafonat la MAX_OBIECTIVE_PROMPT
+  const restul = lista.filter((a) => !potrivite.includes(a));
+  const combinat = potrivite.concat(restul).slice(0, MAX_OBIECTIVE_PROMPT);
+  return { obiective: combinat, gasitExactInOras: potrivite.length > 0 };
+}
+
 // promptul trimis către OpenAI — cerem explicit format JSON, structură fixă,
-// ca frontend-ul să poată randa direct, fără parsare fragilă de text liber
-function buildItineraryPrompt(oras, zile, obiective, lang) {
-  const listaText = obiective.map((o) => `- ${o.nume} (${o.localitate})`).join("\n");
+// ca frontend-ul să poată randa direct, fără parsare fragilă de text liber.
+// GENERALIZAT pentru orice țară: countryCode + numeTara (română, pt. AI) +
+// obiective ca listă de STRINGURI simple (nume complet, eventual cu oraș
+// inclus în text) — la RO includem explicit "(localitate)", la restul
+// țărilor numele obiectivului conține deja orașul în multe cazuri (vezi
+// filtreazaObiectivePentruOrasIntl), deci NU mai forțăm un format anume.
+function buildItineraryPrompt(oras, zile, obiective, lang, numeTara) {
+  const listaText = obiective.map((o) => `- ${o}`).join("\n");
   const langName = itineraryLabelsFor(lang).aiLangName;
-  // Numele obiectivelor rămân în română, sunt nume proprii de locuri (nu se
+  const tara = numeTara || "România";
+  // Numele obiectivelor rămân exact cum apar (nume proprii de locuri, nu se
   // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
   // cerută. Instrucțiunea de limbă e pusă explicit, de trei ori (la început,
   // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
   // limbă dacă apare o singură dată la începutul unui prompt lung.
-  return `Ești un ghid turistic expert în România. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras}. TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii românești, nu se traduc).
+  return `Ești un ghid turistic expert în ${tara}. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras} (${tara}). TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii, nu se traduc).
 
-Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici:
+Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
 Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
@@ -12572,7 +12653,8 @@ Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${lan
 // Opening Hours Today) depinde de DOMENIU, nu de limbă — la fel ca restul
 // paginilor de pe site; limba în sine controlează formularul, mesajele și
 // (prin buildItineraryPrompt) chiar textul generat de AI.
-function renderItineraryPage(nonce, baseUrl, lang) {
+function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
+  const cc = countryCode || "ro";
   const t = itineraryLabelsFor(lang);
   const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
   const brandHtml = isIntlDomain
@@ -12581,8 +12663,34 @@ function renderItineraryPage(nonce, baseUrl, lang) {
   const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
   const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
   const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
-  const description = t.description;
-  const canonical = isIntlDomain ? `${baseUrl}/itinerar?lang=${lang}` : `${baseUrl}/itinerar`;
+  // GENERALIZAT — pe .ro, placeholder-ul rămâne EXACT cum era (orașe
+  // românești, ex. "Brașov, Sibiu, Maramureș", scris de mână în fiecare
+  // limbă). Pe restul țărilor, nu are sens să sugerăm orașe din România
+  // cuiva care planifică un itinerar în Belgia sau Germania — bug real,
+  // prins prin verificare directă a paginii ("arăta rău").
+  //
+  // NU rescriem cele 27 de texte traduse (risc mare de greșeală lingvistică
+  // pe limbi pe care nu le stăpânim) — în schimb, la randare, înlocuim DOAR
+  // parté dintre paranteze cu exemple reale, luate din COUNTRIES[cc].cities
+  // (deja existente, mereu sincronizate cu orașele reale ale țării). Numele
+  // de orașe (Bruxelles, Antwerpen etc.) nu se traduc de la o limbă la
+  // alta, deci sunt sigure de folosit fără text-lider tradus.
+  let placeholder = t.placeholder;
+  let description = t.description;
+  if (cc !== "ro" && COUNTRIES[cc]) {
+    const exampleCities = (COUNTRIES[cc].cities || []).slice(0, 2);
+    if (exampleCities.length) {
+      placeholder = placeholder.replace(/\s*\([^)]*\)\s*$/, ` (${exampleCities.join(", ")})`);
+    }
+    const countAttractions = (ATTRACTIONS[cc] || []).length;
+    if (countAttractions) {
+      description = description.replace(/\b500\b/, String(countAttractions));
+    }
+  }
+  // Canonical GENERALIZAT: /itinerar pentru RO (neschimbat), /<tara>/itinerar
+  // pentru restul — la fel ca la paginile de obiective/magazine internaționale.
+  const canonical = cc === "ro" ? `${baseUrl}/itinerar` : `${baseUrl}/${cc}/itinerar?lang=${lang}`;
+
 
   const daysOptionsHtml = [1, 2, 3, 4, 5].map((n) => `<option value="${n}"${n === 2 ? " selected" : ""}>${n}</option>`).join("");
 
@@ -12599,7 +12707,7 @@ function renderItineraryPage(nonce, baseUrl, lang) {
   <p class="intro-text">${escapeHtml(t.intro)}</p>
 
   <form id="itineraryForm" class="city-search-form" style="flex-direction:column;gap:12px;align-items:stretch">
-    <input type="text" id="itinOras" class="city-search-input" placeholder="${escapeHtml(t.placeholder)}" required>
+    <input type="text" id="itinOras" class="city-search-input" placeholder="${escapeHtml(placeholder)}" required>
     <div style="display:flex;gap:8px;align-items:center">
       <label for="itinZile" style="font-size:14px;color:var(--muted);white-space:nowrap">${escapeHtml(t.daysLabel)}</label>
       <select id="itinZile" class="city-search-input" style="flex:0 0 90px">
@@ -12636,6 +12744,7 @@ function renderItineraryPage(nonce, baseUrl, lang) {
 <script nonce="${nonce}">
 (function(){
   var LANG = ${safeJson(lang)};
+  var TARA = ${safeJson(cc)};
   var DAY_PREFIX = ${safeJson(t.dayPrefix)};
   var MORNING_LABEL = ${safeJson(t.morning)};
   var LUNCH_LABEL = ${safeJson(t.lunch)};
@@ -12719,7 +12828,7 @@ function renderItineraryPage(nonce, baseUrl, lang) {
     fetch("/api/genereaza-itinerar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG }),
+      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG, tara: TARA }),
     })
       .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
       .then(function(res){
