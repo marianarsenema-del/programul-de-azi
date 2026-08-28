@@ -1636,12 +1636,26 @@ const BOOKING_PLANNING_LABELS_EN = {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode }) {
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   const ticketHtml = linkBileteTurism
     ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.ticket)}</a>`
     : "";
+  // Restaurant + parcare — bug real, găsit prin testare directă (semnalat de
+  // utilizator): butonul de "parcare" folosea din greșeală bookingSearchLinkFor
+  // (căutare de HOTELURI pe Booking.com, aceeași funcție ca la cazare), nu
+  // parkviaLinkFor (funcția corectă, deja existentă, dar nefolosită aici).
+  // Reparat mai jos — DAR, la cererea explicită, ambele butoane rămân
+  // OPRITE (înlocuite cu mesaj "urmează în curând") cât timp
+  // TRAVEL_GUIDES_MONETIZATION_READY e false, exact ca la restul
+  // ghidurilor de călătorie de pe site (vezi comentariul de la
+  // TRAVEL_GUIDES_MONETIZATION_READY, mai sus în fișier) — nu are sens să
+  // arătăm butoane care nu duc la nimic util/monetizat pentru vizitator.
+  const restaurantParkingHtml = TRAVEL_GUIDES_MONETIZATION_READY
+    ? `<a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>
+      <a href="${escapeHtml(parkviaLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>`
+    : `<p class="plan-visit-hint">${escapeHtml(comingSoonTextFor(lang || "ro"))}</p>`;
   return `
   <div class="plan-visit-block">
     <button type="button" class="plan-visit-btn" id="planVisitBtn">${escapeHtml(t.title)}</button>
@@ -1649,8 +1663,7 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode }) {
     <div class="plan-visit-panel" id="planVisitPanel" hidden>
       ${ticketHtml}
       <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
-      <a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>
-      <a href="${escapeHtml(bookingSearchLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>
+      ${restaurantParkingHtml}
     </div>
   </div>`;
 }
@@ -11610,7 +11623,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro" })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro" })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
   ${buildTravelGuidesBoxHtml()}
 
@@ -11690,7 +11703,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name)}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
