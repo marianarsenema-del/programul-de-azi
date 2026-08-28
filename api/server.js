@@ -10341,14 +10341,20 @@ const BOTTOM_NAV_LABELS = {
   lv: { home: "Sākums", search: "Meklēt", favorites: "Iecienītie", map: "Karte" },
   ee: { home: "Avaleht", search: "Otsi", favorites: "Lemmikud", map: "Kaart" },
 };
-function buildBottomNavHtml(langCode) {
+function buildBottomNavHtml(langCode, countryCode) {
   const labels = BOTTOM_NAV_LABELS[langCode] || BOTTOM_NAV_LABELS.uk;
-  // "Creează itinerar" — acum tradus complet, în toate limbile (formular +
-  // răspunsul AI); href-ul rămâne simplu "/itinerar" pentru română (rută
-  // implicită), iar pentru celelalte limbi adaugă ?lang=xx, ca pagina să se
-  // deschidă direct în limba în care naviga deja utilizatorul.
+  // "Creează itinerar" — GENERALIZAT pentru orice țară, nu doar România.
+  // Bug real, prins prin testare directă: link-ul era hardcodat mereu la
+  // "/itinerar" (varianta doar-România) — click pe el dintr-o pagină a
+  // Belgiei tot ajungea pe generatorul de itinerarii al României, care
+  // evident nu găsea "Bruxelles" (mesaj de eroare vorbind despre România,
+  // deși interfața era deja în engleză). Acum href-ul include codul țării
+  // curente, la fel ca restul rutelor internaționale.
+  const cc = countryCode || "ro";
   const itineraryLabel = itineraryLabelsFor(langCode).breadcrumbCurrent;
-  const itineraryHref = langCode === "ro" ? "/itinerar" : `/itinerar?lang=${langCode}`;
+  const itineraryHref = cc === "ro"
+    ? (langCode === "ro" ? "/itinerar" : `/itinerar?lang=${langCode}`)
+    : `/${cc}/itinerar?lang=${langCode}`;
   const itineraryBtn = `<a href="${escapeHtml(itineraryHref)}" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>${escapeHtml(itineraryLabel)}</span></a>`;
   return `
 <nav class="bottom-nav">
@@ -10439,6 +10445,14 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
   const smartInstallBrand = isIntlDomain ? "Opening Hours Today" : "Programul de Azi";
   const smartInstallHtml = buildSmartInstallHtml(smartInstallBrand, langCode);
   const smartInstallScript = buildSmartInstallScript(nonce, langCode);
+  // Codul de țară curent, dedus din canonical (mereu URL complet) — folosit
+  // pentru link-ul "Creează itinerar" din bottom nav, ca să meargă spre
+  // țara paginii curente, nu mereu spre România (vezi buildBottomNavHtml).
+  // Nu se schimbă restul apelurilor către pageShell — canonical era deja
+  // transmis peste tot, doar îl citim și aici, în plus.
+  const canonicalPath = canonical.replace(/^https?:\/\/[^/]+/, "");
+  const canonicalCountryMatch = canonicalPath.match(/^\/([a-z]{2})(\/|\?|$)/);
+  const pageCountryCode = canonicalCountryMatch && COUNTRY_LABELS[canonicalCountryMatch[1]] ? canonicalCountryMatch[1] : "ro";
   // Travelpayouts Drive — Project SEPARAT per domeniu (coduri de urmărire
   // diferite, confirmat de utilizator), determinat din domeniul din canonical
   // (mereu URL complet, nu doar cale relativă) — fără să atingem restul
@@ -10511,7 +10525,7 @@ ${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.go
 ${smartInstallHtml}
 ${bodyHtml}
 ${buildThemeToggleHtml()}
-${buildBottomNavHtml(langCode)}
+${buildBottomNavHtml(langCode, pageCountryCode)}
 ${dataForClient ? buildClientScript(dataForClient, nonce) : ""}
 ${buildBottomNavScript(nonce)}
 ${buildThemeToggleScript(nonce)}
