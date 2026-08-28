@@ -5244,187 +5244,187 @@ const ATTRACTIONS = {
     { name: "Ars Electronica Center", url: "https://www.google.com/maps/search/?api=1&query=Ars+Electronica+Center+Austria" },
   ],
   be: [
-    { name: "Palatul Regal din Bruxelles (Palais Royal)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Bruxelles+(Palais+Royal)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
-    { name: "Palatul Națiunii (Palais de la Nation)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Națiunii+(Palais+de+la+Nation)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
-    { name: "Castelul Regal din Laeken (Château de Laeken)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+din+Laeken+(Château+de+Laeken)+Laeken+Belgium", category: "castele_palate" }, // Laeken
-    { name: "Palatul Egmont (Palais d'Egmont)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Egmont+(Palais+d'Egmont)+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
-    { name: "Palacio de Charles de Lorraine", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Charles+de+Lorraine+Bruxelles+Belgium", category: "castele_palate" }, // Bruxelles
-    { name: "Castelul Rivieren", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rivieren+Ganshoren+Belgium", category: "castele_palate" }, // Ganshoren
-    { name: "Poarta Hal (Porte de Hal - Turn fortificat medieval)", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Hal+(Porte+de+Hal+-+Turn+fortificat+medieval)+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
-    { name: "Turnul Negru (Tour Noire - Fragment de zid medieval)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Negru+(Tour+Noire+-+Fragment+de+zid+medieval)+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
-    { name: "Turnul de Televiziune din Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Televiziune+din+Bruxelles+Bruxelles+Belgium", category: "cetati_turnuri" }, // Bruxelles
-    { name: "Catedrala Sfântul Mihail și Sfânta Gudula", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Mihail+și+Sfânta+Gudula+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
-    { name: "Bazilica Națională Sacré-Cœur din Koekelberg (A cincea ca mărime din lume)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Națională+Sacré-Cœur+din+Koekelberg+(A+cincea+ca+mărime+din+lume)+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
-    { name: "Biserica Notre-Dame du Sablon", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+du+Sablon+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
-    { name: "Biserica Saint-Jacques-sur-Coudenberg", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques-sur-Coudenberg+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
-    { name: "Biserica Notre-Dame de Laeken", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+de+Laeken+Laeken+Belgium", category: "manastiri" }, // Laeken
-    { name: "Biserica Sainte-Catherine", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sainte-Catherine+Bruxelles+Belgium", category: "manastiri" }, // Bruxelles
-    { name: "Parcul din Bruxelles (Parc de Bruxelles)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+din+Bruxelles+(Parc+de+Bruxelles)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
-    { name: "Parcul Cinquantenaire (Parc du Cinquantenaire)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Cinquantenaire+(Parc+du+Cinquantenaire)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
-    { name: "Parcul Leopold (Parc Léopold)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Leopold+(Parc+Léopold)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
+    { name: "Palatul Regal din Bruxelles (Palais Royal)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Bruxelles+(Palais+Royal)+Bruxelles+Belgium", category: "castele_palate", city: "Brussels" }, // Bruxelles
+    { name: "Palatul Națiunii (Palais de la Nation)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Națiunii+(Palais+de+la+Nation)+Bruxelles+Belgium", category: "castele_palate", city: "Brussels" }, // Bruxelles
+    { name: "Castelul Regal din Laeken (Château de Laeken)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+din+Laeken+(Château+de+Laeken)+Laeken+Belgium", category: "castele_palate", city: "Brussels" }, // Laeken
+    { name: "Palatul Egmont (Palais d'Egmont)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Egmont+(Palais+d'Egmont)+Bruxelles+Belgium", category: "castele_palate", city: "Brussels" }, // Bruxelles
+    { name: "Palacio de Charles de Lorraine", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Charles+de+Lorraine+Bruxelles+Belgium", category: "castele_palate", city: "Brussels" }, // Bruxelles
+    { name: "Castelul Rivieren", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rivieren+Ganshoren+Belgium", category: "castele_palate", city: "Brussels" }, // Ganshoren
+    { name: "Poarta Hal (Porte de Hal - Turn fortificat medieval)", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Hal+(Porte+de+Hal+-+Turn+fortificat+medieval)+Bruxelles+Belgium", category: "cetati_turnuri", city: "Brussels" }, // Bruxelles
+    { name: "Turnul Negru (Tour Noire - Fragment de zid medieval)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Negru+(Tour+Noire+-+Fragment+de+zid+medieval)+Bruxelles+Belgium", category: "cetati_turnuri", city: "Brussels" }, // Bruxelles
+    { name: "Turnul de Televiziune din Bruxelles", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Televiziune+din+Bruxelles+Bruxelles+Belgium", category: "cetati_turnuri", city: "Brussels" }, // Bruxelles
+    { name: "Catedrala Sfântul Mihail și Sfânta Gudula", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Mihail+și+Sfânta+Gudula+Bruxelles+Belgium", category: "manastiri", city: "Brussels" }, // Bruxelles
+    { name: "Bazilica Națională Sacré-Cœur din Koekelberg (A cincea ca mărime din lume)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Națională+Sacré-Cœur+din+Koekelberg+(A+cincea+ca+mărime+din+lume)+Bruxelles+Belgium", category: "manastiri", city: "Brussels" }, // Bruxelles
+    { name: "Biserica Notre-Dame du Sablon", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+du+Sablon+Bruxelles+Belgium", category: "manastiri", city: "Brussels" }, // Bruxelles
+    { name: "Biserica Saint-Jacques-sur-Coudenberg", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques-sur-Coudenberg+Bruxelles+Belgium", category: "manastiri", city: "Brussels" }, // Bruxelles
+    { name: "Biserica Notre-Dame de Laeken", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Notre-Dame+de+Laeken+Laeken+Belgium", category: "manastiri", city: "Brussels" }, // Laeken
+    { name: "Biserica Sainte-Catherine", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sainte-Catherine+Bruxelles+Belgium", category: "manastiri", city: "Brussels" }, // Bruxelles
+    { name: "Parcul din Bruxelles (Parc de Bruxelles)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+din+Bruxelles+(Parc+de+Bruxelles)+Bruxelles+Belgium", category: "natura", city: "Brussels" }, // Bruxelles
+    { name: "Parcul Cinquantenaire (Parc du Cinquantenaire)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Cinquantenaire+(Parc+du+Cinquantenaire)+Bruxelles+Belgium", category: "natura", city: "Brussels" }, // Bruxelles
+    { name: "Parcul Leopold (Parc Léopold)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Leopold+(Parc+Léopold)+Bruxelles+Belgium", category: "natura", city: "Brussels" }, // Bruxelles
     { name: "Grădina Botanică Națională a Belgiei", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+Națională+a+Belgiei+Meise+(Zona+metropolitană)+Belgium", category: "natura" }, // Meise (Zona metropolitană)
-    { name: "Pădurea Soignes (Forêt de Soignes - Fagi seculari UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Pădurea+Soignes+(Forêt+de+Soignes+-+Fagi+seculari+UNESCO)+Bruxelles+Belgium", category: "natura" }, // Bruxelles
-    { name: "Serele Regale din Laeken (Serres Royales)", url: "https://www.google.com/maps/search/?api=1&query=Serele+Regale+din+Laeken+(Serres+Royales)+Laeken+Belgium", category: "natura" }, // Laeken
-    { name: "Gara Centrală din Bruxelles (Bruxelles-Central)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Bruxelles+(Bruxelles-Central)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
-    { name: "Gara de Sud (Bruxelles-Midi)", url: "https://www.google.com/maps/search/?api=1&query=Gara+de+Sud+(Bruxelles-Midi)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
-    { name: "Tunelul Leopold II (Infrastructură subterană majoră)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Leopold+II+(Infrastructură+subterană+majoră)+Bruxelles+Belgium", category: "infrastructura" }, // Bruxelles
-    { name: "Muzeele Regale de Arte Frumoase ale Belgiei", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Regale+de+Arte+Frumoase+ale+Belgiei+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Muzeul Magritte", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Magritte+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Muzeul Instrumentelor Muzicale (MIM - Clădire Art Nouveau)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Instrumentelor+Muzicale+(MIM+-+Clădire+Art+Nouveau)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Lumea Auto (AutoWorld Museum)", url: "https://www.google.com/maps/search/?api=1&query=Lumea+Auto+(AutoWorld+Museum)+Bruxelles,+Parcul+Cinquantenaire+Belgium", category: "muzee" }, // Bruxelles, Parcul Cinquantenaire
-    { name: "Muzeul Regal al Armatei și de Istorie Militară", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Armatei+și+de+Istorie+Militară+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Centrul Belgian al Benzilor Desenate (Comic Strip Center)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Belgian+al+Benzilor+Desenate+(Comic+Strip+Center)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Muzeul de Istorie Naturală (Institutul Regal)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+(Institutul+Regal)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Muzeul Orașului Bruxelles (Maison du Roi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Orașului+Bruxelles+(Maison+du+Roi)+Bruxelles+Belgium", category: "muzee" }, // Bruxelles
-    { name: "Atomium (Simbolul arhitectural monumental)", url: "https://www.google.com/maps/search/?api=1&query=Atomium+(Simbolul+arhitectural+monumental)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Piața Mare (Grand-Place / Grote Markt - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+(Grand-Place+/+Grote+Markt+-+UNESCO)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Clădirea Primăriei (Hôtel de Ville)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Hôtel+de+Ville)+Bruxelles,+Grand-Place+Belgium", category: "cladiri_teatre" }, // Bruxelles, Grand-Place
-    { name: "Palatul de Justiție (Palais de Justice - Cea mai mare clădire din sec. XIX)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Palais+de+Justice+-+Cea+mai+mare+clădire+din+sec.+XIX)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Galeriile Regale Saint-Hubert (Printre primele galerii comerciale acoperite)", url: "https://www.google.com/maps/search/?api=1&query=Galeriile+Regale+Saint-Hubert+(Printre+primele+galerii+comerciale+acoperite)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Manneken Pis (Celebra statuie-simbol)", url: "https://www.google.com/maps/search/?api=1&query=Manneken+Pis+(Celebra+statuie-simbol)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Jeanneke Pis (Varianta feminină a statuii)", url: "https://www.google.com/maps/search/?api=1&query=Jeanneke+Pis+(Varianta+feminină+a+statuii)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Parcul Europa în Miniatură (Mini-Europe)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Europa+în+Miniatură+(Mini-Europe)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Arcul de Triumf din Parcul Cinquantenaire", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Parcul+Cinquantenaire+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
-    { name: "Teatrul Regal de la Monnaie (La Monnaie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+de+la+Monnaie+(La+Monnaie)+Bruxelles+Belgium", category: "cladiri_teatre" }, // Bruxelles
+    { name: "Pădurea Soignes (Forêt de Soignes - Fagi seculari UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Pădurea+Soignes+(Forêt+de+Soignes+-+Fagi+seculari+UNESCO)+Bruxelles+Belgium", category: "natura", city: "Brussels" }, // Bruxelles
+    { name: "Serele Regale din Laeken (Serres Royales)", url: "https://www.google.com/maps/search/?api=1&query=Serele+Regale+din+Laeken+(Serres+Royales)+Laeken+Belgium", category: "natura", city: "Brussels" }, // Laeken
+    { name: "Gara Centrală din Bruxelles (Bruxelles-Central)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Bruxelles+(Bruxelles-Central)+Bruxelles+Belgium", category: "infrastructura", city: "Brussels" }, // Bruxelles
+    { name: "Gara de Sud (Bruxelles-Midi)", url: "https://www.google.com/maps/search/?api=1&query=Gara+de+Sud+(Bruxelles-Midi)+Bruxelles+Belgium", category: "infrastructura", city: "Brussels" }, // Bruxelles
+    { name: "Tunelul Leopold II (Infrastructură subterană majoră)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Leopold+II+(Infrastructură+subterană+majoră)+Bruxelles+Belgium", category: "infrastructura", city: "Brussels" }, // Bruxelles
+    { name: "Muzeele Regale de Arte Frumoase ale Belgiei", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Regale+de+Arte+Frumoase+ale+Belgiei+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Muzeul Magritte", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Magritte+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Muzeul Instrumentelor Muzicale (MIM - Clădire Art Nouveau)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Instrumentelor+Muzicale+(MIM+-+Clădire+Art+Nouveau)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Lumea Auto (AutoWorld Museum)", url: "https://www.google.com/maps/search/?api=1&query=Lumea+Auto+(AutoWorld+Museum)+Bruxelles,+Parcul+Cinquantenaire+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles, Parcul Cinquantenaire
+    { name: "Muzeul Regal al Armatei și de Istorie Militară", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+al+Armatei+și+de+Istorie+Militară+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Centrul Belgian al Benzilor Desenate (Comic Strip Center)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Belgian+al+Benzilor+Desenate+(Comic+Strip+Center)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Muzeul de Istorie Naturală (Institutul Regal)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+(Institutul+Regal)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Muzeul Orașului Bruxelles (Maison du Roi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Orașului+Bruxelles+(Maison+du+Roi)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
+    { name: "Atomium (Simbolul arhitectural monumental)", url: "https://www.google.com/maps/search/?api=1&query=Atomium+(Simbolul+arhitectural+monumental)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Piața Mare (Grand-Place / Grote Markt - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+(Grand-Place+/+Grote+Markt+-+UNESCO)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Clădirea Primăriei (Hôtel de Ville)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Hôtel+de+Ville)+Bruxelles,+Grand-Place+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles, Grand-Place
+    { name: "Palatul de Justiție (Palais de Justice - Cea mai mare clădire din sec. XIX)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Palais+de+Justice+-+Cea+mai+mare+clădire+din+sec.+XIX)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Galeriile Regale Saint-Hubert (Printre primele galerii comerciale acoperite)", url: "https://www.google.com/maps/search/?api=1&query=Galeriile+Regale+Saint-Hubert+(Printre+primele+galerii+comerciale+acoperite)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Manneken Pis (Celebra statuie-simbol)", url: "https://www.google.com/maps/search/?api=1&query=Manneken+Pis+(Celebra+statuie-simbol)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Jeanneke Pis (Varianta feminină a statuii)", url: "https://www.google.com/maps/search/?api=1&query=Jeanneke+Pis+(Varianta+feminină+a+statuii)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Parcul Europa în Miniatură (Mini-Europe)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Europa+în+Miniatură+(Mini-Europe)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Arcul de Triumf din Parcul Cinquantenaire", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Parcul+Cinquantenaire+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Teatrul Regal de la Monnaie (La Monnaie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+de+la+Monnaie+(La+Monnaie)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
     { name: "Castelul Loppem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loppem+Loppem+Belgium", category: "castele_palate" }, // Loppem
     { name: "Castelul Wijnendale", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wijnendale+Torhout+Belgium", category: "castele_palate" }, // Torhout
     { name: "Castelul Beauvoorde", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beauvoorde+Veurne+Belgium", category: "castele_palate" }, // Veurne
-    { name: "Castelul Male", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Male+Bruges+Belgium", category: "castele_palate" }, // Bruges
-    { name: "Palatul Provincial (Provinciaal Hof)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Provincial+(Provinciaal+Hof)+Bruges,+Grote+Markt+Belgium", category: "castele_palate" }, // Bruges, Grote Markt
-    { name: "Castelul Tillegem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Tillegem+Bruges+Belgium", category: "castele_palate" }, // Bruges
-    { name: "Turnul cu Ceas din Bruges (Belfort - Simbolul medieval UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Bruges+(Belfort+-+Simbolul+medieval+UNESCO)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
-    { name: "Turnul Bisericii Maicii Domnului (Cel mai înalt turn de cărămidă)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Bisericii+Maicii+Domnului+(Cel+mai+înalt+turn+de+cărămidă)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
-    { name: "Porțile Medievale ale Orașului (Gentpoort, Kruispoort, Smedenpoort)", url: "https://www.google.com/maps/search/?api=1&query=Porțile+Medievale+ale+Orașului+(Gentpoort,+Kruispoort,+Smedenpoort)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
-    { name: "Turnul de Pulbere (Poertoren)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Pulbere+(Poertoren)+Bruges+Belgium", category: "cetati_turnuri" }, // Bruges
-    { name: "Bazilica Sângelui Sfânt (Heilig-Bloedbasiliek)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sângelui+Sfânt+(Heilig-Bloedbasiliek)+Bruges+Belgium", category: "manastiri" }, // Bruges
-    { name: "Catedrala Sfântul Salvator (Sint-Salvatorskathedraal)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Salvator+(Sint-Salvatorskathedraal)+Bruges+Belgium", category: "manastiri" }, // Bruges
-    { name: "Biserica Maicii Domnului (Onze-Lieve-Vrouwekerk - Statuia de Michelangelo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Maicii+Domnului+(Onze-Lieve-Vrouwekerk+-+Statuia+de+Michelangelo)+Bruges+Belgium", category: "manastiri" }, // Bruges
-    { name: "Mănăstirea Beguinage (Pridvorul de mănăstire prințesesc - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+(Pridvorul+de+mănăstire+prințesesc+-+UNESCO)+Bruges+Belgium", category: "manastiri" }, // Bruges
-    { name: "Ierusalimkerk (Biserica Ierusalim)", url: "https://www.google.com/maps/search/?api=1&query=Ierusalimkerk+(Biserica+Ierusalim)+Bruges+Belgium", category: "manastiri" }, // Bruges
+    { name: "Castelul Male", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Male+Bruges+Belgium", category: "castele_palate", city: "Brugge" }, // Bruges
+    { name: "Palatul Provincial (Provinciaal Hof)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Provincial+(Provinciaal+Hof)+Bruges,+Grote+Markt+Belgium", category: "castele_palate", city: "Brugge" }, // Bruges, Grote Markt
+    { name: "Castelul Tillegem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Tillegem+Bruges+Belgium", category: "castele_palate", city: "Brugge" }, // Bruges
+    { name: "Turnul cu Ceas din Bruges (Belfort - Simbolul medieval UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Bruges+(Belfort+-+Simbolul+medieval+UNESCO)+Bruges+Belgium", category: "cetati_turnuri", city: "Brugge" }, // Bruges
+    { name: "Turnul Bisericii Maicii Domnului (Cel mai înalt turn de cărămidă)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Bisericii+Maicii+Domnului+(Cel+mai+înalt+turn+de+cărămidă)+Bruges+Belgium", category: "cetati_turnuri", city: "Brugge" }, // Bruges
+    { name: "Porțile Medievale ale Orașului (Gentpoort, Kruispoort, Smedenpoort)", url: "https://www.google.com/maps/search/?api=1&query=Porțile+Medievale+ale+Orașului+(Gentpoort,+Kruispoort,+Smedenpoort)+Bruges+Belgium", category: "cetati_turnuri", city: "Brugge" }, // Bruges
+    { name: "Turnul de Pulbere (Poertoren)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Pulbere+(Poertoren)+Bruges+Belgium", category: "cetati_turnuri", city: "Brugge" }, // Bruges
+    { name: "Bazilica Sângelui Sfânt (Heilig-Bloedbasiliek)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sângelui+Sfânt+(Heilig-Bloedbasiliek)+Bruges+Belgium", category: "manastiri", city: "Brugge" }, // Bruges
+    { name: "Catedrala Sfântul Salvator (Sint-Salvatorskathedraal)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Salvator+(Sint-Salvatorskathedraal)+Bruges+Belgium", category: "manastiri", city: "Brugge" }, // Bruges
+    { name: "Biserica Maicii Domnului (Onze-Lieve-Vrouwekerk - Statuia de Michelangelo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Maicii+Domnului+(Onze-Lieve-Vrouwekerk+-+Statuia+de+Michelangelo)+Bruges+Belgium", category: "manastiri", city: "Brugge" }, // Bruges
+    { name: "Mănăstirea Beguinage (Pridvorul de mănăstire prințesesc - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+(Pridvorul+de+mănăstire+prințesesc+-+UNESCO)+Bruges+Belgium", category: "manastiri", city: "Brugge" }, // Bruges
+    { name: "Ierusalimkerk (Biserica Ierusalim)", url: "https://www.google.com/maps/search/?api=1&query=Ierusalimkerk+(Biserica+Ierusalim)+Bruges+Belgium", category: "manastiri", city: "Brugge" }, // Bruges
     { name: "Abația Sfântul Andrei", url: "https://www.google.com/maps/search/?api=1&query=Abația+Sfântul+Andrei+Zevenkerken+Belgium", category: "manastiri" }, // Zevenkerken
-    { name: "Lacul Iubirii (Minnewater și Parcul Minnewaterpark)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iubirii+(Minnewater+și+Parcul+Minnewaterpark)+Bruges+Belgium", category: "natura" }, // Bruges
+    { name: "Lacul Iubirii (Minnewater și Parcul Minnewaterpark)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iubirii+(Minnewater+și+Parcul+Minnewaterpark)+Bruges+Belgium", category: "natura", city: "Brugge" }, // Bruges
     { name: "Rezervația Naturală Zwin (Zonă protejată de coastă pe mare)", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Zwin+(Zonă+protejată+de+coastă+pe+mare)+Knokke-Heist+Belgium", category: "natura" }, // Knokke-Heist
-    { name: "Canalele din Bruges (Canalele verzi și rețeaua acvatică)", url: "https://www.google.com/maps/search/?api=1&query=Canalele+din+Bruges+(Canalele+verzi+și+rețeaua+acvatică)+Bruges+Belgium", category: "natura" }, // Bruges
+    { name: "Canalele din Bruges (Canalele verzi și rețeaua acvatică)", url: "https://www.google.com/maps/search/?api=1&query=Canalele+din+Bruges+(Canalele+verzi+și+rețeaua+acvatică)+Bruges+Belgium", category: "natura", city: "Brugge" }, // Bruges
     { name: "Parcul Natural Het Zwin", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Het+Zwin+Knokke+Belgium", category: "natura" }, // Knokke
     { name: "Plaja din Oostende", url: "https://www.google.com/maps/search/?api=1&query=Plaja+din+Oostende+Oostende+Belgium", category: "natura" }, // Oostende
-    { name: "Podul Bonifacius (Ponte Bonifacio - Cel mai fotografiat pod romantic)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Bonifacius+(Ponte+Bonifacio+-+Cel+mai+fotografiat+pod+romantic)+Bruges+Belgium", category: "infrastructura" }, // Bruges
+    { name: "Podul Bonifacius (Ponte Bonifacio - Cel mai fotografiat pod romantic)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Bonifacius+(Ponte+Bonifacio+-+Cel+mai+fotografiat+pod+romantic)+Bruges+Belgium", category: "infrastructura", city: "Brugge" }, // Bruges
     { name: "Portul Zeebrugge (Mare port maritim și terminal)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Zeebrugge+(Mare+port+maritim+și+terminal)+Zeebrugge+Belgium", category: "infrastructura" }, // Zeebrugge
-    { name: "Gara din Bruges (Station Brugge)", url: "https://www.google.com/maps/search/?api=1&query=Gara+din+Bruges+(Station+Brugge)+Bruges+Belgium", category: "infrastructura" }, // Bruges
-    { name: "Debarcaderul istoric Rozenhoedkaai", url: "https://www.google.com/maps/search/?api=1&query=Debarcaderul+istoric+Rozenhoedkaai+Bruges+Belgium", category: "infrastructura" }, // Bruges
-    { name: "Muzeul Groeninge (Groeningemuseum - Pictorii Primitivi Flamanzi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Groeninge+(Groeningemuseum+-+Pictorii+Primitivi+Flamanzi)+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Spitalul Sfântul Ioan (Sint-Janshospitaal - Muzeul Memling)", url: "https://www.google.com/maps/search/?api=1&query=Spitalul+Sfântul+Ioan+(Sint-Janshospitaal+-+Muzeul+Memling)+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Muzeul Ciocolatei (Choco-Story)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ciocolatei+(Choco-Story)+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Muzeul Cartofilor Prăjiți (Frietmuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cartofilor+Prăjiți+(Frietmuseum)+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Muzeul Chihlimbarului și Diamantelor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Chihlimbarului+și+Diamantelor+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Muzeul Istoric Historium Bruges", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoric+Historium+Bruges+Bruges+Belgium", category: "muzee" }, // Bruges
-    { name: "Piața Centrală din Bruges (Grote Markt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Bruges+(Grote+Markt)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
-    { name: "Piața Burg (Cu clădirile administrative istorice)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Burg+(Cu+clădirile+administrative+istorice)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
-    { name: "Clădirea Primăriei din Bruges (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+din+Bruges+(Stadhuis)+Bruges,+Piața+Burg+Belgium", category: "cladiri_teatre" }, // Bruges, Piața Burg
-    { name: "Casele Breslelor Medievale", url: "https://www.google.com/maps/search/?api=1&query=Casele+Breslelor+Medievale+Bruges,+Grote+Markt+Belgium", category: "cladiri_teatre" }, // Bruges, Grote Markt
-    { name: "Vechea Hală de Pește (Vismarkt)", url: "https://www.google.com/maps/search/?api=1&query=Vechea+Hală+de+Pește+(Vismarkt)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
-    { name: "Clădirea Libertății din Bruges (Brugse Vrije)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Libertății+din+Bruges+(Brugse+Vrije)+Bruges+Belgium", category: "cladiri_teatre" }, // Bruges
-    { name: "Castelul Conților de Flandra (Gravensteen - Fortăreață medievală masivă)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Conților+de+Flandra+(Gravensteen+-+Fortăreață+medievală+masivă)+Gent+Belgium", category: "castele_palate" }, // Gent
-    { name: "Castelul lui Gerald Diavolul (Geeraard de Duivelsteen)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+lui+Gerald+Diavolul+(Geeraard+de+Duivelsteen)+Gent+Belgium", category: "castele_palate" }, // Gent
+    { name: "Gara din Bruges (Station Brugge)", url: "https://www.google.com/maps/search/?api=1&query=Gara+din+Bruges+(Station+Brugge)+Bruges+Belgium", category: "infrastructura", city: "Brugge" }, // Bruges
+    { name: "Debarcaderul istoric Rozenhoedkaai", url: "https://www.google.com/maps/search/?api=1&query=Debarcaderul+istoric+Rozenhoedkaai+Bruges+Belgium", category: "infrastructura", city: "Brugge" }, // Bruges
+    { name: "Muzeul Groeninge (Groeningemuseum - Pictorii Primitivi Flamanzi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Groeninge+(Groeningemuseum+-+Pictorii+Primitivi+Flamanzi)+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Spitalul Sfântul Ioan (Sint-Janshospitaal - Muzeul Memling)", url: "https://www.google.com/maps/search/?api=1&query=Spitalul+Sfântul+Ioan+(Sint-Janshospitaal+-+Muzeul+Memling)+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Muzeul Ciocolatei (Choco-Story)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ciocolatei+(Choco-Story)+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Muzeul Cartofilor Prăjiți (Frietmuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cartofilor+Prăjiți+(Frietmuseum)+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Muzeul Chihlimbarului și Diamantelor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Chihlimbarului+și+Diamantelor+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Muzeul Istoric Historium Bruges", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoric+Historium+Bruges+Bruges+Belgium", category: "muzee", city: "Brugge" }, // Bruges
+    { name: "Piața Centrală din Bruges (Grote Markt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Bruges+(Grote+Markt)+Bruges+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges
+    { name: "Piața Burg (Cu clădirile administrative istorice)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Burg+(Cu+clădirile+administrative+istorice)+Bruges+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges
+    { name: "Clădirea Primăriei din Bruges (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+din+Bruges+(Stadhuis)+Bruges,+Piața+Burg+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges, Piața Burg
+    { name: "Casele Breslelor Medievale", url: "https://www.google.com/maps/search/?api=1&query=Casele+Breslelor+Medievale+Bruges,+Grote+Markt+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges, Grote Markt
+    { name: "Vechea Hală de Pește (Vismarkt)", url: "https://www.google.com/maps/search/?api=1&query=Vechea+Hală+de+Pește+(Vismarkt)+Bruges+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges
+    { name: "Clădirea Libertății din Bruges (Brugse Vrije)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Libertății+din+Bruges+(Brugse+Vrije)+Bruges+Belgium", category: "cladiri_teatre", city: "Brugge" }, // Bruges
+    { name: "Castelul Conților de Flandra (Gravensteen - Fortăreață medievală masivă)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Conților+de+Flandra+(Gravensteen+-+Fortăreață+medievală+masivă)+Gent+Belgium", category: "castele_palate", city: "Gent" }, // Gent
+    { name: "Castelul lui Gerald Diavolul (Geeraard de Duivelsteen)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+lui+Gerald+Diavolul+(Geeraard+de+Duivelsteen)+Gent+Belgium", category: "castele_palate", city: "Gent" }, // Gent
     { name: "Castelul Ooidonk", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ooidonk+Deinze+Belgium", category: "castele_palate" }, // Deinze
     { name: "Castelul Laarne", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Laarne+Laarne+Belgium", category: "castele_palate" }, // Laarne
-    { name: "Palatul de Justiție (Oude Justitiepaleis)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Oude+Justitiepaleis)+Gent+Belgium", category: "castele_palate" }, // Gent
-    { name: "Turnul cu Ceas din Gent (Belfort - Turnul independenței UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Gent+(Belfort+-+Turnul+independenței+UNESCO)+Gent+Belgium", category: "cetati_turnuri" }, // Gent
-    { name: "Turnul Catedralei Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+Sfântului+Bavo+Gent+Belgium", category: "cetati_turnuri" }, // Gent
-    { name: "Zidurile Porții Rabot (Monument fortificat pe canal)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Porții+Rabot+(Monument+fortificat+pe+canal)+Gent+Belgium", category: "cetati_turnuri" }, // Gent
-    { name: "Catedrala Sfântul Bavo (Sint-Baafskathedraal - Altarul din Gent de Van Eyck)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Bavo+(Sint-Baafskathedraal+-+Altarul+din+Gent+de+Van+Eyck)+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Biserica Sfântul Nicolae (Sint-Niklaasker)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Nicolae+(Sint-Niklaasker)+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Mănăstirea Sfântul Petru (Sint-Pietersabdij)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Sfântul+Petru+(Sint-Pietersabdij)+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Biserica Sfântul Mihail (Sint-Michielskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Mihail+(Sint-Michielskerk)+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Mănăstirea Beguinage Sfânta Elisabeta (Klein Begijnhof)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+Sfânta+Elisabeta+(Klein+Begijnhof)+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Ruinele Abației Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Ruinele+Abației+Sfântului+Bavo+Gent+Belgium", category: "manastiri" }, // Gent
-    { name: "Rezervația Naturală Bourgoyen-Ossemeersen", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Bourgoyen-Ossemeersen+Gent+Belgium", category: "natura" }, // Gent
-    { name: "Parcul Citadelei (Citadelpark)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Citadelei+(Citadelpark)+Gent+Belgium", category: "natura" }, // Gent
-    { name: "Rețeaua de Canale Graslei și Korenlei", url: "https://www.google.com/maps/search/?api=1&query=Rețeaua+de+Canale+Graslei+și+Korenlei+Gent+Belgium", category: "natura" }, // Gent
-    { name: "Parcul Natural Blaarmeersen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Blaarmeersen+Gent+Belgium", category: "natura" }, // Gent
-    { name: "Podul Sfântul Mihail (Sint-Michielsbrug - Punct panoramic major)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Sfântul+Mihail+(Sint-Michielsbrug+-+Punct+panoramic+major)+Gent+Belgium", category: "infrastructura" }, // Gent
-    { name: "Portul Comercial din Gent", url: "https://www.google.com/maps/search/?api=1&query=Portul+Comercial+din+Gent+Gent+Belgium", category: "infrastructura" }, // Gent
-    { name: "Gara Gent-Sint-Pieters", url: "https://www.google.com/maps/search/?api=1&query=Gara+Gent-Sint-Pieters+Gent+Belgium", category: "infrastructura" }, // Gent
-    { name: "Muzeul de Arte Frumoase (MSK)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arte+Frumoase+(MSK)+Gent+Belgium", category: "muzee" }, // Gent
-    { name: "Muzeul de Artă Contemporană (S.M.A.K.)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(S.M.A.K.)+Gent+Belgium", category: "muzee" }, // Gent
-    { name: "Muzeul de Industrie și Textile (Industriemuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Industrie+și+Textile+(Industriemuseum)+Gent+Belgium", category: "muzee" }, // Gent
-    { name: "STAM (Muzeul de Istorie al Orașului Gent)", url: "https://www.google.com/maps/search/?api=1&query=STAM+(Muzeul+de+Istorie+al+Orașului+Gent)+Gent+Belgium", category: "muzee" }, // Gent
-    { name: "Muzeul de Etnografie și Folclor (Huis van Alijn)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Etnografie+și+Folclor+(Huis+van+Alijn)+Gent+Belgium", category: "muzee" }, // Gent
-    { name: "Faleza Graslei și Korenlei (Casele monumentale ale breslelor)", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Graslei+și+Korenlei+(Casele+monumentale+ale+breslelor)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
-    { name: "Primăria din Gent (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Primăria+din+Gent+(Stadhuis)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
-    { name: "Hala de Carne (Groot Vleeshuis)", url: "https://www.google.com/maps/search/?api=1&query=Hala+de+Carne+(Groot+Vleeshuis)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
-    { name: "Piața Vineri (Vrijdagmarkt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Vineri+(Vrijdagmarkt)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
-    { name: "Hala Orașului (Stadshal - Arhitectură modernă)", url: "https://www.google.com/maps/search/?api=1&query=Hala+Orașului+(Stadshal+-+Arhitectură+modernă)+Gent+Belgium", category: "cladiri_teatre" }, // Gent
-    { name: "Castelul Steen (Het Steen - Cetatea de pe malul râului Scheldt)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Steen+(Het+Steen+-+Cetatea+de+pe+malul+râului+Scheldt)+Anvers+Belgium", category: "castele_palate" }, // Anvers
-    { name: "Palatul Regal de pe Meir (Paleis op Meir)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+de+pe+Meir+(Paleis+op+Meir)+Anvers+Belgium", category: "castele_palate" }, // Anvers
+    { name: "Palatul de Justiție (Oude Justitiepaleis)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Oude+Justitiepaleis)+Gent+Belgium", category: "castele_palate", city: "Gent" }, // Gent
+    { name: "Turnul cu Ceas din Gent (Belfort - Turnul independenței UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Gent+(Belfort+-+Turnul+independenței+UNESCO)+Gent+Belgium", category: "cetati_turnuri", city: "Gent" }, // Gent
+    { name: "Turnul Catedralei Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+Sfântului+Bavo+Gent+Belgium", category: "cetati_turnuri", city: "Gent" }, // Gent
+    { name: "Zidurile Porții Rabot (Monument fortificat pe canal)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Porții+Rabot+(Monument+fortificat+pe+canal)+Gent+Belgium", category: "cetati_turnuri", city: "Gent" }, // Gent
+    { name: "Catedrala Sfântul Bavo (Sint-Baafskathedraal - Altarul din Gent de Van Eyck)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Bavo+(Sint-Baafskathedraal+-+Altarul+din+Gent+de+Van+Eyck)+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Biserica Sfântul Nicolae (Sint-Niklaasker)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Nicolae+(Sint-Niklaasker)+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Mănăstirea Sfântul Petru (Sint-Pietersabdij)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Sfântul+Petru+(Sint-Pietersabdij)+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Biserica Sfântul Mihail (Sint-Michielskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Mihail+(Sint-Michielskerk)+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Mănăstirea Beguinage Sfânta Elisabeta (Klein Begijnhof)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Beguinage+Sfânta+Elisabeta+(Klein+Begijnhof)+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Ruinele Abației Sfântului Bavo", url: "https://www.google.com/maps/search/?api=1&query=Ruinele+Abației+Sfântului+Bavo+Gent+Belgium", category: "manastiri", city: "Gent" }, // Gent
+    { name: "Rezervația Naturală Bourgoyen-Ossemeersen", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Bourgoyen-Ossemeersen+Gent+Belgium", category: "natura", city: "Gent" }, // Gent
+    { name: "Parcul Citadelei (Citadelpark)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Citadelei+(Citadelpark)+Gent+Belgium", category: "natura", city: "Gent" }, // Gent
+    { name: "Rețeaua de Canale Graslei și Korenlei", url: "https://www.google.com/maps/search/?api=1&query=Rețeaua+de+Canale+Graslei+și+Korenlei+Gent+Belgium", category: "natura", city: "Gent" }, // Gent
+    { name: "Parcul Natural Blaarmeersen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Blaarmeersen+Gent+Belgium", category: "natura", city: "Gent" }, // Gent
+    { name: "Podul Sfântul Mihail (Sint-Michielsbrug - Punct panoramic major)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Sfântul+Mihail+(Sint-Michielsbrug+-+Punct+panoramic+major)+Gent+Belgium", category: "infrastructura", city: "Gent" }, // Gent
+    { name: "Portul Comercial din Gent", url: "https://www.google.com/maps/search/?api=1&query=Portul+Comercial+din+Gent+Gent+Belgium", category: "infrastructura", city: "Gent" }, // Gent
+    { name: "Gara Gent-Sint-Pieters", url: "https://www.google.com/maps/search/?api=1&query=Gara+Gent-Sint-Pieters+Gent+Belgium", category: "infrastructura", city: "Gent" }, // Gent
+    { name: "Muzeul de Arte Frumoase (MSK)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arte+Frumoase+(MSK)+Gent+Belgium", category: "muzee", city: "Gent" }, // Gent
+    { name: "Muzeul de Artă Contemporană (S.M.A.K.)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(S.M.A.K.)+Gent+Belgium", category: "muzee", city: "Gent" }, // Gent
+    { name: "Muzeul de Industrie și Textile (Industriemuseum)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Industrie+și+Textile+(Industriemuseum)+Gent+Belgium", category: "muzee", city: "Gent" }, // Gent
+    { name: "STAM (Muzeul de Istorie al Orașului Gent)", url: "https://www.google.com/maps/search/?api=1&query=STAM+(Muzeul+de+Istorie+al+Orașului+Gent)+Gent+Belgium", category: "muzee", city: "Gent" }, // Gent
+    { name: "Muzeul de Etnografie și Folclor (Huis van Alijn)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Etnografie+și+Folclor+(Huis+van+Alijn)+Gent+Belgium", category: "muzee", city: "Gent" }, // Gent
+    { name: "Faleza Graslei și Korenlei (Casele monumentale ale breslelor)", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Graslei+și+Korenlei+(Casele+monumentale+ale+breslelor)+Gent+Belgium", category: "cladiri_teatre", city: "Gent" }, // Gent
+    { name: "Primăria din Gent (Stadhuis)", url: "https://www.google.com/maps/search/?api=1&query=Primăria+din+Gent+(Stadhuis)+Gent+Belgium", category: "cladiri_teatre", city: "Gent" }, // Gent
+    { name: "Hala de Carne (Groot Vleeshuis)", url: "https://www.google.com/maps/search/?api=1&query=Hala+de+Carne+(Groot+Vleeshuis)+Gent+Belgium", category: "cladiri_teatre", city: "Gent" }, // Gent
+    { name: "Piața Vineri (Vrijdagmarkt)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Vineri+(Vrijdagmarkt)+Gent+Belgium", category: "cladiri_teatre", city: "Gent" }, // Gent
+    { name: "Hala Orașului (Stadshal - Arhitectură modernă)", url: "https://www.google.com/maps/search/?api=1&query=Hala+Orașului+(Stadshal+-+Arhitectură+modernă)+Gent+Belgium", category: "cladiri_teatre", city: "Gent" }, // Gent
+    { name: "Castelul Steen (Het Steen - Cetatea de pe malul râului Scheldt)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Steen+(Het+Steen+-+Cetatea+de+pe+malul+râului+Scheldt)+Anvers+Belgium", category: "castele_palate", city: "Antwerpen" }, // Anvers
+    { name: "Palatul Regal de pe Meir (Paleis op Meir)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+de+pe+Meir+(Paleis+op+Meir)+Anvers+Belgium", category: "castele_palate", city: "Antwerpen" }, // Anvers
     { name: "Castelul Sterckshof", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sterckshof+Deurne,+Anvers+Belgium", category: "castele_palate" }, // Deurne, Anvers
-    { name: "Palatul Bursei (Handelsbeurs)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Bursei+(Handelsbeurs)+Anvers+Belgium", category: "castele_palate" }, // Anvers
-    { name: "Turnul Catedralei (Cel mai înalt turn de biserică din Benelux UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+(Cel+mai+înalt+turn+de+biserică+din+Benelux+UNESCO)+Anvers+Belgium", category: "cetati_turnuri" }, // Anvers
-    { name: "Turnul Boerentoren (Primul zgârie-nori din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Boerentoren+(Primul+zgârie-nori+din+Europa)+Anvers+Belgium", category: "cetati_turnuri" }, // Anvers
+    { name: "Palatul Bursei (Handelsbeurs)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Bursei+(Handelsbeurs)+Anvers+Belgium", category: "castele_palate", city: "Antwerpen" }, // Anvers
+    { name: "Turnul Catedralei (Cel mai înalt turn de biserică din Benelux UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Catedralei+(Cel+mai+înalt+turn+de+biserică+din+Benelux+UNESCO)+Anvers+Belgium", category: "cetati_turnuri", city: "Antwerpen" }, // Anvers
+    { name: "Turnul Boerentoren (Primul zgârie-nori din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Boerentoren+(Primul+zgârie-nori+din+Europa)+Anvers+Belgium", category: "cetati_turnuri", city: "Antwerpen" }, // Anvers
     { name: "Fortăreața Lillo", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Lillo+Zona+Portuară,+Anvers+Belgium", category: "cetati_turnuri" }, // Zona Portuară, Anvers
-    { name: "Catedrala Maicii Domnului (Onze-Lieve-Vrouwekathedraal - Picturi de Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Maicii+Domnului+(Onze-Lieve-Vrouwekathedraal+-+Picturi+de+Rubens)+Anvers+Belgium", category: "manastiri" }, // Anvers
-    { name: "Biserica Sfântul Carol Borromeo (Iezuită barocă superbă)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Carol+Borromeo+(Iezuită+barocă+superbă)+Anvers+Belgium", category: "manastiri" }, // Anvers
-    { name: "Biserica Sfântul Iacob (Sint-Jacobskerk - Mormântul lui Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Iacob+(Sint-Jacobskerk+-+Mormântul+lui+Rubens)+Anvers+Belgium", category: "manastiri" }, // Anvers
-    { name: "Biserica Sfântul Pavel (Sint-Pauluskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Pavel+(Sint-Pauluskerk)+Anvers+Belgium", category: "manastiri" }, // Anvers
-    { name: "Biserica Sfântul Andrei (Sint-Andrieskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Andrei+(Sint-Andrieskerk)+Anvers+Belgium", category: "manastiri" }, // Anvers
-    { name: "Grădina Zoologică din Anvers (ZOO Antwerpen - Printre cele mai vechi)", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+din+Anvers+(ZOO+Antwerpen+-+Printre+cele+mai+vechi)+Anvers+Belgium", category: "natura" }, // Anvers
-    { name: "Parcul Middelheim (Parc monumental de sculpturi în aer liber)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Middelheim+(Parc+monumental+de+sculpturi+în+aer+liber)+Anvers+Belgium", category: "natura" }, // Anvers
-    { name: "Râul Scheldt și Faleza de mers", url: "https://www.google.com/maps/search/?api=1&query=Râul+Scheldt+și+Faleza+de+mers+Anvers+Belgium", category: "natura" }, // Anvers
-    { name: "Parcul Stadspark", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Stadspark+Anvers+Belgium", category: "natura" }, // Anvers
-    { name: "Gara Centrală din Anvers (Antwerpen-Centraal - Catedrala Gărilor)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Anvers+(Antwerpen-Centraal+-+Catedrala+Gărilor)+Anvers+Belgium", category: "infrastructura" }, // Anvers
-    { name: "Tunelul Sfântul Ana (Tunel pietonal subteran istoric pe sub râu)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Sfântul+Ana+(Tunel+pietonal+subteran+istoric+pe+sub+râu)+Anvers+Belgium", category: "infrastructura" }, // Anvers
-    { name: "Portul Anvers (Al doilea ca mărime din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Anvers+(Al+doilea+ca+mărime+din+Europa)+Anvers+Belgium", category: "infrastructura" }, // Anvers
-    { name: "Portul de iahturi Willemdok", url: "https://www.google.com/maps/search/?api=1&query=Portul+de+iahturi+Willemdok+Anvers+Belgium", category: "infrastructura" }, // Anvers
-    { name: "Casa Memorială Rubens (Rubenshuis)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memorială+Rubens+(Rubenshuis)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul MAS (Museum aan de Stroom - Clădire avangardistă)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+MAS+(Museum+aan+de+Stroom+-+Clădire+avangardistă)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul Plantin-Moretus (Tipografie istorică unică UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Plantin-Moretus+(Tipografie+istorică+unică+UNESCO)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul Regal de Arte Frumoase (KMSKA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+de+Arte+Frumoase+(KMSKA)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul Diamantelor (DIVA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Diamantelor+(DIVA)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul Modei (MoMu)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Modei+(MoMu)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Muzeul Red Star Line (Istoria emigrației)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Red+Star+Line+(Istoria+emigrației)+Anvers+Belgium", category: "muzee" }, // Anvers
-    { name: "Piața Mare din Anvers (Grote Markt și Fântâna Brabo)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+din+Anvers+(Grote+Markt+și+Fântâna+Brabo)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Clădirea Primăriei (Stadhuis - Stil Renaștere UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Stadhuis+-+Stil+Renaștere+UNESCO)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Bulevardul Comercial Meir", url: "https://www.google.com/maps/search/?api=1&query=Bulevardul+Comercial+Meir+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Cartierul Diamantelor (Diamond Quarter)", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Diamantelor+(Diamond+Quarter)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Teatrul Bourla (Bourlaschouwburg)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Bourla+(Bourlaschouwburg)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Clădirea Tribunalului (Justitiepaleis - Acoperiș futurist)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Tribunalului+(Justitiepaleis+-+Acoperiș+futurist)+Anvers+Belgium", category: "cladiri_teatre" }, // Anvers
-    { name: "Palatul Prinților-Episcopi din Liège", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prinților-Episcopi+din+Liège+Liège+Belgium", category: "castele_palate" }, // Liège
+    { name: "Catedrala Maicii Domnului (Onze-Lieve-Vrouwekathedraal - Picturi de Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Maicii+Domnului+(Onze-Lieve-Vrouwekathedraal+-+Picturi+de+Rubens)+Anvers+Belgium", category: "manastiri", city: "Antwerpen" }, // Anvers
+    { name: "Biserica Sfântul Carol Borromeo (Iezuită barocă superbă)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Carol+Borromeo+(Iezuită+barocă+superbă)+Anvers+Belgium", category: "manastiri", city: "Antwerpen" }, // Anvers
+    { name: "Biserica Sfântul Iacob (Sint-Jacobskerk - Mormântul lui Rubens)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Iacob+(Sint-Jacobskerk+-+Mormântul+lui+Rubens)+Anvers+Belgium", category: "manastiri", city: "Antwerpen" }, // Anvers
+    { name: "Biserica Sfântul Pavel (Sint-Pauluskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Pavel+(Sint-Pauluskerk)+Anvers+Belgium", category: "manastiri", city: "Antwerpen" }, // Anvers
+    { name: "Biserica Sfântul Andrei (Sint-Andrieskerk)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântul+Andrei+(Sint-Andrieskerk)+Anvers+Belgium", category: "manastiri", city: "Antwerpen" }, // Anvers
+    { name: "Grădina Zoologică din Anvers (ZOO Antwerpen - Printre cele mai vechi)", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Zoologică+din+Anvers+(ZOO+Antwerpen+-+Printre+cele+mai+vechi)+Anvers+Belgium", category: "natura", city: "Antwerpen" }, // Anvers
+    { name: "Parcul Middelheim (Parc monumental de sculpturi în aer liber)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Middelheim+(Parc+monumental+de+sculpturi+în+aer+liber)+Anvers+Belgium", category: "natura", city: "Antwerpen" }, // Anvers
+    { name: "Râul Scheldt și Faleza de mers", url: "https://www.google.com/maps/search/?api=1&query=Râul+Scheldt+și+Faleza+de+mers+Anvers+Belgium", category: "natura", city: "Antwerpen" }, // Anvers
+    { name: "Parcul Stadspark", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Stadspark+Anvers+Belgium", category: "natura", city: "Antwerpen" }, // Anvers
+    { name: "Gara Centrală din Anvers (Antwerpen-Centraal - Catedrala Gărilor)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Anvers+(Antwerpen-Centraal+-+Catedrala+Gărilor)+Anvers+Belgium", category: "infrastructura", city: "Antwerpen" }, // Anvers
+    { name: "Tunelul Sfântul Ana (Tunel pietonal subteran istoric pe sub râu)", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Sfântul+Ana+(Tunel+pietonal+subteran+istoric+pe+sub+râu)+Anvers+Belgium", category: "infrastructura", city: "Antwerpen" }, // Anvers
+    { name: "Portul Anvers (Al doilea ca mărime din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Anvers+(Al+doilea+ca+mărime+din+Europa)+Anvers+Belgium", category: "infrastructura", city: "Antwerpen" }, // Anvers
+    { name: "Portul de iahturi Willemdok", url: "https://www.google.com/maps/search/?api=1&query=Portul+de+iahturi+Willemdok+Anvers+Belgium", category: "infrastructura", city: "Antwerpen" }, // Anvers
+    { name: "Casa Memorială Rubens (Rubenshuis)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memorială+Rubens+(Rubenshuis)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul MAS (Museum aan de Stroom - Clădire avangardistă)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+MAS+(Museum+aan+de+Stroom+-+Clădire+avangardistă)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul Plantin-Moretus (Tipografie istorică unică UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Plantin-Moretus+(Tipografie+istorică+unică+UNESCO)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul Regal de Arte Frumoase (KMSKA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regal+de+Arte+Frumoase+(KMSKA)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul Diamantelor (DIVA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Diamantelor+(DIVA)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul Modei (MoMu)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Modei+(MoMu)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Muzeul Red Star Line (Istoria emigrației)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Red+Star+Line+(Istoria+emigrației)+Anvers+Belgium", category: "muzee", city: "Antwerpen" }, // Anvers
+    { name: "Piața Mare din Anvers (Grote Markt și Fântâna Brabo)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+din+Anvers+(Grote+Markt+și+Fântâna+Brabo)+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Clădirea Primăriei (Stadhuis - Stil Renaștere UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Stadhuis+-+Stil+Renaștere+UNESCO)+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Bulevardul Comercial Meir", url: "https://www.google.com/maps/search/?api=1&query=Bulevardul+Comercial+Meir+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Cartierul Diamantelor (Diamond Quarter)", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Diamantelor+(Diamond+Quarter)+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Teatrul Bourla (Bourlaschouwburg)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Bourla+(Bourlaschouwburg)+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Clădirea Tribunalului (Justitiepaleis - Acoperiș futurist)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Tribunalului+(Justitiepaleis+-+Acoperiș+futurist)+Anvers+Belgium", category: "cladiri_teatre", city: "Antwerpen" }, // Anvers
+    { name: "Palatul Prinților-Episcopi din Liège", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prinților-Episcopi+din+Liège+Liège+Belgium", category: "castele_palate", city: "Liège" }, // Liège
     { name: "Castelul Modave", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Modave+Modave,+Liège+Belgium", category: "castele_palate" }, // Modave, Liège
     { name: "Castelul Jehay", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Jehay+Amay,+Liège+Belgium", category: "castele_palate" }, // Amay, Liège
     { name: "Castelul Corroy-le-Château", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corroy-le-Château+Gembloux,+Namur+Belgium", category: "castele_palate" }, // Gembloux, Namur
     { name: "Palatul Episcopal din Tournai", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopal+din+Tournai+Tournai+Belgium", category: "castele_palate" }, // Tournai
     { name: "Castelul Beloeil (Versailles-ul Valoniei)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beloeil+(Versailles-ul+Valoniei)+Beloeil,+Hainaut+Belgium", category: "castele_palate" }, // Beloeil, Hainaut
     { name: "Castelul Attre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Attre+Brugelette+Belgium", category: "castele_palate" }, // Brugelette
-    { name: "Citadela din Namur (Una dintre cele mai mari fortărețe din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Namur+(Una+dintre+cele+mai+mari+fortărețe+din+Europa)+Namur+Belgium", category: "cetati_turnuri" }, // Namur
-    { name: "Citadela din Liège", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Liège+Liège+Belgium", category: "cetati_turnuri" }, // Liège
+    { name: "Citadela din Namur (Una dintre cele mai mari fortărețe din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Namur+(Una+dintre+cele+mai+mari+fortărețe+din+Europa)+Namur+Belgium", category: "cetati_turnuri", city: "Namur" }, // Namur
+    { name: "Citadela din Liège", url: "https://www.google.com/maps/search/?api=1&query=Citadela+din+Liège+Liège+Belgium", category: "cetati_turnuri", city: "Liège" }, // Liège
     { name: "Turnul cu Ceas din Tournai (Belfort - Cel mai vechi din Belgia UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Tournai+(Belfort+-+Cel+mai+vechi+din+Belgia+UNESCO)+Tournai+Belgium", category: "cetati_turnuri" }, // Tournai
     { name: "Turnul de pază Tour de la Passerelle", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+pază+Tour+de+la+Passerelle+Tournai+Belgium", category: "cetati_turnuri" }, // Tournai
-    { name: "Fortul Flémalle", url: "https://www.google.com/maps/search/?api=1&query=Fortul+Flémalle+Liège+Belgium", category: "cetati_turnuri" }, // Liège
-    { name: "Catedrala Sfântul Paul", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Paul+Liège+Belgium", category: "manastiri" }, // Liège
+    { name: "Fortul Flémalle", url: "https://www.google.com/maps/search/?api=1&query=Fortul+Flémalle+Liège+Belgium", category: "cetati_turnuri", city: "Liège" }, // Liège
+    { name: "Catedrala Sfântul Paul", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Paul+Liège+Belgium", category: "manastiri", city: "Liège" }, // Liège
     { name: "Catedrala Notre-Dame din Tournai (UNESCO - 5 turnuri monumentale)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Notre-Dame+din+Tournai+(UNESCO+-+5+turnuri+monumentale)+Tournai+Belgium", category: "manastiri" }, // Tournai
-    { name: "Catedrala Sfântul Albin", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Albin+Namur+Belgium", category: "manastiri" }, // Namur
-    { name: "Biserica Saint-Jacques", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques+Liège+Belgium", category: "manastiri" }, // Liège
-    { name: "Biserica Colegiată Saint-Barthélemy (Faimosul bazin baptismal)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Colegiată+Saint-Barthélemy+(Faimosul+bazin+baptismal)+Liège+Belgium", category: "manastiri" }, // Liège
+    { name: "Catedrala Sfântul Albin", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfântul+Albin+Namur+Belgium", category: "manastiri", city: "Namur" }, // Namur
+    { name: "Biserica Saint-Jacques", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Saint-Jacques+Liège+Belgium", category: "manastiri", city: "Liège" }, // Liège
+    { name: "Biserica Colegiată Saint-Barthélemy (Faimosul bazin baptismal)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Colegiată+Saint-Barthélemy+(Faimosul+bazin+baptismal)+Liège+Belgium", category: "manastiri", city: "Liège" }, // Liège
     { name: "Mănăstirea Maredsous", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Maredsous+Anhée+Belgium", category: "manastiri" }, // Anhée
-    { name: "Parcul Natural High Fens (Hautes Fagnes - Platou montan și mlaștini)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+High+Fens+(Hautes+Fagnes+-+Platou+montan+și+mlaștini)+Liège+Belgium", category: "natura" }, // Liège
+    { name: "Parcul Natural High Fens (Hautes Fagnes - Platou montan și mlaștini)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+High+Fens+(Hautes+Fagnes+-+Platou+montan+și+mlaștini)+Liège+Belgium", category: "natura", city: "Liège" }, // Liège
     { name: "Peșterile din Remouchamps (Cel mai lung traseu navigabil subteran)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Remouchamps+(Cel+mai+lung+traseu+navigabil+subteran)+Aywaille+Belgium", category: "natura" }, // Aywaille
-    { name: "Muntele Bueren (Scara monumentală cu 374 de trepte)", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Bueren+(Scara+monumentală+cu+374+de+trepte)+Liège+Belgium", category: "natura" }, // Liège
-    { name: "Parcul Natural din Văile Burdinale și Mehaigne", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+din+Văile+Burdinale+și+Mehaigne+Liège+Belgium", category: "natura" }, // Liège
+    { name: "Muntele Bueren (Scara monumentală cu 374 de trepte)", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Bueren+(Scara+monumentală+cu+374+de+trepte)+Liège+Belgium", category: "natura", city: "Liège" }, // Liège
+    { name: "Parcul Natural din Văile Burdinale și Mehaigne", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+din+Văile+Burdinale+și+Mehaigne+Liège+Belgium", category: "natura", city: "Liège" }, // Liège
     { name: "Parcul Natural al Văii Attert", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+al+Văii+Attert+Regiunea+de+Sud+Belgium", category: "natura" }, // Regiunea de Sud
-    { name: "Gara Liège-Guillemins (Capodoperă futuristă de Santiago Calatrava)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Liège-Guillemins+(Capodoperă+futuristă+de+Santiago+Calatrava)+Liège+Belgium", category: "infrastructura" }, // Liège
+    { name: "Gara Liège-Guillemins (Capodoperă futuristă de Santiago Calatrava)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Liège-Guillemins+(Capodoperă+futuristă+de+Santiago+Calatrava)+Liège+Belgium", category: "infrastructura", city: "Liège" }, // Liège
     { name: "Șoseaua panoramică de pe malul fluviului Meuse", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+de+pe+malul+fluviului+Meuse+Namur+la+Liège+Belgium", category: "infrastructura" }, // Namur la Liège
-    { name: "Podul Albert I", url: "https://www.google.com/maps/search/?api=1&query=Podul+Albert+I+Liège+Belgium", category: "infrastructura" }, // Liège
-    { name: "Podul de la Fragnée", url: "https://www.google.com/maps/search/?api=1&query=Podul+de+la+Fragnée+Liège+Belgium", category: "infrastructura" }, // Liège
-    { name: "Telecabina din Namur", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+din+Namur+Namur+Belgium", category: "infrastructura" }, // Namur
-    { name: "Muzeul Curtius (Grand Curtius - Complex muzeal major)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Curtius+(Grand+Curtius+-+Complex+muzeal+major)+Liège+Belgium", category: "muzee" }, // Liège
-    { name: "Muzeul de Artă Valonă (La Boverie)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Valonă+(La+Boverie)+Liège+Belgium", category: "muzee" }, // Liège
+    { name: "Podul Albert I", url: "https://www.google.com/maps/search/?api=1&query=Podul+Albert+I+Liège+Belgium", category: "infrastructura", city: "Liège" }, // Liège
+    { name: "Podul de la Fragnée", url: "https://www.google.com/maps/search/?api=1&query=Podul+de+la+Fragnée+Liège+Belgium", category: "infrastructura", city: "Liège" }, // Liège
+    { name: "Telecabina din Namur", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+din+Namur+Namur+Belgium", category: "infrastructura", city: "Namur" }, // Namur
+    { name: "Muzeul Curtius (Grand Curtius - Complex muzeal major)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Curtius+(Grand+Curtius+-+Complex+muzeal+major)+Liège+Belgium", category: "muzee", city: "Liège" }, // Liège
+    { name: "Muzeul de Artă Valonă (La Boverie)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Valonă+(La+Boverie)+Liège+Belgium", category: "muzee", city: "Liège" }, // Liège
     { name: "Muzeul de Istorie și Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+și+Arheologie+Tournai+Belgium", category: "muzee" }, // Tournai
     { name: "Muzeul de Arte Frumoase din Tournai (Clădire de Victor Horta)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arte+Frumoase+din+Tournai+(Clădire+de+Victor+Horta)+Tournai+Belgium", category: "muzee" }, // Tournai
     { name: "Situl Industrial Istoric Grand-Hornu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Industrial+Istoric+Grand-Hornu+(UNESCO)+Boussu+Belgium", category: "muzee" }, // Boussu
-    { name: "Piața Saint-Lambert", url: "https://www.google.com/maps/search/?api=1&query=Piața+Saint-Lambert+Liège+Belgium", category: "cladiri_teatre" }, // Liège
+    { name: "Piața Saint-Lambert", url: "https://www.google.com/maps/search/?api=1&query=Piața+Saint-Lambert+Liège+Belgium", category: "cladiri_teatre", city: "Liège" }, // Liège
     { name: "Piața Mare din Tournai (Grand-Place)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+din+Tournai+(Grand-Place)+Tournai+Belgium", category: "cladiri_teatre" }, // Tournai
-    { name: "Piața Armelor (Place d'Armes)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Armelor+(Place+d'Armes)+Namur+Belgium", category: "cladiri_teatre" }, // Namur
-    { name: "Teatrul Regal din Liège (Opéra Royal de Wallonie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+din+Liège+(Opéra+Royal+de+Wallonie)+Liège+Belgium", category: "cladiri_teatre" }, // Liège
-    { name: "Monumentul Perron (Simbolul libertății orașului)", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Perron+(Simbolul+libertății+orașului)+Liège,+Piața+du+Marché+Belgium", category: "cladiri_teatre" }, // Liège, Piața du Marché
+    { name: "Piața Armelor (Place d'Armes)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Armelor+(Place+d'Armes)+Namur+Belgium", category: "cladiri_teatre", city: "Namur" }, // Namur
+    { name: "Teatrul Regal din Liège (Opéra Royal de Wallonie)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regal+din+Liège+(Opéra+Royal+de+Wallonie)+Liège+Belgium", category: "cladiri_teatre", city: "Liège" }, // Liège
+    { name: "Monumentul Perron (Simbolul libertății orașului)", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Perron+(Simbolul+libertății+orașului)+Liège,+Piața+du+Marché+Belgium", category: "cladiri_teatre", city: "Liège" }, // Liège, Piața du Marché
     { name: "Castelul Bouillon (Fortăreața medievală a lui Godfrey de Bouillon)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bouillon+(Fortăreața+medievală+a+lui+Godfrey+de+Bouillon)+Bouillon,+Luxemburg+Belgium", category: "castele_palate" }, // Bouillon, Luxemburg
     { name: "Castelul Vêves (Castelul de basm cu turnuri ascuțite)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vêves+(Castelul+de+basm+cu+turnuri+ascuțite)+Celles,+Namur+Belgium", category: "castele_palate" }, // Celles, Namur
     { name: "Castelul Walzin (Ridicată dramatic pe o stâncă verticală deasupra râului)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Walzin+(Ridicată+dramatic+pe+o+stâncă+verticală+deasupra+râului)+Dinant+Belgium", category: "castele_palate" }, // Dinant
@@ -5489,227 +5489,227 @@ const ATTRACTIONS = {
     { name: "Knuthenborg Safari Park", url: "https://www.google.com/maps/search/?api=1&query=Knuthenborg+Safari+Park+Denmark" },
   ],
   it: [
-    { name: "Castelul Sant'Angelo", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sant'Angelo+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Barberini", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Barberini+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Farnese", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Farnese+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Doria Pamphilj", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Doria+Pamphilj+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Quirinale (Palatul Prezidențial)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Quirinale+(Palatul+Prezidențial)+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Venezia", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Venezia+Roma+Italy", category: "castele_palate" }, // Roma
+    { name: "Castelul Sant'Angelo", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sant'Angelo+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Barberini", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Barberini+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Farnese", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Farnese+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Doria Pamphilj", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Doria+Pamphilj+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Quirinale (Palatul Prezidențial)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Quirinale+(Palatul+Prezidențial)+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Venezia", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Venezia+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
     { name: "Castelul Orsini-Odescalchi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Orsini-Odescalchi+Bracciano+Italy", category: "castele_palate" }, // Bracciano
-    { name: "Palazzo Colonna", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Colonna+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Spada", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Spada+Roma+Italy", category: "castele_palate" }, // Roma
+    { name: "Palazzo Colonna", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Colonna+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Spada", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Spada+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
     { name: "Castelul Giulio II", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Giulio+II+Ostia+Antica+Italy", category: "castele_palate" }, // Ostia Antica
-    { name: "Palazzo Chigi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Chigi+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Palazzo Madama", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Madama+Roma+Italy", category: "castele_palate" }, // Roma
-    { name: "Zidurile Aureliene (Mura Aureliane)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Aureliene+(Mura+Aureliane)+Roma+Italy", category: "cetati_turnuri" }, // Roma
-    { name: "Torre delle Milizie", url: "https://www.google.com/maps/search/?api=1&query=Torre+delle+Milizie+Roma+Italy", category: "cetati_turnuri" }, // Roma
+    { name: "Palazzo Chigi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Chigi+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Palazzo Madama", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Madama+Roma+Italy", category: "castele_palate", city: "Roma" }, // Roma
+    { name: "Zidurile Aureliene (Mura Aureliane)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Aureliene+(Mura+Aureliane)+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
+    { name: "Torre delle Milizie", url: "https://www.google.com/maps/search/?api=1&query=Torre+delle+Milizie+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
     { name: "Rocca di Papa", url: "https://www.google.com/maps/search/?api=1&query=Rocca+di+Papa+Castelli+Romani+Italy", category: "cetati_turnuri" }, // Castelli Romani
-    { name: "Turnul Caetani", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Caetani+Roma+Italy", category: "cetati_turnuri" }, // Roma
-    { name: "Zidurile Serviene", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Serviene+Roma+Italy", category: "cetati_turnuri" }, // Roma
+    { name: "Turnul Caetani", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Caetani+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
+    { name: "Zidurile Serviene", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Serviene+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
     { name: "Fortăreața Pia", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Pia+Tivoli+Italy", category: "cetati_turnuri" }, // Tivoli
-    { name: "Turnul lui Ioan (Torre San Giovanni)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Ioan+(Torre+San+Giovanni)+Vatican+Italy", category: "cetati_turnuri" }, // Vatican
-    { name: "Porta Pia", url: "https://www.google.com/maps/search/?api=1&query=Porta+Pia+Roma+Italy", category: "cetati_turnuri" }, // Roma
-    { name: "Bazilica Sfântul Petru (San Pietro)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Petru+(San+Pietro)+Vatican+Italy", category: "manastiri" }, // Vatican
-    { name: "Panteonul (Pantheon)", url: "https://www.google.com/maps/search/?api=1&query=Panteonul+(Pantheon)+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Bazilica Santa Maria Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Santa+Maria+Maggiore+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Bazilica San Giovanni in Laterano", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Giovanni+in+Laterano+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Bazilica San Paolo fuori le Mura", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Paolo+fuori+le+Mura+Roma+Italy", category: "manastiri" }, // Roma
+    { name: "Turnul lui Ioan (Torre San Giovanni)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Ioan+(Torre+San+Giovanni)+Vatican+Italy", category: "cetati_turnuri", city: "Roma" }, // Vatican
+    { name: "Porta Pia", url: "https://www.google.com/maps/search/?api=1&query=Porta+Pia+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
+    { name: "Bazilica Sfântul Petru (San Pietro)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Petru+(San+Pietro)+Vatican+Italy", category: "manastiri", city: "Roma" }, // Vatican
+    { name: "Panteonul (Pantheon)", url: "https://www.google.com/maps/search/?api=1&query=Panteonul+(Pantheon)+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Bazilica Santa Maria Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Santa+Maria+Maggiore+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Bazilica San Giovanni in Laterano", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Giovanni+in+Laterano+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Bazilica San Paolo fuori le Mura", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Paolo+fuori+le+Mura+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
     { name: "Mănăstirea Santa Maria di Farfa", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santa+Maria+di+Farfa+Rieti+Italy", category: "manastiri" }, // Rieti
     { name: "Mănăstirea Sacro Speco (Sfântul Benedict)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Sacro+Speco+(Sfântul+Benedict)+Subiaco+Italy", category: "manastiri" }, // Subiaco
     { name: "Ababația Montecassino", url: "https://www.google.com/maps/search/?api=1&query=Ababația+Montecassino+Cassino+Italy", category: "manastiri" }, // Cassino
-    { name: "Biserica Santa Maria in Cosmedin (Bocca della Verità)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+in+Cosmedin+(Bocca+della+Verità)+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica Il Gesù", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Il+Gesù+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica San Pietro in Vincoli (Moise de Michelangelo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Pietro+in+Vincoli+(Moise+de+Michelangelo)+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica Santa Maria del Popolo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+del+Popolo+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica San Clemente (Structura pe 3 niveluri)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Clemente+(Structura+pe+3+niveluri)+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica Santa Maria in Trastevere", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+in+Trastevere+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Biserica Sant'Agnese in Agone", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sant'Agnese+in+Agone+Roma+Italy", category: "manastiri" }, // Roma
-    { name: "Grădinile Vilat Borghese", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Vilat+Borghese+Roma+Italy", category: "natura" }, // Roma
+    { name: "Biserica Santa Maria in Cosmedin (Bocca della Verità)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+in+Cosmedin+(Bocca+della+Verità)+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica Il Gesù", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Il+Gesù+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica San Pietro in Vincoli (Moise de Michelangelo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Pietro+in+Vincoli+(Moise+de+Michelangelo)+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica Santa Maria del Popolo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+del+Popolo+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica San Clemente (Structura pe 3 niveluri)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Clemente+(Structura+pe+3+niveluri)+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica Santa Maria in Trastevere", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+in+Trastevere+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Biserica Sant'Agnese in Agone", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sant'Agnese+in+Agone+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Grădinile Vilat Borghese", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Vilat+Borghese+Roma+Italy", category: "natura", city: "Roma" }, // Roma
     { name: "Parcul Național Circeo", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Circeo+Latina+Italy", category: "natura" }, // Latina
     { name: "Lacul Bracciano", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Bracciano+Regiunea+Lazio+Italy", category: "natura" }, // Regiunea Lazio
     { name: "Lacul Bolsena", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Bolsena+Viterbo+Italy", category: "natura" }, // Viterbo
     { name: "Grădinile Tivoli (Villa d'Este)", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+(Villa+d'Este)+Tivoli+Italy", category: "natura" }, // Tivoli
     { name: "Grotele din Pastena (Grotte di Pastena)", url: "https://www.google.com/maps/search/?api=1&query=Grotele+din+Pastena+(Grotte+di+Pastena)+Frosinone+Italy", category: "natura" }, // Frosinone
     { name: "Parcul Monștrilor din Bomarzo (Sacro Bosco)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Monștrilor+din+Bomarzo+(Sacro+Bosco)+Viterbo+Italy", category: "natura" }, // Viterbo
-    { name: "Rezervația Naturală Monte Mario", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Monte+Mario+Roma+Italy", category: "natura" }, // Roma
-    { name: "Grădina Botanică din Roma", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+din+Roma+Roma+Italy", category: "natura" }, // Roma
+    { name: "Rezervația Naturală Monte Mario", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Monte+Mario+Roma+Italy", category: "natura", city: "Roma" }, // Roma
+    { name: "Grădina Botanică din Roma", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+din+Roma+Roma+Italy", category: "natura", city: "Roma" }, // Roma
     { name: "Cataratta delle Marmore (Cascada Marmore - Graniță)", url: "https://www.google.com/maps/search/?api=1&query=Cataratta+delle+Marmore+(Cascada+Marmore+-+Graniță)+Terni+Italy", category: "natura" }, // Terni
-    { name: "Via Appia Antica (Șoseaua Istorică Romană)", url: "https://www.google.com/maps/search/?api=1&query=Via+Appia+Antica+(Șoseaua+Istorică+Romană)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Gara Termini (Roma Termini)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Termini+(Roma+Termini)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Traseul panoramic de pe Dealul Janiculum (Gianicolo)", url: "https://www.google.com/maps/search/?api=1&query=Traseul+panoramic+de+pe+Dealul+Janiculum+(Gianicolo)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Podul Milvio (Ponte Milvio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Milvio+(Ponte+Milvio)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Podul Sant'Angelo (Ponte Sant'Angelo)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Sant'Angelo+(Ponte+Sant'Angelo)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Podul Fabricio (Ponte Fabricio - Cel mai vechi intact)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Fabricio+(Ponte+Fabricio+-+Cel+mai+vechi+intact)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Scara Sfântă (Scala Santa)", url: "https://www.google.com/maps/search/?api=1&query=Scara+Sfântă+(Scala+Santa)+Roma+Italy", category: "infrastructura" }, // Roma
-    { name: "Muzeele Vaticane (Musei Vaticani & Capela Sixtină)", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Vaticane+(Musei+Vaticani+&+Capela+Sixtină)+Vatican+Italy", category: "muzee" }, // Vatican
-    { name: "Galeria Borghese (Galleria Borghese)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Borghese+(Galleria+Borghese)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Muzeele Capitoline (Musei Capitolini)", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Capitoline+(Musei+Capitolini)+Roma+Italy", category: "muzee" }, // Roma
+    { name: "Via Appia Antica (Șoseaua Istorică Romană)", url: "https://www.google.com/maps/search/?api=1&query=Via+Appia+Antica+(Șoseaua+Istorică+Romană)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Gara Termini (Roma Termini)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Termini+(Roma+Termini)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Traseul panoramic de pe Dealul Janiculum (Gianicolo)", url: "https://www.google.com/maps/search/?api=1&query=Traseul+panoramic+de+pe+Dealul+Janiculum+(Gianicolo)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Podul Milvio (Ponte Milvio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Milvio+(Ponte+Milvio)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Podul Sant'Angelo (Ponte Sant'Angelo)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Sant'Angelo+(Ponte+Sant'Angelo)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Podul Fabricio (Ponte Fabricio - Cel mai vechi intact)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Fabricio+(Ponte+Fabricio+-+Cel+mai+vechi+intact)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Scara Sfântă (Scala Santa)", url: "https://www.google.com/maps/search/?api=1&query=Scara+Sfântă+(Scala+Santa)+Roma+Italy", category: "infrastructura", city: "Roma" }, // Roma
+    { name: "Muzeele Vaticane (Musei Vaticani & Capela Sixtină)", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Vaticane+(Musei+Vaticani+&+Capela+Sixtină)+Vatican+Italy", category: "muzee", city: "Roma" }, // Vatican
+    { name: "Galeria Borghese (Galleria Borghese)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Borghese+(Galleria+Borghese)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Muzeele Capitoline (Musei Capitolini)", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+Capitoline+(Musei+Capitolini)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
     { name: "Situl Arheologic Ostia Antica", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Ostia+Antica+Ostia+Italy", category: "muzee" }, // Ostia
-    { name: "Muzeul Național Etrusc din Villa Giulia", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Etrusc+din+Villa+Giulia+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Situl Arheologic Pompeii din Roma (Cinecittà Due)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Pompeii+din+Roma+(Cinecittà+Due)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Galeria Națională de Artă Modernă (GNAM)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Națională+de+Artă+Modernă+(GNAM)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Muzeul Național Roman (Palazzo Massimo)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Roman+(Palazzo+Massimo)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Termele lui Dioclețian (Muzeul)", url: "https://www.google.com/maps/search/?api=1&query=Termele+lui+Dioclețian+(Muzeul)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "MAXXI (Muzeul de Artă al Secolului XXI)", url: "https://www.google.com/maps/search/?api=1&query=MAXXI+(Muzeul+de+Artă+al+Secolului+XXI)+Roma+Italy", category: "muzee" }, // Roma
-    { name: "Colosseum (Amfiteatrul Flavian)", url: "https://www.google.com/maps/search/?api=1&query=Colosseum+(Amfiteatrul+Flavian)+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Forumul Roman (Foro Romano)", url: "https://www.google.com/maps/search/?api=1&query=Forumul+Roman+(Foro+Romano)+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Fontana di Trevi", url: "https://www.google.com/maps/search/?api=1&query=Fontana+di+Trevi+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Piazza Navona", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Navona+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Treptele Spaniole (Piazza di Spagna)", url: "https://www.google.com/maps/search/?api=1&query=Treptele+Spaniole+(Piazza+di+Spagna)+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Piazza del Popolo", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Popolo+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Columna lui Traian (Forul lui Traian)", url: "https://www.google.com/maps/search/?api=1&query=Columna+lui+Traian+(Forul+lui+Traian)+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Arcul lui Constantin", url: "https://www.google.com/maps/search/?api=1&query=Arcul+lui+Constantin+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Teatrul lui Marcello", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+lui+Marcello+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Forul lui Augustus", url: "https://www.google.com/maps/search/?api=1&query=Forul+lui+Augustus+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Piazza Venezia (Altare della Patria / Vittoriano)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Venezia+(Altare+della+Patria+/+Vittoriano)+Roma+Italy", category: "cladiri_teatre" }, // Roma
+    { name: "Muzeul Național Etrusc din Villa Giulia", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Etrusc+din+Villa+Giulia+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Situl Arheologic Pompeii din Roma (Cinecittà Due)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Pompeii+din+Roma+(Cinecittà+Due)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Galeria Națională de Artă Modernă (GNAM)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Națională+de+Artă+Modernă+(GNAM)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Muzeul Național Roman (Palazzo Massimo)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Roman+(Palazzo+Massimo)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Termele lui Dioclețian (Muzeul)", url: "https://www.google.com/maps/search/?api=1&query=Termele+lui+Dioclețian+(Muzeul)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "MAXXI (Muzeul de Artă al Secolului XXI)", url: "https://www.google.com/maps/search/?api=1&query=MAXXI+(Muzeul+de+Artă+al+Secolului+XXI)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
+    { name: "Colosseum (Amfiteatrul Flavian)", url: "https://www.google.com/maps/search/?api=1&query=Colosseum+(Amfiteatrul+Flavian)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Forumul Roman (Foro Romano)", url: "https://www.google.com/maps/search/?api=1&query=Forumul+Roman+(Foro+Romano)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Fontana di Trevi", url: "https://www.google.com/maps/search/?api=1&query=Fontana+di+Trevi+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Piazza Navona", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Navona+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Treptele Spaniole (Piazza di Spagna)", url: "https://www.google.com/maps/search/?api=1&query=Treptele+Spaniole+(Piazza+di+Spagna)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Piazza del Popolo", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Popolo+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Columna lui Traian (Forul lui Traian)", url: "https://www.google.com/maps/search/?api=1&query=Columna+lui+Traian+(Forul+lui+Traian)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Arcul lui Constantin", url: "https://www.google.com/maps/search/?api=1&query=Arcul+lui+Constantin+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Teatrul lui Marcello", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+lui+Marcello+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Forul lui Augustus", url: "https://www.google.com/maps/search/?api=1&query=Forul+lui+Augustus+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Piazza Venezia (Altare della Patria / Vittoriano)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Venezia+(Altare+della+Patria+/+Vittoriano)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
     { name: "Villa Adriana", url: "https://www.google.com/maps/search/?api=1&query=Villa+Adriana+Tivoli+Italy", category: "cladiri_teatre" }, // Tivoli
-    { name: "Circus Maximus (Circo Massimo)", url: "https://www.google.com/maps/search/?api=1&query=Circus+Maximus+(Circo+Massimo)+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Termele lui Caracalla", url: "https://www.google.com/maps/search/?api=1&query=Termele+lui+Caracalla+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Campo de' Fiori", url: "https://www.google.com/maps/search/?api=1&query=Campo+de'+Fiori+Roma+Italy", category: "cladiri_teatre" }, // Roma
-    { name: "Piazza San Pietro", url: "https://www.google.com/maps/search/?api=1&query=Piazza+San+Pietro+Vatican+Italy", category: "cladiri_teatre" }, // Vatican
-    { name: "Palazzo Vecchio", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Vecchio+Florența+Italy", category: "castele_palate" }, // Florența
-    { name: "Palazzo Pitti", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Pitti+Florența+Italy", category: "castele_palate" }, // Florența
-    { name: "Palazzo Medici Riccardi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Medici+Riccardi+Florența+Italy", category: "castele_palate" }, // Florența
+    { name: "Circus Maximus (Circo Massimo)", url: "https://www.google.com/maps/search/?api=1&query=Circus+Maximus+(Circo+Massimo)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Termele lui Caracalla", url: "https://www.google.com/maps/search/?api=1&query=Termele+lui+Caracalla+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Campo de' Fiori", url: "https://www.google.com/maps/search/?api=1&query=Campo+de'+Fiori+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Piazza San Pietro", url: "https://www.google.com/maps/search/?api=1&query=Piazza+San+Pietro+Vatican+Italy", category: "cladiri_teatre", city: "Roma" }, // Vatican
+    { name: "Palazzo Vecchio", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Vecchio+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
+    { name: "Palazzo Pitti", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Pitti+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
+    { name: "Palazzo Medici Riccardi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Medici+Riccardi+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
     { name: "Castelul Brolio", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Brolio+Gaiole+in+Chianti+Italy", category: "castele_palate" }, // Gaiole in Chianti
-    { name: "Palazzo Strozzi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Strozzi+Florența+Italy", category: "castele_palate" }, // Florența
+    { name: "Palazzo Strozzi", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Strozzi+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
     { name: "Castelul Sammezzano", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sammezzano+Reggello+Italy", category: "castele_palate" }, // Reggello
     { name: "Palazzo Piccolomini", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Piccolomini+Pienza+Italy", category: "castele_palate" }, // Pienza
-    { name: "Vila Medicee din Petraia", url: "https://www.google.com/maps/search/?api=1&query=Vila+Medicee+din+Petraia+Florența+Italy", category: "castele_palate" }, // Florența
-    { name: "Vila Medicee di Castello", url: "https://www.google.com/maps/search/?api=1&query=Vila+Medicee+di+Castello+Florența+Italy", category: "castele_palate" }, // Florența
+    { name: "Vila Medicee din Petraia", url: "https://www.google.com/maps/search/?api=1&query=Vila+Medicee+din+Petraia+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
+    { name: "Vila Medicee di Castello", url: "https://www.google.com/maps/search/?api=1&query=Vila+Medicee+di+Castello+Florența+Italy", category: "castele_palate", city: "Firenze" }, // Florența
     { name: "Castelul Verrazzano", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Verrazzano+Greve+in+Chianti+Italy", category: "castele_palate" }, // Greve in Chianti
-    { name: "Palazzo Pubblico", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Pubblico+Siena+Italy", category: "castele_palate" }, // Siena
-    { name: "Palazzo Salimbeni", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Salimbeni+Siena+Italy", category: "castele_palate" }, // Siena
-    { name: "Turnul Înclinat din Pisa (Torre di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Înclinat+din+Pisa+(Torre+di+Pisa)+Pisa+Italy", category: "cetati_turnuri" }, // Pisa
+    { name: "Palazzo Pubblico", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Pubblico+Siena+Italy", category: "castele_palate", city: "Siena" }, // Siena
+    { name: "Palazzo Salimbeni", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Salimbeni+Siena+Italy", category: "castele_palate", city: "Siena" }, // Siena
+    { name: "Turnul Înclinat din Pisa (Torre di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Înclinat+din+Pisa+(Torre+di+Pisa)+Pisa+Italy", category: "cetati_turnuri", city: "Pisa" }, // Pisa
     { name: "Turnurile Medievale din San Gimignano", url: "https://www.google.com/maps/search/?api=1&query=Turnurile+Medievale+din+San+Gimignano+San+Gimignano+Italy", category: "cetati_turnuri" }, // San Gimignano
-    { name: "Fortezza da Basso", url: "https://www.google.com/maps/search/?api=1&query=Fortezza+da+Basso+Florența+Italy", category: "cetati_turnuri" }, // Florența
-    { name: "Turnul Giotto (Campanile di Giotto)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Giotto+(Campanile+di+Giotto)+Florența+Italy", category: "cetati_turnuri" }, // Florența
+    { name: "Fortezza da Basso", url: "https://www.google.com/maps/search/?api=1&query=Fortezza+da+Basso+Florența+Italy", category: "cetati_turnuri", city: "Firenze" }, // Florența
+    { name: "Turnul Giotto (Campanile di Giotto)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Giotto+(Campanile+di+Giotto)+Florența+Italy", category: "cetati_turnuri", city: "Firenze" }, // Florența
     { name: "Zidurile Medievale din Lucca", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Lucca+Lucca+Italy", category: "cetati_turnuri" }, // Lucca
-    { name: "Fortăreața Medicee", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Medicee+Siena+Italy", category: "cetati_turnuri" }, // Siena
-    { name: "Torre del Mangia", url: "https://www.google.com/maps/search/?api=1&query=Torre+del+Mangia+Siena+Italy", category: "cetati_turnuri" }, // Siena
+    { name: "Fortăreața Medicee", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Medicee+Siena+Italy", category: "cetati_turnuri", city: "Siena" }, // Siena
+    { name: "Torre del Mangia", url: "https://www.google.com/maps/search/?api=1&query=Torre+del+Mangia+Siena+Italy", category: "cetati_turnuri", city: "Siena" }, // Siena
     { name: "Turnul Guinigi (Cu copaci pe platformă)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Guinigi+(Cu+copaci+pe+platformă)+Lucca+Italy", category: "cetati_turnuri" }, // Lucca
     { name: "Fortăreața din Volterra", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+din+Volterra+Volterra+Italy", category: "cetati_turnuri" }, // Volterra
     { name: "Turnul Orelor (Torre delle Ore)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Orelor+(Torre+delle+Ore)+Lucca+Italy", category: "cetati_turnuri" }, // Lucca
     { name: "Cetatea Radicofani", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Radicofani+Radicofani+Italy", category: "cetati_turnuri" }, // Radicofani
     { name: "Fortezza di Santa Barbara", url: "https://www.google.com/maps/search/?api=1&query=Fortezza+di+Santa+Barbara+Pistoia+Italy", category: "cetati_turnuri" }, // Pistoia
-    { name: "Catedrala Santa Maria del Fiore (Duomo din Florența)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+Maria+del+Fiore+(Duomo+din+Florența)+Florența+Italy", category: "manastiri" }, // Florența
-    { name: "Catedrala din Siena (Duomo di Siena)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Siena+(Duomo+di+Siena)+Siena+Italy", category: "manastiri" }, // Siena
-    { name: "Catedrala din Pisa (Duomo di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Pisa+(Duomo+di+Pisa)+Pisa+Italy", category: "manastiri" }, // Pisa
-    { name: "Baptisteriul San Giovanni", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+San+Giovanni+Florența+Italy", category: "manastiri" }, // Florența
-    { name: "Biserica Santa Maria Novella", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Novella+Florența+Italy", category: "manastiri" }, // Florența
-    { name: "Biserica Santa Croce (Pantheonul Italiei)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Croce+(Pantheonul+Italiei)+Florența+Italy", category: "manastiri" }, // Florența
+    { name: "Catedrala Santa Maria del Fiore (Duomo din Florența)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+Maria+del+Fiore+(Duomo+din+Florența)+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
+    { name: "Catedrala din Siena (Duomo di Siena)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Siena+(Duomo+di+Siena)+Siena+Italy", category: "manastiri", city: "Siena" }, // Siena
+    { name: "Catedrala din Pisa (Duomo di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Pisa+(Duomo+di+Pisa)+Pisa+Italy", category: "manastiri", city: "Pisa" }, // Pisa
+    { name: "Baptisteriul San Giovanni", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+San+Giovanni+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
+    { name: "Biserica Santa Maria Novella", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Novella+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
+    { name: "Biserica Santa Croce (Pantheonul Italiei)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Croce+(Pantheonul+Italiei)+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
     { name: "Ababația San Galgano (Biserica fără acoperiș și sabia în stâncă)", url: "https://www.google.com/maps/search/?api=1&query=Ababația+San+Galgano+(Biserica+fără+acoperiș+și+sabia+în+stâncă)+Chiusdino+Italy", category: "manastiri" }, // Chiusdino
     { name: "Mănăstirea Monte Oliveto Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Monte+Oliveto+Maggiore+Asciano+Italy", category: "manastiri" }, // Asciano
-    { name: "Biserica San Miniato al Monte", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Miniato+al+Monte+Florența+Italy", category: "manastiri" }, // Florența
+    { name: "Biserica San Miniato al Monte", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Miniato+al+Monte+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
     { name: "Mănăstirea La Verna (Locul Sfântului Francisc)", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+La+Verna+(Locul+Sfântului+Francisc)+Chiusi+della+Verna+Italy", category: "manastiri" }, // Chiusi della Verna
-    { name: "Biserica San Lorenzo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Lorenzo+Florența+Italy", category: "manastiri" }, // Florența
+    { name: "Biserica San Lorenzo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Lorenzo+Florența+Italy", category: "manastiri", city: "Firenze" }, // Florența
     { name: "Ababația Sant'Antimo", url: "https://www.google.com/maps/search/?api=1&query=Ababația+Sant'Antimo+Montalcino+Italy", category: "manastiri" }, // Montalcino
-    { name: "Baptisteriul din Pisa", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+din+Pisa+Pisa+Italy", category: "manastiri" }, // Pisa
-    { name: "Biserica Santa Maria della Spina", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+della+Spina+Pisa+Italy", category: "manastiri" }, // Pisa
-    { name: "Grădinile Boboli (Giardini di Boboli)", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Boboli+(Giardini+di+Boboli)+Florența+Italy", category: "natura" }, // Florența
+    { name: "Baptisteriul din Pisa", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+din+Pisa+Pisa+Italy", category: "manastiri", city: "Pisa" }, // Pisa
+    { name: "Biserica Santa Maria della Spina", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+della+Spina+Pisa+Italy", category: "manastiri", city: "Pisa" }, // Pisa
+    { name: "Grădinile Boboli (Giardini di Boboli)", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Boboli+(Giardini+di+Boboli)+Florența+Italy", category: "natura", city: "Firenze" }, // Florența
     { name: "Parcul Național Arhipelagul Toscan (Insula Elba)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Arhipelagul+Toscan+(Insula+Elba)+Livorno+Italy", category: "natura" }, // Livorno
-    { name: "Valea Orcia (Val d'Orcia - Peisaj UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Valea+Orcia+(Val+d'Orcia+-+Peisaj+UNESCO)+Siena+Italy", category: "natura" }, // Siena
+    { name: "Valea Orcia (Val d'Orcia - Peisaj UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Valea+Orcia+(Val+d'Orcia+-+Peisaj+UNESCO)+Siena+Italy", category: "natura", city: "Siena" }, // Siena
     { name: "Grotta del Vento (Peștera Vântului)", url: "https://www.google.com/maps/search/?api=1&query=Grotta+del+Vento+(Peștera+Vântului)+Garfagnana+Italy", category: "natura" }, // Garfagnana
     { name: "Izvoarele Termale Saturnia (Cascate del Mulino)", url: "https://www.google.com/maps/search/?api=1&query=Izvoarele+Termale+Saturnia+(Cascate+del+Mulino)+Manciano+Italy", category: "natura" }, // Manciano
     { name: "Parcul Regional Maremma", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Regional+Maremma+Grosseto+Italy", category: "natura" }, // Grosseto
     { name: "Carierele de Marmură de Carrara", url: "https://www.google.com/maps/search/?api=1&query=Carierele+de+Marmură+de+Carrara+Carrara+Italy", category: "natura" }, // Carrara
-    { name: "Grădinile Bardini", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Bardini+Florența+Italy", category: "natura" }, // Florența
+    { name: "Grădinile Bardini", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Bardini+Florența+Italy", category: "natura", city: "Firenze" }, // Florența
     { name: "Parcul Pinocchio", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Pinocchio+Collodi+Italy", category: "natura" }, // Collodi
     { name: "Izvoarele Termale Bagno Vignoni", url: "https://www.google.com/maps/search/?api=1&query=Izvoarele+Termale+Bagno+Vignoni+San+Quirico+d'Orcia+Italy", category: "natura" }, // San Quirico d'Orcia
     { name: "Șoseaua panoramică Chiantigiana (SR222)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+Chiantigiana+(SR222)+Regiunea+Chianti+Italy", category: "infrastructura" }, // Regiunea Chianti
-    { name: "Podul Vechi (Ponte Vecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Vechi+(Ponte+Vecchio)+Florența+Italy", category: "infrastructura" }, // Florența
-    { name: "Gara Santa Maria Novella (Firenze SMN)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Santa+Maria+Novella+(Firenze+SMN)+Florența+Italy", category: "infrastructura" }, // Florența
+    { name: "Podul Vechi (Ponte Vecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Vechi+(Ponte+Vecchio)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
+    { name: "Gara Santa Maria Novella (Firenze SMN)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Santa+Maria+Novella+(Firenze+SMN)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
     { name: "Traseul serpentinelor de la Monticchiello", url: "https://www.google.com/maps/search/?api=1&query=Traseul+serpentinelor+de+la+Monticchiello+Pienza+Italy", category: "infrastructura" }, // Pienza
-    { name: "Podul Santa Trinita", url: "https://www.google.com/maps/search/?api=1&query=Podul+Santa+Trinita+Florența+Italy", category: "infrastructura" }, // Florența
+    { name: "Podul Santa Trinita", url: "https://www.google.com/maps/search/?api=1&query=Podul+Santa+Trinita+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
     { name: "Podul Diavolului (Ponte della Maddalena)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Diavolului+(Ponte+della+Maddalena)+Borgo+a+Mozzano+Italy", category: "infrastructura" }, // Borgo a Mozzano
-    { name: "Coridorul Vasari (Corridoio Vasariano)", url: "https://www.google.com/maps/search/?api=1&query=Coridorul+Vasari+(Corridoio+Vasariano)+Florența+Italy", category: "infrastructura" }, // Florența
-    { name: "Galeria Uffizi (Galleria degli Uffizi)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Uffizi+(Galleria+degli+Uffizi)+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Galeria Academiei (Galleria dell'Accademia - Statuia David)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Academiei+(Galleria+dell'Accademia+-+Statuia+David)+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Muzeul Național Bargello", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Bargello+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Palazzo Strozzi (Expozițiile de Artă)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Strozzi+(Expozițiile+de+Artă)+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Muzeul Galileo (Istoria Științei)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Galileo+(Istoria+Științei)+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Muzeul Operelor din Duomo (Museo dell'Opera del Duomo)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Operelor+din+Duomo+(Museo+dell'Opera+del+Duomo)+Florența+Italy", category: "muzee" }, // Florența
-    { name: "Muzeul Porțelanului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Porțelanului+Florența,+Grădinile+Boboli+Italy", category: "muzee" }, // Florența, Grădinile Boboli
+    { name: "Coridorul Vasari (Corridoio Vasariano)", url: "https://www.google.com/maps/search/?api=1&query=Coridorul+Vasari+(Corridoio+Vasariano)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
+    { name: "Galeria Uffizi (Galleria degli Uffizi)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Uffizi+(Galleria+degli+Uffizi)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Galeria Academiei (Galleria dell'Accademia - Statuia David)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Academiei+(Galleria+dell'Accademia+-+Statuia+David)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Muzeul Național Bargello", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Bargello+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Palazzo Strozzi (Expozițiile de Artă)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Strozzi+(Expozițiile+de+Artă)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Muzeul Galileo (Istoria Științei)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Galileo+(Istoria+Științei)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Muzeul Operelor din Duomo (Museo dell'Opera del Duomo)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Operelor+din+Duomo+(Museo+dell'Opera+del+Duomo)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Muzeul Porțelanului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Porțelanului+Florența,+Grădinile+Boboli+Italy", category: "muzee", city: "Firenze" }, // Florența, Grădinile Boboli
     { name: "Muzeul Piaggio (Istoria Vespa)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Piaggio+(Istoria+Vespa)+Pontedera+Italy", category: "muzee" }, // Pontedera
-    { name: "Piazza del Duomo (Florența)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Florența)+Florența+Italy", category: "cladiri_teatre" }, // Florența
-    { name: "Piazza della Signoria", url: "https://www.google.com/maps/search/?api=1&query=Piazza+della+Signoria+Florența+Italy", category: "cladiri_teatre" }, // Florența
-    { name: "Piazza del Campo (Locul cursei Il Palio)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Campo+(Locul+cursei+Il+Palio)+Siena+Italy", category: "cladiri_teatre" }, // Siena
-    { name: "Piazza dei Miracoli", url: "https://www.google.com/maps/search/?api=1&query=Piazza+dei+Miracoli+Pisa+Italy", category: "cladiri_teatre" }, // Pisa
-    { name: "Piazzale Michelangelo (Platforma panoramică)", url: "https://www.google.com/maps/search/?api=1&query=Piazzale+Michelangelo+(Platforma+panoramică)+Florența+Italy", category: "cladiri_teatre" }, // Florența
+    { name: "Piazza del Duomo (Florența)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Florența)+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
+    { name: "Piazza della Signoria", url: "https://www.google.com/maps/search/?api=1&query=Piazza+della+Signoria+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
+    { name: "Piazza del Campo (Locul cursei Il Palio)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Campo+(Locul+cursei+Il+Palio)+Siena+Italy", category: "cladiri_teatre", city: "Siena" }, // Siena
+    { name: "Piazza dei Miracoli", url: "https://www.google.com/maps/search/?api=1&query=Piazza+dei+Miracoli+Pisa+Italy", category: "cladiri_teatre", city: "Pisa" }, // Pisa
+    { name: "Piazzale Michelangelo (Platforma panoramică)", url: "https://www.google.com/maps/search/?api=1&query=Piazzale+Michelangelo+(Platforma+panoramică)+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
     { name: "Piazza Anfiteatro (Construită pe amfiteatrul roman)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Anfiteatro+(Construită+pe+amfiteatrul+roman)+Lucca+Italy", category: "cladiri_teatre" }, // Lucca
-    { name: "Loggia dei Lanzi", url: "https://www.google.com/maps/search/?api=1&query=Loggia+dei+Lanzi+Florența+Italy", category: "cladiri_teatre" }, // Florența
+    { name: "Loggia dei Lanzi", url: "https://www.google.com/maps/search/?api=1&query=Loggia+dei+Lanzi+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
     { name: "Teatrul Roman din Volterra", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Volterra+Volterra+Italy", category: "cladiri_teatre" }, // Volterra
-    { name: "Mercato Centrale (Hala istorică)", url: "https://www.google.com/maps/search/?api=1&query=Mercato+Centrale+(Hala+istorică)+Florența+Italy", category: "cladiri_teatre" }, // Florența
-    { name: "Piazza Santa Croce", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Santa+Croce+Florența+Italy", category: "cladiri_teatre" }, // Florența
-    { name: "Palatul Dogilor (Palazzo Ducale)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dogilor+(Palazzo+Ducale)+Veneția+Italy", category: "castele_palate" }, // Veneția
-    { name: "Ca' d'Oro (Palazzo Santa Sofia)", url: "https://www.google.com/maps/search/?api=1&query=Ca'+d'Oro+(Palazzo+Santa+Sofia)+Veneția+Italy", category: "castele_palate" }, // Veneția
-    { name: "Ca' Rezzonico", url: "https://www.google.com/maps/search/?api=1&query=Ca'+Rezzonico+Veneția+Italy", category: "castele_palate" }, // Veneția
-    { name: "Ca' Pesaro", url: "https://www.google.com/maps/search/?api=1&query=Ca'+Pesaro+Veneția+Italy", category: "castele_palate" }, // Veneția
+    { name: "Mercato Centrale (Hala istorică)", url: "https://www.google.com/maps/search/?api=1&query=Mercato+Centrale+(Hala+istorică)+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
+    { name: "Piazza Santa Croce", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Santa+Croce+Florența+Italy", category: "cladiri_teatre", city: "Firenze" }, // Florența
+    { name: "Palatul Dogilor (Palazzo Ducale)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dogilor+(Palazzo+Ducale)+Veneția+Italy", category: "castele_palate", city: "Venezia" }, // Veneția
+    { name: "Ca' d'Oro (Palazzo Santa Sofia)", url: "https://www.google.com/maps/search/?api=1&query=Ca'+d'Oro+(Palazzo+Santa+Sofia)+Veneția+Italy", category: "castele_palate", city: "Venezia" }, // Veneția
+    { name: "Ca' Rezzonico", url: "https://www.google.com/maps/search/?api=1&query=Ca'+Rezzonico+Veneția+Italy", category: "castele_palate", city: "Venezia" }, // Veneția
+    { name: "Ca' Pesaro", url: "https://www.google.com/maps/search/?api=1&query=Ca'+Pesaro+Veneția+Italy", category: "castele_palate", city: "Venezia" }, // Veneția
     { name: "Castelul San Zeno", url: "https://www.google.com/maps/search/?api=1&query=Castelul+San+Zeno+Montagnana+Italy", category: "castele_palate" }, // Montagnana
     { name: "Villa Almerico Capra „La Rotonda” (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Villa+Almerico+Capra+„La+Rotonda”+(UNESCO)+Vicenza+Italy", category: "castele_palate" }, // Vicenza
     { name: "Villa Pisani", url: "https://www.google.com/maps/search/?api=1&query=Villa+Pisani+Stra+Italy", category: "castele_palate" }, // Stra
-    { name: "Palazzo Contarini del Bovolo (Scara spiralată)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Contarini+del+Bovolo+(Scara+spiralată)+Veneția+Italy", category: "castele_palate" }, // Veneția
+    { name: "Palazzo Contarini del Bovolo (Scara spiralată)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Contarini+del+Bovolo+(Scara+spiralată)+Veneția+Italy", category: "castele_palate", city: "Venezia" }, // Veneția
     { name: "Castelul Castelfranco Veneto", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Castelfranco+Veneto+Treviso+Italy", category: "castele_palate" }, // Treviso
     { name: "Villa Barbaro", url: "https://www.google.com/maps/search/?api=1&query=Villa+Barbaro+Maser+Italy", category: "castele_palate" }, // Maser
     { name: "Palazzo Thiene", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Thiene+Vicenza+Italy", category: "castele_palate" }, // Vicenza
     { name: "Palazzo Chiericati", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Chiericati+Vicenza+Italy", category: "castele_palate" }, // Vicenza
-    { name: "Turnul San Marco (Campanile di San Marco)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+San+Marco+(Campanile+di+San+Marco)+Veneția+Italy", category: "cetati_turnuri" }, // Veneția
-    { name: "Arsenalul din Veneția (Arsenale)", url: "https://www.google.com/maps/search/?api=1&query=Arsenalul+din+Veneția+(Arsenale)+Veneția+Italy", category: "cetati_turnuri" }, // Veneția
-    { name: "Zidurile Medievale din Cittadella (Traseu complet pe ziduri)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Cittadella+(Traseu+complet+pe+ziduri)+Padova+Italy", category: "cetati_turnuri" }, // Padova
-    { name: "Turnul Orelor (Torre dell'Orologio)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Orelor+(Torre+dell'Orologio)+Veneția+Italy", category: "cetati_turnuri" }, // Veneția
-    { name: "Zidurile din Montagnana", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Montagnana+Padova+Italy", category: "cetati_turnuri" }, // Padova
+    { name: "Turnul San Marco (Campanile di San Marco)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+San+Marco+(Campanile+di+San+Marco)+Veneția+Italy", category: "cetati_turnuri", city: "Venezia" }, // Veneția
+    { name: "Arsenalul din Veneția (Arsenale)", url: "https://www.google.com/maps/search/?api=1&query=Arsenalul+din+Veneția+(Arsenale)+Veneția+Italy", category: "cetati_turnuri", city: "Venezia" }, // Veneția
+    { name: "Zidurile Medievale din Cittadella (Traseu complet pe ziduri)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Cittadella+(Traseu+complet+pe+ziduri)+Padova+Italy", category: "cetati_turnuri", city: "Padova" }, // Padova
+    { name: "Turnul Orelor (Torre dell'Orologio)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Orelor+(Torre+dell'Orologio)+Veneția+Italy", category: "cetati_turnuri", city: "Venezia" }, // Veneția
+    { name: "Zidurile din Montagnana", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Montagnana+Padova+Italy", category: "cetati_turnuri", city: "Padova" }, // Padova
     { name: "Turnul Ezzelino", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Ezzelino+Bassano+del+Grappa+Italy", category: "cetati_turnuri" }, // Bassano del Grappa
-    { name: "Cetatea Peschiera del Garda (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Peschiera+del+Garda+(UNESCO)+Verona+Italy", category: "cetati_turnuri" }, // Verona
-    { name: "Turnul Lamberti (Torre dei Lamberti)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Lamberti+(Torre+dei+Lamberti)+Verona+Italy", category: "cetati_turnuri" }, // Verona
-    { name: "Castelul Scaliger (Castelvecchio)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Scaliger+(Castelvecchio)+Verona+Italy", category: "cetati_turnuri" }, // Verona
+    { name: "Cetatea Peschiera del Garda (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Peschiera+del+Garda+(UNESCO)+Verona+Italy", category: "cetati_turnuri", city: "Verona" }, // Verona
+    { name: "Turnul Lamberti (Torre dei Lamberti)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Lamberti+(Torre+dei+Lamberti)+Verona+Italy", category: "cetati_turnuri", city: "Verona" }, // Verona
+    { name: "Castelul Scaliger (Castelvecchio)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Scaliger+(Castelvecchio)+Verona+Italy", category: "cetati_turnuri", city: "Verona" }, // Verona
     { name: "Turnul din Torcello", url: "https://www.google.com/maps/search/?api=1&query=Turnul+din+Torcello+Insula+Torcello+Italy", category: "cetati_turnuri" }, // Insula Torcello
-    { name: "Bazilica San Marco", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Marco+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Bazilica Sfântul Anton de Padova (Il Santo)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Anton+de+Padova+(Il+Santo)+Padova+Italy", category: "manastiri" }, // Padova
-    { name: "Biserica Santa Maria della Salute", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+della+Salute+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Biserica Santa Maria Gloriosa dei Frari", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Gloriosa+dei+Frari+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Biserica San Giorgio Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Giorgio+Maggiore+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Catedrala din Verona (Duomo di Verona)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Verona+(Duomo+di+Verona)+Verona+Italy", category: "manastiri" }, // Verona
-    { name: "Biserica San Zeno Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Zeno+Maggiore+Verona+Italy", category: "manastiri" }, // Verona
+    { name: "Bazilica San Marco", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Marco+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Bazilica Sfântul Anton de Padova (Il Santo)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Anton+de+Padova+(Il+Santo)+Padova+Italy", category: "manastiri", city: "Padova" }, // Padova
+    { name: "Biserica Santa Maria della Salute", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+della+Salute+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Biserica Santa Maria Gloriosa dei Frari", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Gloriosa+dei+Frari+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Biserica San Giorgio Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Giorgio+Maggiore+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Catedrala din Verona (Duomo di Verona)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Verona+(Duomo+di+Verona)+Verona+Italy", category: "manastiri", city: "Verona" }, // Verona
+    { name: "Biserica San Zeno Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Zeno+Maggiore+Verona+Italy", category: "manastiri", city: "Verona" }, // Verona
     { name: "Mănăstirea Praglia", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Praglia+Teolo,+Padova+Italy", category: "manastiri" }, // Teolo, Padova
-    { name: "Biserica San Zanipolo (Santi Giovanni e Paolo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Zanipolo+(Santi+Giovanni+e+Paolo)+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Biserica Redentore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Redentore+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Biserica Santa Maria Miracoli", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Miracoli+Veneția+Italy", category: "manastiri" }, // Veneția
-    { name: "Scrovegni Chapel (Capela Scrovegni - Frescele lui Giotto)", url: "https://www.google.com/maps/search/?api=1&query=Scrovegni+Chapel+(Capela+Scrovegni+-+Frescele+lui+Giotto)+Padova+Italy", category: "manastiri" }, // Padova
+    { name: "Biserica San Zanipolo (Santi Giovanni e Paolo)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Zanipolo+(Santi+Giovanni+e+Paolo)+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Biserica Redentore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Redentore+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Biserica Santa Maria Miracoli", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+Miracoli+Veneția+Italy", category: "manastiri", city: "Venezia" }, // Veneția
+    { name: "Scrovegni Chapel (Capela Scrovegni - Frescele lui Giotto)", url: "https://www.google.com/maps/search/?api=1&query=Scrovegni+Chapel+(Capela+Scrovegni+-+Frescele+lui+Giotto)+Padova+Italy", category: "manastiri", city: "Padova" }, // Padova
     { name: "Parcul Național Alpii Bellunezi (Dolomiti Bellunesi)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Alpii+Bellunezi+(Dolomiti+Bellunesi)+Belluno+Italy", category: "natura" }, // Belluno
-    { name: "Lacul Garda (Lago di Garda - Partea estică)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Garda+(Lago+di+Garda+-+Partea+estică)+Verona+Italy", category: "natura" }, // Verona
-    { name: "Grădina Botanică din Padova (Orto Botanico - Cea mai veche universitară)", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+din+Padova+(Orto+Botanico+-+Cea+mai+veche+universitară)+Padova+Italy", category: "natura" }, // Padova
+    { name: "Lacul Garda (Lago di Garda - Partea estică)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Garda+(Lago+di+Garda+-+Partea+estică)+Verona+Italy", category: "natura", city: "Verona" }, // Verona
+    { name: "Grădina Botanică din Padova (Orto Botanico - Cea mai veche universitară)", url: "https://www.google.com/maps/search/?api=1&query=Grădina+Botanică+din+Padova+(Orto+Botanico+-+Cea+mai+veche+universitară)+Padova+Italy", category: "natura", city: "Padova" }, // Padova
     { name: "Peștera Grotta di Oliero", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Grotta+di+Oliero+Valbrenta+Italy", category: "natura" }, // Valbrenta
-    { name: "Laguna Venețiană (Insulele Burano, Murano, Torcello)", url: "https://www.google.com/maps/search/?api=1&query=Laguna+Venețiană+(Insulele+Burano,+Murano,+Torcello)+Veneția+Italy", category: "natura" }, // Veneția
+    { name: "Laguna Venețiană (Insulele Burano, Murano, Torcello)", url: "https://www.google.com/maps/search/?api=1&query=Laguna+Venețiană+(Insulele+Burano,+Murano,+Torcello)+Veneția+Italy", category: "natura", city: "Venezia" }, // Veneția
     { name: "Muntele Grappa (Monte Grappa)", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Grappa+(Monte+Grappa)+Vicenza+Italy", category: "natura" }, // Vicenza
     { name: "Parcul Regional Delta Po (Partea de Veneto)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Regional+Delta+Po+(Partea+de+Veneto)+Rovigo+Italy", category: "natura" }, // Rovigo
     { name: "Parcul Sigurtà (Parco Giardino Sigurtà)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Sigurtà+(Parco+Giardino+Sigurtà)+Valeggio+sul+Mincio+Italy", category: "natura" }, // Valeggio sul Mincio
-    { name: "Canal Grande (Marea arteră acvatică)", url: "https://www.google.com/maps/search/?api=1&query=Canal+Grande+(Marea+arteră+acvatică)+Veneția+Italy", category: "infrastructura" }, // Veneția
-    { name: "Podul Rialto (Ponte di Rialto)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Rialto+(Ponte+di+Rialto)+Veneția+Italy", category: "infrastructura" }, // Veneția
-    { name: "Podul Suspinelor (Ponte dei Sospiri)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Suspinelor+(Ponte+dei+Sospiri)+Veneția+Italy", category: "infrastructura" }, // Veneția
+    { name: "Canal Grande (Marea arteră acvatică)", url: "https://www.google.com/maps/search/?api=1&query=Canal+Grande+(Marea+arteră+acvatică)+Veneția+Italy", category: "infrastructura", city: "Venezia" }, // Veneția
+    { name: "Podul Rialto (Ponte di Rialto)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Rialto+(Ponte+di+Rialto)+Veneția+Italy", category: "infrastructura", city: "Venezia" }, // Veneția
+    { name: "Podul Suspinelor (Ponte dei Sospiri)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Suspinelor+(Ponte+dei+Sospiri)+Veneția+Italy", category: "infrastructura", city: "Venezia" }, // Veneția
     { name: "Pasul Pordoi (Șosea alpină din Dolomiți)", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Pordoi+(Șosea+alpină+din+Dolomiți)+Belluno+Italy", category: "infrastructura" }, // Belluno
     { name: "Podul Alpiniștilor (Ponte degli Alpini)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Alpiniștilor+(Ponte+degli+Alpini)+Bassano+del+Grappa+Italy", category: "infrastructura" }, // Bassano del Grappa
-    { name: "Podul Scaligero (Ponte di Castelvecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Scaligero+(Ponte+di+Castelvecchio)+Verona+Italy", category: "infrastructura" }, // Verona
-    { name: "Podul dell'Accademia", url: "https://www.google.com/maps/search/?api=1&query=Podul+dell'Accademia+Veneția+Italy", category: "infrastructura" }, // Veneția
+    { name: "Podul Scaligero (Ponte di Castelvecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Scaligero+(Ponte+di+Castelvecchio)+Verona+Italy", category: "infrastructura", city: "Verona" }, // Verona
+    { name: "Podul dell'Accademia", url: "https://www.google.com/maps/search/?api=1&query=Podul+dell'Accademia+Veneția+Italy", category: "infrastructura", city: "Venezia" }, // Veneția
     { name: "Calea ferată istorică a Dolomiților", url: "https://www.google.com/maps/search/?api=1&query=Calea+ferată+istorică+a+Dolomiților+Cortina+d'Ampezzo+Italy", category: "infrastructura" }, // Cortina d'Ampezzo
-    { name: "Colecția Peggy Guggenheim", url: "https://www.google.com/maps/search/?api=1&query=Colecția+Peggy+Guggenheim+Veneția+Italy", category: "muzee" }, // Veneția
-    { name: "Galeria Academiei (Galleria dell'Accademia)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Academiei+(Galleria+dell'Accademia)+Veneția+Italy", category: "muzee" }, // Veneția
-    { name: "Muzeul Correr", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Correr+Veneția+Italy", category: "muzee" }, // Veneția
-    { name: "Palazzo Cini", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Cini+Veneția+Italy", category: "muzee" }, // Veneția
+    { name: "Colecția Peggy Guggenheim", url: "https://www.google.com/maps/search/?api=1&query=Colecția+Peggy+Guggenheim+Veneția+Italy", category: "muzee", city: "Venezia" }, // Veneția
+    { name: "Galeria Academiei (Galleria dell'Accademia)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Academiei+(Galleria+dell'Accademia)+Veneția+Italy", category: "muzee", city: "Venezia" }, // Veneția
+    { name: "Muzeul Correr", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Correr+Veneția+Italy", category: "muzee", city: "Venezia" }, // Veneția
+    { name: "Palazzo Cini", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Cini+Veneția+Italy", category: "muzee", city: "Venezia" }, // Veneția
     { name: "Muzeul Sticlei (Museo del Vetro)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sticlei+(Museo+del+Vetro)+Insula+Murano+Italy", category: "muzee" }, // Insula Murano
     { name: "Muzeul Danteli", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Danteli+Insula+Burano+Italy", category: "muzee" }, // Insula Burano
-    { name: "Muzeul de Istorie Naturală", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+Veneția+Italy", category: "muzee" }, // Veneția
-    { name: "Muzeul Civic Castelvecchio", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Civic+Castelvecchio+Verona+Italy", category: "muzee" }, // Verona
-    { name: "Piazza San Marco", url: "https://www.google.com/maps/search/?api=1&query=Piazza+San+Marco+Veneția+Italy", category: "cladiri_teatre" }, // Veneția
-    { name: "Arena din Verona (Amfiteatrul Roman Arena)", url: "https://www.google.com/maps/search/?api=1&query=Arena+din+Verona+(Amfiteatrul+Roman+Arena)+Verona+Italy", category: "cladiri_teatre" }, // Verona
+    { name: "Muzeul de Istorie Naturală", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+Veneția+Italy", category: "muzee", city: "Venezia" }, // Veneția
+    { name: "Muzeul Civic Castelvecchio", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Civic+Castelvecchio+Verona+Italy", category: "muzee", city: "Verona" }, // Verona
+    { name: "Piazza San Marco", url: "https://www.google.com/maps/search/?api=1&query=Piazza+San+Marco+Veneția+Italy", category: "cladiri_teatre", city: "Venezia" }, // Veneția
+    { name: "Arena din Verona (Amfiteatrul Roman Arena)", url: "https://www.google.com/maps/search/?api=1&query=Arena+din+Verona+(Amfiteatrul+Roman+Arena)+Verona+Italy", category: "cladiri_teatre", city: "Verona" }, // Verona
     { name: "Teatrul Olimpic (Teatro Olimpico - Palladio)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Olimpic+(Teatro+Olimpico+-+Palladio)+Vicenza+Italy", category: "cladiri_teatre" }, // Vicenza
-    { name: "Prato della Valle (Una dintre cele mai mari piețe din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Prato+della+Valle+(Una+dintre+cele+mai+mari+piețe+din+Europa)+Padova+Italy", category: "cladiri_teatre" }, // Padova
-    { name: "Casa Julietei (Casa di Giulietta)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Julietei+(Casa+di+Giulietta)+Verona+Italy", category: "cladiri_teatre" }, // Verona
-    { name: "Teatrul La Fenice", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+La+Fenice+Veneția+Italy", category: "cladiri_teatre" }, // Veneția
-    { name: "Piazza delle Erbe (Verona)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+delle+Erbe+(Verona)+Verona+Italy", category: "cladiri_teatre" }, // Verona
-    { name: "Palazzo della Ragione", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+della+Ragione+Padova+Italy", category: "cladiri_teatre" }, // Padova
+    { name: "Prato della Valle (Una dintre cele mai mari piețe din Europa)", url: "https://www.google.com/maps/search/?api=1&query=Prato+della+Valle+(Una+dintre+cele+mai+mari+piețe+din+Europa)+Padova+Italy", category: "cladiri_teatre", city: "Padova" }, // Padova
+    { name: "Casa Julietei (Casa di Giulietta)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Julietei+(Casa+di+Giulietta)+Verona+Italy", category: "cladiri_teatre", city: "Verona" }, // Verona
+    { name: "Teatrul La Fenice", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+La+Fenice+Veneția+Italy", category: "cladiri_teatre", city: "Venezia" }, // Veneția
+    { name: "Piazza delle Erbe (Verona)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+delle+Erbe+(Verona)+Verona+Italy", category: "cladiri_teatre", city: "Verona" }, // Verona
+    { name: "Palazzo della Ragione", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+della+Ragione+Padova+Italy", category: "cladiri_teatre", city: "Padova" }, // Padova
     { name: "Piazza dei Signori", url: "https://www.google.com/maps/search/?api=1&query=Piazza+dei+Signori+Vicenza+Italy", category: "cladiri_teatre" }, // Vicenza
-    { name: "Fondaco dei Tedeschi (Terasa panoramică)", url: "https://www.google.com/maps/search/?api=1&query=Fondaco+dei+Tedeschi+(Terasa+panoramică)+Veneția+Italy", category: "cladiri_teatre" }, // Veneția
-    { name: "Castelul Sforzesco (Castello Sforzesco)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sforzesco+(Castello+Sforzesco)+Milano+Italy", category: "castele_palate" }, // Milano
-    { name: "Palazzo Reale", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Reale+Milano+Italy", category: "castele_palate" }, // Milano
+    { name: "Fondaco dei Tedeschi (Terasa panoramică)", url: "https://www.google.com/maps/search/?api=1&query=Fondaco+dei+Tedeschi+(Terasa+panoramică)+Veneția+Italy", category: "cladiri_teatre", city: "Venezia" }, // Veneția
+    { name: "Castelul Sforzesco (Castello Sforzesco)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sforzesco+(Castello+Sforzesco)+Milano+Italy", category: "castele_palate", city: "Milano" }, // Milano
+    { name: "Palazzo Reale", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Reale+Milano+Italy", category: "castele_palate", city: "Milano" }, // Milano
     { name: "Vila Regală din Monza (Villa Reale)", url: "https://www.google.com/maps/search/?api=1&query=Vila+Regală+din+Monza+(Villa+Reale)+Monza+Italy", category: "castele_palate" }, // Monza
     { name: "Castelul Masegra", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Masegra+Sondrio+Italy", category: "castele_palate" }, // Sondrio
     { name: "Villa d'Este", url: "https://www.google.com/maps/search/?api=1&query=Villa+d'Este+Cernobbio,+Lacul+Como+Italy", category: "castele_palate" }, // Cernobbio, Lacul Como
@@ -5720,153 +5720,153 @@ const ATTRACTIONS = {
     { name: "Palazzo Ducale (Mantova)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Ducale+(Mantova)+Mantova+Italy", category: "castele_palate" }, // Mantova
     { name: "Vila Melzi d'Eril", url: "https://www.google.com/maps/search/?api=1&query=Vila+Melzi+d'Eril+Bellagio,+Lacul+Como+Italy", category: "castele_palate" }, // Bellagio, Lacul Como
     { name: "Villa Monastero", url: "https://www.google.com/maps/search/?api=1&query=Villa+Monastero+Varenna,+Lacul+Como+Italy", category: "castele_palate" }, // Varenna, Lacul Como
-    { name: "Turnul Velasca (Torre Velasca)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Velasca+(Torre+Velasca)+Milano+Italy", category: "cetati_turnuri" }, // Milano
-    { name: "Zidurile Venețiene din Bergamo Alta (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Venețiene+din+Bergamo+Alta+(UNESCO)+Bergamo+Italy", category: "cetati_turnuri" }, // Bergamo
-    { name: "Turnul Pirelli (Grattacielo Pirelli)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Pirelli+(Grattacielo+Pirelli)+Milano+Italy", category: "cetati_turnuri" }, // Milano
-    { name: "Torre Branca", url: "https://www.google.com/maps/search/?api=1&query=Torre+Branca+Milano,+Parcul+Sempione+Italy", category: "cetati_turnuri" }, // Milano, Parcul Sempione
-    { name: "Cetatea din Brescia (Castello di Brescia)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+din+Brescia+(Castello+di+Brescia)+Brescia+Italy", category: "cetati_turnuri" }, // Brescia
+    { name: "Turnul Velasca (Torre Velasca)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Velasca+(Torre+Velasca)+Milano+Italy", category: "cetati_turnuri", city: "Milano" }, // Milano
+    { name: "Zidurile Venețiene din Bergamo Alta (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Venețiene+din+Bergamo+Alta+(UNESCO)+Bergamo+Italy", category: "cetati_turnuri", city: "Bergamo" }, // Bergamo
+    { name: "Turnul Pirelli (Grattacielo Pirelli)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Pirelli+(Grattacielo+Pirelli)+Milano+Italy", category: "cetati_turnuri", city: "Milano" }, // Milano
+    { name: "Torre Branca", url: "https://www.google.com/maps/search/?api=1&query=Torre+Branca+Milano,+Parcul+Sempione+Italy", category: "cetati_turnuri", city: "Milano" }, // Milano, Parcul Sempione
+    { name: "Cetatea din Brescia (Castello di Brescia)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+din+Brescia+(Castello+di+Brescia)+Brescia+Italy", category: "cetati_turnuri", city: "Brescia" }, // Brescia
     { name: "Turnul cu Ceas (Torre dell'Orologio)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+(Torre+dell'Orologio)+Mantova+Italy", category: "cetati_turnuri" }, // Mantova
     { name: "Turnul de pază din Bellagio", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+pază+din+Bellagio+Lacul+Como+Italy", category: "cetati_turnuri" }, // Lacul Como
-    { name: "Poarta Garibaldi", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Garibaldi+Milano+Italy", category: "cetati_turnuri" }, // Milano
-    { name: "Domul din Milano (Duomo di Milano)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Milano+(Duomo+di+Milano)+Milano+Italy", category: "manastiri" }, // Milano
-    { name: "Biserica Santa Maria delle Grazie (Unde se află „Cina cea de Taină”)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+delle+Grazie+(Unde+se+află+„Cina+cea+de+Taină”)+Milano+Italy", category: "manastiri" }, // Milano
+    { name: "Poarta Garibaldi", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Garibaldi+Milano+Italy", category: "cetati_turnuri", city: "Milano" }, // Milano
+    { name: "Domul din Milano (Duomo di Milano)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Milano+(Duomo+di+Milano)+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
+    { name: "Biserica Santa Maria delle Grazie (Unde se află „Cina cea de Taină”)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+delle+Grazie+(Unde+se+află+„Cina+cea+de+Taină”)+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
     { name: "Mănăstirea Certosa di Pavia", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Certosa+di+Pavia+Pavia+Italy", category: "manastiri" }, // Pavia
-    { name: "Bazilica Sant'Ambrogio", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sant'Ambrogio+Milano+Italy", category: "manastiri" }, // Milano
-    { name: "Domul din Bergamo (Catedrala Sf. Alexandru)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Bergamo+(Catedrala+Sf.+Alexandru)+Bergamo+Italy", category: "manastiri" }, // Bergamo
-    { name: "Domul din Como (Catedrala Santa Maria Assunta)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Como+(Catedrala+Santa+Maria+Assunta)+Como+Italy", category: "manastiri" }, // Como
-    { name: "Biserica San Fedele", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Fedele+Como+Italy", category: "manastiri" }, // Como
+    { name: "Bazilica Sant'Ambrogio", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sant'Ambrogio+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
+    { name: "Domul din Bergamo (Catedrala Sf. Alexandru)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Bergamo+(Catedrala+Sf.+Alexandru)+Bergamo+Italy", category: "manastiri", city: "Bergamo" }, // Bergamo
+    { name: "Domul din Como (Catedrala Santa Maria Assunta)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Como+(Catedrala+Santa+Maria+Assunta)+Como+Italy", category: "manastiri", city: "Como" }, // Como
+    { name: "Biserica San Fedele", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Fedele+Como+Italy", category: "manastiri", city: "Como" }, // Como
     { name: "Ababația Piona", url: "https://www.google.com/maps/search/?api=1&query=Ababația+Piona+Colico,+Lacul+Como+Italy", category: "manastiri" }, // Colico, Lacul Como
-    { name: "Biserica San Maurizio al Monastero Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Maurizio+al+Monastero+Maggiore+Milano+Italy", category: "manastiri" }, // Milano
-    { name: "Bazilica San Lorenzo Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Lorenzo+Maggiore+Milano+Italy", category: "manastiri" }, // Milano
+    { name: "Biserica San Maurizio al Monastero Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Maurizio+al+Monastero+Maggiore+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
+    { name: "Bazilica San Lorenzo Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Lorenzo+Maggiore+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
     { name: "Sacro Monte di Varese (Muntele Sfânt UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Sacro+Monte+di+Varese+(Muntele+Sfânt+UNESCO)+Varese+Italy", category: "manastiri" }, // Varese
     { name: "Parcul Național Stelvio", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Stelvio+Sondrio+/+Brescia+Italy", category: "natura" }, // Sondrio / Brescia
     { name: "Lacul Como (Lago di Como)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Como+(Lago+di+Como)+Como+/+Lecco+Italy", category: "natura" }, // Como / Lecco
     { name: "Lacul Maggiore (Lago Maggiore - Partea lombardă)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Maggiore+(Lago+Maggiore+-+Partea+lombardă)+Varese+Italy", category: "natura" }, // Varese
     { name: "Lacul Iseo (Lago d'Iseo și insula Monte Isola)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iseo+(Lago+d'Iseo+și+insula+Monte+Isola)+Brescia+/+Bergamo+Italy", category: "natura" }, // Brescia / Bergamo
-    { name: "Parcul Sempione", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Sempione+Milano+Italy", category: "natura" }, // Milano
-    { name: "Grădinile Publice Indro Montanelli", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Publice+Indro+Montanelli+Milano+Italy", category: "natura" }, // Milano
+    { name: "Parcul Sempione", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Sempione+Milano+Italy", category: "natura", city: "Milano" }, // Milano
+    { name: "Grădinile Publice Indro Montanelli", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Publice+Indro+Montanelli+Milano+Italy", category: "natura", city: "Milano" }, // Milano
     { name: "Rezervația Naturală Torbiere del Sebino", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Torbiere+del+Sebino+Iseo+Italy", category: "natura" }, // Iseo
     { name: "Parcul Regional Campo dei Fiori", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Regional+Campo+dei+Fiori+Varese+Italy", category: "natura" }, // Varese
     { name: "Peștera Grotte di Catullo (Ruine și sit pe lac)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Grotte+di+Catullo+(Ruine+și+sit+pe+lac)+Sirmione+Italy", category: "natura" }, // Sirmione
     { name: "Pasul Stelvio (Passo dello Stelvio - Cea mai înaltă șosea alpină)", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Stelvio+(Passo+dello+Stelvio+-+Cea+mai+înaltă+șosea+alpină)+Alpii+Retici+Italy", category: "infrastructura" }, // Alpii Retici
-    { name: "Gara Centrală din Milano (Milano Centrale)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Milano+(Milano+Centrale)+Milano+Italy", category: "infrastructura" }, // Milano
-    { name: "Funicularul Como - Brunate", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+Como+-+Brunate+Como+Italy", category: "infrastructura" }, // Como
+    { name: "Gara Centrală din Milano (Milano Centrale)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Milano+(Milano+Centrale)+Milano+Italy", category: "infrastructura", city: "Milano" }, // Milano
+    { name: "Funicularul Como - Brunate", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+Como+-+Brunate+Como+Italy", category: "infrastructura", city: "Como" }, // Como
     { name: "Navigația cu feribotul pe Lacul Como", url: "https://www.google.com/maps/search/?api=1&query=Navigația+cu+feribotul+pe+Lacul+Como+Bellagio+/+Varenna+Italy", category: "infrastructura" }, // Bellagio / Varenna
     { name: "Pasul Gavia", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Gavia+Bormio+Italy", category: "infrastructura" }, // Bormio
     { name: "Podul acoperit din Pavia (Ponte Coperto)", url: "https://www.google.com/maps/search/?api=1&query=Podul+acoperit+din+Pavia+(Ponte+Coperto)+Pavia+Italy", category: "infrastructura" }, // Pavia
     { name: "Pasul San Marco", url: "https://www.google.com/maps/search/?api=1&query=Pasul+San+Marco+Bergamo+/+Sondrio+Italy", category: "infrastructura" }, // Bergamo / Sondrio
-    { name: "Pinacoteca di Brera", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+di+Brera+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Muzeul Național de Știință și Tehnologie Leonardo da Vinci", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Știință+și+Tehnologie+Leonardo+da+Vinci+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Teatrul-Muzeu la Scala", url: "https://www.google.com/maps/search/?api=1&query=Teatrul-Muzeu+la+Scala+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Pinacoteca Ambrosiana", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+Ambrosiana+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Muzeul de Istorie Naturală din Milano", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+din+Milano+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Triennale di Milano (Muzeul de Design)", url: "https://www.google.com/maps/search/?api=1&query=Triennale+di+Milano+(Muzeul+de+Design)+Milano+Italy", category: "muzee" }, // Milano
-    { name: "Muzeul Mille Miglia (Istoria curselor auto)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mille+Miglia+(Istoria+curselor+auto)+Brescia+Italy", category: "muzee" }, // Brescia
+    { name: "Pinacoteca di Brera", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+di+Brera+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Muzeul Național de Știință și Tehnologie Leonardo da Vinci", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Știință+și+Tehnologie+Leonardo+da+Vinci+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Teatrul-Muzeu la Scala", url: "https://www.google.com/maps/search/?api=1&query=Teatrul-Muzeu+la+Scala+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Pinacoteca Ambrosiana", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+Ambrosiana+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Muzeul de Istorie Naturală din Milano", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+din+Milano+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Triennale di Milano (Muzeul de Design)", url: "https://www.google.com/maps/search/?api=1&query=Triennale+di+Milano+(Muzeul+de+Design)+Milano+Italy", category: "muzee", city: "Milano" }, // Milano
+    { name: "Muzeul Mille Miglia (Istoria curselor auto)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mille+Miglia+(Istoria+curselor+auto)+Brescia+Italy", category: "muzee", city: "Brescia" }, // Brescia
     { name: "Muzeul Vioarei (Museo del Violino)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vioarei+(Museo+del+Violino)+Cremona+Italy", category: "muzee" }, // Cremona
-    { name: "Galeria Vittorio Emanuele II", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Vittorio+Emanuele+II+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Teatrul Scala (Teatro alla Scala)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Scala+(Teatro+alla+Scala)+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Piazza del Duomo (Milano)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Milano)+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Arcul Păcii (Arco della Pace)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+Păcii+(Arco+della+Pace)+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Piazza Gae Aulenti (Zona zgârie-norilor moderni)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Gae+Aulenti+(Zona+zgârie-norilor+moderni)+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Cartierul Navigli (Canalele istorice)", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Navigli+(Canalele+istorice)+Milano+Italy", category: "cladiri_teatre" }, // Milano
+    { name: "Galeria Vittorio Emanuele II", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Vittorio+Emanuele+II+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Teatrul Scala (Teatro alla Scala)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Scala+(Teatro+alla+Scala)+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Piazza del Duomo (Milano)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Milano)+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Arcul Păcii (Arco della Pace)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+Păcii+(Arco+della+Pace)+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Piazza Gae Aulenti (Zona zgârie-norilor moderni)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Gae+Aulenti+(Zona+zgârie-norilor+moderni)+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Cartierul Navigli (Canalele istorice)", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Navigli+(Canalele+istorice)+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
     { name: "Piazza Vecchia", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Vecchia+Bergamo+Alta+Italy", category: "cladiri_teatre" }, // Bergamo Alta
-    { name: "Stadionul San Siro", url: "https://www.google.com/maps/search/?api=1&query=Stadionul+San+Siro+Milano+Italy", category: "cladiri_teatre" }, // Milano
+    { name: "Stadionul San Siro", url: "https://www.google.com/maps/search/?api=1&query=Stadionul+San+Siro+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
     { name: "Piazza delle Erbe (Mantova)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+delle+Erbe+(Mantova)+Mantova+Italy", category: "cladiri_teatre" }, // Mantova
-    { name: "Piazza Mercanti", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Mercanti+Milano+Italy", category: "cladiri_teatre" }, // Milano
-    { name: "Palazzo d'Accursio (Primăria)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+d'Accursio+(Primăria)+Bologna+Italy", category: "castele_palate" }, // Bologna
-    { name: "Palazzo Re Enzo", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Re+Enzo+Bologna+Italy", category: "castele_palate" }, // Bologna
-    { name: "Palazzo Podestà", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Podestà+Bologna+Italy", category: "castele_palate" }, // Bologna
+    { name: "Piazza Mercanti", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Mercanti+Milano+Italy", category: "cladiri_teatre", city: "Milano" }, // Milano
+    { name: "Palazzo d'Accursio (Primăria)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+d'Accursio+(Primăria)+Bologna+Italy", category: "castele_palate", city: "Bologna" }, // Bologna
+    { name: "Palazzo Re Enzo", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Re+Enzo+Bologna+Italy", category: "castele_palate", city: "Bologna" }, // Bologna
+    { name: "Palazzo Podestà", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Podestà+Bologna+Italy", category: "castele_palate", city: "Bologna" }, // Bologna
     { name: "Castelul Estense", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Estense+Ferrara+Italy", category: "castele_palate" }, // Ferrara
     { name: "Palazzo dei Diamanti", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+dei+Diamanti+Ferrara+Italy", category: "castele_palate" }, // Ferrara
-    { name: "Palazzo Ducale (Parma)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Ducale+(Parma)+Parma+Italy", category: "castele_palate" }, // Parma
+    { name: "Palazzo Ducale (Parma)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Ducale+(Parma)+Parma+Italy", category: "castele_palate", city: "Parma" }, // Parma
     { name: "Castelul Torrechiara", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Torrechiara+Langhirano,+Parma+Italy", category: "castele_palate" }, // Langhirano, Parma
     { name: "Palatul Regal din Colorno", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Colorno+Colorno+Italy", category: "castele_palate" }, // Colorno
     { name: "Castelul Rivalta", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rivalta+Piacenza+Italy", category: "castele_palate" }, // Piacenza
     { name: "Palazzo Comunale", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Comunale+Piacenza+Italy", category: "castele_palate" }, // Piacenza
-    { name: "Castelul Vignola", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vignola+Modena+Italy", category: "castele_palate" }, // Modena
+    { name: "Castelul Vignola", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vignola+Modena+Italy", category: "castele_palate", city: "Modena" }, // Modena
     { name: "Palazzo Ducale (Sassuolo)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Ducale+(Sassuolo)+Sassuolo+Italy", category: "castele_palate" }, // Sassuolo
-    { name: "Turnurile Înclinate Asinelli și Garisenda", url: "https://www.google.com/maps/search/?api=1&query=Turnurile+Înclinate+Asinelli+și+Garisenda+Bologna+Italy", category: "cetati_turnuri" }, // Bologna
+    { name: "Turnurile Înclinate Asinelli și Garisenda", url: "https://www.google.com/maps/search/?api=1&query=Turnurile+Înclinate+Asinelli+și+Garisenda+Bologna+Italy", category: "cetati_turnuri", city: "Bologna" }, // Bologna
     { name: "Mausoleul lui Teodoric", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+lui+Teodoric+Ravenna+Italy", category: "cetati_turnuri" }, // Ravenna
     { name: "Rocca Sanvitale", url: "https://www.google.com/maps/search/?api=1&query=Rocca+Sanvitale+Fontanellato+Italy", category: "cetati_turnuri" }, // Fontanellato
     { name: "Rocchetta Mattei (Castel maur-gotic)", url: "https://www.google.com/maps/search/?api=1&query=Rocchetta+Mattei+(Castel+maur-gotic)+Grizzana+Morandi+Italy", category: "cetati_turnuri" }, // Grizzana Morandi
     { name: "Cetatea din San Leo", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+din+San+Leo+San+Leo,+Rimini+Italy", category: "cetati_turnuri" }, // San Leo, Rimini
-    { name: "Castel Sismondo", url: "https://www.google.com/maps/search/?api=1&query=Castel+Sismondo+Rimini+Italy", category: "cetati_turnuri" }, // Rimini
-    { name: "Turnul Prendiparte", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Prendiparte+Bologna+Italy", category: "cetati_turnuri" }, // Bologna
+    { name: "Castel Sismondo", url: "https://www.google.com/maps/search/?api=1&query=Castel+Sismondo+Rimini+Italy", category: "cetati_turnuri", city: "Rimini" }, // Rimini
+    { name: "Turnul Prendiparte", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Prendiparte+Bologna+Italy", category: "cetati_turnuri", city: "Bologna" }, // Bologna
     { name: "Zidurile Medievale din Ferrara", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Ferrara+Ferrara+Italy", category: "cetati_turnuri" }, // Ferrara
-    { name: "Turnul Ghirlandina", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Ghirlandina+Modena+Italy", category: "cetati_turnuri" }, // Modena
+    { name: "Turnul Ghirlandina", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Ghirlandina+Modena+Italy", category: "cetati_turnuri", city: "Modena" }, // Modena
     { name: "Rocca di Brisighella", url: "https://www.google.com/maps/search/?api=1&query=Rocca+di+Brisighella+Brisighella+Italy", category: "cetati_turnuri" }, // Brisighella
-    { name: "Bazilica San Petronio", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Petronio+Bologna+Italy", category: "manastiri" }, // Bologna
-    { name: "Sanctuarul Madonna di San Luca (Cel mai lung portic din lume)", url: "https://www.google.com/maps/search/?api=1&query=Sanctuarul+Madonna+di+San+Luca+(Cel+mai+lung+portic+din+lume)+Bologna+Italy", category: "manastiri" }, // Bologna
-    { name: "Complexul Santo Stefano (Cele Șapte Biserici)", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Santo+Stefano+(Cele+Șapte+Biserici)+Bologna+Italy", category: "manastiri" }, // Bologna
+    { name: "Bazilica San Petronio", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Petronio+Bologna+Italy", category: "manastiri", city: "Bologna" }, // Bologna
+    { name: "Sanctuarul Madonna di San Luca (Cel mai lung portic din lume)", url: "https://www.google.com/maps/search/?api=1&query=Sanctuarul+Madonna+di+San+Luca+(Cel+mai+lung+portic+din+lume)+Bologna+Italy", category: "manastiri", city: "Bologna" }, // Bologna
+    { name: "Complexul Santo Stefano (Cele Șapte Biserici)", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Santo+Stefano+(Cele+Șapte+Biserici)+Bologna+Italy", category: "manastiri", city: "Bologna" }, // Bologna
     { name: "Bazilica San Vitale (Mozaicuri bizantine UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Vitale+(Mozaicuri+bizantine+UNESCO)+Ravenna+Italy", category: "manastiri" }, // Ravenna
     { name: "Mausoleul Galla Placidia (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+Galla+Placidia+(UNESCO)+Ravenna+Italy", category: "manastiri" }, // Ravenna
-    { name: "Catedrala din Modena (Duomo di Modena UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Modena+(Duomo+di+Modena+UNESCO)+Modena+Italy", category: "manastiri" }, // Modena
-    { name: "Catedrala din Parma (Duomo di Parma)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Parma+(Duomo+di+Parma)+Parma+Italy", category: "manastiri" }, // Parma
-    { name: "Baptisteriul din Parma", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+din+Parma+Parma+Italy", category: "manastiri" }, // Parma
+    { name: "Catedrala din Modena (Duomo di Modena UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Modena+(Duomo+di+Modena+UNESCO)+Modena+Italy", category: "manastiri", city: "Modena" }, // Modena
+    { name: "Catedrala din Parma (Duomo di Parma)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Parma+(Duomo+di+Parma)+Parma+Italy", category: "manastiri", city: "Parma" }, // Parma
+    { name: "Baptisteriul din Parma", url: "https://www.google.com/maps/search/?api=1&query=Baptisteriul+din+Parma+Parma+Italy", category: "manastiri", city: "Parma" }, // Parma
     { name: "Bazilica Sant'Apollinare in Classe (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sant'Apollinare+in+Classe+(UNESCO)+Ravenna+Italy", category: "manastiri" }, // Ravenna
     { name: "Bazilica Sant'Apollinare Nuovo (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sant'Apollinare+Nuovo+(UNESCO)+Ravenna+Italy", category: "manastiri" }, // Ravenna
-    { name: "Mănăstirea San Giovanni Evangelista", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Giovanni+Evangelista+Parma+Italy", category: "manastiri" }, // Parma
+    { name: "Mănăstirea San Giovanni Evangelista", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Giovanni+Evangelista+Parma+Italy", category: "manastiri", city: "Parma" }, // Parma
     { name: "Ababația Pomposa", url: "https://www.google.com/maps/search/?api=1&query=Ababația+Pomposa+Codigoro+Italy", category: "manastiri" }, // Codigoro
     { name: "Parcul Național Appennino Tosco-Emiliano", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Appennino+Tosco-Emiliano+Regiunea+de+Vest+Italy", category: "natura" }, // Regiunea de Vest
     { name: "Parcul Regional Delta Po (Partea de Emilia-Romagna)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Regional+Delta+Po+(Partea+de+Emilia-Romagna)+Ferrara+/+Ravenna+Italy", category: "natura" }, // Ferrara / Ravenna
     { name: "Grotele din Re Tiberio (Grotte di Re Tiberio)", url: "https://www.google.com/maps/search/?api=1&query=Grotele+din+Re+Tiberio+(Grotte+di+Re+Tiberio)+Riolo+Terme+Italy", category: "natura" }, // Riolo Terme
     { name: "Parcul Național Foreste Casentinesi", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Foreste+Casentinesi+Forlì-Cesena+Italy", category: "natura" }, // Forlì-Cesena
-    { name: "Parcul Giardini Margherita", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Giardini+Margherita+Bologna+Italy", category: "natura" }, // Bologna
+    { name: "Parcul Giardini Margherita", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Giardini+Margherita+Bologna+Italy", category: "natura", city: "Bologna" }, // Bologna
     { name: "Salinele din Cervia", url: "https://www.google.com/maps/search/?api=1&query=Salinele+din+Cervia+Cervia+Italy", category: "natura" }, // Cervia
     { name: "Peștera Grotta Ursea", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Grotta+Ursea+Regiunea+Apenină+Italy", category: "natura" }, // Regiunea Apenină
-    { name: "Porticurile din Bologna (Sistem urban UNESCO de 62 km)", url: "https://www.google.com/maps/search/?api=1&query=Porticurile+din+Bologna+(Sistem+urban+UNESCO+de+62+km)+Bologna+Italy", category: "infrastructura" }, // Bologna
-    { name: "Canalul de la Reno (Fereastra de pe Via Piella)", url: "https://www.google.com/maps/search/?api=1&query=Canalul+de+la+Reno+(Fereastra+de+pe+Via+Piella)+Bologna+Italy", category: "infrastructura" }, // Bologna
-    { name: "Podul lui Tiberiu (Ponte di Tiberio - Pod Roman)", url: "https://www.google.com/maps/search/?api=1&query=Podul+lui+Tiberiu+(Ponte+di+Tiberio+-+Pod+Roman)+Rimini+Italy", category: "infrastructura" }, // Rimini
-    { name: "Șoseaua Alpină a Pasului Cisa", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Alpină+a+Pasului+Cisa+Parma+Italy", category: "infrastructura" }, // Parma
-    { name: "Gara Bologna Centrale", url: "https://www.google.com/maps/search/?api=1&query=Gara+Bologna+Centrale+Bologna+Italy", category: "infrastructura" }, // Bologna
+    { name: "Porticurile din Bologna (Sistem urban UNESCO de 62 km)", url: "https://www.google.com/maps/search/?api=1&query=Porticurile+din+Bologna+(Sistem+urban+UNESCO+de+62+km)+Bologna+Italy", category: "infrastructura", city: "Bologna" }, // Bologna
+    { name: "Canalul de la Reno (Fereastra de pe Via Piella)", url: "https://www.google.com/maps/search/?api=1&query=Canalul+de+la+Reno+(Fereastra+de+pe+Via+Piella)+Bologna+Italy", category: "infrastructura", city: "Bologna" }, // Bologna
+    { name: "Podul lui Tiberiu (Ponte di Tiberio - Pod Roman)", url: "https://www.google.com/maps/search/?api=1&query=Podul+lui+Tiberiu+(Ponte+di+Tiberio+-+Pod+Roman)+Rimini+Italy", category: "infrastructura", city: "Rimini" }, // Rimini
+    { name: "Șoseaua Alpină a Pasului Cisa", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Alpină+a+Pasului+Cisa+Parma+Italy", category: "infrastructura", city: "Parma" }, // Parma
+    { name: "Gara Bologna Centrale", url: "https://www.google.com/maps/search/?api=1&query=Gara+Bologna+Centrale+Bologna+Italy", category: "infrastructura", city: "Bologna" }, // Bologna
     { name: "Canalul Corsini", url: "https://www.google.com/maps/search/?api=1&query=Canalul+Corsini+Ravenna+Italy", category: "infrastructura" }, // Ravenna
     { name: "Muzeul Ferrari", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ferrari+Maranello+Italy", category: "muzee" }, // Maranello
-    { name: "Muzeul Enzo Ferrari", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Enzo+Ferrari+Modena+Italy", category: "muzee" }, // Modena
+    { name: "Muzeul Enzo Ferrari", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Enzo+Ferrari+Modena+Italy", category: "muzee", city: "Modena" }, // Modena
     { name: "Muzeul Lamborghini", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Lamborghini+Sant'Agata+Bolognese+Italy", category: "muzee" }, // Sant'Agata Bolognese
-    { name: "Muzeul Ducati", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ducati+Bologna,+Borgo+Panigale+Italy", category: "muzee" }, // Bologna, Borgo Panigale
-    { name: "Galeria Națională din Parma (Palazzo Pilotta)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Națională+din+Parma+(Palazzo+Pilotta)+Parma+Italy", category: "muzee" }, // Parma
+    { name: "Muzeul Ducati", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ducati+Bologna,+Borgo+Panigale+Italy", category: "muzee", city: "Bologna" }, // Bologna, Borgo Panigale
+    { name: "Galeria Națională din Parma (Palazzo Pilotta)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Națională+din+Parma+(Palazzo+Pilotta)+Parma+Italy", category: "muzee", city: "Parma" }, // Parma
     { name: "Muzeul Internațional al Ceramicii", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Internațional+al+Ceramicii+Faenza+Italy", category: "muzee" }, // Faenza
-    { name: "Muzeul Național de Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Arheologie+Bologna+Italy", category: "muzee" }, // Bologna
-    { name: "Pinacoteca Națională din Bologna", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+Națională+din+Bologna+Bologna+Italy", category: "muzee" }, // Bologna
-    { name: "Piazza Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Maggiore+Bologna+Italy", category: "cladiri_teatre" }, // Bologna
-    { name: "Teatrul Farnese (Teatro Farnese - Structură completă din lemn)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Farnese+(Teatro+Farnese+-+Structură+completă+din+lemn)+Parma+Italy", category: "cladiri_teatre" }, // Parma
-    { name: "Arcul lui Augustus (Arco d'Augusto)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+lui+Augustus+(Arco+d'Augusto)+Rimini+Italy", category: "cladiri_teatre" }, // Rimini
-    { name: "Piața Grande", url: "https://www.google.com/maps/search/?api=1&query=Piața+Grande+Modena+Italy", category: "cladiri_teatre" }, // Modena
+    { name: "Muzeul Național de Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Arheologie+Bologna+Italy", category: "muzee", city: "Bologna" }, // Bologna
+    { name: "Pinacoteca Națională din Bologna", url: "https://www.google.com/maps/search/?api=1&query=Pinacoteca+Națională+din+Bologna+Bologna+Italy", category: "muzee", city: "Bologna" }, // Bologna
+    { name: "Piazza Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Maggiore+Bologna+Italy", category: "cladiri_teatre", city: "Bologna" }, // Bologna
+    { name: "Teatrul Farnese (Teatro Farnese - Structură completă din lemn)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Farnese+(Teatro+Farnese+-+Structură+completă+din+lemn)+Parma+Italy", category: "cladiri_teatre", city: "Parma" }, // Parma
+    { name: "Arcul lui Augustus (Arco d'Augusto)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+lui+Augustus+(Arco+d'Augusto)+Rimini+Italy", category: "cladiri_teatre", city: "Rimini" }, // Rimini
+    { name: "Piața Grande", url: "https://www.google.com/maps/search/?api=1&query=Piața+Grande+Modena+Italy", category: "cladiri_teatre", city: "Modena" }, // Modena
     { name: "Piazza Trento e Trieste", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Trento+e+Trieste+Ferrara+Italy", category: "cladiri_teatre" }, // Ferrara
-    { name: "Teatrul Comunale Pavarotti", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Comunale+Pavarotti+Modena+Italy", category: "cladiri_teatre" }, // Modena
+    { name: "Teatrul Comunale Pavarotti", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Comunale+Pavarotti+Modena+Italy", category: "cladiri_teatre", city: "Modena" }, // Modena
     { name: "Monumento a Domenico Inzaghi", url: "https://www.google.com/maps/search/?api=1&query=Monumento+a+Domenico+Inzaghi+Budrio+Italy", category: "cladiri_teatre" }, // Budrio
-    { name: "Fântâna lui Neptun (Fontana del Nettuno)", url: "https://www.google.com/maps/search/?api=1&query=Fântâna+lui+Neptun+(Fontana+del+Nettuno)+Bologna+Italy", category: "cladiri_teatre" }, // Bologna
+    { name: "Fântâna lui Neptun (Fontana del Nettuno)", url: "https://www.google.com/maps/search/?api=1&query=Fântâna+lui+Neptun+(Fontana+del+Nettuno)+Bologna+Italy", category: "cladiri_teatre", city: "Bologna" }, // Bologna
     { name: "Palatul Regal din Caserta (Reggia di Caserta - Versailles-ul Italiei)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Caserta+(Reggia+di+Caserta+-+Versailles-ul+Italiei)+Caserta+Italy", category: "castele_palate" }, // Caserta
-    { name: "Castel Nuovo (Maschio Angioino)", url: "https://www.google.com/maps/search/?api=1&query=Castel+Nuovo+(Maschio+Angioino)+Napoli+Italy", category: "castele_palate" }, // Napoli
-    { name: "Castel dell'Ovo (Castelul Oului)", url: "https://www.google.com/maps/search/?api=1&query=Castel+dell'Ovo+(Castelul+Oului)+Napoli+Italy", category: "castele_palate" }, // Napoli
-    { name: "Palatul Regal din Napoli (Palazzo Reale)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Napoli+(Palazzo+Reale)+Napoli+Italy", category: "castele_palate" }, // Napoli
-    { name: "Castel Sant'Elmo", url: "https://www.google.com/maps/search/?api=1&query=Castel+Sant'Elmo+Napoli+Italy", category: "castele_palate" }, // Napoli
+    { name: "Castel Nuovo (Maschio Angioino)", url: "https://www.google.com/maps/search/?api=1&query=Castel+Nuovo+(Maschio+Angioino)+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
+    { name: "Castel dell'Ovo (Castelul Oului)", url: "https://www.google.com/maps/search/?api=1&query=Castel+dell'Ovo+(Castelul+Oului)+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
+    { name: "Palatul Regal din Napoli (Palazzo Reale)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Napoli+(Palazzo+Reale)+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
+    { name: "Castel Sant'Elmo", url: "https://www.google.com/maps/search/?api=1&query=Castel+Sant'Elmo+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
     { name: "Villa Rufolo", url: "https://www.google.com/maps/search/?api=1&query=Villa+Rufolo+Ravello,+Coasta+Amalfitană+Italy", category: "castele_palate" }, // Ravello, Coasta Amalfitană
     { name: "Villa Cimbrone", url: "https://www.google.com/maps/search/?api=1&query=Villa+Cimbrone+Ravello,+Coasta+Amalfitană+Italy", category: "castele_palate" }, // Ravello, Coasta Amalfitană
-    { name: "Palazzo Donn'Anna", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Donn'Anna+Napoli+Italy", category: "castele_palate" }, // Napoli
+    { name: "Palazzo Donn'Anna", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Donn'Anna+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
     { name: "Castelul Aragonez (Insula Ischia)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Aragonez+(Insula+Ischia)+Insula+Ischia+Italy", category: "castele_palate" }, // Insula Ischia
     { name: "Villa Jovis (Palatul Împăratului Tiberius)", url: "https://www.google.com/maps/search/?api=1&query=Villa+Jovis+(Palatul+Împăratului+Tiberius)+Insula+Capri+Italy", category: "castele_palate" }, // Insula Capri
     { name: "Villa San Michele", url: "https://www.google.com/maps/search/?api=1&query=Villa+San+Michele+Anacapri,+Insula+Capri+Italy", category: "castele_palate" }, // Anacapri, Insula Capri
-    { name: "Palazzo di Capodimonte", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+di+Capodimonte+Napoli+Italy", category: "castele_palate" }, // Napoli
-    { name: "Zidurile Grecești din Piazza Bellini", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Grecești+din+Piazza+Bellini+Napoli+Italy", category: "cetati_turnuri" }, // Napoli
+    { name: "Palazzo di Capodimonte", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+di+Capodimonte+Napoli+Italy", category: "castele_palate", city: "Napoli" }, // Napoli
+    { name: "Zidurile Grecești din Piazza Bellini", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Grecești+din+Piazza+Bellini+Napoli+Italy", category: "cetati_turnuri", city: "Napoli" }, // Napoli
     { name: "Turnul Caleo", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Caleo+Centola+Italy", category: "cetati_turnuri" }, // Centola
     { name: "Cetatea Benevento (Rocca dei Rettori)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Benevento+(Rocca+dei+Rettori)+Benevento+Italy", category: "cetati_turnuri" }, // Benevento
     { name: "Turnul de pază Torre Normanna", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+pază+Torre+Normanna+Maiori,+Coasta+Amalfitană+Italy", category: "cetati_turnuri" }, // Maiori, Coasta Amalfitană
     { name: "Fortăreața din Ischia", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+din+Ischia+Insula+Ischia+Italy", category: "cetati_turnuri" }, // Insula Ischia
     { name: "Torre di Bassano", url: "https://www.google.com/maps/search/?api=1&query=Torre+di+Bassano+Torre+del+Greco+Italy", category: "cetati_turnuri" }, // Torre del Greco
-    { name: "Catedrala din Napoli (Duomo di San Gennaro)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Napoli+(Duomo+di+San+Gennaro)+Napoli+Italy", category: "manastiri" }, // Napoli
-    { name: "Mănăstirea Certosa di San Martino", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Certosa+di+San+Martino+Napoli+Italy", category: "manastiri" }, // Napoli
-    { name: "Biserica Santa Chiara (Mănăstirea și mozaicurile de majolică)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Chiara+(Mănăstirea+și+mozaicurile+de+majolică)+Napoli+Italy", category: "manastiri" }, // Napoli
-    { name: "Bazilica San Francesco di Paola", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Francesco+di+Paola+Napoli,+Piazza+del+Plebiscito+Italy", category: "manastiri" }, // Napoli, Piazza del Plebiscito
+    { name: "Catedrala din Napoli (Duomo di San Gennaro)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Napoli+(Duomo+di+San+Gennaro)+Napoli+Italy", category: "manastiri", city: "Napoli" }, // Napoli
+    { name: "Mănăstirea Certosa di San Martino", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Certosa+di+San+Martino+Napoli+Italy", category: "manastiri", city: "Napoli" }, // Napoli
+    { name: "Biserica Santa Chiara (Mănăstirea și mozaicurile de majolică)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Chiara+(Mănăstirea+și+mozaicurile+de+majolică)+Napoli+Italy", category: "manastiri", city: "Napoli" }, // Napoli
+    { name: "Bazilica San Francesco di Paola", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Francesco+di+Paola+Napoli,+Piazza+del+Plebiscito+Italy", category: "manastiri", city: "Napoli" }, // Napoli, Piazza del Plebiscito
     { name: "Catedrala din Amalfi (Duomo di Amalfi)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Amalfi+(Duomo+di+Amalfi)+Amalfi+Italy", category: "manastiri" }, // Amalfi
     { name: "Catedrala din Ravello", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Ravello+Ravello,+Coasta+Amalfitană+Italy", category: "manastiri" }, // Ravello, Coasta Amalfitană
     { name: "Mănăstirea Montevergine", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Montevergine+Mercogliano+Italy", category: "manastiri" }, // Mercogliano
-    { name: "Biserica Gesu Nuovo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Gesu+Nuovo+Napoli+Italy", category: "manastiri" }, // Napoli
-    { name: "Capela Sansevero (Statuia „Cristos sub văl”)", url: "https://www.google.com/maps/search/?api=1&query=Capela+Sansevero+(Statuia+„Cristos+sub+văl”)+Napoli+Italy", category: "manastiri" }, // Napoli
+    { name: "Biserica Gesu Nuovo", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Gesu+Nuovo+Napoli+Italy", category: "manastiri", city: "Napoli" }, // Napoli
+    { name: "Capela Sansevero (Statuia „Cristos sub văl”)", url: "https://www.google.com/maps/search/?api=1&query=Capela+Sansevero+(Statuia+„Cristos+sub+văl”)+Napoli+Italy", category: "manastiri", city: "Napoli" }, // Napoli
     { name: "Ababația de la Cava de' Tirreni", url: "https://www.google.com/maps/search/?api=1&query=Ababația+de+la+Cava+de'+Tirreni+Cava+de'+Tirreni+Italy", category: "manastiri" }, // Cava de' Tirreni
     { name: "Parcul Național Vezuviu (Muntele și Craterul Vulcanului)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Vezuviu+(Muntele+și+Craterul+Vulcanului)+Ercolano+Italy", category: "natura" }, // Ercolano
     { name: "Grota Albastră (Grotta Azzurra)", url: "https://www.google.com/maps/search/?api=1&query=Grota+Albastră+(Grotta+Azzurra)+Insula+Capri+Italy", category: "natura" }, // Insula Capri
-    { name: "Parcul Național Cilento și Vallo di Diano", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Cilento+și+Vallo+di+Diano+Salerno+Italy", category: "natura" }, // Salerno
+    { name: "Parcul Național Cilento și Vallo di Diano", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Cilento+și+Vallo+di+Diano+Salerno+Italy", category: "natura", city: "Salerno" }, // Salerno
     { name: "Peștera Pertosa-Auletta (Grotte di Pertosa)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Pertosa-Auletta+(Grotte+di+Pertosa)+Pertosa+Italy", category: "natura" }, // Pertosa
     { name: "Stâncile Faraglioni", url: "https://www.google.com/maps/search/?api=1&query=Stâncile+Faraglioni+Insula+Capri+Italy", category: "natura" }, // Insula Capri
     { name: "Valle delle Ferriere (Rezervație naturală în chei)", url: "https://www.google.com/maps/search/?api=1&query=Valle+delle+Ferriere+(Rezervație+naturală+în+chei)+Amalfi+Italy", category: "natura" }, // Amalfi
@@ -5875,33 +5875,33 @@ const ATTRACTIONS = {
     { name: "Solfatara di Pozzuoli (Câmpul de cratere vulcanice)", url: "https://www.google.com/maps/search/?api=1&query=Solfatara+di+Pozzuoli+(Câmpul+de+cratere+vulcanice)+Pozzuoli+Italy", category: "natura" }, // Pozzuoli
     { name: "Fjordul Furore (Fiordo di Furore)", url: "https://www.google.com/maps/search/?api=1&query=Fjordul+Furore+(Fiordo+di+Furore)+Furore,+Coasta+Amalfitană+Italy", category: "natura" }, // Furore, Coasta Amalfitană
     { name: "Șoseaua Amalfitană (Costiera Amalfitana - SS163)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Amalfitană+(Costiera+Amalfitana+-+SS163)+Sorrento+la+Salerno+Italy", category: "infrastructura" }, // Sorrento la Salerno
-    { name: "Napoli Sotterranea (Sistemul de tuneluri subterane)", url: "https://www.google.com/maps/search/?api=1&query=Napoli+Sotterranea+(Sistemul+de+tuneluri+subterane)+Napoli+Italy", category: "infrastructura" }, // Napoli
+    { name: "Napoli Sotterranea (Sistemul de tuneluri subterane)", url: "https://www.google.com/maps/search/?api=1&query=Napoli+Sotterranea+(Sistemul+de+tuneluri+subterane)+Napoli+Italy", category: "infrastructura", city: "Napoli" }, // Napoli
     { name: "Calea ferată istorică Circumvesuviana", url: "https://www.google.com/maps/search/?api=1&query=Calea+ferată+istorică+Circumvesuviana+Napoli+la+Sorrento+Italy", category: "infrastructura" }, // Napoli la Sorrento
     { name: "Funicularul din Capri", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Capri+Insula+Capri+Italy", category: "infrastructura" }, // Insula Capri
     { name: "Scaunul zburător Monte Solaro (Chairlift)", url: "https://www.google.com/maps/search/?api=1&query=Scaunul+zburător+Monte+Solaro+(Chairlift)+Anacapri,+Capri+Italy", category: "infrastructura" }, // Anacapri, Capri
     { name: "Traseul montan Cărarea Zeilor (Sentiero degli Dei)", url: "https://www.google.com/maps/search/?api=1&query=Traseul+montan+Cărarea+Zeilor+(Sentiero+degli+Dei)+Agerola+la+Positano+Italy", category: "infrastructura" }, // Agerola la Positano
     { name: "Portul Marina Grande", url: "https://www.google.com/maps/search/?api=1&query=Portul+Marina+Grande+Insula+Capri+Italy", category: "infrastructura" }, // Insula Capri
-    { name: "Muzeul Național de Arheologie din Napoli (MANN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Arheologie+din+Napoli+(MANN)+Napoli+Italy", category: "muzee" }, // Napoli
+    { name: "Muzeul Național de Arheologie din Napoli (MANN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Arheologie+din+Napoli+(MANN)+Napoli+Italy", category: "muzee", city: "Napoli" }, // Napoli
     { name: "Situl Arheologic Pompeii (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Pompeii+(UNESCO)+Pompei+Italy", category: "muzee" }, // Pompei
     { name: "Situl Arheologic Herculaneum (Ercolano UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Herculaneum+(Ercolano+UNESCO)+Ercolano+Italy", category: "muzee" }, // Ercolano
-    { name: "Muzeul Național Capodimonte", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Capodimonte+Napoli+Italy", category: "muzee" }, // Napoli
+    { name: "Muzeul Național Capodimonte", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Capodimonte+Napoli+Italy", category: "muzee", city: "Napoli" }, // Napoli
     { name: "Situl Arheologic Paestum (Templele Grecești UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Paestum+(Templele+Grecești+UNESCO)+Capaccio+Paestum+Italy", category: "muzee" }, // Capaccio Paestum
     { name: "Muzeul de Corali", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Corali+Ravello+Italy", category: "muzee" }, // Ravello
     { name: "Muzeul Căilor Ferate Pietrarsa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Căilor+Ferate+Pietrarsa+Portici+Italy", category: "muzee" }, // Portici
     { name: "Situl Arheologic Oplontis", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Oplontis+Torre+Annunziata+Italy", category: "muzee" }, // Torre Annunziata
-    { name: "Piazza del Plebiscito", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Plebiscito+Napoli+Italy", category: "cladiri_teatre" }, // Napoli
-    { name: "Teatrul San Carlo (Teatro di San Carlo - Cea mai veche operă activă)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+San+Carlo+(Teatro+di+San+Carlo+-+Cea+mai+veche+operă+activă)+Napoli+Italy", category: "cladiri_teatre" }, // Napoli
-    { name: "Galeria Umberto I", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Umberto+I+Napoli+Italy", category: "cladiri_teatre" }, // Napoli
+    { name: "Piazza del Plebiscito", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Plebiscito+Napoli+Italy", category: "cladiri_teatre", city: "Napoli" }, // Napoli
+    { name: "Teatrul San Carlo (Teatro di San Carlo - Cea mai veche operă activă)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+San+Carlo+(Teatro+di+San+Carlo+-+Cea+mai+veche+operă+activă)+Napoli+Italy", category: "cladiri_teatre", city: "Napoli" }, // Napoli
+    { name: "Galeria Umberto I", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Umberto+I+Napoli+Italy", category: "cladiri_teatre", city: "Napoli" }, // Napoli
     { name: "Positano (Orașul vertical monumental pe stâncă)", url: "https://www.google.com/maps/search/?api=1&query=Positano+(Orașul+vertical+monumental+pe+stâncă)+Coasta+Amalfitană+Italy", category: "cladiri_teatre" }, // Coasta Amalfitană
     { name: "Amfiteatrul Roman din Santa Maria Capua Vetere", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Santa+Maria+Capua+Vetere+Caserta+Italy", category: "cladiri_teatre" }, // Caserta
     { name: "Piazza Tasso", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Tasso+Sorrento+Italy", category: "cladiri_teatre" }, // Sorrento
     { name: "Teatrul Roman din Benevento", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Benevento+Benevento+Italy", category: "cladiri_teatre" }, // Benevento
-    { name: "Spaccanapoli (Artera stradală istorică)", url: "https://www.google.com/maps/search/?api=1&query=Spaccanapoli+(Artera+stradală+istorică)+Napoli+Italy", category: "cladiri_teatre" }, // Napoli
-    { name: "Palatul Normanzilor (Palazzo dei Normanni & Capela Palatină)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Normanzilor+(Palazzo+dei+Normanni+&+Capela+Palatină)+Palermo+Italy", category: "castele_palate" }, // Palermo
-    { name: "Castelul Ursino", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ursino+Catania+Italy", category: "castele_palate" }, // Catania
+    { name: "Spaccanapoli (Artera stradală istorică)", url: "https://www.google.com/maps/search/?api=1&query=Spaccanapoli+(Artera+stradală+istorică)+Napoli+Italy", category: "cladiri_teatre", city: "Napoli" }, // Napoli
+    { name: "Palatul Normanzilor (Palazzo dei Normanni & Capela Palatină)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Normanzilor+(Palazzo+dei+Normanni+&+Capela+Palatină)+Palermo+Italy", category: "castele_palate", city: "Palermo" }, // Palermo
+    { name: "Castelul Ursino", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ursino+Catania+Italy", category: "castele_palate", city: "Catania" }, // Catania
     { name: "Castello Maniace", url: "https://www.google.com/maps/search/?api=1&query=Castello+Maniace+Siracuza,+Ortigia+Italy", category: "castele_palate" }, // Siracuza, Ortigia
-    { name: "Palazzo Biscari", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Biscari+Catania+Italy", category: "castele_palate" }, // Catania
-    { name: "Palazzo Chiaramonte-Steri", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Chiaramonte-Steri+Palermo+Italy", category: "castele_palate" }, // Palermo
+    { name: "Palazzo Biscari", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Biscari+Catania+Italy", category: "castele_palate", city: "Catania" }, // Catania
+    { name: "Palazzo Chiaramonte-Steri", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Chiaramonte-Steri+Palermo+Italy", category: "castele_palate", city: "Palermo" }, // Palermo
     { name: "Castelul Caccamo", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Caccamo+Caccamo+Italy", category: "castele_palate" }, // Caccamo
     { name: "Palazzo Zacco", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Zacco+Ragusa+Italy", category: "castele_palate" }, // Ragusa
     { name: "Castelul din Venere", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Venere+Erice+Italy", category: "castele_palate" }, // Erice
@@ -5914,16 +5914,16 @@ const ATTRACTIONS = {
     { name: "Zidurile Grecesti din Gela", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Grecesti+din+Gela+Gela+Italy", category: "cetati_turnuri" }, // Gela
     { name: "Forte San Jachiddu", url: "https://www.google.com/maps/search/?api=1&query=Forte+San+Jachiddu+Messina+Italy", category: "cetati_turnuri" }, // Messina
     { name: "Catedrala din Monreale (Mozaicuri bizantine UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Monreale+(Mozaicuri+bizantine+UNESCO)+Monreale+Italy", category: "manastiri" }, // Monreale
-    { name: "Catedrala din Palermo (Cattedrale di Palermo)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Palermo+(Cattedrale+di+Palermo)+Palermo+Italy", category: "manastiri" }, // Palermo
+    { name: "Catedrala din Palermo (Cattedrale di Palermo)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Palermo+(Cattedrale+di+Palermo)+Palermo+Italy", category: "manastiri", city: "Palermo" }, // Palermo
     { name: "Catedrala din Cefalù (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Cefalù+(UNESCO)+Cefalù+Italy", category: "manastiri" }, // Cefalù
-    { name: "Biserica Martorana", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Martorana+Palermo+Italy", category: "manastiri" }, // Palermo
-    { name: "Catedrala Sfânta Agata", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Agata+Catania+Italy", category: "manastiri" }, // Catania
+    { name: "Biserica Martorana", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Martorana+Palermo+Italy", category: "manastiri", city: "Palermo" }, // Palermo
+    { name: "Catedrala Sfânta Agata", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Agata+Catania+Italy", category: "manastiri", city: "Catania" }, // Catania
     { name: "Catedrala din Siracuza (Construită în templul Atenei)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Siracuza+(Construită+în+templul+Atenei)+Siracuza,+Ortigia+Italy", category: "manastiri" }, // Siracuza, Ortigia
     { name: "Sanctuarul Madonna delle Lacrime", url: "https://www.google.com/maps/search/?api=1&query=Sanctuarul+Madonna+delle+Lacrime+Siracuza+Italy", category: "manastiri" }, // Siracuza
     { name: "Biserica San Giorgio", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Giorgio+Modica+Italy", category: "manastiri" }, // Modica
     { name: "Catedrala San Giorgio", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+San+Giorgio+Ragusa+Ibla+Italy", category: "manastiri" }, // Ragusa Ibla
     { name: "Catedrala din Noto", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Noto+Noto+Italy", category: "manastiri" }, // Noto
-    { name: "Parcul Național Etna (Muntele și Craterele Vulcanului Activ)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Etna+(Muntele+și+Craterele+Vulcanului+Activ)+Catania+Italy", category: "natura" }, // Catania
+    { name: "Parcul Național Etna (Muntele și Craterele Vulcanului Activ)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Etna+(Muntele+și+Craterele+Vulcanului+Activ)+Catania+Italy", category: "natura", city: "Catania" }, // Catania
     { name: "Valea Templorilor (Valle dei Templi - Agrigento UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Valea+Templorilor+(Valle+dei+Templi+-+Agrigento+UNESCO)+Agrigento+Italy", category: "natura" }, // Agrigento
     { name: "Scala dei Turchi (Scara Turcilor - Stâncă de marnă albă)", url: "https://www.google.com/maps/search/?api=1&query=Scala+dei+Turchi+(Scara+Turcilor+-+Stâncă+de+marnă+albă)+Realmonte+Italy", category: "natura" }, // Realmonte
     { name: "Rezervația Naturală Zingaro (Riserva Naturale dello Zingaro)", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Zingaro+(Riserva+Naturale+dello+Zingaro)+Castellammare+del+Golfo+Italy", category: "natura" }, // Castellammare del Golfo
@@ -5932,59 +5932,59 @@ const ATTRACTIONS = {
     { name: "Rezervația Naturală Vendicari", url: "https://www.google.com/maps/search/?api=1&query=Rezervația+Naturală+Vendicari+Noto+Italy", category: "natura" }, // Noto
     { name: "Isola Bella (Insula Frumoasă)", url: "https://www.google.com/maps/search/?api=1&query=Isola+Bella+(Insula+Frumoasă)+Taormina+Italy", category: "natura" }, // Taormina
     { name: "Peștera Urechii lui Dionysius (Orecchio di Dionisio)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Urechii+lui+Dionysius+(Orecchio+di+Dionisio)+Siracuza,+Parcul+Neapolis+Italy", category: "natura" }, // Siracuza, Parcul Neapolis
-    { name: "Muntele Pellegrino", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Pellegrino+Palermo+Italy", category: "natura" }, // Palermo
+    { name: "Muntele Pellegrino", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Pellegrino+Palermo+Italy", category: "natura", city: "Palermo" }, // Palermo
     { name: "Traseul auto montan Etna Sud (Rifugio Sapienza)", url: "https://www.google.com/maps/search/?api=1&query=Traseul+auto+montan+Etna+Sud+(Rifugio+Sapienza)+Nicolosi+Italy", category: "infrastructura" }, // Nicolosi
     { name: "Teatrul Antic din Taormina (Teatro Antico di Taormina)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Antic+din+Taormina+(Teatro+Antico+di+Taormina)+Taormina+Italy", category: "infrastructura" }, // Taormina
     { name: "Funivia di Taormina (Telecabina spre plajă)", url: "https://www.google.com/maps/search/?api=1&query=Funivia+di+Taormina+(Telecabina+spre+plajă)+Taormina+Italy", category: "infrastructura" }, // Taormina
     { name: "Traseul feroviar istoric Circumetnea", url: "https://www.google.com/maps/search/?api=1&query=Traseul+feroviar+istoric+Circumetnea+În+jurul+Vulcanului+Etna+Italy", category: "infrastructura" }, // În jurul Vulcanului Etna
     { name: "Funicularul Trapani - Erice", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+Trapani+-+Erice+Trapani+Italy", category: "infrastructura" }, // Trapani
     { name: "Podul Umbertino", url: "https://www.google.com/maps/search/?api=1&query=Podul+Umbertino+Siracuza+Italy", category: "infrastructura" }, // Siracuza
-    { name: "Muzeul Arheologic Regional Salinas", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Regional+Salinas+Palermo+Italy", category: "muzee" }, // Palermo
+    { name: "Muzeul Arheologic Regional Salinas", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Regional+Salinas+Palermo+Italy", category: "muzee", city: "Palermo" }, // Palermo
     { name: "Parcul Arheologic Neapolis", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Arheologic+Neapolis+Siracuza+Italy", category: "muzee" }, // Siracuza
     { name: "Muzeul Arheologic Regional Paolo Orsi", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Regional+Paolo+Orsi+Siracuza+Italy", category: "muzee" }, // Siracuza
-    { name: "Muzeul de Artă Contemporană RISO", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+RISO+Palermo+Italy", category: "muzee" }, // Palermo
-    { name: "Catacombele Capucinilor (Catacombe dei Cappuccini)", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+Capucinilor+(Catacombe+dei+Cappuccini)+Palermo+Italy", category: "muzee" }, // Palermo
+    { name: "Muzeul de Artă Contemporană RISO", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+RISO+Palermo+Italy", category: "muzee", city: "Palermo" }, // Palermo
+    { name: "Catacombele Capucinilor (Catacombe dei Cappuccini)", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+Capucinilor+(Catacombe+dei+Cappuccini)+Palermo+Italy", category: "muzee", city: "Palermo" }, // Palermo
     { name: "Muzeul de Ceramică", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Ceramică+Caltagirone+Italy", category: "muzee" }, // Caltagirone
     { name: "Situl Arheologic Selinunte", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Selinunte+Castelvetrano+Italy", category: "muzee" }, // Castelvetrano
     { name: "Situl Arheologic Segesta (Templul și Teatrul)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Segesta+(Templul+și+Teatrul)+Calatafimi-Segesta+Italy", category: "muzee" }, // Calatafimi-Segesta
     { name: "Villa Romana del Casale (Mozaicuri romane UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Villa+Romana+del+Casale+(Mozaicuri+romane+UNESCO)+Piazza+Armerina+Italy", category: "muzee" }, // Piazza Armerina
-    { name: "Teatro Massimo (Cel mai mare teatru de operă din Italia)", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+(Cel+mai+mare+teatru+de+operă+din+Italia)+Palermo+Italy", category: "cladiri_teatre" }, // Palermo
-    { name: "Piazza Duomo", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Duomo+Catania+Italy", category: "cladiri_teatre" }, // Catania
-    { name: "Quattro Canti (Piața barocă circulară)", url: "https://www.google.com/maps/search/?api=1&query=Quattro+Canti+(Piața+barocă+circulară)+Palermo+Italy", category: "cladiri_teatre" }, // Palermo
-    { name: "Fontana Pretoria", url: "https://www.google.com/maps/search/?api=1&query=Fontana+Pretoria+Palermo+Italy", category: "cladiri_teatre" }, // Palermo
+    { name: "Teatro Massimo (Cel mai mare teatru de operă din Italia)", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Massimo+(Cel+mai+mare+teatru+de+operă+din+Italia)+Palermo+Italy", category: "cladiri_teatre", city: "Palermo" }, // Palermo
+    { name: "Piazza Duomo", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Duomo+Catania+Italy", category: "cladiri_teatre", city: "Catania" }, // Catania
+    { name: "Quattro Canti (Piața barocă circulară)", url: "https://www.google.com/maps/search/?api=1&query=Quattro+Canti+(Piața+barocă+circulară)+Palermo+Italy", category: "cladiri_teatre", city: "Palermo" }, // Palermo
+    { name: "Fontana Pretoria", url: "https://www.google.com/maps/search/?api=1&query=Fontana+Pretoria+Palermo+Italy", category: "cladiri_teatre", city: "Palermo" }, // Palermo
     { name: "Piazza Armerina (Centrul Istoric)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Armerina+(Centrul+Istoric)+Enna+Italy", category: "cladiri_teatre" }, // Enna
     { name: "Scara Santa Maria del Monte (142 de trepte din ceramică)", url: "https://www.google.com/maps/search/?api=1&query=Scara+Santa+Maria+del+Monte+(142+de+trepte+din+ceramică)+Caltagirone+Italy", category: "cladiri_teatre" }, // Caltagirone
     { name: "Ortigia (Centrul istoric insular din Siracuza)", url: "https://www.google.com/maps/search/?api=1&query=Ortigia+(Centrul+istoric+insular+din+Siracuza)+Siracuza+Italy", category: "cladiri_teatre" }, // Siracuza
     { name: "Corso Umberto", url: "https://www.google.com/maps/search/?api=1&query=Corso+Umberto+Taormina+Italy", category: "cladiri_teatre" }, // Taormina
     { name: "Piazza Municipio", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Municipio+Noto+Italy", category: "cladiri_teatre" }, // Noto
     { name: "Castel del Monte (Castelul octogonal UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Castel+del+Monte+(Castelul+octogonal+UNESCO)+Andria,+Apulia+Italy", category: "castele_palate" }, // Andria, Apulia
-    { name: "Castelul Aragonez (Taranto)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Aragonez+(Taranto)+Taranto,+Apulia+Italy", category: "castele_palate" }, // Taranto, Apulia
+    { name: "Castelul Aragonez (Taranto)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Aragonez+(Taranto)+Taranto,+Apulia+Italy", category: "castele_palate", city: "Taranto" }, // Taranto, Apulia
     { name: "Palazzo Ducale (Martina Franca)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Ducale+(Martina+Franca)+Martina+Franca,+Apulia+Italy", category: "castele_palate" }, // Martina Franca, Apulia
-    { name: "Castelul Carlo V", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Carlo+V+Lecce,+Apulia+Italy", category: "castele_palate" }, // Lecce, Apulia
-    { name: "Castelul di San Michele", url: "https://www.google.com/maps/search/?api=1&query=Castelul+di+San+Michele+Cagliari,+Sardinia+Italy", category: "castele_palate" }, // Cagliari, Sardinia
-    { name: "Palazzo Regio", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Regio+Cagliari,+Sardinia+Italy", category: "castele_palate" }, // Cagliari, Sardinia
+    { name: "Castelul Carlo V", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Carlo+V+Lecce,+Apulia+Italy", category: "castele_palate", city: "Lecce" }, // Lecce, Apulia
+    { name: "Castelul di San Michele", url: "https://www.google.com/maps/search/?api=1&query=Castelul+di+San+Michele+Cagliari,+Sardinia+Italy", category: "castele_palate", city: "Cagliari" }, // Cagliari, Sardinia
+    { name: "Palazzo Regio", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Regio+Cagliari,+Sardinia+Italy", category: "castele_palate", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Castelul Otranto", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Otranto+Otranto,+Apulia+Italy", category: "castele_palate" }, // Otranto, Apulia
-    { name: "Castelul Norman-Svev", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Norman-Svev+Bari,+Apulia+Italy", category: "castele_palate" }, // Bari, Apulia
+    { name: "Castelul Norman-Svev", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Norman-Svev+Bari,+Apulia+Italy", category: "castele_palate", city: "Bari" }, // Bari, Apulia
     { name: "Situl Nuragic Su Nuraxi di Barumini (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Situl+Nuragic+Su+Nuraxi+di+Barumini+(UNESCO)+Barumini,+Sardinia+Italy", category: "cetati_turnuri" }, // Barumini, Sardinia
-    { name: "Bastionul Saint Remy", url: "https://www.google.com/maps/search/?api=1&query=Bastionul+Saint+Remy+Cagliari,+Sardinia+Italy", category: "cetati_turnuri" }, // Cagliari, Sardinia
-    { name: "Turnul San Pancrazio", url: "https://www.google.com/maps/search/?api=1&query=Turnul+San+Pancrazio+Cagliari,+Sardinia+Italy", category: "cetati_turnuri" }, // Cagliari, Sardinia
+    { name: "Bastionul Saint Remy", url: "https://www.google.com/maps/search/?api=1&query=Bastionul+Saint+Remy+Cagliari,+Sardinia+Italy", category: "cetati_turnuri", city: "Cagliari" }, // Cagliari, Sardinia
+    { name: "Turnul San Pancrazio", url: "https://www.google.com/maps/search/?api=1&query=Turnul+San+Pancrazio+Cagliari,+Sardinia+Italy", category: "cetati_turnuri", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Zidurile Catalane din Alghero", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Catalane+din+Alghero+Alghero,+Sardinia+Italy", category: "cetati_turnuri" }, // Alghero, Sardinia
     { name: "Turnul Sulis", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Sulis+Alghero,+Sardinia+Italy", category: "cetati_turnuri" }, // Alghero, Sardinia
     { name: "Cetatea din Peschici", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+din+Peschici+Foggia,+Apulia+Italy", category: "cetati_turnuri" }, // Foggia, Apulia
     { name: "Turnul Guaceto", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Guaceto+Brindisi,+Apulia+Italy", category: "cetati_turnuri" }, // Brindisi, Apulia
-    { name: "Zidurile din Altamura", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Altamura+Bari,+Apulia+Italy", category: "cetati_turnuri" }, // Bari, Apulia
-    { name: "Biserica Santa Croce (Capodoperă a barocului de Lecce)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Croce+(Capodoperă+a+barocului+de+Lecce)+Lecce,+Apulia+Italy", category: "manastiri" }, // Lecce, Apulia
-    { name: "Bazilica San Nicola", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Nicola+Bari,+Apulia+Italy", category: "manastiri" }, // Bari, Apulia
+    { name: "Zidurile din Altamura", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Altamura+Bari,+Apulia+Italy", category: "cetati_turnuri", city: "Bari" }, // Bari, Apulia
+    { name: "Biserica Santa Croce (Capodoperă a barocului de Lecce)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Croce+(Capodoperă+a+barocului+de+Lecce)+Lecce,+Apulia+Italy", category: "manastiri", city: "Lecce" }, // Lecce, Apulia
+    { name: "Bazilica San Nicola", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Nicola+Bari,+Apulia+Italy", category: "manastiri", city: "Bari" }, // Bari, Apulia
     { name: "Catedrala din Trani (Pe malul mării)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Trani+(Pe+malul+mării)+Trani,+Apulia+Italy", category: "manastiri" }, // Trani, Apulia
-    { name: "Catedrala Santa Maria", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+Maria+Cagliari,+Sardinia+Italy", category: "manastiri" }, // Cagliari, Sardinia
+    { name: "Catedrala Santa Maria", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+Maria+Cagliari,+Sardinia+Italy", category: "manastiri", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Mănăstirea San Giovanni in Venere", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Giovanni+in+Venere+Chieti+(Zona+de+trecere)+Italy", category: "manastiri" }, // Chieti (Zona de trecere)
     { name: "Biserica San Giovanni al Sepolcro", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Giovanni+al+Sepolcro+Brindisi,+Apulia+Italy", category: "manastiri" }, // Brindisi, Apulia
     { name: "Catedrala din Otranto (Mozaicul uriaș al podelei)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Otranto+(Mozaicul+uriaș+al+podelei)+Otranto,+Apulia+Italy", category: "manastiri" }, // Otranto, Apulia
-    { name: "Santuario di Bonaria", url: "https://www.google.com/maps/search/?api=1&query=Santuario+di+Bonaria+Cagliari,+Sardinia+Italy", category: "manastiri" }, // Cagliari, Sardinia
+    { name: "Santuario di Bonaria", url: "https://www.google.com/maps/search/?api=1&query=Santuario+di+Bonaria+Cagliari,+Sardinia+Italy", category: "manastiri", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Biserica San Simplicio", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Simplicio+Olbia,+Sardinia+Italy", category: "manastiri" }, // Olbia, Sardinia
     { name: "Catedrala din Troia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Troia+Foggia,+Apulia+Italy", category: "manastiri" }, // Foggia, Apulia
     { name: "Parcul Național Arhipelagul La Maddalena", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Arhipelagul+La+Maddalena+Olbia-Tempio,+Sardinia+Italy", category: "natura" }, // Olbia-Tempio, Sardinia
-    { name: "Grotte di Castellana (Peșteri cu stalactite spectaculoase)", url: "https://www.google.com/maps/search/?api=1&query=Grotte+di+Castellana+(Peșteri+cu+stalactite+spectaculoase)+Bari,+Apulia+Italy", category: "natura" }, // Bari, Apulia
+    { name: "Grotte di Castellana (Peșteri cu stalactite spectaculoase)", url: "https://www.google.com/maps/search/?api=1&query=Grotte+di+Castellana+(Peșteri+cu+stalactite+spectaculoase)+Bari,+Apulia+Italy", category: "natura", city: "Bari" }, // Bari, Apulia
     { name: "Peștera lui Neptun (Grotta di Nettuno)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+lui+Neptun+(Grotta+di+Nettuno)+Alghero,+Sardinia+Italy", category: "natura" }, // Alghero, Sardinia
     { name: "Gargano (Parcul Național și Pădurea Umbra)", url: "https://www.google.com/maps/search/?api=1&query=Gargano+(Parcul+Național+și+Pădurea+Umbra)+Foggia,+Apulia+Italy", category: "natura" }, // Foggia, Apulia
     { name: "Plaja La Pelosa (Ape turcoaz)", url: "https://www.google.com/maps/search/?api=1&query=Plaja+La+Pelosa+(Ape+turcoaz)+Stintino,+Sardinia+Italy", category: "natura" }, // Stintino, Sardinia
@@ -5992,30 +5992,30 @@ const ATTRACTIONS = {
     { name: "Golful Orosei (Cala Goloritzé și Cala Luna)", url: "https://www.google.com/maps/search/?api=1&query=Golful+Orosei+(Cala+Goloritzé+și+Cala+Luna)+Baunei,+Sardinia+Italy", category: "natura" }, // Baunei, Sardinia
     { name: "Parcul Național Asinara (Măgarii albi sălbatici)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Asinara+(Măgarii+albi+sălbatici)+Porto+Torres,+Sardinia+Italy", category: "natura" }, // Porto Torres, Sardinia
     { name: "Grotta della Zinzulusa", url: "https://www.google.com/maps/search/?api=1&query=Grotta+della+Zinzulusa+Castro,+Apulia+Italy", category: "natura" }, // Castro, Apulia
-    { name: "Salinele din Conti Vecchi", url: "https://www.google.com/maps/search/?api=1&query=Salinele+din+Conti+Vecchi+Cagliari,+Sardinia+Italy", category: "natura" }, // Cagliari, Sardinia
+    { name: "Salinele din Conti Vecchi", url: "https://www.google.com/maps/search/?api=1&query=Salinele+din+Conti+Vecchi+Cagliari,+Sardinia+Italy", category: "natura", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Traseul de coastă panoramic SP71 (Porto Teulada - Chia)", url: "https://www.google.com/maps/search/?api=1&query=Traseul+de+coastă+panoramic+SP71+(Porto+Teulada+-+Chia)+Sardinia+Italy", category: "infrastructura" }, // Sardinia
     { name: "Șoseaua panoramică Gargano (SS89)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+Gargano+(SS89)+Foggia,+Apulia+Italy", category: "infrastructura" }, // Foggia, Apulia
     { name: "Trenino Verde (Trenul istoric de linie îngustă)", url: "https://www.google.com/maps/search/?api=1&query=Trenino+Verde+(Trenul+istoric+de+linie+îngustă)+Regiunea+Montană+Mandas+-+Arbatax,+Sardinia+Italy", category: "infrastructura" }, // Regiunea Montană Mandas - Arbatax, Sardinia
     { name: "Portul Porto Cervo (Costa Smeralda)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Porto+Cervo+(Costa+Smeralda)+Arzachena,+Sardinia+Italy", category: "infrastructura" }, // Arzachena, Sardinia
-    { name: "Podul Girevole", url: "https://www.google.com/maps/search/?api=1&query=Podul+Girevole+Taranto,+Apulia+Italy", category: "infrastructura" }, // Taranto, Apulia
+    { name: "Podul Girevole", url: "https://www.google.com/maps/search/?api=1&query=Podul+Girevole+Taranto,+Apulia+Italy", category: "infrastructura", city: "Taranto" }, // Taranto, Apulia
     { name: "Portul Brindisi (Scara Terminală a Via Appia)", url: "https://www.google.com/maps/search/?api=1&query=Portul+Brindisi+(Scara+Terminală+a+Via+Appia)+Brindisi,+Apulia+Italy", category: "infrastructura" }, // Brindisi, Apulia
-    { name: "Muzeul Arheologic Național din Cagliari (Giganții din Mont'e Prama)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+din+Cagliari+(Giganții+din+Mont'e+Prama)+Cagliari,+Sardinia+Italy", category: "muzee" }, // Cagliari, Sardinia
+    { name: "Muzeul Arheologic Național din Cagliari (Giganții din Mont'e Prama)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+din+Cagliari+(Giganții+din+Mont'e+Prama)+Cagliari,+Sardinia+Italy", category: "muzee", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Trulli din Alberobello (Sate-muzeu din piatră UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Trulli+din+Alberobello+(Sate-muzeu+din+piatră+UNESCO)+Alberobello,+Apulia+Italy", category: "muzee" }, // Alberobello, Apulia
     { name: "Sassi di Matera (Orașul-muzeu în stâncă UNESCO - Granița Basilicata)", url: "https://www.google.com/maps/search/?api=1&query=Sassi+di+Matera+(Orașul-muzeu+în+stâncă+UNESCO+-+Granița+Basilicata)+Matera+Italy", category: "muzee" }, // Matera
-    { name: "Muzeul Arheologic Național din Taranto (MArTA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+din+Taranto+(MArTA)+Taranto,+Apulia+Italy", category: "muzee" }, // Taranto, Apulia
+    { name: "Muzeul Arheologic Național din Taranto (MArTA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+din+Taranto+(MArTA)+Taranto,+Apulia+Italy", category: "muzee", city: "Taranto" }, // Taranto, Apulia
     { name: "Muzeul de Etnografie din Nuoro", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Etnografie+din+Nuoro+Nuoro,+Sardinia+Italy", category: "muzee" }, // Nuoro, Sardinia
     { name: "Situl Arheologic Tharros", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Tharros+Cabras,+Sardinia+Italy", category: "muzee" }, // Cabras, Sardinia
     { name: "Situl Arheologic Nora", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Nora+Pula,+Sardinia+Italy", category: "muzee" }, // Pula, Sardinia
     { name: "Muzeul Național Jatta", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Jatta+Ruvo+di+Puglia+Italy", category: "muzee" }, // Ruvo di Puglia
-    { name: "Piața Sant'Oronzo", url: "https://www.google.com/maps/search/?api=1&query=Piața+Sant'Oronzo+Lecce,+Apulia+Italy", category: "cladiri_teatre" }, // Lecce, Apulia
-    { name: "Anfiteatrul Roman din Lecce", url: "https://www.google.com/maps/search/?api=1&query=Anfiteatrul+Roman+din+Lecce+Lecce,+Apulia+Italy", category: "cladiri_teatre" }, // Lecce, Apulia
-    { name: "Piazza del Duomo (Lecce)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Lecce)+Lecce,+Apulia+Italy", category: "cladiri_teatre" }, // Lecce, Apulia
-    { name: "Cartierul Istoric Castello", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Istoric+Castello+Cagliari,+Sardinia+Italy", category: "cladiri_teatre" }, // Cagliari, Sardinia
-    { name: "Polignano a Mare (Orașul monumental pe stânci de coastă)", url: "https://www.google.com/maps/search/?api=1&query=Polignano+a+Mare+(Orașul+monumental+pe+stânci+de+coastă)+Bari,+Apulia+Italy", category: "cladiri_teatre" }, // Bari, Apulia
-    { name: "Piazza Mercantile", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Mercantile+Bari,+Apulia+Italy", category: "cladiri_teatre" }, // Bari, Apulia
-    { name: "Amfiteatrul Roman din Cagliari", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Cagliari+Cagliari,+Sardinia+Italy", category: "cladiri_teatre" }, // Cagliari, Sardinia
-    { name: "Centrul Istoric Gallipoli (Insulă urbană)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Istoric+Gallipoli+(Insulă+urbană)+Lecce,+Apulia+Italy", category: "cladiri_teatre" }, // Lecce, Apulia
-    { name: "Torre Asinelli", url: "https://www.google.com/maps/search/?api=1&query=Torre+Asinelli+Bologna,+Emilia-Romagna+Italy", category: "cetati_turnuri" }, // Bologna, Emilia-Romagna
+    { name: "Piața Sant'Oronzo", url: "https://www.google.com/maps/search/?api=1&query=Piața+Sant'Oronzo+Lecce,+Apulia+Italy", category: "cladiri_teatre", city: "Lecce" }, // Lecce, Apulia
+    { name: "Anfiteatrul Roman din Lecce", url: "https://www.google.com/maps/search/?api=1&query=Anfiteatrul+Roman+din+Lecce+Lecce,+Apulia+Italy", category: "cladiri_teatre", city: "Lecce" }, // Lecce, Apulia
+    { name: "Piazza del Duomo (Lecce)", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Duomo+(Lecce)+Lecce,+Apulia+Italy", category: "cladiri_teatre", city: "Lecce" }, // Lecce, Apulia
+    { name: "Cartierul Istoric Castello", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Istoric+Castello+Cagliari,+Sardinia+Italy", category: "cladiri_teatre", city: "Cagliari" }, // Cagliari, Sardinia
+    { name: "Polignano a Mare (Orașul monumental pe stânci de coastă)", url: "https://www.google.com/maps/search/?api=1&query=Polignano+a+Mare+(Orașul+monumental+pe+stânci+de+coastă)+Bari,+Apulia+Italy", category: "cladiri_teatre", city: "Bari" }, // Bari, Apulia
+    { name: "Piazza Mercantile", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Mercantile+Bari,+Apulia+Italy", category: "cladiri_teatre", city: "Bari" }, // Bari, Apulia
+    { name: "Amfiteatrul Roman din Cagliari", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Cagliari+Cagliari,+Sardinia+Italy", category: "cladiri_teatre", city: "Cagliari" }, // Cagliari, Sardinia
+    { name: "Centrul Istoric Gallipoli (Insulă urbană)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Istoric+Gallipoli+(Insulă+urbană)+Lecce,+Apulia+Italy", category: "cladiri_teatre", city: "Lecce" }, // Lecce, Apulia
+    { name: "Torre Asinelli", url: "https://www.google.com/maps/search/?api=1&query=Torre+Asinelli+Bologna,+Emilia-Romagna+Italy", category: "cetati_turnuri", city: "Bologna" }, // Bologna, Emilia-Romagna
     { name: "Gardaland Resort", url: "https://www.google.com/maps/search/?api=1&query=Gardaland+Resort+Italy", category: "parcuri_agrement" },
     { name: "Mirabilandia Ravenna", url: "https://www.google.com/maps/search/?api=1&query=Mirabilandia+Ravenna+Italy", category: "parcuri_agrement" },
     { name: "Cinecittà World Roma", url: "https://www.google.com/maps/search/?api=1&query=Cinecittà+World+Roma+Italy", category: "parcuri_agrement" },
@@ -6072,507 +6072,506 @@ const ATTRACTIONS = {
     { name: "Deltapark Neeltje Jans", url: "https://www.google.com/maps/search/?api=1&query=Deltapark+Neeltje+Jans+Netherlands" },
     { name: "Cel mai mare parc de joacă din Europa", url: "https://www.google.com/maps/search/?api=1&query=Cel+mai+mare+parc+de+joacă+din+Europa+Netherlands" },
   ],
-  ro: [
-    { name: "Castelul Bran", url: "https://bran-castle.com/" , category: "castele_palate" },
-    { name: "Castelul Peleș", url: "https://peles.ro/" , category: "castele_palate" },
-    { name: "Palatul Parlamentului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Parlamentului+Romania" , category: "castele_palate" },
-    { name: "Salina Turda", url: "https://www.salinaturda.eu/" , category: "infrastructura" },
-    { name: "Muzeul Antipa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Antipa+Romania" , category: "muzee" },
-    { name: "Therme București", url: "https://www.therme.ro/" , category: "parcuri_agrement" },
-    { name: "Dino Parc Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Dino+Parc+Râșnov+Romania" , category: "parcuri_agrement" },
-    { name: "Cetatea Alba Carolina", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Alba+Carolina+Romania" , category: "cetati_turnuri" },
-    { name: "Castelul Corvinilor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corvinilor+Romania" , category: "castele_palate" },
-    { name: "Muzeul Satului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Romania" , category: "muzee" },
-    { name: "Cetatea Deva", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Deva+Romania" , category: "cetati_turnuri" },
-    { name: "Cetatea Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Râșnov+Romania" , category: "cetati_turnuri" },
-    { name: "Cetatea de Scaun a Sucevei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+de+Scaun+a+Sucevei+Romania" , category: "cetati_turnuri" },
-    { name: "Salina Praid", url: "https://www.google.com/maps/search/?api=1&query=Salina+Praid+Romania" , category: "infrastructura" },
-    { name: "Ansamblul Sculptural Constantin Brâncuși", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Sculptural+Constantin+Brâncuși+Romania" , category: "cladiri_teatre" },
-    { name: "Castelul Cantacuzino Bușteni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Cantacuzino+Bușteni+Romania" , category: "castele_palate" },
-    { name: "Turnul cu Ceas și Cetatea Sighișoara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+și+Cetatea+Sighișoara+Romania" , category: "cetati_turnuri" },
-    { name: "Cetatea Făgăraș", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Făgăraș+Romania" , category: "cetati_turnuri" },
-    { name: "Muzeul Național Brukenthal Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Brukenthal+Sibiu+Romania" , category: "muzee" },
-    { name: "Palatul Culturii Iași", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Iași+Romania" , category: "castele_palate" },
-    { name: "Aquapark Nymphaea Oradea", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Nymphaea+Oradea+Romania" , category: "parcuri_agrement" },
-    { name: "Muzeul Național al Țăranului Român", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+al+Țăranului+Român+Romania" , category: "muzee" },
-    { name: "Cetatea Neamț", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Neamț+Romania" , category: "cetati_turnuri" },
-    { name: "Castelul Sturdza Miclăușeni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sturdza+Miclăușeni+Romania" , category: "castele_palate" },
-    { name: "Muzeul Național de Istorie a României", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Istorie+a+României+Romania" , category: "muzee" },
-    { name: "Libearty Bear Sanctuary Zărnești", url: "https://www.google.com/maps/search/?api=1&query=Libearty+Bear+Sanctuary+Zărnești+Romania" , category: "natura" },
-    { name: "Palatul Mogoșoaia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Mogoșoaia+Romania" , category: "castele_palate" },
-    { name: "Cetatea Poenari", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Poenari+Romania" , category: "cetati_turnuri" },
-    { name: "Catedrala Mântuirii Neamului", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mântuirii+Neamului+Romania" , category: "manastiri" },
-    { name: "Mănăstirea Voroneț", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Voroneț+Romania" , category: "manastiri" },
-    { name: "Palatul Brâncovenesc Sâmbăta de Sus", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Brâncovenesc+Sâmbăta+de+Sus+Romania" , category: "castele_palate" },
-    { name: "MNAR București", url: "https://www.google.com/maps/search/?api=1&query=MNAR+București+Romania" , category: "muzee" },
-    { name: "Parc Aventura Brașov", url: "https://www.google.com/maps/search/?api=1&query=Parc+Aventura+Brașov+Romania" , category: "parcuri_agrement" },
-    { name: "Planetariul Baia Mare", url: "https://www.google.com/maps/search/?api=1&query=Planetariul+Baia+Mare+Romania" , category: "muzee" },
-    { name: "Complexul de Agrement Cheile Grădiștei", url: "https://www.google.com/maps/search/?api=1&query=Complexul+de+Agrement+Cheile+Grădiștei+Romania" , category: "parcuri_agrement" },
-    { name: "Salina Slănic Prahova", url: "https://www.google.com/maps/search/?api=1&query=Salina+Slănic+Prahova+Romania" , category: "infrastructura" },
-    { name: "Cetatea Enisala Tulcea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Enisala+Tulcea+Romania" , category: "cetati_turnuri" },
-    { name: "Roșia Montană UNESCO", url: "https://www.google.com/maps/search/?api=1&query=Roșia+Montană+UNESCO+Romania" , category: "natura" },
-    { name: "Palatul Ghika", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ghika+Romania" , category: "castele_palate" },
-    { name: "Castelul de Lut Valea Zanelor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+de+Lut+Valea+Zanelor+Porumbacu+de+Sus+Romania", category: "castele_palate" },
-    { name: "Castelul Karolyi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Karolyi+Carei+Romania", category: "castele_palate" },
-    { name: "Castelul Banffy", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Banffy+Bontida+Romania", category: "castele_palate" },
-    { name: "Castelul Josika", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Josika+Surduc+Romania", category: "castele_palate" },
-    { name: "Castelul Teleki Gornesti", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Teleki+Gornesti+Gornesti+Romania", category: "castele_palate" },
-    { name: "Castelul Bethlen-Haller", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bethlen-Haller+Cetatea+de+Balta+Romania", category: "castele_palate" },
-    { name: "Palatul Roznovanu (Primaria)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Roznovanu+(Primaria)+Iasi+Romania", category: "castele_palate" },
-    { name: "Palatul Baroc (Muzeul de Arta)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Baroc+(Muzeul+de+Arta)+Timisoara+Romania", category: "castele_palate" },
-    { name: "Palatul Dicasterial", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dicasterial+Timisoara+Romania", category: "castele_palate" },
-    { name: "Palatul Vulturul Negru", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Vulturul+Negru+Oradea+Romania", category: "castele_palate" },
-    { name: "Palatul Episcopiei Romano-Catolice", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopiei+Romano-Catolice+Oradea+Romania", category: "castele_palate" },
-    { name: "Palatul Apollo", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Apollo+Targu+Mures+Romania", category: "castele_palate" },
-    { name: "Palatul Culturii Targu Mures", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Targu+Mures+Targu+Mures+Romania", category: "castele_palate" },
-    { name: "Palatul Administrativ Craiova", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Administrativ+Craiova+Craiova+Romania", category: "castele_palate" },
-    { name: "Palatul Jean Mihail (Muzeul de Arta)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Jean+Mihail+(Muzeul+de+Arta)+Craiova+Romania", category: "castele_palate" },
-    { name: "Palatul Marincu", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Marincu+Calafat+Romania", category: "castele_palate" },
-    { name: "Palatul Domnesc de la Curtea Noua", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Domnesc+de+la+Curtea+Noua+Bucuresti+Romania", category: "castele_palate" },
-    { name: "Palatul Cotroceni", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cotroceni+Bucuresti+Romania", category: "castele_palate" },
-    { name: "Palatul Regal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Bucuresti+Romania", category: "castele_palate" },
-    { name: "Palatul Stirbey", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Stirbey+Buftea+Romania", category: "castele_palate" },
-    { name: "Palatul Snagov", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Snagov+Snagov+Romania", category: "castele_palate" },
-    { name: "Castelul Iulia Hasdeu", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Iulia+Hasdeu+Campina+Romania", category: "castele_palate" },
-    { name: "Castelul Marta", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Marta+Arad+Romania", category: "castele_palate" },
-    { name: "Palatul Administrativ Arad", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Administrativ+Arad+Arad+Romania", category: "castele_palate" },
-    { name: "Castelul Nopcsa", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Nopcsa+Sacel+Romania", category: "castele_palate" },
-    { name: "Castelul Kendeffy", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kendeffy+Santamaria-Orlea+Romania", category: "castele_palate" },
-    { name: "Castelul Magna Curia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Magna+Curia+Deva+Romania", category: "castele_palate" },
-    { name: "Castelul Rhedey", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rhedey+Sangeorgiu+de+Padure+Romania", category: "castele_palate" },
-    { name: "Castelul Haller", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Haller+Ogra+Romania", category: "castele_palate" },
-    { name: "Castelul Apafi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Apafi+Malancrav+Romania", category: "castele_palate" },
-    { name: "Palatul Brukenthal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Brukenthal+Avrig+Romania", category: "castele_palate" },
-    { name: "Castelul Sukosd-Bethlen", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sukosd-Bethlen+Racos+Romania", category: "castele_palate" },
-    { name: "Castelul Beldy Ladislau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beldy+Ladislau+Budila+Romania", category: "castele_palate" },
-    { name: "Castelul Mikes", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Mikes+Zabala+Romania", category: "castele_palate" },
-    { name: "Castelul Kalnoky", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kalnoky+Miclosoara+Romania", category: "castele_palate" },
-    { name: "Castelul Daniel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Daniel+Talisoara+Romania", category: "castele_palate" },
-    { name: "Castelul Szentkereszty", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Szentkereszty+Arcus+Romania", category: "castele_palate" },
-    { name: "Conacul Bellu", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Bellu+Urlati+Romania", category: "castele_palate" },
-    { name: "Conacul Pana Filipescu", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Pana+Filipescu+Filipestii+de+Targ+Romania", category: "castele_palate" },
-    { name: "Conacul Octavian Goga", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Octavian+Goga+Ciucea+Romania", category: "castele_palate" },
-    { name: "Castelul Bocskai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bocskai+Aghiresu+Romania", category: "castele_palate" },
-    { name: "Castelul Kemeny", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kemeny+Brancovenesti+Romania", category: "castele_palate" },
-    { name: "Palatul Domnesc", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Domnesc+Cotnari+Romania", category: "castele_palate" },
-    { name: "Palatul Cuza", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cuza+Ruginoasa+Romania", category: "castele_palate" },
-    { name: "Palatul Comisiei Europene a Dunarii", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Comisiei+Europene+a+Dunarii+Sulina+Romania", category: "castele_palate" },
-    { name: "Palatul Episcopal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopal+Galati+Romania", category: "castele_palate" },
-    { name: "Hanul lui Manuc", url: "https://www.google.com/maps/search/?api=1&query=Hanul+lui+Manuc+Bucuresti+Romania", category: "castele_palate" },
-    { name: "Hanul Gabroveni", url: "https://www.google.com/maps/search/?api=1&query=Hanul+Gabroveni+Bucuresti+Romania", category: "castele_palate" },
-    { name: "Palatul Cazinoului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cazinoului+Vatra+Dornei+Romania", category: "castele_palate" },
-    { name: "Castelul Wesselényi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wessel%C3%A9nyi+Jibou+Romania", category: "castele_palate" },
-    { name: "Castelul Teleki Pribilesti", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Teleki+Pribilesti+Pribilesti+Romania", category: "castele_palate" },
-    { name: "Cetatea Rupea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Rupea+Rupea+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Sighisoara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sighisoara+Sighisoara+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Ciceu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ciceu+Ciceu-Corabia+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Bistritei (Turnul Dogarilor)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Bistritei+(Turnul+Dogarilor)+Bistrita+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Medievala", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Medievala+Targu+Mures+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Feldioara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Feldioara+Feldioara+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Hoghiz", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Hoghiz+Hoghiz+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Fetei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Fetei+Floresti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Bologa", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Bologa+Poieni+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Liteni", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Liteni+Liteni+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Coltesti", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Coltesti+Coltesti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Calnic (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Calnic+(UNESCO)+Calnic+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Soimos", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Soimos+Lipova+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Siria", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Siria+Siria+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Dezna", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Dezna+Dezna+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Ineu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ineu+Ineu+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Aradului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Aradului+Arad+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Timisoara (Bastionul Theresia)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Timisoara+(Bastionul+Theresia)+Timisoara+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Severinului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Severinului+Drobeta-Turnu+Severin+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Oradea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Oradea+Oradea+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Porolissum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Porolissum+Moigrad-Porolissum+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Buciumi", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Buciumi+Buciumi+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Almasului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Almasului+Almasu+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Chioarului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Chioarului+Remetea+Chioarului+Romania", category: "cetati_turnuri" },
-    { name: "Sarmizegetusa Regia (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Sarmizegetusa+Regia+(UNESCO)+Gradistea+de+Munte+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Costesti-Blidaru (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Costesti-Blidaru+(UNESCO)+Costesti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Costesti-Cetatuie (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Costesti-Cetatuie+(UNESCO)+Costesti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Piatra Rosie (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Piatra+Rosie+(UNESCO)+Alun+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Banita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Banita+(UNESCO)+Banita+Romania", category: "cetati_turnuri" },
-    { name: "Ulpia Traiana Sarmizegetusa", url: "https://www.google.com/maps/search/?api=1&query=Ulpia+Traiana+Sarmizegetusa+Sarmizegetusa+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Malaiesti", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Malaiesti+Malaiesti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Giurgiu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Giurgiu+Giurgiu+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Chilia Noua", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Chilia+Noua+Chilia+Veche+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Argamum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Argamum+Jurilovca+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Ibida", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ibida+Slava+Rusa+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Noviodunum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Noviodunum+Isaccea+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Dinogetia", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Dinogetia+Garvan+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Histria", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Histria+Istria+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Capidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Capidava+Topalu+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Carsium", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Carsium+Harsova+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Callatis", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Callatis+Mangalia+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Tomis", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Tomis+Constanta+Romania", category: "cetati_turnuri" },
-    { name: "Tropaeum Traiani", url: "https://www.google.com/maps/search/?api=1&query=Tropaeum+Traiani+Adamclisi+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Sacidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sacidava+Alimanesti+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Sucidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sucidava+Celeiu+Romania", category: "cetati_turnuri" },
-    { name: "Cetatea Turnu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Turnu+Turnu+Magurele+Romania", category: "cetati_turnuri" },
-    { name: "Curtea Domneasca din Targoviste (Turnul Chindiei)", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Targoviste+(Turnul+Chindiei)+Targoviste+Romania", category: "cetati_turnuri" },
-    { name: "Curtea Domneasca din Suceava", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Suceava+Suceava+Romania", category: "cetati_turnuri" },
-    { name: "Curtea Domneasca din Piatra Neamt", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Piatra+Neamt+Piatra+Neamt+Romania", category: "cetati_turnuri" },
-    { name: "Curtea Veche", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Veche+Bucuresti+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Sfatului", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Sfatului+Sibiu+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Dulgherilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Dulgherilor+Sibiu+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Olarilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Olarilor+Sibiu+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Pompierilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Pompierilor+Cluj-Napoca+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Croitorilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Croitorilor+Cluj-Napoca+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Alb", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Alb+Brasov+Romania", category: "cetati_turnuri" },
-    { name: "Turnul Negru", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Negru+Brasov+Romania", category: "cetati_turnuri" },
-    { name: "Bastionul Tesatorilor", url: "https://www.google.com/maps/search/?api=1&query=Bastionul+Tesatorilor+Brasov+Romania", category: "cetati_turnuri" },
-    { name: "Cetatuia de pe Straja", url: "https://www.google.com/maps/search/?api=1&query=Cetatuia+de+pe+Straja+Brasov+Romania", category: "cetati_turnuri" },
-    { name: "Cetatuia Clujului", url: "https://www.google.com/maps/search/?api=1&query=Cetatuia+Clujului+Cluj-Napoca+Romania", category: "cetati_turnuri" },
-    { name: "Manastirea Sucevita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sucevita+(UNESCO)+Sucevita+Romania", category: "manastiri" },
-    { name: "Manastirea Moldovita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Moldovita+(UNESCO)+Vatra+Moldovitei+Romania", category: "manastiri" },
-    { name: "Manastirea Humor (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Humor+(UNESCO)+Manastirea+Humorului+Romania", category: "manastiri" },
-    { name: "Manastirea Arbore (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Arbore+(UNESCO)+Arbore+Romania", category: "manastiri" },
-    { name: "Manastirea Patrauti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Patrauti+(UNESCO)+Patrauti+Romania", category: "manastiri" },
-    { name: "Manastirea Putna", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Putna+Putna+Romania", category: "manastiri" },
-    { name: "Manastirea Dragomirna", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dragomirna+Mitocu+Dragomirnei+Romania", category: "manastiri" },
-    { name: "Manastirea Bogdana", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bogdana+Radauti+Romania", category: "manastiri" },
-    { name: "Manastirea Risca", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Risca+Risca+Romania", category: "manastiri" },
-    { name: "Manastirea Slatina", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Slatina+Slatina+Romania", category: "manastiri" },
-    { name: "Manastirea Agapia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Agapia+Agapia+Romania", category: "manastiri" },
-    { name: "Manastirea Varatec", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Varatec+Varatec+Romania", category: "manastiri" },
-    { name: "Manastirea Secu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Secu+Vanatori-Neamt+Romania", category: "manastiri" },
-    { name: "Manastirea Sihastria", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sihastria+Vanatori-Neamt+Romania", category: "manastiri" },
-    { name: "Manastirea Bistrita Alexandru cel Bun", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bistrita+Alexandru+cel+Bun+Alexandru+cel+Bun+Romania", category: "manastiri" },
-    { name: "Manastirea Durau", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Durau+Ceahlau+Romania", category: "manastiri" },
-    { name: "Manastirea Pangarati", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pangarati+Pangarati+Romania", category: "manastiri" },
-    { name: "Manastirea Tazlau", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Tazlau+Tazlau+Romania", category: "manastiri" },
-    { name: "Manastirea Horezu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Horezu+(UNESCO)+Horezu+Romania", category: "manastiri" },
-    { name: "Manastirea Cozia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cozia+Calimanesti+Romania", category: "manastiri" },
-    { name: "Manastirea Dintr-un Lemn", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dintr-un+Lemn+Francesti+Romania", category: "manastiri" },
-    { name: "Manastirea Govora", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Govora+Mihaesti+Romania", category: "manastiri" },
-    { name: "Manastirea Bistrita Costesti", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bistrita+Costesti+Costesti+Romania", category: "manastiri" },
-    { name: "Manastirea Arnota", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Arnota+Costesti+Romania", category: "manastiri" },
-    { name: "Manastirea Turnu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Turnu+Calimanesti+Romania", category: "manastiri" },
-    { name: "Manastirea Stanisora", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Stanisora+Calimanesti+Romania", category: "manastiri" },
-    { name: "Manastirea Curtea de Arges", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Curtea+de+Arges+Curtea+de+Arges+Romania", category: "manastiri" },
-    { name: "Manastirea Aninoasa", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Aninoasa+Aninoasa+Romania", category: "manastiri" },
-    { name: "Manastirea Slanic", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Slanic+Aninoasa+Romania", category: "manastiri" },
-    { name: "Manastirea Robaia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Robaia+Musatesti+Romania", category: "manastiri" },
-    { name: "Manastirea Namaesti (Rupestra)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Namaesti+(Rupestra)+Namaesti+Romania", category: "manastiri" },
-    { name: "Manastirea Corbii de Piatra (Rupestra)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Corbii+de+Piatra+(Rupestra)+Corbi+Romania", category: "manastiri" },
-    { name: "Manastirea Cetatuia Negru Voda", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cetatuia+Negru+Voda+Cetateni+Romania", category: "manastiri" },
-    { name: "Manastirea Tismana", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Tismana+Tismana+Romania", category: "manastiri" },
-    { name: "Manastirea Polovragi", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Polovragi+Polovragi+Romania", category: "manastiri" },
-    { name: "Manastirea Lainici", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Lainici+Schela+Romania", category: "manastiri" },
-    { name: "Manastirea Crasna Gorj", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crasna+Gorj+Crasna+Romania", category: "manastiri" },
-    { name: "Manastirea Barsana (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Barsana+(UNESCO)+Barsana+Romania", category: "manastiri" },
-    { name: "Manastirea Peri-Sapanta", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Peri-Sapanta+Sapanta+Romania", category: "manastiri" },
-    { name: "Manastirea Rohia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Rohia+Targu+Lapus+Romania", category: "manastiri" },
-    { name: "Manastirea Moisei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Moisei+Moisei+Romania", category: "manastiri" },
-    { name: "Biserica Ieud Deal (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Ieud+Deal+(UNESCO)+Ieud+Romania", category: "manastiri" },
-    { name: "Biserica Poienile Izei (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Poienile+Izei+(UNESCO)+Poienile+Izei+Romania", category: "manastiri" },
-    { name: "Biserica Surdesti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Surdesti+(UNESCO)+Sisesti+Romania", category: "manastiri" },
-    { name: "Biserica Plopis (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Plopis+(UNESCO)+Sisesti+Romania", category: "manastiri" },
-    { name: "Biserica Desesti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Desesti+(UNESCO)+Desesti+Romania", category: "manastiri" },
-    { name: "Biserica Budesti Josani (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Budesti+Josani+(UNESCO)+Budesti+Romania", category: "manastiri" },
-    { name: "Manastirea Nicula", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Nicula+Nicula+Romania", category: "manastiri" },
-    { name: "Manastirea Ramet", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ramet+Ramet+Romania", category: "manastiri" },
-    { name: "Manastirea Prislop", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Prislop+Silvasu+de+Sus+Romania", category: "manastiri" },
-    { name: "Manastirea Crisan", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crisan+Crisan+Romania", category: "manastiri" },
-    { name: "Manastirea Bodrog (Hodos-Bodrog)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bodrog+(Hodos-Bodrog)+Bodrogu+Nou+Romania", category: "manastiri" },
-    { name: "Manastirea Radna (Maria Radna)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Radna+(Maria+Radna)+Lipova+Romania", category: "manastiri" },
-    { name: "Manastirea Sfanta Maria", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sfanta+Maria+Techirghiol+Romania", category: "manastiri" },
-    { name: "Manastirea Dervent", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dervent+Galita+Romania", category: "manastiri" },
-    { name: "Manastirea Pestera Sfantului Andrei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pestera+Sfantului+Andrei+Ion+Corvin+Romania", category: "manastiri" },
-    { name: "Manastirea Celic-Dere", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Celic-Dere+Frecatei+Romania", category: "manastiri" },
-    { name: "Manastirea Saon", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Saon+Frecatei+Romania", category: "manastiri" },
-    { name: "Manastirea Cocos", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cocos+Niculitel+Romania", category: "manastiri" },
-    { name: "Manastirea Cernica", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cernica+Pantelimon+Romania", category: "manastiri" },
-    { name: "Manastirea Pasarea", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pasarea+Branesti+Romania", category: "manastiri" },
-    { name: "Manastirea Caldarusani", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Caldarusani+Gruiu+Romania", category: "manastiri" },
-    { name: "Manastirea Snagov", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Snagov+Snagov+Romania", category: "manastiri" },
-    { name: "Manastirea Caraiman", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Caraiman+Busteni+Romania", category: "manastiri" },
-    { name: "Manastirea Ghighiu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ghighiu+Barcanesti+Romania", category: "manastiri" },
-    { name: "Manastirea Sinaia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sinaia+Sinaia+Romania", category: "manastiri" },
-    { name: "Manastirea Zamfira", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Zamfira+Lipanesti+Romania", category: "manastiri" },
-    { name: "Manastirea Crasna Prahova", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crasna+Prahova+Crasna+Romania", category: "manastiri" },
-    { name: "Manastirea Ciolanu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ciolanu+Tisau+Romania", category: "manastiri" },
-    { name: "Manastirea Frasinei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Frasinei+Muereasca+Romania", category: "manastiri" },
-    { name: "Biserica Neagra", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Neagra+Brasov+Romania", category: "manastiri" },
-    { name: "Biserica Sfantul Nicolae", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfantul+Nicolae+Brasov+Romania", category: "manastiri" },
-    { name: "Catedrala Evanghelica Ciriac", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Evanghelica+Ciriac+Sibiu+Romania", category: "manastiri" },
-    { name: "Catedrala Mitopolitana Ortodoxa", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitopolitana+Ortodoxa+Sibiu+Romania", category: "manastiri" },
-    { name: "Biserica Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfantul+Mihail+Cluj-Napoca+Romania", category: "manastiri" },
-    { name: "Catedrala Mitropolitana Ortodoxa", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Ortodoxa+Cluj-Napoca+Romania", category: "manastiri" },
-    { name: "Catedrala Romano-Catolica Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Romano-Catolica+Sfantul+Mihail+Alba+Iulia+Romania", category: "manastiri" },
-    { name: "Catedrala Incoronarii", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Incoronarii+Alba+Iulia+Romania", category: "manastiri" },
-    { name: "Catedrala Mitropolitana Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Timisoara+Timisoara+Romania", category: "manastiri" },
-    { name: "Catedrala Mitropolitana Iasi", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Iasi+Iasi+Romania", category: "manastiri" },
-    { name: "Biserica Fortificata Viscri (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Viscri+(UNESCO)+Viscri+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Prejmer (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Prejmer+(UNESCO)+Prejmer+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Biertan (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Biertan+(UNESCO)+Biertan+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Saschiz (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Saschiz+(UNESCO)+Saschiz+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Darjiu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Darjiu+(UNESCO)+Darjiu+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Calnic (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Calnic+(UNESCO)+Calnic+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Valea Viilor (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Valea+Viilor+(UNESCO)+Valea+Viilor+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Harman", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Harman+Harman+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Cristian Brasov", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cristian+Brasov+Cristian+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Codlea", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Codlea+Codlea+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Bod", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bod+Bod+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Vulcan", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Vulcan+Vulcan+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Sanpetru", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Sanpetru+Sanpetru+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Cisnadioara", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cisnadioara+Cisnadioara+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Cisnadie", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cisnadie+Cisnadie+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Cristian Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cristian+Sibiu+Cristian+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Axente Sever", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Axente+Sever+Axente+Sever+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Medias (Castelul Margarete)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Medias+(Castelul+Margarete)+Medias+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Agnita", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Agnita+Agnita+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Moardas", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Moardas+Moardas+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Richis", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Richis+Richis+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Alma Vii", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Alma+Vii+Alma+Vii+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Bazna", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bazna+Bazna+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Hosman", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Hosman+Hosman+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Dealu Frumos", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Dealu+Frumos+Dealu+Frumos+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Stejarisu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Stejarisu+Stejarisu+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Iacobeni", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Iacobeni+Iacobeni+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Carta (Abatia Cisterciana)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Carta+(Abatia+Cisterciana)+Carta+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Apold", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Apold+Apold+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Archita", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Archita+Archita+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Cloasterf", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cloasterf+Cloasterf+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Danes", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Danes+Danes+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Nades", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Nades+Nades+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Bagaciu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bagaciu+Bagaciu+Romania", category: "biserici_cimitire" },
-    { name: "Biserica Fortificata Aiud", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Aiud+Aiud+Romania", category: "biserici_cimitire" },
-    { name: "Cimitirul Vesel", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Vesel+Sapanta+Romania", category: "biserici_cimitire" },
-    { name: "Cimitirul Central (Hajongard)", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Central+(Hajongard)+Cluj-Napoca+Romania", category: "biserici_cimitire" },
-    { name: "Cimitirul Bellu", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Bellu+Bucuresti+Romania", category: "biserici_cimitire" },
-    { name: "Cimitirul Evreiesc", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Evreiesc+Siret+Romania", category: "biserici_cimitire" },
-    { name: "Cimitirul International al Eroilor", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+International+al+Eroilor+Valea+Uzului+Romania", category: "biserici_cimitire" },
-    { name: "Sfinxul si Babele", url: "https://www.google.com/maps/search/?api=1&query=Sfinxul+si+Babele+Muntii+Bucegi+Romania", category: "natura" },
-    { name: "Pestera Scarisoara (Ghetarul)", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Scarisoara+(Ghetarul)+Garda+de+Sus+Romania", category: "natura" },
-    { name: "Pestera Ursilor", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ursilor+Chiscau+Romania", category: "natura" },
-    { name: "Pestera Muierilor", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Muierilor+Baia+de+Fier+Romania", category: "natura" },
-    { name: "Pestera Polovragi", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Polovragi+Polovragi+Romania", category: "natura" },
-    { name: "Pestera Dambovicioara", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Dambovicioara+Dambovicioara+Romania", category: "natura" },
-    { name: "Pestera Meziad", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Meziad+Meziad+Romania", category: "natura" },
-    { name: "Pestera Vantului", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Vantului+Suncuius+Romania", category: "natura" },
-    { name: "Pestera Crystal din Mina Farcu", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Crystal+din+Mina+Farcu+Rosia+Romania", category: "natura" },
-    { name: "Pestera Limanu", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Limanu+Limanu+Romania", category: "natura" },
-    { name: "Pestera Hodos (Gura Dobrogei)", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Hodos+(Gura+Dobrogei)+Targusor+Romania", category: "natura" },
-    { name: "Pestera Sfantului Ioan Casian", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Sfantului+Ioan+Casian+Targusor+Romania", category: "natura" },
-    { name: "Pestera Ialomitei", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ialomitei+Moroeni+Romania", category: "natura" },
-    { name: "Pestera Bolii", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Bolii+Petrosani+Romania", category: "natura" },
-    { name: "Pestera Comarnic", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Comarnic+Carasova+Romania", category: "natura" },
-    { name: "Pestera Popovât", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Popov%C3%A2t+Carasova+Romania", category: "natura" },
-    { name: "Pestera Veterani", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Veterani+Dubova+Romania", category: "natura" },
-    { name: "Pestera Ponicova", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ponicova+Dubova+Romania", category: "natura" },
-    { name: "Pestera Topolnita", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Topolnita+Ciresu+Romania", category: "natura" },
-    { name: "Pestera Sugau", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Sugau+Voslabeni+Romania", category: "natura" },
-    { name: "Pestera Valea Cetatii", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Valea+Cetatii+Rasnov+Romania", category: "natura" },
-    { name: "Vulcanii Noroiosi (Paclele Mari si Mici)", url: "https://www.google.com/maps/search/?api=1&query=Vulcanii+Noroiosi+(Paclele+Mari+si+Mici)+Berca+Romania", category: "natura" },
-    { name: "Gradina Zmeilor", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Zmeilor+Galgau+Almasului+Romania", category: "natura" },
-    { name: "Detunatele (Detunata Goala si Detunata Flocoasa)", url: "https://www.google.com/maps/search/?api=1&query=Detunatele+(Detunata+Goala+si+Detunata+Flocoasa)+Bucium+Romania", category: "natura" },
-    { name: "Rapa Rosie", url: "https://www.google.com/maps/search/?api=1&query=Rapa+Rosie+Sebes+Romania", category: "natura" },
-    { name: "Cheile Turzii", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Turzii+Petrestii+de+Jos+Romania", category: "natura" },
-    { name: "Cheile Bicazului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Bicazului+Bicaz-Chei+Romania", category: "natura" },
-    { name: "Cheile Nerei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Nerei+Sasca+Montana+Romania", category: "natura" },
-    { name: "Cheile Carasului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Carasului+Carasova+Romania", category: "natura" },
-    { name: "Cheile Sohodolului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Sohodolului+Runcu+Romania", category: "natura" },
-    { name: "Cheile Oltetului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Oltetului+Polovragi+Romania", category: "natura" },
-    { name: "Cheile Tisitei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Tisitei+Tulnici+Romania", category: "natura" },
-    { name: "Cheile Zanoagei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Zanoagei+Moroeni+Romania", category: "natura" },
-    { name: "Cheile Rametului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Rametului+Ramet+Romania", category: "natura" },
-    { name: "Cheile Gradistei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Gradistei+Moieciu+Romania", category: "natura" },
-    { name: "Cheile Rasnoavei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Rasnoavei+Rasnov+Romania", category: "natura" },
-    { name: "Cascada Bigar", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Bigar+Bozovici+Romania", category: "natura" },
-    { name: "Cascada Cailor", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Cailor+Borsa+Romania", category: "natura" },
-    { name: "Cascada Beusnita", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Beusnita+Sasca+Montana+Romania", category: "natura" },
-    { name: "Cascada Duruitoarea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Duruitoarea+Ceahlau+Romania", category: "natura" },
-    { name: "Cascada Balea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Balea+Cartisoara+Romania", category: "natura" },
-    { name: "Cascada Valul Miresei", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Valul+Miresei+Rachitele+Romania", category: "natura" },
-    { name: "Cascada Urlatoarea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Urlatoarea+Busteni+Romania", category: "natura" },
-    { name: "Cascada Putnei", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Putnei+Tulnici+Romania", category: "natura" },
-    { name: "Cascada Lotrisor", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Lotrisor+Calimanesti+Romania", category: "natura" },
-    { name: "Cascada Scorus", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Scorus+Malaia+Romania", category: "natura" },
-    { name: "Cascada Ciucas", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Ciucas+Mihai+Viteazu+Romania", category: "natura" },
-    { name: "Lacul Rosu", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Rosu+Lacu+Rosu+Romania", category: "natura" },
-    { name: "Lacul Sfanta Ana", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Sfanta+Ana+Bixad+Romania", category: "natura" },
-    { name: "Lacul Bâlea", url: "https://www.google.com/maps/search/?api=1&query=Lacul+B%C3%A2lea+Cartisoara+Romania", category: "natura" },
-    { name: "Lacul Bucura", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Bucura+Muntii+Retezat+Romania", category: "natura" },
-    { name: "Lacul Zanoaga", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Zanoaga+Muntii+Retezat+Romania", category: "natura" },
-    { name: "Lacul Ochiul Beiului", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Ochiul+Beiului+Sasca+Montana+Romania", category: "natura" },
-    { name: "Lacul Dracului", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Dracului+Carbunari+Romania", category: "natura" },
-    { name: "Lacul Vidraru", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Vidraru+Arefu+Romania", category: "natura" },
-    { name: "Lacul Izvorul Muntelui (Bicaz)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Izvorul+Muntelui+(Bicaz)+Bicaz+Romania", category: "natura" },
-    { name: "Lacul Colibita", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Colibita+Colibita+Romania", category: "natura" },
-    { name: "Lacul Iezer", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iezer+Muntii+Rodnei+Romania", category: "natura" },
-    { name: "Lacul Albastru", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Albastru+Baia+Sprie+Romania", category: "natura" },
-    { name: "Lacul Siriu", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Siriu+Siriu+Romania", category: "natura" },
-    { name: "Lacul Razim-Sinoe", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Razim-Sinoe+Jurilovca+Romania", category: "natura" },
-    { name: "Focul Viu de la Andreiasu de Jos", url: "https://www.google.com/maps/search/?api=1&query=Focul+Viu+de+la+Andreiasu+de+Jos+Andreiasu+de+Jos+Romania", category: "natura" },
-    { name: "Focurile Vii de la Lopatari", url: "https://www.google.com/maps/search/?api=1&query=Focurile+Vii+de+la+Lopatari+Lopatari+Romania", category: "natura" },
-    { name: "Cazanele Dunarii (Mari si Mici)", url: "https://www.google.com/maps/search/?api=1&query=Cazanele+Dunarii+(Mari+si+Mici)+Dubova+Romania", category: "natura" },
-    { name: "Chipul lui Decebal", url: "https://www.google.com/maps/search/?api=1&query=Chipul+lui+Decebal+Dubova+Romania", category: "natura" },
-    { name: "Podul lui Dumnezeu", url: "https://www.google.com/maps/search/?api=1&query=Podul+lui+Dumnezeu+Ponoarele+Romania", category: "natura" },
-    { name: "Padurea Letea", url: "https://www.google.com/maps/search/?api=1&query=Padurea+Letea+C.A.+Rosetti+Romania", category: "natura" },
-    { name: "Padurea Caraorman", url: "https://www.google.com/maps/search/?api=1&query=Padurea+Caraorman+Crisan+Romania", category: "natura" },
-    { name: "Gradina Botanica „Alexandru Borza”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EAlexandru+Borza%E2%80%9D+Cluj-Napoca+Romania", category: "natura" },
-    { name: "Gradina Botanica „Anastasie Fatu”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EAnastasie+Fatu%E2%80%9D+Iasi+Romania", category: "natura" },
-    { name: "Gradina Botanica „Dimitrie Brândza”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EDimitrie+Br%C3%A2ndza%E2%80%9D+Bucuresti+Romania", category: "natura" },
-    { name: "Gradina Botanica Jibou", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+Jibou+Jibou+Romania", category: "natura" },
-    { name: "Gradina Botanica Bucov", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+Bucov+Bucov+Romania", category: "natura" },
-    { name: "Delta Dunarii (Rezervatie Biosfera)", url: "https://www.google.com/maps/search/?api=1&query=Delta+Dunarii+(Rezervatie+Biosfera)+Judetul+Tulcea+Romania", category: "natura" },
-    { name: "Parcul National Retezat", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Retezat+Judetul+Hunedoara+Romania", category: "natura" },
-    { name: "Parcul National Piatra Craiului", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Piatra+Craiului+Zarnesti+Romania", category: "natura" },
-    { name: "Parcul National Cheile Nerei-Beusnita", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Cheile+Nerei-Beusnita+Judetul+Caras-Severin+Romania", category: "natura" },
-    { name: "Parcul National Ceahlau", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Ceahlau+Izvoru+Muntelui+Romania", category: "natura" },
-    { name: "Parcul National Cozia", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Cozia+Brezoi+Romania", category: "natura" },
-    { name: "Sfinxul din Banat", url: "https://www.google.com/maps/search/?api=1&query=Sfinxul+din+Banat+Toplet+Romania", category: "natura" },
-    { name: "Transfagarasan (Soseaua DN7C)", url: "https://www.google.com/maps/search/?api=1&query=Transfagarasan+(Soseaua+DN7C)+Judetele+Arges+%2F+Sibiu+Romania", category: "infrastructura" },
-    { name: "Transalpina (Soseaua DN67C)", url: "https://www.google.com/maps/search/?api=1&query=Transalpina+(Soseaua+DN67C)+Judetele+Gorj+%2F+Alba+Romania", category: "infrastructura" },
-    { name: "Transbucegi (Soseaua DJ713)", url: "https://www.google.com/maps/search/?api=1&query=Transbucegi+(Soseaua+DJ713)+Judetele+Dambovita+%2F+Prahova+Romania", category: "infrastructura" },
-    { name: "Transrarau (Soseaua DJ175B)", url: "https://www.google.com/maps/search/?api=1&query=Transrarau+(Soseaua+DJ175B)+Pojorata+%2F+Chiril+Romania", category: "infrastructura" },
-    { name: "Transursoaia (Soseaua DN1R)", url: "https://www.google.com/maps/search/?api=1&query=Transursoaia+(Soseaua+DN1R)+Albac+%2F+Huedin+Romania", category: "infrastructura" },
-    { name: "Transsemenic (Soseaua DJ582)", url: "https://www.google.com/maps/search/?api=1&query=Transsemenic+(Soseaua+DJ582)+Slatina-Timis+%2F+Resita+Romania", category: "infrastructura" },
-    { name: "Pasul Tihuta", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Tihuta+Piatra+Fantanele+Romania", category: "infrastructura" },
-    { name: "Pasul Prislop", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Prislop+Borsa+Romania", category: "infrastructura" },
-    { name: "Mocanita de pe Valea Vaserului", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+de+pe+Valea+Vaserului+Viseu+de+Sus+Romania", category: "infrastructura" },
-    { name: "Mocanita Hutulca", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+Hutulca+Moldovita+Romania", category: "infrastructura" },
-    { name: "Mocanita Apusenilor", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+Apusenilor+Abrud+Romania", category: "infrastructura" },
-    { name: "Calea Ferata Oravita-Anina", url: "https://www.google.com/maps/search/?api=1&query=Calea+Ferata+Oravita-Anina+Oravita+Romania", category: "infrastructura" },
-    { name: "Podul Anghel Saligny", url: "https://www.google.com/maps/search/?api=1&query=Podul+Anghel+Saligny+Cernavoda+Romania", category: "infrastructura" },
-    { name: "Canalul Dunare-Marea Neagra", url: "https://www.google.com/maps/search/?api=1&query=Canalul+Dunare-Marea+Neagra+Judetul+Constanta+Romania", category: "infrastructura" },
-    { name: "Barajul Vidraru", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Vidraru+Arefu+Romania", category: "infrastructura" },
-    { name: "Barajul Bicaz", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Bicaz+Bicaz+Romania", category: "infrastructura" },
-    { name: "Barajul Portile de Fier I", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Portile+de+Fier+I+Drobeta-Turnu+Severin+Romania", category: "infrastructura" },
-    { name: "Barajul Gura Apelor", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Gura+Apelor+Muntii+Retezat+Romania", category: "infrastructura" },
-    { name: "Barajul Paltinu", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Paltinu+Valea+Doftanei+Romania", category: "infrastructura" },
-    { name: "Barajul Bolboci", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Bolboci+Moroeni+Romania", category: "infrastructura" },
-    { name: "Salina Ocnele Mari", url: "https://www.google.com/maps/search/?api=1&query=Salina+Ocnele+Mari+Ocnele+Mari+Romania", category: "infrastructura" },
-    { name: "Salina Cacica", url: "https://www.google.com/maps/search/?api=1&query=Salina+Cacica+Cacica+Romania", category: "infrastructura" },
-    { name: "Telegondola Mamaia", url: "https://www.google.com/maps/search/?api=1&query=Telegondola+Mamaia+Mamaia+Romania", category: "infrastructura" },
-    { name: "Telecabina Bâlea Lac", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+B%C3%A2lea+Lac+Cartisoara+Romania", category: "infrastructura" },
-    { name: "Telecabina Busteni-Babele", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Busteni-Babele+Busteni+Romania", category: "infrastructura" },
-    { name: "Telecabina Sinaia", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Sinaia+Sinaia+Romania", category: "infrastructura" },
-    { name: "Funicularul din Resita", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Resita+Resita+Romania", category: "infrastructura" },
-    { name: "Portul Turistic Tomis", url: "https://www.google.com/maps/search/?api=1&query=Portul+Turistic+Tomis+Constanta+Romania", category: "infrastructura" },
-    { name: "Faleza Dunarii Galati", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Dunarii+Galati+Galati+Romania", category: "infrastructura" },
-    { name: "Faleza Dunarii Braila", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Dunarii+Braila+Braila+Romania", category: "infrastructura" },
-    { name: "Muzeul Recordurilor Romanesti", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Recordurilor+Romanesti+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National al Hartilor si Cartii Vechi", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Hartilor+si+Cartii+Vechi+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National de Artă Contemporana (MNAC)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+de+Art%C4%83+Contemporana+(MNAC)+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National al Literaturii Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Literaturii+Romane+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National Filatelic", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+Filatelic+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Municipiului Bucuresti (Palatul Sutu)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Municipiului+Bucuresti+(Palatul+Sutu)+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National Tehnic „Dimitrie Leonida”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+Tehnic+%E2%80%9EDimitrie+Leonida%E2%80%9D+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National al Aviatiei Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Aviatiei+Romane+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Cailor Ferate Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cailor+Ferate+Romane+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Kitsch-ului Romanesc", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Kitsch-ului+Romanesc+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul National „George Enescu”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+%E2%80%9EGeorge+Enescu%E2%80%9D+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Theodor Pallady", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Theodor+Pallady+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Zambaccian", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Zambaccian+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul de Arta „Vasile Grigore”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+%E2%80%9EVasile+Grigore%E2%80%9D+Bucuresti+Romania", category: "muzee" },
-    { name: "Casa Memoriala „Tudor Arghezi", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memoriala+%E2%80%9ETudor+Arghezi+Martisor%E2%80%9D+%E2%80%93+Bucuresti+Romania", category: "muzee" },
-    { name: "Muzeul Satului Maramuresean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Maramuresean+Sighetu+Marmatiei+Romania", category: "muzee" },
-    { name: "Muzeul Satului Banatean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Banatean+Timisoara+Romania", category: "muzee" },
-    { name: "Muzeul Satului Bucovinean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Bucovinean+Suceava+Romania", category: "muzee" },
-    { name: "Muzeul ASTRA (Civilizatiei Populare Traditionale)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+ASTRA+(Civilizatiei+Populare+Traditionale)+Sibiu+Romania", category: "muzee" },
-    { name: "Muzeul Etnografic al Transilvaniei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Etnografic+al+Transilvaniei+Cluj-Napoca+Romania", category: "muzee" },
-    { name: "Muzeul Tarii Crisurilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Tarii+Crisurilor+Oradea+Romania", category: "muzee" },
-    { name: "Muzeul Regiunii Portilor de Fier", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regiunii+Portilor+de+Fier+Drobeta-Turnu+Severin+Romania", category: "muzee" },
-    { name: "Muzeul Olteniei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Olteniei+Craiova+Romania", category: "muzee" },
-    { name: "Muzeul Ceasului „Nicolae Simache”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ceasului+%E2%80%9ENicolae+Simache%E2%80%9D+Ploiesti+Romania", category: "muzee" },
-    { name: "Muzeul National al Petrolului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Petrolului+Ploiesti+Romania", category: "muzee" },
-    { name: "Muzeul Judetean de Istorie si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Judetean+de+Istorie+si+Arheologie+Prahova+Romania", category: "muzee" },
-    { name: "Muzeul Chihlimbarului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Chihlimbarului+Colti+Romania", category: "muzee" },
-    { name: "Muzeul National al Carpatilor Rasariteni", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Carpatilor+Rasariteni+Sf%C3%A2ntu+Gheorghe+Romania", category: "muzee" },
-    { name: "Muzeul Secuiesc al Ciucului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Secuiesc+al+Ciucului+Miercurea+Ciuc+Romania", category: "muzee" },
-    { name: "Muzeul de Arta Comparata", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+Comparata+S%C3%A2ngeorz-Bai+Romania", category: "muzee" },
-    { name: "Muzeul Memorial „Octavian Goga”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Memorial+%E2%80%9EOctavian+Goga%E2%80%9D+Ciucea+Romania", category: "muzee" },
-    { name: "Muzeul Memorial „Ioan Slavici si Emil Montia”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Memorial+%E2%80%9EIoan+Slavici+si+Emil+Montia%E2%80%9D+Siria+Romania", category: "muzee" },
-    { name: "Muzeul Aurului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Aurului+Brad+Romania", category: "muzee" },
-    { name: "Muzeul Mineritului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mineritului+Petrosani+Romania", category: "muzee" },
-    { name: "Muzeul Judetean de Istorie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Judetean+de+Istorie+Brasov+Romania", category: "muzee" },
-    { name: "Muzeul Casa Muresenilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Casa+Muresenilor+Brasov+Romania", category: "muzee" },
-    { name: "Muzeul Primei Scoli Romanesti", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Primei+Scoli+Romanesti+Brasov+Romania", category: "muzee" },
-    { name: "Muzeul National al Unirii", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Unirii+Alba+Iulia+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie a Farmaciei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Farmaciei+Sibiu+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie Naturala", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturala+Sibiu+Romania", category: "muzee" },
-    { name: "Muzeul Cinegetic", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cinegetic+Posada+Romania", category: "muzee" },
-    { name: "Muzeul Etnografic Samuil si Eugenia Ionel", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Etnografic+Samuil+si+Eugenia+Ionel+Radauti+Romania", category: "muzee" },
-    { name: "Muzeul Oului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Oului+Vama+Romania", category: "muzee" },
-    { name: "Muzeul Oului Încondeiat Lucia Condrea", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Oului+%C3%8Encondeiat+Lucia+Condrea+Moldovita+Romania", category: "muzee" },
-    { name: "Muzeul Arta Lemnului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arta+Lemnului+C%C3%A2mpulung+Moldovenesc+Romania", category: "muzee" },
-    { name: "Muzeul Apelor „Mihai Bacescu”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Apelor+%E2%80%9EMihai+Bacescu%E2%80%9D+Falticeni+Romania", category: "muzee" },
-    { name: "Muzeul Popa (Arta Naiva)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Popa+(Arta+Naiva)+Tarpesti+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie si Etnografie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+si+Etnografie+Targu+Neamt+Romania", category: "muzee" },
-    { name: "Muzeul Vasile Pârvan", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vasile+P%C3%A2rvan+B%C3%A2rlad+Romania", category: "muzee" },
-    { name: "Muzeul Municipal", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Municipal+Husi+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie „Paul Paltanea”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+%E2%80%9EPaul+Paltanea%E2%80%9D+Galati+Romania", category: "muzee" },
-    { name: "Muzeul de Stiinte ale Naturii", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Stiinte+ale+Naturii+Galati+Romania", category: "muzee" },
-    { name: "Muzeul Brailei „Carol I”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Brailei+%E2%80%9ECarol+I%E2%80%9D+Braila+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie Nationala si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Nationala+si+Arheologie+Constanta+Romania", category: "muzee" },
-    { name: "Muzeul de Arta Populara", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+Populara+Constanta+Romania", category: "muzee" },
-    { name: "Muzeul Marinei Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Marinei+Romane+Constanta+Romania", category: "muzee" },
-    { name: "Edificiul Roman cu Mozaic", url: "https://www.google.com/maps/search/?api=1&query=Edificiul+Roman+cu+Mozaic+Constanta+Romania", category: "muzee" },
-    { name: "Muzeul Farului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Farului+Sulina+Romania", category: "muzee" },
-    { name: "Centrul Eco-Turism Delta Dunarii", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Eco-Turism+Delta+Dunarii+Tulcea+Romania", category: "muzee" },
-    { name: "Muzeul de Istorie si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+si+Arheologie+Tulcea+Romania", category: "muzee" },
-    { name: "Ateneul Roman", url: "https://www.google.com/maps/search/?api=1&query=Ateneul+Roman+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Arcul de Triumf", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Cazinoul din Constanta", url: "https://www.google.com/maps/search/?api=1&query=Cazinoul+din+Constanta+Constanta+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National „Vasile Alecsandri”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EVasile+Alecsandri%E2%80%9D+Iasi+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National „Mihai Eminescu”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EMihai+Eminescu%E2%80%9D+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National „Radu Stanca”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9ERadu+Stanca%E2%80%9D+Sibiu+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National Targu Mures", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+Targu+Mures+Targu+Mures+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul National „Marin Sorescu”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EMarin+Sorescu%E2%80%9D+Craiova+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul Clasic „Ioan Slavici”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Clasic+%E2%80%9EIoan+Slavici%E2%80%9D+Arad+Romania", category: "cladiri_teatre" },
-    { name: "Teatrul de Stat", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+de+Stat+Oradea+Romania", category: "cladiri_teatre" },
-    { name: "Opera Nationala Bucuresti", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Bucuresti+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Opera Nationala Romana Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" },
-    { name: "Opera Nationala Romana Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Timisoara+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Opera Nationala Romana Iasi", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Iasi+Iasi+Romania", category: "cladiri_teatre" },
-    { name: "Piata Sfatului", url: "https://www.google.com/maps/search/?api=1&query=Piata+Sfatului+Brasov+Romania", category: "cladiri_teatre" },
-    { name: "Piata Mare", url: "https://www.google.com/maps/search/?api=1&query=Piata+Mare+Sibiu+Romania", category: "cladiri_teatre" },
-    { name: "Piata Mica (Podul Minciunilor)", url: "https://www.google.com/maps/search/?api=1&query=Piata+Mica+(Podul+Minciunilor)+Sibiu+Romania", category: "cladiri_teatre" },
-    { name: "Piata Huet", url: "https://www.google.com/maps/search/?api=1&query=Piata+Huet+Sibiu+Romania", category: "cladiri_teatre" },
-    { name: "Piata Unirii Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" },
-    { name: "Piata Muzeului", url: "https://www.google.com/maps/search/?api=1&query=Piata+Muzeului+Cluj-Napoca+Romania", category: "cladiri_teatre" },
-    { name: "Piata Unirii Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Timisoara+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Piata Victoriei (Operei)", url: "https://www.google.com/maps/search/?api=1&query=Piata+Victoriei+(Operei)+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Piata Libertatii", url: "https://www.google.com/maps/search/?api=1&query=Piata+Libertatii+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Piata Unirii Oradea", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Oradea+Oradea+Romania", category: "cladiri_teatre" },
-    { name: "Piata Avram Iancu", url: "https://www.google.com/maps/search/?api=1&query=Piata+Avram+Iancu+Arad+Romania", category: "cladiri_teatre" },
-    { name: "Piata Revolutiei", url: "https://www.google.com/maps/search/?api=1&query=Piata+Revolutiei+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Piata Universitatii", url: "https://www.google.com/maps/search/?api=1&query=Piata+Universitatii+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Piata Unirii Iasi", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Iasi+Iasi+Romania", category: "cladiri_teatre" },
-    { name: "Cazinoul Vatra Dornei", url: "https://www.google.com/maps/search/?api=1&query=Cazinoul+Vatra+Dornei+Vatra+Dornei+Romania", category: "cladiri_teatre" },
-    { name: "Palatul Prefecturii", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prefecturii+Suceava+Romania", category: "cladiri_teatre" },
-    { name: "Palatul Comunal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Comunal+Buzau+Romania", category: "cladiri_teatre" },
-    { name: "Cladirea Universitatii", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Cladirea Universitatii „Alexandru Ioan Cuza”", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+%E2%80%9EAlexandru+Ioan+Cuza%E2%80%9D+Iasi+Romania", category: "cladiri_teatre" },
-    { name: "Cladirea Universitatii Babes-Bolyai", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+Babes-Bolyai+Cluj-Napoca+Romania", category: "cladiri_teatre" },
-    { name: "Palatul Culturii Ploiesti", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Ploiesti+Ploiesti+Romania", category: "cladiri_teatre" },
-    { name: "Complexul Monumental Memorial Drobeta", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Monumental+Memorial+Drobeta+Drobeta-Turnu+Severin+Romania", category: "cladiri_teatre" },
-    { name: "Monumentul Eroilor Patriei", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Eroilor+Patriei+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Crucea Eroilor de pe Vârful Caraiman", url: "https://www.google.com/maps/search/?api=1&query=Crucea+Eroilor+de+pe+V%C3%A2rful+Caraiman+Muntii+Bucegi+Romania", category: "cladiri_teatre" },
-    { name: "Mausoleul de la Marasesti", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Marasesti+Marasesti+Romania", category: "cladiri_teatre" },
-    { name: "Mausoleul de la Marasti", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Marasti+Marasti+Romania", category: "cladiri_teatre" },
-    { name: "Mausoleul de la Soveja", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Soveja+Soveja+Romania", category: "cladiri_teatre" },
-    { name: "Mausoleul Mateias", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+Mateias+Valea+Mare-Pravat+Romania", category: "cladiri_teatre" },
-    { name: "Memorialul Victimelor Comunismului si al Rezistentei", url: "https://www.google.com/maps/search/?api=1&query=Memorialul+Victimelor+Comunismului+si+al+Rezistentei+Sighetu+Marmatiei+Romania", category: "cladiri_teatre" },
-    { name: "Inchisoarea Pitesti (Memorial)", url: "https://www.google.com/maps/search/?api=1&query=Inchisoarea+Pitesti+(Memorial)+Pitesti+Romania", category: "cladiri_teatre" },
-    { name: "Inchisoarea Râmnicu Sărat (Memorial)", url: "https://www.google.com/maps/search/?api=1&query=Inchisoarea+R%C3%A2mnicu+S%C4%83rat+(Memorial)+R%C3%A2mnicu+S%C4%83rat+Romania", category: "cladiri_teatre" },
-    { name: "Monumentul Revolutiei", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Revolutiei+Timisoara+Romania", category: "cladiri_teatre" },
-    { name: "Farul Vechi", url: "https://www.google.com/maps/search/?api=1&query=Farul+Vechi+Sulina+Romania", category: "cladiri_teatre" },
-    { name: "Farul Genovez", url: "https://www.google.com/maps/search/?api=1&query=Farul+Genovez+Constanta+Romania", category: "cladiri_teatre" },
-    { name: "Moscheea Carol I", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Carol+I+Constanta+Romania", category: "cladiri_teatre" },
-    { name: "Sinagoga Mare Oradea", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Mare+Oradea+Oradea+Romania", category: "cladiri_teatre" },
-    { name: "Sinagoga din Sion", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+din+Sion+Oradea+Romania", category: "cladiri_teatre" },
-    { name: "Templul Coral", url: "https://www.google.com/maps/search/?api=1&query=Templul+Coral+Bucuresti+Romania", category: "cladiri_teatre" },
-    { name: "Sinagoga Mare Iasi", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Mare+Iasi+Iasi+Romania", category: "cladiri_teatre" },
-    { name: "Biserica de Piatra Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Biserica+de+Piatra+Sfantul+Mihail+Densus+Romania", category: "manastiri" },
-    { name: "Ansamblul Rupestru de la Murfatlar", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Rupestru+de+la+Murfatlar+Murfatlar+Romania", category: "manastiri" },
-    { name: "Complexul Rupestru Alunis", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Rupestru+Alunis+Colti+Romania", category: "manastiri" },
-    { name: "Rezervația de Zimbri „Dragos Voda”", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+%E2%80%9EDragos+Voda%E2%80%9D+V%C3%A2n%C4%83tori-Neamt+Romania", category: "natura" },
-    { name: "Rezervația de Zimbri Vama Buzaului", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+Vama+Buzaului+Vama+Buzaului+Romania", category: "natura" },
-    { name: "Rezervația de Zimbri „Neagra”", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+%E2%80%9ENeagra%E2%80%9D+Bucsani+Romania", category: "natura" },
+  ro: [    { name: "Castelul Bran", url: "https://bran-castle.com/" , category: "castele_palate" , city: "Bran" },
+    { name: "Castelul Peleș", url: "https://peles.ro/" , category: "castele_palate" , city: "Sinaia" },
+    { name: "Palatul Parlamentului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Parlamentului+Romania" , category: "castele_palate" , city: "București" },
+    { name: "Salina Turda", url: "https://www.salinaturda.eu/" , category: "infrastructura" , city: "Turda" },
+    { name: "Muzeul Antipa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Antipa+Romania" , category: "muzee" , city: "București" },
+    { name: "Therme București", url: "https://www.therme.ro/" , category: "parcuri_agrement" , city: "Balotesti" },
+    { name: "Dino Parc Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Dino+Parc+Râșnov+Romania" , category: "parcuri_agrement" , city: "Rasnov" },
+    { name: "Cetatea Alba Carolina", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Alba+Carolina+Romania" , category: "cetati_turnuri" , city: "Alba Iulia" },
+    { name: "Castelul Corvinilor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corvinilor+Romania" , category: "castele_palate" , city: "Hunedoara" },
+    { name: "Muzeul Satului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Romania" , category: "muzee" , city: "București" },
+    { name: "Cetatea Deva", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Deva+Romania" , category: "cetati_turnuri" , city: "Deva" },
+    { name: "Cetatea Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Râșnov+Romania" , category: "cetati_turnuri" , city: "Rasnov" },
+    { name: "Cetatea de Scaun a Sucevei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+de+Scaun+a+Sucevei+Romania" , category: "cetati_turnuri" , city: "Suceava" },
+    { name: "Salina Praid", url: "https://www.google.com/maps/search/?api=1&query=Salina+Praid+Romania" , category: "infrastructura" , city: "Praid" },
+    { name: "Ansamblul Sculptural Constantin Brâncuși", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Sculptural+Constantin+Brâncuși+Romania" , category: "cladiri_teatre" , city: "Târgu Jiu" },
+    { name: "Castelul Cantacuzino Bușteni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Cantacuzino+Bușteni+Romania" , category: "castele_palate" , city: "Busteni" },
+    { name: "Turnul cu Ceas și Cetatea Sighișoara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+și+Cetatea+Sighișoara+Romania" , category: "cetati_turnuri" , city: "Sighișoara" },
+    { name: "Cetatea Făgăraș", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Făgăraș+Romania" , category: "cetati_turnuri" , city: "Făgăraș" },
+    { name: "Muzeul Național Brukenthal Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Brukenthal+Sibiu+Romania" , category: "muzee" , city: "Sibiu" },
+    { name: "Palatul Culturii Iași", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Iași+Romania" , category: "castele_palate" , city: "Iași" },
+    { name: "Aquapark Nymphaea Oradea", url: "https://www.google.com/maps/search/?api=1&query=Aquapark+Nymphaea+Oradea+Romania" , category: "parcuri_agrement" , city: "Oradea" },
+    { name: "Muzeul Național al Țăranului Român", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+al+Țăranului+Român+Romania" , category: "muzee" , city: "București" },
+    { name: "Cetatea Neamț", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Neamț+Romania" , category: "cetati_turnuri" , city: "Targu Neamt" },
+    { name: "Castelul Sturdza Miclăușeni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sturdza+Miclăușeni+Romania" , category: "castele_palate" , city: "Miclauseni" },
+    { name: "Muzeul Național de Istorie a României", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Istorie+a+României+Romania" , category: "muzee" , city: "București" },
+    { name: "Libearty Bear Sanctuary Zărnești", url: "https://www.google.com/maps/search/?api=1&query=Libearty+Bear+Sanctuary+Zărnești+Romania" , category: "natura" , city: "Zarnesti" },
+    { name: "Palatul Mogoșoaia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Mogoșoaia+Romania" , category: "castele_palate" , city: "Mogosoaia" },
+    { name: "Cetatea Poenari", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Poenari+Romania" , category: "cetati_turnuri" , city: "Arefu" },
+    { name: "Catedrala Mântuirii Neamului", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mântuirii+Neamului+Romania" , category: "manastiri" , city: "București" },
+    { name: "Mănăstirea Voroneț", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Voroneț+Romania" , category: "manastiri" , city: "Gura Humorului" },
+    { name: "Palatul Brâncovenesc Sâmbăta de Sus", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Brâncovenesc+Sâmbăta+de+Sus+Romania" , category: "castele_palate" , city: "Sambata de Sus" },
+    { name: "MNAR București", url: "https://www.google.com/maps/search/?api=1&query=MNAR+București+Romania" , category: "muzee" , city: "București" },
+    { name: "Parc Aventura Brașov", url: "https://www.google.com/maps/search/?api=1&query=Parc+Aventura+Brașov+Romania" , category: "parcuri_agrement" , city: "Brașov" },
+    { name: "Planetariul Baia Mare", url: "https://www.google.com/maps/search/?api=1&query=Planetariul+Baia+Mare+Romania" , category: "muzee" , city: "Baia Mare" },
+    { name: "Complexul de Agrement Cheile Grădiștei", url: "https://www.google.com/maps/search/?api=1&query=Complexul+de+Agrement+Cheile+Grădiștei+Romania" , category: "parcuri_agrement" , city: "Moieciu" },
+    { name: "Salina Slănic Prahova", url: "https://www.google.com/maps/search/?api=1&query=Salina+Slănic+Prahova+Romania" , category: "infrastructura" , city: "Slanic" },
+    { name: "Cetatea Enisala Tulcea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Enisala+Tulcea+Romania" , category: "cetati_turnuri" , city: "Enisala" },
+    { name: "Roșia Montană UNESCO", url: "https://www.google.com/maps/search/?api=1&query=Roșia+Montană+UNESCO+Romania" , category: "natura" , city: "Rosia Montana" },
+    { name: "Palatul Ghika", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ghika+Romania" , category: "castele_palate" , city: "București" },
+    { name: "Castelul de Lut Valea Zanelor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+de+Lut+Valea+Zanelor+Porumbacu+de+Sus+Romania", category: "castele_palate" , city: "Porumbacu de Sus" },
+    { name: "Castelul Karolyi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Karolyi+Carei+Romania", category: "castele_palate" , city: "Carei" },
+    { name: "Castelul Banffy", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Banffy+Bontida+Romania", category: "castele_palate" , city: "Bontida" },
+    { name: "Castelul Josika", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Josika+Surduc+Romania", category: "castele_palate" , city: "Surduc" },
+    { name: "Castelul Teleki Gornesti", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Teleki+Gornesti+Gornesti+Romania", category: "castele_palate" , city: "Gornesti" },
+    { name: "Castelul Bethlen-Haller", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bethlen-Haller+Cetatea+de+Balta+Romania", category: "castele_palate" , city: "Cetatea de Balta" },
+    { name: "Palatul Roznovanu (Primaria)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Roznovanu+(Primaria)+Iasi+Romania", category: "castele_palate" , city: "Iași" },
+    { name: "Palatul Baroc (Muzeul de Arta)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Baroc+(Muzeul+de+Arta)+Timisoara+Romania", category: "castele_palate" , city: "Timișoara" },
+    { name: "Palatul Dicasterial", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dicasterial+Timisoara+Romania", category: "castele_palate" , city: "Timișoara" },
+    { name: "Palatul Vulturul Negru", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Vulturul+Negru+Oradea+Romania", category: "castele_palate" , city: "Oradea" },
+    { name: "Palatul Episcopiei Romano-Catolice", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopiei+Romano-Catolice+Oradea+Romania", category: "castele_palate" , city: "Oradea" },
+    { name: "Palatul Apollo", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Apollo+Targu+Mures+Romania", category: "castele_palate" , city: "Târgu Mureș" },
+    { name: "Palatul Culturii Targu Mures", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Targu+Mures+Targu+Mures+Romania", category: "castele_palate" , city: "Târgu Mureș" },
+    { name: "Palatul Administrativ Craiova", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Administrativ+Craiova+Craiova+Romania", category: "castele_palate" , city: "Craiova" },
+    { name: "Palatul Jean Mihail (Muzeul de Arta)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Jean+Mihail+(Muzeul+de+Arta)+Craiova+Romania", category: "castele_palate" , city: "Craiova" },
+    { name: "Palatul Marincu", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Marincu+Calafat+Romania", category: "castele_palate" , city: "Calafat" },
+    { name: "Palatul Domnesc de la Curtea Noua", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Domnesc+de+la+Curtea+Noua+Bucuresti+Romania", category: "castele_palate" , city: "București" },
+    { name: "Palatul Cotroceni", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cotroceni+Bucuresti+Romania", category: "castele_palate" , city: "București" },
+    { name: "Palatul Regal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Bucuresti+Romania", category: "castele_palate" , city: "București" },
+    { name: "Palatul Stirbey", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Stirbey+Buftea+Romania", category: "castele_palate" , city: "Buftea" },
+    { name: "Palatul Snagov", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Snagov+Snagov+Romania", category: "castele_palate" , city: "Snagov" },
+    { name: "Castelul Iulia Hasdeu", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Iulia+Hasdeu+Campina+Romania", category: "castele_palate" , city: "Câmpina" },
+    { name: "Castelul Marta", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Marta+Arad+Romania", category: "castele_palate" , city: "Arad" },
+    { name: "Palatul Administrativ Arad", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Administrativ+Arad+Arad+Romania", category: "castele_palate" , city: "Arad" },
+    { name: "Castelul Nopcsa", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Nopcsa+Sacel+Romania", category: "castele_palate" , city: "Sacel" },
+    { name: "Castelul Kendeffy", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kendeffy+Santamaria-Orlea+Romania", category: "castele_palate" , city: "Santamaria-Orlea" },
+    { name: "Castelul Magna Curia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Magna+Curia+Deva+Romania", category: "castele_palate" , city: "Deva" },
+    { name: "Castelul Rhedey", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rhedey+Sangeorgiu+de+Padure+Romania", category: "castele_palate" , city: "Sangeorgiu de Padure" },
+    { name: "Castelul Haller", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Haller+Ogra+Romania", category: "castele_palate" , city: "Ogra" },
+    { name: "Castelul Apafi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Apafi+Malancrav+Romania", category: "castele_palate" , city: "Malancrav" },
+    { name: "Palatul Brukenthal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Brukenthal+Avrig+Romania", category: "castele_palate" , city: "Avrig" },
+    { name: "Castelul Sukosd-Bethlen", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Sukosd-Bethlen+Racos+Romania", category: "castele_palate" , city: "Racos" },
+    { name: "Castelul Beldy Ladislau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beldy+Ladislau+Budila+Romania", category: "castele_palate" , city: "Budila" },
+    { name: "Castelul Mikes", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Mikes+Zabala+Romania", category: "castele_palate" , city: "Zabala" },
+    { name: "Castelul Kalnoky", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kalnoky+Miclosoara+Romania", category: "castele_palate" , city: "Miclosoara" },
+    { name: "Castelul Daniel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Daniel+Talisoara+Romania", category: "castele_palate" , city: "Talisoara" },
+    { name: "Castelul Szentkereszty", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Szentkereszty+Arcus+Romania", category: "castele_palate" , city: "Arcus" },
+    { name: "Conacul Bellu", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Bellu+Urlati+Romania", category: "castele_palate" , city: "Urlati" },
+    { name: "Conacul Pana Filipescu", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Pana+Filipescu+Filipestii+de+Targ+Romania", category: "castele_palate" , city: "Filipestii de Targ" },
+    { name: "Conacul Octavian Goga", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Octavian+Goga+Ciucea+Romania", category: "castele_palate" , city: "Ciucea" },
+    { name: "Castelul Bocskai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bocskai+Aghiresu+Romania", category: "castele_palate" , city: "Aghiresu" },
+    { name: "Castelul Kemeny", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kemeny+Brancovenesti+Romania", category: "castele_palate" , city: "Brancovenesti" },
+    { name: "Palatul Domnesc", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Domnesc+Cotnari+Romania", category: "castele_palate" , city: "Cotnari" },
+    { name: "Palatul Cuza", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cuza+Ruginoasa+Romania", category: "castele_palate" , city: "Ruginoasa" },
+    { name: "Palatul Comisiei Europene a Dunarii", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Comisiei+Europene+a+Dunarii+Sulina+Romania", category: "castele_palate" , city: "Sulina" },
+    { name: "Palatul Episcopal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopal+Galati+Romania", category: "castele_palate" , city: "Galați" },
+    { name: "Hanul lui Manuc", url: "https://www.google.com/maps/search/?api=1&query=Hanul+lui+Manuc+Bucuresti+Romania", category: "castele_palate" , city: "București" },
+    { name: "Hanul Gabroveni", url: "https://www.google.com/maps/search/?api=1&query=Hanul+Gabroveni+Bucuresti+Romania", category: "castele_palate" , city: "București" },
+    { name: "Palatul Cazinoului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Cazinoului+Vatra+Dornei+Romania", category: "castele_palate" , city: "Vatra Dornei" },
+    { name: "Castelul Wesselényi", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wessel%C3%A9nyi+Jibou+Romania", category: "castele_palate" , city: "Jibou" },
+    { name: "Castelul Teleki Pribilesti", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Teleki+Pribilesti+Pribilesti+Romania", category: "castele_palate" , city: "Pribilesti" },
+    { name: "Cetatea Rupea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Rupea+Rupea+Romania", category: "cetati_turnuri" , city: "Rupea" },
+    { name: "Cetatea Sighisoara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sighisoara+Sighisoara+Romania", category: "cetati_turnuri" , city: "Sighișoara" },
+    { name: "Cetatea Ciceu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ciceu+Ciceu-Corabia+Romania", category: "cetati_turnuri" , city: "Ciceu-Corabia" },
+    { name: "Cetatea Bistritei (Turnul Dogarilor)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Bistritei+(Turnul+Dogarilor)+Bistrita+Romania", category: "cetati_turnuri" , city: "Bistrița" },
+    { name: "Cetatea Medievala", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Medievala+Targu+Mures+Romania", category: "cetati_turnuri" , city: "Târgu Mureș" },
+    { name: "Cetatea Feldioara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Feldioara+Feldioara+Romania", category: "cetati_turnuri" , city: "Feldioara" },
+    { name: "Cetatea Hoghiz", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Hoghiz+Hoghiz+Romania", category: "cetati_turnuri" , city: "Hoghiz" },
+    { name: "Cetatea Fetei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Fetei+Floresti+Romania", category: "cetati_turnuri" , city: "Floresti" },
+    { name: "Cetatea Bologa", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Bologa+Poieni+Romania", category: "cetati_turnuri" , city: "Poieni" },
+    { name: "Cetatea Liteni", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Liteni+Liteni+Romania", category: "cetati_turnuri" , city: "Liteni" },
+    { name: "Cetatea Coltesti", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Coltesti+Coltesti+Romania", category: "cetati_turnuri" , city: "Coltesti" },
+    { name: "Cetatea Calnic (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Calnic+(UNESCO)+Calnic+Romania", category: "cetati_turnuri" , city: "Calnic" },
+    { name: "Cetatea Soimos", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Soimos+Lipova+Romania", category: "cetati_turnuri" , city: "Lipova" },
+    { name: "Cetatea Siria", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Siria+Siria+Romania", category: "cetati_turnuri" , city: "Siria" },
+    { name: "Cetatea Dezna", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Dezna+Dezna+Romania", category: "cetati_turnuri" , city: "Dezna" },
+    { name: "Cetatea Ineu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ineu+Ineu+Romania", category: "cetati_turnuri" , city: "Ineu" },
+    { name: "Cetatea Aradului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Aradului+Arad+Romania", category: "cetati_turnuri" , city: "Arad" },
+    { name: "Cetatea Timisoara (Bastionul Theresia)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Timisoara+(Bastionul+Theresia)+Timisoara+Romania", category: "cetati_turnuri" , city: "Timișoara" },
+    { name: "Cetatea Severinului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Severinului+Drobeta-Turnu+Severin+Romania", category: "cetati_turnuri" , city: "Drobeta-Turnu Severin" },
+    { name: "Cetatea Oradea", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Oradea+Oradea+Romania", category: "cetati_turnuri" , city: "Oradea" },
+    { name: "Cetatea Porolissum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Porolissum+Moigrad-Porolissum+Romania", category: "cetati_turnuri" , city: "Moigrad-Porolissum" },
+    { name: "Cetatea Buciumi", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Buciumi+Buciumi+Romania", category: "cetati_turnuri" , city: "Buciumi" },
+    { name: "Cetatea Almasului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Almasului+Almasu+Romania", category: "cetati_turnuri" , city: "Almasu" },
+    { name: "Cetatea Chioarului", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Chioarului+Remetea+Chioarului+Romania", category: "cetati_turnuri" , city: "Remetea Chioarului" },
+    { name: "Sarmizegetusa Regia (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Sarmizegetusa+Regia+(UNESCO)+Gradistea+de+Munte+Romania", category: "cetati_turnuri" , city: "Gradistea de Munte" },
+    { name: "Cetatea Costesti-Blidaru (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Costesti-Blidaru+(UNESCO)+Costesti+Romania", category: "cetati_turnuri" , city: "Costesti" },
+    { name: "Cetatea Costesti-Cetatuie (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Costesti-Cetatuie+(UNESCO)+Costesti+Romania", category: "cetati_turnuri" , city: "Costesti" },
+    { name: "Cetatea Piatra Rosie (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Piatra+Rosie+(UNESCO)+Alun+Romania", category: "cetati_turnuri" , city: "Alun" },
+    { name: "Cetatea Banita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Banita+(UNESCO)+Banita+Romania", category: "cetati_turnuri" , city: "Banita" },
+    { name: "Ulpia Traiana Sarmizegetusa", url: "https://www.google.com/maps/search/?api=1&query=Ulpia+Traiana+Sarmizegetusa+Sarmizegetusa+Romania", category: "cetati_turnuri" , city: "Sarmizegetusa" },
+    { name: "Cetatea Malaiesti", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Malaiesti+Malaiesti+Romania", category: "cetati_turnuri" , city: "Malaiesti" },
+    { name: "Cetatea Giurgiu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Giurgiu+Giurgiu+Romania", category: "cetati_turnuri" , city: "Giurgiu" },
+    { name: "Cetatea Chilia Noua", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Chilia+Noua+Chilia+Veche+Romania", category: "cetati_turnuri" , city: "Chilia Veche" },
+    { name: "Cetatea Argamum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Argamum+Jurilovca+Romania", category: "cetati_turnuri" , city: "Jurilovca" },
+    { name: "Cetatea Ibida", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Ibida+Slava+Rusa+Romania", category: "cetati_turnuri" , city: "Slava Rusa" },
+    { name: "Cetatea Noviodunum", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Noviodunum+Isaccea+Romania", category: "cetati_turnuri" , city: "Isaccea" },
+    { name: "Cetatea Dinogetia", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Dinogetia+Garvan+Romania", category: "cetati_turnuri" , city: "Garvan" },
+    { name: "Cetatea Histria", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Histria+Istria+Romania", category: "cetati_turnuri" , city: "Istria" },
+    { name: "Cetatea Capidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Capidava+Topalu+Romania", category: "cetati_turnuri" , city: "Topalu" },
+    { name: "Cetatea Carsium", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Carsium+Harsova+Romania", category: "cetati_turnuri" , city: "Harsova" },
+    { name: "Cetatea Callatis", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Callatis+Mangalia+Romania", category: "cetati_turnuri" , city: "Mangalia" },
+    { name: "Cetatea Tomis", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Tomis+Constanta+Romania", category: "cetati_turnuri" , city: "Constanța" },
+    { name: "Tropaeum Traiani", url: "https://www.google.com/maps/search/?api=1&query=Tropaeum+Traiani+Adamclisi+Romania", category: "cetati_turnuri" , city: "Adamclisi" },
+    { name: "Cetatea Sacidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sacidava+Alimanesti+Romania", category: "cetati_turnuri" , city: "Alimanesti" },
+    { name: "Cetatea Sucidava", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Sucidava+Celeiu+Romania", category: "cetati_turnuri" , city: "Celeiu" },
+    { name: "Cetatea Turnu", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Turnu+Turnu+Magurele+Romania", category: "cetati_turnuri" , city: "Turnu Măgurele" },
+    { name: "Curtea Domneasca din Targoviste (Turnul Chindiei)", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Targoviste+(Turnul+Chindiei)+Targoviste+Romania", category: "cetati_turnuri" , city: "Târgoviște" },
+    { name: "Curtea Domneasca din Suceava", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Suceava+Suceava+Romania", category: "cetati_turnuri" , city: "Suceava" },
+    { name: "Curtea Domneasca din Piatra Neamt", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Domneasca+din+Piatra+Neamt+Piatra+Neamt+Romania", category: "cetati_turnuri" , city: "Piatra Neamț" },
+    { name: "Curtea Veche", url: "https://www.google.com/maps/search/?api=1&query=Curtea+Veche+Bucuresti+Romania", category: "cetati_turnuri" , city: "București" },
+    { name: "Turnul Sfatului", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Sfatului+Sibiu+Romania", category: "cetati_turnuri" , city: "Sibiu" },
+    { name: "Turnul Dulgherilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Dulgherilor+Sibiu+Romania", category: "cetati_turnuri" , city: "Sibiu" },
+    { name: "Turnul Olarilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Olarilor+Sibiu+Romania", category: "cetati_turnuri" , city: "Sibiu" },
+    { name: "Turnul Pompierilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Pompierilor+Cluj-Napoca+Romania", category: "cetati_turnuri" , city: "Cluj-Napoca" },
+    { name: "Turnul Croitorilor", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Croitorilor+Cluj-Napoca+Romania", category: "cetati_turnuri" , city: "Cluj-Napoca" },
+    { name: "Turnul Alb", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Alb+Brasov+Romania", category: "cetati_turnuri" , city: "Brașov" },
+    { name: "Turnul Negru", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Negru+Brasov+Romania", category: "cetati_turnuri" , city: "Brașov" },
+    { name: "Bastionul Tesatorilor", url: "https://www.google.com/maps/search/?api=1&query=Bastionul+Tesatorilor+Brasov+Romania", category: "cetati_turnuri" , city: "Brașov" },
+    { name: "Cetatuia de pe Straja", url: "https://www.google.com/maps/search/?api=1&query=Cetatuia+de+pe+Straja+Brasov+Romania", category: "cetati_turnuri" , city: "Brașov" },
+    { name: "Cetatuia Clujului", url: "https://www.google.com/maps/search/?api=1&query=Cetatuia+Clujului+Cluj-Napoca+Romania", category: "cetati_turnuri" , city: "Cluj-Napoca" },
+    { name: "Manastirea Sucevita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sucevita+(UNESCO)+Sucevita+Romania", category: "manastiri" , city: "Sucevita" },
+    { name: "Manastirea Moldovita (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Moldovita+(UNESCO)+Vatra+Moldovitei+Romania", category: "manastiri" , city: "Vatra Moldovitei" },
+    { name: "Manastirea Humor (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Humor+(UNESCO)+Manastirea+Humorului+Romania", category: "manastiri" , city: "Manastirea Humorului" },
+    { name: "Manastirea Arbore (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Arbore+(UNESCO)+Arbore+Romania", category: "manastiri" , city: "Arbore" },
+    { name: "Manastirea Patrauti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Patrauti+(UNESCO)+Patrauti+Romania", category: "manastiri" , city: "Patrauti" },
+    { name: "Manastirea Putna", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Putna+Putna+Romania", category: "manastiri" , city: "Putna" },
+    { name: "Manastirea Dragomirna", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dragomirna+Mitocu+Dragomirnei+Romania", category: "manastiri" , city: "Mitocu Dragomirnei" },
+    { name: "Manastirea Bogdana", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bogdana+Radauti+Romania", category: "manastiri" , city: "Rădăuți" },
+    { name: "Manastirea Risca", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Risca+Risca+Romania", category: "manastiri" , city: "Risca" },
+    { name: "Manastirea Slatina", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Slatina+Slatina+Romania", category: "manastiri" , city: "Slatina" },
+    { name: "Manastirea Agapia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Agapia+Agapia+Romania", category: "manastiri" , city: "Agapia" },
+    { name: "Manastirea Varatec", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Varatec+Varatec+Romania", category: "manastiri" , city: "Varatec" },
+    { name: "Manastirea Secu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Secu+Vanatori-Neamt+Romania", category: "manastiri" , city: "Vanatori-Neamt" },
+    { name: "Manastirea Sihastria", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sihastria+Vanatori-Neamt+Romania", category: "manastiri" , city: "Vanatori-Neamt" },
+    { name: "Manastirea Bistrita Alexandru cel Bun", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bistrita+Alexandru+cel+Bun+Alexandru+cel+Bun+Romania", category: "manastiri" , city: "Alexandru cel Bun" },
+    { name: "Manastirea Durau", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Durau+Ceahlau+Romania", category: "manastiri" , city: "Ceahlau" },
+    { name: "Manastirea Pangarati", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pangarati+Pangarati+Romania", category: "manastiri" , city: "Pangarati" },
+    { name: "Manastirea Tazlau", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Tazlau+Tazlau+Romania", category: "manastiri" , city: "Tazlau" },
+    { name: "Manastirea Horezu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Horezu+(UNESCO)+Horezu+Romania", category: "manastiri" , city: "Horezu" },
+    { name: "Manastirea Cozia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cozia+Calimanesti+Romania", category: "manastiri" , city: "Calimanesti" },
+    { name: "Manastirea Dintr-un Lemn", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dintr-un+Lemn+Francesti+Romania", category: "manastiri" , city: "Francesti" },
+    { name: "Manastirea Govora", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Govora+Mihaesti+Romania", category: "manastiri" , city: "Mihaesti" },
+    { name: "Manastirea Bistrita Costesti", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bistrita+Costesti+Costesti+Romania", category: "manastiri" , city: "Costesti" },
+    { name: "Manastirea Arnota", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Arnota+Costesti+Romania", category: "manastiri" , city: "Costesti" },
+    { name: "Manastirea Turnu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Turnu+Calimanesti+Romania", category: "manastiri" , city: "Calimanesti" },
+    { name: "Manastirea Stanisora", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Stanisora+Calimanesti+Romania", category: "manastiri" , city: "Calimanesti" },
+    { name: "Manastirea Curtea de Arges", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Curtea+de+Arges+Curtea+de+Arges+Romania", category: "manastiri" , city: "Curtea de Argeș" },
+    { name: "Manastirea Aninoasa", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Aninoasa+Aninoasa+Romania", category: "manastiri" , city: "Aninoasa" },
+    { name: "Manastirea Slanic", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Slanic+Aninoasa+Romania", category: "manastiri" , city: "Aninoasa" },
+    { name: "Manastirea Robaia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Robaia+Musatesti+Romania", category: "manastiri" , city: "Musatesti" },
+    { name: "Manastirea Namaesti (Rupestra)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Namaesti+(Rupestra)+Namaesti+Romania", category: "manastiri" , city: "Namaesti" },
+    { name: "Manastirea Corbii de Piatra (Rupestra)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Corbii+de+Piatra+(Rupestra)+Corbi+Romania", category: "manastiri" , city: "Corbi" },
+    { name: "Manastirea Cetatuia Negru Voda", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cetatuia+Negru+Voda+Cetateni+Romania", category: "manastiri" , city: "Cetateni" },
+    { name: "Manastirea Tismana", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Tismana+Tismana+Romania", category: "manastiri" , city: "Tismana" },
+    { name: "Manastirea Polovragi", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Polovragi+Polovragi+Romania", category: "manastiri" , city: "Polovragi" },
+    { name: "Manastirea Lainici", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Lainici+Schela+Romania", category: "manastiri" , city: "Schela" },
+    { name: "Manastirea Crasna Gorj", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crasna+Gorj+Crasna+Romania", category: "manastiri" , city: "Crasna" },
+    { name: "Manastirea Barsana (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Barsana+(UNESCO)+Barsana+Romania", category: "manastiri" , city: "Barsana" },
+    { name: "Manastirea Peri-Sapanta", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Peri-Sapanta+Sapanta+Romania", category: "manastiri" , city: "Sapanta" },
+    { name: "Manastirea Rohia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Rohia+Targu+Lapus+Romania", category: "manastiri" , city: "Targu Lapus" },
+    { name: "Manastirea Moisei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Moisei+Moisei+Romania", category: "manastiri" , city: "Moisei" },
+    { name: "Biserica Ieud Deal (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Ieud+Deal+(UNESCO)+Ieud+Romania", category: "manastiri" , city: "Ieud" },
+    { name: "Biserica Poienile Izei (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Poienile+Izei+(UNESCO)+Poienile+Izei+Romania", category: "manastiri" , city: "Poienile Izei" },
+    { name: "Biserica Surdesti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Surdesti+(UNESCO)+Sisesti+Romania", category: "manastiri" , city: "Sisesti" },
+    { name: "Biserica Plopis (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Plopis+(UNESCO)+Sisesti+Romania", category: "manastiri" , city: "Sisesti" },
+    { name: "Biserica Desesti (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Desesti+(UNESCO)+Desesti+Romania", category: "manastiri" , city: "Desesti" },
+    { name: "Biserica Budesti Josani (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Budesti+Josani+(UNESCO)+Budesti+Romania", category: "manastiri" , city: "Budesti" },
+    { name: "Manastirea Nicula", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Nicula+Nicula+Romania", category: "manastiri" , city: "Nicula" },
+    { name: "Manastirea Ramet", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ramet+Ramet+Romania", category: "manastiri" , city: "Ramet" },
+    { name: "Manastirea Prislop", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Prislop+Silvasu+de+Sus+Romania", category: "manastiri" , city: "Silvasu de Sus" },
+    { name: "Manastirea Crisan", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crisan+Crisan+Romania", category: "manastiri" , city: "Crisan" },
+    { name: "Manastirea Bodrog (Hodos-Bodrog)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Bodrog+(Hodos-Bodrog)+Bodrogu+Nou+Romania", category: "manastiri" , city: "Bodrogu Nou" },
+    { name: "Manastirea Radna (Maria Radna)", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Radna+(Maria+Radna)+Lipova+Romania", category: "manastiri" , city: "Lipova" },
+    { name: "Manastirea Sfanta Maria", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sfanta+Maria+Techirghiol+Romania", category: "manastiri" , city: "Techirghiol" },
+    { name: "Manastirea Dervent", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Dervent+Galita+Romania", category: "manastiri" , city: "Galita" },
+    { name: "Manastirea Pestera Sfantului Andrei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pestera+Sfantului+Andrei+Ion+Corvin+Romania", category: "manastiri" , city: "Ion Corvin" },
+    { name: "Manastirea Celic-Dere", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Celic-Dere+Frecatei+Romania", category: "manastiri" , city: "Frecatei" },
+    { name: "Manastirea Saon", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Saon+Frecatei+Romania", category: "manastiri" , city: "Frecatei" },
+    { name: "Manastirea Cocos", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cocos+Niculitel+Romania", category: "manastiri" , city: "Niculitel" },
+    { name: "Manastirea Cernica", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Cernica+Pantelimon+Romania", category: "manastiri" , city: "Pantelimon" },
+    { name: "Manastirea Pasarea", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Pasarea+Branesti+Romania", category: "manastiri" , city: "Branesti" },
+    { name: "Manastirea Caldarusani", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Caldarusani+Gruiu+Romania", category: "manastiri" , city: "Gruiu" },
+    { name: "Manastirea Snagov", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Snagov+Snagov+Romania", category: "manastiri" , city: "Snagov" },
+    { name: "Manastirea Caraiman", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Caraiman+Busteni+Romania", category: "manastiri" , city: "Busteni" },
+    { name: "Manastirea Ghighiu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ghighiu+Barcanesti+Romania", category: "manastiri" , city: "Barcanesti" },
+    { name: "Manastirea Sinaia", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Sinaia+Sinaia+Romania", category: "manastiri" , city: "Sinaia" },
+    { name: "Manastirea Zamfira", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Zamfira+Lipanesti+Romania", category: "manastiri" , city: "Lipanesti" },
+    { name: "Manastirea Crasna Prahova", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Crasna+Prahova+Crasna+Romania", category: "manastiri" , city: "Crasna" },
+    { name: "Manastirea Ciolanu", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Ciolanu+Tisau+Romania", category: "manastiri" , city: "Tisau" },
+    { name: "Manastirea Frasinei", url: "https://www.google.com/maps/search/?api=1&query=Manastirea+Frasinei+Muereasca+Romania", category: "manastiri" , city: "Muereasca" },
+    { name: "Biserica Neagra", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Neagra+Brasov+Romania", category: "manastiri" , city: "Brașov" },
+    { name: "Biserica Sfantul Nicolae", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfantul+Nicolae+Brasov+Romania", category: "manastiri" , city: "Brașov" },
+    { name: "Catedrala Evanghelica Ciriac", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Evanghelica+Ciriac+Sibiu+Romania", category: "manastiri" , city: "Sibiu" },
+    { name: "Catedrala Mitopolitana Ortodoxa", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitopolitana+Ortodoxa+Sibiu+Romania", category: "manastiri" , city: "Sibiu" },
+    { name: "Biserica Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfantul+Mihail+Cluj-Napoca+Romania", category: "manastiri" , city: "Cluj-Napoca" },
+    { name: "Catedrala Mitropolitana Ortodoxa", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Ortodoxa+Cluj-Napoca+Romania", category: "manastiri" , city: "Cluj-Napoca" },
+    { name: "Catedrala Romano-Catolica Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Romano-Catolica+Sfantul+Mihail+Alba+Iulia+Romania", category: "manastiri" , city: "Alba Iulia" },
+    { name: "Catedrala Incoronarii", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Incoronarii+Alba+Iulia+Romania", category: "manastiri" , city: "Alba Iulia" },
+    { name: "Catedrala Mitropolitana Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Timisoara+Timisoara+Romania", category: "manastiri" , city: "Timișoara" },
+    { name: "Catedrala Mitropolitana Iasi", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Mitropolitana+Iasi+Iasi+Romania", category: "manastiri" , city: "Iași" },
+    { name: "Biserica Fortificata Viscri (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Viscri+(UNESCO)+Viscri+Romania", category: "biserici_cimitire" , city: "Viscri" },
+    { name: "Biserica Fortificata Prejmer (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Prejmer+(UNESCO)+Prejmer+Romania", category: "biserici_cimitire" , city: "Prejmer" },
+    { name: "Biserica Fortificata Biertan (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Biertan+(UNESCO)+Biertan+Romania", category: "biserici_cimitire" , city: "Biertan" },
+    { name: "Biserica Fortificata Saschiz (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Saschiz+(UNESCO)+Saschiz+Romania", category: "biserici_cimitire" , city: "Saschiz" },
+    { name: "Biserica Fortificata Darjiu (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Darjiu+(UNESCO)+Darjiu+Romania", category: "biserici_cimitire" , city: "Darjiu" },
+    { name: "Biserica Fortificata Calnic (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Calnic+(UNESCO)+Calnic+Romania", category: "biserici_cimitire" , city: "Calnic" },
+    { name: "Biserica Fortificata Valea Viilor (UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Valea+Viilor+(UNESCO)+Valea+Viilor+Romania", category: "biserici_cimitire" , city: "Valea Viilor" },
+    { name: "Biserica Fortificata Harman", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Harman+Harman+Romania", category: "biserici_cimitire" , city: "Harman" },
+    { name: "Biserica Fortificata Cristian Brasov", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cristian+Brasov+Cristian+Romania", category: "biserici_cimitire" , city: "Cristian" },
+    { name: "Biserica Fortificata Codlea", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Codlea+Codlea+Romania", category: "biserici_cimitire" , city: "Codlea" },
+    { name: "Biserica Fortificata Bod", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bod+Bod+Romania", category: "biserici_cimitire" , city: "Bod" },
+    { name: "Biserica Fortificata Vulcan", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Vulcan+Vulcan+Romania", category: "biserici_cimitire" , city: "Vulcan" },
+    { name: "Biserica Fortificata Sanpetru", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Sanpetru+Sanpetru+Romania", category: "biserici_cimitire" , city: "Sanpetru" },
+    { name: "Biserica Fortificata Cisnadioara", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cisnadioara+Cisnadioara+Romania", category: "biserici_cimitire" , city: "Cisnadioara" },
+    { name: "Biserica Fortificata Cisnadie", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cisnadie+Cisnadie+Romania", category: "biserici_cimitire" , city: "Cisnadie" },
+    { name: "Biserica Fortificata Cristian Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cristian+Sibiu+Cristian+Romania", category: "biserici_cimitire" , city: "Cristian" },
+    { name: "Biserica Fortificata Axente Sever", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Axente+Sever+Axente+Sever+Romania", category: "biserici_cimitire" , city: "Axente Sever" },
+    { name: "Biserica Fortificata Medias (Castelul Margarete)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Medias+(Castelul+Margarete)+Medias+Romania", category: "biserici_cimitire" , city: "Mediaș" },
+    { name: "Biserica Fortificata Agnita", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Agnita+Agnita+Romania", category: "biserici_cimitire" , city: "Agnita" },
+    { name: "Biserica Fortificata Moardas", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Moardas+Moardas+Romania", category: "biserici_cimitire" , city: "Moardas" },
+    { name: "Biserica Fortificata Richis", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Richis+Richis+Romania", category: "biserici_cimitire" , city: "Richis" },
+    { name: "Biserica Fortificata Alma Vii", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Alma+Vii+Alma+Vii+Romania", category: "biserici_cimitire" , city: "Alma Vii" },
+    { name: "Biserica Fortificata Bazna", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bazna+Bazna+Romania", category: "biserici_cimitire" , city: "Bazna" },
+    { name: "Biserica Fortificata Hosman", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Hosman+Hosman+Romania", category: "biserici_cimitire" , city: "Hosman" },
+    { name: "Biserica Fortificata Dealu Frumos", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Dealu+Frumos+Dealu+Frumos+Romania", category: "biserici_cimitire" , city: "Dealu Frumos" },
+    { name: "Biserica Fortificata Stejarisu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Stejarisu+Stejarisu+Romania", category: "biserici_cimitire" , city: "Stejarisu" },
+    { name: "Biserica Fortificata Iacobeni", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Iacobeni+Iacobeni+Romania", category: "biserici_cimitire" , city: "Iacobeni" },
+    { name: "Biserica Fortificata Carta (Abatia Cisterciana)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Carta+(Abatia+Cisterciana)+Carta+Romania", category: "biserici_cimitire" , city: "Carta" },
+    { name: "Biserica Fortificata Apold", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Apold+Apold+Romania", category: "biserici_cimitire" , city: "Apold" },
+    { name: "Biserica Fortificata Archita", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Archita+Archita+Romania", category: "biserici_cimitire" , city: "Archita" },
+    { name: "Biserica Fortificata Cloasterf", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Cloasterf+Cloasterf+Romania", category: "biserici_cimitire" , city: "Cloasterf" },
+    { name: "Biserica Fortificata Danes", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Danes+Danes+Romania", category: "biserici_cimitire" , city: "Danes" },
+    { name: "Biserica Fortificata Nades", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Nades+Nades+Romania", category: "biserici_cimitire" , city: "Nades" },
+    { name: "Biserica Fortificata Bagaciu", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Bagaciu+Bagaciu+Romania", category: "biserici_cimitire" , city: "Bagaciu" },
+    { name: "Biserica Fortificata Aiud", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Fortificata+Aiud+Aiud+Romania", category: "biserici_cimitire" , city: "Aiud" },
+    { name: "Cimitirul Vesel", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Vesel+Sapanta+Romania", category: "biserici_cimitire" , city: "Sapanta" },
+    { name: "Cimitirul Central (Hajongard)", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Central+(Hajongard)+Cluj-Napoca+Romania", category: "biserici_cimitire" , city: "Cluj-Napoca" },
+    { name: "Cimitirul Bellu", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Bellu+Bucuresti+Romania", category: "biserici_cimitire" , city: "București" },
+    { name: "Cimitirul Evreiesc", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+Evreiesc+Siret+Romania", category: "biserici_cimitire" , city: "Siret" },
+    { name: "Cimitirul International al Eroilor", url: "https://www.google.com/maps/search/?api=1&query=Cimitirul+International+al+Eroilor+Valea+Uzului+Romania", category: "biserici_cimitire" , city: "Valea Uzului" },
+    { name: "Sfinxul si Babele", url: "https://www.google.com/maps/search/?api=1&query=Sfinxul+si+Babele+Muntii+Bucegi+Romania", category: "natura" , city: "Muntii Bucegi" },
+    { name: "Pestera Scarisoara (Ghetarul)", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Scarisoara+(Ghetarul)+Garda+de+Sus+Romania", category: "natura" , city: "Garda de Sus" },
+    { name: "Pestera Ursilor", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ursilor+Chiscau+Romania", category: "natura" , city: "Chiscau" },
+    { name: "Pestera Muierilor", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Muierilor+Baia+de+Fier+Romania", category: "natura" , city: "Baia de Fier" },
+    { name: "Pestera Polovragi", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Polovragi+Polovragi+Romania", category: "natura" , city: "Polovragi" },
+    { name: "Pestera Dambovicioara", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Dambovicioara+Dambovicioara+Romania", category: "natura" , city: "Dambovicioara" },
+    { name: "Pestera Meziad", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Meziad+Meziad+Romania", category: "natura" , city: "Meziad" },
+    { name: "Pestera Vantului", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Vantului+Suncuius+Romania", category: "natura" , city: "Suncuius" },
+    { name: "Pestera Crystal din Mina Farcu", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Crystal+din+Mina+Farcu+Rosia+Romania", category: "natura" , city: "Rosia" },
+    { name: "Pestera Limanu", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Limanu+Limanu+Romania", category: "natura" , city: "Limanu" },
+    { name: "Pestera Hodos (Gura Dobrogei)", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Hodos+(Gura+Dobrogei)+Targusor+Romania", category: "natura" , city: "Targusor" },
+    { name: "Pestera Sfantului Ioan Casian", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Sfantului+Ioan+Casian+Targusor+Romania", category: "natura" , city: "Targusor" },
+    { name: "Pestera Ialomitei", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ialomitei+Moroeni+Romania", category: "natura" , city: "Moroeni" },
+    { name: "Pestera Bolii", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Bolii+Petrosani+Romania", category: "natura" , city: "Petroșani" },
+    { name: "Pestera Comarnic", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Comarnic+Carasova+Romania", category: "natura" , city: "Carasova" },
+    { name: "Pestera Popovât", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Popov%C3%A2t+Carasova+Romania", category: "natura" , city: "Carasova" },
+    { name: "Pestera Veterani", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Veterani+Dubova+Romania", category: "natura" , city: "Dubova" },
+    { name: "Pestera Ponicova", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Ponicova+Dubova+Romania", category: "natura" , city: "Dubova" },
+    { name: "Pestera Topolnita", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Topolnita+Ciresu+Romania", category: "natura" , city: "Ciresu" },
+    { name: "Pestera Sugau", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Sugau+Voslabeni+Romania", category: "natura" , city: "Voslabeni" },
+    { name: "Pestera Valea Cetatii", url: "https://www.google.com/maps/search/?api=1&query=Pestera+Valea+Cetatii+Rasnov+Romania", category: "natura" , city: "Rasnov" },
+    { name: "Vulcanii Noroiosi (Paclele Mari si Mici)", url: "https://www.google.com/maps/search/?api=1&query=Vulcanii+Noroiosi+(Paclele+Mari+si+Mici)+Berca+Romania", category: "natura" , city: "Berca" },
+    { name: "Gradina Zmeilor", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Zmeilor+Galgau+Almasului+Romania", category: "natura" , city: "Galgau Almasului" },
+    { name: "Detunatele (Detunata Goala si Detunata Flocoasa)", url: "https://www.google.com/maps/search/?api=1&query=Detunatele+(Detunata+Goala+si+Detunata+Flocoasa)+Bucium+Romania", category: "natura" , city: "Bucium" },
+    { name: "Rapa Rosie", url: "https://www.google.com/maps/search/?api=1&query=Rapa+Rosie+Sebes+Romania", category: "natura" , city: "Sebeș" },
+    { name: "Cheile Turzii", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Turzii+Petrestii+de+Jos+Romania", category: "natura" , city: "Petrestii de Jos" },
+    { name: "Cheile Bicazului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Bicazului+Bicaz-Chei+Romania", category: "natura" , city: "Bicaz-Chei, Judetele Neamt / Harghita" },
+    { name: "Cheile Nerei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Nerei+Sasca+Montana+Romania", category: "natura" , city: "Sasca Montana" },
+    { name: "Cheile Carasului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Carasului+Carasova+Romania", category: "natura" , city: "Carasova" },
+    { name: "Cheile Sohodolului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Sohodolului+Runcu+Romania", category: "natura" , city: "Runcu" },
+    { name: "Cheile Oltetului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Oltetului+Polovragi+Romania", category: "natura" , city: "Polovragi" },
+    { name: "Cheile Tisitei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Tisitei+Tulnici+Romania", category: "natura" , city: "Tulnici" },
+    { name: "Cheile Zanoagei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Zanoagei+Moroeni+Romania", category: "natura" , city: "Moroeni" },
+    { name: "Cheile Rametului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Rametului+Ramet+Romania", category: "natura" , city: "Ramet" },
+    { name: "Cheile Gradistei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Gradistei+Moieciu+Romania", category: "natura" , city: "Moieciu" },
+    { name: "Cheile Rasnoavei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Rasnoavei+Rasnov+Romania", category: "natura" , city: "Rasnov" },
+    { name: "Cascada Bigar", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Bigar+Bozovici+Romania", category: "natura" , city: "Bozovici" },
+    { name: "Cascada Cailor", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Cailor+Borsa+Romania", category: "natura" , city: "Borsa" },
+    { name: "Cascada Beusnita", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Beusnita+Sasca+Montana+Romania", category: "natura" , city: "Sasca Montana" },
+    { name: "Cascada Duruitoarea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Duruitoarea+Ceahlau+Romania", category: "natura" , city: "Ceahlau" },
+    { name: "Cascada Balea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Balea+Cartisoara+Romania", category: "natura" , city: "Cartisoara" },
+    { name: "Cascada Valul Miresei", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Valul+Miresei+Rachitele+Romania", category: "natura" , city: "Rachitele" },
+    { name: "Cascada Urlatoarea", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Urlatoarea+Busteni+Romania", category: "natura" , city: "Busteni" },
+    { name: "Cascada Putnei", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Putnei+Tulnici+Romania", category: "natura" , city: "Tulnici" },
+    { name: "Cascada Lotrisor", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Lotrisor+Calimanesti+Romania", category: "natura" , city: "Calimanesti" },
+    { name: "Cascada Scorus", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Scorus+Malaia+Romania", category: "natura" , city: "Malaia" },
+    { name: "Cascada Ciucas", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Ciucas+Mihai+Viteazu+Romania", category: "natura" , city: "Mihai Viteazu" },
+    { name: "Lacul Rosu", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Rosu+Lacu+Rosu+Romania", category: "natura" , city: "Lacu Rosu" },
+    { name: "Lacul Sfanta Ana", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Sfanta+Ana+Bixad+Romania", category: "natura" , city: "Bixad" },
+    { name: "Lacul Bâlea", url: "https://www.google.com/maps/search/?api=1&query=Lacul+B%C3%A2lea+Cartisoara+Romania", category: "natura" , city: "Cartisoara" },
+    { name: "Lacul Bucura", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Bucura+Muntii+Retezat+Romania", category: "natura" , city: "Muntii Retezat" },
+    { name: "Lacul Zanoaga", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Zanoaga+Muntii+Retezat+Romania", category: "natura" , city: "Muntii Retezat" },
+    { name: "Lacul Ochiul Beiului", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Ochiul+Beiului+Sasca+Montana+Romania", category: "natura" , city: "Sasca Montana" },
+    { name: "Lacul Dracului", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Dracului+Carbunari+Romania", category: "natura" , city: "Carbunari" },
+    { name: "Lacul Vidraru", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Vidraru+Arefu+Romania", category: "natura" , city: "Arefu" },
+    { name: "Lacul Izvorul Muntelui (Bicaz)", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Izvorul+Muntelui+(Bicaz)+Bicaz+Romania", category: "natura" , city: "Bicaz" },
+    { name: "Lacul Colibita", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Colibita+Colibita+Romania", category: "natura" , city: "Colibita" },
+    { name: "Lacul Iezer", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Iezer+Muntii+Rodnei+Romania", category: "natura" , city: "Muntii Rodnei" },
+    { name: "Lacul Albastru", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Albastru+Baia+Sprie+Romania", category: "natura" , city: "Baia Sprie" },
+    { name: "Lacul Siriu", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Siriu+Siriu+Romania", category: "natura" , city: "Siriu" },
+    { name: "Lacul Razim-Sinoe", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Razim-Sinoe+Jurilovca+Romania", category: "natura" , city: "Jurilovca" },
+    { name: "Focul Viu de la Andreiasu de Jos", url: "https://www.google.com/maps/search/?api=1&query=Focul+Viu+de+la+Andreiasu+de+Jos+Andreiasu+de+Jos+Romania", category: "natura" , city: "Andreiasu de Jos" },
+    { name: "Focurile Vii de la Lopatari", url: "https://www.google.com/maps/search/?api=1&query=Focurile+Vii+de+la+Lopatari+Lopatari+Romania", category: "natura" , city: "Lopatari" },
+    { name: "Cazanele Dunarii (Mari si Mici)", url: "https://www.google.com/maps/search/?api=1&query=Cazanele+Dunarii+(Mari+si+Mici)+Dubova+Romania", category: "natura" , city: "Dubova" },
+    { name: "Chipul lui Decebal", url: "https://www.google.com/maps/search/?api=1&query=Chipul+lui+Decebal+Dubova+Romania", category: "natura" , city: "Dubova" },
+    { name: "Podul lui Dumnezeu", url: "https://www.google.com/maps/search/?api=1&query=Podul+lui+Dumnezeu+Ponoarele+Romania", category: "natura" , city: "Ponoarele" },
+    { name: "Padurea Letea", url: "https://www.google.com/maps/search/?api=1&query=Padurea+Letea+C.A.+Rosetti+Romania", category: "natura" , city: "C.A. Rosetti" },
+    { name: "Padurea Caraorman", url: "https://www.google.com/maps/search/?api=1&query=Padurea+Caraorman+Crisan+Romania", category: "natura" , city: "Crisan" },
+    { name: "Gradina Botanica „Alexandru Borza”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EAlexandru+Borza%E2%80%9D+Cluj-Napoca+Romania", category: "natura" , city: "Cluj-Napoca" },
+    { name: "Gradina Botanica „Anastasie Fatu”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EAnastasie+Fatu%E2%80%9D+Iasi+Romania", category: "natura" , city: "Iași" },
+    { name: "Gradina Botanica „Dimitrie Brândza”", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+%E2%80%9EDimitrie+Br%C3%A2ndza%E2%80%9D+Bucuresti+Romania", category: "natura" , city: "București" },
+    { name: "Gradina Botanica Jibou", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+Jibou+Jibou+Romania", category: "natura" , city: "Jibou" },
+    { name: "Gradina Botanica Bucov", url: "https://www.google.com/maps/search/?api=1&query=Gradina+Botanica+Bucov+Bucov+Romania", category: "natura" , city: "Bucov" },
+    { name: "Delta Dunarii (Rezervatie Biosfera)", url: "https://www.google.com/maps/search/?api=1&query=Delta+Dunarii+(Rezervatie+Biosfera)+Judetul+Tulcea+Romania", category: "natura" , city: "Judetul Tulcea" },
+    { name: "Parcul National Retezat", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Retezat+Judetul+Hunedoara+Romania", category: "natura" , city: "Judetul Hunedoara" },
+    { name: "Parcul National Piatra Craiului", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Piatra+Craiului+Zarnesti+Romania", category: "natura" , city: "Zarnesti" },
+    { name: "Parcul National Cheile Nerei-Beusnita", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Cheile+Nerei-Beusnita+Judetul+Caras-Severin+Romania", category: "natura" , city: "Judetul Caras-Severin" },
+    { name: "Parcul National Ceahlau", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Ceahlau+Izvoru+Muntelui+Romania", category: "natura" , city: "Izvoru Muntelui" },
+    { name: "Parcul National Cozia", url: "https://www.google.com/maps/search/?api=1&query=Parcul+National+Cozia+Brezoi+Romania", category: "natura" , city: "Brezoi" },
+    { name: "Sfinxul din Banat", url: "https://www.google.com/maps/search/?api=1&query=Sfinxul+din+Banat+Toplet+Romania", category: "natura" , city: "Toplet" },
+    { name: "Transfagarasan (Soseaua DN7C)", url: "https://www.google.com/maps/search/?api=1&query=Transfagarasan+(Soseaua+DN7C)+Judetele+Arges+%2F+Sibiu+Romania", category: "infrastructura" , city: "Judetele Arges / Sibiu" },
+    { name: "Transalpina (Soseaua DN67C)", url: "https://www.google.com/maps/search/?api=1&query=Transalpina+(Soseaua+DN67C)+Judetele+Gorj+%2F+Alba+Romania", category: "infrastructura" , city: "Judetele Gorj / Alba" },
+    { name: "Transbucegi (Soseaua DJ713)", url: "https://www.google.com/maps/search/?api=1&query=Transbucegi+(Soseaua+DJ713)+Judetele+Dambovita+%2F+Prahova+Romania", category: "infrastructura" , city: "Judetele Dambovita / Prahova" },
+    { name: "Transrarau (Soseaua DJ175B)", url: "https://www.google.com/maps/search/?api=1&query=Transrarau+(Soseaua+DJ175B)+Pojorata+%2F+Chiril+Romania", category: "infrastructura" , city: "Pojorata / Chiril" },
+    { name: "Transursoaia (Soseaua DN1R)", url: "https://www.google.com/maps/search/?api=1&query=Transursoaia+(Soseaua+DN1R)+Albac+%2F+Huedin+Romania", category: "infrastructura" , city: "Albac / Huedin, Judetele Alba / Cluj" },
+    { name: "Transsemenic (Soseaua DJ582)", url: "https://www.google.com/maps/search/?api=1&query=Transsemenic+(Soseaua+DJ582)+Slatina-Timis+%2F+Resita+Romania", category: "infrastructura" , city: "Slatina-Timis / Resita" },
+    { name: "Pasul Tihuta", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Tihuta+Piatra+Fantanele+Romania", category: "infrastructura" , city: "Piatra Fantanele" },
+    { name: "Pasul Prislop", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Prislop+Borsa+Romania", category: "infrastructura" , city: "Borsa" },
+    { name: "Mocanita de pe Valea Vaserului", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+de+pe+Valea+Vaserului+Viseu+de+Sus+Romania", category: "infrastructura" , city: "Viseu de Sus" },
+    { name: "Mocanita Hutulca", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+Hutulca+Moldovita+Romania", category: "infrastructura" , city: "Moldovita" },
+    { name: "Mocanita Apusenilor", url: "https://www.google.com/maps/search/?api=1&query=Mocanita+Apusenilor+Abrud+Romania", category: "infrastructura" , city: "Abrud" },
+    { name: "Calea Ferata Oravita-Anina", url: "https://www.google.com/maps/search/?api=1&query=Calea+Ferata+Oravita-Anina+Oravita+Romania", category: "infrastructura" , city: "Oravita" },
+    { name: "Podul Anghel Saligny", url: "https://www.google.com/maps/search/?api=1&query=Podul+Anghel+Saligny+Cernavoda+Romania", category: "infrastructura" , city: "Cernavoda" },
+    { name: "Canalul Dunare-Marea Neagra", url: "https://www.google.com/maps/search/?api=1&query=Canalul+Dunare-Marea+Neagra+Judetul+Constanta+Romania", category: "infrastructura" , city: "Judetul Constanta" },
+    { name: "Barajul Vidraru", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Vidraru+Arefu+Romania", category: "infrastructura" , city: "Arefu" },
+    { name: "Barajul Bicaz", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Bicaz+Bicaz+Romania", category: "infrastructura" , city: "Bicaz" },
+    { name: "Barajul Portile de Fier I", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Portile+de+Fier+I+Drobeta-Turnu+Severin+Romania", category: "infrastructura" , city: "Drobeta-Turnu Severin" },
+    { name: "Barajul Gura Apelor", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Gura+Apelor+Muntii+Retezat+Romania", category: "infrastructura" , city: "Muntii Retezat" },
+    { name: "Barajul Paltinu", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Paltinu+Valea+Doftanei+Romania", category: "infrastructura" , city: "Valea Doftanei" },
+    { name: "Barajul Bolboci", url: "https://www.google.com/maps/search/?api=1&query=Barajul+Bolboci+Moroeni+Romania", category: "infrastructura" , city: "Moroeni" },
+    { name: "Salina Ocnele Mari", url: "https://www.google.com/maps/search/?api=1&query=Salina+Ocnele+Mari+Ocnele+Mari+Romania", category: "infrastructura" , city: "Ocnele Mari" },
+    { name: "Salina Cacica", url: "https://www.google.com/maps/search/?api=1&query=Salina+Cacica+Cacica+Romania", category: "infrastructura" , city: "Cacica" },
+    { name: "Telegondola Mamaia", url: "https://www.google.com/maps/search/?api=1&query=Telegondola+Mamaia+Mamaia+Romania", category: "infrastructura" , city: "Mamaia" },
+    { name: "Telecabina Bâlea Lac", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+B%C3%A2lea+Lac+Cartisoara+Romania", category: "infrastructura" , city: "Cartisoara" },
+    { name: "Telecabina Busteni-Babele", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Busteni-Babele+Busteni+Romania", category: "infrastructura" , city: "Busteni" },
+    { name: "Telecabina Sinaia", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Sinaia+Sinaia+Romania", category: "infrastructura" , city: "Sinaia" },
+    { name: "Funicularul din Resita", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Resita+Resita+Romania", category: "infrastructura" , city: "Reșița" },
+    { name: "Portul Turistic Tomis", url: "https://www.google.com/maps/search/?api=1&query=Portul+Turistic+Tomis+Constanta+Romania", category: "infrastructura" , city: "Constanța" },
+    { name: "Faleza Dunarii Galati", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Dunarii+Galati+Galati+Romania", category: "infrastructura" , city: "Galați" },
+    { name: "Faleza Dunarii Braila", url: "https://www.google.com/maps/search/?api=1&query=Faleza+Dunarii+Braila+Braila+Romania", category: "infrastructura" , city: "Brăila" },
+    { name: "Muzeul Recordurilor Romanesti", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Recordurilor+Romanesti+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National al Hartilor si Cartii Vechi", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Hartilor+si+Cartii+Vechi+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National de Artă Contemporana (MNAC)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+de+Art%C4%83+Contemporana+(MNAC)+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National al Literaturii Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Literaturii+Romane+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National Filatelic", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+Filatelic+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul Municipiului Bucuresti (Palatul Sutu)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Municipiului+Bucuresti+(Palatul+Sutu)+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National Tehnic „Dimitrie Leonida”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+Tehnic+%E2%80%9EDimitrie+Leonida%E2%80%9D+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National al Aviatiei Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Aviatiei+Romane+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul Cailor Ferate Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cailor+Ferate+Romane+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul Kitsch-ului Romanesc", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Kitsch-ului+Romanesc+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul National „George Enescu”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+%E2%80%9EGeorge+Enescu%E2%80%9D+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul Theodor Pallady", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Theodor+Pallady+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul Zambaccian", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Zambaccian+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Muzeul de Arta „Vasile Grigore”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+%E2%80%9EVasile+Grigore%E2%80%9D+Bucuresti+Romania", category: "muzee" , city: "București" },
+    { name: "Casa Memoriala „Tudor Arghezi", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memoriala+%E2%80%9ETudor+Arghezi+Martisor%E2%80%9D+%E2%80%93+Bucuresti+Romania", category: "muzee" , city: "Martisor” – Bucuresti" },
+    { name: "Muzeul Satului Maramuresean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Maramuresean+Sighetu+Marmatiei+Romania", category: "muzee" , city: "Sighetu Marmației" },
+    { name: "Muzeul Satului Banatean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Banatean+Timisoara+Romania", category: "muzee" , city: "Timișoara" },
+    { name: "Muzeul Satului Bucovinean", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Bucovinean+Suceava+Romania", category: "muzee" , city: "Suceava" },
+    { name: "Muzeul ASTRA (Civilizatiei Populare Traditionale)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+ASTRA+(Civilizatiei+Populare+Traditionale)+Sibiu+Romania", category: "muzee" , city: "Sibiu" },
+    { name: "Muzeul Etnografic al Transilvaniei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Etnografic+al+Transilvaniei+Cluj-Napoca+Romania", category: "muzee" , city: "Cluj-Napoca" },
+    { name: "Muzeul Tarii Crisurilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Tarii+Crisurilor+Oradea+Romania", category: "muzee" , city: "Oradea" },
+    { name: "Muzeul Regiunii Portilor de Fier", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Regiunii+Portilor+de+Fier+Drobeta-Turnu+Severin+Romania", category: "muzee" , city: "Drobeta-Turnu Severin" },
+    { name: "Muzeul Olteniei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Olteniei+Craiova+Romania", category: "muzee" , city: "Craiova" },
+    { name: "Muzeul Ceasului „Nicolae Simache”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ceasului+%E2%80%9ENicolae+Simache%E2%80%9D+Ploiesti+Romania", category: "muzee" , city: "Ploiești" },
+    { name: "Muzeul National al Petrolului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Petrolului+Ploiesti+Romania", category: "muzee" , city: "Ploiești" },
+    { name: "Muzeul Judetean de Istorie si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Judetean+de+Istorie+si+Arheologie+Prahova+Romania", category: "muzee" , city: "Prahova" },
+    { name: "Muzeul Chihlimbarului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Chihlimbarului+Colti+Romania", category: "muzee" , city: "Colti" },
+    { name: "Muzeul National al Carpatilor Rasariteni", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Carpatilor+Rasariteni+Sf%C3%A2ntu+Gheorghe+Romania", category: "muzee" , city: "Sfântu Gheorghe" },
+    { name: "Muzeul Secuiesc al Ciucului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Secuiesc+al+Ciucului+Miercurea+Ciuc+Romania", category: "muzee" , city: "Miercurea Ciuc" },
+    { name: "Muzeul de Arta Comparata", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+Comparata+S%C3%A2ngeorz-Bai+Romania", category: "muzee" , city: "Sângeorz-Bai" },
+    { name: "Muzeul Memorial „Octavian Goga”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Memorial+%E2%80%9EOctavian+Goga%E2%80%9D+Ciucea+Romania", category: "muzee" , city: "Ciucea" },
+    { name: "Muzeul Memorial „Ioan Slavici si Emil Montia”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Memorial+%E2%80%9EIoan+Slavici+si+Emil+Montia%E2%80%9D+Siria+Romania", category: "muzee" , city: "Siria" },
+    { name: "Muzeul Aurului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Aurului+Brad+Romania", category: "muzee" , city: "Brad" },
+    { name: "Muzeul Mineritului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mineritului+Petrosani+Romania", category: "muzee" , city: "Petroșani" },
+    { name: "Muzeul Judetean de Istorie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Judetean+de+Istorie+Brasov+Romania", category: "muzee" , city: "Brașov" },
+    { name: "Muzeul Casa Muresenilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Casa+Muresenilor+Brasov+Romania", category: "muzee" , city: "Brașov" },
+    { name: "Muzeul Primei Scoli Romanesti", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Primei+Scoli+Romanesti+Brasov+Romania", category: "muzee" , city: "Brașov" },
+    { name: "Muzeul National al Unirii", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+National+al+Unirii+Alba+Iulia+Romania", category: "muzee" , city: "Alba Iulia" },
+    { name: "Muzeul de Istorie a Farmaciei", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Farmaciei+Sibiu+Romania", category: "muzee" , city: "Sibiu" },
+    { name: "Muzeul de Istorie Naturala", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturala+Sibiu+Romania", category: "muzee" , city: "Sibiu" },
+    { name: "Muzeul Cinegetic", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cinegetic+Posada+Romania", category: "muzee" , city: "Posada" },
+    { name: "Muzeul Etnografic Samuil si Eugenia Ionel", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Etnografic+Samuil+si+Eugenia+Ionel+Radauti+Romania", category: "muzee" , city: "Rădăuți" },
+    { name: "Muzeul Oului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Oului+Vama+Romania", category: "muzee" , city: "Vama" },
+    { name: "Muzeul Oului Încondeiat Lucia Condrea", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Oului+%C3%8Encondeiat+Lucia+Condrea+Moldovita+Romania", category: "muzee" , city: "Moldovita" },
+    { name: "Muzeul Arta Lemnului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arta+Lemnului+C%C3%A2mpulung+Moldovenesc+Romania", category: "muzee" , city: "Câmpulung Moldovenesc" },
+    { name: "Muzeul Apelor „Mihai Bacescu”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Apelor+%E2%80%9EMihai+Bacescu%E2%80%9D+Falticeni+Romania", category: "muzee" , city: "Fălticeni" },
+    { name: "Muzeul Popa (Arta Naiva)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Popa+(Arta+Naiva)+Tarpesti+Romania", category: "muzee" , city: "Tarpesti" },
+    { name: "Muzeul de Istorie si Etnografie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+si+Etnografie+Targu+Neamt+Romania", category: "muzee" , city: "Targu Neamt" },
+    { name: "Muzeul Vasile Pârvan", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vasile+P%C3%A2rvan+B%C3%A2rlad+Romania", category: "muzee" , city: "Bârlad" },
+    { name: "Muzeul Municipal", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Municipal+Husi+Romania", category: "muzee" , city: "Huși" },
+    { name: "Muzeul de Istorie „Paul Paltanea”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+%E2%80%9EPaul+Paltanea%E2%80%9D+Galati+Romania", category: "muzee" , city: "Galați" },
+    { name: "Muzeul de Stiinte ale Naturii", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Stiinte+ale+Naturii+Galati+Romania", category: "muzee" , city: "Galați" },
+    { name: "Muzeul Brailei „Carol I”", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Brailei+%E2%80%9ECarol+I%E2%80%9D+Braila+Romania", category: "muzee" , city: "Brăila" },
+    { name: "Muzeul de Istorie Nationala si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Nationala+si+Arheologie+Constanta+Romania", category: "muzee" , city: "Constanța" },
+    { name: "Muzeul de Arta Populara", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arta+Populara+Constanta+Romania", category: "muzee" , city: "Constanța" },
+    { name: "Muzeul Marinei Romane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Marinei+Romane+Constanta+Romania", category: "muzee" , city: "Constanța" },
+    { name: "Edificiul Roman cu Mozaic", url: "https://www.google.com/maps/search/?api=1&query=Edificiul+Roman+cu+Mozaic+Constanta+Romania", category: "muzee" , city: "Constanța" },
+    { name: "Muzeul Farului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Farului+Sulina+Romania", category: "muzee" , city: "Sulina" },
+    { name: "Centrul Eco-Turism Delta Dunarii", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Eco-Turism+Delta+Dunarii+Tulcea+Romania", category: "muzee" , city: "Tulcea" },
+    { name: "Muzeul de Istorie si Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+si+Arheologie+Tulcea+Romania", category: "muzee" , city: "Tulcea" },
+    { name: "Ateneul Roman", url: "https://www.google.com/maps/search/?api=1&query=Ateneul+Roman+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Arcul de Triumf", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Cazinoul din Constanta", url: "https://www.google.com/maps/search/?api=1&query=Cazinoul+din+Constanta+Constanta+Romania", category: "cladiri_teatre" , city: "Constanța" },
+    { name: "Teatrul National „Vasile Alecsandri”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EVasile+Alecsandri%E2%80%9D+Iasi+Romania", category: "cladiri_teatre" , city: "Iași" },
+    { name: "Teatrul National „Mihai Eminescu”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EMihai+Eminescu%E2%80%9D+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Teatrul National Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" , city: "Cluj-Napoca" },
+    { name: "Teatrul National „Radu Stanca”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9ERadu+Stanca%E2%80%9D+Sibiu+Romania", category: "cladiri_teatre" , city: "Sibiu" },
+    { name: "Teatrul National Targu Mures", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+Targu+Mures+Targu+Mures+Romania", category: "cladiri_teatre" , city: "Târgu Mureș" },
+    { name: "Teatrul National „Marin Sorescu”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+National+%E2%80%9EMarin+Sorescu%E2%80%9D+Craiova+Romania", category: "cladiri_teatre" , city: "Craiova" },
+    { name: "Teatrul Clasic „Ioan Slavici”", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Clasic+%E2%80%9EIoan+Slavici%E2%80%9D+Arad+Romania", category: "cladiri_teatre" , city: "Arad" },
+    { name: "Teatrul de Stat", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+de+Stat+Oradea+Romania", category: "cladiri_teatre" , city: "Oradea" },
+    { name: "Opera Nationala Bucuresti", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Bucuresti+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Opera Nationala Romana Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" , city: "Cluj-Napoca" },
+    { name: "Opera Nationala Romana Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Timisoara+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Opera Nationala Romana Iasi", url: "https://www.google.com/maps/search/?api=1&query=Opera+Nationala+Romana+Iasi+Iasi+Romania", category: "cladiri_teatre" , city: "Iași" },
+    { name: "Piata Sfatului", url: "https://www.google.com/maps/search/?api=1&query=Piata+Sfatului+Brasov+Romania", category: "cladiri_teatre" , city: "Brașov" },
+    { name: "Piata Mare", url: "https://www.google.com/maps/search/?api=1&query=Piata+Mare+Sibiu+Romania", category: "cladiri_teatre" , city: "Sibiu" },
+    { name: "Piata Mica (Podul Minciunilor)", url: "https://www.google.com/maps/search/?api=1&query=Piata+Mica+(Podul+Minciunilor)+Sibiu+Romania", category: "cladiri_teatre" , city: "Sibiu" },
+    { name: "Piata Huet", url: "https://www.google.com/maps/search/?api=1&query=Piata+Huet+Sibiu+Romania", category: "cladiri_teatre" , city: "Sibiu" },
+    { name: "Piata Unirii Cluj-Napoca", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Cluj-Napoca+Cluj-Napoca+Romania", category: "cladiri_teatre" , city: "Cluj-Napoca" },
+    { name: "Piata Muzeului", url: "https://www.google.com/maps/search/?api=1&query=Piata+Muzeului+Cluj-Napoca+Romania", category: "cladiri_teatre" , city: "Cluj-Napoca" },
+    { name: "Piata Unirii Timisoara", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Timisoara+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Piata Victoriei (Operei)", url: "https://www.google.com/maps/search/?api=1&query=Piata+Victoriei+(Operei)+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Piata Libertatii", url: "https://www.google.com/maps/search/?api=1&query=Piata+Libertatii+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Piata Unirii Oradea", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Oradea+Oradea+Romania", category: "cladiri_teatre" , city: "Oradea" },
+    { name: "Piata Avram Iancu", url: "https://www.google.com/maps/search/?api=1&query=Piata+Avram+Iancu+Arad+Romania", category: "cladiri_teatre" , city: "Arad" },
+    { name: "Piata Revolutiei", url: "https://www.google.com/maps/search/?api=1&query=Piata+Revolutiei+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Piata Universitatii", url: "https://www.google.com/maps/search/?api=1&query=Piata+Universitatii+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Piata Unirii Iasi", url: "https://www.google.com/maps/search/?api=1&query=Piata+Unirii+Iasi+Iasi+Romania", category: "cladiri_teatre" , city: "Iași" },
+    { name: "Cazinoul Vatra Dornei", url: "https://www.google.com/maps/search/?api=1&query=Cazinoul+Vatra+Dornei+Vatra+Dornei+Romania", category: "cladiri_teatre" , city: "Vatra Dornei" },
+    { name: "Palatul Prefecturii", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prefecturii+Suceava+Romania", category: "cladiri_teatre" , city: "Suceava" },
+    { name: "Palatul Comunal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Comunal+Buzau+Romania", category: "cladiri_teatre" , city: "Buzău" },
+    { name: "Cladirea Universitatii", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Cladirea Universitatii „Alexandru Ioan Cuza”", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+%E2%80%9EAlexandru+Ioan+Cuza%E2%80%9D+Iasi+Romania", category: "cladiri_teatre" , city: "Iași" },
+    { name: "Cladirea Universitatii Babes-Bolyai", url: "https://www.google.com/maps/search/?api=1&query=Cladirea+Universitatii+Babes-Bolyai+Cluj-Napoca+Romania", category: "cladiri_teatre" , city: "Cluj-Napoca" },
+    { name: "Palatul Culturii Ploiesti", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Ploiesti+Ploiesti+Romania", category: "cladiri_teatre" , city: "Ploiești" },
+    { name: "Complexul Monumental Memorial Drobeta", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Monumental+Memorial+Drobeta+Drobeta-Turnu+Severin+Romania", category: "cladiri_teatre" , city: "Drobeta-Turnu Severin" },
+    { name: "Monumentul Eroilor Patriei", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Eroilor+Patriei+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Crucea Eroilor de pe Vârful Caraiman", url: "https://www.google.com/maps/search/?api=1&query=Crucea+Eroilor+de+pe+V%C3%A2rful+Caraiman+Muntii+Bucegi+Romania", category: "cladiri_teatre" , city: "Muntii Bucegi" },
+    { name: "Mausoleul de la Marasesti", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Marasesti+Marasesti+Romania", category: "cladiri_teatre" , city: "Marasesti" },
+    { name: "Mausoleul de la Marasti", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Marasti+Marasti+Romania", category: "cladiri_teatre" , city: "Marasti" },
+    { name: "Mausoleul de la Soveja", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+de+la+Soveja+Soveja+Romania", category: "cladiri_teatre" , city: "Soveja" },
+    { name: "Mausoleul Mateias", url: "https://www.google.com/maps/search/?api=1&query=Mausoleul+Mateias+Valea+Mare-Pravat+Romania", category: "cladiri_teatre" , city: "Valea Mare-Pravat" },
+    { name: "Memorialul Victimelor Comunismului si al Rezistentei", url: "https://www.google.com/maps/search/?api=1&query=Memorialul+Victimelor+Comunismului+si+al+Rezistentei+Sighetu+Marmatiei+Romania", category: "cladiri_teatre" , city: "Sighetu Marmației" },
+    { name: "Inchisoarea Pitesti (Memorial)", url: "https://www.google.com/maps/search/?api=1&query=Inchisoarea+Pitesti+(Memorial)+Pitesti+Romania", category: "cladiri_teatre" , city: "Pitești" },
+    { name: "Inchisoarea Râmnicu Sărat (Memorial)", url: "https://www.google.com/maps/search/?api=1&query=Inchisoarea+R%C3%A2mnicu+S%C4%83rat+(Memorial)+R%C3%A2mnicu+S%C4%83rat+Romania", category: "cladiri_teatre" , city: "Râmnicu Sărat" },
+    { name: "Monumentul Revolutiei", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Revolutiei+Timisoara+Romania", category: "cladiri_teatre" , city: "Timișoara" },
+    { name: "Farul Vechi", url: "https://www.google.com/maps/search/?api=1&query=Farul+Vechi+Sulina+Romania", category: "cladiri_teatre" , city: "Sulina" },
+    { name: "Farul Genovez", url: "https://www.google.com/maps/search/?api=1&query=Farul+Genovez+Constanta+Romania", category: "cladiri_teatre" , city: "Constanța" },
+    { name: "Moscheea Carol I", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Carol+I+Constanta+Romania", category: "cladiri_teatre" , city: "Constanța" },
+    { name: "Sinagoga Mare Oradea", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Mare+Oradea+Oradea+Romania", category: "cladiri_teatre" , city: "Oradea" },
+    { name: "Sinagoga din Sion", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+din+Sion+Oradea+Romania", category: "cladiri_teatre" , city: "Oradea" },
+    { name: "Templul Coral", url: "https://www.google.com/maps/search/?api=1&query=Templul+Coral+Bucuresti+Romania", category: "cladiri_teatre" , city: "București" },
+    { name: "Sinagoga Mare Iasi", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Mare+Iasi+Iasi+Romania", category: "cladiri_teatre" , city: "Iași" },
+    { name: "Biserica de Piatra Sfantul Mihail", url: "https://www.google.com/maps/search/?api=1&query=Biserica+de+Piatra+Sfantul+Mihail+Densus+Romania", category: "manastiri" , city: "Densus" },
+    { name: "Ansamblul Rupestru de la Murfatlar", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Rupestru+de+la+Murfatlar+Murfatlar+Romania", category: "manastiri" , city: "Murfatlar" },
+    { name: "Complexul Rupestru Alunis", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Rupestru+Alunis+Colti+Romania", category: "manastiri" , city: "Colti" },
+    { name: "Rezervația de Zimbri „Dragos Voda”", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+%E2%80%9EDragos+Voda%E2%80%9D+V%C3%A2n%C4%83tori-Neamt+Romania", category: "natura" , city: "Vânători-Neamt" },
+    { name: "Rezervația de Zimbri Vama Buzaului", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+Vama+Buzaului+Vama+Buzaului+Romania", category: "natura" , city: "Vama Buzaului" },
+    { name: "Rezervația de Zimbri „Neagra”", url: "https://www.google.com/maps/search/?api=1&query=Rezerva%C8%9Bia+de+Zimbri+%E2%80%9ENeagra%E2%80%9D+Bucsani+Romania", category: "natura" , city: "Bucsani" },
   ],
   de: [
     { name: "Castelul Neuschwanstein", url: "https://www.neuschwanstein.de/" },
@@ -6622,256 +6621,256 @@ const ATTRACTIONS = {
     { name: "London Eye", url: "https://www.londoneye.com/" },
   ],
   es: [
-    { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de Cristal (Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cristal+(Retiro)+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de Liria", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Liria+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de El Pardo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+El+Pardo+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de Santa Cruz", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Santa+Cruz+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cibeles+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Palacio de Velázquez", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Velázquez+Madrid+Spain", category: "castele_palate" }, // Madrid
-    { name: "Zidurile Arabe din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Madrid+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
-    { name: "Torre de los Lujanes", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+los+Lujanes+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
-    { name: "Torre de la Parroquia de San Pedro", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Parroquia+de+San+Pedro+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
-    { name: "Catedral de la Almudena", url: "https://www.google.com/maps/search/?api=1&query=Catedral+de+la+Almudena+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Basílica de San Francisco el Grande", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Francisco+el+Grande+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Mănăstirea Descalzas Reales", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Descalzas+Reales+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Mănăstirea San Jerónimo el Real", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Jerónimo+el+Real+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Ermita de San Antonio de la Florida", url: "https://www.google.com/maps/search/?api=1&query=Ermita+de+San+Antonio+de+la+Florida+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Iglesia de San Manuel y San Benito", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Manuel+y+San+Benito+Madrid+Spain", category: "manastiri" }, // Madrid
-    { name: "Parcul Retiro (Parque del Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Retiro+(Parque+del+Retiro)+Madrid+Spain", category: "natura" }, // Madrid
-    { name: "Casa de Campo", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Campo+Madrid+Spain", category: "natura" }, // Madrid
-    { name: "Real Jardín Botánico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Real+Jardín+Botánico+de+Madrid+Madrid+Spain", category: "natura" }, // Madrid
-    { name: "Parque Madrid Río", url: "https://www.google.com/maps/search/?api=1&query=Parque+Madrid+Río+Madrid+Spain", category: "natura" }, // Madrid
-    { name: "Parque de El Capricho", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+El+Capricho+Madrid+Spain", category: "natura" }, // Madrid
-    { name: "Teleférico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Teleférico+de+Madrid+Madrid+Spain", category: "infrastructura" }, // Madrid
-    { name: "Viaducto de Segovia", url: "https://www.google.com/maps/search/?api=1&query=Viaducto+de+Segovia+Madrid+Spain", category: "infrastructura" }, // Madrid
-    { name: "Estación de Atocha (Grădina Tropicală)", url: "https://www.google.com/maps/search/?api=1&query=Estación+de+Atocha+(Grădina+Tropicală)+Madrid+Spain", category: "infrastructura" }, // Madrid
-    { name: "Muzeul Național Prado", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Prado+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Național Centru de Artă Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Centru+de+Artă+Reina+Sofía+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Thyssen-Bornemisza", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Arheologic Național (MAN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+(MAN)+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Sorolla", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sorolla+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Cerralbo", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cerralbo+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Istoriei din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoriei+din+Madrid+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Muzeul Naval din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Naval+din+Madrid+Madrid+Spain", category: "muzee" }, // Madrid
-    { name: "Plaza Mayor", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Puerta del Sol", url: "https://www.google.com/maps/search/?api=1&query=Puerta+del+Sol+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Gran Vía", url: "https://www.google.com/maps/search/?api=1&query=Gran+Vía+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Plaza de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Cibeles+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Puerta de Alcalá", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Alcalá+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Teatro Real (Opera)", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Real+(Opera)+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Círculo de Bellas Artes", url: "https://www.google.com/maps/search/?api=1&query=Círculo+de+Bellas+Artes+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Templo de Debod", url: "https://www.google.com/maps/search/?api=1&query=Templo+de+Debod+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Plaza de España (Madrid)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Madrid)+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
-    { name: "Palacio Güell", url: "https://www.google.com/maps/search/?api=1&query=Palacio+Güell+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
-    { name: "Castelul Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Montjuïc+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
-    { name: "Palau Reial Major", url: "https://www.google.com/maps/search/?api=1&query=Palau+Reial+Major+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
-    { name: "Palau de la Generalitat", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Generalitat+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
-    { name: "Castelul celor Trei Dragoni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+celor+Trei+Dragoni+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
-    { name: "Torre Glòries (Agbar)", url: "https://www.google.com/maps/search/?api=1&query=Torre+Glòries+(Agbar)+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
-    { name: "Zidurile Romane din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Romane+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
-    { name: "Torre de Collserola", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+Collserola+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
-    { name: "Sagrada Família", url: "https://www.google.com/maps/search/?api=1&query=Sagrada+Família+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Catedrala Sfânta Cruce și Sfânta Eulalia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Cruce+și+Sfânta+Eulalia+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Basílica de Santa Maria del Mar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Mar+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Basílica de Santa Maria del Pi", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Pi+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Mănăstirea Pedralbes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Pedralbes+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Temple Expiatori del Sagrat Cor (Tibidabo)", url: "https://www.google.com/maps/search/?api=1&query=Temple+Expiatori+del+Sagrat+Cor+(Tibidabo)+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
-    { name: "Parcul Güell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Güell+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
-    { name: "Parc de la Ciutadella", url: "https://www.google.com/maps/search/?api=1&query=Parc+de+la+Ciutadella+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
-    { name: "Parc del Laberint d'Horta", url: "https://www.google.com/maps/search/?api=1&query=Parc+del+Laberint+d'Horta+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
-    { name: "Muntele Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Montjuïc+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
-    { name: "Telecabina de la Barceloneta (Transbordador Aeri)", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+de+la+Barceloneta+(Transbordador+Aeri)+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
-    { name: "Funicularul din Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Montjuïc+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
-    { name: "Funicularul din Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Tibidabo+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
-    { name: "Puerto de Barcelona (Portul Vell)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Barcelona+(Portul+Vell)+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
-    { name: "Muzeul Picasso", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Muzeul Național de Artă al Cataloniei (MNAC)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Artă+al+Cataloniei+(MNAC)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Muzeul de Artă Contemporană (MACBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MACBA)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Fundació Joan Miró", url: "https://www.google.com/maps/search/?api=1&query=Fundació+Joan+Miró+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Muzeul de Istorie a Cubei (MUHBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Cubei+(MUHBA)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "CosmoCaixa (Muzeul de Știință)", url: "https://www.google.com/maps/search/?api=1&query=CosmoCaixa+(Muzeul+de+Știință)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Muzeul Maritim din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Maritim+din+Barcelona+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
-    { name: "Casa Milà (La Pedrera)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Milà+(La+Pedrera)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Casa Batlló", url: "https://www.google.com/maps/search/?api=1&query=Casa+Batlló+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Palau de la Música Catalana", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+Catalana+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "La Rambla (Bulevardul Emblematic)", url: "https://www.google.com/maps/search/?api=1&query=La+Rambla+(Bulevardul+Emblematic)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Plaça de Catalunya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+Catalunya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Plaça d'Espanya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+d'Espanya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Arcul de Triumf din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Casa Amatller", url: "https://www.google.com/maps/search/?api=1&query=Casa+Amatller+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Gran Teatre del Liceu", url: "https://www.google.com/maps/search/?api=1&query=Gran+Teatre+del+Liceu+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Mercat de la Boqueria", url: "https://www.google.com/maps/search/?api=1&query=Mercat+de+la+Boqueria+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Plaça del Rei", url: "https://www.google.com/maps/search/?api=1&query=Plaça+del+Rei+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
-    { name: "Palatul Regal Alcázar din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Alcázar+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
-    { name: "Palacio de las Dueñas (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
-    { name: "Palacio de San Telmo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+San+Telmo+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
-    { name: "Casa de Pilatos", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Pilatos+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
-    { name: "Palacio de la Condesa de Lebrija", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Condesa+de+Lebrija+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
-    { name: "Turnul de Aur (Torre del Oro)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Aur+(Torre+del+Oro)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
-    { name: "Torre de la Giralda", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Giralda+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
-    { name: "Zidurile Almohade (Murallas de Sevilla)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Almohade+(Murallas+de+Sevilla)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
-    { name: "Torre de la Plata", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Plata+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
-    { name: "Catedrala din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
-    { name: "Monasterio de Santa María de las Cuevas (La Cartuja)", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+Santa+María+de+las+Cuevas+(La+Cartuja)+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
-    { name: "Iglesia de San Luis de los Franceses", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Luis+de+los+Franceses+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
-    { name: "Basílica de la Macarena", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Macarena+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
-    { name: "Iglesia del Salvador", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+del+Salvador+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
-    { name: "Parque de María Luisa", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+María+Luisa+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
-    { name: "Jardines de Murillo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+de+Murillo+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
-    { name: "Guadalquivir River (Zona de Promenadă)", url: "https://www.google.com/maps/search/?api=1&query=Guadalquivir+River+(Zona+de+Promenadă)+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
-    { name: "Puente de Triana (Puente de Isabel II)", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+Triana+(Puente+de+Isabel+II)+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
-    { name: "Puente del Alamillo", url: "https://www.google.com/maps/search/?api=1&query=Puente+del+Alamillo+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
-    { name: "Muelle de las Delicias", url: "https://www.google.com/maps/search/?api=1&query=Muelle+de+las+Delicias+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
-    { name: "Archivo General de Indias", url: "https://www.google.com/maps/search/?api=1&query=Archivo+General+de+Indias+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
-    { name: "Museo de Bellas Artes din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
-    { name: "Museo del Baile Flamenco", url: "https://www.google.com/maps/search/?api=1&query=Museo+del+Baile+Flamenco+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
-    { name: "Museo de Artes y Costumbres Populares", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Artes+y+Costumbres+Populares+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
-    { name: "Museo Arqueológico de Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Sevilla+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
-    { name: "Plaza de España (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Setas de Sevilla (Metropol Parasol)", url: "https://www.google.com/maps/search/?api=1&query=Setas+de+Sevilla+(Metropol+Parasol)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Barrio Santa Cruz (Cartierul Istoric)", url: "https://www.google.com/maps/search/?api=1&query=Barrio+Santa+Cruz+(Cartierul+Istoric)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Real Maestranza de Caballería (Plaza de Toros)", url: "https://www.google.com/maps/search/?api=1&query=Real+Maestranza+de+Caballería+(Plaza+de+Toros)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Plaça de América", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+América+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Teatro de la Maestranza", url: "https://www.google.com/maps/search/?api=1&query=Teatro+de+la+Maestranza+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
-    { name: "Palacio del Marqués de Dos Aguas", url: "https://www.google.com/maps/search/?api=1&query=Palacio+del+Marqués+de+Dos+Aguas+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
-    { name: "Palacio de Benicarló", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Benicarló+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
-    { name: "Palacio de la Generalitat Valenciana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Generalitat+Valenciana+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
-    { name: "Torres de Serranos", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Serranos+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Valencia, Comunitatea Valenciană
-    { name: "Torres de Quart", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Quart+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Valencia, Comunitatea Valenciană
-    { name: "Catedrala din Valencia (El Miguelete)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Valencia+(El+Miguelete)+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
-    { name: "Basílica de la Virgen de los Desamparados", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Virgen+de+los+Desamparados+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
-    { name: "Real Monasterio de la Santísima Trinidad", url: "https://www.google.com/maps/search/?api=1&query=Real+Monasterio+de+la+Santísima+Trinidad+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
-    { name: "Iglesia de San Nicolás de Bari", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Nicolás+de+Bari+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
-    { name: "Jardines del Turia (Parcul din albia veche)", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Turia+(Parcul+din+albia+veche)+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
-    { name: "Parcul Natural Albufera", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Albufera+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
-    { name: "Jardín Botánico de la Universidad de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Jardín+Botánico+de+la+Universidad+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
-    { name: "Bioparc Valencia", url: "https://www.google.com/maps/search/?api=1&query=Bioparc+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
-    { name: "Puente de la Exposición", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+la+Exposición+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
-    { name: "Puente de les Flors", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+les+Flors+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
-    { name: "Puerto de Valencia (Marina de València)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Valencia+(Marina+de+València)+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
-    { name: "Museo de Bellas Artes de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
-    { name: "IVAM (Institutul de Artă Modernă)", url: "https://www.google.com/maps/search/?api=1&query=IVAM+(Institutul+de+Artă+Modernă)+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
-    { name: "Museo Fallero", url: "https://www.google.com/maps/search/?api=1&query=Museo+Fallero+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
-    { name: "Museo Nacional de Cerámica", url: "https://www.google.com/maps/search/?api=1&query=Museo+Nacional+de+Cerámica+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
-    { name: "Orașul Artelor și Științei (Ciudad de las Artes y las Ciencias)", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Artelor+și+Științei+(Ciudad+de+las+Artes+y+las+Ciencias)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Llotja de la Seda (Bursa Mătăsii - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Llotja+de+la+Seda+(Bursa+Mătăsii+-+UNESCO)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Mercado Central din Valencia", url: "https://www.google.com/maps/search/?api=1&query=Mercado+Central+din+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Plaza del Ayuntamiento", url: "https://www.google.com/maps/search/?api=1&query=Plaza+del+Ayuntamiento+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Plaza de la Virgen", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Virgen+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Estación del Norte", url: "https://www.google.com/maps/search/?api=1&query=Estación+del+Norte+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Palau de la Música de València", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+de+València+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
-    { name: "Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Alhambra+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
-    { name: "Palacio de Generalife", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Generalife+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
-    { name: "Palacio de Carlos V", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Carlos+V+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
-    { name: "Palacio de Viana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Viana+Córdoba,+Andaluzia+Spain", category: "castele_palate" }, // Córdoba, Andaluzia
-    { name: "Alcázar de los Reyes Cristianos", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+los+Reyes+Cristianos+Córdoba,+Andaluzia+Spain", category: "castele_palate" }, // Córdoba, Andaluzia
-    { name: "Torre de la Vela (Alhambra)", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Vela+(Alhambra)+Granada,+Andaluzia+Spain", category: "cetati_turnuri" }, // Granada, Andaluzia
-    { name: "Torre de la Calahorra", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Calahorra+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri" }, // Córdoba, Andaluzia
-    { name: "Turnul Malmuerta", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Malmuerta+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri" }, // Córdoba, Andaluzia
-    { name: "Alcazaba de Granada", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Granada+Granada,+Andaluzia+Spain", category: "cetati_turnuri" }, // Granada, Andaluzia
-    { name: "Moscheea-Catedrală din Córdoba (Mezquita)", url: "https://www.google.com/maps/search/?api=1&query=Moscheea-Catedrală+din+Córdoba+(Mezquita)+Córdoba,+Andaluzia+Spain", category: "manastiri" }, // Córdoba, Andaluzia
-    { name: "Catedrala din Granada (Capilla Real)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Granada+(Capilla+Real)+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
-    { name: "Monasterio de San Jerónimo", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+San+Jerónimo+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
-    { name: "Monasterio de la Cartuja", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+la+Cartuja+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
-    { name: "Sinagoga din Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+din+Córdoba+Córdoba,+Andaluzia+Spain", category: "manastiri" }, // Córdoba, Andaluzia
-    { name: "Basílica de San Juan de Dios", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Juan+de+Dios+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
-    { name: "Jardines del Triunfo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Triunfo+Granada,+Andaluzia+Spain", category: "natura" }, // Granada, Andaluzia
-    { name: "Peșterile din Sacromonte (Cuevas de Sacromonte)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Sacromonte+(Cuevas+de+Sacromonte)+Granada,+Andaluzia+Spain", category: "natura" }, // Granada, Andaluzia
-    { name: "Los Patios de Córdoba (Curțile înflorite)", url: "https://www.google.com/maps/search/?api=1&query=Los+Patios+de+Córdoba+(Curțile+înflorite)+Córdoba,+Andaluzia+Spain", category: "natura" }, // Córdoba, Andaluzia
-    { name: "Șoseaua de Înaltă Altitudine A-395 (Sierra Nevada)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+de+Înaltă+Altitudine+A-395+(Sierra+Nevada)+Granada,+Andaluzia+Spain", category: "infrastructura" }, // Granada, Andaluzia
-    { name: "Podul Roman din Córdoba (Puente Romano)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Roman+din+Córdoba+(Puente+Romano)+Córdoba,+Andaluzia+Spain", category: "infrastructura" }, // Córdoba, Andaluzia
-    { name: "Museo de Bellas Artes de Granada", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Granada+Granada,+Andaluzia+Spain", category: "muzee" }, // Granada, Andaluzia
-    { name: "Museo de la Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+la+Alhambra+Granada,+Andaluzia+Spain", category: "muzee" }, // Granada, Andaluzia
-    { name: "Museo Arqueológico de Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Córdoba+Córdoba,+Andaluzia+Spain", category: "muzee" }, // Córdoba, Andaluzia
-    { name: "Museo Julio Romero de Torres", url: "https://www.google.com/maps/search/?api=1&query=Museo+Julio+Romero+de+Torres+Córdoba,+Andaluzia+Spain", category: "muzee" }, // Córdoba, Andaluzia
-    { name: "Medina Azahara (Sit Arheologic UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Medina+Azahara+(Sit+Arheologic+UNESCO)+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
-    { name: "Albaicín (Cartierul vechi maur)", url: "https://www.google.com/maps/search/?api=1&query=Albaicín+(Cartierul+vechi+maur)+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
-    { name: "Plaza de las Tendillas", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+las+Tendillas+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
-    { name: "Plaza de la Corredera", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Corredera+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
-    { name: "Corral del Carbón", url: "https://www.google.com/maps/search/?api=1&query=Corral+del+Carbón+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
-    { name: "Calle Elvira (Zonă Bazar)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Elvira+(Zonă+Bazar)+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
-    { name: "Castelul Alcázar din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Alcázar+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "castele_palate" }, // Segovia, Castilia și León
+    { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de Cristal (Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cristal+(Retiro)+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de Liria", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Liria+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de El Pardo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+El+Pardo+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de Santa Cruz", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Santa+Cruz+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cibeles+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Palacio de Velázquez", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Velázquez+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
+    { name: "Zidurile Arabe din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Madrid+Madrid+Spain", category: "cetati_turnuri", city: "Madrid" }, // Madrid
+    { name: "Torre de los Lujanes", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+los+Lujanes+Madrid+Spain", category: "cetati_turnuri", city: "Madrid" }, // Madrid
+    { name: "Torre de la Parroquia de San Pedro", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Parroquia+de+San+Pedro+Madrid+Spain", category: "cetati_turnuri", city: "Madrid" }, // Madrid
+    { name: "Catedral de la Almudena", url: "https://www.google.com/maps/search/?api=1&query=Catedral+de+la+Almudena+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Basílica de San Francisco el Grande", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Francisco+el+Grande+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Mănăstirea Descalzas Reales", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Descalzas+Reales+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Mănăstirea San Jerónimo el Real", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Jerónimo+el+Real+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Ermita de San Antonio de la Florida", url: "https://www.google.com/maps/search/?api=1&query=Ermita+de+San+Antonio+de+la+Florida+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Iglesia de San Manuel y San Benito", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Manuel+y+San+Benito+Madrid+Spain", category: "manastiri", city: "Madrid" }, // Madrid
+    { name: "Parcul Retiro (Parque del Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Retiro+(Parque+del+Retiro)+Madrid+Spain", category: "natura", city: "Madrid" }, // Madrid
+    { name: "Casa de Campo", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Campo+Madrid+Spain", category: "natura", city: "Madrid" }, // Madrid
+    { name: "Real Jardín Botánico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Real+Jardín+Botánico+de+Madrid+Madrid+Spain", category: "natura", city: "Madrid" }, // Madrid
+    { name: "Parque Madrid Río", url: "https://www.google.com/maps/search/?api=1&query=Parque+Madrid+Río+Madrid+Spain", category: "natura", city: "Madrid" }, // Madrid
+    { name: "Parque de El Capricho", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+El+Capricho+Madrid+Spain", category: "natura", city: "Madrid" }, // Madrid
+    { name: "Teleférico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Teleférico+de+Madrid+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
+    { name: "Viaducto de Segovia", url: "https://www.google.com/maps/search/?api=1&query=Viaducto+de+Segovia+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
+    { name: "Estación de Atocha (Grădina Tropicală)", url: "https://www.google.com/maps/search/?api=1&query=Estación+de+Atocha+(Grădina+Tropicală)+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
+    { name: "Muzeul Național Prado", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Prado+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Național Centru de Artă Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Centru+de+Artă+Reina+Sofía+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Thyssen-Bornemisza", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Arheologic Național (MAN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+(MAN)+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Sorolla", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sorolla+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Cerralbo", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cerralbo+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Istoriei din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoriei+din+Madrid+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Naval din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Naval+din+Madrid+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Plaza Mayor", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Puerta del Sol", url: "https://www.google.com/maps/search/?api=1&query=Puerta+del+Sol+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Gran Vía", url: "https://www.google.com/maps/search/?api=1&query=Gran+Vía+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Plaza de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Cibeles+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Puerta de Alcalá", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Alcalá+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Teatro Real (Opera)", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Real+(Opera)+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Círculo de Bellas Artes", url: "https://www.google.com/maps/search/?api=1&query=Círculo+de+Bellas+Artes+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Templo de Debod", url: "https://www.google.com/maps/search/?api=1&query=Templo+de+Debod+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Plaza de España (Madrid)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Madrid)+Madrid+Spain", category: "cladiri_teatre", city: "Madrid" }, // Madrid
+    { name: "Palacio Güell", url: "https://www.google.com/maps/search/?api=1&query=Palacio+Güell+Barcelona,+Catalonia+Spain", category: "castele_palate", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Castelul Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Montjuïc+Barcelona,+Catalonia+Spain", category: "castele_palate", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Palau Reial Major", url: "https://www.google.com/maps/search/?api=1&query=Palau+Reial+Major+Barcelona,+Catalonia+Spain", category: "castele_palate", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Palau de la Generalitat", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Generalitat+Barcelona,+Catalonia+Spain", category: "castele_palate", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Castelul celor Trei Dragoni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+celor+Trei+Dragoni+Barcelona,+Catalonia+Spain", category: "castele_palate", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Torre Glòries (Agbar)", url: "https://www.google.com/maps/search/?api=1&query=Torre+Glòries+(Agbar)+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Zidurile Romane din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Romane+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Torre de Collserola", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+Collserola+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Sagrada Família", url: "https://www.google.com/maps/search/?api=1&query=Sagrada+Família+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Catedrala Sfânta Cruce și Sfânta Eulalia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Cruce+și+Sfânta+Eulalia+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Basílica de Santa Maria del Mar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Mar+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Basílica de Santa Maria del Pi", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Pi+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Mănăstirea Pedralbes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Pedralbes+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Temple Expiatori del Sagrat Cor (Tibidabo)", url: "https://www.google.com/maps/search/?api=1&query=Temple+Expiatori+del+Sagrat+Cor+(Tibidabo)+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Parcul Güell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Güell+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Parc de la Ciutadella", url: "https://www.google.com/maps/search/?api=1&query=Parc+de+la+Ciutadella+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Parc del Laberint d'Horta", url: "https://www.google.com/maps/search/?api=1&query=Parc+del+Laberint+d'Horta+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muntele Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Montjuïc+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Telecabina de la Barceloneta (Transbordador Aeri)", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+de+la+Barceloneta+(Transbordador+Aeri)+Barcelona,+Catalonia+Spain", category: "infrastructura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Funicularul din Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Montjuïc+Barcelona,+Catalonia+Spain", category: "infrastructura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Funicularul din Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Tibidabo+Barcelona,+Catalonia+Spain", category: "infrastructura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Puerto de Barcelona (Portul Vell)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Barcelona+(Portul+Vell)+Barcelona,+Catalonia+Spain", category: "infrastructura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muzeul Picasso", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muzeul Național de Artă al Cataloniei (MNAC)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Artă+al+Cataloniei+(MNAC)+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muzeul de Artă Contemporană (MACBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MACBA)+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Fundació Joan Miró", url: "https://www.google.com/maps/search/?api=1&query=Fundació+Joan+Miró+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muzeul de Istorie a Cubei (MUHBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Cubei+(MUHBA)+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "CosmoCaixa (Muzeul de Știință)", url: "https://www.google.com/maps/search/?api=1&query=CosmoCaixa+(Muzeul+de+Știință)+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Muzeul Maritim din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Maritim+din+Barcelona+Barcelona,+Catalonia+Spain", category: "muzee", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Casa Milà (La Pedrera)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Milà+(La+Pedrera)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Casa Batlló", url: "https://www.google.com/maps/search/?api=1&query=Casa+Batlló+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Palau de la Música Catalana", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+Catalana+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "La Rambla (Bulevardul Emblematic)", url: "https://www.google.com/maps/search/?api=1&query=La+Rambla+(Bulevardul+Emblematic)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Plaça de Catalunya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+Catalunya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Plaça d'Espanya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+d'Espanya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Arcul de Triumf din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Casa Amatller", url: "https://www.google.com/maps/search/?api=1&query=Casa+Amatller+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Gran Teatre del Liceu", url: "https://www.google.com/maps/search/?api=1&query=Gran+Teatre+del+Liceu+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Mercat de la Boqueria", url: "https://www.google.com/maps/search/?api=1&query=Mercat+de+la+Boqueria+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Plaça del Rei", url: "https://www.google.com/maps/search/?api=1&query=Plaça+del+Rei+Barcelona,+Catalonia+Spain", category: "cladiri_teatre", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Palatul Regal Alcázar din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Alcázar+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "castele_palate", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Palacio de las Dueñas (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "castele_palate", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Palacio de San Telmo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+San+Telmo+Sevilia,+Andaluzia+Spain", category: "castele_palate", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Casa de Pilatos", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Pilatos+Sevilia,+Andaluzia+Spain", category: "castele_palate", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Palacio de la Condesa de Lebrija", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Condesa+de+Lebrija+Sevilia,+Andaluzia+Spain", category: "castele_palate", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Turnul de Aur (Torre del Oro)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Aur+(Torre+del+Oro)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Torre de la Giralda", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Giralda+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Zidurile Almohade (Murallas de Sevilla)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Almohade+(Murallas+de+Sevilla)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Torre de la Plata", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Plata+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Catedrala din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "manastiri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Monasterio de Santa María de las Cuevas (La Cartuja)", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+Santa+María+de+las+Cuevas+(La+Cartuja)+Sevilia,+Andaluzia+Spain", category: "manastiri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Iglesia de San Luis de los Franceses", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Luis+de+los+Franceses+Sevilia,+Andaluzia+Spain", category: "manastiri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Basílica de la Macarena", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Macarena+Sevilia,+Andaluzia+Spain", category: "manastiri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Iglesia del Salvador", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+del+Salvador+Sevilia,+Andaluzia+Spain", category: "manastiri", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Parque de María Luisa", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+María+Luisa+Sevilia,+Andaluzia+Spain", category: "natura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Jardines de Murillo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+de+Murillo+Sevilia,+Andaluzia+Spain", category: "natura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Guadalquivir River (Zona de Promenadă)", url: "https://www.google.com/maps/search/?api=1&query=Guadalquivir+River+(Zona+de+Promenadă)+Sevilia,+Andaluzia+Spain", category: "natura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Puente de Triana (Puente de Isabel II)", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+Triana+(Puente+de+Isabel+II)+Sevilia,+Andaluzia+Spain", category: "infrastructura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Puente del Alamillo", url: "https://www.google.com/maps/search/?api=1&query=Puente+del+Alamillo+Sevilia,+Andaluzia+Spain", category: "infrastructura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Muelle de las Delicias", url: "https://www.google.com/maps/search/?api=1&query=Muelle+de+las+Delicias+Sevilia,+Andaluzia+Spain", category: "infrastructura", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Archivo General de Indias", url: "https://www.google.com/maps/search/?api=1&query=Archivo+General+de+Indias+Sevilia,+Andaluzia+Spain", category: "muzee", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Museo de Bellas Artes din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "muzee", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Museo del Baile Flamenco", url: "https://www.google.com/maps/search/?api=1&query=Museo+del+Baile+Flamenco+Sevilia,+Andaluzia+Spain", category: "muzee", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Museo de Artes y Costumbres Populares", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Artes+y+Costumbres+Populares+Sevilia,+Andaluzia+Spain", category: "muzee", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Museo Arqueológico de Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Sevilla+Sevilia,+Andaluzia+Spain", category: "muzee", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Plaza de España (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Setas de Sevilla (Metropol Parasol)", url: "https://www.google.com/maps/search/?api=1&query=Setas+de+Sevilla+(Metropol+Parasol)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Barrio Santa Cruz (Cartierul Istoric)", url: "https://www.google.com/maps/search/?api=1&query=Barrio+Santa+Cruz+(Cartierul+Istoric)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Real Maestranza de Caballería (Plaza de Toros)", url: "https://www.google.com/maps/search/?api=1&query=Real+Maestranza+de+Caballería+(Plaza+de+Toros)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Plaça de América", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+América+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Teatro de la Maestranza", url: "https://www.google.com/maps/search/?api=1&query=Teatro+de+la+Maestranza+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre", city: "Sevilla" }, // Sevilia, Andaluzia
+    { name: "Palacio del Marqués de Dos Aguas", url: "https://www.google.com/maps/search/?api=1&query=Palacio+del+Marqués+de+Dos+Aguas+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Palacio de Benicarló", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Benicarló+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Palacio de la Generalitat Valenciana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Generalitat+Valenciana+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Torres de Serranos", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Serranos+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Torres de Quart", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Quart+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Catedrala din Valencia (El Miguelete)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Valencia+(El+Miguelete)+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Basílica de la Virgen de los Desamparados", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Virgen+de+los+Desamparados+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Real Monasterio de la Santísima Trinidad", url: "https://www.google.com/maps/search/?api=1&query=Real+Monasterio+de+la+Santísima+Trinidad+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Iglesia de San Nicolás de Bari", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Nicolás+de+Bari+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Jardines del Turia (Parcul din albia veche)", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Turia+(Parcul+din+albia+veche)+Valencia,+Comunitatea+Valenciană+Spain", category: "natura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Parcul Natural Albufera", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Albufera+Valencia,+Comunitatea+Valenciană+Spain", category: "natura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Jardín Botánico de la Universidad de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Jardín+Botánico+de+la+Universidad+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Bioparc Valencia", url: "https://www.google.com/maps/search/?api=1&query=Bioparc+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Puente de la Exposición", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+la+Exposición+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Puente de les Flors", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+les+Flors+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Puerto de Valencia (Marina de València)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Valencia+(Marina+de+València)+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo de Bellas Artes de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "IVAM (Institutul de Artă Modernă)", url: "https://www.google.com/maps/search/?api=1&query=IVAM+(Institutul+de+Artă+Modernă)+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo Fallero", url: "https://www.google.com/maps/search/?api=1&query=Museo+Fallero+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo Nacional de Cerámica", url: "https://www.google.com/maps/search/?api=1&query=Museo+Nacional+de+Cerámica+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Orașul Artelor și Științei (Ciudad de las Artes y las Ciencias)", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Artelor+și+Științei+(Ciudad+de+las+Artes+y+las+Ciencias)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Llotja de la Seda (Bursa Mătăsii - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Llotja+de+la+Seda+(Bursa+Mătăsii+-+UNESCO)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Mercado Central din Valencia", url: "https://www.google.com/maps/search/?api=1&query=Mercado+Central+din+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Plaza del Ayuntamiento", url: "https://www.google.com/maps/search/?api=1&query=Plaza+del+Ayuntamiento+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Plaza de la Virgen", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Virgen+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Estación del Norte", url: "https://www.google.com/maps/search/?api=1&query=Estación+del+Norte+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Palau de la Música de València", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+de+València+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
+    { name: "Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Alhambra+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
+    { name: "Palacio de Generalife", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Generalife+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
+    { name: "Palacio de Carlos V", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Carlos+V+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
+    { name: "Palacio de Viana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Viana+Córdoba,+Andaluzia+Spain", category: "castele_palate", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Alcázar de los Reyes Cristianos", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+los+Reyes+Cristianos+Córdoba,+Andaluzia+Spain", category: "castele_palate", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Torre de la Vela (Alhambra)", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Vela+(Alhambra)+Granada,+Andaluzia+Spain", category: "cetati_turnuri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Torre de la Calahorra", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Calahorra+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Turnul Malmuerta", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Malmuerta+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Alcazaba de Granada", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Granada+Granada,+Andaluzia+Spain", category: "cetati_turnuri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Moscheea-Catedrală din Córdoba (Mezquita)", url: "https://www.google.com/maps/search/?api=1&query=Moscheea-Catedrală+din+Córdoba+(Mezquita)+Córdoba,+Andaluzia+Spain", category: "manastiri", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Catedrala din Granada (Capilla Real)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Granada+(Capilla+Real)+Granada,+Andaluzia+Spain", category: "manastiri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Monasterio de San Jerónimo", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+San+Jerónimo+Granada,+Andaluzia+Spain", category: "manastiri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Monasterio de la Cartuja", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+la+Cartuja+Granada,+Andaluzia+Spain", category: "manastiri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Sinagoga din Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+din+Córdoba+Córdoba,+Andaluzia+Spain", category: "manastiri", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Basílica de San Juan de Dios", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Juan+de+Dios+Granada,+Andaluzia+Spain", category: "manastiri", city: "Granada" }, // Granada, Andaluzia
+    { name: "Jardines del Triunfo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Triunfo+Granada,+Andaluzia+Spain", category: "natura", city: "Granada" }, // Granada, Andaluzia
+    { name: "Peșterile din Sacromonte (Cuevas de Sacromonte)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Sacromonte+(Cuevas+de+Sacromonte)+Granada,+Andaluzia+Spain", category: "natura", city: "Granada" }, // Granada, Andaluzia
+    { name: "Los Patios de Córdoba (Curțile înflorite)", url: "https://www.google.com/maps/search/?api=1&query=Los+Patios+de+Córdoba+(Curțile+înflorite)+Córdoba,+Andaluzia+Spain", category: "natura", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Șoseaua de Înaltă Altitudine A-395 (Sierra Nevada)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+de+Înaltă+Altitudine+A-395+(Sierra+Nevada)+Granada,+Andaluzia+Spain", category: "infrastructura", city: "Granada" }, // Granada, Andaluzia
+    { name: "Podul Roman din Córdoba (Puente Romano)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Roman+din+Córdoba+(Puente+Romano)+Córdoba,+Andaluzia+Spain", category: "infrastructura", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Museo de Bellas Artes de Granada", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Granada+Granada,+Andaluzia+Spain", category: "muzee", city: "Granada" }, // Granada, Andaluzia
+    { name: "Museo de la Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+la+Alhambra+Granada,+Andaluzia+Spain", category: "muzee", city: "Granada" }, // Granada, Andaluzia
+    { name: "Museo Arqueológico de Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Córdoba+Córdoba,+Andaluzia+Spain", category: "muzee", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Museo Julio Romero de Torres", url: "https://www.google.com/maps/search/?api=1&query=Museo+Julio+Romero+de+Torres+Córdoba,+Andaluzia+Spain", category: "muzee", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Medina Azahara (Sit Arheologic UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Medina+Azahara+(Sit+Arheologic+UNESCO)+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Albaicín (Cartierul vechi maur)", url: "https://www.google.com/maps/search/?api=1&query=Albaicín+(Cartierul+vechi+maur)+Granada,+Andaluzia+Spain", category: "cladiri_teatre", city: "Granada" }, // Granada, Andaluzia
+    { name: "Plaza de las Tendillas", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+las+Tendillas+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Plaza de la Corredera", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Corredera+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre", city: "Córdoba" }, // Córdoba, Andaluzia
+    { name: "Corral del Carbón", url: "https://www.google.com/maps/search/?api=1&query=Corral+del+Carbón+Granada,+Andaluzia+Spain", category: "cladiri_teatre", city: "Granada" }, // Granada, Andaluzia
+    { name: "Calle Elvira (Zonă Bazar)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Elvira+(Zonă+Bazar)+Granada,+Andaluzia+Spain", category: "cladiri_teatre", city: "Granada" }, // Granada, Andaluzia
+    { name: "Castelul Alcázar din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Alcázar+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "castele_palate", city: "Segovia" }, // Segovia, Castilia și León
     { name: "Palacio Real de La Granja de San Ildefonso", url: "https://www.google.com/maps/search/?api=1&query=Palacio+Real+de+La+Granja+de+San+Ildefonso+San+Ildefonso,+Castilia+și+León+Spain", category: "castele_palate" }, // San Ildefonso, Castilia și León
     { name: "Castelul Coca", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Coca+Coca,+Castilia+și+León+Spain", category: "castele_palate" }, // Coca, Castilia și León
     { name: "Castelul Ponferrada (Templier)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ponferrada+(Templier)+Ponferrada,+Castilia+și+León+Spain", category: "castele_palate" }, // Ponferrada, Castilia și León
     { name: "Castelul Peñafiel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Peñafiel+Peñafiel,+Castilia+și+León+Spain", category: "castele_palate" }, // Peñafiel, Castilia și León
-    { name: "Palacio de las Dueñas (Salamanca)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Salamanca)+Salamanca,+Castilia+și+León+Spain", category: "castele_palate" }, // Salamanca, Castilia și León
+    { name: "Palacio de las Dueñas (Salamanca)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Salamanca)+Salamanca,+Castilia+și+León+Spain", category: "castele_palate", city: "Salamanca" }, // Salamanca, Castilia și León
     { name: "Castelul Belmonte", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Belmonte+Belmonte,+Castilia-La+Mancha+Spain", category: "castele_palate" }, // Belmonte, Castilia-La Mancha
-    { name: "Zidurile Medievale din Ávila", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Ávila+Ávila,+Castilia+și+León+Spain", category: "cetati_turnuri" }, // Ávila, Castilia și León
-    { name: "Zidurile Arabe din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
-    { name: "Alcázar de Toledo", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
-    { name: "Puerta de Bisagra", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Bisagra+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
-    { name: "Catedrala Santa María din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+María+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
-    { name: "Catedrala din Burgos", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Burgos+Burgos,+Castilia+și+León+Spain", category: "manastiri" }, // Burgos, Castilia și León
+    { name: "Zidurile Medievale din Ávila", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Ávila+Ávila,+Castilia+și+León+Spain", category: "cetati_turnuri", city: "Ávila" }, // Ávila, Castilia și León
+    { name: "Zidurile Arabe din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Alcázar de Toledo", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Puerta de Bisagra", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Bisagra+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Catedrala Santa María din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+María+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Catedrala din Burgos", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Burgos+Burgos,+Castilia+și+León+Spain", category: "manastiri", city: "Burgos" }, // Burgos, Castilia și León
     { name: "Catedrala din León (Pulchra Leonina)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+León+(Pulchra+Leonina)+León,+Castilia+și+León+Spain", category: "manastiri" }, // León, Castilia și León
-    { name: "Mănăstirea San Juan de los Reyes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Juan+de+los+Reyes+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
-    { name: "Mănăstirea Santa María la Real de Las Huelgas", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santa+María+la+Real+de+Las+Huelgas+Burgos,+Castilia+și+León+Spain", category: "manastiri" }, // Burgos, Castilia și León
-    { name: "Catedrala Nouă și Catedrala Veche din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Nouă+și+Catedrala+Veche+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "manastiri" }, // Salamanca, Castilia și León
-    { name: "Biserica San Román", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Román+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
-    { name: "Sinagoga Santa María la Blanca", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Santa+María+la+Blanca+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
+    { name: "Mănăstirea San Juan de los Reyes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Juan+de+los+Reyes+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Mănăstirea Santa María la Real de Las Huelgas", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santa+María+la+Real+de+Las+Huelgas+Burgos,+Castilia+și+León+Spain", category: "manastiri", city: "Burgos" }, // Burgos, Castilia și León
+    { name: "Catedrala Nouă și Catedrala Veche din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Nouă+și+Catedrala+Veche+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "manastiri", city: "Salamanca" }, // Salamanca, Castilia și León
+    { name: "Biserica San Román", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Román+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Sinagoga Santa María la Blanca", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Santa+María+la+Blanca+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri", city: "Toledo" }, // Toledo, Castilia-La Mancha
     { name: "Mănăstirea Santo Domingo de Silos", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santo+Domingo+de+Silos+Silos,+Castilia+și+León+Spain", category: "manastiri" }, // Silos, Castilia și León
     { name: "Las Médulas (Vechile Mine Romane de Aur)", url: "https://www.google.com/maps/search/?api=1&query=Las+Médulas+(Vechile+Mine+Romane+de+Aur)+Ponferrada,+Castilia+și+León+Spain", category: "natura" }, // Ponferrada, Castilia și León
     { name: "Parcul Național Cabañeros", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Cabañeros+Castilia-La+Mancha+Spain", category: "natura" }, // Castilia-La Mancha
-    { name: "Parcul Natural Hoces del Río Duratón", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Hoces+del+Río+Duratón+Segovia,+Castilia+și+León+Spain", category: "natura" }, // Segovia, Castilia și León
+    { name: "Parcul Natural Hoces del Río Duratón", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Hoces+del+Río+Duratón+Segovia,+Castilia+și+León+Spain", category: "natura", city: "Segovia" }, // Segovia, Castilia și León
     { name: "Vulcanii Noroioși din Campo de Calatrava", url: "https://www.google.com/maps/search/?api=1&query=Vulcanii+Noroioși+din+Campo+de+Calatrava+Ciudad+Real,+Castilia-La+Mancha+Spain", category: "natura" }, // Ciudad Real, Castilia-La Mancha
-    { name: "Apeductul Roman din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+Roman+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "infrastructura" }, // Segovia, Castilia și León
-    { name: "Podul San Martín (Puente de San Martín)", url: "https://www.google.com/maps/search/?api=1&query=Podul+San+Martín+(Puente+de+San+Martín)+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura" }, // Toledo, Castilia-La Mancha
-    { name: "Podul Alcántara", url: "https://www.google.com/maps/search/?api=1&query=Podul+Alcántara+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura" }, // Toledo, Castilia-La Mancha
+    { name: "Apeductul Roman din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+Roman+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "infrastructura", city: "Segovia" }, // Segovia, Castilia și León
+    { name: "Podul San Martín (Puente de San Martín)", url: "https://www.google.com/maps/search/?api=1&query=Podul+San+Martín+(Puente+de+San+Martín)+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Podul Alcántara", url: "https://www.google.com/maps/search/?api=1&query=Podul+Alcántara+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura", city: "Toledo" }, // Toledo, Castilia-La Mancha
     { name: "Pasul Montan Puerto de Navacerrada", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Montan+Puerto+de+Navacerrada+Sistema+Central,+Madrid/Segovia+Spain", category: "infrastructura" }, // Sistema Central, Madrid/Segovia
-    { name: "Muzeul El Greco", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+El+Greco+Toledo,+Castilia-La+Mancha+Spain", category: "muzee" }, // Toledo, Castilia-La Mancha
-    { name: "Muzeul Evoluției Umane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Evoluției+Umane+Burgos,+Castilia+și+León+Spain", category: "muzee" }, // Burgos, Castilia și León
+    { name: "Muzeul El Greco", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+El+Greco+Toledo,+Castilia-La+Mancha+Spain", category: "muzee", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Muzeul Evoluției Umane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Evoluției+Umane+Burgos,+Castilia+și+León+Spain", category: "muzee", city: "Burgos" }, // Burgos, Castilia și León
     { name: "MUSAC (Muzeul de Artă Contemporană)", url: "https://www.google.com/maps/search/?api=1&query=MUSAC+(Muzeul+de+Artă+Contemporană)+León,+Castilia+și+León+Spain", category: "muzee" }, // León, Castilia și León
-    { name: "Muzeul Sefardic (Sinagoga del Tránsito)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sefardic+(Sinagoga+del+Tránsito)+Toledo,+Castilia-La+Mancha+Spain", category: "muzee" }, // Toledo, Castilia-La Mancha
-    { name: "Casa de las Conchas", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+las+Conchas+Salamanca,+Castilia+și+León+Spain", category: "muzee" }, // Salamanca, Castilia și León
-    { name: "Plaza Mayor din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Salamanca, Castilia și León
-    { name: "Casas Colgadas (Casele Suspendate)", url: "https://www.google.com/maps/search/?api=1&query=Casas+Colgadas+(Casele+Suspendate)+Cuenca,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Cuenca, Castilia-La Mancha
-    { name: "Clădirea Universității din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Universității+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Salamanca, Castilia și León
-    { name: "Plaza Mayor din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Segovia, Castilia și León
-    { name: "Plaza de Zocodover", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Zocodover+Toledo,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Toledo, Castilia-La Mancha
+    { name: "Muzeul Sefardic (Sinagoga del Tránsito)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sefardic+(Sinagoga+del+Tránsito)+Toledo,+Castilia-La+Mancha+Spain", category: "muzee", city: "Toledo" }, // Toledo, Castilia-La Mancha
+    { name: "Casa de las Conchas", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+las+Conchas+Salamanca,+Castilia+și+León+Spain", category: "muzee", city: "Salamanca" }, // Salamanca, Castilia și León
+    { name: "Plaza Mayor din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre", city: "Salamanca" }, // Salamanca, Castilia și León
+    { name: "Casas Colgadas (Casele Suspendate)", url: "https://www.google.com/maps/search/?api=1&query=Casas+Colgadas+(Casele+Suspendate)+Cuenca,+Castilia-La+Mancha+Spain", category: "cladiri_teatre", city: "Cuenca" }, // Cuenca, Castilia-La Mancha
+    { name: "Clădirea Universității din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Universității+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre", city: "Salamanca" }, // Salamanca, Castilia și León
+    { name: "Plaza Mayor din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "cladiri_teatre", city: "Segovia" }, // Segovia, Castilia și León
+    { name: "Plaza de Zocodover", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Zocodover+Toledo,+Castilia-La+Mancha+Spain", category: "cladiri_teatre", city: "Toledo" }, // Toledo, Castilia-La Mancha
     { name: "Mora de Toledo (Zonă Mori de Vânt)", url: "https://www.google.com/maps/search/?api=1&query=Mora+de+Toledo+(Zonă+Mori+de+Vânt)+Consuegra,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Consuegra, Castilia-La Mancha
     { name: "Palacio de Gaudí", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Gaudí+Astorga,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Astorga, Castilia și León
-    { name: "Alcazaba de Málaga", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Málaga+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
-    { name: "Castillo de Gibralfaro", url: "https://www.google.com/maps/search/?api=1&query=Castillo+de+Gibralfaro+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
+    { name: "Alcazaba de Málaga", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Málaga+Málaga,+Andaluzia+Spain", category: "castele_palate", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Castillo de Gibralfaro", url: "https://www.google.com/maps/search/?api=1&query=Castillo+de+Gibralfaro+Málaga,+Andaluzia+Spain", category: "castele_palate", city: "Málaga" }, // Málaga, Andaluzia
     { name: "Castillo de Colomares", url: "https://www.google.com/maps/search/?api=1&query=Castillo+de+Colomares+Benalmádena,+Andaluzia+Spain", category: "castele_palate" }, // Benalmádena, Andaluzia
-    { name: "Palacio de Villalón", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Villalón+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
-    { name: "Zidurile din Ronda (Murallas de Ronda)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Ronda+(Murallas+de+Ronda)+Ronda,+Andaluzia+Spain", category: "cetati_turnuri" }, // Ronda, Andaluzia
+    { name: "Palacio de Villalón", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Villalón+Málaga,+Andaluzia+Spain", category: "castele_palate", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Zidurile din Ronda (Murallas de Ronda)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Ronda+(Murallas+de+Ronda)+Ronda,+Andaluzia+Spain", category: "cetati_turnuri", city: "Ronda" }, // Ronda, Andaluzia
     { name: "Turnul Maritim Torremolinos", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Maritim+Torremolinos+Torremolinos,+Andaluzia+Spain", category: "cetati_turnuri" }, // Torremolinos, Andaluzia
     { name: "Fuerte de San Luis", url: "https://www.google.com/maps/search/?api=1&query=Fuerte+de+San+Luis+Estepona,+Andaluzia+Spain", category: "cetati_turnuri" }, // Estepona, Andaluzia
-    { name: "Catedrala din Málaga (La Manquita)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Málaga+(La+Manquita)+Málaga,+Andaluzia+Spain", category: "manastiri" }, // Málaga, Andaluzia
-    { name: "Iglesia de Santa María la Mayor", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+Santa+María+la+Mayor+Ronda,+Andaluzia+Spain", category: "manastiri" }, // Ronda, Andaluzia
-    { name: "Santuario de la Victoria", url: "https://www.google.com/maps/search/?api=1&query=Santuario+de+la+Victoria+Málaga,+Andaluzia+Spain", category: "manastiri" }, // Málaga, Andaluzia
+    { name: "Catedrala din Málaga (La Manquita)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Málaga+(La+Manquita)+Málaga,+Andaluzia+Spain", category: "manastiri", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Iglesia de Santa María la Mayor", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+Santa+María+la+Mayor+Ronda,+Andaluzia+Spain", category: "manastiri", city: "Ronda" }, // Ronda, Andaluzia
+    { name: "Santuario de la Victoria", url: "https://www.google.com/maps/search/?api=1&query=Santuario+de+la+Victoria+Málaga,+Andaluzia+Spain", category: "manastiri", city: "Málaga" }, // Málaga, Andaluzia
     { name: "Caminito del Rey (Traseu în Chei)", url: "https://www.google.com/maps/search/?api=1&query=Caminito+del+Rey+(Traseu+în+Chei)+Ardales,+Málaga,+Andaluzia+Spain", category: "natura" }, // Ardales, Málaga, Andaluzia
     { name: "El Torcal de Antequera (Rezervație Karstică)", url: "https://www.google.com/maps/search/?api=1&query=El+Torcal+de+Antequera+(Rezervație+Karstică)+Antequera,+Málaga,+Andaluzia+Spain", category: "natura" }, // Antequera, Málaga, Andaluzia
     { name: "Peștera Nerja (Cuevas de Nerja)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Nerja+(Cuevas+de+Nerja)+Nerja,+Málaga,+Andaluzia+Spain", category: "natura" }, // Nerja, Málaga, Andaluzia
     { name: "Parcul Natural Cabo de Gata-Níjar", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Cabo+de+Gata-Níjar+Níjar,+Almería,+Andaluzia+Spain", category: "natura" }, // Níjar, Almería, Andaluzia
     { name: "Peștera Pileta (Cueva de la Pileta)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Pileta+(Cueva+de+la+Pileta)+Benaoján,+Andaluzia+Spain", category: "natura" }, // Benaoján, Andaluzia
-    { name: "Podul Nou din Ronda (Puente Nuevo)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Nou+din+Ronda+(Puente+Nuevo)+Ronda,+Andaluzia+Spain", category: "infrastructura" }, // Ronda, Andaluzia
-    { name: "Puerto Banús (Port de Lux)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+Banús+(Port+de+Lux)+Marbella,+Andaluzia+Spain", category: "infrastructura" }, // Marbella, Andaluzia
+    { name: "Podul Nou din Ronda (Puente Nuevo)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Nou+din+Ronda+(Puente+Nuevo)+Ronda,+Andaluzia+Spain", category: "infrastructura", city: "Ronda" }, // Ronda, Andaluzia
+    { name: "Puerto Banús (Port de Lux)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+Banús+(Port+de+Lux)+Marbella,+Andaluzia+Spain", category: "infrastructura", city: "Marbella" }, // Marbella, Andaluzia
     { name: "Balcón de Europa (Punct Panoramic)", url: "https://www.google.com/maps/search/?api=1&query=Balcón+de+Europa+(Punct+Panoramic)+Nerja,+Andaluzia+Spain", category: "infrastructura" }, // Nerja, Andaluzia
     { name: "Telecabina din Benalmádena", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+din+Benalmádena+Benalmádena,+Andaluzia+Spain", category: "infrastructura" }, // Benalmádena, Andaluzia
-    { name: "Muzeul Picasso din Málaga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+din+Málaga+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
-    { name: "Museo Carmen Thyssen", url: "https://www.google.com/maps/search/?api=1&query=Museo+Carmen+Thyssen+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
-    { name: "Centre Pompidou Málaga", url: "https://www.google.com/maps/search/?api=1&query=Centre+Pompidou+Málaga+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
-    { name: "Muzeul de Automobile și Modă", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Automobile+și+Modă+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
+    { name: "Muzeul Picasso din Málaga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+din+Málaga+Málaga,+Andaluzia+Spain", category: "muzee", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Museo Carmen Thyssen", url: "https://www.google.com/maps/search/?api=1&query=Museo+Carmen+Thyssen+Málaga,+Andaluzia+Spain", category: "muzee", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Centre Pompidou Málaga", url: "https://www.google.com/maps/search/?api=1&query=Centre+Pompidou+Málaga+Málaga,+Andaluzia+Spain", category: "muzee", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Muzeul de Automobile și Modă", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Automobile+și+Modă+Málaga,+Andaluzia+Spain", category: "muzee", city: "Málaga" }, // Málaga, Andaluzia
     { name: "Teatrul Roman din Málaga", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Málaga+Teatrul+Roman,+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Teatrul Roman, Málaga, Andaluzia
-    { name: "Plaza de Toros de Ronda", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Toros+de+Ronda+Ronda,+Andaluzia+Spain", category: "cladiri_teatre" }, // Ronda, Andaluzia
-    { name: "Calle Larios (Bulevard Comercial)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Larios+(Bulevard+Comercial)+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Málaga, Andaluzia
-    { name: "Plaza de la Merced", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Merced+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Málaga, Andaluzia
-    { name: "Baños Árabes de Ronda (Băile Arabe)", url: "https://www.google.com/maps/search/?api=1&query=Baños+Árabes+de+Ronda+(Băile+Arabe)+Ronda,+Andaluzia+Spain", category: "cladiri_teatre" }, // Ronda, Andaluzia
-    { name: "Palacio de la Magdalena", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Magdalena+Santander,+Cantabria+Spain", category: "castele_palate" }, // Santander, Cantabria
-    { name: "Castelul Bellver", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bellver+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "castele_palate" }, // Palma de Mallorca, Insulele Baleare
+    { name: "Plaza de Toros de Ronda", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Toros+de+Ronda+Ronda,+Andaluzia+Spain", category: "cladiri_teatre", city: "Ronda" }, // Ronda, Andaluzia
+    { name: "Calle Larios (Bulevard Comercial)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Larios+(Bulevard+Comercial)+Málaga,+Andaluzia+Spain", category: "cladiri_teatre", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Plaza de la Merced", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Merced+Málaga,+Andaluzia+Spain", category: "cladiri_teatre", city: "Málaga" }, // Málaga, Andaluzia
+    { name: "Baños Árabes de Ronda (Băile Arabe)", url: "https://www.google.com/maps/search/?api=1&query=Baños+Árabes+de+Ronda+(Băile+Arabe)+Ronda,+Andaluzia+Spain", category: "cladiri_teatre", city: "Ronda" }, // Ronda, Andaluzia
+    { name: "Palacio de la Magdalena", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Magdalena+Santander,+Cantabria+Spain", category: "castele_palate", city: "Santander" }, // Santander, Cantabria
+    { name: "Castelul Bellver", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bellver+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "castele_palate", city: "Palma" }, // Palma de Mallorca, Insulele Baleare
     { name: "Castelul Loarre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loarre+Loarre,+Aragon+Spain", category: "castele_palate" }, // Loarre, Aragon
     { name: "Palacio de Olite", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Olite+Olite,+Navarra+Spain", category: "castele_palate" }, // Olite, Navarra
     { name: "El Capricho de Gaudí", url: "https://www.google.com/maps/search/?api=1&query=El+Capricho+de+Gaudí+Comillas,+Cantabria+Spain", category: "castele_palate" }, // Comillas, Cantabria
-    { name: "Turnul lui Hercule (Torre de Hércules)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Hercule+(Torre+de+Hércules)+A+Coruña,+Galicia+Spain", category: "cetati_turnuri" }, // A Coruña, Galicia
+    { name: "Turnul lui Hercule (Torre de Hércules)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Hercule+(Torre+de+Hércules)+A+Coruña,+Galicia+Spain", category: "cetati_turnuri", city: "A Coruña" }, // A Coruña, Galicia
     { name: "Murallas de Lugo (Zidurile Romane)", url: "https://www.google.com/maps/search/?api=1&query=Murallas+de+Lugo+(Zidurile+Romane)+Lugo,+Galicia+Spain", category: "cetati_turnuri" }, // Lugo, Galicia
-    { name: "Cetatea Santa Bárbara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Santa+Bárbara+Alicante,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Alicante, Comunitatea Valenciană
+    { name: "Cetatea Santa Bárbara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Santa+Bárbara+Alicante,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri", city: "Alicante" }, // Alicante, Comunitatea Valenciană
     { name: "Cetatea Peñíscola", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Peñíscola+Peñíscola,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Peñíscola, Comunitatea Valenciană
     { name: "Mănăstirea Montserrat", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Montserrat+Monistrol+de+Montserrat,+Catalonia+Spain", category: "manastiri" }, // Monistrol de Montserrat, Catalonia
-    { name: "Catedrala din Santiago de Compostela", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Santiago+de+Compostela+Santiago+de+Compostela,+Galicia+Spain", category: "manastiri" }, // Santiago de Compostela, Galicia
-    { name: "Basílica de Nuestra Señora del Pilar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Nuestra+Señora+del+Pilar+Zaragoza,+Aragon+Spain", category: "manastiri" }, // Zaragoza, Aragon
-    { name: "Catedrala La Seu din Palma", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+La+Seu+din+Palma+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "manastiri" }, // Palma de Mallorca, Insulele Baleare
+    { name: "Catedrala din Santiago de Compostela", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Santiago+de+Compostela+Santiago+de+Compostela,+Galicia+Spain", category: "manastiri", city: "Santiago de Compostela" }, // Santiago de Compostela, Galicia
+    { name: "Basílica de Nuestra Señora del Pilar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Nuestra+Señora+del+Pilar+Zaragoza,+Aragon+Spain", category: "manastiri", city: "Zaragoza" }, // Zaragoza, Aragon
+    { name: "Catedrala La Seu din Palma", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+La+Seu+din+Palma+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "manastiri", city: "Palma" }, // Palma de Mallorca, Insulele Baleare
     { name: "Basílica de Covadonga", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Covadonga+Cangas+de+Onís,+Asturias+Spain", category: "manastiri" }, // Cangas de Onís, Asturias
     { name: "Mănăstirea San Juan de la Peña", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Juan+de+la+Peña+Jaca,+Aragon+Spain", category: "manastiri" }, // Jaca, Aragon
     { name: "Parcul Național Teide", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Teide+Tenerife,+Insulele+Canare+Spain", category: "natura" }, // Tenerife, Insulele Canare
@@ -6887,16 +6886,16 @@ const ATTRACTIONS = {
     { name: "Traseul Montan de Coastă MA-10", url: "https://www.google.com/maps/search/?api=1&query=Traseul+Montan+de+Coastă+MA-10+Serra+de+Tramuntana,+Mallorca,+Insulele+Baleare+Spain", category: "infrastructura" }, // Serra de Tramuntana, Mallorca, Insulele Baleare
     { name: "Telecabina de pe Muntele Teide", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+de+pe+Muntele+Teide+Tenerife,+Insulele+Canare+Spain", category: "infrastructura" }, // Tenerife, Insulele Canare
     { name: "Funicularul din Bulnes", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Bulnes+Picos+de+Europa,+Asturias+Spain", category: "infrastructura" }, // Picos de Europa, Asturias
-    { name: "Funicularul de Artxanda", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+de+Artxanda+Bilbao,+Țara+Bascilor+Spain", category: "infrastructura" }, // Bilbao, Țara Bascilor
-    { name: "Muzeul Guggenheim", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Guggenheim+Bilbao,+Țara+Bascilor+Spain", category: "muzee" }, // Bilbao, Țara Bascilor
+    { name: "Funicularul de Artxanda", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+de+Artxanda+Bilbao,+Țara+Bascilor+Spain", category: "infrastructura", city: "Bilbao" }, // Bilbao, Țara Bascilor
+    { name: "Muzeul Guggenheim", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Guggenheim+Bilbao,+Țara+Bascilor+Spain", category: "muzee", city: "Bilbao" }, // Bilbao, Țara Bascilor
     { name: "Teatrul-Muzeu Dalí", url: "https://www.google.com/maps/search/?api=1&query=Teatrul-Muzeu+Dalí+Figueres,+Catalonia+Spain", category: "muzee" }, // Figueres, Catalonia
-    { name: "Muzeul de Artă Contemporană (MARCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MARCO)+Vigo,+Galicia+Spain", category: "muzee" }, // Vigo, Galicia
-    { name: "Muzeul de Preistorie și Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Preistorie+și+Arheologie+Santander,+Cantabria+Spain", category: "muzee" }, // Santander, Cantabria
-    { name: "Teatrul Roman din Mérida", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Mérida+Mérida,+Extremadura+Spain", category: "cladiri_teatre" }, // Mérida, Extremadura
-    { name: "Teatrul Roman din Cartagena", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Cartagena+Cartagena,+Murcia+Spain", category: "cladiri_teatre" }, // Cartagena, Murcia
-    { name: "Plaza Mayor din Cáceres", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Cáceres+Cáceres,+Extremadura+Spain", category: "cladiri_teatre" }, // Cáceres, Extremadura
-    { name: "Apeductul de los Milagros", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+de+los+Milagros+Mérida,+Extremadura+Spain", category: "cladiri_teatre" }, // Mérida, Extremadura
-    { name: "Paseo de Pereda", url: "https://www.google.com/maps/search/?api=1&query=Paseo+de+Pereda+Santander,+Cantabria+Spain", category: "cladiri_teatre" }, // Santander, Cantabria
+    { name: "Muzeul de Artă Contemporană (MARCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MARCO)+Vigo,+Galicia+Spain", category: "muzee", city: "Vigo" }, // Vigo, Galicia
+    { name: "Muzeul de Preistorie și Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Preistorie+și+Arheologie+Santander,+Cantabria+Spain", category: "muzee", city: "Santander" }, // Santander, Cantabria
+    { name: "Teatrul Roman din Mérida", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Mérida+Mérida,+Extremadura+Spain", category: "cladiri_teatre", city: "Mérida" }, // Mérida, Extremadura
+    { name: "Teatrul Roman din Cartagena", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Cartagena+Cartagena,+Murcia+Spain", category: "cladiri_teatre", city: "Cartagena" }, // Cartagena, Murcia
+    { name: "Plaza Mayor din Cáceres", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Cáceres+Cáceres,+Extremadura+Spain", category: "cladiri_teatre", city: "Cáceres" }, // Cáceres, Extremadura
+    { name: "Apeductul de los Milagros", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+de+los+Milagros+Mérida,+Extremadura+Spain", category: "cladiri_teatre", city: "Mérida" }, // Mérida, Extremadura
+    { name: "Paseo de Pereda", url: "https://www.google.com/maps/search/?api=1&query=Paseo+de+Pereda+Santander,+Cantabria+Spain", category: "cladiri_teatre", city: "Santander" }, // Santander, Cantabria
     { name: "PortAventura World Tarragona", url: "https://www.portaventuraworld.com/", category: "parcuri_agrement" },
     { name: "Parque Warner Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Warner+Madrid+Spain", category: "parcuri_agrement" },
     { name: "Terra Mítica Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Terra+Mítica+Benidorm+Spain", category: "parcuri_agrement" },
@@ -7245,8 +7244,30 @@ function buildLanguageSwitcherScript(nonce) {
 </script>`;
 }
 
+// deduce orașul unui obiectiv turistic — preferă câmpul REAL `a.city`, dacă
+// obiectivul îl are (Belgia/Spania au deja acest câmp; adăugat pornind din
+// lista originală, cu locația fiecărui obiectiv, nu ghicit). Pentru restul
+// țărilor, care încă nu au acest câmp, cade pe o deducere din nume — mai
+// slabă (funcționează doar dacă orașul apare literal în numele obiectivului,
+// ex. "Palatul Regal din Madrid"), dar mai bine decât nimic până se
+// completează și acolo câmpul real, la fel ca la Spania.
+function inferCityForAttraction(attraction, cities) {
+  if (attraction.city) return attraction.city;
+  const norm = normalizeJudetInput(attraction.name);
+  const found = (cities || []).find((c) => norm.includes(normalizeJudetInput(c)));
+  return found || "";
+}
+
 // index combinat de căutare (magazine + atracții, toate țările internaționale)
 // — generat o singură dată, trimis către browser pentru căutarea instant de pe homepage.
+//
+// FIX real, găsit prin testare directă: un utilizator care caută "Madrid"
+// găsea toate magazinele din Madrid (numele lor include orașul, dintotdeauna),
+// dar RATA majoritatea obiectivelor turistice din Madrid — numele unui
+// obiectiv (ex. "Museo del Prado") nu conține mereu orașul, deci căutarea nu
+// avea cum să facă legătura. Acum fiecare obiectiv primește un câmp `city`
+// separat (real, la Spania — vezi inferCityForAttraction), folosit DOAR la
+// căutare — nu schimbă ce se afișează, doar ce se poate găsi.
 function buildSearchIndex() {
   const index = [];
   Object.keys(COUNTRIES).forEach((code) => {
@@ -7261,8 +7282,9 @@ function buildSearchIndex() {
     });
   });
   Object.keys(ATTRACTIONS).forEach((code) => {
+    const cities = (COUNTRIES[code] && COUNTRIES[code].cities) || [];
     ATTRACTIONS[code].forEach((a) => {
-      index.push({ name: a.name, type: "attraction", country: code, href: `/${code}/obiectiv/${toDbSlug(a.name)}` });
+      index.push({ name: a.name, city: inferCityForAttraction(a, cities), type: "attraction", country: code, href: `/${code}/obiectiv/${toDbSlug(a.name)}` });
     });
   });
   return index;
@@ -7277,6 +7299,10 @@ function buildSearchIndex() {
 // căuta după oraș (ex. "Brad") și link-ul mergea mereu spre primul oraș
 // din listă (București), indiferent ce brand căutai. Acum fiecare
 // combinație brand+oraș e o intrare proprie, exact ca paginile reale.
+//
+// Același fix ca la buildSearchIndex de mai sus, aplicat și aici: obiectivele
+// primesc un câmp `city` dedus din nume (peste cele 103 municipii din
+// SITEMAP_CITIES), ca să caute și pe orașe, nu doar exact numele obiectivului.
 function buildSearchIndexRO() {
   const index = [];
   Object.keys(RO_INTL_STORE_CONFIG).forEach((key) => {
@@ -7288,7 +7314,7 @@ function buildSearchIndexRO() {
     });
   });
   ATTRACTIONS.ro.forEach((a) => {
-    index.push({ name: a.name, type: "attraction", country: "ro", href: `/obiectiv/${toDbSlug(a.name)}` });
+    index.push({ name: a.name, city: inferCityForAttraction(a, SITEMAP_CITIES), type: "attraction", country: "ro", href: `/obiectiv/${toDbSlug(a.name)}` });
   });
   return index;
 }
@@ -9561,7 +9587,12 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
     renderFavoritesPanel();
   });
 
-  // căutare instant
+  // căutare instant — GENERALIZATĂ: caută acum și pe oraș (item.city, dedus
+  // server-side pentru obiective), nu doar pe numele exact al magazinului/
+  // obiectivului. Bug real, semnalat direct: cine căuta "Madrid" găsea toate
+  // magazinele din Madrid (aveau orașul în nume dintotdeauna), dar rata
+  // majoritatea obiectivelor turistice din Madrid — repar aici, nu doar la
+  // sursa datelor (vezi buildSearchIndex/buildSearchIndexRO pe server).
   var input = document.getElementById("siteSearchInput");
   var results = document.getElementById("siteSearchResults");
   function norm(s){ return s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase(); }
@@ -9570,17 +9601,36 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
       var q = norm(input.value.trim());
       results.innerHTML = "";
       if (!q) { results.style.display = "none"; return; }
-      var matches = SEARCH_INDEX.filter(function(item){ return norm(item.name).indexOf(q) !== -1; });
+      var matches = SEARCH_INDEX.filter(function(item){
+        return norm(item.name).indexOf(q) !== -1 || (item.city && norm(item.city).indexOf(q) !== -1);
+      });
+      // Relevanță simplă, înainte de sortarea pe țară: o potrivire EXACTĂ pe
+      // oraș (cineva a scris exact "Madrid") trece înaintea unei potriviri
+      // parțiale oarecare din mijlocul unui nume lung — altfel, cu limita
+      // mărită de mai jos, un oraș popular ar putea fi "îngropat" sub
+      // magazine/obiective dintr-un oraș cu nume asemănător, dar irelevant.
+      matches.sort(function(a, b){
+        var aExact = a.city && norm(a.city) === q ? 0 : 1;
+        var bExact = b.city && norm(b.city) === q ? 0 : 1;
+        return aExact - bExact;
+      });
       if (PRIMARY_COUNTRY) {
         // țara curentă/detectată apare mereu prima — restul, după, în ordinea
-        // găsită; nu ascundem celelalte țări, doar le trecem la coadă
+        // găsită; nu ascundem celelalte țări, doar le trecem la coadă.
+        // Stabil (Array#sort e stabil în toate motoarele moderne) — nu strică
+        // sortarea de relevanță de mai sus, doar regrupează pe țară deasupra ei.
         matches.sort(function(a, b){
           var aPrimary = a.country === PRIMARY_COUNTRY ? 0 : 1;
           var bPrimary = b.country === PRIMARY_COUNTRY ? 0 : 1;
           return aPrimary - bPrimary;
         });
       }
-      matches = matches.slice(0, 8);
+      // Limita a crescut de la 8 la 40 — după ce am adăugat orașul real pe
+      // obiective (Spania are acum acest câmp), o căutare pe un oraș mare ca
+      // Madrid găsește 50+ rezultate; panoul are deja scroll propriu
+      // (max-height + overflow-y, vezi .search-results), deci 40 nu strică
+      // UI-ul, doar arată mai mult din ce s-a găsit efectiv.
+      matches = matches.slice(0, 40);
       if (!matches.length) {
         results.innerHTML = '<div class="search-result-empty">No matches</div>';
         results.style.display = "block";
@@ -10783,7 +10833,17 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
   const canonical = `${baseUrl}/`;
 
-  const allCodes = ["ro", "de", "uk", "es", "fr", "it", "pl", "nl", "at", "be", "dk", "se", "pt", "cz", "fi", "gr", "hu", "hr", "ie", "sk", "si", "lt", "lv", "ee", "cy", "mt", "lu"];
+  // Sortat alfabetic după numele afișat (Austria, Belgium, Croatia...) —
+  // înainte era în ordinea în care au fost adăugate țările în cod (RO
+  // primul, apoi mai mult sau mai puțin după mărime), greu de scanat cu
+  // ochiul într-o bară de derulare cu 27 de opțiuni. Calculat automat din
+  // COUNTRY_LABELS, nu scris de mână a doua oară — dacă se adaugă
+  // vreodată o țară nouă, ordinea rămâne corectă fără nicio intervenție.
+  const allCodes = Object.keys(COUNTRY_LABELS).sort((a, b) => {
+    const nameA = COUNTRY_LABELS[a].split(" ").slice(1).join(" ");
+    const nameB = COUNTRY_LABELS[b].split(" ").slice(1).join(" ");
+    return nameA.localeCompare(nameB);
+  });
   const countryLinks = allCodes.map((code) => ({
     code,
     flag: COUNTRY_LABELS[code].split(" ")[0],
