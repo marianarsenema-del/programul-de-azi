@@ -9664,18 +9664,31 @@ function buildAttractionAccordionScript(nonce) {
   // controlăm. Renunțăm la widget — arătăm direct link-ul de bilete
   // (real, per obiectiv, unde-l avem — altfel cel general), simplu și
   // sigur funcțional, imediat ce utilizatorul deschide un obiectiv.
-  document.querySelectorAll(".attraction-accordion-header").forEach(function(header){
-    header.addEventListener("click", function(){
-      var item = header.closest(".attraction-accordion-item");
-      var panel = item.querySelector(".attraction-accordion-panel");
-      var isOpen = item.classList.toggle("is-open");
-      header.setAttribute("aria-expanded", String(isOpen));
-      panel.hidden = !isOpen;
-      if (isOpen) {
-        var fallback = item.querySelector(".gyg-widget-fallback");
-        if (fallback) fallback.style.display = "block";
-      }
-    });
+  //
+  // FIX real, găsit prin testare directă: obiectivele oricărei țări NU
+  // primite direct la încărcarea paginii (adică toate în afară de cea
+  // detectată automat) se încarcă mai târziu, prin fetch (vezi
+  // buildAttractionLazyScript) — abia când utilizatorul deschide acea
+  // țară. Legarea de mai jos, dacă rula o singură dată la încărcarea
+  // paginii (document.querySelectorAll + addEventListener pe fiecare),
+  // NU prindea niciodată elementele adăugate ulterior în DOM — click-ul
+  // nu făcea absolut nimic, fără nicio eroare vizibilă. Rezolvat cu
+  // DELEGARE de evenimente pe "document" — UN SINGUR listener, care
+  // funcționează automat pentru orice element .attraction-accordion-header
+  // existent ACUM sau adăugat oricând mai târziu, fără nicio legare
+  // suplimentară necesară după fiecare fetch.
+  document.addEventListener("click", function(e){
+    var header = e.target.closest(".attraction-accordion-header");
+    if (!header) return;
+    var item = header.closest(".attraction-accordion-item");
+    var panel = item.querySelector(".attraction-accordion-panel");
+    var isOpen = item.classList.toggle("is-open");
+    header.setAttribute("aria-expanded", String(isOpen));
+    panel.hidden = !isOpen;
+    if (isOpen) {
+      var fallback = item.querySelector(".gyg-widget-fallback");
+      if (fallback) fallback.style.display = "block";
+    }
   });
 })();
 </script>`;
