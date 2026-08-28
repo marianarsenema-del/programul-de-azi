@@ -5078,7 +5078,19 @@ const COUNTRIES = {
   fr: {
     config: FR_STORE_CONFIG,
     t: TRANSLATIONS.fr,
-    cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille"],
+    // Extins de la 10 la 28 de orașe — turism foarte mare în Franța. Include
+    // și orașe mici, dar extrem de turistice (Mont Saint-Michel, Chamonix,
+    // Carcassonne) — vezi SELECTIVE_BRAND_CITIES.fr mai jos pentru restricțiile
+    // reale de magazine la aceste locuri mici (un sit-monument ca Mont
+    // Saint-Michel, cu ~30 de locuitori permanenți, evident nu are hipermarket).
+    cities: [
+      "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
+      "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+      "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
+      "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
+      "Versailles", "Chartres", "Carcassonne", "Mont Saint-Michel",
+      "Saint-Malo", "Chamonix", "Avignon", "Annecy", "Colmar",
+    ],
   },
   it: {
     config: IT_STORE_CONFIG,
@@ -6913,42 +6925,188 @@ const ATTRACTIONS = {
     { name: "Zoo Aquarium Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Aquarium+Madrid+Spain", category: "parcuri_agrement" },
   ],
   fr: [
-    { name: "Disneyland Paris", url: "https://www.disneylandparis.com/" },
-    { name: "Parc Astérix", url: "https://www.google.com/maps/search/?api=1&query=Parc+Astérix+France" },
-    { name: "Puy du Fou", url: "https://www.google.com/maps/search/?api=1&query=Puy+du+Fou+France" },
-    { name: "Turnul Eiffel", url: "https://www.toureiffel.paris/" },
-    { name: "Muzeul Luvru", url: "https://www.louvre.fr/" },
-    { name: "Palatul Versailles", url: "https://www.chateauversailles.fr/" },
-    { name: "Arcul de Triumf", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+France" },
-    { name: "Futuroscope Poitiers", url: "https://www.google.com/maps/search/?api=1&query=Futuroscope+Poitiers+France" },
-    { name: "Abația Mont-Saint-Michel", url: "https://www.ot-montsaintmichel.com/" },
-    { name: "Muzeul d'Orsay Paris", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+d'Orsay+Paris+France" },
-    { name: "Cité des Sciences et de l'Industrie", url: "https://www.google.com/maps/search/?api=1&query=Cité+des+Sciences+et+de+l'Industrie+France" },
-    { name: "Castelul Chambord", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chambord+France" },
-    { name: "Centrul Pompidou Paris", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Pompidou+Paris+France" },
-    { name: "Sainte-Chapelle", url: "https://www.google.com/maps/search/?api=1&query=Sainte-Chapelle+France" },
-    { name: "Castelul Fontainebleau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Fontainebleau+France" },
-    { name: "Walibi Rhône-Alpes", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Rhône-Alpes+France" },
-    { name: "Castelul Chenonceau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chenonceau+France" },
-    { name: "Parcul de distracții Nigloland", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Nigloland+France" },
-    { name: "Palais Idéal du Facteur Cheval", url: "https://www.google.com/maps/search/?api=1&query=Palais+Idéal+du+Facteur+Cheval+France" },
-    { name: "Cetatea Medievală Carcassonne", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Medievală+Carcassonne+France" },
-    { name: "Catacombele din Paris", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+din+Paris+France" },
-    { name: "Muzeul Armatei / Domul Invalizilor", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Armatei+/+Domul+Invalizilor+France" },
-    { name: "Panthéon Paris", url: "https://www.google.com/maps/search/?api=1&query=Panthéon+Paris+France" },
-    { name: "Opéra Garnier Paris", url: "https://www.google.com/maps/search/?api=1&query=Opéra+Garnier+Paris+France" },
-    { name: "Domeniul Trianon Versailles", url: "https://www.google.com/maps/search/?api=1&query=Domeniul+Trianon+Versailles+France" },
-    { name: "Aquaboulevard Paris", url: "https://www.google.com/maps/search/?api=1&query=Aquaboulevard+Paris+France" },
-    { name: "Marineland Antibes", url: "https://www.google.com/maps/search/?api=1&query=Marineland+Antibes+France" },
-    { name: "Castelul Haut-Kœnigsbourg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Haut-Kœnigsbourg+France" },
-    { name: "Muzeul Picasso Paris", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Paris+France" },
-    { name: "Fundația Louis Vuitton", url: "https://www.google.com/maps/search/?api=1&query=Fundația+Louis+Vuitton+France" },
-    { name: "ZooParc de Beauval", url: "https://www.google.com/maps/search/?api=1&query=ZooParc+de+Beauval+France" },
-    { name: "Palais de Tokyo Paris", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+Tokyo+Paris+France" },
-    { name: "Castelul d'If Marseille", url: "https://www.google.com/maps/search/?api=1&query=Castelul+d'If+Marseille+France" },
-    { name: "Muzeul MUCEM", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+MUCEM+France" },
-    { name: "Parcul Festyland Caen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Festyland+Caen+France" },
-    { name: "Peștera Lascaux IV", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Lascaux+IV+France" },
+    { name: "Palais du Luxembourg", url: "https://www.google.com/maps/search/?api=1&query=Palais+du+Luxembourg+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
+    { name: "Palais Royal", url: "https://www.google.com/maps/search/?api=1&query=Palais+Royal+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
+    { name: "Palais de l'Élysée", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+l'Élysée+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
+    { name: "Castelul Versailles", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Versailles+Versailles+(lângă+Paris),+Île-de-France+France", category: "castele_palate", city: "Versailles" }, // Versailles (lângă Paris), Île-de-France
+    { name: "Castelul Fontainebleau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Fontainebleau+Fontainebleau+(lângă+Paris),+Île-de-France+France", category: "castele_palate", city: "Fontainebleau" }, // Fontainebleau (lângă Paris), Île-de-France
+    { name: "Castelul Vincennes", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vincennes+Vincennes,+Île-de-France+France", category: "castele_palate" }, // Vincennes, Île-de-France
+    { name: "Castelul Chantilly", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chantilly+Chantilly+(lângă+Paris),+Hauts-de-France+France", category: "castele_palate", city: "Chantilly" }, // Chantilly (lângă Paris), Hauts-de-France
+    { name: "Turnul Eiffel", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Eiffel+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Tour Saint-Jacques", url: "https://www.google.com/maps/search/?api=1&query=Tour+Saint-Jacques+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Tour Montparnasse", url: "https://www.google.com/maps/search/?api=1&query=Tour+Montparnasse+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Conciergerie", url: "https://www.google.com/maps/search/?api=1&query=Conciergerie+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Catedrala Notre-Dame de Paris", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Notre-Dame+de+Paris+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Basilique du Sacré-Cœur", url: "https://www.google.com/maps/search/?api=1&query=Basilique+du+Sacré-Cœur+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Sainte-Chapelle", url: "https://www.google.com/maps/search/?api=1&query=Sainte-Chapelle+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Basilique de Saint-Denis", url: "https://www.google.com/maps/search/?api=1&query=Basilique+de+Saint-Denis+Saint-Denis,+Île-de-France+France", category: "manastiri" }, // Saint-Denis, Île-de-France
+    { name: "Église de la Madeleine", url: "https://www.google.com/maps/search/?api=1&query=Église+de+la+Madeleine+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Église Saint-Sulpice", url: "https://www.google.com/maps/search/?api=1&query=Église+Saint-Sulpice+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Jardin du Luxembourg", url: "https://www.google.com/maps/search/?api=1&query=Jardin+du+Luxembourg+Paris,+Île-de-France+France", category: "natura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Jardin des Tuileries", url: "https://www.google.com/maps/search/?api=1&query=Jardin+des+Tuileries+Paris,+Île-de-France+France", category: "natura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Parc des Buttes-Chaumont", url: "https://www.google.com/maps/search/?api=1&query=Parc+des+Buttes-Chaumont+Paris,+Île-de-France+France", category: "natura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Bois de Boulogne", url: "https://www.google.com/maps/search/?api=1&query=Bois+de+Boulogne+Paris,+Île-de-France+France", category: "natura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Catacombele din Paris", url: "https://www.google.com/maps/search/?api=1&query=Catacombele+din+Paris+Paris,+Île-de-France+France", category: "natura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Pont Neuf", url: "https://www.google.com/maps/search/?api=1&query=Pont+Neuf+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Pont Alexandre III", url: "https://www.google.com/maps/search/?api=1&query=Pont+Alexandre+III+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Canal Saint-Martin", url: "https://www.google.com/maps/search/?api=1&query=Canal+Saint-Martin+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
+    { name: "Muzeul Luvru (Musée du Louvre)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Luvru+(Musée+du+Louvre)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée d'Orsay", url: "https://www.google.com/maps/search/?api=1&query=Musée+d'Orsay+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Centre Pompidou", url: "https://www.google.com/maps/search/?api=1&query=Centre+Pompidou+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée Rodin", url: "https://www.google.com/maps/search/?api=1&query=Musée+Rodin+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée de l'Orangerie", url: "https://www.google.com/maps/search/?api=1&query=Musée+de+l'Orangerie+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée du Quai Branly", url: "https://www.google.com/maps/search/?api=1&query=Musée+du+Quai+Branly+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée Picasso", url: "https://www.google.com/maps/search/?api=1&query=Musée+Picasso+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée Cluny (Evul Mediu)", url: "https://www.google.com/maps/search/?api=1&query=Musée+Cluny+(Evul+Mediu)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée de l'Armée (Invalides)", url: "https://www.google.com/maps/search/?api=1&query=Musée+de+l'Armée+(Invalides)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Musée Grévin (Ceară)", url: "https://www.google.com/maps/search/?api=1&query=Musée+Grévin+(Ceară)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Arcul de Triumf (Arc de Triomphe)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+(Arc+de+Triomphe)+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Opéra Garnier", url: "https://www.google.com/maps/search/?api=1&query=Opéra+Garnier+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Panthéon", url: "https://www.google.com/maps/search/?api=1&query=Panthéon+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Place de la Concorde", url: "https://www.google.com/maps/search/?api=1&query=Place+de+la+Concorde+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Place des Vosges", url: "https://www.google.com/maps/search/?api=1&query=Place+des+Vosges+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Champs-Élysées", url: "https://www.google.com/maps/search/?api=1&query=Champs-Élysées+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Grand Palais", url: "https://www.google.com/maps/search/?api=1&query=Grand+Palais+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Les Invalides", url: "https://www.google.com/maps/search/?api=1&query=Les+Invalides+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Opéra de la Bastille", url: "https://www.google.com/maps/search/?api=1&query=Opéra+de+la+Bastille+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Place Vendôme", url: "https://www.google.com/maps/search/?api=1&query=Place+Vendôme+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Château de la Motte", url: "https://www.google.com/maps/search/?api=1&query=Château+de+la+Motte+Lyon,+Auvergne-Rhône-Alpes+France", category: "castele_palate", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Château de Fléchères", url: "https://www.google.com/maps/search/?api=1&query=Château+de+Fléchères+Fareins+(lângă+Lyon),+Auvergne-Rhône-Alpes+France", category: "castele_palate", city: "Lyon" }, // Fareins (lângă Lyon), Auvergne-Rhône-Alpes
+    { name: "Fort de Lyon (Sistemul de forturi)", url: "https://www.google.com/maps/search/?api=1&query=Fort+de+Lyon+(Sistemul+de+forturi)+Lyon,+Auvergne-Rhône-Alpes+France", category: "cetati_turnuri", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Tour Métallique de Fourvière", url: "https://www.google.com/maps/search/?api=1&query=Tour+Métallique+de+Fourvière+Lyon,+Auvergne-Rhône-Alpes+France", category: "cetati_turnuri", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Basilique Notre-Dame de Fourvière", url: "https://www.google.com/maps/search/?api=1&query=Basilique+Notre-Dame+de+Fourvière+Lyon,+Auvergne-Rhône-Alpes+France", category: "manastiri", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Cathédrale Saint-Jean-Baptiste", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Jean-Baptiste+Lyon,+Auvergne-Rhône-Alpes+France", category: "manastiri", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Abbaye d'Ainay", url: "https://www.google.com/maps/search/?api=1&query=Abbaye+d'Ainay+Lyon,+Auvergne-Rhône-Alpes+France", category: "manastiri", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Parc de la Tête d'Or", url: "https://www.google.com/maps/search/?api=1&query=Parc+de+la+Tête+d'Or+Lyon,+Auvergne-Rhône-Alpes+France", category: "natura", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Jardin Rosa Mir", url: "https://www.google.com/maps/search/?api=1&query=Jardin+Rosa+Mir+Lyon,+Auvergne-Rhône-Alpes+France", category: "natura", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Grottes de la Balme", url: "https://www.google.com/maps/search/?api=1&query=Grottes+de+la+Balme+La+Balme-les-Grottes+(lângă+Lyon),+Auvergne-Rhône-Alpes+France", category: "natura", city: "Lyon" }, // La Balme-les-Grottes (lângă Lyon), Auvergne-Rhône-Alpes
+    { name: "Passerelle Saint-Georges", url: "https://www.google.com/maps/search/?api=1&query=Passerelle+Saint-Georges+Lyon,+Auvergne-Rhône-Alpes+France", category: "infrastructura", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Funicularul din Lyon", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Lyon+Lyon,+Auvergne-Rhône-Alpes+France", category: "infrastructura", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Musée des Confluences", url: "https://www.google.com/maps/search/?api=1&query=Musée+des+Confluences+Lyon,+Auvergne-Rhône-Alpes+France", category: "muzee", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Musée des Beaux-Arts de Lyon", url: "https://www.google.com/maps/search/?api=1&query=Musée+des+Beaux-Arts+de+Lyon+Lyon,+Auvergne-Rhône-Alpes+France", category: "muzee", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Musée Cinéma et Miniature", url: "https://www.google.com/maps/search/?api=1&query=Musée+Cinéma+et+Miniature+Lyon,+Auvergne-Rhône-Alpes+France", category: "muzee", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Musée Lumière (Originile cinematografului)", url: "https://www.google.com/maps/search/?api=1&query=Musée+Lumière+(Originile+cinematografului)+Lyon,+Auvergne-Rhône-Alpes+France", category: "muzee", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Teatrul Roman (Théâtre Antique de Fourvière)", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+(Théâtre+Antique+de+Fourvière)+Lyon,+Auvergne-Rhône-Alpes+France", category: "cladiri_teatre", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Place Bellecour", url: "https://www.google.com/maps/search/?api=1&query=Place+Bellecour+Lyon,+Auvergne-Rhône-Alpes+France", category: "cladiri_teatre", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Hôtel de Ville de Lyon (Primăria)", url: "https://www.google.com/maps/search/?api=1&query=Hôtel+de+Ville+de+Lyon+(Primăria)+Lyon,+Auvergne-Rhône-Alpes+France", category: "cladiri_teatre", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Opéra National de Lyon", url: "https://www.google.com/maps/search/?api=1&query=Opéra+National+de+Lyon+Lyon,+Auvergne-Rhône-Alpes+France", category: "cladiri_teatre", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Place des Terreaux", url: "https://www.google.com/maps/search/?api=1&query=Place+des+Terreaux+Lyon,+Auvergne-Rhône-Alpes+France", category: "cladiri_teatre", city: "Lyon" }, // Lyon, Auvergne-Rhône-Alpes
+    { name: "Palais Longchamp", url: "https://www.google.com/maps/search/?api=1&query=Palais+Longchamp+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "castele_palate", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Château de l'If (Fortăreața din Contele de Monte Cristo)", url: "https://www.google.com/maps/search/?api=1&query=Château+de+l'If+(Fortăreața+din+Contele+de+Monte+Cristo)+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "castele_palate", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Château Valrose", url: "https://www.google.com/maps/search/?api=1&query=Château+Valrose+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "castele_palate", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Fort Saint-Jean", url: "https://www.google.com/maps/search/?api=1&query=Fort+Saint-Jean+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "cetati_turnuri", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Fort Saint-Nicolas", url: "https://www.google.com/maps/search/?api=1&query=Fort+Saint-Nicolas+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "cetati_turnuri", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Tour Bellanda", url: "https://www.google.com/maps/search/?api=1&query=Tour+Bellanda+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "cetati_turnuri", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Basilique Notre-Dame de la Garde", url: "https://www.google.com/maps/search/?api=1&query=Basilique+Notre-Dame+de+la+Garde+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "manastiri", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Cathédrale de la Major", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+de+la+Major+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "manastiri", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Abbaye Saint-Victor", url: "https://www.google.com/maps/search/?api=1&query=Abbaye+Saint-Victor+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "manastiri", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Cathédrale Sainte-Réparate", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Sainte-Réparate+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "manastiri", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Catedrala Ortodoxă Rusă Sfântul Nicolae", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Ortodoxă+Rusă+Sfântul+Nicolae+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "manastiri", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Parcul Național Calanques", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Calanques+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "natura", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Colline du Château (Dealul Castelului)", url: "https://www.google.com/maps/search/?api=1&query=Colline+du+Château+(Dealul+Castelului)+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "natura", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Îles du Frioul (Insulele Frioul)", url: "https://www.google.com/maps/search/?api=1&query=Îles+du+Frioul+(Insulele+Frioul)+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "natura", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Promenade des Anglais", url: "https://www.google.com/maps/search/?api=1&query=Promenade+des+Anglais+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "infrastructura", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Port de Marseille (Portul Vechi)", url: "https://www.google.com/maps/search/?api=1&query=Port+de+Marseille+(Portul+Vechi)+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "infrastructura", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Mucem (Muzeul Civilizațiilor Europene)", url: "https://www.google.com/maps/search/?api=1&query=Mucem+(Muzeul+Civilizațiilor+Europene)+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "muzee", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Musée Matisse", url: "https://www.google.com/maps/search/?api=1&query=Musée+Matisse+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "muzee", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Musée Marc Chagall", url: "https://www.google.com/maps/search/?api=1&query=Musée+Marc+Chagall+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "muzee", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Musée d'Histoire de Marseille", url: "https://www.google.com/maps/search/?api=1&query=Musée+d'Histoire+de+Marseille+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "muzee", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Opéra de Marseille", url: "https://www.google.com/maps/search/?api=1&query=Opéra+de+Marseille+Marsilia,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Marseille" }, // Marsilia, Provence-Alpes-Côte d'Azur
+    { name: "Place Masséna", url: "https://www.google.com/maps/search/?api=1&query=Place+Masséna+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Opéra de Nice", url: "https://www.google.com/maps/search/?api=1&query=Opéra+de+Nice+Nisa,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Nice" }, // Nisa, Provence-Alpes-Côte d'Azur
+    { name: "Castelul Chambord", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chambord+Chambord,+Centre-Val+de+Loire+France", category: "castele_palate" }, // Chambord, Centre-Val de Loire
+    { name: "Castelul Chenonceau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chenonceau+Chenonceau,+Centre-Val+de+Loire+France", category: "castele_palate" }, // Chenonceau, Centre-Val de Loire
+    { name: "Castelul Villandry & Grădinile", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Villandry+&+Grădinile+Villandry,+Centre-Val+de+Loire+France", category: "castele_palate" }, // Villandry, Centre-Val de Loire
+    { name: "Castelul Amboise", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Amboise+Amboise,+Centre-Val+de+Loire+France", category: "castele_palate" }, // Amboise, Centre-Val de Loire
+    { name: "Castelul Azay-le-Rideau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Azay-le-Rideau+Azay-le-Rideau,+Centre-Val+de+Loire+France", category: "castele_palate" }, // Azay-le-Rideau, Centre-Val de Loire
+    { name: "Orașul Fortificat Carcassonne", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Fortificat+Carcassonne+Carcassonne,+Occitanie+France", category: "cetati_turnuri", city: "Carcassonne" }, // Carcassonne, Occitanie
+    { name: "Zidurile Fortificate din Saint-Malo", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Fortificate+din+Saint-Malo+Saint-Malo,+Bretania+France", category: "cetati_turnuri", city: "Saint-Malo" }, // Saint-Malo, Bretania
+    { name: "Citadela Vauban din Besançon", url: "https://www.google.com/maps/search/?api=1&query=Citadela+Vauban+din+Besançon+Besançon,+Bourgogne-Franche-Comté+France", category: "cetati_turnuri" }, // Besançon, Bourgogne-Franche-Comté
+    { name: "Abația Mont Saint-Michel", url: "https://www.google.com/maps/search/?api=1&query=Abația+Mont+Saint-Michel+Mont+Saint-Michel,+Normandia+France", category: "manastiri", city: "Mont Saint-Michel" }, // Mont Saint-Michel, Normandia
+    { name: "Catedrala din Reims", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Reims+Reims,+Grand+Est+France", category: "manastiri", city: "Reims" }, // Reims, Grand Est
+    { name: "Catedrala din Chartres", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Chartres+Chartres,+Centre-Val+de+Loire+France", category: "manastiri", city: "Chartres" }, // Chartres, Centre-Val de Loire
+    { name: "Catedrala din Amiens", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Amiens+Amiens,+Hauts-de-France+France", category: "manastiri" }, // Amiens, Hauts-de-France
+    { name: "Cheile Verdon (Gorges du Verdon)", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Verdon+(Gorges+du+Verdon)+Provence-Alpes-Côte+d'Azur+France", category: "natura" }, // Provence-Alpes-Côte d'Azur
+    { name: "Stâncile din Étretat (Falaises d'Étretat)", url: "https://www.google.com/maps/search/?api=1&query=Stâncile+din+Étretat+(Falaises+d'Étretat)+Étretat,+Normandia+France", category: "natura" }, // Étretat, Normandia
+    { name: "Duna lui Pilat (Dune du Pilat - Cea mai înaltă dună)", url: "https://www.google.com/maps/search/?api=1&query=Duna+lui+Pilat+(Dune+du+Pilat+-+Cea+mai+înaltă+dună)+Arcachon,+Nouvelle-Aquitaine+France", category: "natura" }, // Arcachon, Nouvelle-Aquitaine
+    { name: "Peștera Lascaux (Artă Preistorică)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Lascaux+(Artă+Preistorică)+Montignac,+Nouvelle-Aquitaine+France", category: "natura" }, // Montignac, Nouvelle-Aquitaine
+    { name: "Masivul Mont Blanc & Aiguille du Midi", url: "https://www.google.com/maps/search/?api=1&query=Masivul+Mont+Blanc+&+Aiguille+du+Midi+Chamonix,+Auvergne-Rhône-Alpes+France", category: "natura", city: "Chamonix" }, // Chamonix, Auvergne-Rhône-Alpes
+    { name: "Mer de Glace (Marea de Gheață)", url: "https://www.google.com/maps/search/?api=1&query=Mer+de+Glace+(Marea+de+Gheață)+Chamonix,+Auvergne-Rhône-Alpes+France", category: "natura", city: "Chamonix" }, // Chamonix, Auvergne-Rhône-Alpes
+    { name: "Cheile Tarnului (Gorges du Tarn)", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Tarnului+(Gorges+du+Tarn)+Occitanie+France", category: "natura" }, // Occitanie
+    { name: "Viaductul Millau (Cel mai înalt pod auto)", url: "https://www.google.com/maps/search/?api=1&query=Viaductul+Millau+(Cel+mai+înalt+pod+auto)+Millau,+Occitanie+France", category: "infrastructura" }, // Millau, Occitanie
+    { name: "Canal du Midi", url: "https://www.google.com/maps/search/?api=1&query=Canal+du+Midi+Occitanie+France", category: "infrastructura" }, // Occitanie
+    { name: "Șoseaua Vinului din Alsacia (Route des Vins)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Vinului+din+Alsacia+(Route+des+Vins)+Alsacia,+Grand+Est+France", category: "infrastructura" }, // Alsacia, Grand Est
+    { name: "Col du Galibier (Șosea montană)", url: "https://www.google.com/maps/search/?api=1&query=Col+du+Galibier+(Șosea+montană)+Alpii+Francezi,+Auvergne-Rhône-Alpes+France", category: "infrastructura" }, // Alpii Francezi, Auvergne-Rhône-Alpes
+    { name: "Route Napoléon", url: "https://www.google.com/maps/search/?api=1&query=Route+Napoléon+Provence-Alpes-Côte+d'Azur+France", category: "infrastructura" }, // Provence-Alpes-Côte d'Azur
+    { name: "Cité de l'Espace (Muzeul Spațial)", url: "https://www.google.com/maps/search/?api=1&query=Cité+de+l'Espace+(Muzeul+Spațial)+Toulouse,+Occitanie+France", category: "muzee", city: "Toulouse" }, // Toulouse, Occitanie
+    { name: "Amfiteatrul Roman din Nîmes (Les Arènes)", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Nîmes+(Les+Arènes)+Nîmes,+Occitanie+France", category: "cladiri_teatre", city: "Nîmes" }, // Nîmes, Occitanie
+    { name: "Teatrul Roman din Orange", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Orange+Orange,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre" }, // Orange, Provence-Alpes-Côte d'Azur
+    { name: "Place Stanislas", url: "https://www.google.com/maps/search/?api=1&query=Place+Stanislas+Nancy,+Grand+Est+France", category: "cladiri_teatre" }, // Nancy, Grand Est
+    { name: "Palatul Papilor (Palais des Papes)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Papilor+(Palais+des+Papes)+Avignon,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Avignon" }, // Avignon, Provence-Alpes-Côte d'Azur
+    { name: "Disneyland Paris", url: "https://www.disneylandparis.com/", category: "parcuri_agrement", city: "Paris" },
+    { name: "Parc Astérix", url: "https://www.google.com/maps/search/?api=1&query=Parc+Astérix+France", category: "parcuri_agrement" },
+    { name: "Puy du Fou", url: "https://www.google.com/maps/search/?api=1&query=Puy+du+Fou+France", category: "parcuri_agrement" },
+    { name: "Futuroscope Poitiers", url: "https://www.google.com/maps/search/?api=1&query=Futuroscope+Poitiers+France", category: "parcuri_agrement" },
+    { name: "Cité des Sciences et de l'Industrie", url: "https://www.google.com/maps/search/?api=1&query=Cité+des+Sciences+et+de+l'Industrie+Paris+France", category: "muzee", city: "Paris" },
+    { name: "Walibi Rhône-Alpes", url: "https://www.google.com/maps/search/?api=1&query=Walibi+Rhône-Alpes+France", category: "parcuri_agrement" },
+    { name: "Parcul de distracții Nigloland", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Nigloland+France", category: "parcuri_agrement" },
+    { name: "Palais Idéal du Facteur Cheval", url: "https://www.google.com/maps/search/?api=1&query=Palais+Idéal+du+Facteur+Cheval+France", category: "cladiri_teatre" },
+    { name: "Domeniul Trianon Versailles", url: "https://www.google.com/maps/search/?api=1&query=Domeniul+Trianon+Versailles+France", category: "castele_palate", city: "Versailles" },
+    { name: "Aquaboulevard Paris", url: "https://www.google.com/maps/search/?api=1&query=Aquaboulevard+Paris+France", category: "parcuri_agrement", city: "Paris" },
+    { name: "Marineland Antibes", url: "https://www.google.com/maps/search/?api=1&query=Marineland+Antibes+France", category: "parcuri_agrement" },
+    { name: "Castelul Haut-Kœnigsbourg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Haut-Kœnigsbourg+France", category: "castele_palate" },
+    { name: "Fundația Louis Vuitton", url: "https://www.google.com/maps/search/?api=1&query=Fundația+Louis+Vuitton+Paris+France", category: "muzee", city: "Paris" },
+    { name: "ZooParc de Beauval", url: "https://www.google.com/maps/search/?api=1&query=ZooParc+de+Beauval+France", category: "parcuri_agrement" },
+    { name: "Palais de Tokyo Paris", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+Tokyo+Paris+France", category: "muzee", city: "Paris" },
+    { name: "Parcul Festyland Caen", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Festyland+Caen+France", category: "parcuri_agrement" },
+    { name: "Château des Ducs de Bretagne", url: "https://www.google.com/maps/search/?api=1&query=Château+des+Ducs+de+Bretagne+Nantes+France", category: "castele_palate", city: "Nantes" },
+    { name: "Cathédrale Saint-Pierre-et-Saint-Paul de Nantes", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Pierre-et-Saint-Paul+de+Nantes+Nantes+France", category: "manastiri", city: "Nantes" },
+    { name: "Les Machines de l'Île (Éléphant)", url: "https://www.google.com/maps/search/?api=1&query=Les+Machines+de+l'Île+(Éléphant)+Nantes+France", category: "cladiri_teatre", city: "Nantes" },
+    { name: "Jardin des Plantes de Nantes", url: "https://www.google.com/maps/search/?api=1&query=Jardin+des+Plantes+de+Nantes+Nantes+France", category: "natura", city: "Nantes" },
+    { name: "Cathédrale Notre-Dame de Strasbourg", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Notre-Dame+de+Strasbourg+Strasbourg+France", category: "manastiri", city: "Strasbourg" },
+    { name: "La Petite France", url: "https://www.google.com/maps/search/?api=1&query=La+Petite+France+Strasbourg+France", category: "cladiri_teatre", city: "Strasbourg" },
+    { name: "Palais Rohan Strasbourg", url: "https://www.google.com/maps/search/?api=1&query=Palais+Rohan+Strasbourg+Strasbourg+France", category: "castele_palate", city: "Strasbourg" },
+    { name: "Barrage Vauban", url: "https://www.google.com/maps/search/?api=1&query=Barrage+Vauban+Strasbourg+France", category: "cetati_turnuri", city: "Strasbourg" },
+    { name: "Place de la Comédie", url: "https://www.google.com/maps/search/?api=1&query=Place+de+la+Comédie+Montpellier+France", category: "cladiri_teatre", city: "Montpellier" },
+    { name: "Cathédrale Saint-Pierre de Montpellier", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Pierre+de+Montpellier+Montpellier+France", category: "manastiri", city: "Montpellier" },
+    { name: "Arc de Triomphe de Montpellier", url: "https://www.google.com/maps/search/?api=1&query=Arc+de+Triomphe+de+Montpellier+Montpellier+France", category: "cladiri_teatre", city: "Montpellier" },
+    { name: "Musée Fabre", url: "https://www.google.com/maps/search/?api=1&query=Musée+Fabre+Montpellier+France", category: "muzee", city: "Montpellier" },
+    { name: "Place de la Bourse (Miroir d'eau)", url: "https://www.google.com/maps/search/?api=1&query=Place+de+la+Bourse+(Miroir+d'eau)+Bordeaux+France", category: "cladiri_teatre", city: "Bordeaux" },
+    { name: "Cité du Vin Bordeaux", url: "https://www.google.com/maps/search/?api=1&query=Cité+du+Vin+Bordeaux+Bordeaux+France", category: "muzee", city: "Bordeaux" },
+    { name: "Cathédrale Saint-André de Bordeaux", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-André+de+Bordeaux+Bordeaux+France", category: "manastiri", city: "Bordeaux" },
+    { name: "Grosse Cloche de Bordeaux", url: "https://www.google.com/maps/search/?api=1&query=Grosse+Cloche+de+Bordeaux+Bordeaux+France", category: "cetati_turnuri", city: "Bordeaux" },
+    { name: "Grand Place de Lille", url: "https://www.google.com/maps/search/?api=1&query=Grand+Place+de+Lille+Lille+France", category: "cladiri_teatre", city: "Lille" },
+    { name: "Vieille Bourse de Lille", url: "https://www.google.com/maps/search/?api=1&query=Vieille+Bourse+de+Lille+Lille+France", category: "cladiri_teatre", city: "Lille" },
+    { name: "Palais des Beaux-Arts de Lille", url: "https://www.google.com/maps/search/?api=1&query=Palais+des+Beaux-Arts+de+Lille+Lille+France", category: "muzee", city: "Lille" },
+    { name: "Notre-Dame-de-la-Treille", url: "https://www.google.com/maps/search/?api=1&query=Notre-Dame-de-la-Treille+Lille+France", category: "manastiri", city: "Lille" },
+    { name: "Parlement de Bretagne", url: "https://www.google.com/maps/search/?api=1&query=Parlement+de+Bretagne+Rennes+France", category: "cladiri_teatre", city: "Rennes" },
+    { name: "Cathédrale Saint-Pierre de Rennes", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Pierre+de+Rennes+Rennes+France", category: "manastiri", city: "Rennes" },
+    { name: "Les Champs Libres", url: "https://www.google.com/maps/search/?api=1&query=Les+Champs+Libres+Rennes+France", category: "muzee", city: "Rennes" },
+    { name: "Parc du Thabor", url: "https://www.google.com/maps/search/?api=1&query=Parc+du+Thabor+Rennes+France", category: "natura", city: "Rennes" },
+    { name: "Église Saint-Joseph du Havre", url: "https://www.google.com/maps/search/?api=1&query=Église+Saint-Joseph+du+Havre+Le+Havre+France", category: "manastiri", city: "Le Havre" },
+    { name: "Le Volcan (Maison de la Culture)", url: "https://www.google.com/maps/search/?api=1&query=Le+Volcan+(Maison+de+la+Culture)+Le+Havre+France", category: "cladiri_teatre", city: "Le Havre" },
+    { name: "Musée d'Art Moderne André Malraux (MuMa)", url: "https://www.google.com/maps/search/?api=1&query=Musée+d'Art+Moderne+André+Malraux+(MuMa)+Le+Havre+France", category: "muzee", city: "Le Havre" },
+    { name: "Musée d'Art Moderne et Contemporain de Saint-Étienne", url: "https://www.google.com/maps/search/?api=1&query=Musée+d'Art+Moderne+et+Contemporain+de+Saint-Étienne+Saint-Étienne+France", category: "muzee", city: "Saint-Étienne" },
+    { name: "Musée de la Mine Saint-Étienne", url: "https://www.google.com/maps/search/?api=1&query=Musée+de+la+Mine+Saint-Étienne+Saint-Étienne+France", category: "muzee", city: "Saint-Étienne" },
+    { name: "Rade de Toulon", url: "https://www.google.com/maps/search/?api=1&query=Rade+de+Toulon+Toulon+France", category: "natura", city: "Toulon" },
+    { name: "Mont Faron", url: "https://www.google.com/maps/search/?api=1&query=Mont+Faron+Toulon+France", category: "natura", city: "Toulon" },
+    { name: "Opéra de Toulon", url: "https://www.google.com/maps/search/?api=1&query=Opéra+de+Toulon+Toulon+France", category: "cladiri_teatre", city: "Toulon" },
+    { name: "Bastille de Grenoble (Téléphérique)", url: "https://www.google.com/maps/search/?api=1&query=Bastille+de+Grenoble+(Téléphérique)+Grenoble+France", category: "cetati_turnuri", city: "Grenoble" },
+    { name: "Musée de Grenoble", url: "https://www.google.com/maps/search/?api=1&query=Musée+de+Grenoble+Grenoble+France", category: "muzee", city: "Grenoble" },
+    { name: "Palais des Ducs de Bourgogne", url: "https://www.google.com/maps/search/?api=1&query=Palais+des+Ducs+de+Bourgogne+Dijon+France", category: "castele_palate", city: "Dijon" },
+    { name: "Cathédrale Notre-Dame de Dijon", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Notre-Dame+de+Dijon+Dijon+France", category: "manastiri", city: "Dijon" },
+    { name: "Musée des Beaux-Arts de Dijon", url: "https://www.google.com/maps/search/?api=1&query=Musée+des+Beaux-Arts+de+Dijon+Dijon+France", category: "muzee", city: "Dijon" },
+    { name: "Château d'Angers (Tapisserie de l'Apocalypse)", url: "https://www.google.com/maps/search/?api=1&query=Château+d'Angers+(Tapisserie+de+l'Apocalypse)+Angers+France", category: "castele_palate", city: "Angers" },
+    { name: "Cathédrale Saint-Maurice d'Angers", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Maurice+d'Angers+Angers+France", category: "manastiri", city: "Angers" },
+    { name: "Cathédrale Notre-Dame-de-l'Assomption de Clermont-Ferrand", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Notre-Dame-de-l'Assomption+de+Clermont-Ferrand+Clermont-Ferrand+France", category: "manastiri", city: "Clermont-Ferrand" },
+    { name: "Basilique Notre-Dame-du-Port", url: "https://www.google.com/maps/search/?api=1&query=Basilique+Notre-Dame-du-Port+Clermont-Ferrand+France", category: "manastiri", city: "Clermont-Ferrand" },
+    { name: "Puy de Dôme", url: "https://www.google.com/maps/search/?api=1&query=Puy+de+Dôme+Clermont-Ferrand+France", category: "natura", city: "Clermont-Ferrand" },
+    { name: "Château d'Annecy", url: "https://www.google.com/maps/search/?api=1&query=Château+d'Annecy+Annecy+France", category: "castele_palate", city: "Annecy" },
+    { name: "Palais de l'Isle Annecy", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+l'Isle+Annecy+Annecy+France", category: "cetati_turnuri", city: "Annecy" },
+    { name: "Lac d'Annecy", url: "https://www.google.com/maps/search/?api=1&query=Lac+d'Annecy+Annecy+France", category: "natura", city: "Annecy" },
+    { name: "La Petite Venise (Colmar)", url: "https://www.google.com/maps/search/?api=1&query=La+Petite+Venise+(Colmar)+Colmar+France", category: "cladiri_teatre", city: "Colmar" },
+    { name: "Musée Unterlinden", url: "https://www.google.com/maps/search/?api=1&query=Musée+Unterlinden+Colmar+France", category: "muzee", city: "Colmar" },
+    { name: "Maison des Têtes Colmar", url: "https://www.google.com/maps/search/?api=1&query=Maison+des+Têtes+Colmar+Colmar+France", category: "cladiri_teatre", city: "Colmar" },
   ],
   se: [
     { name: "Muzeul Vasa Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vasa+Stockholm+Sweden" },
@@ -8060,6 +8218,21 @@ function toDisplayName(rawParam) {
 // de brand precum "carrefour" există în MAI MULTE țări simultan (RO, BE,
 // FR...), cu liste de orașe complet diferite; un singur nivel ar amesteca
 // orașele unei țări cu magazinele altei țări.
+// Ajutător pentru Franța — vezi comentariul de la SELECTIVE_BRAND_CITIES.fr
+// (leclerc/carrefour/intermarche/auchan) mai jos: o listă albă nu poate
+// exprima direct "toate orașele MAI PUȚIN unul singur", deci construim
+// explicit lista celorlalte 27, filtrând Mont Saint-Michel din
+// COUNTRIES.fr.cities — o singură sursă de adevăr, nu o listă scrisă a
+// doua oară de mână (care s-ar putea dezactualiza dacă se mai adaugă orașe).
+const FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL = [
+  "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
+  "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+  "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
+  "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
+  "Versailles", "Chartres", "Carcassonne", "Saint-Malo", "Chamonix",
+  "Avignon", "Annecy", "Colmar",
+];
+
 const SELECTIVE_BRAND_CITIES = {
   ro: {
     metro: [
@@ -8287,6 +8460,35 @@ const SELECTIVE_BRAND_CITIES = {
       "Bari", "Catania", "Cagliari", "Padova", "Pisa", "Perugia",
       "Bolzano", "Brescia", "Modena",
     ],
+  },
+  fr: {
+    // Monoprix — verificat prin căutare (monoprix.fr/liste-magasins +
+    // pagesjaunes.fr): 200-250+ orașe, confirmat cu adresă exactă chiar și
+    // în orașe mai mici (Colmar, Annecy, Le Havre, Avignon, Dijon,
+    // Clermont-Ferrand, Grenoble). ABSENT din Mont Saint-Michel (sit-monument
+    // cu ~30 de locuitori permanenți, evident fără hipermarket) și din
+    // Chamonix (nicio adresă concretă găsită, doar pagini generice de
+    // director, spre deosebire de restul orașelor de mai sus).
+    monoprix: [
+      "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
+      "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+      "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
+      "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
+      "Versailles", "Chartres", "Carcassonne", "Saint-Malo", "Avignon",
+      "Annecy", "Colmar",
+    ],
+    // Restul brandurilor (E.Leclerc, Carrefour, Intermarché, Auchan) au
+    // rețele mult mai mari (mii de magazine fiecare), universale peste tot
+    // — CU O SINGURĂ EXCEPȚIE, evidentă: Mont Saint-Michel, un sit-monument
+    // (abație + fortăreață medievală), fără nicio infrastructură de oraș
+    // real — cu siguranță fără niciun hipermarket, indiferent de brand.
+    // NOTĂ: SELECTIVE_BRAND_CITIES e o listă ALBĂ (doar orașele enumerate
+    // sunt permise) — ca să excludem UN SINGUR oraș dintr-o listă altfel
+    // universală, enumerăm explicit toate CELELALTE 27, nu doar excepția.
+    leclerc: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    carrefour: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    intermarche: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    auchan: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
   },
 };
 
