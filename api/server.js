@@ -4642,12 +4642,55 @@ function esSupermarketWeekly() {
     { open: "09:00", close: "21:30" }, // Sábado
   ];
 }
+// Bricolaj / electronice / sport (Ikea, Leroy Merlin, MediaMarkt, Decathlon)
+// — program tipic mai lung dimineața, închis duminica (aceeași simplificare
+// declarată mai sus, pentru tot grupul).
+function esDiyWeekly() {
+  return [
+    null, // Domingo — închis
+    { open: "10:00", close: "21:00" }, // Lunes
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" }, // Sábado
+  ];
+}
 const ES_STORE_CONFIG = {
   mercadona: { name: "Mercadona", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   carrefour: { name: "Carrefour", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   alcampo: { name: "Alcampo", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
   dia: { name: "Dia", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Lidl și Eroski — verificate prin căutare (localizator oficial + einforma.es):
+  // ambele confirmate cu magazine reale în toate cele 9 orașe din listă
+  // (inclusiv Eroski în Baleares — 184 de magazine acolo, cel mai dens punct
+  // al rețelei; și în Vizcaya/Bilbao — 41 de magazine).
+  lidl: { name: "Lidl", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  eroski: { name: "Eroski", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Consum — bug real, prins ÎNAINTE să ajungă live: lanțul valencian NU are
+  // acoperire națională (confirmat explicit: "Consum no tiene presencia en
+  // el conjunto de España"), prezent doar în 6 comunități autonome (Valencia,
+  // Cataluña, Andalucía, Murcia, Castilla-La Mancha, Aragón). ABSENT din
+  // Madrid — prima lor unitate acolo (Parla) e abia programată pentru 2028
+  // (confirmat prin articole din aprilie-mai 2026, foarte recente) — și din
+  // Baleares/Palma și Țara Bascilor/Bilbao, nemenționate printre cele 6
+  // regiuni. Vezi SELECTIVE_BRAND_CITIES.es mai jos pentru orașele exacte
+  // unde chiar există.
+  consum: { name: "Consum", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Ikea — verificat prin căutare (ikea.com/es/es/stores + tiendas-espana.es):
+  // confirmat cu magazin propriu sau în zona metropolitană a fiecăruia din
+  // cele 9 orașe (inclusiv Palma și Barakaldo/Bilbao).
+  ikea: { name: "Ikea", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  // Bricolaj / electronice / sport — lanțuri naționale mari (Leroy Merlin
+  // ~90 magazine, MediaMarkt ~100, Decathlon ~170), NEVERIFICATE oraș cu
+  // oraș individual (spre deosebire de toate cele de mai sus) — dar risc mic
+  // aici, pentru că toate cele 9 orașe din listă sunt deja printre cele mai
+  // mari orașe din Spania; probabilitatea reală de absență e mult mai mică
+  // decât la un oraș mic românesc gen Brad.
+  leroymerlin: { name: "Leroy Merlin", slug: "leroy-merlin", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  mediamarkt: { name: "MediaMarkt", slug: "media-markt", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  decathlon: { name: "Decathlon", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
   // Mall-uri reale — Xanadú (Madrid) e o excepție notabilă, deschis chiar și
   // duminica tot anul; La Maquinista (Barcelona) urmează regula generală
   // catalană (închis duminica, cu câteva excepții sezoniere, nemodelate aici).
@@ -4992,7 +5035,20 @@ const COUNTRIES = {
   es: {
     config: ES_STORE_CONFIG,
     t: TRANSLATIONS.es,
-    cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia", "Palma", "Bilbao"],
+    // Extins de la 9 la 34 de orașe — turism foarte mare în Spania, multe
+    // orașe importante (Toledo, Salamanca, Granada, Segovia etc.) lipseau
+    // complet. Vezi SELECTIVE_BRAND_CITIES.es mai jos — brandurile de format
+    // mare (El Corte Inglés, Ikea) NU sunt în toate cele 34, verificat cu
+    // liste complete reale (tiendas-espana.es, leroymerlin.es, ikea.com).
+    cities: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Ronda", "Mérida", "Cáceres", "Cuenca", "Marbella",
+    ],
   },
   fr: {
     config: FR_STORE_CONFIG,
@@ -6024,40 +6080,296 @@ const ATTRACTIONS = {
     { name: "London Eye", url: "https://www.londoneye.com/" },
   ],
   es: [
-    { name: "PortAventura World Tarragona", url: "https://www.portaventuraworld.com/" },
-    { name: "Parque Warner Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Warner+Madrid+Spain" },
-    { name: "Terra Mítica Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Terra+Mítica+Benidorm+Spain" },
-    { name: "Basílica de la Sagrada Família", url: "https://sagradafamilia.org/" },
-    { name: "Museo Nacional del Prado", url: "https://www.museodelprado.es/" },
-    { name: "Alhambra de Granada", url: "https://www.alhambra-patronato.es/" },
-    { name: "Parc Güell Barcelona", url: "https://parkguell.barcelona/" },
-    { name: "Siam Park Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Siam+Park+Tenerife+Spain" },
-    { name: "Real Alcázar de Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Real+Alcázar+de+Sevilla+Spain" },
-    { name: "L'Oceanogràfic", url: "https://www.google.com/maps/search/?api=1&query=L'Oceanogràfic+Spain" },
-    { name: "Loro Parque Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Loro+Parque+Tenerife+Spain" },
-    { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Spain" },
-    { name: "Muzeul Picasso", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Spain" },
-    { name: "Museo Nacional Centro de Arte Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Museo+Nacional+Centro+de+Arte+Reina+Sofía+Spain" },
-    { name: "Casa Batlló Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Casa+Batlló+Barcelona+Spain" },
-    { name: "Isla Mágica Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Isla+Mágica+Sevilla+Spain" },
-    { name: "Moscheea-Catedrală din Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Moscheea-Catedrală+din+Córdoba+Spain" },
-    { name: "Muzeul Guggenheim Bilbao", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Guggenheim+Bilbao+Spain" },
-    { name: "Castelul Alcázar din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Alcázar+din+Segovia+Spain" },
-    { name: "Parque de Atracciones", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+Atracciones+Spain" },
-    { name: "Poble Espanyol Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Poble+Espanyol+Barcelona+Spain" },
-    { name: "Parcul de distracții Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Tibidabo+Spain" },
-    { name: "Aqualandia Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Aqualandia+Benidorm+Spain" },
-    { name: "Casa Milà / La Pedrera Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Casa+Milà+/+La+Pedrera+Barcelona+Spain" },
-    { name: "Catedrala din Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Sevilla+Spain" },
-    { name: "Bioparc Valencia", url: "https://www.google.com/maps/search/?api=1&query=Bioparc+Valencia+Spain" },
-    { name: "Katmandu Park Mallorca", url: "https://www.google.com/maps/search/?api=1&query=Katmandu+Park+Mallorca+Spain" },
-    { name: "Teatro Real", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Real+Spain" },
-    { name: "Orașul Artelor și Științelor Valencia", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Artelor+și+Științelor+Valencia+Spain" },
-    { name: "Muzeul Thyssen-Bornemisza Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain" },
-    { name: "Parque Europa Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Europa+Madrid+Spain" },
-    { name: "Castelul Loarre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loarre+Spain" },
-    { name: "Palatul Aljafería Zaragoza", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Aljafería+Zaragoza+Spain" },
-    { name: "Zoo Aquarium Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Aquarium+Madrid+Spain" },
+    { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de Cristal (Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cristal+(Retiro)+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de Liria", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Liria+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de El Pardo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+El+Pardo+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de Santa Cruz", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Santa+Cruz+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Cibeles+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Palacio de Velázquez", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Velázquez+Madrid+Spain", category: "castele_palate" }, // Madrid
+    { name: "Zidurile Arabe din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Madrid+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
+    { name: "Torre de los Lujanes", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+los+Lujanes+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
+    { name: "Torre de la Parroquia de San Pedro", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Parroquia+de+San+Pedro+Madrid+Spain", category: "cetati_turnuri" }, // Madrid
+    { name: "Catedral de la Almudena", url: "https://www.google.com/maps/search/?api=1&query=Catedral+de+la+Almudena+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Basílica de San Francisco el Grande", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Francisco+el+Grande+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Mănăstirea Descalzas Reales", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Descalzas+Reales+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Mănăstirea San Jerónimo el Real", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Jerónimo+el+Real+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Ermita de San Antonio de la Florida", url: "https://www.google.com/maps/search/?api=1&query=Ermita+de+San+Antonio+de+la+Florida+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Iglesia de San Manuel y San Benito", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Manuel+y+San+Benito+Madrid+Spain", category: "manastiri" }, // Madrid
+    { name: "Parcul Retiro (Parque del Retiro)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Retiro+(Parque+del+Retiro)+Madrid+Spain", category: "natura" }, // Madrid
+    { name: "Casa de Campo", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Campo+Madrid+Spain", category: "natura" }, // Madrid
+    { name: "Real Jardín Botánico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Real+Jardín+Botánico+de+Madrid+Madrid+Spain", category: "natura" }, // Madrid
+    { name: "Parque Madrid Río", url: "https://www.google.com/maps/search/?api=1&query=Parque+Madrid+Río+Madrid+Spain", category: "natura" }, // Madrid
+    { name: "Parque de El Capricho", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+El+Capricho+Madrid+Spain", category: "natura" }, // Madrid
+    { name: "Teleférico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Teleférico+de+Madrid+Madrid+Spain", category: "infrastructura" }, // Madrid
+    { name: "Viaducto de Segovia", url: "https://www.google.com/maps/search/?api=1&query=Viaducto+de+Segovia+Madrid+Spain", category: "infrastructura" }, // Madrid
+    { name: "Estación de Atocha (Grădina Tropicală)", url: "https://www.google.com/maps/search/?api=1&query=Estación+de+Atocha+(Grădina+Tropicală)+Madrid+Spain", category: "infrastructura" }, // Madrid
+    { name: "Muzeul Național Prado", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Prado+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Național Centru de Artă Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Centru+de+Artă+Reina+Sofía+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Thyssen-Bornemisza", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Arheologic Național (MAN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+(MAN)+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Sorolla", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sorolla+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Cerralbo", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cerralbo+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Istoriei din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Istoriei+din+Madrid+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Muzeul Naval din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Naval+din+Madrid+Madrid+Spain", category: "muzee" }, // Madrid
+    { name: "Plaza Mayor", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Puerta del Sol", url: "https://www.google.com/maps/search/?api=1&query=Puerta+del+Sol+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Gran Vía", url: "https://www.google.com/maps/search/?api=1&query=Gran+Vía+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Plaza de Cibeles", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Cibeles+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Puerta de Alcalá", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Alcalá+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Teatro Real (Opera)", url: "https://www.google.com/maps/search/?api=1&query=Teatro+Real+(Opera)+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Círculo de Bellas Artes", url: "https://www.google.com/maps/search/?api=1&query=Círculo+de+Bellas+Artes+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Templo de Debod", url: "https://www.google.com/maps/search/?api=1&query=Templo+de+Debod+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Plaza de España (Madrid)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Madrid)+Madrid+Spain", category: "cladiri_teatre" }, // Madrid
+    { name: "Palacio Güell", url: "https://www.google.com/maps/search/?api=1&query=Palacio+Güell+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
+    { name: "Castelul Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Montjuïc+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
+    { name: "Palau Reial Major", url: "https://www.google.com/maps/search/?api=1&query=Palau+Reial+Major+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
+    { name: "Palau de la Generalitat", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Generalitat+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
+    { name: "Castelul celor Trei Dragoni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+celor+Trei+Dragoni+Barcelona,+Catalonia+Spain", category: "castele_palate" }, // Barcelona, Catalonia
+    { name: "Torre Glòries (Agbar)", url: "https://www.google.com/maps/search/?api=1&query=Torre+Glòries+(Agbar)+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
+    { name: "Zidurile Romane din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Romane+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
+    { name: "Torre de Collserola", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+Collserola+Barcelona,+Catalonia+Spain", category: "cetati_turnuri" }, // Barcelona, Catalonia
+    { name: "Sagrada Família", url: "https://www.google.com/maps/search/?api=1&query=Sagrada+Família+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Catedrala Sfânta Cruce și Sfânta Eulalia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Cruce+și+Sfânta+Eulalia+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Basílica de Santa Maria del Mar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Mar+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Basílica de Santa Maria del Pi", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Pi+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Mănăstirea Pedralbes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Pedralbes+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Temple Expiatori del Sagrat Cor (Tibidabo)", url: "https://www.google.com/maps/search/?api=1&query=Temple+Expiatori+del+Sagrat+Cor+(Tibidabo)+Barcelona,+Catalonia+Spain", category: "manastiri" }, // Barcelona, Catalonia
+    { name: "Parcul Güell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Güell+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
+    { name: "Parc de la Ciutadella", url: "https://www.google.com/maps/search/?api=1&query=Parc+de+la+Ciutadella+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
+    { name: "Parc del Laberint d'Horta", url: "https://www.google.com/maps/search/?api=1&query=Parc+del+Laberint+d'Horta+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
+    { name: "Muntele Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Montjuïc+Barcelona,+Catalonia+Spain", category: "natura" }, // Barcelona, Catalonia
+    { name: "Telecabina de la Barceloneta (Transbordador Aeri)", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+de+la+Barceloneta+(Transbordador+Aeri)+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
+    { name: "Funicularul din Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Montjuïc+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
+    { name: "Funicularul din Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Tibidabo+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
+    { name: "Puerto de Barcelona (Portul Vell)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Barcelona+(Portul+Vell)+Barcelona,+Catalonia+Spain", category: "infrastructura" }, // Barcelona, Catalonia
+    { name: "Muzeul Picasso", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Muzeul Național de Artă al Cataloniei (MNAC)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+de+Artă+al+Cataloniei+(MNAC)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Muzeul de Artă Contemporană (MACBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MACBA)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Fundació Joan Miró", url: "https://www.google.com/maps/search/?api=1&query=Fundació+Joan+Miró+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Muzeul de Istorie a Cubei (MUHBA)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+a+Cubei+(MUHBA)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "CosmoCaixa (Muzeul de Știință)", url: "https://www.google.com/maps/search/?api=1&query=CosmoCaixa+(Muzeul+de+Știință)+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Muzeul Maritim din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Maritim+din+Barcelona+Barcelona,+Catalonia+Spain", category: "muzee" }, // Barcelona, Catalonia
+    { name: "Casa Milà (La Pedrera)", url: "https://www.google.com/maps/search/?api=1&query=Casa+Milà+(La+Pedrera)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Casa Batlló", url: "https://www.google.com/maps/search/?api=1&query=Casa+Batlló+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Palau de la Música Catalana", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+Catalana+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "La Rambla (Bulevardul Emblematic)", url: "https://www.google.com/maps/search/?api=1&query=La+Rambla+(Bulevardul+Emblematic)+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Plaça de Catalunya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+Catalunya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Plaça d'Espanya", url: "https://www.google.com/maps/search/?api=1&query=Plaça+d'Espanya+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Arcul de Triumf din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Casa Amatller", url: "https://www.google.com/maps/search/?api=1&query=Casa+Amatller+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Gran Teatre del Liceu", url: "https://www.google.com/maps/search/?api=1&query=Gran+Teatre+del+Liceu+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Mercat de la Boqueria", url: "https://www.google.com/maps/search/?api=1&query=Mercat+de+la+Boqueria+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Plaça del Rei", url: "https://www.google.com/maps/search/?api=1&query=Plaça+del+Rei+Barcelona,+Catalonia+Spain", category: "cladiri_teatre" }, // Barcelona, Catalonia
+    { name: "Palatul Regal Alcázar din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+Alcázar+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
+    { name: "Palacio de las Dueñas (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
+    { name: "Palacio de San Telmo", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+San+Telmo+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
+    { name: "Casa de Pilatos", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+Pilatos+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
+    { name: "Palacio de la Condesa de Lebrija", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Condesa+de+Lebrija+Sevilia,+Andaluzia+Spain", category: "castele_palate" }, // Sevilia, Andaluzia
+    { name: "Turnul de Aur (Torre del Oro)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Aur+(Torre+del+Oro)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
+    { name: "Torre de la Giralda", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Giralda+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
+    { name: "Zidurile Almohade (Murallas de Sevilla)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Almohade+(Murallas+de+Sevilla)+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
+    { name: "Torre de la Plata", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Plata+Sevilia,+Andaluzia+Spain", category: "cetati_turnuri" }, // Sevilia, Andaluzia
+    { name: "Catedrala din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
+    { name: "Monasterio de Santa María de las Cuevas (La Cartuja)", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+Santa+María+de+las+Cuevas+(La+Cartuja)+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
+    { name: "Iglesia de San Luis de los Franceses", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Luis+de+los+Franceses+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
+    { name: "Basílica de la Macarena", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Macarena+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
+    { name: "Iglesia del Salvador", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+del+Salvador+Sevilia,+Andaluzia+Spain", category: "manastiri" }, // Sevilia, Andaluzia
+    { name: "Parque de María Luisa", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+María+Luisa+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
+    { name: "Jardines de Murillo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+de+Murillo+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
+    { name: "Guadalquivir River (Zona de Promenadă)", url: "https://www.google.com/maps/search/?api=1&query=Guadalquivir+River+(Zona+de+Promenadă)+Sevilia,+Andaluzia+Spain", category: "natura" }, // Sevilia, Andaluzia
+    { name: "Puente de Triana (Puente de Isabel II)", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+Triana+(Puente+de+Isabel+II)+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
+    { name: "Puente del Alamillo", url: "https://www.google.com/maps/search/?api=1&query=Puente+del+Alamillo+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
+    { name: "Muelle de las Delicias", url: "https://www.google.com/maps/search/?api=1&query=Muelle+de+las+Delicias+Sevilia,+Andaluzia+Spain", category: "infrastructura" }, // Sevilia, Andaluzia
+    { name: "Archivo General de Indias", url: "https://www.google.com/maps/search/?api=1&query=Archivo+General+de+Indias+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
+    { name: "Museo de Bellas Artes din Sevilia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+din+Sevilia+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
+    { name: "Museo del Baile Flamenco", url: "https://www.google.com/maps/search/?api=1&query=Museo+del+Baile+Flamenco+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
+    { name: "Museo de Artes y Costumbres Populares", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Artes+y+Costumbres+Populares+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
+    { name: "Museo Arqueológico de Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Sevilla+Sevilia,+Andaluzia+Spain", category: "muzee" }, // Sevilia, Andaluzia
+    { name: "Plaza de España (Sevilia)", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+España+(Sevilia)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Setas de Sevilla (Metropol Parasol)", url: "https://www.google.com/maps/search/?api=1&query=Setas+de+Sevilla+(Metropol+Parasol)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Barrio Santa Cruz (Cartierul Istoric)", url: "https://www.google.com/maps/search/?api=1&query=Barrio+Santa+Cruz+(Cartierul+Istoric)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Real Maestranza de Caballería (Plaza de Toros)", url: "https://www.google.com/maps/search/?api=1&query=Real+Maestranza+de+Caballería+(Plaza+de+Toros)+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Plaça de América", url: "https://www.google.com/maps/search/?api=1&query=Plaça+de+América+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Teatro de la Maestranza", url: "https://www.google.com/maps/search/?api=1&query=Teatro+de+la+Maestranza+Sevilia,+Andaluzia+Spain", category: "cladiri_teatre" }, // Sevilia, Andaluzia
+    { name: "Palacio del Marqués de Dos Aguas", url: "https://www.google.com/maps/search/?api=1&query=Palacio+del+Marqués+de+Dos+Aguas+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
+    { name: "Palacio de Benicarló", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Benicarló+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
+    { name: "Palacio de la Generalitat Valenciana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Generalitat+Valenciana+Valencia,+Comunitatea+Valenciană+Spain", category: "castele_palate" }, // Valencia, Comunitatea Valenciană
+    { name: "Torres de Serranos", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Serranos+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Valencia, Comunitatea Valenciană
+    { name: "Torres de Quart", url: "https://www.google.com/maps/search/?api=1&query=Torres+de+Quart+Valencia,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Valencia, Comunitatea Valenciană
+    { name: "Catedrala din Valencia (El Miguelete)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Valencia+(El+Miguelete)+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
+    { name: "Basílica de la Virgen de los Desamparados", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+la+Virgen+de+los+Desamparados+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
+    { name: "Real Monasterio de la Santísima Trinidad", url: "https://www.google.com/maps/search/?api=1&query=Real+Monasterio+de+la+Santísima+Trinidad+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
+    { name: "Iglesia de San Nicolás de Bari", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+San+Nicolás+de+Bari+Valencia,+Comunitatea+Valenciană+Spain", category: "manastiri" }, // Valencia, Comunitatea Valenciană
+    { name: "Jardines del Turia (Parcul din albia veche)", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Turia+(Parcul+din+albia+veche)+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
+    { name: "Parcul Natural Albufera", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Albufera+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
+    { name: "Jardín Botánico de la Universidad de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Jardín+Botánico+de+la+Universidad+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
+    { name: "Bioparc Valencia", url: "https://www.google.com/maps/search/?api=1&query=Bioparc+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "natura" }, // Valencia, Comunitatea Valenciană
+    { name: "Puente de la Exposición", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+la+Exposición+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
+    { name: "Puente de les Flors", url: "https://www.google.com/maps/search/?api=1&query=Puente+de+les+Flors+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
+    { name: "Puerto de Valencia (Marina de València)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Valencia+(Marina+de+València)+Valencia,+Comunitatea+Valenciană+Spain", category: "infrastructura" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo de Bellas Artes de Valencia", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
+    { name: "IVAM (Institutul de Artă Modernă)", url: "https://www.google.com/maps/search/?api=1&query=IVAM+(Institutul+de+Artă+Modernă)+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo Fallero", url: "https://www.google.com/maps/search/?api=1&query=Museo+Fallero+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
+    { name: "Museo Nacional de Cerámica", url: "https://www.google.com/maps/search/?api=1&query=Museo+Nacional+de+Cerámica+Valencia,+Comunitatea+Valenciană+Spain", category: "muzee" }, // Valencia, Comunitatea Valenciană
+    { name: "Orașul Artelor și Științei (Ciudad de las Artes y las Ciencias)", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Artelor+și+Științei+(Ciudad+de+las+Artes+y+las+Ciencias)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Llotja de la Seda (Bursa Mătăsii - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Llotja+de+la+Seda+(Bursa+Mătăsii+-+UNESCO)+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Mercado Central din Valencia", url: "https://www.google.com/maps/search/?api=1&query=Mercado+Central+din+Valencia+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Plaza del Ayuntamiento", url: "https://www.google.com/maps/search/?api=1&query=Plaza+del+Ayuntamiento+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Plaza de la Virgen", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Virgen+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Estación del Norte", url: "https://www.google.com/maps/search/?api=1&query=Estación+del+Norte+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Palau de la Música de València", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+de+València+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre" }, // Valencia, Comunitatea Valenciană
+    { name: "Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Alhambra+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
+    { name: "Palacio de Generalife", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Generalife+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
+    { name: "Palacio de Carlos V", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Carlos+V+Granada,+Andaluzia+Spain", category: "castele_palate" }, // Granada, Andaluzia
+    { name: "Palacio de Viana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Viana+Córdoba,+Andaluzia+Spain", category: "castele_palate" }, // Córdoba, Andaluzia
+    { name: "Alcázar de los Reyes Cristianos", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+los+Reyes+Cristianos+Córdoba,+Andaluzia+Spain", category: "castele_palate" }, // Córdoba, Andaluzia
+    { name: "Torre de la Vela (Alhambra)", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Vela+(Alhambra)+Granada,+Andaluzia+Spain", category: "cetati_turnuri" }, // Granada, Andaluzia
+    { name: "Torre de la Calahorra", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+la+Calahorra+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri" }, // Córdoba, Andaluzia
+    { name: "Turnul Malmuerta", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Malmuerta+Córdoba,+Andaluzia+Spain", category: "cetati_turnuri" }, // Córdoba, Andaluzia
+    { name: "Alcazaba de Granada", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Granada+Granada,+Andaluzia+Spain", category: "cetati_turnuri" }, // Granada, Andaluzia
+    { name: "Moscheea-Catedrală din Córdoba (Mezquita)", url: "https://www.google.com/maps/search/?api=1&query=Moscheea-Catedrală+din+Córdoba+(Mezquita)+Córdoba,+Andaluzia+Spain", category: "manastiri" }, // Córdoba, Andaluzia
+    { name: "Catedrala din Granada (Capilla Real)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Granada+(Capilla+Real)+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
+    { name: "Monasterio de San Jerónimo", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+San+Jerónimo+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
+    { name: "Monasterio de la Cartuja", url: "https://www.google.com/maps/search/?api=1&query=Monasterio+de+la+Cartuja+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
+    { name: "Sinagoga din Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+din+Córdoba+Córdoba,+Andaluzia+Spain", category: "manastiri" }, // Córdoba, Andaluzia
+    { name: "Basílica de San Juan de Dios", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+San+Juan+de+Dios+Granada,+Andaluzia+Spain", category: "manastiri" }, // Granada, Andaluzia
+    { name: "Jardines del Triunfo", url: "https://www.google.com/maps/search/?api=1&query=Jardines+del+Triunfo+Granada,+Andaluzia+Spain", category: "natura" }, // Granada, Andaluzia
+    { name: "Peșterile din Sacromonte (Cuevas de Sacromonte)", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+din+Sacromonte+(Cuevas+de+Sacromonte)+Granada,+Andaluzia+Spain", category: "natura" }, // Granada, Andaluzia
+    { name: "Los Patios de Córdoba (Curțile înflorite)", url: "https://www.google.com/maps/search/?api=1&query=Los+Patios+de+Córdoba+(Curțile+înflorite)+Córdoba,+Andaluzia+Spain", category: "natura" }, // Córdoba, Andaluzia
+    { name: "Șoseaua de Înaltă Altitudine A-395 (Sierra Nevada)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+de+Înaltă+Altitudine+A-395+(Sierra+Nevada)+Granada,+Andaluzia+Spain", category: "infrastructura" }, // Granada, Andaluzia
+    { name: "Podul Roman din Córdoba (Puente Romano)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Roman+din+Córdoba+(Puente+Romano)+Córdoba,+Andaluzia+Spain", category: "infrastructura" }, // Córdoba, Andaluzia
+    { name: "Museo de Bellas Artes de Granada", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+Bellas+Artes+de+Granada+Granada,+Andaluzia+Spain", category: "muzee" }, // Granada, Andaluzia
+    { name: "Museo de la Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Museo+de+la+Alhambra+Granada,+Andaluzia+Spain", category: "muzee" }, // Granada, Andaluzia
+    { name: "Museo Arqueológico de Córdoba", url: "https://www.google.com/maps/search/?api=1&query=Museo+Arqueológico+de+Córdoba+Córdoba,+Andaluzia+Spain", category: "muzee" }, // Córdoba, Andaluzia
+    { name: "Museo Julio Romero de Torres", url: "https://www.google.com/maps/search/?api=1&query=Museo+Julio+Romero+de+Torres+Córdoba,+Andaluzia+Spain", category: "muzee" }, // Córdoba, Andaluzia
+    { name: "Medina Azahara (Sit Arheologic UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Medina+Azahara+(Sit+Arheologic+UNESCO)+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
+    { name: "Albaicín (Cartierul vechi maur)", url: "https://www.google.com/maps/search/?api=1&query=Albaicín+(Cartierul+vechi+maur)+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
+    { name: "Plaza de las Tendillas", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+las+Tendillas+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
+    { name: "Plaza de la Corredera", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Corredera+Córdoba,+Andaluzia+Spain", category: "cladiri_teatre" }, // Córdoba, Andaluzia
+    { name: "Corral del Carbón", url: "https://www.google.com/maps/search/?api=1&query=Corral+del+Carbón+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
+    { name: "Calle Elvira (Zonă Bazar)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Elvira+(Zonă+Bazar)+Granada,+Andaluzia+Spain", category: "cladiri_teatre" }, // Granada, Andaluzia
+    { name: "Castelul Alcázar din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Alcázar+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "castele_palate" }, // Segovia, Castilia și León
+    { name: "Palacio Real de La Granja de San Ildefonso", url: "https://www.google.com/maps/search/?api=1&query=Palacio+Real+de+La+Granja+de+San+Ildefonso+San+Ildefonso,+Castilia+și+León+Spain", category: "castele_palate" }, // San Ildefonso, Castilia și León
+    { name: "Castelul Coca", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Coca+Coca,+Castilia+și+León+Spain", category: "castele_palate" }, // Coca, Castilia și León
+    { name: "Castelul Ponferrada (Templier)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ponferrada+(Templier)+Ponferrada,+Castilia+și+León+Spain", category: "castele_palate" }, // Ponferrada, Castilia și León
+    { name: "Castelul Peñafiel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Peñafiel+Peñafiel,+Castilia+și+León+Spain", category: "castele_palate" }, // Peñafiel, Castilia și León
+    { name: "Palacio de las Dueñas (Salamanca)", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+las+Dueñas+(Salamanca)+Salamanca,+Castilia+și+León+Spain", category: "castele_palate" }, // Salamanca, Castilia și León
+    { name: "Castelul Belmonte", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Belmonte+Belmonte,+Castilia-La+Mancha+Spain", category: "castele_palate" }, // Belmonte, Castilia-La Mancha
+    { name: "Zidurile Medievale din Ávila", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Ávila+Ávila,+Castilia+și+León+Spain", category: "cetati_turnuri" }, // Ávila, Castilia și León
+    { name: "Zidurile Arabe din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Arabe+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
+    { name: "Alcázar de Toledo", url: "https://www.google.com/maps/search/?api=1&query=Alcázar+de+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
+    { name: "Puerta de Bisagra", url: "https://www.google.com/maps/search/?api=1&query=Puerta+de+Bisagra+Toledo,+Castilia-La+Mancha+Spain", category: "cetati_turnuri" }, // Toledo, Castilia-La Mancha
+    { name: "Catedrala Santa María din Toledo", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Santa+María+din+Toledo+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
+    { name: "Catedrala din Burgos", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Burgos+Burgos,+Castilia+și+León+Spain", category: "manastiri" }, // Burgos, Castilia și León
+    { name: "Catedrala din León (Pulchra Leonina)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+León+(Pulchra+Leonina)+León,+Castilia+și+León+Spain", category: "manastiri" }, // León, Castilia și León
+    { name: "Mănăstirea San Juan de los Reyes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Juan+de+los+Reyes+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
+    { name: "Mănăstirea Santa María la Real de Las Huelgas", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santa+María+la+Real+de+Las+Huelgas+Burgos,+Castilia+și+León+Spain", category: "manastiri" }, // Burgos, Castilia și León
+    { name: "Catedrala Nouă și Catedrala Veche din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Nouă+și+Catedrala+Veche+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "manastiri" }, // Salamanca, Castilia și León
+    { name: "Biserica San Román", url: "https://www.google.com/maps/search/?api=1&query=Biserica+San+Román+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
+    { name: "Sinagoga Santa María la Blanca", url: "https://www.google.com/maps/search/?api=1&query=Sinagoga+Santa+María+la+Blanca+Toledo,+Castilia-La+Mancha+Spain", category: "manastiri" }, // Toledo, Castilia-La Mancha
+    { name: "Mănăstirea Santo Domingo de Silos", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Santo+Domingo+de+Silos+Silos,+Castilia+și+León+Spain", category: "manastiri" }, // Silos, Castilia și León
+    { name: "Las Médulas (Vechile Mine Romane de Aur)", url: "https://www.google.com/maps/search/?api=1&query=Las+Médulas+(Vechile+Mine+Romane+de+Aur)+Ponferrada,+Castilia+și+León+Spain", category: "natura" }, // Ponferrada, Castilia și León
+    { name: "Parcul Național Cabañeros", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Cabañeros+Castilia-La+Mancha+Spain", category: "natura" }, // Castilia-La Mancha
+    { name: "Parcul Natural Hoces del Río Duratón", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Hoces+del+Río+Duratón+Segovia,+Castilia+și+León+Spain", category: "natura" }, // Segovia, Castilia și León
+    { name: "Vulcanii Noroioși din Campo de Calatrava", url: "https://www.google.com/maps/search/?api=1&query=Vulcanii+Noroioși+din+Campo+de+Calatrava+Ciudad+Real,+Castilia-La+Mancha+Spain", category: "natura" }, // Ciudad Real, Castilia-La Mancha
+    { name: "Apeductul Roman din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+Roman+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "infrastructura" }, // Segovia, Castilia și León
+    { name: "Podul San Martín (Puente de San Martín)", url: "https://www.google.com/maps/search/?api=1&query=Podul+San+Martín+(Puente+de+San+Martín)+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura" }, // Toledo, Castilia-La Mancha
+    { name: "Podul Alcántara", url: "https://www.google.com/maps/search/?api=1&query=Podul+Alcántara+Toledo,+Castilia-La+Mancha+Spain", category: "infrastructura" }, // Toledo, Castilia-La Mancha
+    { name: "Pasul Montan Puerto de Navacerrada", url: "https://www.google.com/maps/search/?api=1&query=Pasul+Montan+Puerto+de+Navacerrada+Sistema+Central,+Madrid/Segovia+Spain", category: "infrastructura" }, // Sistema Central, Madrid/Segovia
+    { name: "Muzeul El Greco", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+El+Greco+Toledo,+Castilia-La+Mancha+Spain", category: "muzee" }, // Toledo, Castilia-La Mancha
+    { name: "Muzeul Evoluției Umane", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Evoluției+Umane+Burgos,+Castilia+și+León+Spain", category: "muzee" }, // Burgos, Castilia și León
+    { name: "MUSAC (Muzeul de Artă Contemporană)", url: "https://www.google.com/maps/search/?api=1&query=MUSAC+(Muzeul+de+Artă+Contemporană)+León,+Castilia+și+León+Spain", category: "muzee" }, // León, Castilia și León
+    { name: "Muzeul Sefardic (Sinagoga del Tránsito)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Sefardic+(Sinagoga+del+Tránsito)+Toledo,+Castilia-La+Mancha+Spain", category: "muzee" }, // Toledo, Castilia-La Mancha
+    { name: "Casa de las Conchas", url: "https://www.google.com/maps/search/?api=1&query=Casa+de+las+Conchas+Salamanca,+Castilia+și+León+Spain", category: "muzee" }, // Salamanca, Castilia și León
+    { name: "Plaza Mayor din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Salamanca, Castilia și León
+    { name: "Casas Colgadas (Casele Suspendate)", url: "https://www.google.com/maps/search/?api=1&query=Casas+Colgadas+(Casele+Suspendate)+Cuenca,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Cuenca, Castilia-La Mancha
+    { name: "Clădirea Universității din Salamanca", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Universității+din+Salamanca+Salamanca,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Salamanca, Castilia și León
+    { name: "Plaza Mayor din Segovia", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Segovia+Segovia,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Segovia, Castilia și León
+    { name: "Plaza de Zocodover", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Zocodover+Toledo,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Toledo, Castilia-La Mancha
+    { name: "Mora de Toledo (Zonă Mori de Vânt)", url: "https://www.google.com/maps/search/?api=1&query=Mora+de+Toledo+(Zonă+Mori+de+Vânt)+Consuegra,+Castilia-La+Mancha+Spain", category: "cladiri_teatre" }, // Consuegra, Castilia-La Mancha
+    { name: "Palacio de Gaudí", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Gaudí+Astorga,+Castilia+și+León+Spain", category: "cladiri_teatre" }, // Astorga, Castilia și León
+    { name: "Alcazaba de Málaga", url: "https://www.google.com/maps/search/?api=1&query=Alcazaba+de+Málaga+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
+    { name: "Castillo de Gibralfaro", url: "https://www.google.com/maps/search/?api=1&query=Castillo+de+Gibralfaro+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
+    { name: "Castillo de Colomares", url: "https://www.google.com/maps/search/?api=1&query=Castillo+de+Colomares+Benalmádena,+Andaluzia+Spain", category: "castele_palate" }, // Benalmádena, Andaluzia
+    { name: "Palacio de Villalón", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Villalón+Málaga,+Andaluzia+Spain", category: "castele_palate" }, // Málaga, Andaluzia
+    { name: "Zidurile din Ronda (Murallas de Ronda)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Ronda+(Murallas+de+Ronda)+Ronda,+Andaluzia+Spain", category: "cetati_turnuri" }, // Ronda, Andaluzia
+    { name: "Turnul Maritim Torremolinos", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Maritim+Torremolinos+Torremolinos,+Andaluzia+Spain", category: "cetati_turnuri" }, // Torremolinos, Andaluzia
+    { name: "Fuerte de San Luis", url: "https://www.google.com/maps/search/?api=1&query=Fuerte+de+San+Luis+Estepona,+Andaluzia+Spain", category: "cetati_turnuri" }, // Estepona, Andaluzia
+    { name: "Catedrala din Málaga (La Manquita)", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Málaga+(La+Manquita)+Málaga,+Andaluzia+Spain", category: "manastiri" }, // Málaga, Andaluzia
+    { name: "Iglesia de Santa María la Mayor", url: "https://www.google.com/maps/search/?api=1&query=Iglesia+de+Santa+María+la+Mayor+Ronda,+Andaluzia+Spain", category: "manastiri" }, // Ronda, Andaluzia
+    { name: "Santuario de la Victoria", url: "https://www.google.com/maps/search/?api=1&query=Santuario+de+la+Victoria+Málaga,+Andaluzia+Spain", category: "manastiri" }, // Málaga, Andaluzia
+    { name: "Caminito del Rey (Traseu în Chei)", url: "https://www.google.com/maps/search/?api=1&query=Caminito+del+Rey+(Traseu+în+Chei)+Ardales,+Málaga,+Andaluzia+Spain", category: "natura" }, // Ardales, Málaga, Andaluzia
+    { name: "El Torcal de Antequera (Rezervație Karstică)", url: "https://www.google.com/maps/search/?api=1&query=El+Torcal+de+Antequera+(Rezervație+Karstică)+Antequera,+Málaga,+Andaluzia+Spain", category: "natura" }, // Antequera, Málaga, Andaluzia
+    { name: "Peștera Nerja (Cuevas de Nerja)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Nerja+(Cuevas+de+Nerja)+Nerja,+Málaga,+Andaluzia+Spain", category: "natura" }, // Nerja, Málaga, Andaluzia
+    { name: "Parcul Natural Cabo de Gata-Níjar", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Natural+Cabo+de+Gata-Níjar+Níjar,+Almería,+Andaluzia+Spain", category: "natura" }, // Níjar, Almería, Andaluzia
+    { name: "Peștera Pileta (Cueva de la Pileta)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Pileta+(Cueva+de+la+Pileta)+Benaoján,+Andaluzia+Spain", category: "natura" }, // Benaoján, Andaluzia
+    { name: "Podul Nou din Ronda (Puente Nuevo)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Nou+din+Ronda+(Puente+Nuevo)+Ronda,+Andaluzia+Spain", category: "infrastructura" }, // Ronda, Andaluzia
+    { name: "Puerto Banús (Port de Lux)", url: "https://www.google.com/maps/search/?api=1&query=Puerto+Banús+(Port+de+Lux)+Marbella,+Andaluzia+Spain", category: "infrastructura" }, // Marbella, Andaluzia
+    { name: "Balcón de Europa (Punct Panoramic)", url: "https://www.google.com/maps/search/?api=1&query=Balcón+de+Europa+(Punct+Panoramic)+Nerja,+Andaluzia+Spain", category: "infrastructura" }, // Nerja, Andaluzia
+    { name: "Telecabina din Benalmádena", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+din+Benalmádena+Benalmádena,+Andaluzia+Spain", category: "infrastructura" }, // Benalmádena, Andaluzia
+    { name: "Muzeul Picasso din Málaga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Picasso+din+Málaga+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
+    { name: "Museo Carmen Thyssen", url: "https://www.google.com/maps/search/?api=1&query=Museo+Carmen+Thyssen+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
+    { name: "Centre Pompidou Málaga", url: "https://www.google.com/maps/search/?api=1&query=Centre+Pompidou+Málaga+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
+    { name: "Muzeul de Automobile și Modă", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Automobile+și+Modă+Málaga,+Andaluzia+Spain", category: "muzee" }, // Málaga, Andaluzia
+    { name: "Teatrul Roman din Málaga", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Málaga+Teatrul+Roman,+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Teatrul Roman, Málaga, Andaluzia
+    { name: "Plaza de Toros de Ronda", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+Toros+de+Ronda+Ronda,+Andaluzia+Spain", category: "cladiri_teatre" }, // Ronda, Andaluzia
+    { name: "Calle Larios (Bulevard Comercial)", url: "https://www.google.com/maps/search/?api=1&query=Calle+Larios+(Bulevard+Comercial)+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Málaga, Andaluzia
+    { name: "Plaza de la Merced", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Merced+Málaga,+Andaluzia+Spain", category: "cladiri_teatre" }, // Málaga, Andaluzia
+    { name: "Baños Árabes de Ronda (Băile Arabe)", url: "https://www.google.com/maps/search/?api=1&query=Baños+Árabes+de+Ronda+(Băile+Arabe)+Ronda,+Andaluzia+Spain", category: "cladiri_teatre" }, // Ronda, Andaluzia
+    { name: "Palacio de la Magdalena", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+la+Magdalena+Santander,+Cantabria+Spain", category: "castele_palate" }, // Santander, Cantabria
+    { name: "Castelul Bellver", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bellver+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "castele_palate" }, // Palma de Mallorca, Insulele Baleare
+    { name: "Castelul Loarre", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Loarre+Loarre,+Aragon+Spain", category: "castele_palate" }, // Loarre, Aragon
+    { name: "Palacio de Olite", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Olite+Olite,+Navarra+Spain", category: "castele_palate" }, // Olite, Navarra
+    { name: "El Capricho de Gaudí", url: "https://www.google.com/maps/search/?api=1&query=El+Capricho+de+Gaudí+Comillas,+Cantabria+Spain", category: "castele_palate" }, // Comillas, Cantabria
+    { name: "Turnul lui Hercule (Torre de Hércules)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Hercule+(Torre+de+Hércules)+A+Coruña,+Galicia+Spain", category: "cetati_turnuri" }, // A Coruña, Galicia
+    { name: "Murallas de Lugo (Zidurile Romane)", url: "https://www.google.com/maps/search/?api=1&query=Murallas+de+Lugo+(Zidurile+Romane)+Lugo,+Galicia+Spain", category: "cetati_turnuri" }, // Lugo, Galicia
+    { name: "Cetatea Santa Bárbara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Santa+Bárbara+Alicante,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Alicante, Comunitatea Valenciană
+    { name: "Cetatea Peñíscola", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Peñíscola+Peñíscola,+Comunitatea+Valenciană+Spain", category: "cetati_turnuri" }, // Peñíscola, Comunitatea Valenciană
+    { name: "Mănăstirea Montserrat", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Montserrat+Monistrol+de+Montserrat,+Catalonia+Spain", category: "manastiri" }, // Monistrol de Montserrat, Catalonia
+    { name: "Catedrala din Santiago de Compostela", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Santiago+de+Compostela+Santiago+de+Compostela,+Galicia+Spain", category: "manastiri" }, // Santiago de Compostela, Galicia
+    { name: "Basílica de Nuestra Señora del Pilar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Nuestra+Señora+del+Pilar+Zaragoza,+Aragon+Spain", category: "manastiri" }, // Zaragoza, Aragon
+    { name: "Catedrala La Seu din Palma", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+La+Seu+din+Palma+Palma+de+Mallorca,+Insulele+Baleare+Spain", category: "manastiri" }, // Palma de Mallorca, Insulele Baleare
+    { name: "Basílica de Covadonga", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Covadonga+Cangas+de+Onís,+Asturias+Spain", category: "manastiri" }, // Cangas de Onís, Asturias
+    { name: "Mănăstirea San Juan de la Peña", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+San+Juan+de+la+Peña+Jaca,+Aragon+Spain", category: "manastiri" }, // Jaca, Aragon
+    { name: "Parcul Național Teide", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Teide+Tenerife,+Insulele+Canare+Spain", category: "natura" }, // Tenerife, Insulele Canare
+    { name: "Peștera Altamira (Artă Rupestră)", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Altamira+(Artă+Rupestră)+Santillana+del+Mar,+Cantabria+Spain", category: "natura" }, // Santillana del Mar, Cantabria
+    { name: "Parcul Național Picos de Europa", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Picos+de+Europa+Asturias+/+Cantabria+/+Castilia+și+León+Spain", category: "natura" }, // Asturias / Cantabria / Castilia și León
+    { name: "Playa de Las Catedrales (Plaja Catedralelor)", url: "https://www.google.com/maps/search/?api=1&query=Playa+de+Las+Catedrales+(Plaja+Catedralelor)+Ribadeo,+Galicia+Spain", category: "natura" }, // Ribadeo, Galicia
+    { name: "Parcul Național Timanfaya", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Timanfaya+Lanzarote,+Insulele+Canare+Spain", category: "natura" }, // Lanzarote, Insulele Canare
+    { name: "Cuevas del Drach (Peșterile Dragonului)", url: "https://www.google.com/maps/search/?api=1&query=Cuevas+del+Drach+(Peșterile+Dragonului)+Porto+Cristo,+Mallorca,+Insulele+Baleare+Spain", category: "natura" }, // Porto Cristo, Mallorca, Insulele Baleare
+    { name: "Parcul Național Garajonay", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Garajonay+La+Gomera,+Insulele+Canare+Spain", category: "natura" }, // La Gomera, Insulele Canare
+    { name: "Parcul Rural de Anaga", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Rural+de+Anaga+Tenerife,+Insulele+Canare+Spain", category: "natura" }, // Tenerife, Insulele Canare
+    { name: "San Juan de Gaztelugatxe (Insulă Stâncoasă)", url: "https://www.google.com/maps/search/?api=1&query=San+Juan+de+Gaztelugatxe+(Insulă+Stâncoasă)+Bermeo,+Țara+Bascilor+Spain", category: "natura" }, // Bermeo, Țara Bascilor
+    { name: "Șoseaua Alpină Trans-Pirinei (N-260)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Alpină+Trans-Pirinei+(N-260)+Regiunea+Pirinei+Spain", category: "infrastructura" }, // Regiunea Pirinei
+    { name: "Traseul Montan de Coastă MA-10", url: "https://www.google.com/maps/search/?api=1&query=Traseul+Montan+de+Coastă+MA-10+Serra+de+Tramuntana,+Mallorca,+Insulele+Baleare+Spain", category: "infrastructura" }, // Serra de Tramuntana, Mallorca, Insulele Baleare
+    { name: "Telecabina de pe Muntele Teide", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+de+pe+Muntele+Teide+Tenerife,+Insulele+Canare+Spain", category: "infrastructura" }, // Tenerife, Insulele Canare
+    { name: "Funicularul din Bulnes", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+din+Bulnes+Picos+de+Europa,+Asturias+Spain", category: "infrastructura" }, // Picos de Europa, Asturias
+    { name: "Funicularul de Artxanda", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+de+Artxanda+Bilbao,+Țara+Bascilor+Spain", category: "infrastructura" }, // Bilbao, Țara Bascilor
+    { name: "Muzeul Guggenheim", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Guggenheim+Bilbao,+Țara+Bascilor+Spain", category: "muzee" }, // Bilbao, Țara Bascilor
+    { name: "Teatrul-Muzeu Dalí", url: "https://www.google.com/maps/search/?api=1&query=Teatrul-Muzeu+Dalí+Figueres,+Catalonia+Spain", category: "muzee" }, // Figueres, Catalonia
+    { name: "Muzeul de Artă Contemporană (MARCO)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+(MARCO)+Vigo,+Galicia+Spain", category: "muzee" }, // Vigo, Galicia
+    { name: "Muzeul de Preistorie și Arheologie", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Preistorie+și+Arheologie+Santander,+Cantabria+Spain", category: "muzee" }, // Santander, Cantabria
+    { name: "Teatrul Roman din Mérida", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Mérida+Mérida,+Extremadura+Spain", category: "cladiri_teatre" }, // Mérida, Extremadura
+    { name: "Teatrul Roman din Cartagena", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Cartagena+Cartagena,+Murcia+Spain", category: "cladiri_teatre" }, // Cartagena, Murcia
+    { name: "Plaza Mayor din Cáceres", url: "https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+din+Cáceres+Cáceres,+Extremadura+Spain", category: "cladiri_teatre" }, // Cáceres, Extremadura
+    { name: "Apeductul de los Milagros", url: "https://www.google.com/maps/search/?api=1&query=Apeductul+de+los+Milagros+Mérida,+Extremadura+Spain", category: "cladiri_teatre" }, // Mérida, Extremadura
+    { name: "Paseo de Pereda", url: "https://www.google.com/maps/search/?api=1&query=Paseo+de+Pereda+Santander,+Cantabria+Spain", category: "cladiri_teatre" }, // Santander, Cantabria
+    { name: "PortAventura World Tarragona", url: "https://www.portaventuraworld.com/", category: "parcuri_agrement" },
+    { name: "Parque Warner Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Warner+Madrid+Spain", category: "parcuri_agrement" },
+    { name: "Terra Mítica Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Terra+Mítica+Benidorm+Spain", category: "parcuri_agrement" },
+    { name: "Siam Park Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Siam+Park+Tenerife+Spain", category: "parcuri_agrement" },
+    { name: "L'Oceanogràfic", url: "https://www.google.com/maps/search/?api=1&query=L'Oceanogràfic+Valencia+Spain", category: "parcuri_agrement" },
+    { name: "Loro Parque Tenerife", url: "https://www.google.com/maps/search/?api=1&query=Loro+Parque+Tenerife+Spain", category: "parcuri_agrement" },
+    { name: "Isla Mágica Sevilla", url: "https://www.google.com/maps/search/?api=1&query=Isla+Mágica+Sevilla+Spain", category: "parcuri_agrement" },
+    { name: "Parque de Atracciones de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+de+Atracciones+de+Madrid+Spain", category: "parcuri_agrement" },
+    { name: "Poble Espanyol Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Poble+Espanyol+Barcelona+Spain", category: "muzee" },
+    { name: "Parcul de distracții Tibidabo", url: "https://www.google.com/maps/search/?api=1&query=Parcul+de+distracții+Tibidabo+Barcelona+Spain", category: "parcuri_agrement" },
+    { name: "Aqualandia Benidorm", url: "https://www.google.com/maps/search/?api=1&query=Aqualandia+Benidorm+Spain", category: "parcuri_agrement" },
+    { name: "Katmandu Park Mallorca", url: "https://www.google.com/maps/search/?api=1&query=Katmandu+Park+Mallorca+Spain", category: "parcuri_agrement" },
+    { name: "Parque Europa Madrid", url: "https://www.google.com/maps/search/?api=1&query=Parque+Europa+Madrid+Spain", category: "parcuri_agrement" },
+    { name: "Palatul Aljafería Zaragoza", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Aljafería+Zaragoza+Spain", category: "castele_palate" },
+    { name: "Zoo Aquarium Madrid", url: "https://www.google.com/maps/search/?api=1&query=Zoo+Aquarium+Madrid+Spain", category: "parcuri_agrement" },
   ],
   fr: [
     { name: "Disneyland Paris", url: "https://www.disneylandparis.com/" },
@@ -7310,6 +7622,77 @@ const SELECTIVE_BRAND_CITIES = {
     // în Leuven/Aalst, deși apărea înainte ca "universal" pe toate cele
     // 10 orașe din listă — corectat aici, nu presupus.
     alvo: ["Brussels", "Antwerpen", "Gent", "Brugge"],
+  },
+  es: {
+    // Consum — extins conform hărții comunităților autonome unde chiar
+    // există (vezi comentariul de la ES_STORE_CONFIG mai sus): Comunidad
+    // Valenciana, Cataluña, Andalucía, Murcia, Castilla-La Mancha, Aragón.
+    consum: [
+      "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia",
+      "Alicante", "Córdoba", "Granada", "Toledo", "Cádiz", "Cartagena",
+      "Ronda", "Cuenca", "Marbella",
+    ],
+    // El Corte Inglés — bug real, prins ÎNAINTE să ajungă live, la extinderea
+    // listei de orașe (34 în loc de 9): lista OFICIALĂ completă de magazine
+    // (tiendas-espana.es, verificată direct, oraș cu oraș) NU include deloc
+    // Segovia, Ávila, Logroño, Ronda, Mérida sau Cuenca — orașe mici/turistice,
+    // fără format de magazin mare precum acesta.
+    elcorteingles: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Burgos", "Cartagena", "Cáceres", "Marbella",
+    ],
+    // Ikea — cel mai concentrat brand de aici: doar ~20 de magazine în toată
+    // Spania (listă oficială ikea.com, verificată pe regiuni). Confirmat
+    // DOAR în cele 9 orașe originale + Valladolid și A Coruña — restul celor
+    // 23 de orașe noi nu au niciun magazin Ikea propriu.
+    ikea: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao", "Valladolid", "A Coruña",
+    ],
+    // Leroy Merlin — verificat individual (leroymerlin.es/tiendas/<oraș>):
+    // confirmat CHIAR ÎN Segovia, Ávila și Cuenca (surprinzător de răspândit
+    // pentru un brand de bricolaj — 130 de magazine la nivel național).
+    // Absent confirmat doar din Ronda, Mérida, Cáceres, Marbella (fără nicio
+    // mențiune de magazin propriu găsită, spre deosebire de restul).
+    leroymerlin: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Cuenca",
+    ],
+    // MediaMarkt — NEVERIFICAT individual oraș-cu-oraș (spre deosebire de
+    // Leroy Merlin, unde am găsit confirmare directă) — folosim aceeași
+    // listă ca Leroy Merlin, ca aproximare rezonabilă (scară națională
+    // similară, ~100 de magazine), NU o certitudine la fel de solidă.
+    mediamarkt: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Cuenca",
+    ],
+    // Decathlon rămâne universal — NU e restricționat aici, deliberat: rețea
+    // mult mai densă (~170 de magazine, cea mai mare dintre toate de aici),
+    // confirmată explicit chiar și în Logroño (oraș mic). Strategia lor
+    // vizează explicit orașe mijlocii/mici, spre deosebire de El Corte
+    // Inglés/Ikea (format mare, doar orașe mari).
+    //
+    // Xanadú și La Maquinista — bug pre-existent, independent de extinderea
+    // de mai sus la 34 de orașe: sunt mall-uri SPECIFICE, unice (nu lanțuri
+    // repetate în fiecare oraș), dar nu aveau nicio restricție — apăreau
+    // greșit ca opțiune și în celelalte 8 orașe originale, nu doar în orașul
+    // lor real. Corectat aici, la câte un singur oraș fiecare.
+    xanadumadrid: ["Madrid"],
+    lamaquinista: ["Barcelona"],
   },
 };
 
