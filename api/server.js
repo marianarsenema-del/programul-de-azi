@@ -10710,7 +10710,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -10783,7 +10783,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -10889,7 +10889,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -10997,7 +10997,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11082,7 +11082,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11249,7 +11249,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11328,8 +11328,10 @@ const TRAVEL_GUIDES_RO = [
     <p>Pentru distanțe lungi sau între regiuni istorice, trenul rămâne varianta cea mai populară — rețeaua feroviară europeană leagă majoritatea capitalelor de orașele mai mici, cu rute adesea pitorești. Autocarele completează bine acoperirea, mai ales spre localități sau zone montane unde trenul nu ajunge direct, și costă de regulă mai puțin.</p>
     <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
-      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
   {
@@ -11384,7 +11386,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11423,7 +11425,7 @@ function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11453,8 +11455,10 @@ const TRAVEL_GUIDES_EN = [
     <p>For long distances or between historic regions, trains remain the most popular option — Europe's rail network connects most capitals with smaller towns, often along scenic routes. Coaches fill in the gaps well, especially toward towns or mountain areas trains don't reach directly, and usually cost less.</p>
     <p>If you land at the airport with a lot of luggage or travel as a group, a pre-booked private transfer removes the hassle of switching between modes of transport — it takes you straight from the terminal to the castle gate or the hotel. Planning these connections ahead is what turns a hectic trip into a stress-free one.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Search train and coach tickets</a>
-      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Book a private transfer</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Search train and coach tickets</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Book a private transfer</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
   },
   {
@@ -11510,7 +11514,7 @@ async function renderTravelGuidePageIntl({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11543,7 +11547,7 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11610,7 +11614,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11689,7 +11693,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11767,7 +11771,7 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11806,7 +11810,7 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11859,7 +11863,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -13967,8 +13971,8 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   const t = itineraryLabelsFor(lang);
   const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
   const brandHtml = isIntlDomain
-    ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides</a>`
-    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri</a>`;
+    ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a>`
+    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a>`;
   const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
   const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
   const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
