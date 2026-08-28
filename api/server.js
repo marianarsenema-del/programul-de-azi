@@ -1636,7 +1636,7 @@ const BOOKING_PLANNING_LABELS_EN = {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang }) {
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   const ticketHtml = linkBileteTurism
@@ -1652,9 +1652,17 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
   // ghidurilor de călătorie de pe site (vezi comentariul de la
   // TRAVEL_GUIDES_MONETIZATION_READY, mai sus în fișier) — nu are sens să
   // arătăm butoane care nu duc la nimic util/monetizat pentru vizitator.
-  const restaurantParkingHtml = TRAVEL_GUIDES_MONETIZATION_READY
-    ? `<a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>
-      <a href="${escapeHtml(parkviaLinkFor(parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>`
+  // Restaurant și parcare — DECUPLATE una de alta: restaurantul rămâne
+  // "urmează în curând" peste tot (TheFork/OpenTable neconfigurate încă),
+  // dar parcarea devine link REAL, activ, DOAR pe paginile din UK — decizie
+  // explicită ("il punem doar la UK ca in rest nu functioneaza"), nu
+  // presupunere. Vezi parkingLinkFor mai sus pentru logica exactă.
+  const realParkingLink = parkingLinkFor(lat, lng, countryCode);
+  const restaurantHtml = TRAVEL_GUIDES_MONETIZATION_READY
+    ? `<a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>`
+    : `<p class="plan-visit-hint">${escapeHtml(comingSoonTextFor(lang || "ro"))}</p>`;
+  const parkingHtml = realParkingLink
+    ? `<a href="${escapeHtml(realParkingLink)}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>`
     : `<p class="plan-visit-hint">${escapeHtml(comingSoonTextFor(lang || "ro"))}</p>`;
   return `
   <div class="plan-visit-block">
@@ -1663,7 +1671,8 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
     <div class="plan-visit-panel" id="planVisitPanel" hidden>
       ${ticketHtml}
       <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
-      ${restaurantParkingHtml}
+      ${restaurantHtml}
+      ${parkingHtml}
     </div>
   </div>`;
 }
@@ -2152,9 +2161,46 @@ function restaurantLinkFor(countryCode, place) {
   return `https://www.getyourguide.com/s/?q=${encodeURIComponent("food tour " + place)}&partner_id=${GYG_PARTNER_ID}`;
 }
 
-// Parcări rezervabile în avans (ParkVia) — link gol acum, cade pe site-ul
-// public, funcțional; pune codul de afiliat real când îl ai (același tipar
-// ca restul: TheFork, OpenTable, GetTransfer, Omio)
+// Parcări rezervabile în avans — YourParkingSpace, prin Awin (rețea de
+// afiliere), confirmat DOAR pentru UK ("il punem doar la UK ca in rest nu
+// functioneaza" — decizie explicită, nu presupunere). Restul țărilor rămân
+// pe mesajul "urmează în curând" (vezi parkingLinkFor mai jos).
+//
+// Format REAL, confirmat direct din link-ul generat în Awin ("Create deep
+// link" → Generate link) — NU presupus: parametrul de destinație e "ued="
+// (nu "p="), și trebuie inclus și "campaign=". Căutarea lor (yourparkingspace.
+// co.uk/search) cere coordonate GPS reale (lat/lng), nu doar adresă text —
+// confirmat separat, prin documentația lor API (docs.api.yourparkingspace.
+// co.uk): "Perform a search... by latitude and longitude" — un nume de oraș
+// simplu nu ar fi suficient pentru rezultate corecte.
+//
+// SURSA coordonatelor: NU calculăm nimic nou — reutilizăm exact lat/lng pe
+// care site-ul le cere DEJA de la Google Places pentru statusul live
+// (`live.lat`/`live.lng`, vezi tryGetLiveStatus mai jos) — același apel,
+// fără niciun cost suplimentar. Dacă obiectivul nu are status live (fără
+// place_id valid încă), NU inventăm coordonate — link-ul de parcare cade
+// pur și simplu pe "urmează în curând", la fel ca înainte.
+const AWIN_YPS_MERCHANT_ID = "18633";
+const AWIN_YPS_AFFILIATE_ID = "3051943";
+function parkingLinkFor(lat, lng, countryCode) {
+  // UK, EXCLUSIV — decizie explicită a utilizatorului, nu presupunere.
+  if (countryCode !== "uk") return null;
+  if (typeof lat !== "number" || typeof lng !== "number") return null;
+  // Interval implicit — "de azi până mâine" — calculat la fiecare cerere
+  // (nu un timestamp fix, învechit), din lipsă de altă informație despre
+  // datele reale de vizită ale utilizatorului. Utilizatorul poate oricum
+  // schimba datele direct pe site-ul YourParkingSpace, după ce ajunge acolo.
+  const now = new Date();
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const isoNoMs = (d) => d.toISOString().replace(/\.\d{3}Z$/, "+00:00");
+  const destination = `https://www.yourparkingspace.co.uk/search?rental=long&lat=${lat}&lng=${lng}&start=${encodeURIComponent(isoNoMs(now))}&end=${encodeURIComponent(isoNoMs(tomorrow))}&season_plan=mon-sun`;
+  return `https://www.awin1.com/cread.php?awinmid=${encodeURIComponent(AWIN_YPS_MERCHANT_ID)}&awinaffid=${encodeURIComponent(AWIN_YPS_AFFILIATE_ID)}&campaign=${encodeURIComponent("Your Parking Space")}&ued=${encodeURIComponent(destination)}`;
+}
+
+// ParkVia — fallback generic, NECONFIRMAT încă pentru nicio țară (spre
+// deosebire de YourParkingSpace, de mai sus, confirmat pentru UK) — păstrat
+// doar ca infrastructură pentru o eventuală extindere ulterioară, dincolo
+// de UK; nu e folosit momentan de buildBookingPlanningButtonsHtml.
 const linkParkviaAffiliate = "";
 function parkviaLinkFor(place) {
   return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
@@ -12006,7 +12052,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${statusHtml}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name)}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
