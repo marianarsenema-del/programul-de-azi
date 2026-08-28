@@ -5090,6 +5090,15 @@ const COUNTRIES = {
       "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
       "Versailles", "Chartres", "Carcassonne", "Mont Saint-Michel",
       "Saint-Malo", "Chamonix", "Avignon", "Annecy", "Colmar",
+      // Al doilea val — completare, la cerere explicită, ca sa acopere
+      // Franța la nivelul ei real de turism (a 3-a cea mai vizitată țară
+      // din UE): Provence, Coasta de Azur, Normandia, Pirinei, Bretania,
+      // Corsica, Valea Loarei, Champagne.
+      "Aix-en-Provence", "Arles", "Rouen", "Honfleur", "Deauville",
+      "Biarritz", "Bayonne", "Lourdes", "Sarlat", "Carnac", "Quimper",
+      "Vannes", "Ajaccio", "Bonifacio", "Cannes", "Saint-Tropez",
+      "Perpignan", "Tours", "Épernay", "Rocamadour", "Blois", "Cheverny",
+      "Ussé",
     ],
   },
   it: {
@@ -7107,6 +7116,41 @@ const ATTRACTIONS = {
     { name: "La Petite Venise (Colmar)", url: "https://www.google.com/maps/search/?api=1&query=La+Petite+Venise+(Colmar)+Colmar+France", category: "cladiri_teatre", city: "Colmar" },
     { name: "Musée Unterlinden", url: "https://www.google.com/maps/search/?api=1&query=Musée+Unterlinden+Colmar+France", category: "muzee", city: "Colmar" },
     { name: "Maison des Têtes Colmar", url: "https://www.google.com/maps/search/?api=1&query=Maison+des+Têtes+Colmar+Colmar+France", category: "cladiri_teatre", city: "Colmar" },
+    { name: "Cours Mirabeau", url: "https://www.google.com/maps/search/?api=1&query=Cours+Mirabeau+Aix-en-Provence+France", category: "cladiri_teatre", city: "Aix-en-Provence" },
+    { name: "Atelier Cézanne", url: "https://www.google.com/maps/search/?api=1&query=Atelier+Cézanne+Aix-en-Provence+France", category: "muzee", city: "Aix-en-Provence" },
+    { name: "Cathédrale Saint-Sauveur d'Aix-en-Provence", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Sauveur+d'Aix-en-Provence+Aix-en-Provence+France", category: "manastiri", city: "Aix-en-Provence" },
+    { name: "Arènes d'Arles", url: "https://www.google.com/maps/search/?api=1&query=Arènes+d'Arles+Arles+France", category: "cetati_turnuri", city: "Arles" },
+    { name: "Théâtre Antique d'Arles", url: "https://www.google.com/maps/search/?api=1&query=Théâtre+Antique+d'Arles+Arles+France", category: "cladiri_teatre", city: "Arles" },
+    { name: "Fondation Vincent van Gogh Arles", url: "https://www.google.com/maps/search/?api=1&query=Fondation+Vincent+van+Gogh+Arles+Arles+France", category: "muzee", city: "Arles" },
+    { name: "Cathédrale Notre-Dame de Rouen", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Notre-Dame+de+Rouen+Rouen+France", category: "manastiri", city: "Rouen" },
+    { name: "Gros-Horloge de Rouen", url: "https://www.google.com/maps/search/?api=1&query=Gros-Horloge+de+Rouen+Rouen+France", category: "cetati_turnuri", city: "Rouen" },
+    { name: "Place du Vieux-Marché Rouen", url: "https://www.google.com/maps/search/?api=1&query=Place+du+Vieux-Marché+Rouen+Rouen+France", category: "cladiri_teatre", city: "Rouen" },
+    { name: "Vieux Bassin d'Honfleur", url: "https://www.google.com/maps/search/?api=1&query=Vieux+Bassin+d'Honfleur+Honfleur+France", category: "cladiri_teatre", city: "Honfleur" },
+    { name: "Église Sainte-Catherine d'Honfleur", url: "https://www.google.com/maps/search/?api=1&query=Église+Sainte-Catherine+d'Honfleur+Honfleur+France", category: "manastiri", city: "Honfleur" },
+    { name: "Les Planches de Deauville", url: "https://www.google.com/maps/search/?api=1&query=Les+Planches+de+Deauville+Deauville+France", category: "cladiri_teatre", city: "Deauville" },
+    { name: "Rocher de la Vierge Biarritz", url: "https://www.google.com/maps/search/?api=1&query=Rocher+de+la+Vierge+Biarritz+Biarritz+France", category: "natura", city: "Biarritz" },
+    { name: "Grande Plage de Biarritz", url: "https://www.google.com/maps/search/?api=1&query=Grande+Plage+de+Biarritz+Biarritz+France", category: "natura", city: "Biarritz" },
+    { name: "Cathédrale Sainte-Marie de Bayonne", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Sainte-Marie+de+Bayonne+Bayonne+France", category: "manastiri", city: "Bayonne" },
+    { name: "Sanctuaire Notre-Dame de Lourdes", url: "https://www.google.com/maps/search/?api=1&query=Sanctuaire+Notre-Dame+de+Lourdes+Lourdes+France", category: "manastiri", city: "Lourdes" },
+    { name: "Château Fort de Lourdes", url: "https://www.google.com/maps/search/?api=1&query=Château+Fort+de+Lourdes+Lourdes+France", category: "cetati_turnuri", city: "Lourdes" },
+    { name: "Cité Médiévale de Sarlat-la-Canéda", url: "https://www.google.com/maps/search/?api=1&query=Cité+Médiévale+de+Sarlat-la-Canéda+Sarlat+France", category: "cladiri_teatre", city: "Sarlat" },
+    { name: "Alignements de Carnac", url: "https://www.google.com/maps/search/?api=1&query=Alignements+de+Carnac+Carnac+France", category: "natura", city: "Carnac" },
+    { name: "Cathédrale Saint-Corentin de Quimper", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Corentin+de+Quimper+Quimper+France", category: "manastiri", city: "Quimper" },
+    { name: "Remparts de Vannes", url: "https://www.google.com/maps/search/?api=1&query=Remparts+de+Vannes+Vannes+France", category: "cetati_turnuri", city: "Vannes" },
+    { name: "Maison Bonaparte Ajaccio", url: "https://www.google.com/maps/search/?api=1&query=Maison+Bonaparte+Ajaccio+Ajaccio+France", category: "muzee", city: "Ajaccio" },
+    { name: "Citadelle de Bonifacio", url: "https://www.google.com/maps/search/?api=1&query=Citadelle+de+Bonifacio+Bonifacio+France", category: "cetati_turnuri", city: "Bonifacio" },
+    { name: "Palais des Festivals de Cannes", url: "https://www.google.com/maps/search/?api=1&query=Palais+des+Festivals+de+Cannes+Cannes+France", category: "cladiri_teatre", city: "Cannes" },
+    { name: "La Croisette Cannes", url: "https://www.google.com/maps/search/?api=1&query=La+Croisette+Cannes+Cannes+France", category: "cladiri_teatre", city: "Cannes" },
+    { name: "Vieux Port de Saint-Tropez", url: "https://www.google.com/maps/search/?api=1&query=Vieux+Port+de+Saint-Tropez+Saint-Tropez+France", category: "cladiri_teatre", city: "Saint-Tropez" },
+    { name: "Palais des Rois de Majorque Perpignan", url: "https://www.google.com/maps/search/?api=1&query=Palais+des+Rois+de+Majorque+Perpignan+Perpignan+France", category: "castele_palate", city: "Perpignan" },
+    { name: "Cathédrale Saint-Gatien de Tours", url: "https://www.google.com/maps/search/?api=1&query=Cathédrale+Saint-Gatien+de+Tours+Tours+France", category: "manastiri", city: "Tours" },
+    { name: "Basilique Saint-Martin de Tours", url: "https://www.google.com/maps/search/?api=1&query=Basilique+Saint-Martin+de+Tours+Tours+France", category: "manastiri", city: "Tours" },
+    { name: "Avenue de Champagne Épernay", url: "https://www.google.com/maps/search/?api=1&query=Avenue+de+Champagne+Épernay+Épernay+France", category: "cladiri_teatre", city: "Épernay" },
+    { name: "Gouffre de Padirac", url: "https://www.google.com/maps/search/?api=1&query=Gouffre+de+Padirac+Rocamadour+France", category: "natura", city: "Rocamadour" },
+    { name: "Cité Religieuse de Rocamadour", url: "https://www.google.com/maps/search/?api=1&query=Cité+Religieuse+de+Rocamadour+Rocamadour+France", category: "manastiri", city: "Rocamadour" },
+    { name: "Château de Blois", url: "https://www.google.com/maps/search/?api=1&query=Château+de+Blois+Blois+France", category: "castele_palate", city: "Blois" },
+    { name: "Château de Cheverny", url: "https://www.google.com/maps/search/?api=1&query=Château+de+Cheverny+Cheverny+France", category: "castele_palate", city: "Cheverny" },
+    { name: "Château d'Ussé", url: "https://www.google.com/maps/search/?api=1&query=Château+d'Ussé+Ussé+France", category: "castele_palate", city: "Ussé" },
   ],
   se: [
     { name: "Muzeul Vasa Stockholm", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Vasa+Stockholm+Sweden" },
@@ -8220,18 +8264,18 @@ function toDisplayName(rawParam) {
 // orașele unei țări cu magazinele altei țări.
 // Ajutător pentru Franța — vezi comentariul de la SELECTIVE_BRAND_CITIES.fr
 // (leclerc/carrefour/intermarche/auchan) mai jos: o listă albă nu poate
-// exprima direct "toate orașele MAI PUȚIN unul singur", deci construim
-// explicit lista celorlalte 27, filtrând Mont Saint-Michel din
-// COUNTRIES.fr.cities — o singură sursă de adevăr, nu o listă scrisă a
-// doua oară de mână (care s-ar putea dezactualiza dacă se mai adaugă orașe).
-const FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL = [
-  "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
-  "Strasbourg", "Montpellier", "Bordeaux", "Lille",
-  "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
-  "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
-  "Versailles", "Chartres", "Carcassonne", "Saint-Malo", "Chamonix",
-  "Avignon", "Annecy", "Colmar",
-];
+// exprima direct "toate orașele MAI PUȚIN câteva", deci construim explicit
+// restul, CALCULAT din COUNTRIES.fr.cities (nu o listă scrisă a doua oară
+// de mână — bug real, prins prin verificare: varianta veche ERA scrisă de
+// mână, deci nu s-a actualizat automat când am extins lista de orașe la 52,
+// mai devreme în aceeași sesiune). Excludem trei sate minuscule, doar cu un
+// castel/sit — fără nicio infrastructură de oraș real, deci sigur fără
+// hipermarket, indiferent de brand: Mont Saint-Michel (~30 loc.), Rocamadour
+// (~600 loc.), Cheverny și Ussé (sate de sub 1.000 loc., doar cu un castel).
+const FR_TINY_MONUMENT_VILLAGES = ["Mont Saint-Michel", "Rocamadour", "Cheverny", "Ussé"];
+const FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL = COUNTRIES.fr.cities.filter(
+  (c) => !FR_TINY_MONUMENT_VILLAGES.includes(c)
+);
 
 const SELECTIVE_BRAND_CITIES = {
   ro: {
@@ -8469,6 +8513,16 @@ const SELECTIVE_BRAND_CITIES = {
     // cu ~30 de locuitori permanenți, evident fără hipermarket) și din
     // Chamonix (nicio adresă concretă găsită, doar pagini generice de
     // director, spre deosebire de restul orașelor de mai sus).
+    //
+    // Al doilea val de orașe (Aix-en-Provence, Rouen, Tours etc.) — NU
+    // verificate individual, la fel de riguros ca lista de mai sus (fără
+    // căutare oraș-cu-oraș) — incluse doar orașele cu populație/turism
+    // suficient de mare încât prezența Monoprix e foarte probabilă
+    // (orașe de peste ~20.000 locuitori, plus Lourdes — excepție, datorită
+    // afluxului turistic uriaș). LĂSATE AFARĂ, deliberat conservator: Sarlat,
+    // Carnac, Bonifacio, Saint-Tropez (sate/orășele mici, sub acest prag,
+    // fără nicio verificare) — Rocamadour/Cheverny/Ussé nici nu apar aici,
+    // fiind excluse la toate brandurile (vezi FR_TINY_MONUMENT_VILLAGES).
     monoprix: [
       "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
       "Strasbourg", "Montpellier", "Bordeaux", "Lille",
@@ -8476,15 +8530,17 @@ const SELECTIVE_BRAND_CITIES = {
       "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
       "Versailles", "Chartres", "Carcassonne", "Saint-Malo", "Avignon",
       "Annecy", "Colmar",
+      "Aix-en-Provence", "Arles", "Rouen", "Honfleur", "Deauville",
+      "Biarritz", "Bayonne", "Lourdes", "Quimper", "Vannes", "Ajaccio",
+      "Cannes", "Perpignan", "Tours", "Épernay", "Blois",
     ],
     // Restul brandurilor (E.Leclerc, Carrefour, Intermarché, Auchan) au
     // rețele mult mai mari (mii de magazine fiecare), universale peste tot
-    // — CU O SINGURĂ EXCEPȚIE, evidentă: Mont Saint-Michel, un sit-monument
-    // (abație + fortăreață medievală), fără nicio infrastructură de oraș
-    // real — cu siguranță fără niciun hipermarket, indiferent de brand.
+    // — CU EXCEPȚIA celor 4 sate-monument, fără nicio infrastructură de
+    // oraș real (vezi FR_TINY_MONUMENT_VILLAGES mai sus).
     // NOTĂ: SELECTIVE_BRAND_CITIES e o listă ALBĂ (doar orașele enumerate
-    // sunt permise) — ca să excludem UN SINGUR oraș dintr-o listă altfel
-    // universală, enumerăm explicit toate CELELALTE 27, nu doar excepția.
+    // sunt permise) — ca să excludem doar câteva orașe dintr-o listă altfel
+    // universală, enumerăm explicit toate CELELALTE, nu doar excepțiile.
     leclerc: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     carrefour: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     intermarche: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
