@@ -5114,7 +5114,19 @@ const COUNTRIES = {
   uk: {
     config: UK_STORE_CONFIG,
     t: TRANSLATIONS.uk,
-    cities: ["London", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Leeds", "Sheffield", "Bristol", "Newcastle", "Nottingham"],
+    // Extins de la 10 la 33 de orașe/zone — turism foarte mare în UK. Vezi
+    // SELECTIVE_BRAND_CITIES.uk mai jos — cele 3 mall-uri (Westfield London,
+    // Trafford Centre, Bluewater) NU sunt în toate cele 33, bug pre-existent
+    // reparat aici (apăreau universal, deși fiecare e un singur loc real).
+    cities: [
+      "London", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Leeds",
+      "Sheffield", "Bristol", "Newcastle", "Nottingham",
+      "Edinburgh", "Belfast", "Cardiff", "York", "Bath", "Oxford",
+      "Cambridge", "Brighton", "Leicester", "Coventry", "Cornwall",
+      "Yorkshire", "Lake District", "Cumbria", "Highlands", "Fort William",
+      "Conwy", "Gwynedd", "Wrexham", "Bournville", "Derbyshire",
+      "Northumberland", "County Antrim",
+    ],
   },
   es: {
     config: ES_STORE_CONFIG,
@@ -6694,11 +6706,281 @@ const ATTRACTIONS = {
     { name: "Wunderland Kalkar", url: "https://www.google.com/maps/search/?api=1&query=Wunderland+Kalkar+Germany" },
   ],
   uk: [
-    { name: "Tower of London", url: "https://www.hrp.org.uk/tower-of-london/" },
-    { name: "British Museum", url: "https://www.britishmuseum.org/" },
-    { name: "Buckingham Palace", url: "https://www.rct.uk/visit/buckingham-palace" },
-    { name: "Edinburgh Castle", url: "https://www.edinburghcastle.scot/" },
-    { name: "London Eye", url: "https://www.londoneye.com/" },
+    { name: "Buckingham Palace", url: "https://www.google.com/maps/search/?api=1&query=Buckingham+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "Kensington Palace", url: "https://www.google.com/maps/search/?api=1&query=Kensington+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "Hampton Court Palace", url: "https://www.google.com/maps/search/?api=1&query=Hampton+Court+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "Kew Palace", url: "https://www.google.com/maps/search/?api=1&query=Kew+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "St James's Palace", url: "https://www.google.com/maps/search/?api=1&query=St+James's+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "Tower of London", url: "https://www.google.com/maps/search/?api=1&query=Tower+of+London+Londra,+Anglia+UK", category: "cetati_turnuri", city: "London" }, // Londra, Anglia
+    { name: "Jewel Tower", url: "https://www.google.com/maps/search/?api=1&query=Jewel+Tower+Londra,+Anglia+UK", category: "cetati_turnuri", city: "London" }, // Londra, Anglia
+    { name: "Westminster Abbey", url: "https://www.google.com/maps/search/?api=1&query=Westminster+Abbey+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "St Paul's Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Paul's+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "Southwark Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Southwark+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "Westminster Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Westminster+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "Temple Church", url: "https://www.google.com/maps/search/?api=1&query=Temple+Church+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "Hyde Park & Kensington Gardens", url: "https://www.google.com/maps/search/?api=1&query=Hyde+Park+&+Kensington+Gardens+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
+    { name: "Regent's Park", url: "https://www.google.com/maps/search/?api=1&query=Regent's+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
+    { name: "Greenwich Park", url: "https://www.google.com/maps/search/?api=1&query=Greenwich+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
+    { name: "Richmond Park", url: "https://www.google.com/maps/search/?api=1&query=Richmond+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
+    { name: "St James's Park", url: "https://www.google.com/maps/search/?api=1&query=St+James's+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
+    { name: "London Eye", url: "https://www.google.com/maps/search/?api=1&query=London+Eye+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
+    { name: "Tower Bridge", url: "https://www.google.com/maps/search/?api=1&query=Tower+Bridge+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
+    { name: "Millennium Bridge", url: "https://www.google.com/maps/search/?api=1&query=Millennium+Bridge+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
+    { name: "Greenwich Foot Tunnel", url: "https://www.google.com/maps/search/?api=1&query=Greenwich+Foot+Tunnel+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
+    { name: "British Museum", url: "https://www.google.com/maps/search/?api=1&query=British+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Natural History Museum", url: "https://www.google.com/maps/search/?api=1&query=Natural+History+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "National Gallery", url: "https://www.google.com/maps/search/?api=1&query=National+Gallery+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Tate Modern", url: "https://www.google.com/maps/search/?api=1&query=Tate+Modern+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Victoria and Albert Museum (V&A)", url: "https://www.google.com/maps/search/?api=1&query=Victoria+and+Albert+Museum+(V&A)+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Science Museum", url: "https://www.google.com/maps/search/?api=1&query=Science+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Museum of London", url: "https://www.google.com/maps/search/?api=1&query=Museum+of+London+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Design Museum", url: "https://www.google.com/maps/search/?api=1&query=Design+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Imperial War Museum", url: "https://www.google.com/maps/search/?api=1&query=Imperial+War+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Tate Britain", url: "https://www.google.com/maps/search/?api=1&query=Tate+Britain+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
+    { name: "Houses of Parliament & Big Ben", url: "https://www.google.com/maps/search/?api=1&query=Houses+of+Parliament+&+Big+Ben+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Royal Albert Hall", url: "https://www.google.com/maps/search/?api=1&query=Royal+Albert+Hall+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Shakespeare's Globe", url: "https://www.google.com/maps/search/?api=1&query=Shakespeare's+Globe+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Trafalgar Square", url: "https://www.google.com/maps/search/?api=1&query=Trafalgar+Square+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Piccadilly Circus", url: "https://www.google.com/maps/search/?api=1&query=Piccadilly+Circus+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "The Shard", url: "https://www.google.com/maps/search/?api=1&query=The+Shard+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Sky Garden", url: "https://www.google.com/maps/search/?api=1&query=Sky+Garden+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Somerset House", url: "https://www.google.com/maps/search/?api=1&query=Somerset+House+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Royal Opera House", url: "https://www.google.com/maps/search/?api=1&query=Royal+Opera+House+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Covent Garden Market", url: "https://www.google.com/maps/search/?api=1&query=Covent+Garden+Market+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Edinburgh Castle", url: "https://www.google.com/maps/search/?api=1&query=Edinburgh+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Palace of Holyroodhouse", url: "https://www.google.com/maps/search/?api=1&query=Palace+of+Holyroodhouse+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Lauriston Castle", url: "https://www.google.com/maps/search/?api=1&query=Lauriston+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Craigmillar Castle", url: "https://www.google.com/maps/search/?api=1&query=Craigmillar+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Nelson Monument", url: "https://www.google.com/maps/search/?api=1&query=Nelson+Monument+Edinburgh,+Scoția+UK", category: "cetati_turnuri", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Martyrs' Monument", url: "https://www.google.com/maps/search/?api=1&query=Martyrs'+Monument+Edinburgh,+Scoția+UK", category: "cetati_turnuri", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "St Giles' Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Giles'+Cathedral+Edinburgh,+Scoția+UK", category: "manastiri", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Holyrood Abbey", url: "https://www.google.com/maps/search/?api=1&query=Holyrood+Abbey+Edinburgh,+Scoția+UK", category: "manastiri", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Greyfriars Kirk", url: "https://www.google.com/maps/search/?api=1&query=Greyfriars+Kirk+Edinburgh,+Scoția+UK", category: "manastiri", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Arthur's Seat & Holyrood Park", url: "https://www.google.com/maps/search/?api=1&query=Arthur's+Seat+&+Holyrood+Park+Edinburgh,+Scoția+UK", category: "natura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Calton Hill", url: "https://www.google.com/maps/search/?api=1&query=Calton+Hill+Edinburgh,+Scoția+UK", category: "natura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Princes Street Gardens", url: "https://www.google.com/maps/search/?api=1&query=Princes+Street+Gardens+Edinburgh,+Scoția+UK", category: "natura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Royal Botanic Garden Edinburgh", url: "https://www.google.com/maps/search/?api=1&query=Royal+Botanic+Garden+Edinburgh+Edinburgh,+Scoția+UK", category: "natura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Forth Bridge", url: "https://www.google.com/maps/search/?api=1&query=Forth+Bridge+Edinburgh,+Scoția+UK", category: "infrastructura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Queensferry Crossing", url: "https://www.google.com/maps/search/?api=1&query=Queensferry+Crossing+Edinburgh,+Scoția+UK", category: "infrastructura", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "National Museum of Scotland", url: "https://www.google.com/maps/search/?api=1&query=National+Museum+of+Scotland+Edinburgh,+Scoția+UK", category: "muzee", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Scottish National Gallery", url: "https://www.google.com/maps/search/?api=1&query=Scottish+National+Gallery+Edinburgh,+Scoția+UK", category: "muzee", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Scottish National Portrait Gallery", url: "https://www.google.com/maps/search/?api=1&query=Scottish+National+Portrait+Gallery+Edinburgh,+Scoția+UK", category: "muzee", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "The Writers' Museum", url: "https://www.google.com/maps/search/?api=1&query=The+Writers'+Museum+Edinburgh,+Scoția+UK", category: "muzee", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Museum of Edinburgh", url: "https://www.google.com/maps/search/?api=1&query=Museum+of+Edinburgh+Edinburgh,+Scoția+UK", category: "muzee", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Scottish Parliament Building", url: "https://www.google.com/maps/search/?api=1&query=Scottish+Parliament+Building+Edinburgh,+Scoția+UK", category: "cladiri_teatre", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "City Chambers", url: "https://www.google.com/maps/search/?api=1&query=City+Chambers+Edinburgh,+Scoția+UK", category: "cladiri_teatre", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Scott Monument", url: "https://www.google.com/maps/search/?api=1&query=Scott+Monument+Edinburgh,+Scoția+UK", category: "cladiri_teatre", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Royal Mile", url: "https://www.google.com/maps/search/?api=1&query=Royal+Mile+Edinburgh,+Scoția+UK", category: "cladiri_teatre", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Grassmarket", url: "https://www.google.com/maps/search/?api=1&query=Grassmarket+Edinburgh,+Scoția+UK", category: "cladiri_teatre", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Dunham Massey Hall", url: "https://www.google.com/maps/search/?api=1&query=Dunham+Massey+Hall+Manchester,+Anglia+UK", category: "castele_palate", city: "Manchester" }, // Manchester, Anglia
+    { name: "Ordsall Hall", url: "https://www.google.com/maps/search/?api=1&query=Ordsall+Hall+Manchester,+Anglia+UK", category: "castele_palate", city: "Manchester" }, // Manchester, Anglia
+    { name: "Tatton Hall", url: "https://www.google.com/maps/search/?api=1&query=Tatton+Hall+Knutsford+(lângă+Manchester),+Anglia+UK", category: "castele_palate" }, // Knutsford (lângă Manchester), Anglia
+    { name: "Mamucium Roman Fort", url: "https://www.google.com/maps/search/?api=1&query=Mamucium+Roman+Fort+Manchester,+Anglia+UK", category: "cetati_turnuri", city: "Manchester" }, // Manchester, Anglia
+    { name: "Manchester Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Manchester+Cathedral+Manchester,+Anglia+UK", category: "manastiri", city: "Manchester" }, // Manchester, Anglia
+    { name: "St Mary's Church (The Hidden Gem)", url: "https://www.google.com/maps/search/?api=1&query=St+Mary's+Church+(The+Hidden+Gem)+Manchester,+Anglia+UK", category: "manastiri", city: "Manchester" }, // Manchester, Anglia
+    { name: "Heaton Park", url: "https://www.google.com/maps/search/?api=1&query=Heaton+Park+Manchester,+Anglia+UK", category: "natura", city: "Manchester" }, // Manchester, Anglia
+    { name: "Fletcher Moss Botanical Garden", url: "https://www.google.com/maps/search/?api=1&query=Fletcher+Moss+Botanical+Garden+Manchester,+Anglia+UK", category: "natura", city: "Manchester" }, // Manchester, Anglia
+    { name: "Barton Swing Aqueduct", url: "https://www.google.com/maps/search/?api=1&query=Barton+Swing+Aqueduct+Manchester,+Anglia+UK", category: "infrastructura", city: "Manchester" }, // Manchester, Anglia
+    { name: "Manchester Ship Canal", url: "https://www.google.com/maps/search/?api=1&query=Manchester+Ship+Canal+Manchester,+Anglia+UK", category: "infrastructura", city: "Manchester" }, // Manchester, Anglia
+    { name: "Science and Industry Museum", url: "https://www.google.com/maps/search/?api=1&query=Science+and+Industry+Museum+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "Manchester Art Gallery", url: "https://www.google.com/maps/search/?api=1&query=Manchester+Art+Gallery+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "Imperial War Museum North", url: "https://www.google.com/maps/search/?api=1&query=Imperial+War+Museum+North+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "People's History Museum", url: "https://www.google.com/maps/search/?api=1&query=People's+History+Museum+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "National Football Museum", url: "https://www.google.com/maps/search/?api=1&query=National+Football+Museum+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "The Pankhurst Centre", url: "https://www.google.com/maps/search/?api=1&query=The+Pankhurst+Centre+Manchester,+Anglia+UK", category: "muzee", city: "Manchester" }, // Manchester, Anglia
+    { name: "Manchester Town Hall", url: "https://www.google.com/maps/search/?api=1&query=Manchester+Town+Hall+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "The John Rylands Library", url: "https://www.google.com/maps/search/?api=1&query=The+John+Rylands+Library+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "Central Library", url: "https://www.google.com/maps/search/?api=1&query=Central+Library+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "Chetham's Library", url: "https://www.google.com/maps/search/?api=1&query=Chetham's+Library+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "Albert Square", url: "https://www.google.com/maps/search/?api=1&query=Albert+Square+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "Royal Exchange Theatre", url: "https://www.google.com/maps/search/?api=1&query=Royal+Exchange+Theatre+Manchester,+Anglia+UK", category: "cladiri_teatre", city: "Manchester" }, // Manchester, Anglia
+    { name: "Speke Hall", url: "https://www.google.com/maps/search/?api=1&query=Speke+Hall+Liverpool,+Anglia+UK", category: "castele_palate", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Croxteth Hall", url: "https://www.google.com/maps/search/?api=1&query=Croxteth+Hall+Liverpool,+Anglia+UK", category: "castele_palate", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Radio City Tower", url: "https://www.google.com/maps/search/?api=1&query=Radio+City+Tower+Liverpool,+Anglia+UK", category: "cetati_turnuri", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Liverpool Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Liverpool+Cathedral+Liverpool,+Anglia+UK", category: "manastiri", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Liverpool Metropolitan Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Liverpool+Metropolitan+Cathedral+Liverpool,+Anglia+UK", category: "manastiri", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "St Luke's Bombed Out Church", url: "https://www.google.com/maps/search/?api=1&query=St+Luke's+Bombed+Out+Church+Liverpool,+Anglia+UK", category: "manastiri", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Sefton Park & Palm House", url: "https://www.google.com/maps/search/?api=1&query=Sefton+Park+&+Palm+House+Liverpool,+Anglia+UK", category: "natura", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Calderstones Park", url: "https://www.google.com/maps/search/?api=1&query=Calderstones+Park+Liverpool,+Anglia+UK", category: "natura", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Mersey Tunnels", url: "https://www.google.com/maps/search/?api=1&query=Mersey+Tunnels+Liverpool,+Anglia+UK", category: "infrastructura", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "The Beatles Story", url: "https://www.google.com/maps/search/?api=1&query=The+Beatles+Story+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "World Museum", url: "https://www.google.com/maps/search/?api=1&query=World+Museum+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Museum of Liverpool", url: "https://www.google.com/maps/search/?api=1&query=Museum+of+Liverpool+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Maritime Museum", url: "https://www.google.com/maps/search/?api=1&query=Maritime+Museum+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Tate Liverpool", url: "https://www.google.com/maps/search/?api=1&query=Tate+Liverpool+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Walker Art Gallery", url: "https://www.google.com/maps/search/?api=1&query=Walker+Art+Gallery+Liverpool,+Anglia+UK", category: "muzee", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Royal Albert Dock", url: "https://www.google.com/maps/search/?api=1&query=Royal+Albert+Dock+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Royal Liver Building", url: "https://www.google.com/maps/search/?api=1&query=Royal+Liver+Building+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Cunard Building", url: "https://www.google.com/maps/search/?api=1&query=Cunard+Building+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Port of Liverpool Building", url: "https://www.google.com/maps/search/?api=1&query=Port+of+Liverpool+Building+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "St George's Hall", url: "https://www.google.com/maps/search/?api=1&query=St+George's+Hall+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Liverpool Town Hall", url: "https://www.google.com/maps/search/?api=1&query=Liverpool+Town+Hall+Liverpool,+Anglia+UK", category: "cladiri_teatre", city: "Liverpool" }, // Liverpool, Anglia
+    { name: "Bothwell Castle", url: "https://www.google.com/maps/search/?api=1&query=Bothwell+Castle+Glasgow,+Scoția+UK", category: "castele_palate", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Provan Hall", url: "https://www.google.com/maps/search/?api=1&query=Provan+Hall+Glasgow,+Scoția+UK", category: "castele_palate", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Glasgow Tower", url: "https://www.google.com/maps/search/?api=1&query=Glasgow+Tower+Glasgow,+Scoția+UK", category: "cetati_turnuri", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Glasgow Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Glasgow+Cathedral+Glasgow,+Scoția+UK", category: "manastiri", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "St Andrew's Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Andrew's+Cathedral+Glasgow,+Scoția+UK", category: "manastiri", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Glasgow Green", url: "https://www.google.com/maps/search/?api=1&query=Glasgow+Green+Glasgow,+Scoția+UK", category: "natura", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Kelvingrove Park", url: "https://www.google.com/maps/search/?api=1&query=Kelvingrove+Park+Glasgow,+Scoția+UK", category: "natura", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Glasgow Botanic Gardens", url: "https://www.google.com/maps/search/?api=1&query=Glasgow+Botanic+Gardens+Glasgow,+Scoția+UK", category: "natura", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Clyde Arc Bridge", url: "https://www.google.com/maps/search/?api=1&query=Clyde+Arc+Bridge+Glasgow,+Scoția+UK", category: "infrastructura", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Kelvingrove Art Gallery and Museum", url: "https://www.google.com/maps/search/?api=1&query=Kelvingrove+Art+Gallery+and+Museum+Glasgow,+Scoția+UK", category: "muzee", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Riverside Museum", url: "https://www.google.com/maps/search/?api=1&query=Riverside+Museum+Glasgow,+Scoția+UK", category: "muzee", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "The Burrell Collection", url: "https://www.google.com/maps/search/?api=1&query=The+Burrell+Collection+Glasgow,+Scoția+UK", category: "muzee", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Hunterian Museum", url: "https://www.google.com/maps/search/?api=1&query=Hunterian+Museum+Glasgow,+Scoția+UK", category: "muzee", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "People's Palace", url: "https://www.google.com/maps/search/?api=1&query=People's+Palace+Glasgow,+Scoția+UK", category: "muzee", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Glasgow City Chambers", url: "https://www.google.com/maps/search/?api=1&query=Glasgow+City+Chambers+Glasgow,+Scoția+UK", category: "cladiri_teatre", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "The Mitchell Library", url: "https://www.google.com/maps/search/?api=1&query=The+Mitchell+Library+Glasgow,+Scoția+UK", category: "cladiri_teatre", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "George Square", url: "https://www.google.com/maps/search/?api=1&query=George+Square+Glasgow,+Scoția+UK", category: "cladiri_teatre", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Theatre Royal", url: "https://www.google.com/maps/search/?api=1&query=Theatre+Royal+Glasgow,+Scoția+UK", category: "cladiri_teatre", city: "Glasgow" }, // Glasgow, Scoția
+    { name: "Belfast Castle", url: "https://www.google.com/maps/search/?api=1&query=Belfast+Castle+Belfast,+Irlanda+de+Nord+UK", category: "castele_palate", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Hillsborough Castle", url: "https://www.google.com/maps/search/?api=1&query=Hillsborough+Castle+County+Down+(lângă+Belfast),+Irlanda+de+Nord+UK", category: "castele_palate" }, // County Down (lângă Belfast), Irlanda de Nord
+    { name: "Albert Memorial Clock", url: "https://www.google.com/maps/search/?api=1&query=Albert+Memorial+Clock+Belfast,+Irlanda+de+Nord+UK", category: "cetati_turnuri", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "St Anne's Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Anne's+Cathedral+Belfast,+Irlanda+de+Nord+UK", category: "manastiri", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "St Malachy's Church", url: "https://www.google.com/maps/search/?api=1&query=St+Malachy's+Church+Belfast,+Irlanda+de+Nord+UK", category: "manastiri", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Clonard Monastery", url: "https://www.google.com/maps/search/?api=1&query=Clonard+Monastery+Belfast,+Irlanda+de+Nord+UK", category: "manastiri", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Belfast Botanic Gardens", url: "https://www.google.com/maps/search/?api=1&query=Belfast+Botanic+Gardens+Belfast,+Irlanda+de+Nord+UK", category: "natura", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Cave Hill Country Park", url: "https://www.google.com/maps/search/?api=1&query=Cave+Hill+Country+Park+Belfast,+Irlanda+de+Nord+UK", category: "natura", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Laganside Walkway", url: "https://www.google.com/maps/search/?api=1&query=Laganside+Walkway+Belfast,+Irlanda+de+Nord+UK", category: "infrastructura", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Titanic Belfast", url: "https://www.google.com/maps/search/?api=1&query=Titanic+Belfast+Belfast,+Irlanda+de+Nord+UK", category: "muzee", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Ulster Museum", url: "https://www.google.com/maps/search/?api=1&query=Ulster+Museum+Belfast,+Irlanda+de+Nord+UK", category: "muzee", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Ulster Folk Museum", url: "https://www.google.com/maps/search/?api=1&query=Ulster+Folk+Museum+Cultra+(lângă+Belfast),+Irlanda+de+Nord+UK", category: "muzee" }, // Cultra (lângă Belfast), Irlanda de Nord
+    { name: "Ulster Transport Museum", url: "https://www.google.com/maps/search/?api=1&query=Ulster+Transport+Museum+Cultra+(lângă+Belfast),+Irlanda+de+Nord+UK", category: "muzee" }, // Cultra (lângă Belfast), Irlanda de Nord
+    { name: "Belfast City Hall", url: "https://www.google.com/maps/search/?api=1&query=Belfast+City+Hall+Belfast,+Irlanda+de+Nord+UK", category: "cladiri_teatre", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Grand Opera House", url: "https://www.google.com/maps/search/?api=1&query=Grand+Opera+House+Belfast,+Irlanda+de+Nord+UK", category: "cladiri_teatre", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Parliament Buildings (Stormont)", url: "https://www.google.com/maps/search/?api=1&query=Parliament+Buildings+(Stormont)+Belfast,+Irlanda+de+Nord+UK", category: "cladiri_teatre", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Crumlin Road Gaol", url: "https://www.google.com/maps/search/?api=1&query=Crumlin+Road+Gaol+Belfast,+Irlanda+de+Nord+UK", category: "cladiri_teatre", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Aston Hall", url: "https://www.google.com/maps/search/?api=1&query=Aston+Hall+Birmingham,+Anglia+UK", category: "castele_palate", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Blakesley Hall", url: "https://www.google.com/maps/search/?api=1&query=Blakesley+Hall+Birmingham,+Anglia+UK", category: "castele_palate", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Perrott's Folly", url: "https://www.google.com/maps/search/?api=1&query=Perrott's+Folly+Birmingham,+Anglia+UK", category: "cetati_turnuri", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Birmingham Cathedral (St Philip's)", url: "https://www.google.com/maps/search/?api=1&query=Birmingham+Cathedral+(St+Philip's)+Birmingham,+Anglia+UK", category: "manastiri", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "St Chad's Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Chad's+Cathedral+Birmingham,+Anglia+UK", category: "manastiri", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Birmingham Botanical Gardens", url: "https://www.google.com/maps/search/?api=1&query=Birmingham+Botanical+Gardens+Birmingham,+Anglia+UK", category: "natura", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Cannon Hill Park", url: "https://www.google.com/maps/search/?api=1&query=Cannon+Hill+Park+Birmingham,+Anglia+UK", category: "natura", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Lickey Hills Country Park", url: "https://www.google.com/maps/search/?api=1&query=Lickey+Hills+Country+Park+Birmingham,+Anglia+UK", category: "natura", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Gas Street Basin Canals", url: "https://www.google.com/maps/search/?api=1&query=Gas+Street+Basin+Canals+Birmingham,+Anglia+UK", category: "infrastructura", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Spaghetti Junction", url: "https://www.google.com/maps/search/?api=1&query=Spaghetti+Junction+Birmingham,+Anglia+UK", category: "infrastructura", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Birmingham Museum and Art Gallery", url: "https://www.google.com/maps/search/?api=1&query=Birmingham+Museum+and+Art+Gallery+Birmingham,+Anglia+UK", category: "muzee", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Thinktank Birmingham Science Museum", url: "https://www.google.com/maps/search/?api=1&query=Thinktank+Birmingham+Science+Museum+Birmingham,+Anglia+UK", category: "muzee", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Black Country Living Museum", url: "https://www.google.com/maps/search/?api=1&query=Black+Country+Living+Museum+Dudley+(lângă+Birmingham),+Anglia+UK", category: "muzee" }, // Dudley (lângă Birmingham), Anglia
+    { name: "Cadbury World (Muzeul Ciocolatei)", url: "https://www.google.com/maps/search/?api=1&query=Cadbury+World+(Muzeul+Ciocolatei)+Bournville,+Anglia+UK", category: "muzee", city: "Bournville" }, // Bournville, Anglia
+    { name: "Library of Birmingham", url: "https://www.google.com/maps/search/?api=1&query=Library+of+Birmingham+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Birmingham Town Hall", url: "https://www.google.com/maps/search/?api=1&query=Birmingham+Town+Hall+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Council House", url: "https://www.google.com/maps/search/?api=1&query=Council+House+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Victoria Square", url: "https://www.google.com/maps/search/?api=1&query=Victoria+Square+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "The Bullring", url: "https://www.google.com/maps/search/?api=1&query=The+Bullring+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Symphony Hall", url: "https://www.google.com/maps/search/?api=1&query=Symphony+Hall+Birmingham,+Anglia+UK", category: "cladiri_teatre", city: "Birmingham" }, // Birmingham, Anglia
+    { name: "Castle Howard", url: "https://www.google.com/maps/search/?api=1&query=Castle+Howard+Malton+(lângă+York),+Anglia+UK", category: "castele_palate" }, // Malton (lângă York), Anglia
+    { name: "Treasurer's House", url: "https://www.google.com/maps/search/?api=1&query=Treasurer's+House+York,+Anglia+UK", category: "castele_palate", city: "York" }, // York, Anglia
+    { name: "Clifford's Tower", url: "https://www.google.com/maps/search/?api=1&query=Clifford's+Tower+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "Zidurile Medievale din York (City Walls)", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+York+(City+Walls)+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "Micklegate Bar", url: "https://www.google.com/maps/search/?api=1&query=Micklegate+Bar+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "Monk Bar", url: "https://www.google.com/maps/search/?api=1&query=Monk+Bar+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "Bootham Bar", url: "https://www.google.com/maps/search/?api=1&query=Bootham+Bar+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "Walmgate Bar", url: "https://www.google.com/maps/search/?api=1&query=Walmgate+Bar+York,+Anglia+UK", category: "cetati_turnuri", city: "York" }, // York, Anglia
+    { name: "York Minster", url: "https://www.google.com/maps/search/?api=1&query=York+Minster+York,+Anglia+UK", category: "manastiri", city: "York" }, // York, Anglia
+    { name: "St Mary's Abbey (Ruine)", url: "https://www.google.com/maps/search/?api=1&query=St+Mary's+Abbey+(Ruine)+York,+Anglia+UK", category: "manastiri", city: "York" }, // York, Anglia
+    { name: "Holy Trinity Church", url: "https://www.google.com/maps/search/?api=1&query=Holy+Trinity+Church+York,+Anglia+UK", category: "manastiri", city: "York" }, // York, Anglia
+    { name: "Museum Gardens", url: "https://www.google.com/maps/search/?api=1&query=Museum+Gardens+York,+Anglia+UK", category: "natura", city: "York" }, // York, Anglia
+    { name: "Rowntree Park", url: "https://www.google.com/maps/search/?api=1&query=Rowntree+Park+York,+Anglia+UK", category: "natura", city: "York" }, // York, Anglia
+    { name: "River Ouse Bridges", url: "https://www.google.com/maps/search/?api=1&query=River+Ouse+Bridges+York,+Anglia+UK", category: "infrastructura", city: "York" }, // York, Anglia
+    { name: "National Railway Museum", url: "https://www.google.com/maps/search/?api=1&query=National+Railway+Museum+York,+Anglia+UK", category: "muzee", city: "York" }, // York, Anglia
+    { name: "York Castle Museum", url: "https://www.google.com/maps/search/?api=1&query=York+Castle+Museum+York,+Anglia+UK", category: "muzee", city: "York" }, // York, Anglia
+    { name: "JORVIK Viking Centre", url: "https://www.google.com/maps/search/?api=1&query=JORVIK+Viking+Centre+York,+Anglia+UK", category: "muzee", city: "York" }, // York, Anglia
+    { name: "Yorkshire Museum", url: "https://www.google.com/maps/search/?api=1&query=Yorkshire+Museum+York,+Anglia+UK", category: "muzee", city: "York" }, // York, Anglia
+    { name: "York Art Gallery", url: "https://www.google.com/maps/search/?api=1&query=York+Art+Gallery+York,+Anglia+UK", category: "muzee", city: "York" }, // York, Anglia
+    { name: "The Shambles (Strada Medievală)", url: "https://www.google.com/maps/search/?api=1&query=The+Shambles+(Strada+Medievală)+York,+Anglia+UK", category: "cladiri_teatre", city: "York" }, // York, Anglia
+    { name: "The Guildhall", url: "https://www.google.com/maps/search/?api=1&query=The+Guildhall+York,+Anglia+UK", category: "cladiri_teatre", city: "York" }, // York, Anglia
+    { name: "Merchant Adventurers' Hall", url: "https://www.google.com/maps/search/?api=1&query=Merchant+Adventurers'+Hall+York,+Anglia+UK", category: "cladiri_teatre", city: "York" }, // York, Anglia
+    { name: "Barley Hall", url: "https://www.google.com/maps/search/?api=1&query=Barley+Hall+York,+Anglia+UK", category: "cladiri_teatre", city: "York" }, // York, Anglia
+    { name: "York Theatre Royal", url: "https://www.google.com/maps/search/?api=1&query=York+Theatre+Royal+York,+Anglia+UK", category: "cladiri_teatre", city: "York" }, // York, Anglia
+    { name: "Blaise Castle House", url: "https://www.google.com/maps/search/?api=1&query=Blaise+Castle+House+Bristol,+Anglia+UK", category: "castele_palate", city: "Bristol" }, // Bristol, Anglia
+    { name: "Ashton Court Mansion", url: "https://www.google.com/maps/search/?api=1&query=Ashton+Court+Mansion+Bristol,+Anglia+UK", category: "castele_palate", city: "Bristol" }, // Bristol, Anglia
+    { name: "Cabot Tower", url: "https://www.google.com/maps/search/?api=1&query=Cabot+Tower+Bristol,+Anglia+UK", category: "cetati_turnuri", city: "Bristol" }, // Bristol, Anglia
+    { name: "Brandon Hill Fort", url: "https://www.google.com/maps/search/?api=1&query=Brandon+Hill+Fort+Bristol,+Anglia+UK", category: "cetati_turnuri", city: "Bristol" }, // Bristol, Anglia
+    { name: "Bristol Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Bristol+Cathedral+Bristol,+Anglia+UK", category: "manastiri", city: "Bristol" }, // Bristol, Anglia
+    { name: "St Mary Redcliffe Church", url: "https://www.google.com/maps/search/?api=1&query=St+Mary+Redcliffe+Church+Bristol,+Anglia+UK", category: "manastiri", city: "Bristol" }, // Bristol, Anglia
+    { name: "Avon Gorge", url: "https://www.google.com/maps/search/?api=1&query=Avon+Gorge+Bristol,+Anglia+UK", category: "natura", city: "Bristol" }, // Bristol, Anglia
+    { name: "Bristol Downs", url: "https://www.google.com/maps/search/?api=1&query=Bristol+Downs+Bristol,+Anglia+UK", category: "natura", city: "Bristol" }, // Bristol, Anglia
+    { name: "Clifton Suspension Bridge", url: "https://www.google.com/maps/search/?api=1&query=Clifton+Suspension+Bridge+Bristol,+Anglia+UK", category: "infrastructura", city: "Bristol" }, // Bristol, Anglia
+    { name: "Bristol Harbour", url: "https://www.google.com/maps/search/?api=1&query=Bristol+Harbour+Bristol,+Anglia+UK", category: "infrastructura", city: "Bristol" }, // Bristol, Anglia
+    { name: "Brunel's SS Great Britain", url: "https://www.google.com/maps/search/?api=1&query=Brunel's+SS+Great+Britain+Bristol,+Anglia+UK", category: "muzee", city: "Bristol" }, // Bristol, Anglia
+    { name: "M Shed Museum", url: "https://www.google.com/maps/search/?api=1&query=M+Shed+Museum+Bristol,+Anglia+UK", category: "muzee", city: "Bristol" }, // Bristol, Anglia
+    { name: "Bristol Museum & Art Gallery", url: "https://www.google.com/maps/search/?api=1&query=Bristol+Museum+&+Art+Gallery+Bristol,+Anglia+UK", category: "muzee", city: "Bristol" }, // Bristol, Anglia
+    { name: "Aerospace Bristol (Concorde)", url: "https://www.google.com/maps/search/?api=1&query=Aerospace+Bristol+(Concorde)+Bristol,+Anglia+UK", category: "muzee", city: "Bristol" }, // Bristol, Anglia
+    { name: "The Victoria Rooms", url: "https://www.google.com/maps/search/?api=1&query=The+Victoria+Rooms+Bristol,+Anglia+UK", category: "cladiri_teatre", city: "Bristol" }, // Bristol, Anglia
+    { name: "Bristol Old Vic Theatre", url: "https://www.google.com/maps/search/?api=1&query=Bristol+Old+Vic+Theatre+Bristol,+Anglia+UK", category: "cladiri_teatre", city: "Bristol" }, // Bristol, Anglia
+    { name: "Wills Memorial Building", url: "https://www.google.com/maps/search/?api=1&query=Wills+Memorial+Building+Bristol,+Anglia+UK", category: "cladiri_teatre", city: "Bristol" }, // Bristol, Anglia
+    { name: "St Nicholas Market", url: "https://www.google.com/maps/search/?api=1&query=St+Nicholas+Market+Bristol,+Anglia+UK", category: "cladiri_teatre", city: "Bristol" }, // Bristol, Anglia
+    { name: "Prior Park Landscape Garden", url: "https://www.google.com/maps/search/?api=1&query=Prior+Park+Landscape+Garden+Bath,+Anglia+UK", category: "castele_palate", city: "Bath" }, // Bath, Anglia
+    { name: "Beckford's Tower", url: "https://www.google.com/maps/search/?api=1&query=Beckford's+Tower+Bath,+Anglia+UK", category: "cetati_turnuri", city: "Bath" }, // Bath, Anglia
+    { name: "Bath Abbey", url: "https://www.google.com/maps/search/?api=1&query=Bath+Abbey+Bath,+Anglia+UK", category: "manastiri", city: "Bath" }, // Bath, Anglia
+    { name: "Royal Victoria Park", url: "https://www.google.com/maps/search/?api=1&query=Royal+Victoria+Park+Bath,+Anglia+UK", category: "natura", city: "Bath" }, // Bath, Anglia
+    { name: "Cheddar Gorge & Caves", url: "https://www.google.com/maps/search/?api=1&query=Cheddar+Gorge+&+Caves+Somerset+(lângă+Bath),+Anglia+UK", category: "natura", city: "Bath" }, // Somerset (lângă Bath), Anglia
+    { name: "Pulteney Bridge", url: "https://www.google.com/maps/search/?api=1&query=Pulteney+Bridge+Bath,+Anglia+UK", category: "infrastructura", city: "Bath" }, // Bath, Anglia
+    { name: "Kennet & Avon Canal", url: "https://www.google.com/maps/search/?api=1&query=Kennet+&+Avon+Canal+Bath,+Anglia+UK", category: "infrastructura", city: "Bath" }, // Bath, Anglia
+    { name: "Roman Baths Museum (Băile Romane)", url: "https://www.google.com/maps/search/?api=1&query=Roman+Baths+Museum+(Băile+Romane)+Bath,+Anglia+UK", category: "muzee", city: "Bath" }, // Bath, Anglia
+    { name: "The Jane Austen Centre", url: "https://www.google.com/maps/search/?api=1&query=The+Jane+Austen+Centre+Bath,+Anglia+UK", category: "muzee", city: "Bath" }, // Bath, Anglia
+    { name: "Holburne Museum", url: "https://www.google.com/maps/search/?api=1&query=Holburne+Museum+Bath,+Anglia+UK", category: "muzee", city: "Bath" }, // Bath, Anglia
+    { name: "Fashion Museum Bath", url: "https://www.google.com/maps/search/?api=1&query=Fashion+Museum+Bath+Bath,+Anglia+UK", category: "muzee", city: "Bath" }, // Bath, Anglia
+    { name: "No. 1 Royal Crescent Museum", url: "https://www.google.com/maps/search/?api=1&query=No.+1+Royal+Crescent+Museum+Bath,+Anglia+UK", category: "muzee", city: "Bath" }, // Bath, Anglia
+    { name: "Royal Crescent", url: "https://www.google.com/maps/search/?api=1&query=Royal+Crescent+Bath,+Anglia+UK", category: "cladiri_teatre", city: "Bath" }, // Bath, Anglia
+    { name: "The Circus", url: "https://www.google.com/maps/search/?api=1&query=The+Circus+Bath,+Anglia+UK", category: "cladiri_teatre", city: "Bath" }, // Bath, Anglia
+    { name: "The Pump Room", url: "https://www.google.com/maps/search/?api=1&query=The+Pump+Room+Bath,+Anglia+UK", category: "cladiri_teatre", city: "Bath" }, // Bath, Anglia
+    { name: "Theatre Royal Bath", url: "https://www.google.com/maps/search/?api=1&query=Theatre+Royal+Bath+Bath,+Anglia+UK", category: "cladiri_teatre", city: "Bath" }, // Bath, Anglia
+    { name: "Guildhall", url: "https://www.google.com/maps/search/?api=1&query=Guildhall+Bath,+Anglia+UK", category: "cladiri_teatre", city: "Bath" }, // Bath, Anglia
+    { name: "Cardiff Castle", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+Castle+Cardiff,+Țara+Galilor+UK", category: "castele_palate", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Castell Coch", url: "https://www.google.com/maps/search/?api=1&query=Castell+Coch+Tongwynlais+(lângă+Cardiff),+Țara+Galilor+UK", category: "castele_palate" }, // Tongwynlais (lângă Cardiff), Țara Galilor
+    { name: "Cardiff City Walls (Fragmente)", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+City+Walls+(Fragmente)+Cardiff,+Țara+Galilor+UK", category: "cetati_turnuri", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Llandaff Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Llandaff+Cathedral+Cardiff,+Țara+Galilor+UK", category: "manastiri", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Bute Park", url: "https://www.google.com/maps/search/?api=1&query=Bute+Park+Cardiff,+Țara+Galilor+UK", category: "natura", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Roath Park & Lake", url: "https://www.google.com/maps/search/?api=1&query=Roath+Park+&+Lake+Cardiff,+Țara+Galilor+UK", category: "natura", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Cardiff Bay Barrage", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+Bay+Barrage+Cardiff,+Țara+Galilor+UK", category: "infrastructura", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "National Museum Cardiff", url: "https://www.google.com/maps/search/?api=1&query=National+Museum+Cardiff+Cardiff,+Țara+Galilor+UK", category: "muzee", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "St Fagans National Museum of History", url: "https://www.google.com/maps/search/?api=1&query=St+Fagans+National+Museum+of+History+Cardiff,+Țara+Galilor+UK", category: "muzee", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Cardiff Story Museum", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+Story+Museum+Cardiff,+Țara+Galilor+UK", category: "muzee", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Wales Millennium Centre", url: "https://www.google.com/maps/search/?api=1&query=Wales+Millennium+Centre+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Senedd Cymru (Parlamentul)", url: "https://www.google.com/maps/search/?api=1&query=Senedd+Cymru+(Parlamentul)+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Cardiff City Hall", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+City+Hall+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Cardiff Market", url: "https://www.google.com/maps/search/?api=1&query=Cardiff+Market+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Principality Stadium", url: "https://www.google.com/maps/search/?api=1&query=Principality+Stadium+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Pierhead Building", url: "https://www.google.com/maps/search/?api=1&query=Pierhead+Building+Cardiff,+Țara+Galilor+UK", category: "cladiri_teatre", city: "Cardiff" }, // Cardiff, Țara Galilor
+    { name: "Dunluce Castle", url: "https://www.google.com/maps/search/?api=1&query=Dunluce+Castle+Bushmills,+Irlanda+de+Nord+UK", category: "castele_palate" }, // Bushmills, Irlanda de Nord
+    { name: "Tintagel Castle", url: "https://www.google.com/maps/search/?api=1&query=Tintagel+Castle+Cornwall,+Anglia+UK", category: "castele_palate", city: "Cornwall" }, // Cornwall, Anglia
+    { name: "Alnwick Castle", url: "https://www.google.com/maps/search/?api=1&query=Alnwick+Castle+Northumberland,+Anglia+UK", category: "castele_palate", city: "Northumberland" }, // Northumberland, Anglia
+    { name: "Conwy Castle", url: "https://www.google.com/maps/search/?api=1&query=Conwy+Castle+Conwy,+Țara+Galilor+UK", category: "castele_palate", city: "Conwy" }, // Conwy, Țara Galilor
+    { name: "Eilean Donan Castle", url: "https://www.google.com/maps/search/?api=1&query=Eilean+Donan+Castle+Highlands,+Scoția+UK", category: "castele_palate", city: "Highlands" }, // Highlands, Scoția
+    { name: "Zidul lui Hadrian (Hadrian's Wall)", url: "https://www.google.com/maps/search/?api=1&query=Zidul+lui+Hadrian+(Hadrian's+Wall)+Northumberland,+Anglia+UK", category: "cetati_turnuri", city: "Northumberland" }, // Northumberland, Anglia
+    { name: "Harlech Castle", url: "https://www.google.com/maps/search/?api=1&query=Harlech+Castle+Harlech,+Țara+Galilor+UK", category: "cetati_turnuri" }, // Harlech, Țara Galilor
+    { name: "Fountains Abbey", url: "https://www.google.com/maps/search/?api=1&query=Fountains+Abbey+North+Yorkshire,+Anglia+UK", category: "manastiri" }, // North Yorkshire, Anglia
+    { name: "Whitby Abbey", url: "https://www.google.com/maps/search/?api=1&query=Whitby+Abbey+North+Yorkshire,+Anglia+UK", category: "manastiri" }, // North Yorkshire, Anglia
+    { name: "Tintern Abbey", url: "https://www.google.com/maps/search/?api=1&query=Tintern+Abbey+Monmouthshire,+Țara+Galilor+UK", category: "manastiri" }, // Monmouthshire, Țara Galilor
+    { name: "Giant's Causeway", url: "https://www.google.com/maps/search/?api=1&query=Giant's+Causeway+County+Antrim,+Irlanda+de+Nord+UK", category: "natura", city: "County Antrim" }, // County Antrim, Irlanda de Nord
+    { name: "Loch Ness", url: "https://www.google.com/maps/search/?api=1&query=Loch+Ness+Highlands,+Scoția+UK", category: "natura", city: "Highlands" }, // Highlands, Scoția
+    { name: "Parcul Național Lake District", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Lake+District+Cumbria,+Anglia+UK", category: "natura", city: "Cumbria" }, // Cumbria, Anglia
+    { name: "Parcul Național Snowdonia (Yr Wyddfa)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Snowdonia+(Yr+Wyddfa)+Gwynedd,+Țara+Galilor+UK", category: "natura", city: "Gwynedd" }, // Gwynedd, Țara Galilor
+    { name: "Isle of Skye", url: "https://www.google.com/maps/search/?api=1&query=Isle+of+Skye+Highlands,+Scoția+UK", category: "natura", city: "Highlands" }, // Highlands, Scoția
+    { name: "Parcul Național Peak District", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Peak+District+Derbyshire,+Anglia+UK", category: "natura", city: "Derbyshire" }, // Derbyshire, Anglia
+    { name: "Parcul Național Yorkshire Dales", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Yorkshire+Dales+Yorkshire,+Anglia+UK", category: "natura", city: "Yorkshire" }, // Yorkshire, Anglia
+    { name: "Jurassic Coast", url: "https://www.google.com/maps/search/?api=1&query=Jurassic+Coast+Dorset/Devon,+Anglia+UK", category: "natura" }, // Dorset/Devon, Anglia
+    { name: "Fingal's Cave", url: "https://www.google.com/maps/search/?api=1&query=Fingal's+Cave+Insula+Staffa,+Scoția+UK", category: "natura" }, // Insula Staffa, Scoția
+    { name: "Glencoe Valley", url: "https://www.google.com/maps/search/?api=1&query=Glencoe+Valley+Highlands,+Scoția+UK", category: "natura", city: "Highlands" }, // Highlands, Scoția
+    { name: "Ben Nevis", url: "https://www.google.com/maps/search/?api=1&query=Ben+Nevis+Fort+William,+Scoția+UK", category: "natura", city: "Fort William" }, // Fort William, Scoția
+    { name: "Dark Hedges", url: "https://www.google.com/maps/search/?api=1&query=Dark+Hedges+Ballymoney,+Irlanda+de+Nord+UK", category: "natura" }, // Ballymoney, Irlanda de Nord
+    { name: "Wookey Hole Caves", url: "https://www.google.com/maps/search/?api=1&query=Wookey+Hole+Caves+Somerset,+Anglia+UK", category: "natura" }, // Somerset, Anglia
+    { name: "Malham Cove", url: "https://www.google.com/maps/search/?api=1&query=Malham+Cove+North+Yorkshire,+Anglia+UK", category: "natura" }, // North Yorkshire, Anglia
+    { name: "Brimham Rocks", url: "https://www.google.com/maps/search/?api=1&query=Brimham+Rocks+North+Yorkshire,+Anglia+UK", category: "natura" }, // North Yorkshire, Anglia
+    { name: "High Force Waterfall", url: "https://www.google.com/maps/search/?api=1&query=High+Force+Waterfall+County+Durham,+Anglia+UK", category: "natura" }, // County Durham, Anglia
+    { name: "Aira Force Waterfall", url: "https://www.google.com/maps/search/?api=1&query=Aira+Force+Waterfall+Cumbria,+Anglia+UK", category: "natura", city: "Cumbria" }, // Cumbria, Anglia
+    { name: "North Coast 500 Route", url: "https://www.google.com/maps/search/?api=1&query=North+Coast+500+Route+Nordul+Scoției,+Scoția+UK", category: "infrastructura" }, // Nordul Scoției, Scoția
+    { name: "Ribblehead Viaduct", url: "https://www.google.com/maps/search/?api=1&query=Ribblehead+Viaduct+North+Yorkshire,+Anglia+UK", category: "infrastructura" }, // North Yorkshire, Anglia
+    { name: "Glenfinnan Viaduct", url: "https://www.google.com/maps/search/?api=1&query=Glenfinnan+Viaduct+Highlands,+Scoția+UK", category: "infrastructura", city: "Highlands" }, // Highlands, Scoția
+    { name: "Hardknott Pass", url: "https://www.google.com/maps/search/?api=1&query=Hardknott+Pass+Lake+District,+Anglia+UK", category: "infrastructura", city: "Lake District" }, // Lake District, Anglia
+    { name: "Snake Pass (A57)", url: "https://www.google.com/maps/search/?api=1&query=Snake+Pass+(A57)+Peak+District,+Anglia+UK", category: "infrastructura" }, // Peak District, Anglia
+    { name: "Snowdon Mountain Railway", url: "https://www.google.com/maps/search/?api=1&query=Snowdon+Mountain+Railway+Llanberis,+Țara+Galilor+UK", category: "infrastructura" }, // Llanberis, Țara Galilor
+    { name: "Pontcysyllte Aqueduct", url: "https://www.google.com/maps/search/?api=1&query=Pontcysyllte+Aqueduct+Wrexham,+Țara+Galilor+UK", category: "infrastructura", city: "Wrexham" }, // Wrexham, Țara Galilor
+    { name: "Titanic Museum", url: "https://www.google.com/maps/search/?api=1&query=Titanic+Museum+Belfast,+Irlanda+de+Nord+UK", category: "muzee", city: "Belfast" }, // Belfast, Irlanda de Nord
+    { name: "Crucea Eroilor din Glenfinnan", url: "https://www.google.com/maps/search/?api=1&query=Crucea+Eroilor+din+Glenfinnan+Highlands,+Scoția+UK", category: "cladiri_teatre", city: "Highlands" }, // Highlands, Scoția
   ],
   es: [
     { name: "Palatul Regal din Madrid", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Madrid+Madrid+Spain", category: "castele_palate", city: "Madrid" }, // Madrid
@@ -8604,6 +8886,15 @@ const SELECTIVE_BRAND_CITIES = {
     carrefour: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     intermarche: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     auchan: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+  },
+  uk: {
+    // Cele 3 mall-uri — bug pre-existent, prins prin verificare directă (nu
+    // legat de extinderea de mai sus la 33 de orașe/zone): fiecare e un
+    // SINGUR loc real, dar nu avea nicio restricție — apărea universal pe
+    // toate cele 10 orașe originale, dinainte de verificarea de azi.
+    westfieldlondon: ["London"],
+    traffordcentre: ["Manchester"],
+    bluewater: ["London"], // Bluewater e lângă Dartford, in zona metropolitana Londra — cel mai apropiat oraș urmărit
   },
 };
 
