@@ -11488,80 +11488,379 @@ const TRAVEL_GUIDES_EN = [
   },
 ];
 
+const TRAVEL_GUIDES_DE = [
+  {
+    slug: "transport",
+    title: "So kommst du effizient zu den großen Sehenswürdigkeiten",
+    intro: "Leitfaden für den städtischen und regionalen Transport",
+    body: `
+    <p>Eine gelungene Reiseroute hängt stark davon ab, wie du dich zwischen den Sehenswürdigkeiten bewegst. Wenn du Museen, Schlösser oder historische Denkmäler besuchen möchtest, machen die Verbindung zwischen den Städten und die lokale Logistik den Unterschied zwischen einem entspannten Tag und einem, der in Bahnhöfen und Haltestellen verloren geht.</p>
+    <p>Für lange Strecken oder zwischen historischen Regionen bleibt der Zug die beliebteste Option — das europäische Schienennetz verbindet die meisten Hauptstädte mit kleineren Städten, oft auf landschaftlich reizvollen Strecken. Busse füllen die Lücken gut, besonders in Richtung Orte oder Bergregionen, die der Zug nicht direkt erreicht, und kosten meist weniger.</p>
+    <p>Wenn du mit viel Gepäck am Flughafen landest oder in der Gruppe reist, erspart dir ein vorgebuchter privater Transfer den Ärger des Umsteigens zwischen Verkehrsmitteln — er bringt dich direkt vom Terminal zum Schlosstor oder zum Hotel. Diese Verbindungen im Voraus zu planen, macht aus einer hektischen Reise eine stressfreie.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Zug- und Busfahrkarten suchen</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Einen privaten Transfer buchen</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "So gehst du mit dem Parken in der Nähe historischer Gebiete um",
+    intro: "Ein Leitfaden für Autofahrer — Parken in Altstädten",
+    body: `
+    <p>Mit dem eigenen oder einem Mietwagen hast du eine Bewegungsfreiheit, die andere Verkehrsmittel nicht bieten können — aber historische Stadtzentren sind bekannt für Verkehrsbeschränkungen und einen chronischen Mangel an Parkplätzen.</p>
+    <p>Wer das Auto irgendwo abstellt, riskiert ein Bußgeld oder sogar das Abschleppen. Die sicherste Option bleibt ein gesichertes, privat betriebenes Tiefgaragen- oder oberirdisches Parkhaus — viele erlauben eine Vorausbuchung, was besonders am Wochenende oder in der Hochsaison wichtig ist, wenn die Sehenswürdigkeiten am stärksten besucht sind.</p>
+    <p>Ein gut gewähltes Parkhaus, wenige Schritte vom Museum oder der Altstadt entfernt, lässt dir die Freiheit, in deinem eigenen Tempo zu erkunden, ohne dir Sorgen um das Auto zu machen. Prüfe die Verfügbarkeit im Voraus und buche online — es lohnt sich, besonders an einem stark besuchten Wochenende.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("Stadtzentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Einen gesicherten Parkplatz buchen</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "So planst du einen perfekten Ausflugstag",
+    intro: "Öffnungszeiten mit Essenszeiten abstimmen",
+    body: `
+    <p>Ein toller Ausflugstag bedeutet, Kultur und Erholung in Einklang zu bringen. Wenn du deinen Tag um die Öffnungszeiten eines Museums oder einer Galerie herum planst, lohnt es sich, auch die Essenspausen im Voraus einzuplanen — sonst läufst du Gefahr, genau dann hungrig anzukommen, wenn alle Lokale in der Nähe voll sind.</p>
+    <p>Große Sehenswürdigkeiten ziehen täglich Tausende von Besuchern an, und die umliegenden Gebiete werden schnell voll, besonders mittags und abends. Eine im Voraus über eine Online-Plattform getätigte Reservierung garantiert dir einen Tisch, ohne anzustehen oder in letzter Minute verzweifelt nach einem freien Platz zu suchen.</p>
+    <p>Das effizienteste Muster: Besuche Ausstellungen früh am Morgen, wenn es ruhig ist, und beende den Tag mit einem im Voraus reservierten Essen in einem lokalen Restaurant — ein einfacher Ausflugstag wird so zu einer Erinnerung, die man wirklich behalten möchte.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Auf TheFork suchen (Frankreich, Italien, Spanien)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Auf OpenTable suchen (UK, Deutschland)</a>
+    </div>`,
+  },
+];
+
+const TRAVEL_GUIDES_FR = [
+  {
+    slug: "transport",
+    title: "Comment se rendre efficacement aux grands sites touristiques",
+    intro: "Guide des transports urbains et régionaux",
+    body: `
+    <p>Un bon itinéraire dépend beaucoup de la façon dont vous vous déplacez entre les sites. Lorsque vous souhaitez visiter des musées, des châteaux ou des monuments historiques, la connexion entre les villes et la logistique locale font la différence entre une journée détendue et une journée perdue dans les gares et les arrêts.</p>
+    <p>Pour les longues distances ou entre régions historiques, le train reste l'option la plus populaire — le réseau ferroviaire européen relie la plupart des capitales aux petites villes, souvent par des itinéraires pittoresques. Les autocars comblent bien les lacunes, surtout vers les localités ou zones montagneuses que le train n'atteint pas directement, et coûtent généralement moins cher.</p>
+    <p>Si vous atterrissez à l'aéroport avec beaucoup de bagages ou voyagez en groupe, un transfert privé réservé à l'avance vous évite le tracas de changer de mode de transport — il vous emmène directement du terminal à la porte du château ou à l'hôtel. Planifier ces connexions à l'avance transforme un voyage mouvementé en une expérience sans stress.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Rechercher des billets de train et de car</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Réserver un transfert privé</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "Comment gérer le stationnement près des zones historiques",
+    intro: "Guide du conducteur — stationnement dans les vieux centres-villes",
+    body: `
+    <p>Conduire votre propre voiture ou une voiture de location vous offre une liberté de mouvement que les autres modes de transport ne peuvent égaler — mais les centres-villes historiques sont connus pour leurs restrictions de circulation et leur pénurie chronique de places de stationnement.</p>
+    <p>Laisser sa voiture n'importe où risque une amende, voire une mise en fourrière. L'option la plus sûre reste un parking sécurisé, souterrain ou en surface, géré par le secteur privé — beaucoup permettent de réserver une place à l'avance, ce qui compte surtout le week-end ou en haute saison, lorsque les sites sont les plus fréquentés.</p>
+    <p>Un parking bien choisi, à quelques pas du musée ou de la vieille ville, vous laisse la liberté d'explorer à votre rythme, sans vous soucier de la voiture. Vérifiez la disponibilité à l'avance et réservez en ligne — cela en vaut la peine, surtout un week-end chargé.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("centre-ville"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Réserver une place de parking sécurisée</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "Comment organiser une journée de sortie parfaite",
+    intro: "Faire correspondre les horaires d'ouverture avec les heures de repas",
+    body: `
+    <p>Une belle journée de sortie repose sur un équilibre entre culture et détente. Si vous construisez votre journée autour des horaires d'un musée ou d'une galerie, il vaut la peine de planifier aussi vos pauses repas à l'avance — sinon vous risquez d'arriver affamé juste quand tous les établissements voisins sont pleins.</p>
+    <p>Les grands sites attirent des milliers de visiteurs chaque jour, et les zones environnantes se remplissent vite, surtout au déjeuner et au dîner. Réserver à l'avance via une plateforme en ligne vous garantit une table sans faire la queue ni chercher désespérément une place de dernière minute.</p>
+    <p>Le schéma le plus efficace : visitez les expositions tôt le matin, quand c'est calme, puis terminez la journée par un repas réservé à l'avance dans un restaurant local — une simple sortie devient ainsi un souvenir que l'on a vraiment envie de garder.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Rechercher sur TheFork (France, Italie, Espagne)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Rechercher sur OpenTable (UK, Allemagne)</a>
+    </div>`,
+  },
+];
+
+const TRAVEL_GUIDES_ES = [
+  {
+    slug: "transport",
+    title: "Cómo llegar de forma eficiente a las grandes atracciones turísticas",
+    intro: "Guía de transporte urbano y regional",
+    body: `
+    <p>Un buen itinerario depende en gran medida de cómo te muevas entre las atracciones. Cuando quieres visitar museos, castillos o monumentos históricos, la conexión entre ciudades y la logística local marcan la diferencia entre un día relajado y uno perdido entre estaciones y paradas.</p>
+    <p>Para distancias largas o entre regiones históricas, el tren sigue siendo la opción más popular — la red ferroviaria europea conecta la mayoría de las capitales con ciudades más pequeñas, a menudo por rutas pintorescas. Los autobuses cubren bien los huecos, especialmente hacia localidades o zonas montañosas a las que el tren no llega directamente, y suelen costar menos.</p>
+    <p>Si aterrizas en el aeropuerto con mucho equipaje o viajas en grupo, un traslado privado reservado con antelación elimina el engorro de cambiar de medio de transporte — te lleva directamente desde la terminal hasta la puerta del castillo o el hotel. Planificar estas conexiones con antelación convierte un viaje ajetreado en uno sin estrés.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Buscar billetes de tren y autobús</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Reservar un traslado privado</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "Cómo gestionar el aparcamiento cerca de zonas históricas",
+    intro: "Guía del conductor — aparcamiento en los cascos antiguos",
+    body: `
+    <p>Conducir tu propio coche o uno de alquiler te da una libertad de movimiento que otros medios de transporte no pueden igualar — pero los centros históricos de las ciudades son conocidos por sus restricciones de tráfico y su crónica escasez de aparcamiento.</p>
+    <p>Dejar el coche en cualquier sitio conlleva el riesgo de multa, o incluso de que se lo lleve la grúa. La opción más segura sigue siendo un aparcamiento seguro, subterráneo o en superficie, gestionado de forma privada — muchos permiten reservar plaza con antelación, algo que importa especialmente los fines de semana o en temporada alta, cuando las atracciones están más concurridas.</p>
+    <p>Un aparcamiento bien elegido, a pocos pasos del museo o del casco antiguo, te da la libertad de explorar a tu ritmo, sin preocuparte por el coche. Comprueba la disponibilidad con antelación y reserva online — merece la pena, sobre todo en un fin de semana con mucha afluencia.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("centro ciudad"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Reservar una plaza de aparcamiento segura</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "Cómo planificar un día de excursión perfecto",
+    intro: "Coordinar los horarios de apertura con las comidas",
+    body: `
+    <p>Un gran día de excursión consiste en equilibrar cultura y descanso. Si organizas tu día en torno al horario de un museo o una galería, merece la pena planificar también tus pausas para comer con antelación — de lo contrario, corres el riesgo de llegar hambriento justo cuando todos los locales cercanos están llenos.</p>
+    <p>Las grandes atracciones reciben miles de visitantes cada día, y las zonas a su alrededor se llenan rápido, sobre todo a la hora de comer y cenar. Reservar con antelación a través de una plataforma online te garantiza una mesa sin hacer cola ni buscar desesperadamente un sitio libre a última hora.</p>
+    <p>El patrón más eficiente: visita las exposiciones a primera hora de la mañana, cuando hay tranquilidad, y termina el día con una comida reservada con antelación en un restaurante local — una simple excursión se convierte así en un recuerdo que de verdad querrás conservar.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Buscar en TheFork (Francia, Italia, España)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Buscar en OpenTable (Reino Unido, Alemania)</a>
+    </div>`,
+  },
+];
+
+const TRAVEL_GUIDES_IT = [
+  {
+    slug: "transport",
+    title: "Come raggiungere in modo efficiente le grandi attrazioni turistiche",
+    intro: "Guida ai trasporti urbani e regionali",
+    body: `
+    <p>Un buon itinerario dipende molto da come ci si sposta tra le attrazioni. Quando si vogliono visitare musei, castelli o monumenti storici, il collegamento tra le città e la logistica locale fanno la differenza tra una giornata rilassata e una persa tra stazioni e fermate.</p>
+    <p>Per le lunghe distanze o tra regioni storiche, il treno resta l'opzione più popolare — la rete ferroviaria europea collega la maggior parte delle capitali con le città più piccole, spesso lungo percorsi panoramici. I pullman coprono bene i vuoti, soprattutto verso località o zone montane non raggiunte direttamente dal treno, e di solito costano meno.</p>
+    <p>Se atterri in aeroporto con molti bagagli o viaggi in gruppo, un trasferimento privato prenotato in anticipo elimina il fastidio di cambiare mezzo di trasporto — ti porta direttamente dal terminal al cancello del castello o all'hotel. Pianificare questi collegamenti in anticipo trasforma un viaggio caotico in uno senza stress.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Cerca biglietti di treno e pullman</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Prenota un trasferimento privato</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "Come gestire il parcheggio vicino alle zone storiche",
+    intro: "Guida per l'automobilista — parcheggiare nei centri storici",
+    body: `
+    <p>Guidare la propria auto o una a noleggio offre una libertà di movimento che altri mezzi di trasporto non possono eguagliare — ma i centri storici delle città sono noti per le restrizioni al traffico e la cronica carenza di parcheggi.</p>
+    <p>Lasciare l'auto ovunque comporta il rischio di una multa, o persino del carro attrezzi. L'opzione più sicura resta un parcheggio sicuro, sotterraneo o in superficie, a gestione privata — molti permettono di prenotare un posto in anticipo, cosa che conta soprattutto nei weekend o in alta stagione, quando le attrazioni sono più affollate.</p>
+    <p>Un parcheggio ben scelto, a pochi passi dal museo o dal centro storico, ti lascia libero di esplorare al tuo ritmo, senza pensieri per l'auto. Controlla la disponibilità in anticipo e prenota online — ne vale la pena, soprattutto in un weekend affollato.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("centro città"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Prenota un posto auto sicuro</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "Come organizzare una giornata di visita perfetta",
+    intro: "Far coincidere gli orari di apertura con i pasti",
+    body: `
+    <p>Una bella giornata di visita è questione di equilibrio tra cultura e relax. Se costruisci la giornata attorno agli orari di un museo o di una galleria, vale la pena pianificare in anticipo anche le pause pranzo — altrimenti rischi di arrivare affamato proprio quando tutti i locali nei dintorni sono pieni.</p>
+    <p>Le grandi attrazioni attirano migliaia di visitatori ogni giorno, e le zone circostanti si riempiono in fretta, soprattutto a pranzo e a cena. Prenotare in anticipo tramite una piattaforma online ti garantisce un tavolo senza fare la fila o cercare disperatamente un posto libero all'ultimo minuto.</p>
+    <p>Lo schema più efficiente: visita le mostre presto al mattino, quando c'è calma, poi chiudi la giornata con un pasto prenotato in anticipo in un ristorante locale — una semplice giornata di visita diventa così un ricordo che vale davvero la pena conservare.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Cerca su TheFork (Francia, Italia, Spagna)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Cerca su OpenTable (UK, Germania)</a>
+    </div>`,
+  },
+];
+
+const TRAVEL_GUIDES_PL = [
+  {
+    slug: "transport",
+    title: "Jak sprawnie dotrzeć do największych atrakcji turystycznych",
+    intro: "Przewodnik po transporcie miejskim i regionalnym",
+    body: `
+    <p>Udany plan podróży zależy w dużej mierze od tego, jak przemieszczasz się między atrakcjami. Gdy chcesz zwiedzić muzea, zamki czy zabytki historyczne, połączenia między miastami i lokalna logistyka decydują o różnicy między spokojnym dniem a takim, który spędzisz na dworcach i przystankach.</p>
+    <p>Na dłuższych dystansach lub między regionami historycznymi pociąg pozostaje najpopularniejszą opcją — europejska sieć kolejowa łączy większość stolic z mniejszymi miastami, często malowniczymi trasami. Autokary dobrze uzupełniają lukę, zwłaszcza w kierunku miejscowości lub obszarów górskich, do których pociąg nie dociera bezpośrednio, i zwykle kosztują mniej.</p>
+    <p>Jeśli lądujesz na lotnisku z dużą ilością bagażu lub podróżujesz w grupie, wcześniej zarezerwowany prywatny transfer eliminuje kłopoty ze zmianą środków transportu — zawiezie cię prosto z terminalu pod bramę zamku lub do hotelu. Wcześniejsze zaplanowanie tych połączeń zamienia gorączkową podróż w taką bez stresu.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Szukaj biletów kolejowych i autokarowych</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Zarezerwuj prywatny transfer</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "Jak radzić sobie z parkowaniem w pobliżu zabytkowych dzielnic",
+    intro: "Przewodnik dla kierowców — parkowanie w starych centrach miast",
+    body: `
+    <p>Prowadzenie własnego lub wynajętego samochodu daje swobodę poruszania się, której nie zapewnią inne środki transportu — ale zabytkowe centra miast znane są z ograniczeń w ruchu i chronicznego braku miejsc parkingowych.</p>
+    <p>Zostawienie samochodu w przypadkowym miejscu grozi mandatem, a nawet odholowaniem. Najbezpieczniejszą opcją pozostaje strzeżony, prywatnie zarządzany parking podziemny lub naziemny — wiele z nich pozwala zarezerwować miejsce z wyprzedzeniem, co ma szczególne znaczenie w weekendy lub w wysokim sezonie, gdy atrakcje są najbardziej oblegane.</p>
+    <p>Dobrze wybrany parking, kilka kroków od muzeum lub starówki, daje swobodę zwiedzania we własnym tempie, bez martwienia się o samochód. Sprawdź dostępność z wyprzedzeniem i zarezerwuj online — warto, zwłaszcza w ruchliwy weekend.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("centrum miasta"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Zarezerwuj bezpieczne miejsce parkingowe</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "Jak zaplanować idealny dzień zwiedzania",
+    intro: "Dopasowanie godzin otwarcia do pór posiłków",
+    body: `
+    <p>Udany dzień zwiedzania to równowaga między kulturą a odpoczynkiem. Jeśli planujesz dzień wokół godzin otwarcia muzeum czy galerii, warto z wyprzedzeniem zaplanować także przerwy na posiłki — inaczej ryzykujesz, że zgłodniejesz akurat wtedy, gdy wszystkie pobliskie lokale są pełne.</p>
+    <p>Największe atrakcje przyciągają codziennie tysiące odwiedzających, a okoliczne miejsca szybko się zapełniają, zwłaszcza w porze obiadu i kolacji. Wcześniejsza rezerwacja przez platformę internetową gwarantuje stolik bez czekania w kolejce czy rozpaczliwego szukania wolnego miejsca w ostatniej chwili.</p>
+    <p>Najbardziej efektywny schemat: zwiedzaj wystawy wcześnie rano, gdy jest spokojnie, a dzień zakończ posiłkiem zarezerwowanym z wyprzedzeniem w lokalnej restauracji — zwykły dzień zwiedzania staje się wtedy wspomnieniem, które naprawdę warto zachować.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Szukaj na TheFork (Francja, Włochy, Hiszpania)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Szukaj na OpenTable (UK, Niemcy)</a>
+    </div>`,
+  },
+];
+
+const TRAVEL_GUIDES_NL = [
+  {
+    slug: "transport",
+    title: "Zo kom je efficiënt bij de grote toeristische attracties",
+    intro: "Gids voor stedelijk en regionaal vervoer",
+    body: `
+    <p>Een goede reisroute hangt sterk af van hoe je je tussen attracties verplaatst. Als je musea, kastelen of historische monumenten wilt bezoeken, maken de verbinding tussen steden en de lokale logistiek het verschil tussen een ontspannen dag en een dag verloren in stations en haltes.</p>
+    <p>Voor lange afstanden of tussen historische regio's blijft de trein de populairste optie — het Europese spoornetwerk verbindt de meeste hoofdsteden met kleinere steden, vaak via schilderachtige routes. Bussen vullen de gaten goed op, vooral naar plaatsen of berggebieden die de trein niet rechtstreeks bereikt, en kosten meestal minder.</p>
+    <p>Als je met veel bagage op de luchthaven landt of in groep reist, bespaart een vooraf geboekte privétransfer je de rompslomp van het wisselen tussen vervoermiddelen — je gaat rechtstreeks van de terminal naar de poort van het kasteel of het hotel. Deze verbindingen vooraf plannen maakt van een hectische reis een stressvrije.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Zoek trein- en buskaartjes</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Boek een privétransfer</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "parking",
+    title: "Zo ga je om met parkeren bij historische gebieden",
+    intro: "Een gids voor automobilisten — parkeren in oude stadscentra",
+    body: `
+    <p>Met je eigen of een huurauto rijden geeft je een bewegingsvrijheid die andere vervoermiddelen niet kunnen evenaren — maar historische stadscentra staan bekend om verkeersbeperkingen en een chronisch tekort aan parkeerplaatsen.</p>
+    <p>Je auto ergens achterlaten riskeert een boete, of zelfs wegslepen. De veiligste optie blijft een beveiligde, particulier beheerde ondergrondse of bovengrondse parkeergarage — bij veel garages kun je vooraf een plek reserveren, wat vooral in het weekend of hoogseizoen belangrijk is, wanneer de attracties het drukst zijn.</p>
+    <p>Een goed gekozen parkeerplaats, op een paar stappen van het museum of de oude binnenstad, geeft je de vrijheid om in je eigen tempo te verkennen, zonder je zorgen te maken over de auto. Controleer de beschikbaarheid vooraf en boek online — het is de moeite waard, vooral in een druk weekend.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(parkviaLinkFor("stadscentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Boek een beveiligde parkeerplaats</a>
+    </div>`,
+  },
+  {
+    slug: "restaurants",
+    title: "Zo plan je een perfecte dag uit",
+    intro: "Openingstijden afstemmen op etenstijden",
+    body: `
+    <p>Een geweldige dag uit draait om de balans tussen cultuur en rust. Als je je dag opbouwt rond de openingstijden van een museum of galerie, is het de moeite waard om ook je eetpauzes vooraf te plannen — anders loop je het risico hongerig aan te komen net wanneer alle tentjes in de buurt vol zitten.</p>
+    <p>Grote attracties trekken dagelijks duizenden bezoekers, en de omliggende gebieden raken snel druk, vooral tijdens lunch en diner. Vooraf reserveren via een online platform garandeert je een tafel zonder in de rij te staan of op het laatste moment wanhopig naar een vrije plek te zoeken.</p>
+    <p>Het meest efficiënte patroon: bezoek tentoonstellingen vroeg in de ochtend, wanneer het rustig is, en sluit de dag af met een vooraf gereserveerde maaltijd in een lokaal restaurant — een gewone dag uit wordt zo een herinnering die je echt wilt bewaren.</p>
+    <div class="plan-visit-block" style="display:block">
+      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Zoek op TheFork (Frankrijk, Italië, Spanje)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Zoek op OpenTable (VK, Duitsland)</a>
+    </div>`,
+  },
+];
+
+const GUIDES_PAGE_LABELS = {
+  uk: { home: "Home", guidesTitle: "Travel Guides", guidesDesc: "Practical tips for travellers: transport, parking, and restaurant bookings near the big tourist sights.", otherGuides: "Other guides", footer: "practical travel guides, alongside up-to-date opening hours for every sight." },
+  de: { home: "Startseite", guidesTitle: "Reiseführer", guidesDesc: "Praktische Tipps für Reisende: Transport, Parken und Restaurantreservierungen in der Nähe der großen Sehenswürdigkeiten.", otherGuides: "Weitere Reiseführer", footer: "praktische Reiseführer, zusammen mit aktuellen Öffnungszeiten für jede Sehenswürdigkeit." },
+  fr: { home: "Accueil", guidesTitle: "Guides de voyage", guidesDesc: "Conseils pratiques pour les voyageurs : transport, stationnement et réservations de restaurants près des grands sites touristiques.", otherGuides: "Autres guides", footer: "guides de voyage pratiques, ainsi que les horaires d'ouverture à jour pour chaque site." },
+  es: { home: "Inicio", guidesTitle: "Guías de viaje", guidesDesc: "Consejos prácticos para viajeros: transporte, aparcamiento y reservas de restaurantes cerca de las grandes atracciones turísticas.", otherGuides: "Otras guías", footer: "guías de viaje prácticas, junto con los horarios de apertura actualizados de cada lugar." },
+  it: { home: "Home", guidesTitle: "Guide di viaggio", guidesDesc: "Consigli pratici per i viaggiatori: trasporti, parcheggio e prenotazioni al ristorante vicino alle grandi attrazioni turistiche.", otherGuides: "Altre guide", footer: "guide di viaggio pratiche, insieme agli orari di apertura aggiornati di ogni attrazione." },
+  pl: { home: "Strona główna", guidesTitle: "Przewodniki podróżnicze", guidesDesc: "Praktyczne wskazówki dla podróżnych: transport, parkowanie i rezerwacje restauracji w pobliżu głównych atrakcji turystycznych.", otherGuides: "Inne przewodniki", footer: "praktyczne przewodniki podróżnicze wraz z aktualnymi godzinami otwarcia każdej atrakcji." },
+  nl: { home: "Home", guidesTitle: "Reisgidsen", guidesDesc: "Praktische tips voor reizigers: vervoer, parkeren en restaurantreserveringen in de buurt van de grote toeristische attracties.", otherGuides: "Andere gidsen", footer: "praktische reisgidsen, samen met actuele openingstijden voor elke attractie." },
+};
+
+const TRAVEL_GUIDES_BY_LANG = {
+  uk: TRAVEL_GUIDES_EN,
+  de: TRAVEL_GUIDES_DE,
+  fr: TRAVEL_GUIDES_FR,
+  es: TRAVEL_GUIDES_ES,
+  it: TRAVEL_GUIDES_IT,
+  pl: TRAVEL_GUIDES_PL,
+  nl: TRAVEL_GUIDES_NL,
+};
+// Restul limbilor (14 din cele 21) NU au încă ghiduri traduse — cad pe
+// engleză (TRAVEL_GUIDES_EN), mai bine decât o pagină goală sau eronată.
+// Extinde aici pe măsură ce se mai traduc.
+function travelGuidesForLang(lang) {
+  return TRAVEL_GUIDES_BY_LANG[lang] || TRAVEL_GUIDES_EN;
+}
+function guidesPageLabelsFor(lang) {
+  return GUIDES_PAGE_LABELS[lang] || GUIDES_PAGE_LABELS.uk;
+}
+
 function buildTravelGuidesBoxHtmlIntl(lang) {
   if (!TRAVEL_GUIDES_MONETIZATION_READY) {
     return `<p class="intro-text">${escapeHtml(comingSoonTextFor(lang))}</p>`;
   }
   const t = travelGuidesBoxLabelsFor(lang);
+  // Link-uri cu limba curentă atașată (dacă tradusă — vezi TRAVEL_GUIDES_BY_LANG),
+  // ca cineva care navighează în germană să ajungă la ghidul german, nu la
+  // cel englez implicit.
+  const langSuffix = lang && lang !== "uk" && TRAVEL_GUIDES_BY_LANG[lang] ? `?lang=${lang}` : "";
   return `
   <div class="plan-visit-block" style="display:block">
     <p class="intro-text"><strong>${escapeHtml(t.tgTitle)}</strong></p>
-    <a href="/guides/transport" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.tgTransport)}</a>
-    <a href="/guides/parking" class="plan-visit-option plan-visit-parking">${escapeHtml(t.tgParking)}</a>
-    <a href="/guides/restaurants" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.tgRestaurant)}</a>
+    <a href="/guides/transport${langSuffix}" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.tgTransport)}</a>
+    <a href="/guides/parking${langSuffix}" class="plan-visit-option plan-visit-parking">${escapeHtml(t.tgParking)}</a>
+    <a href="/guides/restaurants${langSuffix}" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.tgRestaurant)}</a>
   </div>`;
 }
 
-async function renderTravelGuidePageIntl({ guide, baseUrl, nonce }) {
+async function renderTravelGuidePageIntl({ guide, baseUrl, nonce, lang }) {
+  const activeLang = lang && TRANSLATIONS[lang] ? lang : "uk";
+  const t = guidesPageLabelsFor(activeLang);
+  const guides = travelGuidesForLang(activeLang);
+  const langSuffix = activeLang === "uk" ? "" : `?lang=${activeLang}`;
   const title = `${guide.title} — Travel Guides`;
   const description = `${guide.intro}. Practical tips for travellers, plus direct booking links.`;
-  const canonical = `${baseUrl}/guides/${guide.slug}`;
+  const canonical = `${baseUrl}/guides/${guide.slug}${langSuffix}`;
 
-  const otherGuides = TRAVEL_GUIDES_EN.filter((g) => g.slug !== guide.slug)
-    .map((g) => `<li><a href="/guides/${g.slug}">${escapeHtml(g.title)}</a></li>`)
+  const otherGuides = guides.filter((g) => g.slug !== guide.slug)
+    .map((g) => `<li><a href="/guides/${g.slug}${langSuffix}">${escapeHtml(g.title)}</a></li>`)
     .join("");
 
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">Home</a> / <a href="/guides">Travel Guides</a> / ${escapeHtml(guide.title)}</p>
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / <a href="/guides${langSuffix}">${escapeHtml(t.guidesTitle)}</a> / ${escapeHtml(guide.title)}</p>
 
   <h1 class="page-h1">${escapeHtml(guide.title)}</h1>
   <p class="intro-text">${escapeHtml(guide.intro)}</p>
 
   ${guide.body}
 
-  <h2 class="section-title"><span class="bar"></span>Other guides</h2>
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.otherGuides)}</h2>
   <ul class="mall-list">${otherGuides}</ul>
 
   <footer>
-    <p><strong>Opening Hours Today</strong> — practical travel guides, alongside up-to-date opening hours for every sight.</p>
+    <p><strong>Opening Hours Today</strong> — ${escapeHtml(t.footer)}</p>
   </footer>
 </main>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
 }
 
-function renderTravelGuidesIndexPageIntl({ baseUrl, nonce }) {
-  const title = "Travel Guides — Opening Hours Today";
-  const description = "Practical tips for travellers: transport, parking, and restaurant bookings near the big tourist sights.";
-  const canonical = `${baseUrl}/guides`;
+function renderTravelGuidesIndexPageIntl({ baseUrl, nonce, lang }) {
+  const activeLang = lang && TRANSLATIONS[lang] ? lang : "uk";
+  const t = guidesPageLabelsFor(activeLang);
+  const guides = travelGuidesForLang(activeLang);
+  const langSuffix = activeLang === "uk" ? "" : `?lang=${activeLang}`;
+  const title = `${t.guidesTitle} — Opening Hours Today`;
+  const description = t.guidesDesc;
+  const canonical = `${baseUrl}/guides${langSuffix}`;
 
-  const items = TRAVEL_GUIDES_EN.map((g) => `<li><a href="/guides/${g.slug}">${escapeHtml(g.title)}</a></li>`).join("");
+  const items = guides.map((g) => `<li><a href="/guides/${g.slug}${langSuffix}">${escapeHtml(g.title)}</a></li>`).join("");
 
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">Guides →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">Home</a> / Travel Guides</p>
-  <h1 class="page-h1">Travel Guides</h1>
-  <p class="intro-text">Practical tips for travellers — transport, parking, and restaurant bookings near the big tourist sights.</p>
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(t.guidesTitle)}</p>
+  <h1 class="page-h1">${escapeHtml(t.guidesTitle)}</h1>
+  <p class="intro-text">${escapeHtml(t.guidesDesc)}</p>
   <ul class="mall-list">${items}</ul>
   <footer>
-    <p><strong>Opening Hours Today</strong> — practical travel guides, alongside up-to-date opening hours for every sight.</p>
+    <p><strong>Opening Hours Today</strong> — ${escapeHtml(t.footer)}</p>
   </footer>
 </main>`;
 
-  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "uk" });
+  return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
 }
 
 
@@ -13024,7 +13323,10 @@ app.get("/guides", (req, res) => {
   }
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = renderTravelGuidesIndexPageIntl({ baseUrl: baseUrlFor(req), nonce });
+  // GENERALIZAT — 6 limbi traduse integral (de/fr/es/it/pl/nl), restul cad
+  // pe engleză (vezi travelGuidesForLang) — mai bine decât gol/eronat.
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : "uk";
+  const html = renderTravelGuidesIndexPageIntl({ baseUrl: baseUrlFor(req), nonce, lang: requestedLang });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -13033,14 +13335,16 @@ app.get("/guides/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
-  const guide = TRAVEL_GUIDES_EN.find((g) => g.slug === req.params.slug.toLowerCase());
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : "uk";
+  const guides = travelGuidesForLang(requestedLang);
+  const guide = guides.find((g) => g.slug === req.params.slug.toLowerCase());
   if (!guide) {
     res.status(404).send("Guide not found.");
     return;
   }
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderTravelGuidePageIntl({ guide, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderTravelGuidePageIntl({ guide, baseUrl: baseUrlFor(req), nonce, lang: requestedLang });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
