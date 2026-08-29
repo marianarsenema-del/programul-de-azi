@@ -10730,7 +10730,39 @@ function buildBottomNavScript(nonce) {
   // utilizator: scroll spre un element ascuns nu face nimic vizibil), apoi
   // derulăm până la el — altfel, navigăm spre homepage, sau ascundem
   // butonul dacă nici homepage-ul nu-l are.
-  [["bottomNavSearch","citySearchInput","stores"],["bottomNavFavorites","favoritesList","favorites"]].forEach(function(triple){
+  // căutare: PRIORITAR verificăm "siteSearchInput" — caseta de căutare
+  // instant (magazin/obiectiv), prezentă pe majoritatea paginilor (oraș,
+  // magazin, obiectiv), nu doar pe homepage. Bug real, semnalat direct:
+  // pe o pagină de oraș (care ARE această casetă), butonul de căutare din
+  // bara de jos verifica doar "citySearchInput" (alt element, specific
+  // DOAR homepage-ului RO — formularul "scrie orașul tău") — negăsindu-l
+  // pe pagina curentă, naviga către homepage în loc să deschidă căutarea
+  // chiar acolo unde era utilizatorul.
+  (function(){
+    var link = document.getElementById("bottomNavSearch");
+    if (!link) return;
+    var siteSearch = document.getElementById("siteSearchInput");
+    var citySearch = document.getElementById("citySearchInput");
+    if (siteSearch) {
+      link.addEventListener("click", function(e){
+        e.preventDefault();
+        siteSearch.scrollIntoView({ behavior: "smooth", block: "center" });
+        siteSearch.focus();
+      });
+    } else if (citySearch) {
+      link.addEventListener("click", function(e){
+        e.preventDefault();
+        var tabBtn = document.querySelector('[data-tab="stores"]');
+        if (tabBtn && !tabBtn.classList.contains("active")) { tabBtn.click(); }
+        citySearch.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    } else if (window.location.pathname === "/") {
+      link.style.display = "none";
+    }
+    // altfel — lăsăm link-ul să navigheze normal spre "/#id"
+  })();
+
+  [["bottomNavFavorites","favoritesList","favorites"]].forEach(function(triple){
     var link = document.getElementById(triple[0]);
     var target = document.getElementById(triple[1]);
     var tabName = triple[2];
