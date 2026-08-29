@@ -10738,7 +10738,13 @@ function buildBottomNavHtml(langCode, countryCode) {
   // deși interfața era deja în engleză). Acum href-ul include codul țării
   // curente, la fel ca restul rutelor internaționale.
   const cc = countryCode || "ro";
-  const itineraryLabel = itineraryLabelsFor(langCode).breadcrumbCurrent;
+  // FIX vizual, semnalat direct: textul lung ("Creează itinerar"/"Create
+  // itinerary"), gândit pentru breadcrumb, se rupea pe două rânduri în
+  // spațiul îngust al barei de jos — împingea iconița în sus, descentrată
+  // față de celelalte 4 (Acasă/Căutare/Favorite/Hartă, toate un singur
+  // cuvânt). Folosim eticheta SCURTĂ (navLabelsFor), aceeași folosită deja
+  // în antet, gândită special pentru spații înguste.
+  const itineraryLabel = navLabelsFor(langCode).itinerary;
   const itineraryHref = itineraryHrefFor(cc, langCode);
   const itineraryBtn = `<a href="${escapeHtml(itineraryHref)}" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>${escapeHtml(itineraryLabel)}</span></a>`;
   return `
