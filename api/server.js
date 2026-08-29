@@ -14834,9 +14834,17 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   const cc = countryCode || "ro";
   const t = itineraryLabelsFor(lang);
   const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
+  // FIX real, semnalat direct: acest antet verifica doar isIntlDomain (.ro
+  // vs .eu), nu și limba selectată — pe .eu, chiar dacă alegeai română,
+  // tot vedeai "Guides →" în engleză (același bug găsit și reparat mai
+  // devreme peste tot altundeva pe site — aici a scăpat, pentru că
+  // renderItineraryPage are propriul antet, separat, nu trece prin
+  // funcțiile comune deja reparate). Folosim navLabelsFor(lang), la fel ca
+  // restul paginilor, pe toate cele 21 de limbi.
+  const navL = navLabelsFor(lang);
   const brandHtml = isIntlDomain
-    ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a>`
-    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a>`;
+    ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navL.guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHrefFor(cc, lang)}">${navL.itinerary} →</a>`
+    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">${navL.guides} →</a><a class="guides-link itin-nav-link" href="/itinerar">${navL.itinerary} →</a>`;
   const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
   const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
   const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
@@ -14873,7 +14881,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="${escapeHtml(homeHref)}">${escapeHtml(breadcrumbHomeLabel)}</a> / ${escapeHtml(t.breadcrumbCurrent)}</p>
-  <h1 class="page-h1">${escapeHtml(t.h1)}</h1>
+  <h1 class="page-h1">${escapeHtml(t.h1.replace("🗺️", "🧭"))}</h1>
   <p class="intro-text">${escapeHtml(universalCopy.intro)}</p>
 
   <form id="itineraryForm" class="city-search-form" style="flex-direction:column;gap:12px;align-items:stretch">
