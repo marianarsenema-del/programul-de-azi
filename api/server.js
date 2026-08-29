@@ -9362,6 +9362,8 @@ main{padding-top:8px;}
 .search-result-row + .search-result-row{border-top:1px solid var(--border);}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
 .search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
+.search-result-itin-cta{display:block;padding:12px 16px;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;border-top:1px solid var(--border);background:rgba(255,255,255,.02);}
+.search-result-itin-cta:hover{background:rgba(255,255,255,.05);}
 .fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
 /* Acordeon de obiective turistice, cu lazy-loading (vezi buildAttractionAccordionScript) */
 .attraction-accordion-list{list-style:none;margin:14px 18px 0;display:flex;flex-direction:column;gap:8px;}
@@ -9439,6 +9441,11 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
 .geo-status{margin:10px 18px 0;font-size:13px;color:var(--muted);}
 .city-search-form{display:flex;gap:8px;margin:16px 18px 0;}
 .city-search-input{flex:1 1 auto;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:100px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;}
+/* Lupă vizuală, doar pe caseta de căutare instant (#siteSearchInput, nu
+   toate ".city-search-input" — clasa aceea e împărțită și cu dropdown-ul
+   de zile de la itinerar, unde o lupă n-ar avea sens) — cerut explicit,
+   ca utilizatorul să distingă vizual imediat că e o casetă de căutare. */
+#siteSearchInput{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:16px center;background-size:16px 16px;padding-left:42px;}
 
 /* Selector de orașe — cipuri orizontale + căutare live (buildCitySelectorHtml) */
 .city-chips-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 18px 0;padding-bottom:4px;scrollbar-width:none;}
@@ -10122,6 +10129,10 @@ const HOMEPAGE_FOOTER_TEXTS = {
 
 function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, primaryCountry) {
   const favEmptyText = FAV_EMPTY_TEXTS[lang] || FAV_EMPTY_TEXTS.uk;
+  // Text pentru butonul contextual de itinerar din rezultatele căutării —
+  // reutilizează traducerea deja existentă (navLabelsFor, cele 21 de limbi),
+  // nu o propoziție nouă de tradus separat.
+  const itinCtaLabel = navLabelsFor(lang).itinerary;
   // decisă O SINGURĂ DATĂ, pe server, care listă chiar se trimite — niciodată
   // ambele deodată (ar fi dublat exact bug-ul de greutate a paginii, reparat
   // mai devreme). FIX real, găsit prin testare: "[] || X" e mereu adevărat în
@@ -10134,6 +10145,7 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
   var SEARCH_INDEX = ${safeJson(effectiveIndex)};
   var PRIMARY_COUNTRY = ${safeJson(primaryCountry || null)};
   var FAV_KEY = ${safeJson(favKey || "oht_favorites_v1")};
+  var ITIN_CTA_LABEL = ${safeJson(itinCtaLabel)};
 
   function getFavorites(){
     try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch(e){ return []; }
@@ -10281,6 +10293,25 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
         row.appendChild(a);
         results.appendChild(row);
       });
+      // Buton contextual de itinerar — cerut explicit, DOAR pe tab-ul
+      // "Obiective Turistice" (nu la magazine): dacă printre rezultate sunt
+      // obiective turistice cu un oraș cunoscut (item.city, real, nu dedus),
+      // arătăm un link direct spre itinerar, cu orașul deja completat —
+      // exact fluxul descris ("caut Madrid, vad obiectivele, dau clic sa-mi
+      // fac itinerar"). Aceeași iconiță ca în bara de jos (🧭), pentru
+      // coerență vizuală pe site, nu una nouă.
+      var attractionsTab = document.querySelector('[data-tab="attractions"]');
+      var onAttractionsTab = attractionsTab && attractionsTab.classList.contains("active");
+      if (onAttractionsTab) {
+        var cityMatch = matches.find(function(m){ return m.type === "attraction" && m.city; });
+        if (cityMatch) {
+          var itinRow = document.createElement("a");
+          itinRow.className = "search-result-itin-cta";
+          itinRow.href = "/itinerar?oras=" + encodeURIComponent(cityMatch.city);
+          itinRow.textContent = "🧭 " + ITIN_CTA_LABEL + " – " + cityMatch.city;
+          results.appendChild(itinRow);
+        }
+      }
       results.style.display = "block";
       refreshAllStars();
     });
@@ -10741,6 +10772,14 @@ function buildBottomNavScript(nonce) {
   (function(){
     var link = document.getElementById("bottomNavSearch");
     if (!link) return;
+    // Pe prima pagină (homepage), caseta de căutare e deja vizibilă chiar
+    // sus, la încărcare — o iconiță identică în bara de jos ar fi
+    // redundantă, cerut explicit să dispară doar acolo (nu pe restul
+    // paginilor, unde chiar ajută să găsești caseta ascunsă mai jos).
+    if (window.location.pathname === "/") {
+      link.style.display = "none";
+      return;
+    }
     var siteSearch = document.getElementById("siteSearchInput");
     var citySearch = document.getElementById("citySearchInput");
     if (siteSearch) {
@@ -12126,6 +12165,13 @@ const TRAVEL_GUIDES_NL = [
 
 const GUIDES_PAGE_LABELS = {
   uk: { home: "Home", guidesTitle: "Travel Guides", guidesDesc: "Practical tips for travellers: transport, parking, and restaurant bookings near the big tourist sights.", otherGuides: "Other guides", footer: "practical travel guides, alongside up-to-date opening hours for every sight." },
+  // Bug real, semnalat direct: lipsea complet "ro" din această mapă — un
+  // vizitator de pe .eu care alegea limba română pentru pagina de Ghiduri
+  // vedea tot conținutul în engleză (cădea pe fallback-ul .uk), deși
+  // antetul ("Ghiduri →") arăta deja corect în română (acela venea din
+  // NAV_LABELS, o mapă separată, care AVEA deja "ro"). Reutilizăm text
+  // deja existent, potrivit exact aceluiași scop (pagina RO de /ghiduri).
+  ro: { home: "Acasă", guidesTitle: "Ghiduri de călătorie", guidesDesc: "Sfaturi practice pentru călători: transport, parcare și rezervări la restaurant, aproape de marile obiective turistice.", otherGuides: "Alte ghiduri utile", footer: "ghiduri practice de călătorie, alături de programul actualizat al fiecărui obiectiv." },
   de: { home: "Startseite", guidesTitle: "Reiseführer", guidesDesc: "Praktische Tipps für Reisende: Transport, Parken und Restaurantreservierungen in der Nähe der großen Sehenswürdigkeiten.", otherGuides: "Weitere Reiseführer", footer: "praktische Reiseführer, zusammen mit aktuellen Öffnungszeiten für jede Sehenswürdigkeit." },
   fr: { home: "Accueil", guidesTitle: "Guides de voyage", guidesDesc: "Conseils pratiques pour les voyageurs : transport, stationnement et réservations de restaurants près des grands sites touristiques.", otherGuides: "Autres guides", footer: "guides de voyage pratiques, ainsi que les horaires d'ouverture à jour pour chaque site." },
   es: { home: "Inicio", guidesTitle: "Guías de viaje", guidesDesc: "Consejos prácticos para viajeros: transporte, aparcamiento y reservas de restaurantes cerca de las grandes atracciones turísticas.", otherGuides: "Otras guías", footer: "guías de viaje prácticas, junto con los horarios de apertura actualizados de cada lugar." },
@@ -12185,6 +12231,9 @@ function itineraryHrefFor(countryCode, lang) {
 
 const TRAVEL_GUIDES_BY_LANG = {
   uk: TRAVEL_GUIDES_EN,
+  // Reutilizăm conținutul deja tradus (RO), în loc să-l scriem a doua oară
+  // — vezi comentariul de la GUIDES_PAGE_LABELS.ro pentru motivul bug-ului.
+  ro: TRAVEL_GUIDES_RO,
   de: TRAVEL_GUIDES_DE,
   fr: TRAVEL_GUIDES_FR,
   es: TRAVEL_GUIDES_ES,
@@ -14990,16 +15039,29 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       });
   });
 
-  // La deschiderea paginii — dacă există un itinerar salvat anterior, îl
-  // arătăm direct, fără să mai fie nevoie de o nouă generare (și fără cost
-  // suplimentar către OpenAI). Câmpurile formularului rămân completate cu
-  // orașul/numărul de zile de atunci, pentru context — utilizatorul poate
-  // oricând căuta altceva, sau apăsa "Șterge" ca să pornească de la zero.
-  var saved = loadSavedItinerary();
-  if (saved && saved.data) {
-    document.getElementById("itinOras").value = saved.oras || "";
-    if (saved.zile) document.getElementById("itinZile").value = String(saved.zile);
-    renderItinerary(saved.data);
+  // Dacă vii de la un buton contextual (ex. "🧭 Itinerar – Madrid", din
+  // rezultatele căutării de obiective) — orașul e deja în URL (?oras=...).
+  // Îl completăm direct în casetă, ca să nu-l mai retastezi. În acest caz,
+  // SĂRIM peste afișarea unui itinerar salvat anterior (ar fi confuz să
+  // vezi un itinerar vechi, pentru alt oraș, exact când tocmai ai cerut
+  // unul nou) — utilizatorul mai are nevoie doar să aleagă zilele și să
+  // apese "Generează".
+  var urlParams = new URLSearchParams(window.location.search);
+  var orasDinUrl = urlParams.get("oras");
+  if (orasDinUrl) {
+    document.getElementById("itinOras").value = orasDinUrl;
+  } else {
+    // La deschiderea paginii — dacă există un itinerar salvat anterior, îl
+    // arătăm direct, fără să mai fie nevoie de o nouă generare (și fără cost
+    // suplimentar către OpenAI). Câmpurile formularului rămân completate cu
+    // orașul/numărul de zile de atunci, pentru context — utilizatorul poate
+    // oricând căuta altceva, sau apăsa "Șterge" ca să pornească de la zero.
+    var saved = loadSavedItinerary();
+    if (saved && saved.data) {
+      document.getElementById("itinOras").value = saved.oras || "";
+      if (saved.zile) document.getElementById("itinZile").value = String(saved.zile);
+      renderItinerary(saved.data);
+    }
   }
 })();
 </script>`;
