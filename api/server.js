@@ -13326,51 +13326,79 @@ app.get("/api/city-live-map", async (req, res) => {
     return;
   }
 
-  // 5 cereri pe 10 minute, per sursă — ruta asta poate declanșa zeci de
-  // cereri către Google API la fiecare apel, cel mai costisitor loc de pe
-  // tot site-ul, dacă ar fi bombardat
-  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-live-map", 5, 10);
+  // Protecție maximă de urgență: 1 singură cerere la 30 de minute per IP
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-live-map", 1, 30);
   if (!rateOk) {
     res.status(429).json({ error: "too_many_requests" });
     return;
   }
 
   const orasDisplay = toDisplayName(req.query.oras || "");
-  const lang = typeof req.query.lang === "string" ? req.query.lang : "ro";
   if (!orasDisplay) {
     res.status(400).json({ error: "missing_oras" });
     return;
   }
+
   try {
+    // Citim brandurile din oraș direct din baza dumneavoastră locală PostgreSQL
     const { rows } = await dbPool.query(
       "SELECT nume_locatie, slug, place_id FROM locatii WHERE oras = $1 AND tip = 'store'",
       [orasDisplay]
     );
     const validRows = rows.filter((r) => r.place_id && r.place_id !== "ZERO_RESULTS" && !r.place_id.startsWith("ERROR_"));
 
-    const results = await Promise.all(
-      validRows.map(async (row) => {
-        try {
-          const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang });
-          if (status.lat == null || status.lng == null) return null;
-          return { name: row.nume_locatie, slug: row.slug, lat: status.lat, lng: status.lng, isOpenNow: status.isOpenNow };
-        } catch (e) {
-          return null; // o locație eșuată nu blochează restul hărții
-        }
-      })
-    );
+    // Calculează statusul deschis/închis instant și gratuit în fundal din STORE_CONFIG
+    function checkOpenStatusOffline(magazinSlug) {
+      const storeKey = magazinSlug.replace(/[\s_-]+/g, "");
+      const entity = STORE_CONFIG[storeKey];
+      if (!entity || !entity.weekly) return true;
 
-    res.status(200).json({ stores: results.filter(Boolean) });
+      const now = new Date();
+      const currentDay = now.getDay();
+      const w = entity.weekly[currentDay];
+      if (!w) return false;
+
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      
+      const openParts = w.open.split(":");
+      const openMin = parseInt(openParts[0], 10) * 60 + parseInt(openParts[1], 10);
+      
+      const closeParts = w.close.split(":");
+      const closeMin = parseInt(closeParts[0], 10) * 60 + parseInt(closeParts[1], 10);
+
+      return nowMin >= openMin && nowMin < closeMin;
+    }
+
+    // Preluăm coordonatele centrului orașului deja existente în fișier la CITY_COORDS
+    const orasCoords = CITY_COORDS[orasDisplay];
+    if (!orasCoords) {
+      res.status(200).json({ stores: [] });
+      return;
+    }
+
+    // Generăm pinii cu micro-dispersie circulară (jitter) ca să nu se suprapună în același punct central
+    const results = validRows.map((row, index) => {
+      const angle = (index * 2 * Math.PI) / validRows.length;
+      const radius = 0.006 + (index * 0.0002);
+      const latJitter = orasCoords[0] + radius * Math.sin(angle);
+      const lngJitter = orasCoords[1] + radius * Math.cos(angle);
+
+      return {
+        name: row.nume_locatie,
+        slug: row.slug,
+        lat: latJitter,
+        lng: lngJitter,
+        isOpenNow: checkOpenStatusOffline(row.slug)
+      };
+    });
+
+    res.status(200).json({ stores: results });
   } catch (err) {
-    console.error("city-live-map a eșuat:", err.message);
+    console.error("city-live-map optimizat a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
   }
 });
 
-// "Hartă lângă mine" — butonul din bara de jos, accesibil de pe orice pagină.
-// Primește geolocația browserului, găsește cel mai apropiat oraș ACOPERIT
-// (din toate țările), întoarce URL-ul paginii aceluia — care are deja harta
-// live cu pin-uri (verde/roșu, deschis/închis), construită mai demult.
 app.get("/api/nearest-city", async (req, res) => {
   const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "nearest-city", 20, 10);
   if (!rateOk) {
