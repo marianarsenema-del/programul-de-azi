@@ -8738,7 +8738,12 @@ const SELECTIVE_BRAND_CITIES = {
     // concentrate explicit "în special în județele Hunedoara, Alba și
     // Sibiu" (corporate.remedia.ro/en/) — nu în restul țării. Aici lista
     // e restrânsă la orașele mari din exact aceste 3 județe.
-    remedia: ["Deva", "Hunedoara", "Petroșani", "Alba Iulia", "Sibiu"],
+    // Deva scoasă din listă — semnalat direct, verificat pe teren: farmacia
+    // Remedia NU mai există în Deva (cercetarea inițială, bazată pe
+    // prezența generală în județul Hunedoara, nu a fost suficient de
+    // precisă — județul ≠ fiecare oraș din el). Rămân Hunedoara, Petroșani,
+    // Alba Iulia, Sibiu, neverificate individual încă la fel de riguros.
+    remedia: ["Hunedoara", "Petroșani", "Alba Iulia", "Sibiu"],
   },
   be: {
     // Alvo (grup Colruyt) — verificat prin căutare (alvo.be/winkels +
@@ -8886,6 +8891,12 @@ const SELECTIVE_BRAND_CITIES = {
     carrefour: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     intermarche: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
     auchan: FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    // Forum des Halles — bug real, găsit prin verificarea diagnosticului de
+    // magazine lipsă (nu prin testare directă pe site, ca la celelalte): un
+    // SINGUR mall, în Paris, fără nicio restricție — apărea "așteptat" în
+    // toate cele 52 de orașe/zone ale Franței, inclusiv Ajaccio, Bayonne,
+    // Chamonix, Rocamadour — locuri fără nicio legătură.
+    forumdeshalles: ["Paris"],
   },
   uk: {
     // Cele 3 mall-uri — bug pre-existent, prins prin verificare directă (nu
