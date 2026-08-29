@@ -14876,11 +14876,34 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   var results = document.getElementById("itinResults");
   var submitBtn = document.getElementById("itinSubmitBtn");
   var resetBtn = document.getElementById("itinResetBtn");
+  // Salvare persistentă — cerută explicit ("mi se face un itinerar care
+  // ramane salvat pana il sterg"): itinerarul generat rămâne în
+  // localStorage, vizibil la orice revenire pe pagină (chiar și după ce
+  // închizi browserul), până apeși explicit butonul de ștergere. Cheie
+  // diferită pe fiecare domeniu (ca la restul site-ului — favorite,
+  // notificări), ca să nu se amestece cele două branduri.
+  var STORAGE_KEY = ${safeJson(isIntlDomain ? "oht_itinerar_v1" : "poa_itinerar_v1")};
+
+  function saveItinerary(oras, zile, data){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ oras: oras, zile: zile, data: data, savedAt: Date.now() }));
+    } catch (e) { /* localStorage indisponibil (mod privat etc.) — nu blocăm nimic, doar nu se salvează */ }
+  }
+  function loadSavedItinerary(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function clearSavedItinerary(){
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }
 
   resetBtn.addEventListener("click", function(){
     results.innerHTML = "";
     errorBox.style.display = "none";
     resetBtn.style.display = "none";
+    clearSavedItinerary();
     form.reset();
     form.style.display = "";
     document.getElementById("itinOras").focus();
@@ -14956,6 +14979,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
           return;
         }
         renderItinerary(res.data);
+        saveItinerary(oras, zile, res.data);
       })
       .catch(function(){
         clearInterval(loadingInterval);
@@ -14965,6 +14989,18 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         errorBox.style.display = "block";
       });
   });
+
+  // La deschiderea paginii — dacă există un itinerar salvat anterior, îl
+  // arătăm direct, fără să mai fie nevoie de o nouă generare (și fără cost
+  // suplimentar către OpenAI). Câmpurile formularului rămân completate cu
+  // orașul/numărul de zile de atunci, pentru context — utilizatorul poate
+  // oricând căuta altceva, sau apăsa "Șterge" ca să pornească de la zero.
+  var saved = loadSavedItinerary();
+  if (saved && saved.data) {
+    document.getElementById("itinOras").value = saved.oras || "";
+    if (saved.zile) document.getElementById("itinZile").value = String(saved.zile);
+    renderItinerary(saved.data);
+  }
 })();
 </script>`;
 
