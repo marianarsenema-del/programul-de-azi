@@ -13992,25 +13992,29 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     return;
   }
 
-  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 15, 60);
+  // Securitate sporită: Max 3 itinerarii pe oră per IP (blochează boții, protejează portofelul)
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 3, 60);
   if (!rateOk) {
     res.status(429).json({ error: "too_many_requests" });
     return;
   }
 
-  const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
-  const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
-  let zile = Number(req.body?.zile);
-  if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
-  if (!Number.isFinite(zile) || zile < 1) zile = 1;
-  // Crescut de la 7 la 10 zile, la cerere explicită.
-  if (zile > 10) zile = 10;
+  // Structură curată de destructurare a body-ului trimis de client
+  const { oras: rawOras, zile: rawZile, lang: rawLang } = req.body || {};
+  
+  const oras = typeof rawOras === "string" ? rawOras.trim().slice(0, 100) : "";
+  const lang = typeof rawLang === "string" && ITINERARY_LABELS[rawLang] ? rawLang : "ro";
+  
+  let zile = Number(rawZile);
+  if (!oras) { 
+    res.status(400).json({ error: "missing_oras" }); 
+    return; 
+  }
+  
+  // Plafonare matematică sigură între 1 și maximum 10 zile
+  if (!Number.isFinite(zile) || zile < 1) zile = 2;
+  zile = Math.min(10, Math.max(1, zile));
 
-  // UNIVERSAL — nu mai depinde deloc de pe ce pagină de țară a fost trimisă
-  // cererea (parametrul "tara" primit de la client NU mai e folosit pentru
-  // căutare, doar orașul tastat contează) — vezi resolveCityToCountry mai
-  // sus pentru motivul schimbării: un vizitator trebuie să poată tasta
-  // "Lyon" din orice loc de pe site, nu doar de pe pagina Franței.
   const resolved = resolveCityToCountry(oras);
   if (!resolved) {
     res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă alt oraș.` });
@@ -14032,7 +14036,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
         model: "gpt-4o-mini",
         response_format: { type: "json_object" },
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
+        temperature: 0.6, // Răspunsuri mai precise geografic
       }),
     });
 
