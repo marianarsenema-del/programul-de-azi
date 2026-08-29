@@ -14740,6 +14740,41 @@ Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${lan
 // Opening Hours Today) depinde de DOMENIU, nu de limbă — la fel ca restul
 // paginilor de pe site; limba în sine controlează formularul, mesajele și
 // (prin buildItineraryPrompt) chiar textul generat de AI.
+// Copy UNIVERSAL — placeholder + text introductiv, pentru toate cele 21 de
+// limbi — SUPRASCRIE la randare textul original din ITINERARY_LABELS (nu-l
+// modificăm acolo, ca să nu riscăm alte câmpuri deja bune — title, buton,
+// mesaje de eroare rămân neatinse). Două motive, ambele semnalate direct:
+// 1) "județ" e un concept specific doar României — Germania, de exemplu,
+//    n-are județe; căutarea fiind acum universală (orice oraș, orice
+//    țară), placeholder-ul trebuie să spună doar "Orașul", nu "Oraș sau
+//    județ".
+// 2) textul vechi ("construim un traseu logic din obiective verificate")
+//    suna a lecție de geografie, nu a ceva care să convingă clientul să
+//    își facă un itinerar — rescris cu ton captivant, orientat spre
+//    experiența de vacanță, nu spre mecanica din spate.
+const ITINERARY_COPY_UNIVERSAL = {
+  ro: { placeholder: "Orașul (ex: Paris, Berlin, Roma, Brașov)", intro: "Spune-ne orașul și câte zile ai la dispoziție — transformăm călătoria ta într-un itinerar de neuitat, gata în câteva secunde, din obiectivele turistice pe care le avem deja verificate." },
+  uk: { placeholder: "The city (e.g. Paris, Berlin, Rome, Brașov)", intro: "Tell us the city and how many days you've got — we'll turn your trip into an unforgettable itinerary, ready in seconds, built from tourist attractions we've already verified." },
+  de: { placeholder: "Die Stadt (z. B. Paris, Berlin, Rom, Brașov)", intro: "Sag uns die Stadt und wie viele Tage du hast — wir verwandeln deine Reise in Sekunden in eine unvergessliche Reiseroute, aus bereits geprüften Sehenswürdigkeiten." },
+  fr: { placeholder: "La ville (ex : Paris, Berlin, Rome, Brașov)", intro: "Dites-nous la ville et le nombre de jours dont vous disposez — nous transformons votre voyage en un itinéraire inoubliable, prêt en quelques secondes, à partir d'attractions déjà vérifiées." },
+  es: { placeholder: "La ciudad (ej: París, Berlín, Roma, Brașov)", intro: "Dinos la ciudad y cuántos días tienes — convertimos tu viaje en un itinerario inolvidable, listo en segundos, a partir de atracciones turísticas ya verificadas." },
+  it: { placeholder: "La città (es: Parigi, Berlino, Roma, Brașov)", intro: "Dicci la città e quanti giorni hai a disposizione — trasformiamo il tuo viaggio in un itinerario indimenticabile, pronto in pochi secondi, dalle attrazioni turistiche già verificate." },
+  pl: { placeholder: "Miasto (np. Paryż, Berlin, Rzym, Brașov)", intro: "Podaj miasto i liczbę dni, którymi dysponujesz — zamienimy Twoją podróż w niezapomniany plan zwiedzania, gotowy w kilka sekund, z już zweryfikowanych atrakcji turystycznych." },
+  nl: { placeholder: "De stad (bijv. Parijs, Berlijn, Rome, Brașov)", intro: "Vertel ons de stad en hoeveel dagen je hebt — we maken van je reis een onvergetelijke reisroute, klaar in enkele seconden, uit al geverifieerde bezienswaardigheden." },
+  da: { placeholder: "Byen (f.eks. Paris, Berlin, Rom, Brașov)", intro: "Fortæl os byen og hvor mange dage du har — vi gør din rejse til en uforglemmelig rejseplan, klar på få sekunder, fra allerede verificerede seværdigheder." },
+  cz: { placeholder: "Město (např. Paříž, Berlín, Řím, Brašov)", intro: "Řekněte nám město a kolik dní máte k dispozici — proměníme váš výlet v nezapomenutelnou trasu, hotovou během pár sekund, z již ověřených turistických atrakcí." },
+  ee: { placeholder: "Linn (nt Pariis, Berliin, Rooma, Brașov)", intro: "Ütle meile linna ja mitu päeva sul on — muudame su reisi unustamatuks marsruudiks, valmis mõne sekundiga, juba kontrollitud vaatamisväärsuste põhjal." },
+  fi: { placeholder: "Kaupunki (esim. Pariisi, Berliini, Rooma, Brașov)", intro: "Kerro kaupunki ja kuinka monta päivää sinulla on käytössä — muutamme matkasi unohtumattomaksi matkasuunnitelmaksi muutamassa sekunnissa, jo tarkistetuista nähtävyyksistä." },
+  gr: { placeholder: "Η πόλη (π.χ. Παρίσι, Βερολίνο, Ρώμη, Brașov)", intro: "Πες μας την πόλη και πόσες μέρες έχεις — μετατρέπουμε το ταξίδι σου σε ένα αξέχαστο δρομολόγιο, έτοιμο σε δευτερόλεπτα, από αξιοθέατα που έχουμε ήδη επαληθεύσει." },
+  hr: { placeholder: "Grad (npr. Pariz, Berlin, Rim, Brašov)", intro: "Reci nam grad i koliko dana imaš na raspolaganju — pretvaramo tvoje putovanje u nezaboravan itinerar, spreman za nekoliko sekundi, od već provjerenih turističkih atrakcija." },
+  hu: { placeholder: "A város (pl. Párizs, Berlin, Róma, Brassó)", intro: "Mondd meg a várost és hány napod van — pár másodperc alatt felejthetetlen útitervvé varázsoljuk az utazásodat, már ellenőrzött turisztikai látványosságokból." },
+  lt: { placeholder: "Miestas (pvz. Paryžius, Berlynas, Roma, Brašovas)", intro: "Pasakykite miestą ir kiek dienų turite — jūsų kelionę paverčiame nepamirštamu maršrutu, paruoštu per kelias sekundes, iš jau patikrintų lankytinų vietų." },
+  lv: { placeholder: "Pilsēta (piem. Parīze, Berlīne, Roma, Brašova)", intro: "Pasakiet mums pilsētu un cik dienu jums ir — jūsu ceļojumu pārvērtīsim neaizmirstamā maršrutā, gatavā dažu sekunžu laikā, no jau pārbaudītām apskates vietām." },
+  pt: { placeholder: "A cidade (ex: Paris, Berlim, Roma, Brasóvia)", intro: "Diz-nos a cidade e quantos dias tens — transformamos a tua viagem num itinerário inesquecível, pronto em segundos, a partir de atrações turísticas já verificadas." },
+  se: { placeholder: "Staden (t.ex. Paris, Berlin, Rom, Brașov)", intro: "Berätta staden och hur många dagar du har — vi förvandlar din resa till en oförglömlig reseplan, klar på några sekunder, från redan verifierade sevärdheter." },
+  si: { placeholder: "Mesto (npr. Pariz, Berlin, Rim, Brašov)", intro: "Povej nam mesto in koliko dni imaš na voljo — tvoje potovanje spremenimo v nepozaben itinerar, pripravljen v nekaj sekundah, iz že preverjenih turističnih znamenitosti." },
+  sk: { placeholder: "Mesto (napr. Paríž, Berlín, Rím, Brašov)", intro: "Povedz nám mesto a koľko dní máš k dispozícii — tvoj výlet premeníme na nezabudnuteľný itinerár, hotový za pár sekúnd, z už overených turistických atrakcií." },
+};
 function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   const cc = countryCode || "ro";
   const t = itineraryLabelsFor(lang);
@@ -14756,15 +14791,12 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   // cuiva care planifică un itinerar în Belgia sau Germania — bug real,
   // prins prin verificare directă a paginii ("arăta rău").
   //
-  // UNIVERSAL — placeholder-ul arată acum exemple din MAI MULTE țări
-  // deodată, pe orice pagină (inclusiv România), pentru că itinerarul
-  // însuși a devenit universal: un vizitator poate tasta orice oraș, din
-  // orice țară acoperită, indiferent pe ce pagină se află (schimbare
-  // cerută explicit — "el nu trebuie sa aiba exemple din Romania ci
-  // general valabile pentru toate tarile"). NU rescriem cele 21 de texte
-  // traduse (risc de greșeală lingvistică) — doar înlocuim partea din
-  // paranteze cu exemple neutre, universale.
-  let placeholder = t.placeholder.replace(/\s*\([^)]*\)\s*$/, " (ex: Paris, Berlin, Roma, Brașov)");
+  // UNIVERSAL — placeholder + intro suprascrise din ITINERARY_COPY_UNIVERSAL
+  // de mai sus (cele 21 de limbi), NU doar exemplele din paranteză — vezi
+  // comentariul de acolo pentru motiv ("Orașul", nu "Oraș sau județ";
+  // text captivant, nu descriere tehnică).
+  const universalCopy = ITINERARY_COPY_UNIVERSAL[lang] || ITINERARY_COPY_UNIVERSAL.uk;
+  let placeholder = universalCopy.placeholder;
   let description = t.description;
   const totalAttractions = Object.values(ATTRACTIONS).reduce((sum, list) => sum + list.length, 0);
   if (totalAttractions) {
@@ -14787,7 +14819,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
 <main class="wrap">
   <p class="breadcrumb"><a href="${escapeHtml(homeHref)}">${escapeHtml(breadcrumbHomeLabel)}</a> / ${escapeHtml(t.breadcrumbCurrent)}</p>
   <h1 class="page-h1">${escapeHtml(t.h1)}</h1>
-  <p class="intro-text">${escapeHtml(t.intro)}</p>
+  <p class="intro-text">${escapeHtml(universalCopy.intro)}</p>
 
   <form id="itineraryForm" class="city-search-form" style="flex-direction:column;gap:12px;align-items:stretch">
     <input type="text" id="itinOras" class="city-search-input" placeholder="${escapeHtml(placeholder)}" required>
