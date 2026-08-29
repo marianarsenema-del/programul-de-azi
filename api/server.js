@@ -11226,7 +11226,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11334,7 +11334,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11419,7 +11419,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11591,7 +11591,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="${itineraryHomeHref}">Itinerary →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHomeHref}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12098,6 +12098,41 @@ const GUIDES_PAGE_LABELS = {
   nl: { home: "Home", guidesTitle: "Reisgidsen", guidesDesc: "Praktische tips voor reizigers: vervoer, parkeren en restaurantreserveringen in de buurt van de grote toeristische attracties.", otherGuides: "Andere gidsen", footer: "praktische reisgidsen, samen met actuele openingstijden voor elke attractie." },
 };
 
+// Etichete SCURTE, pentru antetul paginii ("Guides →" / "Itinerary →") — pe
+// TOATE cele 21 de limbi ale site-ului, nu doar cele 6-7 cu ghiduri complete
+// traduse. Bug real, semnalat direct: aceste două cuvinte erau legate de
+// DOMENIU (.ro vs .eu), nu de LIMBA selectată — pe .eu, un vizitator care
+// alegea română (sau orice altă limbă din cele 21) tot vedea "Guides"/
+// "Itinerary" în engleză, indiferent ce alesese. Separat complet de
+// GUIDES_PAGE_LABELS (acela e conținut lung, pentru pagina de ghiduri
+// propriu-zisă — nu toate cele 21 de limbi îl au încă).
+const NAV_LABELS = {
+  uk: { guides: "Guides", itinerary: "Itinerary" },
+  ro: { guides: "Ghiduri", itinerary: "Itinerar" },
+  de: { guides: "Reiseführer", itinerary: "Reiseroute" },
+  fr: { guides: "Guides", itinerary: "Itinéraire" },
+  es: { guides: "Guías", itinerary: "Itinerario" },
+  it: { guides: "Guide", itinerary: "Itinerario" },
+  pl: { guides: "Przewodniki", itinerary: "Plan podróży" },
+  nl: { guides: "Gidsen", itinerary: "Reisroute" },
+  da: { guides: "Guider", itinerary: "Rejseplan" },
+  cz: { guides: "Průvodci", itinerary: "Trasa" },
+  ee: { guides: "Juhendid", itinerary: "Marsruut" },
+  fi: { guides: "Oppaat", itinerary: "Matkasuunnitelma" },
+  gr: { guides: "Οδηγοί", itinerary: "Δρομολόγιο" },
+  hr: { guides: "Vodiči", itinerary: "Itinerar" },
+  hu: { guides: "Útikalauzok", itinerary: "Útiterv" },
+  lt: { guides: "Vadovai", itinerary: "Maršrutas" },
+  lv: { guides: "Ceļveži", itinerary: "Maršruts" },
+  pt: { guides: "Guias", itinerary: "Itinerário" },
+  se: { guides: "Guider", itinerary: "Resplan" },
+  si: { guides: "Vodniki", itinerary: "Itinerar" },
+  sk: { guides: "Sprievodcovia", itinerary: "Itinerár" },
+};
+function navLabelsFor(lang) {
+  return NAV_LABELS[lang] || NAV_LABELS.uk;
+}
+
 const TRAVEL_GUIDES_BY_LANG = {
   uk: TRAVEL_GUIDES_EN,
   de: TRAVEL_GUIDES_DE,
@@ -12151,7 +12186,7 @@ async function renderTravelGuidePageIntl({ guide, baseUrl, nonce, lang }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">${navLabelsFor(activeLang).guides} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12188,7 +12223,7 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce, lang }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides${langSuffix}">${navLabelsFor(activeLang).guides} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12334,7 +12369,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
