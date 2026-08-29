@@ -9207,6 +9207,12 @@ body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,2
 .bottom-nav-item{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:11px;font-weight:600;}
 .bottom-nav-icon{font-size:20px;line-height:1;}
 @media (min-width: 900px){.bottom-nav{display:none;}body{padding-bottom:48px;}}
+/* Link-ul de itinerar din antet — vizibil DOAR pe desktop (unde bara de jos
+   nu există deloc, la fel ca regula de mai sus). Pe mobil, bara de jos are
+   deja propriul buton "🧭 Itinerar" — dacă am fi arătat și link-ul din
+   antet acolo, ar fi apărut duplicat, înghesuit sub "Ghiduri" (semnalat
+   direct: "scoate Itinerar de sub Ghid... nu duplica"). */
+@media (max-width: 899px){.itin-nav-link{display:none;}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 a{color:inherit;text-decoration:none;}
 .wrap{max-width:520px;margin:0 auto;padding:0 18px;}
@@ -11045,7 +11051,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11118,7 +11124,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11224,7 +11230,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11332,7 +11338,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11417,7 +11423,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11589,7 +11595,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHomeHref}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHomeHref}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11726,7 +11732,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11765,7 +11771,7 @@ function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12302,7 +12308,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12381,7 +12387,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link itin-nav-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12459,7 +12465,7 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12498,7 +12504,7 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12551,7 +12557,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -13868,33 +13874,24 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
 
   const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
   const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
-  // GENERALIZAT — acceptă orice țară din COUNTRY_LABELS, nu doar România.
-  // Fără parametru (sau necunoscut), cade pe "ro" — comportamentul de
-  // dinainte, neschimbat, ca să nu stricăm nimic deja funcțional.
-  const tara = typeof req.body?.tara === "string" && COUNTRY_LABELS[req.body.tara] ? req.body.tara : "ro";
   let zile = Number(req.body?.zile);
   if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
   if (!Number.isFinite(zile) || zile < 1) zile = 1;
-  if (zile > 7) zile = 7; // limită sensibilă — un itinerar de 7+ zile cu date filtrate local nu mai are sens practic
+  // Crescut de la 7 la 10 zile, la cerere explicită.
+  if (zile > 10) zile = 10;
 
-  let obiectiveText;
-  const numeTara = COUNTRY_NAMES_RO[tara] || "România";
-
-  if (tara === "ro") {
-    const { judet, obiective } = filtreazaObiectivePentruOras(oras);
-    if (!judet || !obiective.length) {
-      res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un oraș sau județ din România.` });
-      return;
-    }
-    obiectiveText = obiective.map((o) => `${o.nume} (${o.localitate})`);
-  } else {
-    const { obiective } = filtreazaObiectivePentruOrasIntl(tara, oras);
-    if (!obiective.length) {
-      res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă un alt oraș din ${numeTara}.` });
-      return;
-    }
-    obiectiveText = obiective.map((a) => a.name);
+  // UNIVERSAL — nu mai depinde deloc de pe ce pagină de țară a fost trimisă
+  // cererea (parametrul "tara" primit de la client NU mai e folosit pentru
+  // căutare, doar orașul tastat contează) — vezi resolveCityToCountry mai
+  // sus pentru motivul schimbării: un vizitator trebuie să poată tasta
+  // "Lyon" din orice loc de pe site, nu doar de pe pagina Franței.
+  const resolved = resolveCityToCountry(oras);
+  if (!resolved) {
+    res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă alt oraș.` });
+    return;
   }
+  const { tara, obiective: obiectiveText } = resolved;
+  const numeTara = COUNTRY_NAMES_RO[tara] || "România";
 
   const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara);
 
@@ -14612,6 +14609,58 @@ function filtreazaObiectivePentruOrasIntl(countryCode, orasInput) {
   return { obiective: combinat, gasitExactInOras: potrivite.length > 0 };
 }
 
+// REZOLVARE UNIVERSALĂ oraș -> țară — schimbare cerută explicit: itinerarul
+// nu mai trebuie legat de "pe ce pagină de țară ești" — un român din
+// România care mâine pleacă la Paris trebuie să poată tasta "Lyon" din
+// ORICE loc de pe site (pagina principală, orice țară) și să primească
+// direct itinerarul pentru Lyon, fără să navigheze întâi la pagina Franței.
+//
+// Strategie, în ordinea încrederii (cea mai sigură întâi):
+//  1. România întâi — verificăm SITEMAP_CITIES + județe (logica deja
+//     existentă, cu vecini de județ etc.) — cea mai bogată sursă de date.
+//  2. Restul țărilor — potrivire EXACTĂ pe COUNTRIES[cc].cities (lista
+//     "oficială" de orașe urmărite a fiecărei țări) — cea mai de încredere
+//     sursă pentru restul țărilor, verificată manual la fiecare extindere.
+//  3. Potrivire PARȚIALĂ pe COUNTRIES[cc].cities (substring, în ambele
+//     sensuri) — acoperă variații de scriere (ex. "Muenchen" vs "München").
+//  4. Ultimă variantă — orașul apare ca substring în vreun NUME de obiectiv,
+//     în orice țară (gasitExactInOras din filtreazaObiectivePentruOrasIntl)
+//     — mai slab, dar mai bine decât un eșec complet.
+// Dacă nicio țară nu se potrivește la niciun pas, întoarce null — apelantul
+// arată un mesaj de eroare general, NU mai specific unei singure țări.
+function resolveCityToCountry(orasInput) {
+  const roResult = filtreazaObiectivePentruOras(orasInput);
+  if (roResult.judet && roResult.obiective && roResult.obiective.length) {
+    return { tara: "ro", obiective: roResult.obiective.map((o) => `${o.nume} (${o.localitate})`) };
+  }
+
+  const norm = normalizeJudetInput(orasInput);
+  const otherCountries = Object.keys(COUNTRIES).filter((cc) => cc !== "ro");
+
+  for (const cc of otherCountries) {
+    const cities = COUNTRIES[cc].cities || [];
+    if (cities.some((c) => normalizeJudetInput(c) === norm)) {
+      const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
+      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name) };
+    }
+  }
+
+  for (const cc of otherCountries) {
+    const cities = COUNTRIES[cc].cities || [];
+    if (cities.some((c) => { const nc = normalizeJudetInput(c); return nc.includes(norm) || norm.includes(nc); })) {
+      const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
+      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name) };
+    }
+  }
+
+  for (const cc of otherCountries) {
+    const { obiective, gasitExactInOras } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
+    if (gasitExactInOras) return { tara: cc, obiective: obiective.map((a) => a.name) };
+  }
+
+  return null;
+}
+
 // promptul trimis către OpenAI — cerem explicit format JSON, structură fixă,
 // ca frontend-ul să poată randa direct, fără parsare fragilă de text liber.
 // GENERALIZAT pentru orice țară: countryCode + numeTara (română, pt. AI) +
@@ -14665,7 +14714,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
   const brandHtml = isIntlDomain
     ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a>`
-    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a>`;
+    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a>`;
   const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
   const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
   const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
@@ -14675,30 +14724,26 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   // cuiva care planifică un itinerar în Belgia sau Germania — bug real,
   // prins prin verificare directă a paginii ("arăta rău").
   //
-  // NU rescriem cele 27 de texte traduse (risc mare de greșeală lingvistică
-  // pe limbi pe care nu le stăpânim) — în schimb, la randare, înlocuim DOAR
-  // parté dintre paranteze cu exemple reale, luate din COUNTRIES[cc].cities
-  // (deja existente, mereu sincronizate cu orașele reale ale țării). Numele
-  // de orașe (Bruxelles, Antwerpen etc.) nu se traduc de la o limbă la
-  // alta, deci sunt sigure de folosit fără text-lider tradus.
-  let placeholder = t.placeholder;
+  // UNIVERSAL — placeholder-ul arată acum exemple din MAI MULTE țări
+  // deodată, pe orice pagină (inclusiv România), pentru că itinerarul
+  // însuși a devenit universal: un vizitator poate tasta orice oraș, din
+  // orice țară acoperită, indiferent pe ce pagină se află (schimbare
+  // cerută explicit — "el nu trebuie sa aiba exemple din Romania ci
+  // general valabile pentru toate tarile"). NU rescriem cele 21 de texte
+  // traduse (risc de greșeală lingvistică) — doar înlocuim partea din
+  // paranteze cu exemple neutre, universale.
+  let placeholder = t.placeholder.replace(/\s*\([^)]*\)\s*$/, " (ex: Paris, Berlin, Roma, Brașov)");
   let description = t.description;
-  if (cc !== "ro" && COUNTRIES[cc]) {
-    const exampleCities = (COUNTRIES[cc].cities || []).slice(0, 2);
-    if (exampleCities.length) {
-      placeholder = placeholder.replace(/\s*\([^)]*\)\s*$/, ` (${exampleCities.join(", ")})`);
-    }
-    const countAttractions = (ATTRACTIONS[cc] || []).length;
-    if (countAttractions) {
-      description = description.replace(/\b500\b/, String(countAttractions));
-    }
+  const totalAttractions = Object.values(ATTRACTIONS).reduce((sum, list) => sum + list.length, 0);
+  if (totalAttractions) {
+    description = description.replace(/\b500\b/, String(totalAttractions)).replace(/din România/i, "din toate țările acoperite");
   }
   // Canonical GENERALIZAT: /itinerar pentru RO (neschimbat), /<tara>/itinerar
   // pentru restul — la fel ca la paginile de obiective/magazine internaționale.
   const canonical = cc === "ro" ? `${baseUrl}/itinerar` : `${baseUrl}/${cc}/itinerar?lang=${lang}`;
 
 
-  const daysOptionsHtml = [1, 2, 3, 4, 5].map((n) => `<option value="${n}"${n === 2 ? " selected" : ""}>${n}</option>`).join("");
+  const daysOptionsHtml = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => `<option value="${n}"${n === 2 ? " selected" : ""}>${n}</option>`).join("");
 
   const bodyHtml = `
 <header>
