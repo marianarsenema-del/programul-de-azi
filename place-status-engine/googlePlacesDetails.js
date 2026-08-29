@@ -26,6 +26,16 @@
  *                               deja plătim această categorie pentru name)
  *  - formatted_phone_number  -> telefon (categoria Contact — GRATIS, deja
  *                               plătim această categorie pentru opening_hours)
+ *  - geometry                -> coordonatele GPS (geometry.location.lat/lng)
+ *                               — categoria Basic, GRATIS (confirmat direct
+ *                               din documentația Google: aceeași categorie
+ *                               $0 ca name/formatted_address, NU adaugă
+ *                               niciun cost suplimentar). Bug real, găsit
+ *                               prin testare directă: lipsea complet de
+ *                               aici, deci getLocationStatus.js nu avea de
+ *                               unde extrage lat/lng, deși cod din server.js
+ *                               (schema.org geo + link-uri de parcare
+ *                               YourParkingSpace) presupunea că există.
  * -----------------------------------------------------------------------
  */
 
@@ -37,6 +47,7 @@ const FIELDS = [
   "utc_offset",
   "formatted_address",
   "formatted_phone_number",
+  "geometry",
 ].join(",");
 
 async function fetchPlaceDetails(placeId, apiKey, language) {
