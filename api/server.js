@@ -10702,9 +10702,7 @@ function buildBottomNavHtml(langCode, countryCode) {
   // curente, la fel ca restul rutelor internaționale.
   const cc = countryCode || "ro";
   const itineraryLabel = itineraryLabelsFor(langCode).breadcrumbCurrent;
-  const itineraryHref = cc === "ro"
-    ? (langCode === "ro" ? "/itinerar" : `/itinerar?lang=${langCode}`)
-    : `/${cc}/itinerar?lang=${langCode}`;
+  const itineraryHref = itineraryHrefFor(cc, langCode);
   const itineraryBtn = `<a href="${escapeHtml(itineraryHref)}" class="bottom-nav-item"><span class="bottom-nav-icon">🧭</span><span>${escapeHtml(itineraryLabel)}</span></a>`;
   return `
 <nav class="bottom-nav">
@@ -11226,7 +11224,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11334,7 +11332,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11419,7 +11417,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11587,7 +11585,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   // țara detectată geografic (validDetected), dacă există, altfel cade pe
   // varianta simplă /itinerar (România) — comportament mai bun decât să
   // lipsească linkul complet.
-  const itineraryHomeHref = validDetected ? `/${validDetected}/itinerar?lang=${activeLang}` : "/itinerar";
+  const itineraryHomeHref = itineraryHrefFor(validDetected, activeLang);
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
@@ -12132,6 +12130,20 @@ const NAV_LABELS = {
 function navLabelsFor(lang) {
   return NAV_LABELS[lang] || NAV_LABELS.uk;
 }
+// Construiește href-ul corect către itinerar, pentru ORICE context — bug
+// real, găsit prin testare directă: România NU are o rută "/ro/itinerar"
+// (are doar ruta simplă "/itinerar", fără prefix de țară) — un link generat
+// mecanic ca `/${countryCode}/itinerar` pentru România cădea pe ruta
+// generică de oraș, care trata literal cuvântul "itinerar" ca nume de oraș
+// necunoscut (de-aia apăreau "Lidl Itinerar" etc. — magazinele universale
+// aplicate unui "oraș" inventat). Centralizat aici, o singură dată, ca să nu
+// mai apară din nou aceeași greșeală scrisă de mână, în alt loc.
+function itineraryHrefFor(countryCode, lang) {
+  if (!countryCode || countryCode === "ro") {
+    return lang && lang !== "ro" ? `/itinerar?lang=${lang}` : "/itinerar";
+  }
+  return `/${countryCode}/itinerar?lang=${lang}`;
+}
 
 const TRAVEL_GUIDES_BY_LANG = {
   uk: TRAVEL_GUIDES_EN,
@@ -12369,7 +12381,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">${navLabelsFor(activeLang).itinerary} →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${navLabelsFor(activeLang).guides} →</a><a class="guides-link" href="${itineraryHrefFor(countryCode, activeLang)}">${navLabelsFor(activeLang).itinerary} →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
