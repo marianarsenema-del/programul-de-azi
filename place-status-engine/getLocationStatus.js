@@ -77,6 +77,8 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   isSpecialDay: boolean,
  *   specialDayReason: string|null,
  *   utcOffsetMinutes: number|null,
+ *   lat: number|null,
+ *   lng: number|null,
  *   fromCache: boolean,
  * }>}
  */
@@ -92,6 +94,17 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
     await saveCachedDetails(pool, placeId, googleLang, raw);
   }
 
+  // Coordonate GPS — bug real, găsit prin testare directă (link-urile de
+  // parcare YourParkingSpace rămâneau mereu "urmează în curând", chiar și
+  // pentru obiective din UK cu place_id valid): lipseau complet din acest
+  // fișier, deși `geometry` era deja cerut de la Google (după fix-ul din
+  // googlePlacesDetails.js) — extrase aici acum, din ambele ramuri de
+  // return, ca orice apelant (schema.org geo, link-uri de parcare) să le
+  // găsească indiferent dacă locația are sau nu program orar completat.
+  const geo = raw.geometry && raw.geometry.location;
+  const lat = geo && typeof geo.lat === "number" ? geo.lat : null;
+  const lng = geo && typeof geo.lng === "number" ? geo.lng : null;
+
   // fallback defensiv: dacă locația nu are deloc program pe Google (se
   // întâmplă la locații slab completate), nu crăpăm — raportăm onest că
   // nu știm, nu inventăm un status
@@ -106,6 +119,8 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
       utcOffsetMinutes: raw.utc_offset ?? null,
       formattedAddress: raw.formatted_address || null,
       formattedPhoneNumber: raw.formatted_phone_number || null,
+      lat,
+      lng,
       fromCache,
       note: "Google nu are program orar completat pentru această locație.",
     };
@@ -129,6 +144,8 @@ async function getLocationStatus({ pool, placeId, apiKey, language }) {
     utcOffsetMinutes,
     formattedAddress: raw.formatted_address || null,
     formattedPhoneNumber: raw.formatted_phone_number || null,
+    lat,
+    lng,
     fromCache,
   };
 }
