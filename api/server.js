@@ -11047,7 +11047,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11120,7 +11120,7 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11226,7 +11226,7 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
     const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11334,7 +11334,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11419,7 +11419,7 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11583,10 +11583,15 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     })
     .join("");
 
+  // Itinerar — pe homepage nu există o singură țară "curentă"; folosim
+  // țara detectată geografic (validDetected), dacă există, altfel cade pe
+  // varianta simplă /itinerar (România) — comportament mai bun decât să
+  // lipsească linkul complet.
+  const itineraryHomeHref = validDetected ? `/${validDetected}/itinerar?lang=${activeLang}` : "/itinerar";
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="${itineraryHomeHref}">Itinerary →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11723,7 +11728,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -11762,7 +11767,7 @@ function renderTravelGuidesIndexPage({ baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12250,7 +12255,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12329,7 +12334,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a><a class="guides-link" href="/${countryCode}/itinerar?lang=${activeLang}">Itinerary →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12407,7 +12412,7 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12446,7 +12451,7 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -12499,7 +12504,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
-    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a></div>
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a></div>
     <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
   </div>
 </header>
@@ -14613,7 +14618,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   const isIntlDomain = baseUrl.includes(INTL_DOMAIN);
   const brandHtml = isIntlDomain
     ? `<a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">Guides →</a>`
-    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a>`;
+    : `<a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link" href="/itinerar">Itinerar →</a>`;
   const homeHref = isIntlDomain ? `/?lang=${lang}` : "/";
   const breadcrumbHomeLabel = (TRANSLATIONS[lang] && TRANSLATIONS[lang].home) || (isIntlDomain ? "Home" : "Acasă");
   const title = `${t.title} — ${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}`;
