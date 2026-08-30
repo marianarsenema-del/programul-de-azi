@@ -2991,12 +2991,12 @@ const TRANSLATIONS = {
   ro: {
     dayNames: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
     homeH1: "Este magazinul deschis chiar acum?",
-    homeIntro: "Alege o țară mai jos ca să filtrezi tot — magazine și obiective deopotrivă — sau caută direct.",
+    homeIntro: "Alege mai jos limba în care vrei informațiile, apoi o țară ca să filtrezi tot — magazine și obiective deopotrivă — sau caută direct.",
     chooseCountry: "Alege o țară",
     showAllCountries: "🌍 Arată toate țările",
     storesIn: "Magazine în",
     attractionsIn: "Obiective în",
-    attractionsIntro: "Pagini oficiale de bilete și informații — verifică mereu programul live afișat acolo înainte să vizitezi. Apasă ☆ ca să-l salvezi la favorite.",
+    attractionsIntro: (favHref, itinHref) => `Informații și bilete oficiale. Verifică programul actualizat înainte de vizită, adaugă obiective turistice la <a href="${favHref}" class="intro-inline-link">favorite (⭐)</a> pentru mai târziu sau creează un <a href="${itinHref}" class="intro-inline-link">itinerar (🧭)</a>.`,
     allPrefix: "Toate",
     geoLooksLike: "📍 Se pare că ești în",
     geoShowingFirst: "— ți-l arătăm primul. Apasă 🌍 ca să răsfoiești tot, sau alege alt steag mai jos oricând.",
@@ -3037,12 +3037,12 @@ const TRANSLATIONS = {
   de: {
     dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
     homeH1: "Ist der Laden gerade geöffnet?",
-    homeIntro: "Wähle unten ein Land, um alles zu filtern — Geschäfte und Sehenswürdigkeiten — oder suche direkt.",
+    homeIntro: "Wähle unten zuerst deine Sprache, dann ein Land, um alles zu filtern — Geschäfte und Sehenswürdigkeiten — oder suche direkt.",
     chooseCountry: "Länder auswählen",
     showAllCountries: "🌍 Alle Länder anzeigen",
     storesIn: "Geschäfte in",
     attractionsIn: "Sehenswürdigkeiten in",
-    attractionsIntro: "Offizielle Ticket- und Informationsseiten — prüfe vor deinem Besuch immer die dort angezeigten Live-Öffnungszeiten. Tippe auf ☆, um zu deinen Favoriten hinzuzufügen.",
+    attractionsIntro: (favHref, itinHref) => `Offizielle Informationen und Tickets. Prüfe vor deinem Besuch die aktuellen Öffnungszeiten, füge Sehenswürdigkeiten zu deinen <a href="${favHref}" class="intro-inline-link">Favoriten (⭐)</a> hinzu oder erstelle eine <a href="${itinHref}" class="intro-inline-link">Reiseroute (🧭)</a>.`,
     allPrefix: "Alle",
     geoLooksLike: "📍 Sieht so aus, als wärst du in",
     geoShowingFirst: "— zeigen wir dir zuerst. Tippe auf 🌍, um alles zu durchsuchen, oder wähle unten jederzeit eine andere Flagge.",
@@ -3083,12 +3083,12 @@ const TRANSLATIONS = {
   uk: {
     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     homeH1: "Is the store open right now?",
-    homeIntro: "Pick a country below to filter everything — Stores and Attractions both — or search directly.",
+    homeIntro: "Pick your language below, then a country to filter everything — Stores and Attractions both — or search directly.",
     chooseCountry: "Choose a country",
     showAllCountries: "🌍 Show all countries",
     storesIn: "Stores in",
     attractionsIn: "Attractions in",
-    attractionsIntro: "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.",
+    attractionsIntro: (favHref, itinHref) => `Official information and tickets. Check the updated hours before your visit, add attractions to your <a href="${favHref}" class="intro-inline-link">favorites (⭐)</a> for later, or create an <a href="${itinHref}" class="intro-inline-link">itinerary (🧭)</a>.`,
     allPrefix: "All",
     geoLooksLike: "📍 Looks like you're in",
     geoShowingFirst: "— showing that first. Tap 🌍 to browse everything, or pick another flag below anytime.",
@@ -3129,12 +3129,12 @@ const TRANSLATIONS = {
   es: {
     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
     homeH1: "¿Está la tienda abierta ahora mismo?",
-    homeIntro: "Elige un país abajo para filtrar todo — Tiendas y Atracciones — o busca directamente.",
+    homeIntro: "Elige tu idioma abajo, luego un país para filtrar todo — Tiendas y Atracciones — o busca directamente.",
     chooseCountry: "Elige un país",
     showAllCountries: "🌍 Mostrar todos los países",
     storesIn: "Tiendas en",
     attractionsIn: "Atracciones en",
-    attractionsIntro: "Páginas oficiales de entradas e información — comprueba siempre el horario en vivo mostrado allí antes de visitar. Toca ☆ para guardarlo en tus favoritos.",
+    attractionsIntro: (favHref, itinHref) => `Información y entradas oficiales. Comprueba el horario actualizado antes de tu visita, añade atracciones a tus <a href="${favHref}" class="intro-inline-link">favoritos (⭐)</a> para más tarde o crea un <a href="${itinHref}" class="intro-inline-link">itinerario (🧭)</a>.`,
     allPrefix: "Todo",
     geoLooksLike: "📍 Parece que estás en",
     geoShowingFirst: "— mostrando eso primero. Toca 🌍 para ver todo, o elige otra bandera abajo cuando quieras.",
@@ -3175,12 +3175,12 @@ const TRANSLATIONS = {
   fr: {
     dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     homeH1: "Le magasin est-il ouvert maintenant ?",
-    homeIntro: "Choisissez un pays ci-dessous pour tout filtrer — Magasins et Attractions — ou recherchez directement.",
+    homeIntro: "Choisissez votre langue ci-dessous, puis un pays pour tout filtrer — Magasins et Attractions — ou recherchez directement.",
     chooseCountry: "Choisir un pays",
     showAllCountries: "🌍 Afficher tous les pays",
     storesIn: "Magasins en",
     attractionsIn: "Attractions en",
-    attractionsIntro: "Pages officielles de billets et d'informations — vérifiez toujours les horaires en direct affichés avant votre visite. Appuyez sur ☆ pour l'ajouter à vos favoris.",
+    attractionsIntro: (favHref, itinHref) => `Informations et billets officiels. Vérifiez les horaires actualisés avant votre visite, ajoutez des attractions à vos <a href="${favHref}" class="intro-inline-link">favoris (⭐)</a> pour plus tard, ou créez un <a href="${itinHref}" class="intro-inline-link">itinéraire (🧭)</a>.`,
     allPrefix: "Tout",
     geoLooksLike: "📍 Il semble que vous soyez à",
     geoShowingFirst: "— on vous le montre en premier. Appuyez sur 🌍 pour tout parcourir, ou choisissez un autre drapeau ci-dessous à tout moment.",
@@ -3221,12 +3221,12 @@ const TRANSLATIONS = {
   it: {
     dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
     homeH1: "Il negozio è aperto proprio ora?",
-    homeIntro: "Scegli un paese qui sotto per filtrare tutto — Negozi e Attrazioni — oppure cerca direttamente.",
+    homeIntro: "Scegli la tua lingua qui sotto, poi un paese per filtrare tutto — Negozi e Attrazioni — oppure cerca direttamente.",
     chooseCountry: "Scegli un paese",
     showAllCountries: "🌍 Mostra tutti i paesi",
     storesIn: "Negozi in",
     attractionsIn: "Attrazioni in",
-    attractionsIntro: "Pagine ufficiali di biglietti e informazioni — controlla sempre gli orari in tempo reale mostrati lì prima di visitare. Tocca ☆ per salvarlo nei preferiti.",
+    attractionsIntro: (favHref, itinHref) => `Informazioni e biglietti ufficiali. Controlla gli orari aggiornati prima della visita, aggiungi attrazioni ai tuoi <a href="${favHref}" class="intro-inline-link">preferiti (⭐)</a> per dopo, oppure crea un <a href="${itinHref}" class="intro-inline-link">itinerario (🧭)</a>.`,
     allPrefix: "Tutti",
     geoLooksLike: "📍 Sembra che tu sia a",
     geoShowingFirst: "— te lo mostriamo per primo. Tocca 🌍 per sfogliare tutto, o scegli un'altra bandiera qui sotto in qualsiasi momento.",
@@ -3267,12 +3267,12 @@ const TRANSLATIONS = {
   pl: {
     dayNames: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
     homeH1: "Czy sklep jest teraz otwarty?",
-    homeIntro: "Wybierz kraj poniżej, aby wszystko filtrować — zarówno sklepy, jak i atrakcje — albo wyszukaj bezpośrednio.",
+    homeIntro: "Wybierz swój język poniżej, a następnie kraj, aby wszystko filtrować — zarówno sklepy, jak i atrakcje — albo wyszukaj bezpośrednio.",
     chooseCountry: "Wybierz kraj",
     showAllCountries: "🌍 Pokaż wszystkie kraje",
     storesIn: "Sklepy w",
     attractionsIn: "Atrakcje w",
-    attractionsIntro: "Oficjalne strony z biletami i informacjami — zawsze sprawdź tam aktualne godziny otwarcia przed wizytą. Dotknij ☆, aby dodać do ulubionych.",
+    attractionsIntro: (favHref, itinHref) => `Oficjalne informacje i bilety. Sprawdź aktualne godziny przed wizytą, dodaj atrakcje do <a href="${favHref}" class="intro-inline-link">ulubionych (⭐)</a> na później lub stwórz <a href="${itinHref}" class="intro-inline-link">plan podróży (🧭)</a>.`,
     allPrefix: "Wszystkie",
     geoLooksLike: "📍 Wygląda na to, że jesteś w",
     geoShowingFirst: "— pokazujemy to jako pierwsze. Dotknij 🌍, aby przeglądać wszystko, lub wybierz inną flagę poniżej w dowolnym momencie.",
@@ -3313,12 +3313,12 @@ const TRANSLATIONS = {
   nl: {
     dayNames: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
     homeH1: "Is de winkel nu open?",
-    homeIntro: "Kies hieronder een land om alles te filteren — winkels en attracties — of zoek direct.",
+    homeIntro: "Kies hieronder je taal, en daarna een land om alles te filteren — winkels en attracties — of zoek direct.",
     chooseCountry: "Kies een land",
     showAllCountries: "🌍 Toon alle landen",
     storesIn: "Winkels in",
     attractionsIn: "Attracties in",
-    attractionsIntro: "Officiële ticket- en informatiepagina's — controleer altijd de live openingstijden daar voordat je gaat. Tik op ☆ om toe te voegen aan favorieten.",
+    attractionsIntro: (favHref, itinHref) => `Officiële informatie en tickets. Controleer de actuele openingstijden vóór je bezoek, voeg attracties toe aan je <a href="${favHref}" class="intro-inline-link">favorieten (⭐)</a> voor later, of maak een <a href="${itinHref}" class="intro-inline-link">reisroute (🧭)</a>.`,
     allPrefix: "Alle",
     geoLooksLike: "📍 Het lijkt erop dat je in",
     geoShowingFirst: "bent — dat tonen we eerst. Tik op 🌍 om alles te doorzoeken, of kies hieronder altijd een andere vlag.",
@@ -3359,12 +3359,12 @@ const TRANSLATIONS = {
   da: {
     dayNames: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
     homeH1: "Har butikken åbent lige nu?",
-    homeIntro: "Vælg et land nedenfor for at filtrere alt — både butikker og seværdigheder — eller søg direkte.",
+    homeIntro: "Vælg dit sprog nedenfor, og derefter et land for at filtrere alt — både butikker og seværdigheder — eller søg direkte.",
     chooseCountry: "Vælg et land",
     showAllCountries: "🌍 Vis alle lande",
     storesIn: "Butikker i",
     attractionsIn: "Seværdigheder i",
-    attractionsIntro: "Officielle billet- og informationssider — tjek altid de viste åbningstider live, før du besøger. Tryk på ☆ for at gemme til dine favoritter.",
+    attractionsIntro: (favHref, itinHref) => `Officiel information og billetter. Tjek de opdaterede åbningstider før dit besøg, tilføj seværdigheder til dine <a href="${favHref}" class="intro-inline-link">favoritter (⭐)</a> til senere, eller lav en <a href="${itinHref}" class="intro-inline-link">rejseplan (🧭)</a>.`,
     allPrefix: "Alle",
     geoLooksLike: "📍 Det ser ud til, at du er i",
     geoShowingFirst: "— viser vi det først. Tryk på 🌍 for at gennemse alt, eller vælg et andet flag nedenfor når som helst.",
@@ -3405,12 +3405,12 @@ const TRANSLATIONS = {
   se: {
     dayNames: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
     homeH1: "Är butiken öppen just nu?",
-    homeIntro: "Välj ett land nedan för att filtrera allt — både butiker och sevärdheter — eller sök direkt.",
+    homeIntro: "Välj ditt språk nedan, och sedan ett land för att filtrera allt — både butiker och sevärdheter — eller sök direkt.",
     chooseCountry: "Välj ett land",
     showAllCountries: "🌍 Visa alla länder",
     storesIn: "Butiker i",
     attractionsIn: "Sevärdheter i",
-    attractionsIntro: "Officiella biljett- och informationssidor — kontrollera alltid de live-öppettider som visas där innan du besöker. Tryck på ☆ för att spara till favoriter.",
+    attractionsIntro: (favHref, itinHref) => `Officiell information och biljetter. Kontrollera de uppdaterade öppettiderna före ditt besök, lägg till sevärdheter i dina <a href="${favHref}" class="intro-inline-link">favoriter (⭐)</a> för senare, eller skapa en <a href="${itinHref}" class="intro-inline-link">reseplan (🧭)</a>.`,
     allPrefix: "Alla",
     geoLooksLike: "📍 Det ser ut som att du är i",
     geoShowingFirst: "— visar vi det först. Tryck på 🌍 för att bläddra bland allt, eller välj en annan flagga nedan när som helst.",
@@ -3451,12 +3451,12 @@ const TRANSLATIONS = {
   pt: {
     dayNames: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
     homeH1: "A loja está aberta agora mesmo?",
-    homeIntro: "Escolha um país abaixo para filtrar tudo — lojas e pontos turísticos — ou pesquise diretamente.",
+    homeIntro: "Escolha o seu idioma abaixo, depois um país para filtrar tudo — lojas e pontos turísticos — ou pesquise diretamente.",
     chooseCountry: "Escolha um país",
     showAllCountries: "🌍 Mostrar todos os países",
     storesIn: "Lojas em",
     attractionsIn: "Pontos turísticos em",
-    attractionsIntro: "Páginas oficiais de bilhetes e informações — verifique sempre o horário em tempo real mostrado lá antes de visitar. Toque em ☆ para guardar nos favoritos.",
+    attractionsIntro: (favHref, itinHref) => `Informações e bilhetes oficiais. Verifique o horário atualizado antes da tua visita, adiciona atrações aos teus <a href="${favHref}" class="intro-inline-link">favoritos (⭐)</a> para mais tarde, ou cria um <a href="${itinHref}" class="intro-inline-link">itinerário (🧭)</a>.`,
     allPrefix: "Todos",
     geoLooksLike: "📍 Parece que você está em",
     geoShowingFirst: "— mostramos isso primeiro. Toque em 🌍 para explorar tudo, ou escolha outra bandeira abaixo a qualquer momento.",
@@ -3497,12 +3497,12 @@ const TRANSLATIONS = {
   cz: {
     dayNames: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
     homeH1: "Je obchod právě teď otevřený?",
-    homeIntro: "Vyberte níže zemi a filtrujte vše — obchody i zajímavosti — nebo hledejte přímo.",
+    homeIntro: "Vyberte níže svůj jazyk, poté zemi a filtrujte vše — obchody i zajímavosti — nebo hledejte přímo.",
     chooseCountry: "Vyberte zemi",
     showAllCountries: "🌍 Zobrazit všechny země",
     storesIn: "Obchody v",
     attractionsIn: "Zajímavosti v",
-    attractionsIntro: "Oficiální stránky se vstupenkami a informacemi — vždy si před návštěvou ověřte tam zobrazenou aktuální otevírací dobu. Klepnutím na ☆ uložíte do oblíbených.",
+    attractionsIntro: (favHref, itinHref) => `Oficiální informace a vstupenky. Ověřte si aktuální otevírací dobu před návštěvou, přidejte zajímavosti do svých <a href="${favHref}" class="intro-inline-link">oblíbených (⭐)</a> na později, nebo si vytvořte <a href="${itinHref}" class="intro-inline-link">itinerář (🧭)</a>.`,
     allPrefix: "Vše",
     geoLooksLike: "📍 Vypadá to, že jste v",
     geoShowingFirst: "— zobrazujeme to jako první. Klepněte na 🌍 pro procházení všeho, nebo kdykoli vyberte jinou vlajku níže.",
@@ -3543,12 +3543,12 @@ const TRANSLATIONS = {
   fi: {
     dayNames: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"],
     homeH1: "Onko kauppa auki juuri nyt?",
-    homeIntro: "Valitse maa alta suodattaaksesi kaiken — sekä kaupat että nähtävyydet — tai hae suoraan.",
+    homeIntro: "Valitse kielesi alta, sitten maa suodattaaksesi kaiken — sekä kaupat että nähtävyydet — tai hae suoraan.",
     chooseCountry: "Valitse maa",
     showAllCountries: "🌍 Näytä kaikki maat",
     storesIn: "Kaupat maassa",
     attractionsIn: "Nähtävyydet maassa",
-    attractionsIntro: "Viralliset lippu- ja tietosivut — tarkista aina siellä näytetyt reaaliaikaiset aukioloajat ennen vierailua. Napauta ☆ tallentaaksesi suosikkeihin.",
+    attractionsIntro: (favHref, itinHref) => `Viralliset tiedot ja liput. Tarkista päivitetyt aukioloajat ennen vierailua, lisää nähtävyyksiä <a href="${favHref}" class="intro-inline-link">suosikkeihin (⭐)</a> myöhempää varten tai luo <a href="${itinHref}" class="intro-inline-link">matkasuunnitelma (🧭)</a>.`,
     allPrefix: "Kaikki",
     geoLooksLike: "📍 Näyttää siltä, että olet",
     geoShowingFirst: "— näytämme sen ensin. Napauta 🌍 selataksesi kaikkea, tai valitse toinen lippu alta milloin tahansa.",
@@ -3589,12 +3589,12 @@ const TRANSLATIONS = {
   gr: {
     dayNames: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
     homeH1: "Είναι ανοιχτό το κατάστημα αυτή τη στιγμή;",
-    homeIntro: "Επιλέξτε μια χώρα παρακάτω για να φιλτράρετε όλα — καταστήματα και αξιοθέατα — ή αναζητήστε απευθείας.",
+    homeIntro: "Επιλέξτε τη γλώσσα σας παρακάτω, έπειτα μια χώρα για να φιλτράρετε όλα — καταστήματα και αξιοθέατα — ή αναζητήστε απευθείας.",
     chooseCountry: "Επιλέξτε χώρα",
     showAllCountries: "🌍 Εμφάνιση όλων των χωρών",
     storesIn: "Καταστήματα στην",
     attractionsIn: "Αξιοθέατα στην",
-    attractionsIntro: "Επίσημες σελίδες εισιτηρίων και πληροφοριών — ελέγχετε πάντα το ζωντανό ωράριο που εμφανίζεται εκεί πριν επισκεφθείτε. Πατήστε ☆ για αποθήκευση στα αγαπημένα.",
+    attractionsIntro: (favHref, itinHref) => `Επίσημες πληροφορίες και εισιτήρια. Ελέγξτε το ενημερωμένο ωράριο πριν την επίσκεψη, προσθέστε αξιοθέατα στα <a href="${favHref}" class="intro-inline-link">αγαπημένα (⭐)</a> για αργότερα, ή δημιουργήστε ένα <a href="${itinHref}" class="intro-inline-link">δρομολόγιο (🧭)</a>.`,
     allPrefix: "Όλα",
     geoLooksLike: "📍 Φαίνεται ότι είστε στη",
     geoShowingFirst: "— σας το δείχνουμε πρώτο. Πατήστε 🌍 για να περιηγηθείτε όλα, ή επιλέξτε άλλη σημαία παρακάτω οποτεδήποτε.",
@@ -3635,12 +3635,12 @@ const TRANSLATIONS = {
   hu: {
     dayNames: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"],
     homeH1: "Most éppen nyitva van az üzlet?",
-    homeIntro: "Válassz országot lent, hogy mindent szűrj — üzleteket és látnivalókat egyaránt — vagy keress közvetlenül.",
+    homeIntro: "Válaszd ki a nyelvedet lent, majd egy országot, hogy mindent szűrj — üzleteket és látnivalókat egyaránt — vagy keress közvetlenül.",
     chooseCountry: "Válassz országot",
     showAllCountries: "🌍 Összes ország megjelenítése",
     storesIn: "Üzletek itt:",
     attractionsIn: "Látnivalók itt:",
-    attractionsIntro: "Hivatalos jegy- és információs oldalak — látogatás előtt mindig ellenőrizd az ott megjelenített valós idejű nyitvatartást. Koppints a ☆ gombra a kedvencekhez adáshoz.",
+    attractionsIntro: (favHref, itinHref) => `Hivatalos információk és jegyek. Ellenőrizd a frissített nyitvatartást látogatás előtt, add hozzá a látnivalókat a <a href="${favHref}" class="intro-inline-link">kedvencekhez (⭐)</a> későbbre, vagy készíts <a href="${itinHref}" class="intro-inline-link">útitervet (🧭)</a>.`,
     allPrefix: "Összes",
     geoLooksLike: "📍 Úgy tűnik, itt vagy:",
     geoShowingFirst: "— ezt mutatjuk először. Koppints a 🌍 gombra az összes böngészéséhez, vagy válassz más zászlót lent bármikor.",
@@ -3681,12 +3681,12 @@ const TRANSLATIONS = {
   hr: {
     dayNames: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"],
     homeH1: "Je li trgovina sada otvorena?",
-    homeIntro: "Odaberite državu ispod za filtriranje svega — trgovina i znamenitosti — ili pretražite izravno.",
+    homeIntro: "Odaberite svoj jezik ispod, zatim državu za filtriranje svega — trgovina i znamenitosti — ili pretražite izravno.",
     chooseCountry: "Odaberite državu",
     showAllCountries: "🌍 Prikaži sve države",
     storesIn: "Trgovine u",
     attractionsIn: "Znamenitosti u",
-    attractionsIntro: "Službene stranice s ulaznicama i informacijama — uvijek provjerite tamo prikazano radno vrijeme uživo prije posjeta. Dodirnite ☆ za spremanje u favorite.",
+    attractionsIntro: (favHref, itinHref) => `Službene informacije i ulaznice. Provjerite ažurirano radno vrijeme prije posjeta, dodajte znamenitosti u <a href="${favHref}" class="intro-inline-link">favorite (⭐)</a> za kasnije, ili izradite <a href="${itinHref}" class="intro-inline-link">itinerar (🧭)</a>.`,
     allPrefix: "Sve",
     geoLooksLike: "📍 Čini se da ste u",
     geoShowingFirst: "— to prikazujemo prvo. Dodirnite 🌍 za pregled svega, ili odaberite drugu zastavu ispod bilo kada.",
@@ -3727,12 +3727,12 @@ const TRANSLATIONS = {
   sk: {
     dayNames: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
     homeH1: "Je obchod práve teraz otvorený?",
-    homeIntro: "Vyberte nižšie krajinu a filtrujte všetko — obchody aj zaujímavosti — alebo hľadajte priamo.",
+    homeIntro: "Vyberte nižšie svoj jazyk, potom krajinu a filtrujte všetko — obchody aj zaujímavosti — alebo hľadajte priamo.",
     chooseCountry: "Vyberte krajinu",
     showAllCountries: "🌍 Zobraziť všetky krajiny",
     storesIn: "Obchody v",
     attractionsIn: "Zaujímavosti v",
-    attractionsIntro: "Oficiálne stránky so vstupenkami a informáciami — pred návštevou si vždy overte tam zobrazený aktuálny otvárací čas. Klepnutím na ☆ uložíte do obľúbených.",
+    attractionsIntro: (favHref, itinHref) => `Oficiálne informácie a vstupenky. Overte si aktuálny otvárací čas pred návštevou, pridajte zaujímavosti do svojich <a href="${favHref}" class="intro-inline-link">obľúbených (⭐)</a> na neskôr, alebo si vytvorte <a href="${itinHref}" class="intro-inline-link">itinerár (🧭)</a>.`,
     allPrefix: "Všetko",
     geoLooksLike: "📍 Vyzerá to, že ste v",
     geoShowingFirst: "— zobrazujeme to ako prvé. Klepnite na 🌍 na prezeranie všetkého, alebo kedykoľvek vyberte inú vlajku nižšie.",
@@ -3773,12 +3773,12 @@ const TRANSLATIONS = {
   si: {
     dayNames: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"],
     homeH1: "Je trgovina zdaj odprta?",
-    homeIntro: "Spodaj izberite državo za filtriranje vsega — trgovin in znamenitosti — ali iščite neposredno.",
+    homeIntro: "Spodaj izberite svoj jezik, nato državo za filtriranje vsega — trgovin in znamenitosti — ali iščite neposredno.",
     chooseCountry: "Izberite državo",
     showAllCountries: "🌍 Pokaži vse države",
     storesIn: "Trgovine v",
     attractionsIn: "Znamenitosti v",
-    attractionsIntro: "Uradne strani z vstopnicami in informacijami — pred obiskom vedno preverite tam prikazan trenutni delovni čas. Tapnite ☆ za shranjevanje med priljubljene.",
+    attractionsIntro: (favHref, itinHref) => `Uradne informacije in vstopnice. Preverite posodobljen delovni čas pred obiskom, dodajte znamenitosti med <a href="${favHref}" class="intro-inline-link">priljubljene (⭐)</a> za kasneje, ali ustvarite <a href="${itinHref}" class="intro-inline-link">itinerar (🧭)</a>.`,
     allPrefix: "Vse",
     geoLooksLike: "📍 Videti je, da ste v",
     geoShowingFirst: "— to prikažemo najprej. Tapnite 🌍 za brskanje po vsem, ali kadar koli izberite drugo zastavo spodaj.",
@@ -3819,12 +3819,12 @@ const TRANSLATIONS = {
   lt: {
     dayNames: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"],
     homeH1: "Ar parduotuvė dabar atidaryta?",
-    homeIntro: "Pasirinkite šalį žemiau, kad filtruotumėte viską — parduotuves ir lankytinas vietas — arba ieškokite tiesiogiai.",
+    homeIntro: "Pasirinkite savo kalbą žemiau, tada šalį, kad filtruotumėte viską — parduotuves ir lankytinas vietas — arba ieškokite tiesiogiai.",
     chooseCountry: "Pasirinkite šalį",
     showAllCountries: "🌍 Rodyti visas šalis",
     storesIn: "Parduotuvės",
     attractionsIn: "Lankytinos vietos",
-    attractionsIntro: "Oficialūs bilietų ir informacijos puslapiai — prieš lankydamiesi visada patikrinkite ten rodomą gyvą darbo laiką. Bakstelėkite ☆, kad išsaugotumėte mėgstamiausiuose.",
+    attractionsIntro: (favHref, itinHref) => `Oficiali informacija ir bilietai. Patikrinkite atnaujintą darbo laiką prieš apsilankymą, pridėkite lankytinas vietas prie <a href="${favHref}" class="intro-inline-link">mėgstamiausių (⭐)</a> vėlesniam laikui arba sukurkite <a href="${itinHref}" class="intro-inline-link">kelionės planą (🧭)</a>.`,
     allPrefix: "Visos",
     geoLooksLike: "📍 Panašu, kad esate",
     geoShowingFirst: "— rodome tai pirmiausia. Bakstelėkite 🌍, kad peržiūrėtumėte viską, arba bet kada pasirinkite kitą vėliavą žemiau.",
@@ -3865,12 +3865,12 @@ const TRANSLATIONS = {
   lv: {
     dayNames: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"],
     homeH1: "Vai veikals ir atvērts pašlaik?",
-    homeIntro: "Izvēlieties valsti zemāk, lai filtrētu visu — veikalus un apskates vietas — vai meklējiet tieši.",
+    homeIntro: "Izvēlieties savu valodu zemāk, tad valsti, lai filtrētu visu — veikalus un apskates vietas — vai meklējiet tieši.",
     chooseCountry: "Izvēlieties valsti",
     showAllCountries: "🌍 Rādīt visas valstis",
     storesIn: "Veikali",
     attractionsIn: "Apskates vietas",
-    attractionsIntro: "Oficiālas biļešu un informācijas lapas — pirms apmeklējuma vienmēr pārbaudiet tur rādīto tiešsaistes darba laiku. Pieskarieties ☆, lai saglabātu iecienītajās.",
+    attractionsIntro: (favHref, itinHref) => `Oficiāla informācija un biļetes. Pārbaudiet atjaunināto darba laiku pirms apmeklējuma, pievienojiet apskates vietas <a href="${favHref}" class="intro-inline-link">iecienītajiem (⭐)</a> vēlākai izmantošanai vai izveidojiet <a href="${itinHref}" class="intro-inline-link">maršrutu (🧭)</a>.`,
     allPrefix: "Visi",
     geoLooksLike: "📍 Izskatās, ka esat",
     geoShowingFirst: "— to rādām vispirms. Pieskarieties 🌍, lai pārlūkotu visu, vai jebkurā brīdī izvēlieties citu karogu zemāk.",
@@ -3911,12 +3911,12 @@ const TRANSLATIONS = {
   ee: {
     dayNames: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"],
     homeH1: "Kas pood on praegu avatud?",
-    homeIntro: "Vali allpool riik, et filtreerida kõike — nii poode kui vaatamisväärsusi — või otsi otse.",
+    homeIntro: "Vali oma keel allpool, seejärel riik, et filtreerida kõike — nii poode kui vaatamisväärsusi — või otsi otse.",
     chooseCountry: "Vali riik",
     showAllCountries: "🌍 Näita kõiki riike",
     storesIn: "Poed riigis",
     attractionsIn: "Vaatamisväärsused riigis",
-    attractionsIntro: "Ametlikud pileti- ja infoleheküljed — kontrolli enne külastust alati sealt reaalajas kuvatud lahtiolekuaega. Puuduta ☆, et salvestada lemmikutesse.",
+    attractionsIntro: (favHref, itinHref) => `Ametlik info ja piletid. Kontrolli uuendatud lahtiolekuaegu enne külastust, lisa vaatamisväärsused oma <a href="${favHref}" class="intro-inline-link">lemmikutesse (⭐)</a> hilisemaks või loo <a href="${itinHref}" class="intro-inline-link">marsruut (🧭)</a>.`,
     allPrefix: "Kõik",
     geoLooksLike: "📍 Tundub, et oled",
     geoShowingFirst: "— näitame seda esimesena. Puuduta 🌍, et sirvida kõike, või vali allpool alati mõni teine lipp.",
@@ -9416,6 +9416,8 @@ main{padding-top:8px;}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
 .search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
 .search-result-itin-cta{display:block;padding:12px 16px;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;border-top:1px solid var(--border);background:rgba(255,255,255,.02);}
+.intro-inline-link{color:var(--accent);font-weight:700;text-decoration:none;}
+.intro-inline-link:hover{text-decoration:underline;}
 .search-result-itin-cta:hover{background:rgba(255,255,255,.05);}
 .fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
 /* Acordeon de obiective turistice, cu lazy-loading (vezi buildAttractionAccordionScript) */
@@ -10157,27 +10159,27 @@ const FAV_INTRO_TEXTS = {
   "ee": "Kas planeerid reisi? Puuduta ☆ mis tahes poe või vaatamisväärsuse kõrval — ütleme, 3 kohta, mida soovid Berliinis näha — ja need kõik on siin, valmis, ilma uue otsinguta. Lisa nii palju kui soovid ja puuduta ★ uuesti igal ajal, et ühe eemaldada. Salvestatud ainult sellesse seadmesse, mitte kontole."
 };
 const HOMEPAGE_FOOTER_TEXTS = {
-  "ro": "îți arată în timp real dacă marile magazine și obiective turistice din Europa sunt deschise chiar acum, plus programul complet săptămânal și de sărbători — caută, răsfoiește pe țară, sau salvează-ți favoritele pentru data viitoare.",
-  "uk": "shows you in real time whether major stores and tourist attractions across Europe are currently open, plus full weekly and holiday opening hours — search, browse by country, or save your favorites for next time.",
-  "de": "zeigt dir in Echtzeit, ob große Geschäfte und Sehenswürdigkeiten in ganz Europa gerade geöffnet sind, sowie vollständige wöchentliche und feiertägliche Öffnungszeiten — suche, durchsuche nach Land, oder speichere deine Favoriten für das nächste Mal.",
-  "es": "te muestra en tiempo real si las principales tiendas y atracciones turísticas de toda Europa están abiertas ahora mismo, además del horario semanal y festivo completo — busca, explora por país, o guarda tus favoritos para la próxima vez.",
-  "fr": "vous indique en temps réel si les grands magasins et attractions touristiques d'Europe sont actuellement ouverts, ainsi que les horaires hebdomadaires et fériés complets — recherchez, parcourez par pays, ou enregistrez vos favoris pour la prochaine fois.",
-  "it": "ti mostra in tempo reale se i principali negozi e attrazioni turistiche in tutta Europa sono attualmente aperti, oltre agli orari settimanali e festivi completi — cerca, sfoglia per paese, o salva i tuoi preferiti per la prossima volta.",
-  "pl": "pokazuje w czasie rzeczywistym, czy główne sklepy i atrakcje turystyczne w całej Europie są obecnie otwarte, oraz pełne godziny tygodniowe i świąteczne — szukaj, przeglądaj według kraju lub zapisz swoje ulubione na następny raz.",
-  "nl": "laat je in real time zien of grote winkels en toeristische attracties in heel Europa nu open zijn, plus volledige wekelijkse en feestdagopeningstijden — zoek, blader per land, of sla je favorieten op voor de volgende keer.",
-  "da": "viser dig i realtid, om store butikker og turistattraktioner i hele Europa har åbent lige nu, plus fulde ugentlige og helligdagsåbningstider — søg, gennemse efter land, eller gem dine favoritter til næste gang.",
-  "se": "visar dig i realtid om stora butiker och turistattraktioner i hela Europa är öppna just nu, plus fullständiga vecko- och helgdagsöppettider — sök, bläddra efter land, eller spara dina favoriter till nästa gång.",
-  "pt": "mostra-te em tempo real se as principais lojas e pontos turísticos em toda a Europa estão abertos agora mesmo, além do horário semanal e feriados completo — pesquisa, navega por país, ou guarda os teus favoritos para a próxima vez.",
-  "cz": "ti v reálném čase ukazuje, zda jsou hlavní obchody a turistické zajímavosti po celé Evropě právě teď otevřené, plus kompletní týdenní a sváteční otevírací dobu — hledej, procházej podle země, nebo si ulož oblíbené na příště.",
-  "fi": "näyttää sinulle reaaliajassa, ovatko Euroopan suuret kaupat ja nähtävyydet juuri nyt auki, sekä täydelliset viikoittaiset ja pyhäpäivien aukioloajat — hae, selaa maittain tai tallenna suosikkisi seuraavaa kertaa varten.",
-  "gr": "σου δείχνει σε πραγματικό χρόνο αν τα μεγάλα καταστήματα και τα τουριστικά αξιοθέατα σε όλη την Ευρώπη είναι ανοιχτά αυτή τη στιγμή, καθώς και το πλήρες εβδομαδιαίο και εορταστικό ωράριο — αναζήτησε, περιήγηση ανά χώρα, ή αποθήκευσε τα αγαπημένα σου για την επόμενη φορά.",
-  "hu": "valós időben megmutatja, hogy Európa nagy üzletei és turisztikai látványosságai éppen nyitva vannak-e, valamint a teljes heti és ünnepnapi nyitvatartást — keress, böngéssz ország szerint, vagy mentsd el kedvenceidet a következő alkalomra.",
-  "hr": "pokazuje ti u stvarnom vremenu jesu li velike trgovine i turističke znamenitosti diljem Europe trenutno otvorene, uz potpuno tjedno i blagdansko radno vrijeme — pretraži, pregledaj po državi, ili spremi svoje favorite za sljedeći put.",
-  "sk": "ti v reálnom čase ukazuje, či sú veľké obchody a turistické zaujímavosti v celej Európe práve teraz otvorené, plus kompletný týždenný a sviatočný otvárací čas — hľadaj, prezeraj podľa krajiny, alebo si ulož obľúbené na nabudúce.",
-  "si": "ti v realnem času prikazuje, ali so velike trgovine in turistične znamenitosti po vsej Evropi trenutno odprte, ter celoten tedenski in praznični delovni čas — išči, brskaj po državah, ali shrani svoje priljubljene za naslednjič.",
-  "lt": "realiuoju laiku rodo, ar didelės parduotuvės ir turistų lankomos vietos visoje Europoje šiuo metu yra atviros, taip pat visą savaitės ir švenčių darbo laiką — ieškokite, naršykite pagal šalį arba išsaugokite mėgstamiausius kitam kartui.",
-  "lv": "reāllaikā parāda, vai lielie veikali un tūrisma apskates vietas visā Eiropā pašlaik ir atvērti, kā arī pilnu nedēļas un svētku darba laiku — meklējiet, pārlūkojiet pēc valsts vai saglabājiet iecienītākos nākamajai reizei.",
-  "ee": "näitab sulle reaalajas, kas suured poed ja vaatamisväärsused kogu Euroopas on praegu avatud, samuti täielikke nädala- ja pühadeaegseid lahtiolekuaegu — otsi, sirvi riigi järgi või salvesta oma lemmikud järgmiseks korraks."
+  "ro": "îți arată în timp real dacă marile magazine și obiective turistice din Europa sunt deschise chiar acum, plus programul complet săptămânal și de sărbători — caută, răsfoiește pe țară, salvează-ți favoritele sau creează un itinerar pentru o călătorie de neuitat.",
+  "uk": "shows you in real time whether major stores and tourist attractions across Europe are currently open, plus full weekly and holiday opening hours — search, browse by country, save your favorites, or create an itinerary for an unforgettable trip.",
+  "de": "zeigt dir in Echtzeit, ob große Geschäfte und Sehenswürdigkeiten in ganz Europa gerade geöffnet sind, sowie vollständige wöchentliche und feiertägliche Öffnungszeiten — suche, durchsuche nach Land, speichere deine Favoriten, oder erstelle eine Reiseroute für eine unvergessliche Reise.",
+  "es": "te muestra en tiempo real si las principales tiendas y atracciones turísticas de toda Europa están abiertas ahora mismo, además del horario semanal y festivo completo — busca, explora por país, guarda tus favoritos, o crea un itinerario para un viaje inolvidable.",
+  "fr": "vous indique en temps réel si les grands magasins et attractions touristiques d'Europe sont actuellement ouverts, ainsi que les horaires hebdomadaires et fériés complets — recherchez, parcourez par pays, enregistrez vos favoris, ou créez un itinéraire pour un voyage inoubliable.",
+  "it": "ti mostra in tempo reale se i principali negozi e attrazioni turistiche in tutta Europa sono attualmente aperti, oltre agli orari settimanali e festivi completi — cerca, sfoglia per paese, salva i tuoi preferiti, o crea un itinerario per un viaggio indimenticabile.",
+  "pl": "pokazuje w czasie rzeczywistym, czy główne sklepy i atrakcje turystyczne w całej Europie są obecnie otwarte, oraz pełne godziny tygodniowe i świąteczne — szukaj, przeglądaj według kraju, zapisz swoje ulubione, lub stwórz plan podróży na niezapomnianą wyprawę.",
+  "nl": "laat je in real time zien of grote winkels en toeristische attracties in heel Europa nu open zijn, plus volledige wekelijkse en feestdagopeningstijden — zoek, blader per land, sla je favorieten op, of maak een reisroute voor een onvergetelijke reis.",
+  "da": "viser dig i realtid, om store butikker og turistattraktioner i hele Europa har åbent lige nu, plus fulde ugentlige og helligdagsåbningstider — søg, gennemse efter land, gem dine favoritter, eller lav en rejseplan til en uforglemmelig rejse.",
+  "se": "visar dig i realtid om stora butiker och turistattraktioner i hela Europa är öppna just nu, plus fullständiga vecko- och helgdagsöppettider — sök, bläddra efter land, spara dina favoriter, eller skapa en reseplan för en oförglömlig resa.",
+  "pt": "mostra-te em tempo real se as principais lojas e pontos turísticos em toda a Europa estão abertos agora mesmo, além do horário semanal e feriados completo — pesquisa, navega por país, guarda os teus favoritos, ou cria um itinerário para uma viagem inesquecível.",
+  "cz": "ti v reálném čase ukazuje, zda jsou hlavní obchody a turistické zajímavosti po celé Evropě právě teď otevřené, plus kompletní týdenní a sváteční otevírací dobu — hledej, procházej podle země, ulož si oblíbené, nebo si vytvoř trasu pro nezapomenutelný výlet.",
+  "fi": "näyttää sinulle reaaliajassa, ovatko Euroopan suuret kaupat ja nähtävyydet juuri nyt auki, sekä täydelliset viikoittaiset ja pyhäpäivien aukioloajat — hae, selaa maittain, tallenna suosikkisi, tai luo matkasuunnitelma unohtumatonta matkaa varten.",
+  "gr": "σου δείχνει σε πραγματικό χρόνο αν τα μεγάλα καταστήματα και τα τουριστικά αξιοθέατα σε όλη την Ευρώπη είναι ανοιχτά αυτή τη στιγμή, καθώς και το πλήρες εβδομαδιαίο και εορταστικό ωράριο — αναζήτησε, περιήγηση ανά χώρα, αποθήκευσε τα αγαπημένα σου, ή δημιούργησε ένα δρομολόγιο για ένα αξέχαστο ταξίδι.",
+  "hu": "valós időben megmutatja, hogy Európa nagy üzletei és turisztikai látványosságai éppen nyitva vannak-e, valamint a teljes heti és ünnepnapi nyitvatartást — keress, böngéssz ország szerint, mentsd el kedvenceidet, vagy készíts útitervet egy felejthetetlen utazáshoz.",
+  "hr": "pokazuje ti u stvarnom vremenu jesu li velike trgovine i turističke znamenitosti diljem Europe trenutno otvorene, uz potpuno tjedno i blagdansko radno vrijeme — pretraži, pregledaj po državi, spremi svoje favorite, ili izradi itinerar za nezaboravno putovanje.",
+  "sk": "ti v reálnom čase ukazuje, či sú veľké obchody a turistické zaujímavosti v celej Európe práve teraz otvorené, plus kompletný týždenný a sviatočný otvárací čas — hľadaj, prezeraj podľa krajiny, ulož si obľúbené, alebo si vytvor itinerár pre nezabudnuteľný výlet.",
+  "si": "ti v realnem času prikazuje, ali so velike trgovine in turistične znamenitosti po vsej Evropi trenutno odprte, ter celoten tedenski in praznični delovni čas — išči, brskaj po državah, shrani svoje priljubljene, ali ustvari itinerar za nepozabno potovanje.",
+  "lt": "realiuoju laiku rodo, ar didelės parduotuvės ir turistų lankomos vietos visoje Europoje šiuo metu yra atviros, taip pat visą savaitės ir švenčių darbo laiką — ieškokite, naršykite pagal šalį, išsaugokite mėgstamiausius, arba sukurkite kelionės planą nepamirštamai kelionei.",
+  "lv": "reāllaikā parāda, vai lielie veikali un tūrisma apskates vietas visā Eiropā pašlaik ir atvērti, kā arī pilnu nedēļas un svētku darba laiku — meklējiet, pārlūkojiet pēc valsts, saglabājiet iecienītākos, vai izveidojiet maršrutu neaizmirstamam ceļojumam.",
+  "ee": "näitab sulle reaalajas, kas suured poed ja vaatamisväärsused kogu Euroopas on praegu avatud, samuti täielikke nädala- ja pühadeaegseid lahtiolekuaegu — otsi, sirvi riigi järgi, salvesta oma lemmikud, või loo marsruut unustamatuks reisiks."
 };
 
 function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, primaryCountry) {
@@ -11712,9 +11714,19 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     primaryAttractionCountry,
     ...Object.keys(ATTRACTIONS).filter((c) => c !== primaryAttractionCountry),
   ];
+  // Link-uri clicabile, colorate — cerut explicit: "favorite" (⭐) și
+  // "itinerar" (🧭) din textul introductiv trebuie să funcționeze, nu doar
+  // să arate colorat. attractionsIntro a devenit FUNCȚIE (favHref, itinHref)
+  // => html, pentru toate cele 21 de limbi — nu mai poate trece prin
+  // escapeHtml (ar strica link-urile, arătând tag-urile ca text simplu).
+  const favHrefForIntro = "/#favoritesList";
+  const itinHrefForIntro = itineraryHrefFor(validDetected, activeLang);
+  const attractionsIntroHtml = typeof t.attractionsIntro === "function"
+    ? t.attractionsIntro(favHrefForIntro, itinHrefForIntro)
+    : escapeHtml(t.attractionsIntro || "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.");
   const attractionsAllBlockHtml = `
   <div class="country-filter-block active" data-country-block="all">
-    <p class="intro-text">${escapeHtml(t.attractionsIntro || "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.")}</p>
+    <p class="intro-text">${attractionsIntroHtml}</p>
     ${orderedAttractionCodes
       .map((code) => {
         if (code === primaryAttractionCountry) {
