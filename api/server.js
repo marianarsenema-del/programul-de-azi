@@ -10421,6 +10421,16 @@ function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
         if (!stores.length) { statusEl.textContent = "Nu am găsit magazine cu poziție confirmată pentru harta live."; return; }
         statusEl.textContent = stores.length + " magazine găsite — " + stores.filter(function(s){ return s.isOpenNow; }).length + " deschise acum.";
 
+        // Pin clasic (bilă sus, vârf ascuțit jos, care indică exact locația)
+        // — cerut explicit, în loc de "bulina" plină de dinainte (un simplu
+        // cerc). Aceeași formă SVG pentru ambele motoare de hartă (Leaflet
+        // și Google Maps, motorul de rezervă), ca aspectul să fie identic
+        // indiferent care dintre ele se activează.
+        var PIN_SVG_PATH = "M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z";
+        function buildPinSvgHtml(color){
+          return '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))"><path d="' + PIN_SVG_PATH + '" fill="' + color + '" stroke="#1a1a1a" stroke-width="0.5"/></svg>';
+        }
+
         var markers = [];
         var backend = window.__cityMapBackend;
 
@@ -10432,10 +10442,25 @@ function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
               position: { lat: store.lat, lng: store.lng },
               map: window.__cityMapInstance,
               title: store.name,
-              icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: color, fillOpacity: 1, strokeWeight: 0, scale: 8 },
+              icon: {
+                path: PIN_SVG_PATH,
+                fillColor: color,
+                fillOpacity: 1,
+                strokeColor: "#1a1a1a",
+                strokeWeight: 1,
+                scale: 1.4,
+                anchor: new google.maps.Point(12, 24),
+              },
             });
           } else if (backend === "leaflet" && typeof L !== "undefined") {
-            marker = L.circleMarker([store.lat, store.lng], { radius: 8, color: color, fillColor: color, fillOpacity: 0.9 })
+            var pinIcon = L.divIcon({
+              html: buildPinSvgHtml(color),
+              className: "",
+              iconSize: [28, 28],
+              iconAnchor: [14, 28], // vârful pinului indică exact coordonata, nu centrul
+              popupAnchor: [0, -28],
+            });
+            marker = L.marker([store.lat, store.lng], { icon: pinIcon })
               .addTo(window.__cityMapInstance)
               .bindPopup(store.name + (store.isOpenNow ? " — deschis acum" : " — închis acum"));
           }
