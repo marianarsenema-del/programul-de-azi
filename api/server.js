@@ -2206,6 +2206,29 @@ function parkviaLinkFor(place) {
   return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
 }
 
+// Bilete de avion — Skyscanner, prin PROGRAMUL LOR DE AFILIERE (nu "Flights
+// API", mult mai greu de obținut, gândit pentru cine construiește propriul
+// motor de căutare — nu cazul aici). Cerere explicită: locul cel mai potrivit
+// e pagina de ITINERAR (după ce utilizatorul a spus deja exact ce oraș și
+// câte zile vrea), nu Ghiduri — acolo intenția e mult mai vagă.
+//
+// GOL acum, până se aplică și se primește link-ul real generat — la fel ca
+// la YourParkingSpace (UK), unde formatul presupus inițial (parametrul "p=")
+// s-a dovedit greșit (era de fapt "ued="), aflat abia din link-ul real
+// generat de ei. Formatul de mai jos e PROVIZORIU, din documentația publică
+// (nu dintr-un link real, ca la parcare) — se corectează, dacă e nevoie,
+// imediat ce vine link-ul real.
+//
+// Deliberat, la cerere explicită: NU presupunem orașul de plecare al
+// utilizatorului (ar fi o presupunere, nu o certitudine) — link-ul duce
+// direct la Skyscanner cu DOAR destinația completată, lăsând utilizatorul
+// să-și aleagă singur orașul de plecare, pe pagina lor.
+const SKYSCANNER_AFFILIATE_ID = "";
+function flightSearchLinkFor(destinationCity) {
+  if (!SKYSCANNER_AFFILIATE_ID) return null;
+  return `https://www.skyscanner.net/transport/flights/anywhere/${encodeURIComponent(destinationCity)}/?associateid=${encodeURIComponent(SKYSCANNER_AFFILIATE_ID)}`;
+}
+
 const HOW_TO_GET_THERE_LABELS_RO = {
   btn: "🚗 Cum ajung acolo?",
   waze: "🧭 Mergi acolo (Waze)",
@@ -10964,6 +10987,11 @@ ${travelpayoutsScript}
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Verificare proprietate site — Impact.com (platforma care găzduiește
+     programul de afiliere Skyscanner) — pusă în antetul comun, pe toate
+     paginile, ca să fie găsită indiferent ce URL exact ai introdus tu la
+     aplicație. Nu afectează nimic altceva, doar confirmă că tu deții site-ul. -->
+<meta name="impact-site-verification" content="c85f30ab-6b83-44e4-ab02-28aedf095f5a2">
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${escapeHtml(canonical)}">
@@ -12255,6 +12283,35 @@ const NAV_LABELS = {
 };
 function navLabelsFor(lang) {
   return NAV_LABELS[lang] || NAV_LABELS.uk;
+}
+// Etichetă pentru butonul de căutare zboruri (Skyscanner) de pe pagina de
+// itinerar — "Caută zboruri către {oraș}", pe toate cele 21 de limbi. Text
+// complet propriu (nu scurtă ca NAV_LABELS), deci mapă separată.
+const FLIGHT_SEARCH_LABELS = {
+  uk: "✈️ Search flights to",
+  ro: "✈️ Caută zboruri către",
+  de: "✈️ Flüge suchen nach",
+  fr: "✈️ Rechercher des vols vers",
+  es: "✈️ Buscar vuelos a",
+  it: "✈️ Cerca voli per",
+  pl: "✈️ Szukaj lotów do",
+  nl: "✈️ Zoek vluchten naar",
+  da: "✈️ Søg flyrejser til",
+  cz: "✈️ Hledat lety do",
+  ee: "✈️ Otsi lende sihtkohta",
+  fi: "✈️ Etsi lentoja kohteeseen",
+  gr: "✈️ Αναζήτηση πτήσεων προς",
+  hr: "✈️ Traži letove za",
+  hu: "✈️ Repülőjegyek keresése ide",
+  lt: "✈️ Ieškoti skrydžių į",
+  lv: "✈️ Meklēt lidojumus uz",
+  pt: "✈️ Procurar voos para",
+  se: "✈️ Sök flyg till",
+  si: "✈️ Iskanje letov v",
+  sk: "✈️ Hľadať lety do",
+};
+function flightSearchLabelFor(lang) {
+  return FLIGHT_SEARCH_LABELS[lang] || FLIGHT_SEARCH_LABELS.uk;
 }
 // Construiește href-ul corect către itinerar, pentru ORICE context — bug
 // real, găsit prin testare directă: România NU are o rută "/ro/itinerar"
@@ -14985,6 +15042,17 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   var ERROR_NETWORK = ${safeJson(t.errorNetwork)};
   var ERROR_GENERIC = ${safeJson(t.errorGeneric)};
   var LOADING_MESSAGES = ${safeJson(t.loadingMessages)};
+  // Bilete de avion — Skyscanner, prin programul lor de afiliere. GOL acum
+  // (SKYSCANNER_AFFILIATE_ID neconfigurat încă) — arată "urmează în curând"
+  // în loc de link, până se aplică și se primește accesul real. Reutilizează
+  // textul deja tradus (comingSoonTextFor), nu unul nou.
+  var FLIGHT_SEARCH_READY = ${safeJson(Boolean(SKYSCANNER_AFFILIATE_ID))};
+  var FLIGHT_COMING_SOON_TEXT = ${safeJson(comingSoonTextFor(lang))};
+  var FLIGHT_LABEL = ${safeJson(flightSearchLabelFor(lang))};
+  function flightSearchLinkFor(destinationCity) {
+    if (!FLIGHT_SEARCH_READY) return null;
+    return "https://www.skyscanner.net/transport/flights/anywhere/" + encodeURIComponent(destinationCity) + "/?associateid=" + encodeURIComponent(${safeJson(SKYSCANNER_AFFILIATE_ID)});
+  }
 
   var form = document.getElementById("itineraryForm");
   var loading = document.getElementById("itinLoading");
@@ -15041,7 +15109,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     }).join("");
   }
 
-  function renderItinerary(data){
+  function renderItinerary(data, searchedCity){
     results.innerHTML = "";
     if (!data || !Array.isArray(data.zile)) {
       errorBox.textContent = ERROR_UNEXPECTED;
@@ -15059,6 +15127,15 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         (eveningHtml ? '<div class="itin-interval-label">' + EVENING_LABEL + '</div>' + eveningHtml : '') +
         '</div>';
     }).join("");
+    // Bloc de zboruri (Skyscanner) — la cerere explicită, pe pagina de
+    // itinerar, nu la Ghiduri, imediat sub rezultat. "Urmează în curând"
+    // cât timp SKYSCANNER_AFFILIATE_ID e gol; devine link real, automat,
+    // fără nicio altă modificare, imediat ce se completează constanta.
+    var flightLink = searchedCity ? flightSearchLinkFor(searchedCity) : null;
+    var flightHtml = flightLink
+      ? '<a href="' + flightLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</a>'
+      : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
+    html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + flightHtml + '</div>';
     results.innerHTML = html;
     resetBtn.style.display = "block";
   }
@@ -15095,7 +15172,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
           errorBox.style.display = "block";
           return;
         }
-        renderItinerary(res.data);
+        renderItinerary(res.data, oras);
         saveItinerary(oras, zile, res.data);
       })
       .catch(function(){
@@ -15128,7 +15205,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     if (saved && saved.data) {
       document.getElementById("itinOras").value = saved.oras || "";
       if (saved.zile) document.getElementById("itinZile").value = String(saved.zile);
-      renderItinerary(saved.data);
+      renderItinerary(saved.data, saved.oras);
     }
   }
 })();
