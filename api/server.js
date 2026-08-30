@@ -2231,6 +2231,23 @@ function flightSearchLinkFor(destinationCity) {
   return `https://www.kiwi.com/deep?to=${encodeURIComponent(destinationCity)}&marker=${encodeURIComponent(KIWI_TRAVELPAYOUTS_MARKER)}`;
 }
 
+// Închiriere mașină — Discover Cars, program de afiliere DIRECT (nu prin
+// Travelpayouts) — confirmat cu link real: https://www.discovercars.com/?a_aid=marianarsene
+//
+// Fără destinație pre-completată, deliberat — cercetat direct: căutarea lor
+// reală cere un ID INTERN de locație (pick_up_city_id etc.), obținut printr-un
+// API de autocomplete al lor, NU un nume de oraș simplu în text. Singurul
+// mod găsit de a construi asta ar fi prin unelte de "scraping" neoficiale,
+// nedocumentate public — prea fragil, s-ar putea rupe la orice schimbare pe
+// partea lor, fără nicio avertizare. Preferăm un link simplu, sigur
+// funcțional, chiar dacă utilizatorul trebuie să-și scrie singur orașul
+// acolo — la fel ca la originea zborului, pe Kiwi.com.
+const DISCOVERCARS_AFFILIATE_ID = "marianarsene";
+function carRentalLinkFor() {
+  if (!DISCOVERCARS_AFFILIATE_ID) return null;
+  return `https://www.discovercars.com/?a_aid=${encodeURIComponent(DISCOVERCARS_AFFILIATE_ID)}`;
+}
+
 const HOW_TO_GET_THERE_LABELS_RO = {
   btn: "🚗 Cum ajung acolo?",
   waze: "🧭 Mergi acolo (Waze)",
@@ -12315,6 +12332,65 @@ const FLIGHT_SEARCH_LABELS = {
 function flightSearchLabelFor(lang) {
   return FLIGHT_SEARCH_LABELS[lang] || FLIGHT_SEARCH_LABELS.uk;
 }
+// Eticheta pentru butonul de închiriere mașină (Discover Cars) de pe pagina
+// de itinerar — aceleași 21 de limbi, același tipar ca FLIGHT_SEARCH_LABELS.
+const CAR_RENTAL_LABELS = {
+  uk: "🚗 Rent a car",
+  ro: "🚗 Închiriază o mașină",
+  de: "🚗 Mieten Sie ein Auto",
+  fr: "🚗 Louer une voiture",
+  es: "🚗 Alquilar un coche",
+  it: "🚗 Noleggia un'auto",
+  pl: "🚗 Wynajmij samochód",
+  nl: "🚗 Huur een auto",
+  da: "🚗 Lej en bil",
+  cz: "🚗 Půjčit si auto",
+  ee: "🚗 Rendi auto",
+  fi: "🚗 Vuokraa auto",
+  gr: "🚗 Ενοικίαση αυτοκινήτου",
+  hr: "🚗 Iznajmi auto",
+  hu: "🚗 Béreljen autót",
+  lt: "🚗 Išsinuomoti automobilį",
+  lv: "🚗 Nomāt automašīnu",
+  pt: "🚗 Alugar um carro",
+  se: "🚗 Hyr en bil",
+  si: "🚗 Najemi avto",
+  sk: "🚗 Prenajmi si auto",
+};
+function carRentalLabelFor(lang) {
+  return CAR_RENTAL_LABELS[lang] || CAR_RENTAL_LABELS.uk;
+}
+// Selector "tip călătorie" pe formularul de itinerar — cerut explicit:
+// familia cu copii primește obiective de tip parc de agrement prioritizate
+// (folosim eticheta "category: parcuri_agrement" deja existentă pe TOATE
+// obiectivele din cele 6 țări procesate riguros, nu hardcodăm "Disneyland"
+// undeva — funcționează automat pentru orice parc din baza noastră).
+const TRIP_TYPE_LABELS = {
+  uk: { any: "Any", family: "Family (with kids)", couple: "Couple", adventure: "Adventure / nature", culture: "Culture / history", label: "Trip type:" },
+  ro: { any: "Oricare", family: "Familie (cu copii)", couple: "Cuplu", adventure: "Aventură / natură", culture: "Cultural / istoric", label: "Tip călătorie:" },
+  de: { any: "Beliebig", family: "Familie (mit Kindern)", couple: "Paar", adventure: "Abenteuer / Natur", culture: "Kultur / Geschichte", label: "Reiseart:" },
+  fr: { any: "Peu importe", family: "Famille (avec enfants)", couple: "Couple", adventure: "Aventure / nature", culture: "Culture / histoire", label: "Type de voyage :" },
+  es: { any: "Cualquiera", family: "Familia (con niños)", couple: "Pareja", adventure: "Aventura / naturaleza", culture: "Cultura / historia", label: "Tipo de viaje:" },
+  it: { any: "Qualsiasi", family: "Famiglia (con bambini)", couple: "Coppia", adventure: "Avventura / natura", culture: "Cultura / storia", label: "Tipo di viaggio:" },
+  pl: { any: "Dowolny", family: "Rodzina (z dziećmi)", couple: "Para", adventure: "Przygoda / natura", culture: "Kultura / historia", label: "Typ podróży:" },
+  nl: { any: "Willekeurig", family: "Gezin (met kinderen)", couple: "Stel", adventure: "Avontuur / natuur", culture: "Cultuur / geschiedenis", label: "Type reis:" },
+  da: { any: "Alle", family: "Familie (med børn)", couple: "Par", adventure: "Eventyr / natur", culture: "Kultur / historie", label: "Rejsetype:" },
+  cz: { any: "Jakýkoli", family: "Rodina (s dětmi)", couple: "Pár", adventure: "Dobrodružství / příroda", culture: "Kultura / historie", label: "Typ cesty:" },
+  ee: { any: "Suvaline", family: "Pere (lastega)", couple: "Paar", adventure: "Seiklus / loodus", culture: "Kultuur / ajalugu", label: "Reisi tüüp:" },
+  fi: { any: "Mikä tahansa", family: "Perhe (lapsia)", couple: "Pari", adventure: "Seikkailu / luonto", culture: "Kulttuuri / historia", label: "Matkan tyyppi:" },
+  gr: { any: "Οποιοδήποτε", family: "Οικογένεια (με παιδιά)", couple: "Ζευγάρι", adventure: "Περιπέτεια / φύση", culture: "Πολιτισμός / ιστορία", label: "Τύπος ταξιδιού:" },
+  hr: { any: "Bilo koji", family: "Obitelj (s djecom)", couple: "Par", adventure: "Avantura / priroda", culture: "Kultura / povijest", label: "Vrsta putovanja:" },
+  hu: { any: "Bármelyik", family: "Család (gyerekekkel)", couple: "Pár", adventure: "Kaland / természet", culture: "Kultúra / történelem", label: "Utazás típusa:" },
+  lt: { any: "Bet koks", family: "Šeima (su vaikais)", couple: "Pora", adventure: "Nuotykiai / gamta", culture: "Kultūra / istorija", label: "Kelionės tipas:" },
+  lv: { any: "Jebkurš", family: "Ģimene (ar bērniem)", couple: "Pāris", adventure: "Piedzīvojums / daba", culture: "Kultūra / vēsture", label: "Ceļojuma veids:" },
+  pt: { any: "Qualquer", family: "Família (com crianças)", couple: "Casal", adventure: "Aventura / natureza", culture: "Cultura / história", label: "Tipo de viagem:" },
+  se: { any: "Valfri", family: "Familj (med barn)", couple: "Par", adventure: "Äventyr / natur", culture: "Kultur / historia", label: "Resetyp:" },
+  si: { any: "Katerikoli", family: "Družina (z otroki)", couple: "Par", adventure: "Pustolovščina / narava", culture: "Kultura / zgodovina", label: "Vrsta potovanja:" },
+  sk: { any: "Akýkoľvek", family: "Rodina (s deťmi)", couple: "Pár", adventure: "Dobrodružstvo / príroda", culture: "Kultúra / história", label: "Typ cesty:" },
+};
+function tripTypeLabelsFor(lang) {
+  return TRIP_TYPE_LABELS[lang] || TRIP_TYPE_LABELS.uk;
+}
 // Construiește href-ul corect către itinerar, pentru ORICE context — bug
 // real, găsit prin testare directă: România NU are o rută "/ro/itinerar"
 // (are doar ruta simplă "/itinerar", fără prefix de țară) — un link generat
@@ -14074,6 +14150,12 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
 
   const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
   const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
+  // Tip călătorie — cerut explicit, folosit doar pentru "family" (restul,
+  // "couple"/"adventure"/"culture", validate dar fără efect încă asupra
+  // selecției de obiective — doar "family" are logică reală acum, restul
+  // rămân doar opțiuni în formular, gata de extins ulterior dacă e nevoie).
+  const TRIP_TYPES_VALIDE = ["any", "family", "couple", "adventure", "culture"];
+  const tipCalatorie = TRIP_TYPES_VALIDE.includes(req.body?.tipCalatorie) ? req.body.tipCalatorie : "any";
   let zile = Number(req.body?.zile);
   if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
   if (!Number.isFinite(zile) || zile < 1) zile = 1;
@@ -14085,7 +14167,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   // căutare, doar orașul tastat contează) — vezi resolveCityToCountry mai
   // sus pentru motivul schimbării: un vizitator trebuie să poată tasta
   // "Lyon" din orice loc de pe site, nu doar de pe pagina Franței.
-  const resolved = resolveCityToCountry(oras);
+  const resolved = resolveCityToCountry(oras, tipCalatorie);
   if (!resolved) {
     res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă alt oraș.` });
     return;
@@ -14093,7 +14175,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   const { tara, obiective: obiectiveText } = resolved;
   const numeTara = COUNTRY_NAMES_RO[tara] || "România";
 
-  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara);
+  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara, tipCalatorie);
 
   try {
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -14133,7 +14215,12 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
       return;
     }
 
-    res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic });
+    // parcTicketLink — link de bilete (GetYourGuide) pentru parcul găsit,
+    // DOAR în modul familie — calculat aici, nu pe client, ca să refolosim
+    // ticketUrlFor (și tabela ATTRACTION_TICKET_URLS) deja existentă, fără
+    // s-o duplicăm în JS-ul trimis către browser.
+    const parcTicketLink = resolved.parcGasit ? ticketUrlFor(resolved.parcGasit) : null;
+    res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic, parcGasit: resolved.parcGasit, parcTicketLink });
   } catch (err) {
     console.error("genereaza-itinerar a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
@@ -14838,7 +14925,30 @@ function toTitleCase(s) {
   return s.replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 }
 
-function resolveCityToCountry(orasInput) {
+// Prioritizează obiectivele de tip "parc de agrement" — DOAR pentru modul
+// "familie" (cerut explicit) — funcționează pe baza câmpului `category`
+// deja existent pe toate obiectivele din cele 6 țări procesate riguros, nu
+// hardcodează "Disneyland" sau alt nume anume — orice parc din baza noastră
+// (Gardaland, PortAventura, Walibi etc.) beneficiază automat, la fel.
+// Sortare stabilă (Array#sort e stabilă în JS modern) — nu amestecă restul
+// ordinii, doar mută parcurile la început.
+//
+// Întoarce și `parcGasit` — numele PRIMULUI parc găsit (dacă există), ca să
+// putem oferi automat un link de bilete (GetYourGuide) pentru el, fără să
+// mai căutăm o a doua oară aceeași informație.
+function boostParcuriAgrement(items, getCategory, getName, activ) {
+  if (!activ) return { sorted: items, parcGasit: null };
+  const sorted = items.slice().sort((a, b) => {
+    const aPark = getCategory(a) === "parcuri_agrement" ? 0 : 1;
+    const bPark = getCategory(b) === "parcuri_agrement" ? 0 : 1;
+    return aPark - bPark;
+  });
+  const gasit = sorted.find((item) => getCategory(item) === "parcuri_agrement");
+  return { sorted, parcGasit: gasit ? getName(gasit) : null };
+}
+
+function resolveCityToCountry(orasInput, tipCalatorie) {
+  const familyMode = tipCalatorie === "family";
   const roResult = filtreazaObiectivePentruOras(orasInput);
   if (roResult.judet && roResult.obiective && roResult.obiective.length) {
     // Verificăm și SITEMAP_CITIES (cele 103 orașe mari), pentru diacritice
@@ -14847,7 +14957,16 @@ function resolveCityToCountry(orasInput) {
     // ex. "Bran", "Sinaia", nedefinite acolo), cade pe simpla capitalizare.
     const normRo = normalizeJudetInput(orasInput);
     const matchedRo = SITEMAP_CITIES.find((c) => normalizeJudetInput(c) === normRo);
-    return { tara: "ro", obiective: roResult.obiective.map((o) => `${o.nume} (${o.localitate})`), orasCanonic: matchedRo || toTitleCase(orasInput) };
+    // OBIECTIVE_ITINERAR (folosit la RO) nu are câmp `category` propriu —
+    // îl luăm prin potrivire de nume din ATTRACTIONS.ro, care ÎL are deja.
+    const roCategoryByName = new Map((ATTRACTIONS.ro || []).map((a) => [normalizeJudetInput(a.name), a.category]));
+    const { sorted: sortedRo, parcGasit } = boostParcuriAgrement(
+      roResult.obiective,
+      (o) => roCategoryByName.get(normalizeJudetInput(o.nume)),
+      (o) => o.nume,
+      familyMode
+    );
+    return { tara: "ro", obiective: sortedRo.map((o) => `${o.nume} (${o.localitate})`), orasCanonic: matchedRo || toTitleCase(orasInput), parcGasit };
   }
 
   const norm = normalizeJudetInput(orasInput);
@@ -14858,7 +14977,10 @@ function resolveCityToCountry(orasInput) {
     const matched = cities.find((c) => normalizeJudetInput(c) === norm);
     if (matched) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: matched };
+      if (obiective.length) {
+        const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
+        return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: matched, parcGasit };
+      }
     }
   }
 
@@ -14867,13 +14989,19 @@ function resolveCityToCountry(orasInput) {
     const matched = cities.find((c) => { const nc = normalizeJudetInput(c); return nc.includes(norm) || norm.includes(nc); });
     if (matched) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: matched };
+      if (obiective.length) {
+        const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
+        return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: matched, parcGasit };
+      }
     }
   }
 
   for (const cc of otherCountries) {
     const { obiective, gasitExactInOras } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-    if (gasitExactInOras) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: toTitleCase(orasInput) };
+    if (gasitExactInOras) {
+      const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
+      return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: toTitleCase(orasInput), parcGasit };
+    }
   }
 
   return null;
@@ -14886,17 +15014,24 @@ function resolveCityToCountry(orasInput) {
 // inclus în text) — la RO includem explicit "(localitate)", la restul
 // țărilor numele obiectivului conține deja orașul în multe cazuri (vezi
 // filtreazaObiectivePentruOrasIntl), deci NU mai forțăm un format anume.
-function buildItineraryPrompt(oras, zile, obiective, lang, numeTara) {
+function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatorie) {
   const listaText = obiective.map((o) => `- ${o}`).join("\n");
   const langName = itineraryLabelsFor(lang).aiLangName;
   const tara = numeTara || "România";
+  // Instrucțiune suplimentară, DOAR pentru modul "familie" — cerut explicit:
+  // dacă în lista de mai jos există parcuri de agrement (deja prioritizate,
+  // puse la începutul listei, de resolveCityToCountry), AI-ul trebuie să le
+  // includă explicit, nu doar să le "vadă" pasiv în listă.
+  const familyInstruction = tipCalatorie === "family"
+    ? `\nATENȚIE: acest itinerar e pentru o FAMILIE CU COPII. Dacă în lista de mai jos există parcuri de distracții/agrement, zoo-uri sau acvarii, include-le OBLIGATORIU în itinerar, cât mai devreme posibil (nu le ignora) — sunt cele mai potrivite obiective pentru copii. Preferă și restul obiectivelor mai puțin solicitante fizic/vizual pentru copii, unde ai de ales.\n`
+    : "";
   // Numele obiectivelor rămân exact cum apar (nume proprii de locuri, nu se
   // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
   // cerută. Instrucțiunea de limbă e pusă explicit, de trei ori (la început,
   // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
   // limbă dacă apare o singură dată la începutul unui prompt lung.
   return `Ești un ghid turistic expert în ${tara}. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras} (${tara}). TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii, nu se traduc).
-
+${familyInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
@@ -15023,6 +15158,16 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         ${daysOptionsHtml}
       </select>
     </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label for="itinTip" style="font-size:14px;color:var(--muted);white-space:nowrap">${escapeHtml(tripTypeLabelsFor(lang).label)}</label>
+      <select id="itinTip" class="city-search-input" style="flex:1 1 auto">
+        <option value="any">${escapeHtml(tripTypeLabelsFor(lang).any)}</option>
+        <option value="family">${escapeHtml(tripTypeLabelsFor(lang).family)}</option>
+        <option value="couple">${escapeHtml(tripTypeLabelsFor(lang).couple)}</option>
+        <option value="adventure">${escapeHtml(tripTypeLabelsFor(lang).adventure)}</option>
+        <option value="culture">${escapeHtml(tripTypeLabelsFor(lang).culture)}</option>
+      </select>
+    </div>
     <button type="submit" id="itinSubmitBtn" class="geo-btn" style="margin:0">${escapeHtml(t.submitBtn)}</button>
   </form>
 
@@ -15073,6 +15218,27 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     if (!FLIGHT_SEARCH_READY) return null;
     return "https://www.kiwi.com/deep?to=" + encodeURIComponent(destinationCity) + "&marker=" + encodeURIComponent(${safeJson(KIWI_TRAVELPAYOUTS_MARKER)});
   }
+  // Cazare — Booking.com — link întotdeauna funcțional (nu are stare
+  // "urmează în curând"; dacă BOOKING_AFFILIATE_ID nu e completat încă,
+  // cade pe căutare simplă, fără tracking, dar tot funcțională).
+  var HOTEL_LABEL = ${safeJson(bookingPlanningLabelsFor(lang).stays)};
+  function hotelSearchLinkFor(destinationCity) {
+    return ${safeJson(BOOKING_AFFILIATE_ID)}
+      ? "https://www.booking.com/searchresults.html?ss=" + encodeURIComponent(destinationCity) + "&aid=" + encodeURIComponent(${safeJson(BOOKING_AFFILIATE_ID)})
+      : "https://www.booking.com/searchresults.html?ss=" + encodeURIComponent(destinationCity);
+  }
+  // Închiriere mașină — Discover Cars (a_aid=marianarsene, link real,
+  // confirmat direct de tine) — FĂRĂ destinație pre-completată, deliberat
+  // (vezi comentariul din server.js, lângă carRentalLinkFor: căutarea lor
+  // reală cere un ID intern de locație, nu un nume de oraș simplu).
+  var CAR_RENTAL_LABEL = ${safeJson(carRentalLabelFor(lang))};
+  var CAR_RENTAL_LINK = ${safeJson(carRentalLinkFor())};
+  // Bilet parc de agrement (GetYourGuide) — DOAR în modul familie, DOAR
+  // dacă serverul a găsit un parc în lista de obiective (vezi parcGasit,
+  // calculat în resolveCityToCountry, trimis prin API în data.parcGasit /
+  // data.parcTicketLink). Reutilizează eticheta deja tradusă (21 de limbi),
+  // nu una nouă.
+  var PARK_TICKET_LABEL = ${safeJson(bookingPlanningLabelsFor(lang).ticket)};
 
   var form = document.getElementById("itineraryForm");
   var loading = document.getElementById("itinLoading");
@@ -15147,15 +15313,30 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         (eveningHtml ? '<div class="itin-interval-label">' + EVENING_LABEL + '</div>' + eveningHtml : '') +
         '</div>';
     }).join("");
-    // Bloc de zboruri (Skyscanner) — la cerere explicită, pe pagina de
-    // itinerar, nu la Ghiduri, imediat sub rezultat. "Urmează în curând"
-    // cât timp SKYSCANNER_AFFILIATE_ID e gol; devine link real, automat,
-    // fără nicio altă modificare, imediat ce se completează constanta.
+    // Bloc de zboruri (Kiwi.com) + cazare (Booking.com) + mașină (Discover
+    // Cars) — la cerere explicită, pe pagina de itinerar, nu la Ghiduri,
+    // imediat sub rezultat. Zboruri: "urmează în curând" DOAR dacă
+    // FLIGHT_SEARCH_READY e fals (nu mai e cazul acum). Cazare: mereu
+    // funcțional. Mașină: mereu funcțional, dar fără destinație
+    // pre-completată (vezi comentariul de mai sus, la CAR_RENTAL_LINK).
     var flightLink = searchedCity ? flightSearchLinkFor(searchedCity) : null;
     var flightHtml = flightLink
       ? '<a href="' + flightLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</a>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
-    html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + flightHtml + '</div>';
+    var hotelHtml = searchedCity
+      ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
+      : '';
+    var carHtml = CAR_RENTAL_LINK
+      ? '<a href="' + CAR_RENTAL_LINK + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">' + CAR_RENTAL_LABEL + '</a>'
+      : '';
+    // Bilet parc — apare DOAR dacă serverul a găsit un parc de agrement în
+    // modul familie (data.parcGasit + data.parcTicketLink, calculate în
+    // resolveCityToCountry). Absent complet în restul cazurilor — nu ocupă
+    // loc degeaba.
+    var parkTicketHtml = (data && data.parcTicketLink && data.parcGasit)
+      ? '<a href="' + data.parcTicketLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">' + PARK_TICKET_LABEL + ' — ' + escapeHtmlClient(data.parcGasit) + '</a>'
+      : '';
+    html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + '</div>';
     results.innerHTML = html;
     resetBtn.style.display = "block";
   }
@@ -15164,6 +15345,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     e.preventDefault();
     var oras = document.getElementById("itinOras").value.trim();
     var zile = document.getElementById("itinZile").value;
+    var tipCalatorie = document.getElementById("itinTip").value;
     if (!oras) return;
 
     errorBox.style.display = "none";
@@ -15180,7 +15362,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     fetch("/api/genereaza-itinerar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG, tara: TARA }),
+      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG, tara: TARA, tipCalatorie: tipCalatorie }),
     })
       .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
       .then(function(res){
