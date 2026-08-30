@@ -11861,7 +11861,9 @@ const TRAVEL_GUIDES_RO = [
     <p>Lăsată la întâmplare, mașina riscă amendă sau chiar ridicare. Cea mai sigură variantă rămâne o parcare securizată, subterană sau supraterană, administrată privat — multe dintre ele permit rezervarea unui loc din timp, ceea ce contează mai ales în weekend sau în plin sezon, când obiectivele sunt aglomerate.</p>
     <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
   {
@@ -11873,8 +11875,10 @@ const TRAVEL_GUIDES_RO = [
     <p>Marile obiective atrag mii de vizitatori zilnic, iar zonele din jurul lor devin rapid aglomerate, mai ales la prânz și seara. O rezervare făcută din timp, printr-o platformă online, îți garantează o masă fără să stai la coadă sau să cauți disperat un loc liber.</p>
     <p>Cel mai eficient tipar: vizitează expozițiile dimineața devreme, când e liniște, apoi încheie ziua cu o masă la un restaurant local, rezervat din timp — o simplă zi de vacanță devine, așa, o amintire pe care chiar vrei s-o ții minte.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Caută pe TheFork (Franța, Italia, Spania)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Caută pe OpenTable (UK, Germania)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Caută pe TheFork (Franța, Italia, Spania)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Caută pe OpenTable (UK, Germania)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
 ];
@@ -11988,7 +11992,9 @@ const TRAVEL_GUIDES_EN = [
     <p>Leaving your car just anywhere risks a fine, or even a tow. The safest option remains a secure, privately-run underground or above-ground car park — many let you book a spot ahead of time, which matters most on weekends or during peak season, when the sights are busiest.</p>
     <p>A well-chosen car park, a short walk from the museum or the old town, leaves you free to explore at your own pace, without worrying about the car. Check availability ahead of time and book online — it's worth it, especially on a busy weekend.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("city centre"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Book a secure parking spot</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("city centre"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Book a secure parking spot</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
   },
   {
@@ -12000,8 +12006,10 @@ const TRAVEL_GUIDES_EN = [
     <p>Major sights draw thousands of visitors daily, and the areas around them get busy fast, especially at lunch and dinner. Booking ahead through an online platform guarantees you a table without queueing or scrambling for a free spot at the last minute.</p>
     <p>The most efficient pattern: visit exhibitions early in the morning, when it's quiet, then close the day with a meal booked in advance at a local restaurant — a simple day out becomes a memory worth keeping.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Search on TheFork (France, Italy, Spain)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Search on OpenTable (UK, Germany)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Search on TheFork (France, Italy, Spain)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Search on OpenTable (UK, Germany)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
   },
 ];
@@ -12031,7 +12039,9 @@ const TRAVEL_GUIDES_DE = [
     <p>Wer das Auto irgendwo abstellt, riskiert ein Bußgeld oder sogar das Abschleppen. Die sicherste Option bleibt ein gesichertes, privat betriebenes Tiefgaragen- oder oberirdisches Parkhaus — viele erlauben eine Vorausbuchung, was besonders am Wochenende oder in der Hochsaison wichtig ist, wenn die Sehenswürdigkeiten am stärksten besucht sind.</p>
     <p>Ein gut gewähltes Parkhaus, wenige Schritte vom Museum oder der Altstadt entfernt, lässt dir die Freiheit, in deinem eigenen Tempo zu erkunden, ohne dir Sorgen um das Auto zu machen. Prüfe die Verfügbarkeit im Voraus und buche online — es lohnt sich, besonders an einem stark besuchten Wochenende.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("Stadtzentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Einen gesicherten Parkplatz buchen</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("Stadtzentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Einen gesicherten Parkplatz buchen</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
     </div>`,
   },
   {
@@ -12043,8 +12053,10 @@ const TRAVEL_GUIDES_DE = [
     <p>Große Sehenswürdigkeiten ziehen täglich Tausende von Besuchern an, und die umliegenden Gebiete werden schnell voll, besonders mittags und abends. Eine im Voraus über eine Online-Plattform getätigte Reservierung garantiert dir einen Tisch, ohne anzustehen oder in letzter Minute verzweifelt nach einem freien Platz zu suchen.</p>
     <p>Das effizienteste Muster: Besuche Ausstellungen früh am Morgen, wenn es ruhig ist, und beende den Tag mit einem im Voraus reservierten Essen in einem lokalen Restaurant — ein einfacher Ausflugstag wird so zu einer Erinnerung, die man wirklich behalten möchte.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Auf TheFork suchen (Frankreich, Italien, Spanien)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Auf OpenTable suchen (UK, Deutschland)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Auf TheFork suchen (Frankreich, Italien, Spanien)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Auf OpenTable suchen (UK, Deutschland)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
     </div>`,
   },
 ];
@@ -12074,7 +12086,9 @@ const TRAVEL_GUIDES_FR = [
     <p>Laisser sa voiture n'importe où risque une amende, voire une mise en fourrière. L'option la plus sûre reste un parking sécurisé, souterrain ou en surface, géré par le secteur privé — beaucoup permettent de réserver une place à l'avance, ce qui compte surtout le week-end ou en haute saison, lorsque les sites sont les plus fréquentés.</p>
     <p>Un parking bien choisi, à quelques pas du musée ou de la vieille ville, vous laisse la liberté d'explorer à votre rythme, sans vous soucier de la voiture. Vérifiez la disponibilité à l'avance et réservez en ligne — cela en vaut la peine, surtout un week-end chargé.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("centre-ville"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Réserver une place de parking sécurisée</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centre-ville"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Réserver une place de parking sécurisée</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
     </div>`,
   },
   {
@@ -12086,8 +12100,10 @@ const TRAVEL_GUIDES_FR = [
     <p>Les grands sites attirent des milliers de visiteurs chaque jour, et les zones environnantes se remplissent vite, surtout au déjeuner et au dîner. Réserver à l'avance via une plateforme en ligne vous garantit une table sans faire la queue ni chercher désespérément une place de dernière minute.</p>
     <p>Le schéma le plus efficace : visitez les expositions tôt le matin, quand c'est calme, puis terminez la journée par un repas réservé à l'avance dans un restaurant local — une simple sortie devient ainsi un souvenir que l'on a vraiment envie de garder.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Rechercher sur TheFork (France, Italie, Espagne)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Rechercher sur OpenTable (UK, Allemagne)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Rechercher sur TheFork (France, Italie, Espagne)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Rechercher sur OpenTable (UK, Allemagne)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
     </div>`,
   },
 ];
@@ -12117,7 +12133,9 @@ const TRAVEL_GUIDES_ES = [
     <p>Dejar el coche en cualquier sitio conlleva el riesgo de multa, o incluso de que se lo lleve la grúa. La opción más segura sigue siendo un aparcamiento seguro, subterráneo o en superficie, gestionado de forma privada — muchos permiten reservar plaza con antelación, algo que importa especialmente los fines de semana o en temporada alta, cuando las atracciones están más concurridas.</p>
     <p>Un aparcamiento bien elegido, a pocos pasos del museo o del casco antiguo, te da la libertad de explorar a tu ritmo, sin preocuparte por el coche. Comprueba la disponibilidad con antelación y reserva online — merece la pena, sobre todo en un fin de semana con mucha afluencia.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("centro ciudad"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Reservar una plaza de aparcamiento segura</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centro ciudad"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Reservar una plaza de aparcamiento segura</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
     </div>`,
   },
   {
@@ -12129,8 +12147,10 @@ const TRAVEL_GUIDES_ES = [
     <p>Las grandes atracciones reciben miles de visitantes cada día, y las zonas a su alrededor se llenan rápido, sobre todo a la hora de comer y cenar. Reservar con antelación a través de una plataforma online te garantiza una mesa sin hacer cola ni buscar desesperadamente un sitio libre a última hora.</p>
     <p>El patrón más eficiente: visita las exposiciones a primera hora de la mañana, cuando hay tranquilidad, y termina el día con una comida reservada con antelación en un restaurante local — una simple excursión se convierte así en un recuerdo que de verdad querrás conservar.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Buscar en TheFork (Francia, Italia, España)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Buscar en OpenTable (Reino Unido, Alemania)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Buscar en TheFork (Francia, Italia, España)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Buscar en OpenTable (Reino Unido, Alemania)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
     </div>`,
   },
 ];
@@ -12160,7 +12180,9 @@ const TRAVEL_GUIDES_IT = [
     <p>Lasciare l'auto ovunque comporta il rischio di una multa, o persino del carro attrezzi. L'opzione più sicura resta un parcheggio sicuro, sotterraneo o in superficie, a gestione privata — molti permettono di prenotare un posto in anticipo, cosa che conta soprattutto nei weekend o in alta stagione, quando le attrazioni sono più affollate.</p>
     <p>Un parcheggio ben scelto, a pochi passi dal museo o dal centro storico, ti lascia libero di esplorare al tuo ritmo, senza pensieri per l'auto. Controlla la disponibilità in anticipo e prenota online — ne vale la pena, soprattutto in un weekend affollato.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("centro città"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Prenota un posto auto sicuro</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centro città"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Prenota un posto auto sicuro</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
     </div>`,
   },
   {
@@ -12172,8 +12194,10 @@ const TRAVEL_GUIDES_IT = [
     <p>Le grandi attrazioni attirano migliaia di visitatori ogni giorno, e le zone circostanti si riempiono in fretta, soprattutto a pranzo e a cena. Prenotare in anticipo tramite una piattaforma online ti garantisce un tavolo senza fare la fila o cercare disperatamente un posto libero all'ultimo minuto.</p>
     <p>Lo schema più efficiente: visita le mostre presto al mattino, quando c'è calma, poi chiudi la giornata con un pasto prenotato in anticipo in un ristorante locale — una semplice giornata di visita diventa così un ricordo che vale davvero la pena conservare.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Cerca su TheFork (Francia, Italia, Spagna)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Cerca su OpenTable (UK, Germania)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Cerca su TheFork (Francia, Italia, Spagna)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Cerca su OpenTable (UK, Germania)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
     </div>`,
   },
 ];
@@ -12203,7 +12227,9 @@ const TRAVEL_GUIDES_PL = [
     <p>Zostawienie samochodu w przypadkowym miejscu grozi mandatem, a nawet odholowaniem. Najbezpieczniejszą opcją pozostaje strzeżony, prywatnie zarządzany parking podziemny lub naziemny — wiele z nich pozwala zarezerwować miejsce z wyprzedzeniem, co ma szczególne znaczenie w weekendy lub w wysokim sezonie, gdy atrakcje są najbardziej oblegane.</p>
     <p>Dobrze wybrany parking, kilka kroków od muzeum lub starówki, daje swobodę zwiedzania we własnym tempie, bez martwienia się o samochód. Sprawdź dostępność z wyprzedzeniem i zarezerwuj online — warto, zwłaszcza w ruchliwy weekend.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("centrum miasta"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Zarezerwuj bezpieczne miejsce parkingowe</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centrum miasta"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Zarezerwuj bezpieczne miejsce parkingowe</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
     </div>`,
   },
   {
@@ -12215,8 +12241,10 @@ const TRAVEL_GUIDES_PL = [
     <p>Największe atrakcje przyciągają codziennie tysiące odwiedzających, a okoliczne miejsca szybko się zapełniają, zwłaszcza w porze obiadu i kolacji. Wcześniejsza rezerwacja przez platformę internetową gwarantuje stolik bez czekania w kolejce czy rozpaczliwego szukania wolnego miejsca w ostatniej chwili.</p>
     <p>Najbardziej efektywny schemat: zwiedzaj wystawy wcześnie rano, gdy jest spokojnie, a dzień zakończ posiłkiem zarezerwowanym z wyprzedzeniem w lokalnej restauracji — zwykły dzień zwiedzania staje się wtedy wspomnieniem, które naprawdę warto zachować.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Szukaj na TheFork (Francja, Włochy, Hiszpania)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Szukaj na OpenTable (UK, Niemcy)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Szukaj na TheFork (Francja, Włochy, Hiszpania)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Szukaj na OpenTable (UK, Niemcy)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
     </div>`,
   },
 ];
@@ -12246,7 +12274,9 @@ const TRAVEL_GUIDES_NL = [
     <p>Je auto ergens achterlaten riskeert een boete, of zelfs wegslepen. De veiligste optie blijft een beveiligde, particulier beheerde ondergrondse of bovengrondse parkeergarage — bij veel garages kun je vooraf een plek reserveren, wat vooral in het weekend of hoogseizoen belangrijk is, wanneer de attracties het drukst zijn.</p>
     <p>Een goed gekozen parkeerplaats, op een paar stappen van het museum of de oude binnenstad, geeft je de vrijheid om in je eigen tempo te verkennen, zonder je zorgen te maken over de auto. Controleer de beschikbaarheid vooraf en boek online — het is de moeite waard, vooral in een druk weekend.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(parkviaLinkFor("stadscentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Boek een beveiligde parkeerplaats</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("stadscentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Boek een beveiligde parkeerplaats</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
     </div>`,
   },
   {
@@ -12258,8 +12288,10 @@ const TRAVEL_GUIDES_NL = [
     <p>Grote attracties trekken dagelijks duizenden bezoekers, en de omliggende gebieden raken snel druk, vooral tijdens lunch en diner. Vooraf reserveren via een online platform garandeert je een tafel zonder in de rij te staan of op het laatste moment wanhopig naar een vrije plek te zoeken.</p>
     <p>Het meest efficiënte patroon: bezoek tentoonstellingen vroeg in de ochtend, wanneer het rustig is, en sluit de dag af met een vooraf gereserveerde maaltijd in een lokaal restaurant — een gewone dag uit wordt zo een herinnering die je echt wilt bewaren.</p>
     <div class="plan-visit-block" style="display:block">
-      <a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Zoek op TheFork (Frankrijk, Italië, Spanje)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Zoek op OpenTable (VK, Duitsland)</a>
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Zoek op TheFork (Frankrijk, Italië, Spanje)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Zoek op OpenTable (VK, Duitsland)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
     </div>`,
   },
 ];
