@@ -69,6 +69,12 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  * @param {string} params.language - codul de limbă INTERN al site-ului
  *   (ex: "ro", "de", "uk" pentru engleză) — se traduce automat spre codul
  *   IETF pe care îl așteaptă Google.
+ * @param {boolean} [params.cacheOnly] - dacă e true, NU cere niciodată date
+ *   proaspete de la Google (cost real) — dacă nu există deja cache valid,
+ *   întoarce direct `{ skipped: true }`, fără nicio cerere. Folosit de
+ *   /api/city-live-map (harta unui oraș întreg poate avea zeci de magazine
+ *   deodată — fără acest mod, fiecare deschidere a hărții ar costa bani
+ *   pentru orice locație necache-uită încă).
  * @returns {Promise<{
  *   name: string,
  *   businessStatus: string,
@@ -80,15 +86,21 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   lat: number|null,
  *   lng: number|null,
  *   fromCache: boolean,
+ *   skipped: boolean|undefined,
  * }>}
  */
-async function getLocationStatus({ pool, placeId, apiKey, language }) {
+async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly }) {
   const googleLang = toGoogleLang(language);
 
   let raw = await getCachedDetails(pool, placeId, googleLang);
   let fromCache = true;
 
   if (!raw) {
+    if (cacheOnly) {
+      // NU cerem nimic de la Google — mai bine lipsă din hartă decât un
+      // cost real la fiecare deschidere a paginii unui oraș întreg.
+      return { skipped: true, fromCache: false };
+    }
     fromCache = false;
     raw = await fetchPlaceDetails(placeId, apiKey, googleLang);
     await saveCachedDetails(pool, placeId, googleLang, raw);
