@@ -2206,27 +2206,29 @@ function parkviaLinkFor(place) {
   return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
 }
 
-// Bilete de avion — Skyscanner, prin PROGRAMUL LOR DE AFILIERE (nu "Flights
-// API", mult mai greu de obținut, gândit pentru cine construiește propriul
-// motor de căutare — nu cazul aici). Cerere explicită: locul cel mai potrivit
-// e pagina de ITINERAR (după ce utilizatorul a spus deja exact ce oraș și
-// câte zile vrea), nu Ghiduri — acolo intenția e mult mai vagă.
+// Bilete de avion — Kiwi.com, prin Travelpayouts (nu Skyscanner — schimbare
+// de plan, confirmată explicit: aprobare venită la Kiwi.com/Travelpayouts,
+// nu la Skyscanner). Locul rămâne pagina de ITINERAR, nu Ghiduri, din
+// același motiv de dinainte: acolo utilizatorul a spus deja exact ce oraș
+// și câte zile vrea — cel mai concret semnal de intenție de pe site.
 //
-// GOL acum, până se aplică și se primește link-ul real generat — la fel ca
-// la YourParkingSpace (UK), unde formatul presupus inițial (parametrul "p=")
-// s-a dovedit greșit (era de fapt "ued="), aflat abia din link-ul real
-// generat de ei. Formatul de mai jos e PROVIZORIU, din documentația publică
-// (nu dintr-un link real, ca la parcare) — se corectează, dacă e nevoie,
-// imediat ce vine link-ul real.
-//
-// Deliberat, la cerere explicită: NU presupunem orașul de plecare al
-// utilizatorului (ar fi o presupunere, nu o certitudine) — link-ul duce
-// direct la Skyscanner cu DOAR destinația completată, lăsând utilizatorul
-// să-și aleagă singur orașul de plecare, pe pagina lor.
-const SKYSCANNER_AFFILIATE_ID = "";
+// Format confirmat din documentația oficială Travelpayouts (nu doar
+// presupus): https://www.kiwi.com/deep?to=...&marker=ID
+//   - "marker" = ID-ul tău de afiliat (767825, confirmat direct de tine)
+//   - "to" — documentația spune explicit cod IATA/aeroport, NU nume de oraș
+//     în text liber. NEVERIFICAT încă dacă acceptă și "Lyon" direct (probabil
+//     parțial, prin propria rezolvare fuzzy a Kiwi la afișare) — dacă
+//     observi că duce la o pagină goală sau greșită pentru vreun oraș
+//     anume, spune-mi și găsim un cod IATA corect pentru orașele cele mai
+//     căutate, în loc să presupunem că merge peste tot.
+//   - "from" — deliberat, NU presupunem orașul de plecare al utilizatorului
+//     (ar fi o presupunere, nu o certitudine) — lăsăm necompletat, Kiwi
+//     arată implicit toate plecările posibile, utilizatorul își alege
+//     singur orașul de plecare pe pagina lor.
+const KIWI_TRAVELPAYOUTS_MARKER = "767825";
 function flightSearchLinkFor(destinationCity) {
-  if (!SKYSCANNER_AFFILIATE_ID) return null;
-  return `https://www.skyscanner.net/transport/flights/anywhere/${encodeURIComponent(destinationCity)}/?associateid=${encodeURIComponent(SKYSCANNER_AFFILIATE_ID)}`;
+  if (!KIWI_TRAVELPAYOUTS_MARKER) return null;
+  return `https://www.kiwi.com/deep?to=${encodeURIComponent(destinationCity)}&marker=${encodeURIComponent(KIWI_TRAVELPAYOUTS_MARKER)}`;
 }
 
 const HOW_TO_GET_THERE_LABELS_RO = {
@@ -15042,16 +15044,16 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   var ERROR_NETWORK = ${safeJson(t.errorNetwork)};
   var ERROR_GENERIC = ${safeJson(t.errorGeneric)};
   var LOADING_MESSAGES = ${safeJson(t.loadingMessages)};
-  // Bilete de avion — Skyscanner, prin programul lor de afiliere. GOL acum
-  // (SKYSCANNER_AFFILIATE_ID neconfigurat încă) — arată "urmează în curând"
-  // în loc de link, până se aplică și se primește accesul real. Reutilizează
-  // textul deja tradus (comingSoonTextFor), nu unul nou.
-  var FLIGHT_SEARCH_READY = ${safeJson(Boolean(SKYSCANNER_AFFILIATE_ID))};
+  // Bilete de avion — Kiwi.com, prin Travelpayouts (marker 767825, ID-ul
+  // tău real de afiliat, confirmat direct de tine — nu Skyscanner, plan
+  // schimbat). Rămâne activ mereu acum (marker-ul e deja completat) — nu
+  // mai cade pe "urmează în curând", cum era cât timp aștepta Skyscanner.
+  var FLIGHT_SEARCH_READY = ${safeJson(Boolean(KIWI_TRAVELPAYOUTS_MARKER))};
   var FLIGHT_COMING_SOON_TEXT = ${safeJson(comingSoonTextFor(lang))};
   var FLIGHT_LABEL = ${safeJson(flightSearchLabelFor(lang))};
   function flightSearchLinkFor(destinationCity) {
     if (!FLIGHT_SEARCH_READY) return null;
-    return "https://www.skyscanner.net/transport/flights/anywhere/" + encodeURIComponent(destinationCity) + "/?associateid=" + encodeURIComponent(${safeJson(SKYSCANNER_AFFILIATE_ID)});
+    return "https://www.kiwi.com/deep?to=" + encodeURIComponent(destinationCity) + "&marker=" + encodeURIComponent(${safeJson(KIWI_TRAVELPAYOUTS_MARKER)});
   }
 
   var form = document.getElementById("itineraryForm");
