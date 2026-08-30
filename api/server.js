@@ -13326,79 +13326,67 @@ app.get("/api/city-live-map", async (req, res) => {
     return;
   }
 
-  // Protecție maximă de urgență: 1 singură cerere la 30 de minute per IP
-  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-live-map", 1, 30);
+  // Limita a fost redusă drastic (de la 5/10min la 1/30min) într-o variantă
+  // anterioară, gândită pentru costul VECHI al rutei — dar acum, cu modul
+  // "doar din cache" de mai jos, costul real e ZERO (nicio cerere nouă către
+  // Google, niciodată, de la această rută). O limită atât de strictă ar fi
+  // inutil de restrictivă pentru utilizatori normali (ex. cineva care
+  // verifică harta a două orașe diferite, pe rând) — păstrăm totuși o
+  // limită, ca protecție simplă a bazei de date, nu a bugetului.
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-live-map", 15, 10);
   if (!rateOk) {
     res.status(429).json({ error: "too_many_requests" });
     return;
   }
 
   const orasDisplay = toDisplayName(req.query.oras || "");
+  const lang = typeof req.query.lang === "string" ? req.query.lang : "ro";
   if (!orasDisplay) {
     res.status(400).json({ error: "missing_oras" });
     return;
   }
-
   try {
-    // Citim brandurile din oraș direct din baza dumneavoastră locală PostgreSQL
     const { rows } = await dbPool.query(
       "SELECT nume_locatie, slug, place_id FROM locatii WHERE oras = $1 AND tip = 'store'",
       [orasDisplay]
     );
     const validRows = rows.filter((r) => r.place_id && r.place_id !== "ZERO_RESULTS" && !r.place_id.startsWith("ERROR_"));
 
-    // Calculează statusul deschis/închis instant și gratuit în fundal din STORE_CONFIG
-    function checkOpenStatusOffline(magazinSlug) {
-      const storeKey = magazinSlug.replace(/[\s_-]+/g, "");
-      const entity = STORE_CONFIG[storeKey];
-      if (!entity || !entity.weekly) return true;
+    // FIX real, găsit prin verificare directă a unei propuneri anterioare:
+    // acea variantă încerca să deducă brandul din slug ștergând cratimele
+    // (ex. "dona-deva" -> "donadeva"), ceea ce nu se potrivește NICIODATĂ cu
+    // cheile reale din STORE_CONFIG (ex. "dona") — rezultatul ar fi fost
+    // "toate magazinele arată mereu deschis", indiferent de oră. Căutăm
+    // corect, după `nume_locatie` (numele afișat, exact cel salvat în bază),
+    // nu după slug.
+    //
+    // cacheOnly: true — NU facem NICIODATĂ o cerere nouă către Google aici;
+    // dacă o locație n-are cache proaspăt (ultimele 12h), o OMITEM de pe
+    // hartă, în loc s-o arătăm cu date inventate (poziție ghicită, status
+    // presupus). Mai bine incompletă decât greșită.
+    const results = await Promise.all(
+      validRows.map(async (row) => {
+        try {
+          const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, cacheOnly: true });
+          if (status.skipped || status.lat == null || status.lng == null) return null;
+          return { name: row.nume_locatie, slug: row.slug, lat: status.lat, lng: status.lng, isOpenNow: status.isOpenNow };
+        } catch (e) {
+          return null; // o locație eșuată nu blochează restul hărții
+        }
+      })
+    );
 
-      const now = new Date();
-      const currentDay = now.getDay();
-      const w = entity.weekly[currentDay];
-      if (!w) return false;
-
-      const nowMin = now.getHours() * 60 + now.getMinutes();
-      
-      const openParts = w.open.split(":");
-      const openMin = parseInt(openParts[0], 10) * 60 + parseInt(openParts[1], 10);
-      
-      const closeParts = w.close.split(":");
-      const closeMin = parseInt(closeParts[0], 10) * 60 + parseInt(closeParts[1], 10);
-
-      return nowMin >= openMin && nowMin < closeMin;
-    }
-
-    // Preluăm coordonatele centrului orașului deja existente în fișier la CITY_COORDS
-    const orasCoords = CITY_COORDS[orasDisplay];
-    if (!orasCoords) {
-      res.status(200).json({ stores: [] });
-      return;
-    }
-
-    // Generăm pinii cu micro-dispersie circulară (jitter) ca să nu se suprapună în același punct central
-    const results = validRows.map((row, index) => {
-      const angle = (index * 2 * Math.PI) / validRows.length;
-      const radius = 0.006 + (index * 0.0002);
-      const latJitter = orasCoords[0] + radius * Math.sin(angle);
-      const lngJitter = orasCoords[1] + radius * Math.cos(angle);
-
-      return {
-        name: row.nume_locatie,
-        slug: row.slug,
-        lat: latJitter,
-        lng: lngJitter,
-        isOpenNow: checkOpenStatusOffline(row.slug)
-      };
-    });
-
-    res.status(200).json({ stores: results });
+    res.status(200).json({ stores: results.filter(Boolean) });
   } catch (err) {
-    console.error("city-live-map optimizat a eșuat:", err.message);
+    console.error("city-live-map a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
   }
 });
 
+// "Hartă lângă mine" — butonul din bara de jos, accesibil de pe orice pagină.
+// Primește geolocația browserului, găsește cel mai apropiat oraș ACOPERIT
+// (din toate țările), întoarce URL-ul paginii aceluia — care are deja harta
+// live cu pin-uri (verde/roșu, deschis/închis), construită mai demult.
 app.get("/api/nearest-city", async (req, res) => {
   const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "nearest-city", 20, 10);
   if (!rateOk) {
@@ -13992,29 +13980,27 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     return;
   }
 
-  // Securitate sporită: Max 3 itinerarii pe oră per IP (blochează boții, protejează portofelul)
+  // Redus de la 15 la 3 pe oră — cerere reală (fiecare generare costă bani
+  // la OpenAI), aliniat cu grija pentru buget discutată separat.
   const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "genereaza-itinerar", 3, 60);
   if (!rateOk) {
     res.status(429).json({ error: "too_many_requests" });
     return;
   }
 
-  // Structură curată de destructurare a body-ului trimis de client
-  const { oras: rawOras, zile: rawZile, lang: rawLang } = req.body || {};
-  
-  const oras = typeof rawOras === "string" ? rawOras.trim().slice(0, 100) : "";
-  const lang = typeof rawLang === "string" && ITINERARY_LABELS[rawLang] ? rawLang : "ro";
-  
-  let zile = Number(rawZile);
-  if (!oras) { 
-    res.status(400).json({ error: "missing_oras" }); 
-    return; 
-  }
-  
-  // Plafonare matematică sigură între 1 și maximum 10 zile
-  if (!Number.isFinite(zile) || zile < 1) zile = 2;
-  zile = Math.min(10, Math.max(1, zile));
+  const oras = typeof req.body?.oras === "string" ? req.body.oras.trim().slice(0, 100) : "";
+  const lang = typeof req.body?.lang === "string" && ITINERARY_LABELS[req.body.lang] ? req.body.lang : "ro";
+  let zile = Number(req.body?.zile);
+  if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
+  if (!Number.isFinite(zile) || zile < 1) zile = 1;
+  // Crescut de la 7 la 10 zile, la cerere explicită.
+  if (zile > 10) zile = 10;
 
+  // UNIVERSAL — nu mai depinde deloc de pe ce pagină de țară a fost trimisă
+  // cererea (parametrul "tara" primit de la client NU mai e folosit pentru
+  // căutare, doar orașul tastat contează) — vezi resolveCityToCountry mai
+  // sus pentru motivul schimbării: un vizitator trebuie să poată tasta
+  // "Lyon" din orice loc de pe site, nu doar de pe pagina Franței.
   const resolved = resolveCityToCountry(oras);
   if (!resolved) {
     res.status(404).json({ error: "oras_necunoscut", message: `Nu am găsit obiective turistice pentru „${oras}”. Încearcă alt oraș.` });
@@ -14036,7 +14022,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
         model: "gpt-4o-mini",
         response_format: { type: "json_object" },
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.6, // Răspunsuri mai precise geografic
+        temperature: 0.7,
       }),
     });
 
