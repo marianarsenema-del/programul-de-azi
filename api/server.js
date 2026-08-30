@@ -14133,7 +14133,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
       return;
     }
 
-    res.status(200).json(itinerar);
+    res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic });
   } catch (err) {
     console.error("genereaza-itinerar a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
@@ -14828,10 +14828,26 @@ function filtreazaObiectivePentruOrasIntl(countryCode, orasInput) {
 //     — mai slab, dar mai bine decât un eșec complet.
 // Dacă nicio țară nu se potrivește la niciun pas, întoarce null — apelantul
 // arată un mesaj de eroare general, NU mai specific unei singure țări.
+// Capitalizează corect fiecare cuvânt dintr-un nume de oraș (ex. "paris" ->
+// "Paris", "sfantu gheorghe" -> "Sfantu Gheorghe") — folosit ca ultimă
+// soluție, DOAR quando nu găsim orașul exact în propriile liste (RO, sau
+// potrivire doar după numele unui obiectiv) — quando ÎL găsim într-o listă
+// de orașe cunoscută (COUNTRIES[cc].cities), folosim direct forma aceea,
+// deja corect scrisă acolo (cu diacritice corecte), nu o presupunem.
+function toTitleCase(s) {
+  return s.replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+}
+
 function resolveCityToCountry(orasInput) {
   const roResult = filtreazaObiectivePentruOras(orasInput);
   if (roResult.judet && roResult.obiective && roResult.obiective.length) {
-    return { tara: "ro", obiective: roResult.obiective.map((o) => `${o.nume} (${o.localitate})`) };
+    // Verificăm și SITEMAP_CITIES (cele 103 orașe mari), pentru diacritice
+    // corecte — la fel ca la restul țărilor mai jos — dacă orașul tastat e
+    // unul din cele 103 (ex. "brasov" -> "Brașov"); altfel (orășele mici,
+    // ex. "Bran", "Sinaia", nedefinite acolo), cade pe simpla capitalizare.
+    const normRo = normalizeJudetInput(orasInput);
+    const matchedRo = SITEMAP_CITIES.find((c) => normalizeJudetInput(c) === normRo);
+    return { tara: "ro", obiective: roResult.obiective.map((o) => `${o.nume} (${o.localitate})`), orasCanonic: matchedRo || toTitleCase(orasInput) };
   }
 
   const norm = normalizeJudetInput(orasInput);
@@ -14839,23 +14855,25 @@ function resolveCityToCountry(orasInput) {
 
   for (const cc of otherCountries) {
     const cities = COUNTRIES[cc].cities || [];
-    if (cities.some((c) => normalizeJudetInput(c) === norm)) {
+    const matched = cities.find((c) => normalizeJudetInput(c) === norm);
+    if (matched) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name) };
+      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: matched };
     }
   }
 
   for (const cc of otherCountries) {
     const cities = COUNTRIES[cc].cities || [];
-    if (cities.some((c) => { const nc = normalizeJudetInput(c); return nc.includes(norm) || norm.includes(nc); })) {
+    const matched = cities.find((c) => { const nc = normalizeJudetInput(c); return nc.includes(norm) || norm.includes(nc); });
+    if (matched) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name) };
+      if (obiective.length) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: matched };
     }
   }
 
   for (const cc of otherCountries) {
     const { obiective, gasitExactInOras } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
-    if (gasitExactInOras) return { tara: cc, obiective: obiective.map((a) => a.name) };
+    if (gasitExactInOras) return { tara: cc, obiective: obiective.map((a) => a.name), orasCanonic: toTitleCase(orasInput) };
   }
 
   return null;
@@ -15174,8 +15192,14 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
           errorBox.style.display = "block";
           return;
         }
-        renderItinerary(res.data, oras);
-        saveItinerary(oras, zile, res.data);
+        // Folosim orasCanonic (scris corect, din propria noastră listă de
+        // orașe), nu textul brut tastat de utilizator — bug real, semnalat
+        // direct: cineva care scria "paris" (litere mici) vedea exact
+        // "paris" în butonul de zboruri și în link-ul trimis către Kiwi.com,
+        // care nu-l recunoștea corect ca destinație.
+        var orasAfisat = (res.data && res.data.orasCanonic) || oras;
+        renderItinerary(res.data, orasAfisat);
+        saveItinerary(orasAfisat, zile, res.data);
       })
       .catch(function(){
         clearInterval(loadingInterval);
