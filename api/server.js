@@ -2658,6 +2658,84 @@ const ACCORDION_TEXTS = {
 // ro + uk complete acum (singura țară cu date pe categorii, momentan);
 // restul limbilor cad automat pe uk — de completat pe măsură ce se extinde
 // sistemul de categorii și la alte țări.
+const ATTRACTION_PREFIX_TRANSLATIONS = {
+  "Muzeul": { ro: "Muzeul", uk: "Museum", de: "Museum", es: "Museo", fr: "Musée", it: "Museo", pl: "Muzeum", nl: "Museum", da: "Museet", se: "Museet", pt: "Museu", cz: "Muzeum", fi: "Museo", gr: "Μουσείο", hu: "Múzeum", hr: "Muzej", sk: "Múzeum", si: "Muzej", lt: "Muziejus", lv: "Muzejs", ee: "Muuseum" },
+  "Castelul": { ro: "Castelul", uk: "Castle", de: "Schloss", es: "Castillo", fr: "Château", it: "Castello", pl: "Zamek", nl: "Kasteel", da: "Slottet", se: "Slottet", pt: "Castelo", cz: "Hrad", fi: "Linna", gr: "Κάστρο", hu: "Vár", hr: "Dvorac", sk: "Hrad", si: "Grad", lt: "Pilis", lv: "Pils", ee: "Loss" },
+  "Biserica": { ro: "Biserica", uk: "Church", de: "Kirche", es: "Iglesia", fr: "Église", it: "Chiesa", pl: "Kościół", nl: "Kerk", da: "Kirken", se: "Kyrkan", pt: "Igreja", cz: "Kostel", fi: "Kirkko", gr: "Εκκλησία", hu: "Templom", hr: "Crkva", sk: "Kostol", si: "Cerkev", lt: "Bažnyčia", lv: "Baznīca", ee: "Kirik" },
+  "Parcul": { ro: "Parcul", uk: "Park", de: "Park", es: "Parque", fr: "Parc", it: "Parco", pl: "Park", nl: "Park", da: "Parken", se: "Parken", pt: "Parque", cz: "Park", fi: "Puisto", gr: "Πάρκο", hu: "Park", hr: "Park", sk: "Park", si: "Park", lt: "Parkas", lv: "Parks", ee: "Park" },
+  "Catedrala": { ro: "Catedrala", uk: "Cathedral", de: "Kathedrale", es: "Catedral", fr: "Cathédrale", it: "Cattedrale", pl: "Katedra", nl: "Kathedraal", da: "Katedralen", se: "Katedralen", pt: "Catedral", cz: "Katedrála", fi: "Katedraali", gr: "Καθεδρικός Ναός", hu: "Katedrális", hr: "Katedrala", sk: "Katedrála", si: "Katedrala", lt: "Katedra", lv: "Katedrāle", ee: "Katedraal" },
+  "Palatul": { ro: "Palatul", uk: "Palace", de: "Palast", es: "Palacio", fr: "Palais", it: "Palazzo", pl: "Pałac", nl: "Paleis", da: "Paladset", se: "Palatset", pt: "Palácio", cz: "Palác", fi: "Palatsi", gr: "Παλάτι", hu: "Palota", hr: "Palača", sk: "Palác", si: "Palača", lt: "Rūmai", lv: "Pils", ee: "Palee" },
+  "Cetatea": { ro: "Cetatea", uk: "Citadel", de: "Zitadelle", es: "Ciudadela", fr: "Citadelle", it: "Cittadella", pl: "Cytadela", nl: "Citadel", da: "Citadellet", se: "Citadellet", pt: "Cidadela", cz: "Citadela", fi: "Linnoitus", gr: "Ακρόπολη", hu: "Fellegvár", hr: "Citadela", sk: "Citadela", si: "Citadela", lt: "Citadelė", lv: "Citadele", ee: "Kindlus" },
+  "Mănăstirea": { ro: "Mănăstirea", uk: "Monastery", de: "Kloster", es: "Monasterio", fr: "Monastère", it: "Monastero", pl: "Klasztor", nl: "Klooster", da: "Klosteret", se: "Klostret", pt: "Mosteiro", cz: "Klášter", fi: "Luostari", gr: "Μονή", hu: "Kolostor", hr: "Samostan", sk: "Kláštor", si: "Samostan", lt: "Vienuolynas", lv: "Klosteris", ee: "Klooster" },
+  "Manastirea": { ro: "Mănăstirea", uk: "Monastery", de: "Kloster", es: "Monasterio", fr: "Monastère", it: "Monastero", pl: "Klasztor", nl: "Klooster", da: "Klosteret", se: "Klostret", pt: "Mosteiro", cz: "Klášter", fi: "Luostari", gr: "Μονή", hu: "Kolostor", hr: "Samostan", sk: "Kláštor", si: "Samostan", lt: "Vienuolynas", lv: "Klosteris", ee: "Klooster" },
+  "Turnul": { ro: "Turnul", uk: "Tower", de: "Turm", es: "Torre", fr: "Tour", it: "Torre", pl: "Wieża", nl: "Toren", da: "Tårnet", se: "Tornet", pt: "Torre", cz: "Věž", fi: "Torni", gr: "Πύργος", hu: "Torony", hr: "Toranj", sk: "Veža", si: "Stolp", lt: "Bokštas", lv: "Tornis", ee: "Torn" },
+  "Podul": { ro: "Podul", uk: "Bridge", de: "Brücke", es: "Puente", fr: "Pont", it: "Ponte", pl: "Most", nl: "Brug", da: "Broen", se: "Bron", pt: "Ponte", cz: "Most", fi: "Silta", gr: "Γέφυρα", hu: "Híd", hr: "Most", sk: "Most", si: "Most", lt: "Tiltas", lv: "Tilts", ee: "Sild" },
+  "Teatrul": { ro: "Teatrul", uk: "Theatre", de: "Theater", es: "Teatro", fr: "Théâtre", it: "Teatro", pl: "Teatr", nl: "Theater", da: "Teatret", se: "Teatern", pt: "Teatro", cz: "Divadlo", fi: "Teatteri", gr: "Θέατρο", hu: "Színház", hr: "Kazalište", sk: "Divadlo", si: "Gledališče", lt: "Teatras", lv: "Teātris", ee: "Teater" },
+  "Lacul": { ro: "Lacul", uk: "Lake", de: "See", es: "Lago", fr: "Lac", it: "Lago", pl: "Jezioro", nl: "Meer", da: "Søen", se: "Sjön", pt: "Lago", cz: "Jezero", fi: "Järvi", gr: "Λίμνη", hu: "Tó", hr: "Jezero", sk: "Jazero", si: "Jezero", lt: "Ežeras", lv: "Ezers", ee: "Järv" },
+  "Zidurile": { ro: "Zidurile", uk: "Walls", de: "Mauern", es: "Murallas", fr: "Murailles", it: "Mura", pl: "Mury", nl: "Muren", da: "Murene", se: "Murarna", pt: "Muralhas", cz: "Hradby", fi: "Muurit", gr: "Τείχη", hu: "Falak", hr: "Zidine", sk: "Hradby", si: "Obzidje", lt: "Sienos", lv: "Mūri", ee: "Müürid" },
+  "Peșterile": { ro: "Peșterile", uk: "Caves", de: "Höhlen", es: "Cuevas", fr: "Grottes", it: "Grotte", pl: "Jaskinie", nl: "Grotten", da: "Grotterne", se: "Grottorna", pt: "Grutas", cz: "Jeskyně", fi: "Luolat", gr: "Σπήλαια", hu: "Barlangok", hr: "Špilje", sk: "Jaskyne", si: "Jame", lt: "Urvai", lv: "Alas", ee: "Koopad" },
+  "Peștera": { ro: "Peștera", uk: "Cave", de: "Höhle", es: "Cueva", fr: "Grotte", it: "Grotta", pl: "Jaskinia", nl: "Grot", da: "Grotten", se: "Grottan", pt: "Gruta", cz: "Jeskyně", fi: "Luola", gr: "Σπήλαιο", hu: "Barlang", hr: "Špilja", sk: "Jaskyňa", si: "Jama", lt: "Urvas", lv: "Ala", ee: "Koobas" },
+  "Pestera": { ro: "Peștera", uk: "Cave", de: "Höhle", es: "Cueva", fr: "Grotte", it: "Grotta", pl: "Jaskinia", nl: "Grot", da: "Grotten", se: "Grottan", pt: "Gruta", cz: "Jeskyně", fi: "Luola", gr: "Σπήλαιο", hu: "Barlang", hr: "Špilja", sk: "Jaskyňa", si: "Jama", lt: "Urvas", lv: "Ala", ee: "Koobas" },
+  "Bazilica": { ro: "Bazilica", uk: "Basilica", de: "Basilika", es: "Basílica", fr: "Basilique", it: "Basilica", pl: "Bazylika", nl: "Basiliek", da: "Basilikaen", se: "Basilikan", pt: "Basílica", cz: "Bazilika", fi: "Basilika", gr: "Βασιλική", hu: "Bazilika", hr: "Bazilika", sk: "Bazilika", si: "Bazilika", lt: "Bazilika", lv: "Bazilika", ee: "Basiilika" },
+  "Piața": { ro: "Piața", uk: "Square", de: "Platz", es: "Plaza", fr: "Place", it: "Piazza", pl: "Plac", nl: "Plein", da: "Pladsen", se: "Torget", pt: "Praça", cz: "Náměstí", fi: "Aukio", gr: "Πλατεία", hu: "Tér", hr: "Trg", sk: "Námestie", si: "Trg", lt: "Aikštė", lv: "Laukums", ee: "Väljak" },
+  "Piata": { ro: "Piața", uk: "Square", de: "Platz", es: "Plaza", fr: "Place", it: "Piazza", pl: "Plac", nl: "Plein", da: "Pladsen", se: "Torget", pt: "Praça", cz: "Náměstí", fi: "Aukio", gr: "Πλατεία", hu: "Tér", hr: "Trg", sk: "Námestie", si: "Trg", lt: "Aikštė", lv: "Laukums", ee: "Väljak" },
+  "Situl": { ro: "Situl", uk: "Site", de: "Stätte", es: "Sitio", fr: "Site", it: "Sito", pl: "Stanowisko", nl: "Site", da: "Stedet", se: "Platsen", pt: "Sítio", cz: "Naleziště", fi: "Kohde", gr: "Χώρος", hu: "Lelőhely", hr: "Nalazište", sk: "Náleziská", si: "Najdišče", lt: "Vieta", lv: "Vieta", ee: "Ala" },
+  "Cheile": { ro: "Cheile", uk: "Gorge", de: "Schlucht", es: "Desfiladero", fr: "Gorges", it: "Gola", pl: "Wąwóz", nl: "Kloof", da: "Kløften", se: "Klyftan", pt: "Desfiladeiro", cz: "Soutěska", fi: "Rotko", gr: "Φαράγγι", hu: "Szurdok", hr: "Klanac", sk: "Tiesňava", si: "Soteska", lt: "Tarpeklis", lv: "Aiza", ee: "Kanjon" },
+  "Casa": { ro: "Casa", uk: "House", de: "Haus", es: "Casa", fr: "Maison", it: "Casa", pl: "Dom", nl: "Huis", da: "Huset", se: "Huset", pt: "Casa", cz: "Dům", fi: "Talo", gr: "Σπίτι", hu: "Ház", hr: "Kuća", sk: "Dom", si: "Hiša", lt: "Namas", lv: "Māja", ee: "Maja" },
+  "Cascada": { ro: "Cascada", uk: "Waterfall", de: "Wasserfall", es: "Cascada", fr: "Cascade", it: "Cascata", pl: "Wodospad", nl: "Waterval", da: "Vandfaldet", se: "Vattenfallet", pt: "Cascata", cz: "Vodopád", fi: "Vesiputous", gr: "Καταρράκτης", hu: "Vízesés", hr: "Vodopad", sk: "Vodopád", si: "Slap", lt: "Krioklys", lv: "Ūdenskritums", ee: "Juga" },
+  "Gara": { ro: "Gara", uk: "Station", de: "Bahnhof", es: "Estación", fr: "Gare", it: "Stazione", pl: "Dworzec", nl: "Station", da: "Banegården", se: "Stationen", pt: "Estação", cz: "Nádraží", fi: "Asema", gr: "Σταθμός", hu: "Pályaudvar", hr: "Kolodvor", sk: "Stanica", si: "Postaja", lt: "Stotis", lv: "Stacija", ee: "Jaam" },
+  "Fortăreața": { ro: "Fortăreața", uk: "Fortress", de: "Festung", es: "Fortaleza", fr: "Forteresse", it: "Fortezza", pl: "Twierdza", nl: "Vesting", da: "Fæstningen", se: "Fästningen", pt: "Fortaleza", cz: "Pevnost", fi: "Linnoitus", gr: "Φρούριο", hu: "Erőd", hr: "Tvrđava", sk: "Pevnosť", si: "Trdnjava", lt: "Tvirtovė", lv: "Cietoksnis", ee: "Kindlus" },
+  "Rezervația": { ro: "Rezervația", uk: "Reserve", de: "Reservat", es: "Reserva", fr: "Réserve", it: "Riserva", pl: "Rezerwat", nl: "Reservaat", da: "Reservatet", se: "Reservatet", pt: "Reserva", cz: "Rezervace", fi: "Luonnonsuojelualue", gr: "Καταφύγιο", hu: "Rezervátum", hr: "Rezervat", sk: "Rezervácia", si: "Rezervat", lt: "Rezervatas", lv: "Rezervāts", ee: "Kaitseala" },
+  "Grădinile": { ro: "Grădinile", uk: "Gardens", de: "Gärten", es: "Jardines", fr: "Jardins", it: "Giardini", pl: "Ogrody", nl: "Tuinen", da: "Haverne", se: "Trädgårdarna", pt: "Jardins", cz: "Zahrady", fi: "Puutarhat", gr: "Κήποι", hu: "Kertek", hr: "Vrtovi", sk: "Záhrady", si: "Vrtovi", lt: "Sodai", lv: "Dārzi", ee: "Aiad" },
+  "Gradina": { ro: "Grădina", uk: "Garden", de: "Garten", es: "Jardín", fr: "Jardin", it: "Giardino", pl: "Ogród", nl: "Tuin", da: "Haven", se: "Trädgården", pt: "Jardim", cz: "Zahrada", fi: "Puutarha", gr: "Κήπος", hu: "Kert", hr: "Vrt", sk: "Záhrada", si: "Vrt", lt: "Sodas", lv: "Dārzs", ee: "Aed" },
+  "Galeria": { ro: "Galeria", uk: "Gallery", de: "Galerie", es: "Galería", fr: "Galerie", it: "Galleria", pl: "Galeria", nl: "Galerie", da: "Galleriet", se: "Galleriet", pt: "Galeria", cz: "Galerie", fi: "Galleria", gr: "Πινακοθήκη", hu: "Galéria", hr: "Galerija", sk: "Galéria", si: "Galerija", lt: "Galerija", lv: "Galerija", ee: "Galerii" },
+  "Arcul": { ro: "Arcul", uk: "Arch", de: "Bogen", es: "Arco", fr: "Arc", it: "Arco", pl: "Łuk", nl: "Boog", da: "Buen", se: "Bågen", pt: "Arco", cz: "Oblouk", fi: "Kaari", gr: "Αψίδα", hu: "Diadalív", hr: "Slavoluk", sk: "Oblúk", si: "Slavolok", lt: "Arka", lv: "Arka", ee: "Kaar" },
+  "Insula": { ro: "Insula", uk: "Island", de: "Insel", es: "Isla", fr: "Île", it: "Isola", pl: "Wyspa", nl: "Eiland", da: "Øen", se: "Ön", pt: "Ilha", cz: "Ostrov", fi: "Saari", gr: "Νησί", hu: "Sziget", hr: "Otok", sk: "Ostrov", si: "Otok", lt: "Sala", lv: "Sala", ee: "Saar" },
+  "Insulele": { ro: "Insulele", uk: "Islands", de: "Inseln", es: "Islas", fr: "Îles", it: "Isole", pl: "Wyspy", nl: "Eilanden", da: "Øerne", se: "Öarna", pt: "Ilhas", cz: "Ostrovy", fi: "Saaret", gr: "Νησιά", hu: "Szigetek", hr: "Otoci", sk: "Ostrovy", si: "Otoki", lt: "Salos", lv: "Salas", ee: "Saared" },
+  "Muntele": { ro: "Muntele", uk: "Mount", de: "Berg", es: "Monte", fr: "Mont", it: "Monte", pl: "Góra", nl: "Berg", da: "Bjerget", se: "Berget", pt: "Monte", cz: "Hora", fi: "Vuori", gr: "Όρος", hu: "Hegy", hr: "Planina", sk: "Vrch", si: "Gora", lt: "Kalnas", lv: "Kalns", ee: "Mägi" },
+  "Templul": { ro: "Templul", uk: "Temple", de: "Tempel", es: "Templo", fr: "Temple", it: "Tempio", pl: "Świątynia", nl: "Tempel", da: "Templet", se: "Templet", pt: "Templo", cz: "Chrám", fi: "Temppeli", gr: "Ναός", hu: "Templom", hr: "Hram", sk: "Chrám", si: "Tempelj", lt: "Šventykla", lv: "Templis", ee: "Tempel" },
+  "Sinagoga": { ro: "Sinagoga", uk: "Synagogue", de: "Synagoge", es: "Sinagoga", fr: "Synagogue", it: "Sinagoga", pl: "Synagoga", nl: "Synagoge", da: "Synagogen", se: "Synagogan", pt: "Sinagoga", cz: "Synagoga", fi: "Synagoga", gr: "Συναγωγή", hu: "Zsinagóga", hr: "Sinagoga", sk: "Synagóga", si: "Sinagoga", lt: "Sinagoga", lv: "Sinagoga", ee: "Sünagoog" },
+  "Salina": { ro: "Salina", uk: "Salt Mine", de: "Salzbergwerk", es: "Mina de Sal", fr: "Mine de Sel", it: "Miniera di Sale", pl: "Kopalnia Soli", nl: "Zoutmijn", da: "Saltminen", se: "Saltgruvan", pt: "Mina de Sal", cz: "Solný Důl", fi: "Suolakaivos", gr: "Ορυχείο Αλατιού", hu: "Sóbánya", hr: "Rudnik Soli", sk: "Soľná Baňa", si: "Solni Rudnik", lt: "Druskos Kasykla", lv: "Sāls Raktuves", ee: "Soolakaevandus" },
+  "Portul": { ro: "Portul", uk: "Port", de: "Hafen", es: "Puerto", fr: "Port", it: "Porto", pl: "Port", nl: "Haven", da: "Havnen", se: "Hamnen", pt: "Porto", cz: "Přístav", fi: "Satama", gr: "Λιμάνι", hu: "Kikötő", hr: "Luka", sk: "Prístav", si: "Pristanišče", lt: "Uostas", lv: "Osta", ee: "Sadam" },
+  "Barajul": { ro: "Barajul", uk: "Dam", de: "Staudamm", es: "Presa", fr: "Barrage", it: "Diga", pl: "Zapora", nl: "Dam", da: "Dæmningen", se: "Dammen", pt: "Barragem", cz: "Přehrada", fi: "Pato", gr: "Φράγμα", hu: "Gát", hr: "Brana", sk: "Priehrada", si: "Jez", lt: "Užtvanka", lv: "Dambis", ee: "Tamm" },
+  "Mausoleul": { ro: "Mausoleul", uk: "Mausoleum", de: "Mausoleum", es: "Mausoleo", fr: "Mausolée", it: "Mausoleo", pl: "Mauzoleum", nl: "Mausoleum", da: "Mausolæet", se: "Mausoleet", pt: "Mausoléu", cz: "Mauzoleum", fi: "Mausoleumi", gr: "Μαυσωλείο", hu: "Mauzóleum", hr: "Mauzolej", sk: "Mauzóleum", si: "Mavzolej", lt: "Mauzoliejus", lv: "Mauzolejs", ee: "Mausoleum" },
+  "Complexul": { ro: "Complexul", uk: "Complex", de: "Komplex", es: "Complejo", fr: "Complexe", it: "Complesso", pl: "Kompleks", nl: "Complex", da: "Komplekset", se: "Komplexet", pt: "Complexo", cz: "Komplex", fi: "Kompleksi", gr: "Συγκρότημα", hu: "Együttes", hr: "Kompleks", sk: "Komplex", si: "Kompleks", lt: "Kompleksas", lv: "Komplekss", ee: "Kompleks" },
+  "Abația": { ro: "Abația", uk: "Abbey", de: "Abtei", es: "Abadía", fr: "Abbaye", it: "Abbazia", pl: "Opactwo", nl: "Abdij", da: "Abbediet", se: "Klostret", pt: "Abadia", cz: "Opatství", fi: "Luostari", gr: "Αβαείο", hu: "Apátság", hr: "Opatija", sk: "Opátstvo", si: "Opatija", lt: "Abatija", lv: "Abatija", ee: "Klooster" },
+  "Clădirea": { ro: "Clădirea", uk: "Building", de: "Gebäude", es: "Edificio", fr: "Bâtiment", it: "Edificio", pl: "Budynek", nl: "Gebouw", da: "Bygningen", se: "Byggnaden", pt: "Edifício", cz: "Budova", fi: "Rakennus", gr: "Κτίριο", hu: "Épület", hr: "Zgrada", sk: "Budova", si: "Stavba", lt: "Pastatas", lv: "Ēka", ee: "Hoone" },
+};
+
+// Traduce numele obiectivelor turistice — cerut explicit, semnalat cu
+// captură reală: multe obiective (peste 750, din România și cele 21 de
+// țări cu liste mici) au fost introduse cu un cuvânt generic ROMÂNESC în
+// față (ex. "Castelul Neuschwanstein", "Catedrala din Köln"), indiferent de
+// limba paginii. Cele deja introduse cu denumiri locale corecte (Belgia,
+// Spania, Italia, Franța, UK — ex. "Palazzo Ducale", "Château de
+// Chambord") NU se ating — cuvântul de-acolo nu se potrivește niciunui
+// prefix din listă, deci rămâne neschimbat.
+//
+// COMPROMIS ONEST, spus dinainte: nu reordonează cuvintele (engleza ar
+// suna mai natural cu sufix, "Bran Castle", nu "Castle Bran") — dar
+// reordonarea corectă ar necesita gestionarea conectorilor ("din", "de",
+// "a", "ale"), mult mai complex. Rezultatul e clar mai bun decât română
+// peste tot, chiar dacă nu perfect gramatical în toate limbile.
+function translateAttractionName(name, lang) {
+  if (!name || lang === "ro") return name;
+  const words = Object.keys(ATTRACTION_PREFIX_TRANSLATIONS).sort((a, b) => b.length - a.length);
+  for (const word of words) {
+    if (name === word || name.startsWith(word + " ")) {
+      const translated = ATTRACTION_PREFIX_TRANSLATIONS[word][lang];
+      if (!translated) return name;
+      let rest = name.slice(word.length);
+      // Eliminăm conectorul românesc rămas ("din"/"de"/"al"/"ai"/"ale"/"a"),
+      // ex. "Catedrala din Köln" -> "Kathedrale Köln", nu "Kathedrale din
+      // Köln" — găsit la 261 din 2.324 de nume, merită reparat separat.
+      rest = rest.replace(/^ (din|de|al|ai|ale|a) /, " ");
+      return translated + rest;
+    }
+  }
+  return name;
+}
+
 const CATEGORY_LABELS = {
   ro: {
     castele_palate: "🏰 Castele, Palate și Conace",
@@ -2946,11 +3024,16 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext, 
   const cityAttr = cityLabel ? ` data-city="${escapeHtml(normalizeSlug(cityLabel))}"` : "";
   const slug = toDbSlug(a.name);
   const detailHref = isIntlContext ? `/${countryCode}/obiectiv/${slug}` : `/obiectiv/${slug}`;
+  // displayName — DOAR pentru textul vizibil; data-name (mai jos) rămâne
+  // numele ORIGINAL, canonic — folosit ca identificator pentru favorite,
+  // dacă l-am fi tradus, un obiectiv salvat la favorite într-o limbă n-ar
+  // mai fi recunoscut ca "același" în altă limbă.
+  const displayName = translateAttractionName(a.name, lang);
   return `<li class="attraction-accordion-item"${cityAttr}>
     <div class="attraction-accordion-header-row">
       <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(detailHref)}">☆</button>
       <button type="button" class="attraction-accordion-header" aria-expanded="false">
-        <span class="attraction-name">${escapeHtml(a.name)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
+        <span class="attraction-name">${escapeHtml(displayName)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
         <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
     </div>
@@ -12699,8 +12782,14 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   const slug = toDbSlug(attraction.name);
-  const title = `${attraction.name} — Opening Hours Today`;
-  const description = `${attraction.name} — check today's opening hours and book tickets online.`;
+  // displayName — DOAR pentru text vizibil (titlu, H1, breadcrumb, footer).
+  // attraction.name (original) rămâne folosit la slug (URL-ul trebuie să fie
+  // identic indiferent de limbă) și la linkuri de căutare externă
+  // (Booking.com, hartă) — traducerea mecanică a prefixului ar putea strica
+  // potrivirea căutării pe alte site-uri, care așteaptă numele real.
+  const displayName = translateAttractionName(attraction.name, activeLang);
+  const title = `${displayName} — Opening Hours Today`;
+  const description = `${displayName} — check today's opening hours and book tickets online.`;
   const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
 
   const googleLang = toGoogleLang(activeLang);
@@ -12715,7 +12804,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
       : "";
     statusHtml = `
     <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
-      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="store-name">${escapeHtml(displayName)}</div>
       <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
       <div class="status-sub">${escapeHtml(liveGoogleLabelFor(activeLang))}</div>
       <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
@@ -12743,7 +12832,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(attraction.name)}</p>
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(displayName)}</p>
   <div class="search-box-wrap">
     <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
@@ -12757,7 +12846,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
   <footer>
-    <p><strong>Opening Hours Today</strong> ${attractionFooterTextFor(activeLang, escapeHtml(attraction.name))}</p>
+    <p><strong>Opening Hours Today</strong> ${attractionFooterTextFor(activeLang, escapeHtml(displayName))}</p>
   </footer>
 </main>
 ${schemaHtml}
