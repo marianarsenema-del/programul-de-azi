@@ -3332,7 +3332,7 @@ const STORE_AFFILIATE_LINKS = {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -5353,6 +5353,47 @@ const AT_STORE_CONFIG = {
   penny: { name: "Penny", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
 };
 
+// Turcia — spre deosebire de majoritatea Europei, marile lanțuri de
+// discount (BİM, A101, ŞOK) și Migros rămân DESCHISE și duminica, program
+// lung, 7 zile din 7 — practică obișnuită, nu excepție. NU includem
+// sărbătorile islamice (Ramazan Bayramı, Kurban Bayramı) — sunt după
+// calendarul lunar, se mută în fiecare an, ar necesita actualizare manuală
+// anuală ca să rămână corecte; incluse doar 1 ianuarie (singura sărbătoare
+// cu dată fixă, general respectată de marile lanțuri).
+const TR_HOLIDAYS = [
+  { date: "01-01", label: "Yılbaşı (1 Ocak)", hours: null },
+];
+function trSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "22:00" }, // Pazar (Duminică)
+    { open: "08:00", close: "22:00" }, // Pazartesi (Luni)
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Cumartesi (Sâmbătă)
+  ];
+}
+const TR_STORE_CONFIG = {
+  migros: { name: "Migros", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  bim: { name: "BİM", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  a101: { name: "A101", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  sok: { name: "ŞOK", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  carrefoursa: { name: "CarrefourSA", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  teknosa: { name: "Teknosa", weekly: [
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ], holidays: TR_HOLIDAYS },
+  mediamarkt: { name: "MediaMarkt", weekly: [
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ], holidays: TR_HOLIDAYS },
+};
+
 // Belgia: situație reală, în schimbare — Colruyt, Aldi și Lidl rămân închise
 // duminica (politică fermă), în timp ce Carrefour a început recent (ian. 2026)
 // să deschidă duminică dimineața la hipermarketuri, iar Delhaize variază pe
@@ -5687,6 +5728,19 @@ const COUNTRIES = {
     config: LU_STORE_CONFIG,
     t: TRANSLATIONS.fr,
     cities: ["Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Ettelbruck", "Diekirch", "Wiltz", "Grevenmacher"],
+  },
+  // Turcia — LIMITARE ONESTĂ, de spus clar: turca NU e una din cele 21 de
+  // limbi ale site-ului (TRANSLATIONS/CATEGORY_LABELS/etc.) — implementarea
+  // completă a unei a 22-a limbi ar însemna zeci de dicționare de tradus
+  // din nou, mult peste scopul unei singure sesiuni. Cade pe engleză
+  // (TRANSLATIONS.uk) ca interfață — vizitatorii turci văd site-ul în
+  // engleză, nu în turcă. Obiectivele turistice (numele, categoriile)
+  // funcționează normal, traduse în oricare din cele 21 de limbi ale
+  // vizitatorului, la fel ca la orice altă țară.
+  tr: {
+    config: TR_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Adıyaman", "Aksaray", "Alanya", "Amasya", "Anatolia Centrală", "Ankara", "Antalya", "Aydın", "Ağrı", "Batman", "Bergama", "Bodrum", "Bursa", "Capadocia", "Demre", "Denizli", "Diyarbakır", "Doğubeyazıt", "Edirne", "Efes", "Fethiye", "Gaziantep", "Göreme", "Gümüşhane", "Istanbul", "Izmir", "Kaş", "Kekova", "Kemer", "Konya", "Kuşadası", "Lacul Van", "Manavgat", "Mardin", "Maçka", "Mersin", "Midyat", "Ordu", "Rize", "Samsun", "Selçuk", "Serik", "Side", "Sivas", "Trabzon", "Van", "Çanakkale", "Çeşme", "Şanlıurfa"],
   },
 };
 
@@ -11356,6 +11410,161 @@ const ATTRACTIONS = {
     { name: "Podul Adolphe", url: "https://www.google.com/maps/search/?api=1&query=Adolphe+Bridge+Luxembourg", category: "infrastructura" },
     { name: "Castelul Bourscheid", url: "https://www.google.com/maps/search/?api=1&query=Bourscheid+Castle+Luxembourg", category: "cetati_turnuri" },
   ],
+  tr: [
+    { name: "Palatul Topkapı Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Topkapı+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
+    { name: "Palatul Dolmabahçe Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dolmabahçe+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
+    { name: "Palatul Beylerbeyi Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Beylerbeyi+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
+    { name: "Castelul Yıldız Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Yıldız+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
+    { name: "Castelul Beyioğlu Edirne", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Beyioğlu+Edirne+Turkey", category: "castele_palate", city: "Edirne" },
+    { name: "Fortăreața Rumeli Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Rumeli+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
+    { name: "Turnul Galata Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Galata+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
+    { name: "Turnul Fecioarei Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Fecioarei+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
+    { name: "Fortăreața Yedikule Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Yedikule+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
+    { name: "Sfânta Sofia Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Sfânta+Sofia+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Moscheea Albastră Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Albastră+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Moscheea Süleymaniye Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Süleymaniye+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Biserica Chora Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Chora+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Moscheea Selimiye Edirne", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Selimiye+Edirne+Turkey", category: "manastiri", city: "Edirne" },
+    { name: "Biserica Sfânta Irina Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfânta+Irina+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Strâmtoarea Bosfor Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Strâmtoarea+Bosfor+Istanbul+Turkey", category: "natura", city: "Istanbul" },
+    { name: "Parcul Gülhane Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Gülhane+Istanbul+Turkey", category: "natura", city: "Istanbul" },
+    { name: "Insulele Principilor Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Insulele+Principilor+Istanbul+Turkey", category: "natura", city: "Istanbul" },
+    { name: "Parcul Național Uludağ Bursa", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Uludağ+Bursa+Turkey", category: "natura", city: "Bursa" },
+    { name: "Podul Bosfor Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Podul+Bosfor+Istanbul+Turkey", category: "infrastructura", city: "Istanbul" },
+    { name: "Gara Haydarpașa Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Gara+Haydarpașa+Istanbul+Turkey", category: "infrastructura", city: "Istanbul" },
+    { name: "Tunelul Marmaray Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Tunelul+Marmaray+Istanbul+Turkey", category: "infrastructura", city: "Istanbul" },
+    { name: "Funicularul Istoric Tünel Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Funicularul+Istoric+Tünel+Istanbul+Turkey", category: "infrastructura", city: "Istanbul" },
+    { name: "Muzeele de Arheologie din Istanbul Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Muzeele+de+Arheologie+din+Istanbul+Istanbul+Turkey", category: "muzee", city: "Istanbul" },
+    { name: "Muzeul Mozaicului din Marele Palat Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mozaicului+din+Marele+Palat+Istanbul+Turkey", category: "muzee", city: "Istanbul" },
+    { name: "Muzeul de Artă Turcă și Islamică Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Turcă+și+Islamică+Istanbul+Turkey", category: "muzee", city: "Istanbul" },
+    { name: "Muzeul de Artă Modernă din Istanbul Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Modernă+din+Istanbul+Istanbul+Turkey", category: "muzee", city: "Istanbul" },
+    { name: "Complexul Muzeal Troia Çanakkale", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Muzeal+Troia+Çanakkale+Turkey", category: "muzee", city: "Çanakkale" },
+    { name: "Marele Bazar Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Marele+Bazar+Istanbul+Turkey", category: "cladiri_teatre", city: "Istanbul" },
+    { name: "Bazarul de Mirodenii Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Bazarul+de+Mirodenii+Istanbul+Turkey", category: "cladiri_teatre", city: "Istanbul" },
+    { name: "Piața Taksim și Bulevardul Istiklal Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Piața+Taksim+și+Bulevardul+Istiklal+Istanbul+Turkey", category: "cladiri_teatre", city: "Istanbul" },
+    { name: "Cisterna Basilică Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Cisterna+Basilică+Istanbul+Turkey", category: "cladiri_teatre", city: "Istanbul" },
+    { name: "Hipodromul din Constantinopol Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Hipodromul+din+Constantinopol+Istanbul+Turkey", category: "cladiri_teatre", city: "Istanbul" },
+    { name: "Castelul din Bodrum Bodrum", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Bodrum+Bodrum+Turkey", category: "castele_palate", city: "Bodrum" },
+    { name: "Castelul din Çeşme Çeşme", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Çeşme+Çeşme+Turkey", category: "castele_palate", city: "Çeşme" },
+    { name: "Castelul Selçuk Selçuk", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Selçuk+Selçuk+Turkey", category: "castele_palate", city: "Selçuk" },
+    { name: "Turnul cu Ceas din Izmir Izmir", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Izmir+Izmir+Turkey", category: "cetati_turnuri", city: "Izmir" },
+    { name: "Cetatea Kadifekale Izmir", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Kadifekale+Izmir+Turkey", category: "cetati_turnuri", city: "Izmir" },
+    { name: "Casa Fecioarei Maria Efes", url: "https://www.google.com/maps/search/?api=1&query=Casa+Fecioarei+Maria+Efes+Turkey", category: "manastiri", city: "Efes" },
+    { name: "Bazilica Sfântului Ioan Selçuk", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântului+Ioan+Selçuk+Turkey", category: "manastiri", city: "Selçuk" },
+    { name: "Moscheea Isa Bey Selçuk", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Isa+Bey+Selçuk+Turkey", category: "manastiri", city: "Selçuk" },
+    { name: "Terasele de Travertin din Pamukkale Denizli", url: "https://www.google.com/maps/search/?api=1&query=Terasele+de+Travertin+din+Pamukkale+Denizli+Turkey", category: "natura", city: "Denizli" },
+    { name: "Parcul Național Dilek Kuşadası", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Dilek+Kuşadası+Turkey", category: "natura", city: "Kuşadası" },
+    { name: "Golful și Plaja Ölüdeniz Fethiye", url: "https://www.google.com/maps/search/?api=1&query=Golful+și+Plaja+Ölüdeniz+Fethiye+Turkey", category: "natura", city: "Fethiye" },
+    { name: "Portul de Iahturi din Bodrum Bodrum", url: "https://www.google.com/maps/search/?api=1&query=Portul+de+Iahturi+din+Bodrum+Bodrum+Turkey", category: "infrastructura", city: "Bodrum" },
+    { name: "Linia de Funicular Asansör Izmir", url: "https://www.google.com/maps/search/?api=1&query=Linia+de+Funicular+Asansör+Izmir+Turkey", category: "infrastructura", city: "Izmir" },
+    { name: "Șoseaua Panoramică a Rivierei Egeene Bodrum", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Panoramică+a+Rivierei+Egeene+Bodrum+Turkey", category: "infrastructura", city: "Bodrum" },
+    { name: "Orașul Antic Efes Selçuk", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Efes+Selçuk+Turkey", category: "muzee", city: "Selçuk" },
+    { name: "Muzeul de Arheologie Subacvatică din Bodrum Bodrum", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arheologie+Subacvatică+din+Bodrum+Bodrum+Turkey", category: "muzee", city: "Bodrum" },
+    { name: "Siturile Antice Hierapolis și Laodiceea Denizli", url: "https://www.google.com/maps/search/?api=1&query=Siturile+Antice+Hierapolis+și+Laodiceea+Denizli+Turkey", category: "muzee", city: "Denizli" },
+    { name: "Situl Arheologic Pergam Bergama", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Pergam+Bergama+Turkey", category: "muzee", city: "Bergama" },
+    { name: "Orașul Antic Afrodisias Aydın", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Afrodisias+Aydın+Turkey", category: "muzee", city: "Aydın" },
+    { name: "Biblioteca lui Celsus Efes", url: "https://www.google.com/maps/search/?api=1&query=Biblioteca+lui+Celsus+Efes+Turkey", category: "cladiri_teatre", city: "Efes" },
+    { name: "Marele Teatru din Efes Efes", url: "https://www.google.com/maps/search/?api=1&query=Marele+Teatru+din+Efes+Efes+Turkey", category: "cladiri_teatre", city: "Efes" },
+    { name: "Agora Antică din Izmir Izmir", url: "https://www.google.com/maps/search/?api=1&query=Agora+Antică+din+Izmir+Izmir+Turkey", category: "cladiri_teatre", city: "Izmir" },
+    { name: "Piața Istorică Kemeraltı Izmir", url: "https://www.google.com/maps/search/?api=1&query=Piața+Istorică+Kemeraltı+Izmir+Turkey", category: "cladiri_teatre", city: "Izmir" },
+    { name: "Castelul Uçhisar Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Uçhisar+Capadocia+Turkey", category: "castele_palate", city: "Capadocia" },
+    { name: "Castelul Ortahisar Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ortahisar+Capadocia+Turkey", category: "castele_palate", city: "Capadocia" },
+    { name: "Cetatea din Ankara Ankara", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+din+Ankara+Ankara+Turkey", category: "cetati_turnuri", city: "Ankara" },
+    { name: "Turnul Atakule Ankara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Atakule+Ankara+Turkey", category: "cetati_turnuri", city: "Ankara" },
+    { name: "Bisericile în Stâncă din Göreme Göreme", url: "https://www.google.com/maps/search/?api=1&query=Bisericile+în+Stâncă+din+Göreme+Göreme+Turkey", category: "manastiri", city: "Göreme" },
+    { name: "Mănăstirea Kadiș Göreme", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Kadiș+Göreme+Turkey", category: "manastiri", city: "Göreme" },
+    { name: "Moscheea Kocatepe Ankara", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Kocatepe+Ankara+Turkey", category: "manastiri", city: "Ankara" },
+    { name: "Moscheea Hacı Bayram Ankara", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Hacı+Bayram+Ankara+Turkey", category: "manastiri", city: "Ankara" },
+    { name: "Parcul Național Göreme Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Național+Göreme+Capadocia+Turkey", category: "natura", city: "Capadocia" },
+    { name: "Valea Ihlara Aksaray", url: "https://www.google.com/maps/search/?api=1&query=Valea+Ihlara+Aksaray+Turkey", category: "natura", city: "Aksaray" },
+    { name: "Valea Devrent Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Valea+Devrent+Capadocia+Turkey", category: "natura", city: "Capadocia" },
+    { name: "Lacul Sărat Anatolia Centrală", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Sărat+Anatolia+Centrală+Turkey", category: "natura", city: "Anatolia Centrală" },
+    { name: "Orașul Subteran Derinkuyu Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Subteran+Derinkuyu+Capadocia+Turkey", category: "natura", city: "Capadocia" },
+    { name: "Orașul Subteran Kaymaklı Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Subteran+Kaymaklı+Capadocia+Turkey", category: "natura", city: "Capadocia" },
+    { name: "Zona de Lansare a Baloanelor cu Aer Cald Göreme", url: "https://www.google.com/maps/search/?api=1&query=Zona+de+Lansare+a+Baloanelor+cu+Aer+Cald+Göreme+Turkey", category: "infrastructura", city: "Göreme" },
+    { name: "Gara Centrală din Ankara Ankara", url: "https://www.google.com/maps/search/?api=1&query=Gara+Centrală+din+Ankara+Ankara+Turkey", category: "infrastructura", city: "Ankara" },
+    { name: "Șoseaua Panoramică Ürgüp-Avanos Capadocia", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Panoramică+Ürgüp-Avanos+Capadocia+Turkey", category: "infrastructura", city: "Capadocia" },
+    { name: "Muzeul Civilizațiilor Anatoliene Ankara", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Civilizațiilor+Anatoliene+Ankara+Turkey", category: "muzee", city: "Ankara" },
+    { name: "Muzeul în Aer Liber Göreme Göreme", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+în+Aer+Liber+Göreme+Göreme+Turkey", category: "muzee", city: "Göreme" },
+    { name: "Muzeul de Artă și Sculptură din Ankara Ankara", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+și+Sculptură+din+Ankara+Ankara+Turkey", category: "muzee", city: "Ankara" },
+    { name: "Muzeul din Konya Konya", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+din+Konya+Konya+Turkey", category: "muzee", city: "Konya" },
+    { name: "Anıtkabir Ankara", url: "https://www.google.com/maps/search/?api=1&query=Anıtkabir+Ankara+Turkey", category: "cladiri_teatre", city: "Ankara" },
+    { name: "Piața Kızılay Ankara", url: "https://www.google.com/maps/search/?api=1&query=Piața+Kızılay+Ankara+Turkey", category: "cladiri_teatre", city: "Ankara" },
+    { name: "Complexul Urban Istoric Hamamönü Ankara", url: "https://www.google.com/maps/search/?api=1&query=Complexul+Urban+Istoric+Hamamönü+Ankara+Turkey", category: "cladiri_teatre", city: "Ankara" },
+    { name: "Castelul din Alanya Alanya", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Alanya+Alanya+Turkey", category: "castele_palate", city: "Alanya" },
+    { name: "Castelul Simena Kekova", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Simena+Kekova+Turkey", category: "castele_palate", city: "Kekova" },
+    { name: "Castelul Kızkalesi Mersin", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kızkalesi+Mersin+Turkey", category: "castele_palate", city: "Mersin" },
+    { name: "Turnul Roșu Alanya", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Roșu+Alanya+Turkey", category: "cetati_turnuri", city: "Alanya" },
+    { name: "Turnul Hıdırlık Antalya", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Hıdırlık+Antalya+Turkey", category: "cetati_turnuri", city: "Antalya" },
+    { name: "Biserica Sfântului Nicolae Demre", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfântului+Nicolae+Demre+Turkey", category: "manastiri", city: "Demre" },
+    { name: "Moscheea Yivli Minare Antalya", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Yivli+Minare+Antalya+Turkey", category: "manastiri", city: "Antalya" },
+    { name: "Cascada Düden Antalya", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Düden+Antalya+Turkey", category: "natura", city: "Antalya" },
+    { name: "Canionul Köprülü Manavgat", url: "https://www.google.com/maps/search/?api=1&query=Canionul+Köprülü+Manavgat+Turkey", category: "natura", city: "Manavgat" },
+    { name: "Peștera Damlataş Alanya", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Damlataş+Alanya+Turkey", category: "natura", city: "Alanya" },
+    { name: "Cascada Kurşunlu Antalya", url: "https://www.google.com/maps/search/?api=1&query=Cascada+Kurşunlu+Antalya+Turkey", category: "natura", city: "Antalya" },
+    { name: "Plaja Kaputaş Kaş", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kaputaş+Kaş+Turkey", category: "natura", city: "Kaş" },
+    { name: "Muntele Tahtalı Kemer", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Tahtalı+Kemer+Turkey", category: "natura", city: "Kemer" },
+    { name: "Telecabina Olympos Teleferik Kemer", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Olympos+Teleferik+Kemer+Turkey", category: "infrastructura", city: "Kemer" },
+    { name: "Portul Istoric din Antalya Antalya", url: "https://www.google.com/maps/search/?api=1&query=Portul+Istoric+din+Antalya+Antalya+Turkey", category: "infrastructura", city: "Antalya" },
+    { name: "Șoseaua de Coastă D400 Fethiye", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+de+Coastă+D400+Fethiye+Turkey", category: "infrastructura", city: "Fethiye" },
+    { name: "Muzeul din Antalya Antalya", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+din+Antalya+Antalya+Turkey", category: "muzee", city: "Antalya" },
+    { name: "Orașul Antic Perga Antalya", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Perga+Antalya+Turkey", category: "muzee", city: "Antalya" },
+    { name: "Orașul Antic Side Side", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Side+Side+Turkey", category: "muzee", city: "Side" },
+    { name: "Teatrul Antic Aspendos Serik", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Antic+Aspendos+Serik+Turkey", category: "muzee", city: "Serik" },
+    { name: "Orașul Antic Myra Demre", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Myra+Demre+Turkey", category: "muzee", city: "Demre" },
+    { name: "Poarta lui Hadrian Antalya", url: "https://www.google.com/maps/search/?api=1&query=Poarta+lui+Hadrian+Antalya+Turkey", category: "cladiri_teatre", city: "Antalya" },
+    { name: "Templul lui Apollo din Side Side", url: "https://www.google.com/maps/search/?api=1&query=Templul+lui+Apollo+din+Side+Side+Turkey", category: "cladiri_teatre", city: "Side" },
+    { name: "Centrul Istoric Kaleiçi Antalya", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Istoric+Kaleiçi+Antalya+Turkey", category: "cladiri_teatre", city: "Antalya" },
+    { name: "Castelul din Trabzon Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Trabzon+Trabzon+Turkey", category: "castele_palate", city: "Trabzon" },
+    { name: "Castelul Zil Rize", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Zil+Rize+Turkey", category: "castele_palate", city: "Rize" },
+    { name: "Conacul Atatürk Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Atatürk+Trabzon+Turkey", category: "castele_palate", city: "Trabzon" },
+    { name: "Fortăreața Rize Rize", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Rize+Rize+Turkey", category: "cetati_turnuri", city: "Rize" },
+    { name: "Turnul cu Ceas din Amasya Amasya", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Amasya+Amasya+Turkey", category: "cetati_turnuri", city: "Amasya" },
+    { name: "Mănăstirea Sumela Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Sumela+Trabzon+Turkey", category: "manastiri", city: "Trabzon" },
+    { name: "Sfânta Sofia din Trabzon Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Sfânta+Sofia+din+Trabzon+Trabzon+Turkey", category: "manastiri", city: "Trabzon" },
+    { name: "Mănăstirea Vazelon Maçka", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Vazelon+Maçka+Turkey", category: "manastiri", city: "Maçka" },
+    { name: "Lacul Uzungöl Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Uzungöl+Trabzon+Turkey", category: "natura", city: "Trabzon" },
+    { name: "Platoul Ayder Rize", url: "https://www.google.com/maps/search/?api=1&query=Platoul+Ayder+Rize+Turkey", category: "natura", city: "Rize" },
+    { name: "Valea Fırtına Rize", url: "https://www.google.com/maps/search/?api=1&query=Valea+Fırtına+Rize+Turkey", category: "natura", city: "Rize" },
+    { name: "Peștera Karaca Gümüşhane", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Karaca+Gümüşhane+Turkey", category: "natura", city: "Gümüşhane" },
+    { name: "Canionul Şahinkaya Samsun", url: "https://www.google.com/maps/search/?api=1&query=Canionul+Şahinkaya+Samsun+Turkey", category: "natura", city: "Samsun" },
+    { name: "Podurile Otomane de Piatră din Rize Rize", url: "https://www.google.com/maps/search/?api=1&query=Podurile+Otomane+de+Piatră+din+Rize+Rize+Turkey", category: "infrastructura", city: "Rize" },
+    { name: "Șoseaua Panoramică Ovit Pass Rize", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Panoramică+Ovit+Pass+Rize+Turkey", category: "infrastructura", city: "Rize" },
+    { name: "Telecabina Ordu Boztepe Ordu", url: "https://www.google.com/maps/search/?api=1&query=Telecabina+Ordu+Boztepe+Ordu+Turkey", category: "infrastructura", city: "Ordu" },
+    { name: "Mormintele Regilor din Pont Amasya", url: "https://www.google.com/maps/search/?api=1&query=Mormintele+Regilor+din+Pont+Amasya+Turkey", category: "muzee", city: "Amasya" },
+    { name: "Muzeul din Trabzon Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+din+Trabzon+Trabzon+Turkey", category: "muzee", city: "Trabzon" },
+    { name: "Muzeul Orașului Samsun Samsun", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Orașului+Samsun+Samsun+Turkey", category: "muzee", city: "Samsun" },
+    { name: "Casele Otomane de pe Malul Râului Yeşilırmak Amasya", url: "https://www.google.com/maps/search/?api=1&query=Casele+Otomane+de+pe+Malul+Râului+Yeşilırmak+Amasya+Turkey", category: "cladiri_teatre", city: "Amasya" },
+    { name: "Piața Centrală din Trabzon Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Trabzon+Trabzon+Turkey", category: "cladiri_teatre", city: "Trabzon" },
+    { name: "Bazarul Istoric Bedesten Trabzon", url: "https://www.google.com/maps/search/?api=1&query=Bazarul+Istoric+Bedesten+Trabzon+Turkey", category: "cladiri_teatre", city: "Trabzon" },
+    { name: "Palatul Ishak Pașa Doğubeyazıt", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ishak+Pașa+Doğubeyazıt+Turkey", category: "castele_palate", city: "Doğubeyazıt" },
+    { name: "Castelul din Mardin Mardin", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Mardin+Mardin+Turkey", category: "castele_palate", city: "Mardin" },
+    { name: "Castelul din Van Van", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Van+Van+Turkey", category: "castele_palate", city: "Van" },
+    { name: "Castelul Gaziantep Gaziantep", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Gaziantep+Gaziantep+Turkey", category: "castele_palate", city: "Gaziantep" },
+    { name: "Castelul Diyarbakır Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Diyarbakır+Diyarbakır+Turkey", category: "castele_palate", city: "Diyarbakır" },
+    { name: "Zidurile din Diyarbakır Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+din+Diyarbakır+Diyarbakır+Turkey", category: "cetati_turnuri", city: "Diyarbakır" },
+    { name: "Turnul Fetei din Hasankeyf Batman", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Fetei+din+Hasankeyf+Batman+Turkey", category: "cetati_turnuri", city: "Batman" },
+    { name: "Mănăstirea Deyrulzafaran Mardin", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Deyrulzafaran+Mardin+Turkey", category: "manastiri", city: "Mardin" },
+    { name: "Catedrala Sfânta Cruce de pe Insula Akdamar Lacul Van", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Cruce+de+pe+Insula+Akdamar+Lacul+Van+Turkey", category: "manastiri", city: "Lacul Van" },
+    { name: "Marea Moschee din Divriği Sivas", url: "https://www.google.com/maps/search/?api=1&query=Marea+Moschee+din+Divriği+Sivas+Turkey", category: "manastiri", city: "Sivas" },
+    { name: "Marea Moschee din Diyarbakır Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Marea+Moschee+din+Diyarbakır+Diyarbakır+Turkey", category: "manastiri", city: "Diyarbakır" },
+    { name: "Mănăstirea Deyrulumur Midyat", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Deyrulumur+Midyat+Turkey", category: "manastiri", city: "Midyat" },
+    { name: "Muntele Nemrut Adıyaman", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Nemrut+Adıyaman+Turkey", category: "natura", city: "Adıyaman" },
+    { name: "Lacul Van Van", url: "https://www.google.com/maps/search/?api=1&query=Lacul+Van+Van+Turkey", category: "natura", city: "Van" },
+    { name: "Grădinile Hevsel Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Hevsel+Diyarbakır+Turkey", category: "natura", city: "Diyarbakır" },
+    { name: "Fluviul Eufrat și Canioanele din Halfeti Şanlıurfa", url: "https://www.google.com/maps/search/?api=1&query=Fluviul+Eufrat+și+Canioanele+din+Halfeti+Şanlıurfa+Turkey", category: "natura", city: "Şanlıurfa" },
+    { name: "Podul Severan Adıyaman", url: "https://www.google.com/maps/search/?api=1&query=Podul+Severan+Adıyaman+Turkey", category: "infrastructura", city: "Adıyaman" },
+    { name: "Croazierele cu barca pe Lacul Van către Insula Akdamar Van", url: "https://www.google.com/maps/search/?api=1&query=Croazierele+cu+barca+pe+Lacul+Van+către+Insula+Akdamar+Van+Turkey", category: "infrastructura", city: "Van" },
+    { name: "Șoseaua Trans-Anatoliană de lângă Muntele Ararat Ağrı", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+Trans-Anatoliană+de+lângă+Muntele+Ararat+Ağrı+Turkey", category: "infrastructura", city: "Ağrı" },
+    { name: "Situl Arheologic Göbekli Tepe Şanlıurfa", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Göbekli+Tepe+Şanlıurfa+Turkey", category: "muzee", city: "Şanlıurfa" },
+    { name: "Muzeul de Mozaic Zeugma Gaziantep", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Mozaic+Zeugma+Gaziantep+Turkey", category: "muzee", city: "Gaziantep" },
+    { name: "Situl Arheologic Karahan Tepe Şanlıurfa", url: "https://www.google.com/maps/search/?api=1&query=Situl+Arheologic+Karahan+Tepe+Şanlıurfa+Turkey", category: "muzee", city: "Şanlıurfa" },
+    { name: "Muzeul de Arheologie din Şanlıurfa Şanlıurfa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Arheologie+din+Şanlıurfa+Şanlıurfa+Turkey", category: "muzee", city: "Şanlıurfa" },
+    { name: "Orașul Antic Dara Mardin", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Antic+Dara+Mardin+Turkey", category: "muzee", city: "Mardin" },
+    { name: "Arhitectura din Piatră a Centrului Vechi Mardin Mardin", url: "https://www.google.com/maps/search/?api=1&query=Arhitectura+din+Piatră+a+Centrului+Vechi+Mardin+Mardin+Turkey", category: "cladiri_teatre", city: "Mardin" },
+    { name: "Podul Malabadi Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Podul+Malabadi+Diyarbakır+Turkey", category: "cladiri_teatre", city: "Diyarbakır" },
+    { name: "Bazarul Istoric Coppersmiths Gaziantep", url: "https://www.google.com/maps/search/?api=1&query=Bazarul+Istoric+Coppersmiths+Gaziantep+Turkey", category: "cladiri_teatre", city: "Gaziantep" },
+  ],
 };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
@@ -11391,14 +11600,14 @@ function detectAttractionCity(attractionName, countryCode) {
   return null;
 }
 
-const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg" };
+const COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg", tr: "🇹🇷 Turkey" };
 
 // Nume de țară ÎN ROMÂNĂ — folosite doar la construirea promptului pentru AI
 // (instrucțiunea în sine e scrisă în română, indiferent de limba cerută
 // pentru rezultat — vezi buildItineraryPrompt) și în mesajele de eroare ale
 // generatorului de itinerarii. Diferite de COUNTRY_LABELS (engleză, folosit
 // pentru UI-ul de selecție a țării).
-const COUNTRY_NAMES_RO = { ro: "România", de: "Germania", uk: "Regatul Unit", es: "Spania", fr: "Franța", it: "Italia", pl: "Polonia", nl: "Olanda", at: "Austria", be: "Belgia", dk: "Danemarca", se: "Suedia", pt: "Portugalia", cz: "Cehia", fi: "Finlanda", gr: "Grecia", hu: "Ungaria", hr: "Croația", ie: "Irlanda", sk: "Slovacia", si: "Slovenia", lt: "Lituania", lv: "Letonia", ee: "Estonia", cy: "Cipru", mt: "Malta", lu: "Luxemburg" };
+const COUNTRY_NAMES_RO = { ro: "România", de: "Germania", uk: "Regatul Unit", es: "Spania", fr: "Franța", it: "Italia", pl: "Polonia", nl: "Olanda", at: "Austria", be: "Belgia", dk: "Danemarca", se: "Suedia", pt: "Portugalia", cz: "Cehia", fi: "Finlanda", gr: "Grecia", hu: "Ungaria", hr: "Croația", ie: "Irlanda", sk: "Slovacia", si: "Slovenia", lt: "Lituania", lv: "Letonia", ee: "Estonia", cy: "Cipru", mt: "Malta", lu: "Luxemburg", tr: "Turcia" };
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
@@ -17439,7 +17648,7 @@ app.get("/manifest.json", (req, res) => {
 // TOATE țările (posibil 10.000+ obiective, la scară completă) în HTML-ul
 // inițial al fiecărei vizite. Cache lung (24h) — datele nu se schimbă des,
 // și oricum fiecare obiectiv își ia statusul live separat, pe pagina lui.
-app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu).json", (req, res) => {
+app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr).json", (req, res) => {
   const code = req.params.tara;
   const list = ATTRACTIONS[code];
   if (!list) { res.status(404).json({ error: "not_found" }); return; }
@@ -17564,7 +17773,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -17581,7 +17790,7 @@ app.get("/", (req, res) => {
 // "/:tara/:oras/..." de mai jos, EXACT din același motiv documentat acolo
 // pentru "/itinerar" vs "/:oras" — altfel ruta generică de oraș ar
 // intercepta "itinerar" ca nume de oraș necunoscut, înainte să ajungă aici.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/itinerar", (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/itinerar", (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -17595,7 +17804,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -17618,7 +17827,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
 // inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
 // ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
 // piață cu acest tipar de căutare construit), dar generică pentru orice țară.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras/:magazin/:locatie", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras/:magazin/:locatie", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -17658,7 +17867,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -17700,7 +17909,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras", async (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
