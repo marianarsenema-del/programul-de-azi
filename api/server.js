@@ -2242,8 +2242,57 @@ function flightSearchLinkFor(destinationCity) {
 // partea lor, fără nicio avertizare. Preferăm un link simplu, sigur
 // funcțional, chiar dacă utilizatorul trebuie să-și scrie singur orașul
 // acolo — la fel ca la originea zborului, pe Kiwi.com.
+//
+// EXCEPȚIE — 30 de orașe mari/turistice, cu link-uri DEEP LINK reale,
+// generate direct din panoul Discover Cars (nu presupuse) — pentru acestea,
+// destinația CHIAR e pre-completată. Restul orașelor cad pe link-ul general
+// de mai sus. Format real observat: .../{limbă}/{țară}/{oraș}?a_aid=...
+// — codul de urmărire diferă de cel general ("23ea55cb", nu "marianarsene")
+// — probabil un ID separat pentru deep link-uri, generat automat de ei;
+// folosit exact cum a venit, nu modificat.
+//
+// Chei = numele noastre interne CANONICE (orasCanonic din
+// resolveCityToCountry) — două nepotriviri găsite și confirmate direct:
+// "Anvers" -> Antwerpen (numele francez, dat de tine, dar orașul e același),
+// "Fiorentina" -> Firenze (așa a apărut în sistemul DiscoverCars, confirmat
+// că e tot Florența, nu alt loc).
+const DISCOVERCARS_CITY_LINKS = {
+  "București": "https://www.discovercars.com/ro/romania/bucharest?a_aid=23ea55cb",
+  "Cluj-Napoca": "https://www.discovercars.com/ro/romania/cluj-napoca?a_aid=23ea55cb",
+  "Timișoara": "https://www.discovercars.com/ro/romania/timisoara?a_aid=23ea55cb",
+  "Iași": "https://www.discovercars.com/ro/romania/iasi/ias?a_aid=23ea55cb",
+  "Brașov": "https://www.discovercars.com/ro/romania/brasov?a_aid=23ea55cb",
+  "Constanța": "https://www.discovercars.com/ro/romania/constanta?a_aid=23ea55cb",
+  "Brussels": "https://www.discovercars.com/ro/belgium/brussels?a_aid=23ea55cb",
+  "Antwerpen": "https://www.discovercars.com/ro/belgium/antwerp?a_aid=23ea55cb",
+  "Gent": "https://www.discovercars.com/ro/belgium/gent?a_aid=23ea55cb",
+  "Brugge": "https://www.discovercars.com/ro/belgium/brugge?a_aid=23ea55cb",
+  "Madrid": "https://www.discovercars.com/ro/spain/madrid?a_aid=23ea55cb",
+  "Barcelona": "https://www.discovercars.com/ro/spain/barcelona?a_aid=23ea55cb",
+  "Valencia": "https://www.discovercars.com/ro/spain/valencia?a_aid=23ea55cb",
+  "Sevilla": "https://www.discovercars.com/ro/spain/seville?a_aid=23ea55cb",
+  "Málaga": "https://www.discovercars.com/ro/spain/malaga?a_aid=23ea55cb",
+  "Roma": "https://www.discovercars.com/ro/italy-mainland/rome?a_aid=23ea55cb",
+  "Milano": "https://www.discovercars.com/ro/italy-mainland/milan?a_aid=23ea55cb",
+  "Napoli": "https://www.discovercars.com/ro/italy-mainland/naples?a_aid=23ea55cb",
+  "Venezia": "https://www.discovercars.com/ro/italy-mainland/venice?a_aid=23ea55cb",
+  "Firenze": "https://www.discovercars.com/ro/italy-mainland/fiorentina?a_aid=23ea55cb",
+  "Paris": "https://www.discovercars.com/ro/france/paris?a_aid=23ea55cb",
+  "Lyon": "https://www.discovercars.com/ro/france/lyon?a_aid=23ea55cb",
+  "Marseille": "https://www.discovercars.com/ro/france/marseille?a_aid=23ea55cb",
+  "Nice": "https://www.discovercars.com/ro/france/nice?a_aid=23ea55cb",
+  "Bordeaux": "https://www.discovercars.com/ro/france/bordeaux?a_aid=23ea55cb",
+  "London": "https://www.discovercars.com/ro/united-kingdom/london?a_aid=23ea55cb",
+  "Edinburgh": "https://www.discovercars.com/ro/united-kingdom/edinburgh?a_aid=23ea55cb",
+  "Manchester": "https://www.discovercars.com/ro/united-kingdom/manchester?a_aid=23ea55cb",
+  "Birmingham": "https://www.discovercars.com/ro/united-kingdom/birmingham?a_aid=23ea55cb",
+  "Glasgow": "https://www.discovercars.com/ro/united-kingdom/glasgow?a_aid=23ea55cb",
+};
 const DISCOVERCARS_AFFILIATE_ID = "marianarsene";
-function carRentalLinkFor() {
+function carRentalLinkFor(destinationCity) {
+  if (destinationCity && DISCOVERCARS_CITY_LINKS[destinationCity]) {
+    return DISCOVERCARS_CITY_LINKS[destinationCity];
+  }
   if (!DISCOVERCARS_AFFILIATE_ID) return null;
   return `https://www.discovercars.com/?a_aid=${encodeURIComponent(DISCOVERCARS_AFFILIATE_ID)}`;
 }
@@ -15271,12 +15320,19 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       ? "https://www.booking.com/searchresults.html?ss=" + encodeURIComponent(destinationCity) + "&aid=" + encodeURIComponent(${safeJson(BOOKING_AFFILIATE_ID)})
       : "https://www.booking.com/searchresults.html?ss=" + encodeURIComponent(destinationCity);
   }
-  // Închiriere mașină — Discover Cars (a_aid=marianarsene, link real,
-  // confirmat direct de tine) — FĂRĂ destinație pre-completată, deliberat
-  // (vezi comentariul din server.js, lângă carRentalLinkFor: căutarea lor
-  // reală cere un ID intern de locație, nu un nume de oraș simplu).
+  // Închiriere mașină — Discover Cars. Pentru 30 de orașe mari, link REAL,
+  // cu destinația pre-completată (deep link generat direct de tine, din
+  // panoul lor) — pentru restul orașelor, cade pe link-ul general, fără
+  // destinație (vezi comentariul din server.js, lângă carRentalLinkFor:
+  // căutarea lor reală cere un ID intern de locație, nu un nume de oraș
+  // simplu — nu-l putem construi noi, pentru orice oraș, în siguranță).
   var CAR_RENTAL_LABEL = ${safeJson(carRentalLabelFor(lang))};
-  var CAR_RENTAL_LINK = ${safeJson(carRentalLinkFor())};
+  var CAR_RENTAL_CITY_LINKS = ${safeJson(DISCOVERCARS_CITY_LINKS)};
+  var CAR_RENTAL_GENERIC_LINK = ${safeJson(carRentalLinkFor())};
+  function carRentalLinkFor(destinationCity) {
+    if (destinationCity && CAR_RENTAL_CITY_LINKS[destinationCity]) return CAR_RENTAL_CITY_LINKS[destinationCity];
+    return CAR_RENTAL_GENERIC_LINK;
+  }
   // Bilet parc de agrement (GetYourGuide) — DOAR în modul familie, DOAR
   // dacă serverul a găsit un parc în lista de obiective (vezi parcGasit,
   // calculat în resolveCityToCountry, trimis prin API în data.parcGasit /
@@ -15370,8 +15426,9 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
       : '';
-    var carHtml = CAR_RENTAL_LINK
-      ? '<a href="' + CAR_RENTAL_LINK + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">' + CAR_RENTAL_LABEL + '</a>'
+    var carLink = carRentalLinkFor(searchedCity);
+    var carHtml = carLink
+      ? '<a href="' + carLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">' + CAR_RENTAL_LABEL + '</a>'
       : '';
     // Bilet parc — apare DOAR dacă serverul a găsit un parc de agrement în
     // modul familie (data.parcGasit + data.parcTicketLink, calculate în
