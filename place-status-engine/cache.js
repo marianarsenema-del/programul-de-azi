@@ -20,14 +20,19 @@
 
 const CACHE_TTL_HOURS = Number(process.env.PLACE_CACHE_TTL_HOURS || 12);
 
-async function getCachedDetails(pool, placeId, language) {
+async function getCachedDetails(pool, placeId, language, ttlHours) {
+  // ttlHours — durată VARIABILĂ, per apel — cerut explicit: 7 zile (168h)
+  // pentru magazine, 30 de zile (720h) pentru obiective turistice. Fără
+  // parametru (apeluri vechi), cade pe CACHE_TTL_HOURS (12h implicit),
+  // comportament neschimbat pentru orice cod care nu-l transmite încă.
+  const effectiveTtl = ttlHours || CACHE_TTL_HOURS;
   const { rows } = await pool.query(
     `SELECT raw_response, fetched_at
      FROM place_details_cache
      WHERE place_id = $1
        AND language = $2
        AND fetched_at > now() - ($3 || ' hours')::interval`,
-    [placeId, language, CACHE_TTL_HOURS]
+    [placeId, language, effectiveTtl]
   );
   if (rows.length === 0) return null;
   return rows[0].raw_response;
