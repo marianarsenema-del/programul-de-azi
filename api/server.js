@@ -2389,6 +2389,13 @@ function buildListStatusBadgeScript(nonce, statusDataset) {
   function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
 
   function isOpenNow(entity, now){
+    // Status real, per locație, verificat întâi — dacă există (adăugat de
+    // server, din cache), îl folosim direct, fără să mai calculăm nimic.
+    // Bug real, semnalat direct: fără asta, insigna cădea mereu pe
+    // programul GENERIC al brandului, identic pentru toate orașele,
+    // ignorând programul real al locației (putea arăta roșu la un magazin
+    // de fapt deschis).
+    if (typeof entity.liveIsOpenNow === "boolean") return entity.liveIsOpenNow;
     var md = mmdd(now), full = ymd(now);
     var holiday = null;
     for (var i=0;i<entity.holidays.length;i++){
@@ -11391,13 +11398,52 @@ ${buildHowToGetThereScript(nonce)}`;
 }
 
 // Pagină generală de oraș: site.ro/:oras (fără magazin specificat)
-function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
+async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const title = `Program Magazine ${orasDisplay} Azi – Lidl, Kaufland, Penny și Alte Magazine`;
   const description = `Alege un magazin din ${orasDisplay} și vezi instant dacă este deschis acum: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din ${orasDisplay}.`;
   const canonical = `${baseUrl}/${orasSlug}`;
 
-  const listItems = Object.keys(STORE_CONFIG)
-    .filter((key) => isSelectiveBrandAllowedInCity("ro", key, orasDisplay))
+  const allowedKeys = Object.keys(STORE_CONFIG).filter((key) => isSelectiveBrandAllowedInCity("ro", key, orasDisplay));
+
+  // Statusul live REAL, per locație (nu generic, pe brand) — bug real,
+  // semnalat direct, cu captură: insigna arăta roșu la magazine care erau
+  // de fapt deschise, pentru că folosea programul GENERIC al brandului,
+  // identic pentru toate orașele, nu programul real al ACESTEI locații.
+  //
+  // Calculăm direct slug-ul așteptat pentru fiecare brand (la fel cum se
+  // calculează la populare) și interogăm exact acele slug-uri — mai simplu
+  // și mai sigur decât să încercăm să "ghicim" brandul înapoi dintr-un slug
+  // (fragil, exact greșeala găsită mai devreme la o propunere similară).
+  //
+  // cacheOnly: true — NU facem nicio cerere nouă către Google aici, doar
+  // citim ce e deja în cache (din vizite anterioare pe pagina fiecărui
+  // magazin) — cost real: $0. Dacă o locație n-are încă cache, cade pe
+  // programul generic vechi (mai bine decât nimic, dar nu perfect).
+  const liveStatusByKey = {};
+  if (dbPool && GOOGLE_PLACES_API_KEY_LIVE) {
+    try {
+      const expectedSlugs = allowedKeys.map((key) => toDbSlug(`${STORE_CONFIG[key].name}-${orasDisplay}`));
+      const { rows } = await dbPool.query(
+        "SELECT slug, place_id FROM locatii WHERE tara = 'Romania' AND tip = 'store' AND slug = ANY($1::text[])",
+        [expectedSlugs]
+      );
+      const placeIdBySlug = {};
+      rows.forEach((r) => { placeIdBySlug[r.slug] = r.place_id; });
+      await Promise.all(
+        allowedKeys.map(async (key) => {
+          const slug = toDbSlug(`${STORE_CONFIG[key].name}-${orasDisplay}`);
+          const placeId = placeIdBySlug[slug];
+          if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return;
+          try {
+            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: "ro", cacheOnly: true });
+            if (!status.skipped && status.isOpenNow !== null) liveStatusByKey[key] = status.isOpenNow;
+          } catch (e) { /* o locație eșuată nu blochează restul */ }
+        })
+      );
+    } catch (e) { /* interogarea eșuată -> cade pe programul generic, ca înainte */ }
+  }
+
+  const listItems = allowedKeys
     .map((key) => {
       const cfg = STORE_CONFIG[key];
       const urlSlug = cfg.slug || key;
@@ -11408,11 +11454,17 @@ function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
     });
   const listItemsGroupedHtml = buildStoreListHtmlGrouped(listItems, "ro");
 
-  // date pentru insignele live — DOAR cheie->orar, nimic în plus, cât mai mic posibil
+  // date pentru insignele live — cheie->orar generic, PLUS liveIsOpenNow
+  // (status real, per locație, dacă există în cache) — scriptul din
+  // buildListStatusBadgeScript verifică întâi liveIsOpenNow, cade pe
+  // calculul generic (weekly) doar dacă lipsește.
   const statusDataset = {};
   Object.keys(STORE_CONFIG).forEach((key) => {
     const entity = extractStatusEntity(STORE_CONFIG[key]);
-    if (entity) statusDataset[key] = entity;
+    if (entity) {
+      if (key in liveStatusByKey) entity.liveIsOpenNow = liveStatusByKey[key];
+      statusDataset[key] = entity;
+    }
   });
 
   const bodyHtml = `
@@ -11686,7 +11738,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
 }
 
 // Pagină generală de oraș internațională: /:tara/:oras
-function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang, nonce }) {
+async function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang, nonce }) {
   const country = COUNTRIES[countryCode];
   const t = (lang && TRANSLATIONS[lang]) || country.t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === country.t) || "uk";
@@ -11694,8 +11746,38 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const description = t.descriptionTemplate("", orasDisplay);
   const canonical = `${baseUrl}/${countryCode}/${orasSlug}`;
 
-  const listItems = Object.keys(country.config)
-    .filter((key) => isSelectiveBrandAllowedInCity(countryCode, key, orasDisplay))
+  const allowedKeys = Object.keys(country.config).filter((key) => isSelectiveBrandAllowedInCity(countryCode, key, orasDisplay));
+
+  // Statusul live REAL, per locație — aceeași reparație ca la renderCityPage
+  // (RO), aplicată acum și pe .eu, la cerere explicită ("site-ul
+  // internațional să nu mai rămână în urmă"). Slug-ul INTL include și
+  // codul de țară (spre deosebire de RO), vezi tiparul deja folosit la
+  // populare (toDbSlug(`${name}-${oras}-${cc}`)).
+  const liveStatusByKey = {};
+  if (dbPool && GOOGLE_PLACES_API_KEY_LIVE) {
+    try {
+      const expectedSlugs = allowedKeys.map((key) => toDbSlug(`${country.config[key].name}-${orasDisplay}-${countryCode}`));
+      const { rows } = await dbPool.query(
+        "SELECT slug, place_id FROM locatii WHERE tip = 'store' AND slug = ANY($1::text[])",
+        [expectedSlugs]
+      );
+      const placeIdBySlug = {};
+      rows.forEach((r) => { placeIdBySlug[r.slug] = r.place_id; });
+      await Promise.all(
+        allowedKeys.map(async (key) => {
+          const slug = toDbSlug(`${country.config[key].name}-${orasDisplay}-${countryCode}`);
+          const placeId = placeIdBySlug[slug];
+          if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return;
+          try {
+            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: activeLang, cacheOnly: true });
+            if (!status.skipped && status.isOpenNow !== null) liveStatusByKey[key] = status.isOpenNow;
+          } catch (e) { /* o locație eșuată nu blochează restul */ }
+        })
+      );
+    } catch (e) { /* interogarea eșuată -> cade pe programul generic, ca înainte */ }
+  }
+
+  const listItems = allowedKeys
     .map((key) => {
       const cfg = country.config[key];
       const urlSlug = cfg.slug || key;
@@ -11711,7 +11793,10 @@ function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl, lang,
   const statusDataset = {};
   Object.keys(country.config).forEach((key) => {
     const entity = extractStatusEntity(country.config[key]);
-    if (entity) statusDataset[key] = entity;
+    if (entity) {
+      if (key in liveStatusByKey) entity.liveIsOpenNow = liveStatusByKey[key];
+      statusDataset[key] = entity;
+    }
   });
 
   const bodyHtml = `
@@ -14072,7 +14157,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras", (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu)/:oras", async (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -14086,7 +14171,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
+  const html = await renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -14285,7 +14370,7 @@ app.get("/itinerar", (req, res) => {
 // "/:tara/obiectiv/:slug", din motive de ordine a rutelor Express; vezi
 // comentariul de acolo.)
 
-app.get("/:oras", (req, res, next) => {
+app.get("/:oras", async (req, res, next) => {
   if (req.params.oras.includes(".")) return next(); // cereri de tip fișier (css/js/ico) ignorate aici
 
   if (isIntlHost(req)) {
@@ -14305,7 +14390,7 @@ app.get("/:oras", (req, res, next) => {
     return;
   }
 
-  const html = renderCityPage({ orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderCityPage({ orasSlug, orasDisplay, baseUrl: baseUrlFor(req), nonce });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -15129,7 +15214,35 @@ function boostParcuriAgrement(items, getCategory, getName, activ) {
   return { sorted, parcGasit: gasit ? getName(gasit) : null };
 }
 
+// Alias-uri — exonime românești (nume diferite de cel local, nu doar fără
+// diacritice — acelea sunt deja gestionate de normalizeJudetInput) —
+// semnalat direct, cu exemplu real: "Lisabona" (românesc) nu găsea nimic,
+// doar "Lisboa" (numele local, folosit în COUNTRIES.pt.cities) funcționa.
+// Cheile sunt deja normalizate (fără diacritice, litere mici), verificate
+// direct împotriva normalizeJudetInput(orasInput) — valorile sunt numele
+// EXACTE, corect scrise, din COUNTRIES[cc].cities.
+const CITY_ALIASES_RO = {
+  "lisabona": "Lisboa",
+  "viena": "Wien",
+  "praga": "Praha",
+  "varsovia": "Warszawa",
+  "atena": "Athens",
+  "budapesta": "Budapest",
+  "bruxelles": "Brussels",
+  "anvers": "Antwerpen",
+  "londra": "London",
+  "marsilia": "Marseille",
+  "nisa": "Nice",
+  "haga": "Den Haag",
+  "copenhaga": "København",
+  "cracovia": "Kraków",
+  "florenta": "Firenze",
+  "venetia": "Venezia",
+};
+
 function resolveCityToCountry(orasInput, tipCalatorie) {
+  const aliasMatch = CITY_ALIASES_RO[normalizeJudetInput(orasInput)];
+  if (aliasMatch) orasInput = aliasMatch;
   const familyMode = tipCalatorie === "family";
   const roResult = filtreazaObiectivePentruOras(orasInput);
   if (roResult.judet && roResult.obiective && roResult.obiective.length) {
