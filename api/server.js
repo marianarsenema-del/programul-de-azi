@@ -172,7 +172,20 @@ async function getReportCounts(slug) {
   }
 }
 
-async function tryGetLiveStatus(slug, lang, tip) {
+// Detectare bot/crawler — cerut explicit: fără asta, Googlebot (sau orice
+// alt crawler) care indexează sistematic miile de pagini noi ar declanșa
+// costuri REALE la Google Places, identic cu un vizitator uman. Crawlerele
+// nu au nevoie de "e deschis chiar ACUM" — indexează conținut, nu ajută pe
+// nimeni real să afle programul live în acel moment exact; le arătăm ce
+// avem deja în cache (sau mesajul generic), fără nicio cerere nouă,
+// niciodată. Listă rezonabilă de crawlere cunoscute, nu exhaustivă 100%,
+// dar acoperă marea majoritate a traficului automatizat real.
+const BOT_USER_AGENT_PATTERN = /bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|discordbot|linkedinbot|twitterbot|slackbot|pinterest|ahrefs|semrush|mj12bot|dotbot|petalbot|bytespider/i;
+function isBotRequest(userAgent) {
+  return Boolean(userAgent) && BOT_USER_AGENT_PATTERN.test(userAgent);
+}
+
+async function tryGetLiveStatus(slug, lang, tip, isBot) {
   if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) return null;
   try {
     const { rows } = await dbPool.query("SELECT place_id FROM locatii WHERE slug = $1 LIMIT 1", [slug]);
@@ -184,7 +197,7 @@ async function tryGetLiveStatus(slug, lang, tip) {
     // — programul unui magazin/obiectiv se schimbă rar, o valabilitate mai
     // lungă nu afectează practic acuratețea, dar reduce costul semnificativ.
     const ttlHours = tip === "attraction" ? 720 : 168;
-    return await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, ttlHours });
+    return await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, ttlHours, cacheOnly: isBot });
   } catch (err) {
     console.error("tryGetLiveStatus a eșuat, cad pe fallback:", err.message);
     return null;
@@ -14929,7 +14942,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // Pagină pentru un magazin specific dintr-un oraș: site.ro/:oras/:magazin
-async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, nonce }) {
+async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, nonce, userAgent }) {
   // sufixul de locație hiper-locală (cartier/stradă) — opțional, gol pentru paginile normale de magazin
   const locatieSuffix = locatieDisplay ? ` ${locatieDisplay}` : "";
   const locatieForDescription = locatieDisplay ? ` din ${locatieDisplay},` : "";
@@ -15005,7 +15018,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
     // exact ca înainte, fără nicio schimbare vizibilă.
     const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}`) : null;
-    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro", "store") : null;
+    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro", "store", isBotRequest(userAgent)) : null;
     schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, weekly: store.weekly, live });
 
     if (live && live.isOpenNow !== null) {
@@ -15247,7 +15260,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, baseUrl, lang, nonce }) {
+async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, baseUrl, lang, nonce, userAgent }) {
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   // pagină hiper-locală (cartier) — același program ca pagina de oraș, doar
@@ -15341,7 +15354,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
   const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`) : null;
   const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(liveSlug, googleLang, "store");
+  const live = await tryGetLiveStatus(liveSlug, googleLang, "store", isBotRequest(userAgent));
   const schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay} ${orasDisplay}`, weekly: store.weekly, live });
 
   let statusCardHtml;
@@ -16509,13 +16522,13 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce, lang }) {
 }
 
 
-async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
+async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent }) {
   const slug = toDbSlug(attraction.name);
   const title = `${attraction.name} — Program și Bilete`;
   const description = `Vezi programul actualizat și rezervă bilete online pentru ${attraction.name}.`;
   const canonical = `${baseUrl}/obiectiv/${slug}`;
 
-  const live = await tryGetLiveStatus(slug, "ro", "attraction");
+  const live = await tryGetLiveStatus(slug, "ro", "attraction", isBotRequest(userAgent));
 
   let statusHtml;
   let widgetHtml = "";
@@ -16617,7 +16630,7 @@ ${buildPlanVisitScript(nonce)}`;
 
 // Pagină de obiectiv turistic — INTERNAȚIONAL — aceeași logică, adaptată
 // la limbă (traduceri deja existente, TRANSLATIONS)
-async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl, nonce }) {
+async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl, nonce, userAgent }) {
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   const slug = toDbSlug(attraction.name);
@@ -16632,7 +16645,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
 
   const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(slug, googleLang, "attraction");
+  const live = await tryGetLiveStatus(slug, googleLang, "attraction", isBotRequest(userAgent));
 
   let statusHtml;
   let widgetHtml = "";
@@ -17840,7 +17853,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderAttractionPageIntl({ attraction: found.attraction, countryCode, lang: requestedLang, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderAttractionPageIntl({ attraction: found.attraction, countryCode, lang: requestedLang, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -17884,7 +17897,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -17926,7 +17939,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -17992,7 +18005,7 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -18071,7 +18084,7 @@ app.get("/obiectiv/:slug", async (req, res) => {
   }
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderAttractionPageRO({ attraction: found.attraction, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderAttractionPageRO({ attraction: found.attraction, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -18112,7 +18125,7 @@ app.get("/:oras/:magazin", async (req, res, next) => {
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce });
+  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'] });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
