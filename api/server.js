@@ -2826,6 +2826,123 @@ const SEASONAL_WARNING_LABELS = {
 function freeAccessLabelFor(lang) { return FREE_ACCESS_LABELS[lang] || FREE_ACCESS_LABELS.uk; }
 function seasonalWarningLabelFor(lang) { return SEASONAL_WARNING_LABELS[lang] || SEASONAL_WARNING_LABELS.uk; }
 
+// Program GENERIC, pe categorie — cerut explicit: pentru obiectivele fără
+// date live încă (majoritatea celor 3.507 adăugate recent, nepopulate încă
+// din motive de buget), afișăm un program TIPIC, nu cercetat individual
+// (imposibil de făcut real pentru 3.507 obiective într-o sesiune) — marcat
+// clar ca estimare, cu mențiune că programul live urmează.
+//
+// DOAR aceste categorii — restul (clădiri monumentale, infrastructură,
+// natură non-liberă ca peșterile) rămân fără program generic, doar link
+// către sursă, la cerere explicită ("restul... fara program - link catre
+// Google").
+const CATEGORY_GENERIC_SCHEDULE = {
+  // index 0=Duminică..6=Sâmbătă (Date.getDay()) — null = închis în ziua aia
+  castele_palate: [
+    { open: "09:00", close: "17:00" }, null,
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" },
+  ],
+  cetati_turnuri: [
+    { open: "09:00", close: "17:00" }, null,
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" },
+  ],
+  manastiri: [
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+  ],
+  muzee: [
+    { open: "10:00", close: "18:00" }, null,
+    { open: "10:00", close: "18:00" }, { open: "10:00", close: "18:00" },
+    { open: "10:00", close: "18:00" }, { open: "10:00", close: "18:00" },
+    { open: "10:00", close: "18:00" },
+  ],
+  parcuri_agrement: [
+    { open: "10:00", close: "19:00" }, null,
+    { open: "10:00", close: "19:00" }, { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" }, { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+  ],
+};
+
+function genericScheduleForCategory(category) {
+  return CATEGORY_GENERIC_SCHEDULE[category] || null;
+}
+
+// calculează dacă "acum" (ora serverului — aproximare acceptată, la fel ca
+// la insignele de magazine, care folosesc ora browserului) e în intervalul
+// zilei curente din programul generic
+function computeGenericIsOpenNow(schedule) {
+  const now = new Date();
+  const today = schedule[now.getDay()];
+  if (!today) return false;
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const [oh, om] = today.open.split(":").map(Number);
+  const [ch, cm] = today.close.split(":").map(Number);
+  return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
+}
+
+// text scurt, cerut explicit: "urmează în curând programul live" — apare
+// pe TOATE obiectivele fără date live încă, indiferent dacă au sau nu
+// program generic afișat.
+const LIVE_COMING_SOON_LABELS = {
+  ro: "🔜 Programul live urmează în curând pentru acest obiectiv.",
+  uk: "🔜 Live schedule coming soon for this attraction.",
+  de: "🔜 Live-Öffnungszeiten für diese Sehenswürdigkeit folgen in Kürze.",
+  fr: "🔜 Les horaires en direct arrivent bientôt pour ce site.",
+  es: "🔜 Próximamente horario en vivo para esta atracción.",
+  it: "🔜 Presto disponibili gli orari in tempo reale per questa attrazione.",
+  pl: "🔜 Wkrótce dostępne godziny na żywo dla tej atrakcji.",
+  nl: "🔜 Binnenkort live openingstijden voor deze attractie.",
+  da: "🔜 Live åbningstider kommer snart for denne seværdighed.",
+  cz: "🔜 Živé otevírací doby pro tuto zajímavost budou brzy k dispozici.",
+  fi: "🔜 Reaaliaikaiset aukioloajat tälle kohteelle tulossa pian.",
+  gr: "🔜 Σύντομα διαθέσιμο το ζωντανό ωράριο για αυτό το αξιοθέατο.",
+  hu: "🔜 Hamarosan élő nyitvatartás érkezik ehhez a látnivalóhoz.",
+  hr: "🔜 Radno vrijeme uživo za ovu znamenitost uskoro stiže.",
+  sk: "🔜 Živý otvárací čas pre túto atrakciu čoskoro pribudne.",
+  si: "🔜 Delovni čas v živo za to znamenitost bo kmalu na voljo.",
+  lt: "🔜 Netrukus atsiras šios lankytinos vietos gyvas darbo laikas.",
+  lv: "🔜 Drīzumā būs pieejams šīs apskates vietas tiešraides darba laiks.",
+  pt: "🔜 Em breve, horário em direto para esta atração.",
+  se: "🔜 Livöppettider för denna sevärdhet kommer snart.",
+  ee: "🔜 Selle vaatamisväärsuse reaalajas lahtiolekuajad lisatakse peagi.",
+};
+function liveComingSoonLabelFor(lang) { return LIVE_COMING_SOON_LABELS[lang] || LIVE_COMING_SOON_LABELS.uk; }
+
+// eticheta "estimare" (nu date confirmate) — apare DOAR când chiar arătăm
+// programul generic, ca utilizatorul să știe clar diferența față de datele
+// live reale (marcate separat, "Live · Google").
+const ESTIMATED_SCHEDULE_LABELS = {
+  ro: "Program orientativ, tipic categoriei — neconfirmat live încă",
+  uk: "Typical schedule for this type of attraction — not live-confirmed yet",
+  de: "Typische Öffnungszeiten für diese Art von Sehenswürdigkeit — noch nicht live bestätigt",
+  fr: "Horaires typiques pour ce type de site — pas encore confirmés en direct",
+  es: "Horario típico para este tipo de atracción — aún no confirmado en vivo",
+  it: "Orario tipico per questo tipo di attrazione — non ancora confermato in tempo reale",
+  pl: "Typowe godziny dla tego typu atrakcji — jeszcze niepotwierdzone na żywo",
+  nl: "Typische openingstijden voor dit type attractie — nog niet live bevestigd",
+  da: "Typiske åbningstider for denne type seværdighed — endnu ikke live-bekræftet",
+  cz: "Typická otevírací doba pro tento typ zajímavosti — zatím nepotvrzeno živě",
+  fi: "Tyypilliset aukioloajat tämäntyyppiselle kohteelle — ei vielä reaaliaikaisesti vahvistettu",
+  gr: "Τυπικό ωράριο για αυτόν τον τύπο αξιοθέατου — δεν έχει επιβεβαιωθεί ζωντανά ακόμα",
+  hu: "Ilyen típusú látnivalóra jellemző nyitvatartás — élőben még nem megerősítve",
+  hr: "Tipično radno vrijeme za ovu vrstu znamenitosti — još nije potvrđeno uživo",
+  sk: "Typický otvárací čas pre tento typ atrakcie — zatiaľ nepotvrdené naživo",
+  si: "Značilen delovni čas za to vrsto znamenitosti — še ni potrjeno v živo",
+  lt: "Šio tipo lankytinai vietai būdingas darbo laikas — dar nepatvirtinta gyvai",
+  lv: "Šāda veida apskates vietai raksturīgs darba laiks — vēl nav apstiprināts tiešraidē",
+  pt: "Horário típico para este tipo de atração — ainda não confirmado em direto",
+  se: "Typiska öppettider för denna typ av sevärdhet — ännu inte livebekräftat",
+  ee: "Seda tüüpi vaatamisväärsusele tüüpiline lahtiolekuaeg — reaalajas veel kinnitamata",
+};
+function estimatedScheduleLabelFor(lang) { return ESTIMATED_SCHEDULE_LABELS[lang] || ESTIMATED_SCHEDULE_LABELS.uk; }
+
 
 const CATEGORY_LABELS = {
   ro: {
@@ -16189,12 +16306,29 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null });
     widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    // Nu avem orarul (Google nu-l are postat pentru acest loc — frecvent la
-    // obiective mici, din sate) — dar dacă tot am reușit să găsim locul pe
-    // Google, adresa și telefonul sunt utile oricum. NU le mai aruncăm doar
-    // pentru că lipsește orarul, exact ca la magazine.
-    statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>
+    // Program GENERIC, pe categorie — DOAR dacă avem unul definit pentru
+    // categoria acestui obiectiv (vezi CATEGORY_GENERIC_SCHEDULE) — restul
+    // categoriilor rămân pe mesajul simplu, cu link.
+    const genericSchedule = genericScheduleForCategory(attraction.category);
+    if (genericSchedule) {
+      const isOpenGeneric = computeGenericIsOpenNow(genericSchedule);
+      statusHtml = `
+    <div class="status-card ${isOpenGeneric ? "is-open" : "is-closed"}" id="statusCard">
+      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="status-text">${isOpenGeneric ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
+      <div class="status-sub">${escapeHtml(estimatedScheduleLabelFor("ro"))}</div>
+    </div>
+    <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor("ro"))}</p>
     ${live ? contactInfoHtml(live) : ""}`;
+    } else {
+      // Nu avem orarul (Google nu-l are postat pentru acest loc — frecvent la
+      // obiective mici, din sate) — dar dacă tot am reușit să găsim locul pe
+      // Google, adresa și telefonul sunt utile oricum. NU le mai aruncăm doar
+      // pentru că lipsește orarul, exact ca la magazine.
+      statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>
+    <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor("ro"))}</p>
+    ${live ? contactInfoHtml(live) : ""}`;
+    }
   }
 
   // biletul e acum mereu în "Planifică vizita" (buildBookingPlanningButtonsHtml)
@@ -16283,10 +16417,24 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: contextualWidgetLabelsFor(activeLang) });
     widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    // vezi comentariul din renderAttractionPageRO — adresa/telefonul rămân
-    // utile chiar și fără orarul live
-    statusHtml = `<div class="geo-country-highlight">${noLiveDataTextFor(activeLang, escapeHtml(attraction.url))}</div>
+    // Program GENERIC, pe categorie — vezi comentariul echivalent din
+    // renderAttractionPageRO, aceeași logică, adaptată pe limbă.
+    const genericSchedule = genericScheduleForCategory(attraction.category);
+    if (genericSchedule) {
+      const isOpenGeneric = computeGenericIsOpenNow(genericSchedule);
+      statusHtml = `
+    <div class="status-card ${isOpenGeneric ? "is-open" : "is-closed"}" id="statusCard">
+      <div class="store-name">${escapeHtml(displayName)}</div>
+      <div class="status-text">${isOpenGeneric ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
+      <div class="status-sub">${escapeHtml(estimatedScheduleLabelFor(activeLang))}</div>
+    </div>
+    <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor(activeLang))}</p>
     ${live ? contactInfoHtml(live) : ""}`;
+    } else {
+      statusHtml = `<div class="geo-country-highlight">${noLiveDataTextFor(activeLang, escapeHtml(attraction.url))}</div>
+    <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor(activeLang))}</p>
+    ${live ? contactInfoHtml(live) : ""}`;
+    }
   }
 
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
