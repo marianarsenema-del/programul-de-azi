@@ -75,6 +75,10 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   /api/city-live-map (harta unui oraș întreg poate avea zeci de magazine
  *   deodată — fără acest mod, fiecare deschidere a hărții ar costa bani
  *   pentru orice locație necache-uită încă).
+ * @param {number} [params.ttlHours] - durata de valabilitate a cache-ului,
+ *   în ore, pentru ACEST apel specific — cerere explicită de reducere a
+ *   costului: 168 (7 zile) pentru magazine, 720 (30 zile) pentru obiective
+ *   turistice. Fără el, cade pe CACHE_TTL_HOURS din cache.js (12h implicit).
  * @returns {Promise<{
  *   name: string,
  *   businessStatus: string,
@@ -89,10 +93,10 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   skipped: boolean|undefined,
  * }>}
  */
-async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly }) {
+async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly, ttlHours }) {
   const googleLang = toGoogleLang(language);
 
-  let raw = await getCachedDetails(pool, placeId, googleLang);
+  let raw = await getCachedDetails(pool, placeId, googleLang, ttlHours);
   let fromCache = true;
 
   if (!raw) {
