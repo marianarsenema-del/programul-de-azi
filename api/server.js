@@ -2475,20 +2475,37 @@ const CONTEXTUAL_WIDGET_LABELS_EN = {
   bringo: "🛒 Order with Bringo",
 };
 
-function buildContextualWidgetHtml({ type, name, orasDisplay, labels }) {
+// Glovo — DOAR în țările unde chiar operează, verificat direct, nu presupus
+// universal. Din cele deja acoperite de site: România, Spania, Italia,
+// Portugalia, Polonia, Croația. (Ucraina, Bulgaria, Serbia, Muntenegru —
+// unde Glovo operează și el, dar site-ul nu are încă aceste țări.)
+const GLOVO_COUNTRIES = ["ro", "es", "it", "pt", "pl", "hr"];
+function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCode }) {
   const t = labels || CONTEXTUAL_WIDGET_LABELS_RO;
   const place = orasDisplay || name;
+  // Fără countryCode explicit (apelurile vechi, mereu de pe .ro) = România.
+  const cc = countryCode || "ro";
 
   // biletul s-a mutat sub "Planifică vizita" (buildBookingPlanningButtonsHtml)
   // — nu mai are rost aici, condiționat de status; îl vrei indiferent
   const openContentHtml = "";
 
+  // Bringo — bug real, semnalat direct: apărea la TOATE țările, nu doar
+  // România (unde chiar operează). Glovo — la fel, apărea universal, deși
+  // nu operează în toate țările de pe site (ex. Germania, UK, Franța nu au
+  // Glovo deloc). Dacă țara nu are niciunul din cele două, widget-ul rămâne
+  // fără butoane suplimentare aici (restul mesajului de "închis" tot apare).
+  const glovoHtml = GLOVO_COUNTRIES.includes(cc)
+    ? `<a href="${escapeHtml(glovoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.glovo)}</a>`
+    : "";
+  const bringoHtml = cc === "ro"
+    ? `<a href="${escapeHtml(bringoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.bringo)}</a>`
+    : "";
   const closedContentHtml =
     type === "attraction"
       ? `<a href="${escapeHtml(bookingSearchLinkFor(place))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.booking)}</a>
          <a href="${escapeHtml(restaurantsOpenNowLinkFor(place))}" target="_blank" rel="noopener" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.restaurants)}</a>`
-      : `<a href="${escapeHtml(glovoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.glovo)}</a>
-         <a href="${escapeHtml(bringoLinkFor())}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.bringo)}</a>`;
+      : `${glovoHtml}${bringoHtml}`;
 
   return `
   <div id="contextualWidget" class="contextual-widget" hidden>
@@ -15340,7 +15357,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
   ${specialBanner}
-  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang) })}`;
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
     weeklySectionHtml = `
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
   <div class="holiday-card">${live.weeklyScheduleText.length ? live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("") : `<div class="holiday-row"><span class="holiday-label">—</span></div>`}</div>`;
@@ -15361,7 +15378,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   </div>
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
-  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang) })}`;
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
     weeklySectionHtml = `
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
   <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
