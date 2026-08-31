@@ -14185,6 +14185,18 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
       if (match && el.hasAttribute("data-lazy-country") && typeof window.__ohtLoadAttractions === "function") {
         window.__ohtLoadAttractions(effectiveTarget, el.querySelector(".lazy-attraction-target"));
       }
+      // Bug real, semnalat direct, cu captură: selectarea țării PRINCIPALE
+      // arăta întregul bloc "all" — inclusiv celelalte țări, colapsate, dar
+      // tot vizibile dedesubt (ex. România selectată arăta și Austria,
+      // Belgia, Danemarca mai jos). Ascundem acum explicit elementele
+      // celorlalte țări (.attraction-country-lazy) DOAR quando ținta reală
+      // e țara principală (nu "all"/glob) — la "all" rămân vizibile normal.
+      if (match && el.getAttribute("data-country-block") === "all" && inAttractionsPanel) {
+        var showOtherCountries = target === "all";
+        el.querySelectorAll(".attraction-country-lazy").forEach(function(other){
+          other.style.display = showOtherCountries ? "" : "none";
+        });
+      }
     });
     document.querySelectorAll(".country-flag-btn").forEach(function(btn){
       btn.classList.toggle("active", btn.getAttribute("data-country-select") === target);
