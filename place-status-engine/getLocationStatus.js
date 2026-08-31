@@ -79,6 +79,12 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   în ore, pentru ACEST apel specific — cerere explicită de reducere a
  *   costului: 168 (7 zile) pentru magazine, 720 (30 zile) pentru obiective
  *   turistice. Fără el, cade pe CACHE_TTL_HOURS din cache.js (12h implicit).
+ * @param {() => Promise<boolean>} [params.checkFetchAllowed] - verificare
+ *   opțională, apelată DOAR chiar înainte de o cerere plătită reală (nu la
+ *   citirea din cache) — protecție împotriva unui atac deliberat, care ar
+ *   viza intenționat locații necache-uite ca să genereze cost. Dacă
+ *   întoarce `false`, cererea NU se face, se întoarce `{ skipped: true,
+ *   rateLimited: true }`.
  * @returns {Promise<{
  *   name: string,
  *   businessStatus: string,
@@ -93,7 +99,7 @@ function detectSpecialDay(regularOpeningHours, currentOpeningHours, localDay, lo
  *   skipped: boolean|undefined,
  * }>}
  */
-async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly, ttlHours }) {
+async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly, ttlHours, checkFetchAllowed }) {
   const googleLang = toGoogleLang(language);
 
   let raw = await getCachedDetails(pool, placeId, googleLang, ttlHours);
@@ -104,6 +110,17 @@ async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly, t
       // NU cerem nimic de la Google — mai bine lipsă din hartă decât un
       // cost real la fiecare deschidere a paginii unui oraș întreg.
       return { skipped: true, fromCache: false };
+    }
+    // checkFetchAllowed — protecție împotriva unui atac deliberat (cost
+    // real, indus intenționat), NU doar crawlere oneste (alea sunt deja
+    // prinse de cacheOnly, mai sus, din server.js). Verificată chiar aici,
+    // EXACT înainte de cererea plătită — dacă IP-ul a depășit limita de
+    // cereri "noi" (cache-miss) recente, refuzăm ferm, fără cost.
+    if (checkFetchAllowed) {
+      const allowed = await checkFetchAllowed();
+      if (!allowed) {
+        return { skipped: true, rateLimited: true, fromCache: false };
+      }
     }
     fromCache = false;
     raw = await fetchPlaceDetails(placeId, apiKey, googleLang);
