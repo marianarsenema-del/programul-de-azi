@@ -172,14 +172,19 @@ async function getReportCounts(slug) {
   }
 }
 
-async function tryGetLiveStatus(slug, lang) {
+async function tryGetLiveStatus(slug, lang, tip) {
   if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) return null;
   try {
     const { rows } = await dbPool.query("SELECT place_id FROM locatii WHERE slug = $1 LIMIT 1", [slug]);
     if (!rows.length) return null;
     const placeId = rows[0].place_id;
     if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return null;
-    return await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang });
+    // ttlHours — cerere explicită de reducere a costului: cache de 7 zile
+    // (168h) pentru magazine, 30 de zile (720h) pentru obiective turistice
+    // — programul unui magazin/obiectiv se schimbă rar, o valabilitate mai
+    // lungă nu afectează practic acuratețea, dar reduce costul semnificativ.
+    const ttlHours = tip === "attraction" ? 720 : 168;
+    return await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, ttlHours });
   } catch (err) {
     console.error("tryGetLiveStatus a eșuat, cad pe fallback:", err.message);
     return null;
@@ -15000,7 +15005,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
     // exact ca înainte, fără nicio schimbare vizibilă.
     const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}`) : null;
-    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro") : null;
+    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro", "store") : null;
     schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, weekly: store.weekly, live });
 
     if (live && live.isOpenNow !== null) {
@@ -15161,7 +15166,7 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
           const placeId = placeIdBySlug[slug];
           if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return;
           try {
-            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: "ro", cacheOnly: true });
+            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: "ro", cacheOnly: true, ttlHours: 168 });
             if (!status.skipped && status.isOpenNow !== null) liveStatusByKey[key] = status.isOpenNow;
           } catch (e) { /* o locație eșuată nu blochează restul */ }
         })
@@ -15336,7 +15341,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
   const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`) : null;
   const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(liveSlug, googleLang);
+  const live = await tryGetLiveStatus(liveSlug, googleLang, "store");
   const schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay} ${orasDisplay}`, weekly: store.weekly, live });
 
   let statusCardHtml;
@@ -15495,7 +15500,7 @@ async function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl,
           const placeId = placeIdBySlug[slug];
           if (!placeId || placeId === "ZERO_RESULTS" || placeId.startsWith("ERROR_")) return;
           try {
-            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: activeLang, cacheOnly: true });
+            const status = await getLocationStatus({ pool: dbPool, placeId, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: activeLang, cacheOnly: true, ttlHours: 168 });
             if (!status.skipped && status.isOpenNow !== null) liveStatusByKey[key] = status.isOpenNow;
           } catch (e) { /* o locație eșuată nu blochează restul */ }
         })
@@ -16510,7 +16515,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce }) {
   const description = `Vezi programul actualizat și rezervă bilete online pentru ${attraction.name}.`;
   const canonical = `${baseUrl}/obiectiv/${slug}`;
 
-  const live = await tryGetLiveStatus(slug, "ro");
+  const live = await tryGetLiveStatus(slug, "ro", "attraction");
 
   let statusHtml;
   let widgetHtml = "";
@@ -16627,7 +16632,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
 
   const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(slug, googleLang);
+  const live = await tryGetLiveStatus(slug, googleLang, "attraction");
 
   let statusHtml;
   let widgetHtml = "";
@@ -17563,7 +17568,7 @@ app.get("/api/city-live-map", async (req, res) => {
     const results = await Promise.all(
       validRows.map(async (row) => {
         try {
-          const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, cacheOnly: true });
+          const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, cacheOnly: true, ttlHours: 168 });
           if (status.skipped || status.lat == null || status.lng == null) return null;
           return { name: row.nume_locatie, slug: row.slug, lat: status.lat, lng: status.lng, isOpenNow: status.isOpenNow };
         } catch (e) {
