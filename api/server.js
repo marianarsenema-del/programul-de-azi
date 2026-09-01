@@ -20225,9 +20225,16 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // oricând căuta altceva, sau apăsa "Șterge" ca să pornească de la zero.
     var saved = loadSavedItinerary();
     if (saved && saved.data) {
+      // Bug real, semnalat direct, cu captură: un itinerar salvat ÎNAINTE
+      // de reparația asta avea orașul brut, netratat ("paris", litere
+      // mici), salvat direct în localStorage — reparația de la generare
+      // (orasCanonic) nu ajută retroactiv la ce era deja salvat. Aici,
+      // recuperăm orasCanonic din datele salvate (tot venea de la server,
+      // în raspuns), dacă există, chiar dacă saved.oras a rămas vechi.
+      var orasPentruAfisare = (saved.data && saved.data.orasCanonic) || saved.oras || "";
       document.getElementById("itinOras").value = saved.oras || "";
       if (saved.zile) document.getElementById("itinZile").value = String(saved.zile);
-      renderItinerary(saved.data, saved.oras);
+      renderItinerary(saved.data, orasPentruAfisare);
     }
   }
 })();
