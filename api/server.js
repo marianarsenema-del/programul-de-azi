@@ -1747,9 +1747,10 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
   // spectaculoase dar greu accesibile (Lefkada, Creta, Milos, Corfu) — o
   // linie discretă, sub butoane, spre închirieri auto (reutilizează
   // carRentalLinkFor, deja existent — dacă orașul/insula are link real
-  // populat, îl folosește direct; altfel cade pe linkul general).
+  // populat, îl folosește direct; altfel cade pe linkul general) + Waze,
+  // pentru navigare directă spre plaja exactă (cerut explicit).
   const carHintHtml = (accessDifficulty === "medium" || accessDifficulty === "high") && city
-    ? `<p class="plan-visit-hint beach-car-hint">${escapeHtml(carAccessHintLabelFor(lang, city))} <a href="${escapeHtml(carRentalLinkFor(city))}" target="_blank" rel="noopener sponsored">${escapeHtml(beachTagsT.access_car || "🚗")}</a></p>`
+    ? `<p class="plan-visit-hint beach-car-hint">${escapeHtml(carAccessHintLabelFor(lang, city))} <a href="${escapeHtml(carRentalLinkFor(city))}" target="_blank" rel="noopener sponsored">${escapeHtml(beachTagsT.access_car || "🚗")}</a> · <a href="${escapeHtml(wazeLinkFor(`${name} ${city}`))}" target="_blank" rel="noopener">🧭 Waze</a></p>`
     : "";
   // Restaurant + parcare — bug real, găsit prin testare directă (semnalat de
   // utilizator): butonul de "parcare" folosea din greșeală bookingSearchLinkFor
@@ -3908,6 +3909,30 @@ function buildAttractionListForCountry(list, countryCode, isIntlContext, lang) {
       const items = sorted
         .map((a) => buildAttractionAccordionItem(a, countryCode, null, isIntlContext, lang))
         .join("");
+      // Grupare pe insulă/locație — cerut explicit, DOAR pentru categoriile
+      // de plajă (plaje_organizate/plaje_salbatice) — turiștii caută plaje
+      // pe insula unde merg, nu alfabetic pe tot teritoriul unei țări.
+      // Restul categoriilor (castele, muzee etc.) rămân neschimbate, listă
+      // plată, ca până acum.
+      const isBeachCategory = cat === "plaje_organizate" || cat === "plaje_salbatice";
+      let listOrGroupedHtml = `<ul class="attraction-accordion-list">${items}</ul>`;
+      if (isBeachCategory) {
+        const byIsland = {};
+        const islandOrder = [];
+        sorted.forEach((a) => {
+          const island = a.city || "—";
+          if (!byIsland[island]) { byIsland[island] = []; islandOrder.push(island); }
+          byIsland[island].push(a);
+        });
+        listOrGroupedHtml = islandOrder
+          .map((island) => {
+            const islandItems = byIsland[island]
+              .map((a) => buildAttractionAccordionItem(a, countryCode, null, isIntlContext, lang))
+              .join("");
+            return `<h4 class="beach-island-heading">🏝️ ${escapeHtml(island)}</h4><ul class="attraction-accordion-list">${islandItems}</ul>`;
+          })
+          .join("");
+      }
       // Index alfabetic (Quick-Jump) — cerut explicit, pentru categoriile
       // mari (Italia/Germania, 100+ obiective) — DOAR literele care chiar
       // apar în această categorie, nu tot alfabetul (ar fi multe butoane
@@ -3930,7 +3955,7 @@ function buildAttractionListForCountry(list, countryCode, isIntlContext, lang) {
         <label class="category-context-filter"><input type="checkbox" class="category-open-only-checkbox"> ${escapeHtml(openOnlyAttractionShortLabelFor(lang))}</label>
         ${sortToggleHtml}
         ${alphabetHtml}
-        <ul class="attraction-accordion-list">${items}</ul>
+        ${listOrGroupedHtml}
       </details>`;
     })
     .join("");
@@ -10305,10 +10330,10 @@ const ATTRACTIONS = {
     { name: "Mănăstirea Toplou Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Toplou+Lasithi+Greece", category: "manastiri", city: "Lasithi" },
     { name: "Biserica Agios Titos Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Agios+Titos+Heraklion+Greece", category: "manastiri", city: "Heraklion" },
     { name: "Cheile Samariei Munții Albi", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Samariei+Munții+Albi+Greece", category: "natura", city: "Munții Albi" },
-    { name: "Laguna Balos Kissamos", url: "https://www.google.com/maps/search/?api=1&query=Laguna+Balos+Kissamos+Greece", category: "natura", city: "Kissamos" },
-    { name: "Plaja Elafonisi Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Elafonisi+Chania+Greece", category: "natura", city: "Chania" },
+    { name: "Laguna Balos Kissamos", url: "https://www.google.com/maps/search/?api=1&query=Laguna+Balos+Kissamos+Greece", category: "plaje_salbatice", city: "Kissamos", accessDifficulty: "high" },
+    { name: "Plaja Elafonisi Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Elafonisi+Chania+Greece", category: "plaje_salbatice", city: "Chania", accessDifficulty: "medium" },
     { name: "Peștera Dikteon Platoul Lassithi", url: "https://www.google.com/maps/search/?api=1&query=Peștera+Dikteon+Platoul+Lassithi+Greece", category: "natura", city: "Platoul Lassithi" },
-    { name: "Plaja Vai Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Vai+Lasithi+Greece", category: "natura", city: "Lasithi" },
+    { name: "Plaja Vai Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Vai+Lasithi+Greece", category: "plaje_organizate", city: "Lasithi" },
     { name: "Plaja Matala Matala", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Matala+Matala+Greece", category: "natura", city: "Matala" },
     { name: "Cheile Imbros Chania", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Imbros+Chania+Greece", category: "natura", city: "Chania" },
     { name: "Insula Chrissi Ierapetra", url: "https://www.google.com/maps/search/?api=1&query=Insula+Chrissi+Ierapetra+Greece", category: "natura", city: "Ierapetra" },
@@ -10335,11 +10360,11 @@ const ATTRACTIONS = {
     { name: "Mănăstirea Vlacherna Kanoni", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Vlacherna+Kanoni+Greece", category: "manastiri", city: "Kanoni" },
     { name: "Mănăstirea Pantokrator Muntele Pantokrator", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Pantokrator+Muntele+Pantokrator+Greece", category: "manastiri", city: "Muntele Pantokrator" },
     { name: "Biserica Sfinții Jason și Sosipater Corfu Town", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Sfinții+Jason+și+Sosipater+Corfu+Town+Greece", category: "manastiri", city: "Corfu Town" },
-    { name: "Canal d'Amour Sidari", url: "https://www.google.com/maps/search/?api=1&query=Canal+d'Amour+Sidari+Greece", category: "natura", city: "Sidari" },
-    { name: "Plaja Paleokastritsa și Grotele Palaiokastritsa", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Paleokastritsa+și+Grotele+Palaiokastritsa+Greece", category: "natura", city: "Palaiokastritsa" },
+    { name: "Canal d'Amour Sidari", url: "https://www.google.com/maps/search/?api=1&query=Canal+d'Amour+Sidari+Greece", category: "plaje_organizate", city: "Sidari" },
+    { name: "Plaja Paleokastritsa și Grotele Palaiokastritsa", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Paleokastritsa+și+Grotele+Palaiokastritsa+Greece", category: "plaje_organizate", city: "Palaiokastritsa" },
     { name: "Capul Drastis Peroulades", url: "https://www.google.com/maps/search/?api=1&query=Capul+Drastis+Peroulades+Greece", category: "natura", city: "Peroulades" },
     { name: "Laguna Korission Sudul insulei Corfu", url: "https://www.google.com/maps/search/?api=1&query=Laguna+Korission+Sudul+insulei+Corfu+Greece", category: "natura", city: "Sudul insulei Corfu" },
-    { name: "Plaja Glyfada Vestul insulei", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Glyfada+Vestul+insulei+Greece", category: "natura", city: "Vestul insulei" },
+    { name: "Plaja Glyfada Vestul insulei", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Glyfada+Vestul+insulei+Greece", category: "plaje_organizate", city: "Vestul insulei" },
     { name: "Muntele Pantokrator Corfu", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Pantokrator+Corfu+Greece", category: "natura", city: "Corfu" },
     { name: "Drumul serpentinelor de pe Muntele Pantokrator Pantokrator", url: "https://www.google.com/maps/search/?api=1&query=Drumul+serpentinelor+de+pe+Muntele+Pantokrator+Pantokrator+Greece", category: "infrastructura", city: "Pantokrator" },
     { name: "Punctul de observație Kaiser's Throne Pelekas", url: "https://www.google.com/maps/search/?api=1&query=Punctul+de+observație+Kaiser's+Throne+Pelekas+Greece", category: "infrastructura", city: "Pelekas" },
@@ -10365,14 +10390,186 @@ const ATTRACTIONS = {
     { name: "Valea Fluturilor Theologos", url: "https://www.google.com/maps/search/?api=1&query=Valea+Fluturilor+Theologos+Greece", category: "natura", city: "Theologos" },
     { name: "Izvoarele Termale Kallithea Springs Kallithea", url: "https://www.google.com/maps/search/?api=1&query=Izvoarele+Termale+Kallithea+Springs+Kallithea+Greece", category: "natura", city: "Kallithea" },
     { name: "Prasonisi Sudul insulei", url: "https://www.google.com/maps/search/?api=1&query=Prasonisi+Sudul+insulei+Greece", category: "natura", city: "Sudul insulei" },
-    { name: "Plaja Tsambika Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tsambika+Archangelos+Greece", category: "natura", city: "Archangelos" },
-    { name: "Golful Anthony Quinn Faliraki", url: "https://www.google.com/maps/search/?api=1&query=Golful+Anthony+Quinn+Faliraki+Greece", category: "natura", city: "Faliraki" },
+    { name: "Plaja Tsambika Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tsambika+Archangelos+Greece", category: "plaje_organizate", city: "Archangelos" },
+    { name: "Golful Anthony Quinn Faliraki", url: "https://www.google.com/maps/search/?api=1&query=Golful+Anthony+Quinn+Faliraki+Greece", category: "plaje_salbatice", city: "Faliraki", accessDifficulty: "medium" },
     { name: "Șapte Izvoare Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Șapte+Izvoare+Archangelos+Greece", category: "natura", city: "Archangelos" },
     { name: "Șoseaua de coastă Faliraki - Lindos Estul insulei", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+de+coastă+Faliraki+-+Lindos+Estul+insulei+Greece", category: "infrastructura", city: "Estul insulei" },
     { name: "Traseul montan prin masivul Profitis Ilias Profitis Ilias", url: "https://www.google.com/maps/search/?api=1&query=Traseul+montan+prin+masivul+Profitis+Ilias+Profitis+Ilias+Greece", category: "infrastructura", city: "Profitis Ilias" },
     { name: "Muzeul Arheologic din Rhodos Orașul Vechi", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+din+Rhodos+Orașul+Vechi+Greece", category: "muzee", city: "Orașul Vechi" },
     { name: "Aquarium-ul din Rhodos Rhodos Town", url: "https://www.google.com/maps/search/?api=1&query=Aquarium-ul+din+Rhodos+Rhodos+Town+Greece", category: "muzee", city: "Rhodos Town" },
     { name: "Muzeul de Artă Modernă Rhodos Town", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Modernă+Rhodos+Town+Greece", category: "muzee", city: "Rhodos Town" },
+    { name: "Plaja Navagio Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Navagio+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "boat-only" },
+    { name: "Plaja Gerakas Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Gerakas+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "medium" },
+    { name: "Plaja Laganas Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Laganas+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Kalamaki Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalamaki+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Dafni Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Dafni+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "high" },
+    { name: "Plaja Banana Beach Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Banana+Beach+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Porto Limnionas Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Limnionas+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "medium" },
+    { name: "Plaja Tsilivi Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tsilivi+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Alykes Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Alykes+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Alykanas Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Alykanas+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Agios Nikolaos Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Nikolaos+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Porto Vromi Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Vromi+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "medium" },
+    { name: "Plaja Porto Katsiki Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Katsiki+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada", accessDifficulty: "medium" },
+    { name: "Plaja Egremni Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Egremni+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada", accessDifficulty: "high" },
+    { name: "Plaja Mylos Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Mylos+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada", accessDifficulty: "high" },
+    { name: "Plaja Kathisma Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kathisma+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Agios Ioannis Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Ioannis+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Vassiliki Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Vassiliki+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Gyra Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Gyra+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Ammoglossa Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Ammoglossa+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada" },
+    { name: "Plaja Pefkoulia Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pefkoulia+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Nikiana Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nikiana+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Falassarna Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Falassarna+Chania+Greece", category: "plaje_organizate", city: "Chania" },
+    { name: "Plaja Preveli Rethymno", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Preveli+Rethymno+Greece", category: "plaje_salbatice", city: "Rethymno", accessDifficulty: "medium" },
+    { name: "Plaja Matala Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Matala+Heraklion+Greece", category: "plaje_organizate", city: "Heraklion" },
+    { name: "Plaja Seitan Limania Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Seitan+Limania+Chania+Greece", category: "plaje_salbatice", city: "Chania", accessDifficulty: "high" },
+    { name: "Plaja Xerokampos Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Xerokampos+Lasithi+Greece", category: "plaje_salbatice", city: "Lasithi", accessDifficulty: "medium" },
+    { name: "Plaja Stavros Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Stavros+Chania+Greece", category: "plaje_organizate", city: "Chania" },
+    { name: "Plaja Agios Gordios Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Gordios+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Porto Timoni Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Timoni+Corfu+Greece", category: "plaje_salbatice", city: "Corfu", accessDifficulty: "high" },
+    { name: "Plaja Myrtiotissa Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Myrtiotissa+Corfu+Greece", category: "plaje_salbatice", city: "Corfu", accessDifficulty: "medium" },
+    { name: "Plaja Dassia Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Dassia+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Barbati Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Barbati+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Halikounas Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Halikounas+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Lindos Lindos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Lindos+Lindos+Greece", category: "plaje_organizate", city: "Lindos" },
+    { name: "Plaja Afandou Afandou", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Afandou+Afandou+Greece", category: "plaje_organizate", city: "Afandou" },
+    { name: "Plaja Agathi Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agathi+Archangelos+Greece", category: "plaje_organizate", city: "Archangelos" },
+    { name: "Plaja Prasonisi Prasonisi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Prasonisi+Prasonisi+Greece", category: "plaje_organizate", city: "Prasonisi" },
+    { name: "Plaja Kallithea Kallithea", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kallithea+Kallithea+Greece", category: "plaje_organizate", city: "Kallithea" },
+    { name: "Plaja Stegna Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Stegna+Archangelos+Greece", category: "plaje_organizate", city: "Archangelos" },
+    { name: "Plaja Glystra Lindos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Glystra+Lindos+Greece", category: "plaje_organizate", city: "Lindos" },
+    { name: "Plaja Elli Rhodos Town", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Elli+Rhodos+Town+Greece", category: "plaje_organizate", city: "Rhodos Town" },
+    { name: "Plaja Faliraki Faliraki", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Faliraki+Faliraki+Greece", category: "plaje_organizate", city: "Faliraki" },
+    { name: "Plaja Golden Beach Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Golden+Beach+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Saliara (Marble Beach) Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Saliara+(Marble+Beach)+Thassos+Greece", category: "plaje_salbatice", city: "Thassos", accessDifficulty: "medium" },
+    { name: "Plaja Porto Vathy Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Vathy+Thassos+Greece", category: "plaje_salbatice", city: "Thassos", accessDifficulty: "medium" },
+    { name: "Plaja Aliki Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Aliki+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Giola Thassos", url: "https://www.google.com/maps/search/?api=1&query=Giola+Thassos+Greece", category: "plaje_salbatice", city: "Thassos", accessDifficulty: "medium" },
+    { name: "Plaja Paradise Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Paradise+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Psili Ammos Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Psili+Ammos+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Potos Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Potos+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Skala Rachoni Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Skala+Rachoni+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Metalia Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Metalia+Thassos+Greece", category: "plaje_salbatice", city: "Thassos" },
+    { name: "Plaja Xenia Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Xenia+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Possidi Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Possidi+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Sani Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sani+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Kallithea Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kallithea+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Hanioti Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Hanioti+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Glarokavos Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Glarokavos+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Kavourotrypes Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kavourotrypes+Sithonia+Greece", category: "plaje_salbatice", city: "Sithonia", accessDifficulty: "medium" },
+    { name: "Plaja Karidi Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Karidi+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Kalogria Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalogria+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Tristinika Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tristinika+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Porto Koufo Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Koufo+Sithonia+Greece", category: "plaje_salbatice", city: "Sithonia" },
+    { name: "Plaja Glyfada Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Glyfada+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Voula Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Voula+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Astir Vouliagmeni Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Astir+Vouliagmeni+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Varkiza Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Varkiza+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Schinias Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Schinias+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Althea Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Althea+Riviera+Ateniană+Greece", category: "plaje_salbatice", city: "Riviera Ateniană", accessDifficulty: "medium" },
+    { name: "Limanakia Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Limanakia+Riviera+Ateniană+Greece", category: "plaje_salbatice", city: "Riviera Ateniană" },
+    { name: "Plaja Kalamaki Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalamaki+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Simos Elafonisos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Simos+Elafonisos+Greece", category: "plaje_organizate", city: "Elafonisos", accessDifficulty: "boat-only" },
+    { name: "Plaja Voidokilia Pylos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Voidokilia+Pylos+Greece", category: "plaje_salbatice", city: "Pylos" },
+    { name: "Plaja Costa Navarino Pylos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Costa+Navarino+Pylos+Greece", category: "plaje_organizate", city: "Pylos" },
+    { name: "Plaja Rio Patras", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Rio+Patras+Greece", category: "plaje_organizate", city: "Patras" },
+    { name: "Plaja Kalogria Achaia Patras", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalogria+Achaia+Patras+Greece", category: "plaje_organizate", city: "Patras" },
+    { name: "Plaja Foneas Kardamili", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Foneas+Kardamili+Greece", category: "plaje_salbatice", city: "Kardamili" },
+    { name: "Plaja Limeni Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Limeni+Mani+Greece", category: "plaje_organizate", city: "Mani" },
+    { name: "Plaja Marmari Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Marmari+Mani+Greece", category: "plaje_organizate", city: "Mani" },
+    { name: "Plaja Arvanitia Nafplio", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Arvanitia+Nafplio+Greece", category: "plaje_organizate", city: "Nafplio" },
+    { name: "Plaja Sarakiniko Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sarakiniko+Milos+Greece", category: "plaje_salbatice", city: "Milos" },
+    { name: "Kleftiko Milos", url: "https://www.google.com/maps/search/?api=1&query=Kleftiko+Milos+Greece", category: "plaje_salbatice", city: "Milos", accessDifficulty: "boat-only" },
+    { name: "Plaja Tsigrado Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tsigrado+Milos+Greece", category: "plaje_salbatice", city: "Milos", accessDifficulty: "high" },
+    { name: "Plaja Firiplaka Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Firiplaka+Milos+Greece", category: "plaje_organizate", city: "Milos", accessDifficulty: "medium" },
+    { name: "Plaja Provatas Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Provatas+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Paleochori Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Paleochori+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Pollonia Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pollonia+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Achivadolimni Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Achivadolimni+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Papafragas Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Papafragas+Milos+Greece", category: "plaje_salbatice", city: "Milos" },
+    { name: "Plaja Alogomandra Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Alogomandra+Milos+Greece", category: "plaje_salbatice", city: "Milos" },
+    { name: "Plaja Xigia Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Xigia+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos" },
+    { name: "Plaja Makris Gialos Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Makris+Gialos+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos" },
+    { name: "Plaja Pelagaki Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pelagaki+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "medium" },
+    { name: "Plaja Agios Sostis Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Sostis+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Limni Keri Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Limni+Keri+Zakynthos+Greece", category: "plaje_organizate", city: "Zakynthos" },
+    { name: "Plaja Psarou Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Psarou+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos" },
+    { name: "Plaja Plakaki Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Plakaki+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos", accessDifficulty: "high" },
+    { name: "Plaja Marathias Zakynthos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Marathias+Zakynthos+Greece", category: "plaje_salbatice", city: "Zakynthos" },
+    { name: "Plaja Agiofili Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agiofili+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada", accessDifficulty: "high" },
+    { name: "Plaja Poros Mikros Gialos Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Poros+Mikros+Gialos+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Nidri Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nidri+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Desimi Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Desimi+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Episkopos Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Episkopos+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Agios Nikitas Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Nikitas+Lefkada+Greece", category: "plaje_organizate", city: "Lefkada" },
+    { name: "Plaja Megali Petra Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Megali+Petra+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada" },
+    { name: "Plaja Kontogialos Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kontogialos+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Issos Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Issos+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Kalami Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalami+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Arillas Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Arillas+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Sidari Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sidari+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Kassiopi Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kassiopi+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Moraitika Corfu", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Moraitika+Corfu+Greece", category: "plaje_organizate", city: "Corfu" },
+    { name: "Plaja Vlicha Lindos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Vlicha+Lindos+Greece", category: "plaje_organizate", city: "Lindos" },
+    { name: "Plaja Ladiko Faliraki", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Ladiko+Faliraki+Greece", category: "plaje_organizate", city: "Faliraki" },
+    { name: "Plaja Traganou Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Traganou+Archangelos+Greece", category: "plaje_salbatice", city: "Archangelos" },
+    { name: "Plaja Kolymbia Archangelos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kolymbia+Archangelos+Greece", category: "plaje_organizate", city: "Archangelos" },
+    { name: "Plaja Ixia Rhodos Town", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Ixia+Rhodos+Town+Greece", category: "plaje_organizate", city: "Rhodos Town" },
+    { name: "Plaja Pefkos Lindos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pefkos+Lindos+Greece", category: "plaje_organizate", city: "Lindos" },
+    { name: "Plaja Ialyssos Rhodos Town", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Ialyssos+Rhodos+Town+Greece", category: "plaje_organizate", city: "Rhodos Town" },
+    { name: "Plaja Kedrodasos Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kedrodasos+Chania+Greece", category: "plaje_salbatice", city: "Chania", accessDifficulty: "medium" },
+    { name: "Plaja Sougia Chania", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sougia+Chania+Greece", category: "plaje_organizate", city: "Chania" },
+    { name: "Plaja Plakias Rethymno", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Plakias+Rethymno+Greece", category: "plaje_organizate", city: "Rethymno" },
+    { name: "Plaja Damnoni Rethymno", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Damnoni+Rethymno+Greece", category: "plaje_organizate", city: "Rethymno" },
+    { name: "Plaja Agios Pavlos Rethymno", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agios+Pavlos+Rethymno+Greece", category: "plaje_organizate", city: "Rethymno" },
+    { name: "Plaja Triopetra Rethymno", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Triopetra+Rethymno+Greece", category: "plaje_salbatice", city: "Rethymno" },
+    { name: "Plaja Kommos Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kommos+Heraklion+Greece", category: "plaje_salbatice", city: "Heraklion" },
+    { name: "Red Beach Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Red+Beach+Heraklion+Greece", category: "plaje_salbatice", city: "Heraklion", accessDifficulty: "medium" },
+    { name: "Plaja Agiofaraggo Heraklion", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agiofaraggo+Heraklion+Greece", category: "plaje_salbatice", city: "Heraklion", accessDifficulty: "high" },
+    { name: "Insula Chrissi Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Insula+Chrissi+Lasithi+Greece", category: "plaje_salbatice", city: "Lasithi", accessDifficulty: "boat-only" },
+    { name: "Plaja Voulisma Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Voulisma+Lasithi+Greece", category: "plaje_organizate", city: "Lasithi" },
+    { name: "Plaja Kouremenos Lasithi", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kouremenos+Lasithi+Greece", category: "plaje_organizate", city: "Lasithi" },
+    { name: "Plaja Astris Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Astris+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Pefkari Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pefkari+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Kinira Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kinira+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Skala Prinou Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Skala+Prinou+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Limenaria Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Limenaria+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Makriammos Thassos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Makriammos+Thassos+Greece", category: "plaje_organizate", city: "Thassos" },
+    { name: "Plaja Pefkohori Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Pefkohori+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Nea Fokea Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nea+Fokea+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Afitos Kassandra", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Afitos+Kassandra+Greece", category: "plaje_organizate", city: "Kassandra" },
+    { name: "Plaja Vourvourou Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Vourvourou+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Toroni Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Toroni+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Sarti Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sarti+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Nikiti Sithonia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nikiti+Sithonia+Greece", category: "plaje_organizate", city: "Sithonia" },
+    { name: "Plaja Kavouri Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kavouri+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Anavyssos Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Anavyssos+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Legrena Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Legrena+Riviera+Ateniană+Greece", category: "plaje_salbatice", city: "Riviera Ateniană", accessDifficulty: "medium" },
+    { name: "Plaja Sounion Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Sounion+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Kape Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kape+Riviera+Ateniană+Greece", category: "plaje_salbatice", city: "Riviera Ateniană", accessDifficulty: "medium" },
+    { name: "Plaja Lagonisi Riviera Ateniană", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Lagonisi+Riviera+Ateniană+Greece", category: "plaje_organizate", city: "Riviera Ateniană" },
+    { name: "Plaja Stoupa Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Stoupa+Mani+Greece", category: "plaje_organizate", city: "Mani" },
+    { name: "Plaja Mavrovouni Gytheio", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Mavrovouni+Gytheio+Greece", category: "plaje_organizate", city: "Gytheio" },
+    { name: "Plaja Finikounda Messinia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Finikounda+Messinia+Greece", category: "plaje_organizate", city: "Finikounda" },
+    { name: "Plaja Kalo Nero Kyparissia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalo+Nero+Kyparissia+Greece", category: "plaje_organizate", city: "Kyparissia" },
+    { name: "Plaja Tolo Nafplio", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Tolo+Nafplio+Greece", category: "plaje_organizate", city: "Nafplio" },
+    { name: "Plaja Methoni Messinia", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Methoni+Messinia+Greece", category: "plaje_organizate", city: "Methoni" },
+    { name: "Plaja Karathona Nafplio", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Karathona+Nafplio+Greece", category: "plaje_organizate", city: "Nafplio" },
+    { name: "Plaja Firopotamos Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Firopotamos+Milos+Greece", category: "plaje_salbatice", city: "Milos" },
+    { name: "Plaja Mandrakia Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Mandrakia+Milos+Greece", category: "plaje_salbatice", city: "Milos" },
+    { name: "Plaja Plathiena Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Plathiena+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Mytakas Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Mytakas+Milos+Greece", category: "plaje_salbatice", city: "Milos", accessDifficulty: "medium" },
+    { name: "Plaja Agia Kyriaki Milos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Agia+Kyriaki+Milos+Greece", category: "plaje_organizate", city: "Milos" },
+    { name: "Plaja Paralia Katerini", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Paralia+Katerini+Greece", category: "plaje_organizate", city: "Paralia Katerini" },
+    { name: "Plaja Olympiaki Akti Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Olympiaki+Akti+Pieria+Greece", category: "plaje_organizate", city: "Olympiaki Akti" },
+    { name: "Plaja Korinos Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Korinos+Pieria+Greece", category: "plaje_organizate", city: "Korinos" },
+    { name: "Plaja Plaka Litochoro Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Plaka+Litochoro+Pieria+Greece", category: "plaje_organizate", city: "Litochoro" },
+    { name: "Plaja Leptokarya Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Leptokarya+Pieria+Greece", category: "plaje_organizate", city: "Leptokarya" },
+    { name: "Plaja Panteleimonas Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Panteleimonas+Pieria+Greece", category: "plaje_organizate", city: "Panteleimonas" },
+    { name: "Plaja Platamonas Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Platamonas+Pieria+Greece", category: "plaje_organizate", city: "Platamonas" },
+    { name: "Plaja Skotina Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Skotina+Pieria+Greece", category: "plaje_organizate", city: "Skotina" },
+    { name: "Plaja Nei Pori Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nei+Pori+Pieria+Greece", category: "plaje_organizate", city: "Nei Pori" },
   ],
   hu: [
     { name: "Castelul Buda Budapest", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Buda+Budapest+Hungary", category: "castele_palate", city: "Budapest" },
@@ -13981,6 +14178,8 @@ main{padding-top:8px;}
 .alpha-index-btn:hover,.alpha-index-btn:active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .attraction-accordion-item.alpha-jump-highlight{outline:2px solid var(--accent);outline-offset:2px;transition:outline-color .3s;}
 .attraction-recommended-badge{margin-right:4px;}
+.beach-island-heading{margin:14px 18px 4px;font-size:14px;font-weight:800;color:var(--accent);}
+.beach-car-hint a{color:var(--accent);text-decoration:none;font-weight:600;}
 .vote-widget{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;}
 .vote-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;color:var(--text);font-size:13.5px;font-weight:600;padding:10px 18px;cursor:pointer;font-family:var(--font-body);}
 .vote-btn:hover{border-color:var(--accent);}
@@ -20253,6 +20452,23 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
         const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
         return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: matched, parcGasit };
       }
+    }
+  }
+
+  // Insule/locații care NU sunt "orașe" (nu apar în COUNTRIES[cc].cities,
+  // corect — vezi discuția explicită despre Zakynthos/Lefkada nefiind
+  // orașe) — dar au obiective proprii (plaje), cu propriul câmp `city`.
+  // Verificare EXACTĂ, înaintea buclei aproximative de mai jos — bug real,
+  // găsit prin testare: "Lefkada" se potrivea greșit cu "Lefka" (Cipru),
+  // prin verificarea aproximativă (substring), înainte să ajungă la
+  // Grecia. O potrivire exactă pe insulă are prioritate, corect.
+  for (const cc of otherCountries) {
+    const list = ATTRACTIONS[cc] || [];
+    const islandMatch = list.find((a) => a.city && normalizeJudetInput(a.city) === norm);
+    if (islandMatch) {
+      const islandObiective = list.filter((a) => a.city && normalizeJudetInput(a.city) === norm);
+      const { sorted, parcGasit } = boostParcuriAgrement(islandObiective, (a) => a.category, (a) => a.name, familyMode);
+      return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: islandMatch.city, parcGasit };
     }
   }
 
