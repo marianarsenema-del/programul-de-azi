@@ -14981,6 +14981,8 @@ function buildAttractionListFilterScript(nonce) {
   }
 
 
+  var globalToggle = document.getElementById("attractionListOpenOnlyToggle");
+  if (globalToggle) {
     // la încărcare — preia preferința salvată (dacă exista, de la
     // comutatorul de magazine sau de la o vizită anterioară)
     try {
