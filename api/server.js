@@ -148,6 +148,24 @@ function googlePeriodsToWeekly(periods) {
 // mare încât o problemă reală să rămână neafișată mult timp.
 const REPORT_THRESHOLD = 3;
 
+// Etichete comunitare pentru PLAJE — cerut explicit, ca turiștii să
+// contribuie cu detalii pe care le caută (parcare, șezlonguri, acces) —
+// prag mai mic decât la "Popular" (3, la fel ca la raportări) — informația
+// asta e utilă chiar și cu puține confirmări, nu are rost s-o ținem tăcută
+// mult timp ca la un vot general de popularitate.
+const BEACH_TAG_THRESHOLD = 3;
+
+// Grupuri EXCLUSIVE (o plajă are DOAR una din opțiuni — cea cu mai multe
+// voturi câștigă, dacă a trecut pragul) — plus etichete DE SINE STĂTĂTOARE
+// (afișate simplu dacă trec pragul, fără alternativă opusă).
+const BEACH_TAG_GROUPS = {
+  access: ["access_car", "access_boat"],
+  sunbeds: ["sunbeds_free", "sunbeds_paid", "sunbeds_with_drink"],
+  terrain: ["terrain_family", "terrain_pebbles"],
+};
+const BEACH_STANDALONE_TAGS = ["free_parking"];
+const BEACH_ALL_TAGS = [...Object.values(BEACH_TAG_GROUPS).flat(), ...BEACH_STANDALONE_TAGS];
+
 // Prag pentru insigna "🔥 Popular" — cerut explicit: votul rămâne TĂCUT
 // (fără nicio insignă vizibilă) sub acest prag, ca să nu arate site-ul
 // "gol"/nefuncțional la trafic mic — apare organic doar când chiar s-au
@@ -161,6 +179,37 @@ async function getAttractionVoteCount(slug) {
     return rows[0] ? rows[0].cnt : 0;
   } catch (err) {
     return 0; // tabela poate lipsi încă (nu s-a rulat SQL-ul de creare) — cădem elegant pe 0, nu crăpăm pagina
+  }
+}
+
+// Citește etichetele CÂȘTIGĂTOARE pentru o plajă — pentru grupurile
+// exclusive, doar cea cu mai multe voturi, dacă a trecut pragul; pentru
+// cele de sine stătătoare, la fel, individual. Întoarce un array simplu de
+// tag-uri de afișat (ex. ["access_car", "sunbeds_with_drink"]).
+async function getBeachWinningTags(slug) {
+  if (!dbPool) return [];
+  try {
+    const { rows } = await dbPool.query(
+      `SELECT tag, COUNT(*)::int AS cnt FROM attraction_info_tags WHERE slug = $1 GROUP BY tag`,
+      [slug]
+    );
+    const counts = {};
+    rows.forEach((r) => { counts[r.tag] = r.cnt; });
+    const winning = [];
+    Object.values(BEACH_TAG_GROUPS).forEach((group) => {
+      let best = null, bestCount = 0;
+      group.forEach((tag) => {
+        const c = counts[tag] || 0;
+        if (c > bestCount) { best = tag; bestCount = c; }
+      });
+      if (best && bestCount >= BEACH_TAG_THRESHOLD) winning.push(best);
+    });
+    BEACH_STANDALONE_TAGS.forEach((tag) => {
+      if ((counts[tag] || 0) >= BEACH_TAG_THRESHOLD) winning.push(tag);
+    });
+    return winning;
+  } catch (err) {
+    return []; // tabela poate lipsi încă — cădem elegant, nu crăpăm pagina
   }
 }
 
@@ -1680,13 +1729,27 @@ const BOOKING_PLANNING_LABELS_EN = {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket }) {
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket, accessDifficulty }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   // hideTicket — obiective cu acces liber (poduri, lacuri, munți, șosele)
   // nu au bilet de cumpărat, nimeni nu "rezervă" o vizită la un pod.
+  // accessDifficulty === "boat-only" — cerut explicit, pentru plajele
+  // accesibile DOAR pe mare (Navagio, Lalaria, Paxos) — butonul de bilet
+  // devine "Vezi tururi cu barca", folosind ACELAȘI mecanism deja existent
+  // (ticketUrlFor + ATTRACTION_TICKET_URLS) — doar eticheta se schimbă.
+  const beachTagsT = beachTagLabelsFor(lang);
+  const ticketLabel = accessDifficulty === "boat-only" ? boatTourLabelFor(lang) : t.ticket;
   const ticketHtml = linkBileteTurism && !hideTicket
-    ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.ticket)}</a>`
+    ? `<a href="${escapeHtml(ticketUrlFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">${escapeHtml(ticketLabel)}</a>`
+    : "";
+  // accessDifficulty === "medium"/"high" — cerut explicit, pentru plaje
+  // spectaculoase dar greu accesibile (Lefkada, Creta, Milos, Corfu) — o
+  // linie discretă, sub butoane, spre închirieri auto (reutilizează
+  // carRentalLinkFor, deja existent — dacă orașul/insula are link real
+  // populat, îl folosește direct; altfel cade pe linkul general).
+  const carHintHtml = (accessDifficulty === "medium" || accessDifficulty === "high") && city
+    ? `<p class="plan-visit-hint beach-car-hint">${escapeHtml(carAccessHintLabelFor(lang, city))} <a href="${escapeHtml(carRentalLinkFor(city))}" target="_blank" rel="noopener sponsored">${escapeHtml(beachTagsT.access_car || "🚗")}</a></p>`
     : "";
   // Restaurant + parcare — bug real, găsit prin testare directă (semnalat de
   // utilizator): butonul de "parcare" folosea din greșeală bookingSearchLinkFor
@@ -1720,6 +1783,7 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
       ${restaurantHtml}
       ${parkingHtml}
     </div>
+    ${carHintHtml}
   </div>`;
 }
 
@@ -2421,11 +2485,49 @@ function extractStatusEntity(cfg) {
   return null;
 }
 
-function buildListStatusBadgeScript(nonce, statusDataset) {
+// Etichetă pentru mesajul "nimic deschis acum" — cerut explicit: quando
+// filtrul "deschis acum" ajunge la 0 rezultate (ex. seara târziu), în loc
+// să lăsăm lista goală, arătăm un mesaj care trimite spre itinerarul AI —
+// transformă un moment frustrant într-o oportunitate.
+const NO_RESULTS_ITINERARY_LABELS = {
+  ro: { text: "😴 Nimic deschis acum pe aici.", cta: "Planifică vizita pentru mai târziu, cu ajutorul AI-ului →" },
+  uk: { text: "😴 Nothing open right now.", cta: "Plan your visit for later, with AI's help →" },
+  de: { text: "😴 Gerade ist nichts geöffnet.", cta: "Plane deinen Besuch für später, mit Hilfe der KI →" },
+  fr: { text: "😴 Rien n'est ouvert en ce moment.", cta: "Planifiez votre visite pour plus tard, avec l'aide de l'IA →" },
+  es: { text: "😴 Nada abierto ahora mismo.", cta: "Planifica tu visita para más tarde, con ayuda de la IA →" },
+  it: { text: "😴 Niente di aperto in questo momento.", cta: "Pianifica la tua visita per dopo, con l'aiuto dell'IA →" },
+  pl: { text: "😴 Nic teraz nie jest otwarte.", cta: "Zaplanuj wizytę na później, z pomocą AI →" },
+  nl: { text: "😴 Nu is er niets geopend.", cta: "Plan je bezoek voor later, met hulp van AI →" },
+  da: { text: "😴 Der er intet åbent lige nu.", cta: "Planlæg dit besøg til senere, med hjælp fra AI →" },
+  cz: { text: "😴 Právě teď nic není otevřené.", cta: "Naplánujte si návštěvu na později, s pomocí AI →" },
+  fi: { text: "😴 Mikään ei ole nyt auki.", cta: "Suunnittele vierailusi myöhemmäksi, tekoälyn avulla →" },
+  gr: { text: "😴 Τίποτα δεν είναι ανοιχτό αυτή τη στιγμή.", cta: "Προγραμματίστε την επίσκεψή σας για αργότερα, με τη βοήθεια του AI →" },
+  hu: { text: "😴 Most semmi sincs nyitva.", cta: "Tervezd meg a látogatásod későbbre, mesterséges intelligencia segítségével →" },
+  hr: { text: "😴 Trenutno ništa nije otvoreno.", cta: "Planirajte posjet za kasnije, uz pomoć AI-ja →" },
+  sk: { text: "😴 Práve teraz nič nie je otvorené.", cta: "Naplánujte si návštevu na neskôr, s pomocou AI →" },
+  si: { text: "😴 Trenutno nič ni odprto.", cta: "Načrtujte obisk za kasneje, s pomočjo AI →" },
+  lt: { text: "😴 Dabar niekas neveikia.", cta: "Suplanuokite apsilankymą vėliau, pasitelkę DI →" },
+  lv: { text: "😴 Šobrīd nekas nav atvērts.", cta: "Ieplānojiet apmeklējumu vēlākam laikam, ar MI palīdzību →" },
+  pt: { text: "😴 Não há nada aberto agora.", cta: "Planeia a tua visita para mais tarde, com ajuda da IA →" },
+  se: { text: "😴 Inget är öppet just nu.", cta: "Planera ditt besök till senare, med hjälp av AI →" },
+  ee: { text: "😴 Praegu pole midagi avatud.", cta: "Planeeri oma külastus hiljemaks, tehisintellekti abiga →" },
+};
+function noResultsItineraryLabelsFor(lang) { return NO_RESULTS_ITINERARY_LABELS[lang] || NO_RESULTS_ITINERARY_LABELS.uk; }
+function buildNoResultsItineraryPromoHtml(id, countryCode, lang) {
+  const t = noResultsItineraryLabelsFor(lang);
+  const href = itineraryHrefFor(countryCode, lang);
+  return `<a href="${escapeHtml(href)}" id="${escapeHtml(id)}" class="itinerary-promo-card itinerary-promo-empty" style="display:none">
+    <div class="itinerary-promo-title">${escapeHtml(t.text)}</div>
+    <div class="itinerary-promo-cta">${escapeHtml(t.cta)}</div>
+  </a>`;
+}
+
+function buildListStatusBadgeScript(nonce, statusDataset, noResultsElId) {
   return `
 <script nonce="${nonce}">
 (function(){
   var DATASET = ${safeJson(statusDataset)};
+  var NO_RESULTS_EL_ID = ${safeJson(noResultsElId || "")};
   var badges = document.querySelectorAll(".brand-badge[data-status-key]");
   if (!badges.length) return;
 
@@ -2457,6 +2559,7 @@ function buildListStatusBadgeScript(nonce, statusDataset) {
   function syncAll(){
     var now = new Date();
     var onlyOpen = window.__storeListOpenOnlyToggle && window.__storeListOpenOnlyToggle.checked;
+    var visibleCount = 0;
     badges.forEach(function(badge){
       var key = badge.getAttribute("data-status-key");
       var entity = DATASET[key];
@@ -2468,9 +2571,17 @@ function buildListStatusBadgeScript(nonce, statusDataset) {
       // prima pagină?") — ascunde rândul întreg din listă, nu doar insigna,
       // când comutatorul "doar deschise acum" e bifat.
       var li = badge.closest("li");
-      if (li && onlyOpen) li.style.display = open ? "" : "none";
-      else if (li) li.style.display = "";
+      var visible = !onlyOpen || open;
+      if (li) li.style.display = visible ? "" : "none";
+      if (visible) visibleCount++;
     });
+    // Mesaj "nimic deschis acum" — cerut explicit: quando filtrul ajunge la
+    // 0 rezultate (ex. seara târziu), arătăm o alternativă, spre itinerarul
+    // AI, în loc să lăsăm lista pur și simplu goală.
+    if (NO_RESULTS_EL_ID) {
+      var noResultsEl = document.getElementById(NO_RESULTS_EL_ID);
+      if (noResultsEl) noResultsEl.style.display = (onlyOpen && visibleCount === 0) ? "block" : "none";
+    }
   }
 
   syncAll();
@@ -2921,6 +3032,45 @@ function buildItineraryPromoCardHtml(countryCode, lang) {
   </a>`;
 }
 
+// Banner special, DOAR pentru Grecia — cerut explicit, la extinderea cu
+// plaje. Regiune fixă "Grecia" (nu insula specifică — sistemul nostru
+// grupează obiectivele pe categorie, nu pe insulă, deci detectarea
+// dinamică per-insulă ar cere o extindere mult mai mare a arhitecturii,
+// lăsată pentru o etapă viitoare).
+const GREECE_BEACH_PROMO_LABELS = {
+  ro: { title: "🇬🇷 Planifici o zi de plajă în Grecia?", text: "Unele plaje faimoase au acces dificil sau se aglomerează după ora 10:00, în timp ce beach barurile își deschid umbrelele la ore fixe.", cta: "🔮 Lasă AI-ul să îți organizeze traseul „Beach Hopper” →" },
+  uk: { title: "🇬🇷 Planning a beach day in Greece?", text: "Some famous beaches are hard to reach or get crowded after 10am, while beach bars open their umbrellas at fixed hours.", cta: "🔮 Let AI plan your \"Beach Hopper\" route →" },
+  de: { title: "🇬🇷 Planst du einen Strandtag in Griechenland?", text: "Manche berühmte Strände sind schwer erreichbar oder werden nach 10 Uhr überfüllt, während Beachbars ihre Sonnenschirme zu festen Zeiten öffnen.", cta: "🔮 Lass die KI deine „Beach Hopper”-Route planen →" },
+  fr: { title: "🇬🇷 Vous planifiez une journée plage en Grèce ?", text: "Certaines plages célèbres sont difficiles d'accès ou bondées après 10h, tandis que les beach bars ouvrent leurs parasols à heures fixes.", cta: "🔮 Laissez l'IA organiser votre parcours « Beach Hopper » →" },
+  es: { title: "🇬🇷 ¿Planeas un día de playa en Grecia?", text: "Algunas playas famosas tienen acceso difícil o se llenan después de las 10h, mientras que los beach bars abren sus sombrillas a horas fijas.", cta: "🔮 Deja que la IA organice tu ruta «Beach Hopper» →" },
+  it: { title: "🇬🇷 Stai pianificando una giornata in spiaggia in Grecia?", text: "Alcune spiagge famose hanno accesso difficile o si affollano dopo le 10, mentre i beach bar aprono gli ombrelloni a orari fissi.", cta: "🔮 Lascia che l'IA organizzi il tuo percorso «Beach Hopper» →" },
+  pl: { title: "🇬🇷 Planujesz dzień na plaży w Grecji?", text: "Niektóre słynne plaże są trudno dostępne lub zatłoczone po godzinie 10:00, podczas gdy beach bary otwierają parasole o stałych godzinach.", cta: "🔮 Pozwól AI zaplanować trasę „Beach Hopper” →" },
+  nl: { title: "🇬🇷 Plan je een strand dag in Griekenland?", text: "Sommige beroemde stranden zijn moeilijk bereikbaar of overvol na 10 uur, terwijl beachbars hun parasols op vaste tijden openen.", cta: "🔮 Laat AI je „Beach Hopper”-route plannen →" },
+  da: { title: "🇬🇷 Planlægger du en strand dag i Grækenland?", text: "Nogle berømte strande er svære at nå eller bliver overfyldte efter kl. 10, mens beach bars åbner parasollerne på faste tidspunkter.", cta: "🔮 Lad AI planlægge din „Beach Hopper”-rute →" },
+  cz: { title: "🇬🇷 Plánujete den na pláži v Řecku?", text: "Některé slavné pláže mají obtížný přístup nebo se po 10. hodině zaplní, zatímco plážové bary otevírají slunečníky v pevnou dobu.", cta: "🔮 Nechte AI naplánovat vaši trasu „Beach Hopper” →" },
+  fi: { title: "🇬🇷 Suunnitteletko rantapäivää Kreikassa?", text: "Jotkut kuuluisat rannat ovat vaikeasti saavutettavissa tai ruuhkautuvat kello 10 jälkeen, kun taas rantabaarit avaavat aurinkovarjonsa kiinteinä aikoina.", cta: "🔮 Anna tekoälyn suunnitella „Beach Hopper” -reittisi →" },
+  gr: { title: "🇬🇷 Σχεδιάζεις μια μέρα στην παραλία στην Ελλάδα;", text: "Ορισμένες διάσημες παραλίες έχουν δύσκολη πρόσβαση ή γεμίζουν μετά τις 10 π.μ., ενώ τα beach bar ανοίγουν τις ομπρέλες τους σε σταθερές ώρες.", cta: "🔮 Άφησε το AI να οργανώσει τη διαδρομή «Beach Hopper» →" },
+  hu: { title: "🇬🇷 Strandolós napot tervezel Görögországban?", text: "Néhány híres strand nehezen megközelíthető vagy 10 óra után zsúfolttá válik, míg a beach barok fix időpontokban nyitják ki napernyőiket.", cta: "🔮 Hagyd, hogy a mesterséges intelligencia megtervezze a „Beach Hopper” útvonaladat →" },
+  hr: { title: "🇬🇷 Planirate dan na plaži u Grčkoj?", text: "Neke poznate plaže imaju otežan pristup ili se pune nakon 10 sati, dok beach barovi otvaraju suncobrane u fiksno vrijeme.", cta: "🔮 Neka AI isplanira vašu „Beach Hopper” rutu →" },
+  sk: { title: "🇬🇷 Plánujete deň na pláži v Grécku?", text: "Niektoré slávne pláže majú náročný prístup alebo sa po 10. hodine zaplnia, zatiaľ čo plážové bary otvárajú slnečníky v pevnom čase.", cta: "🔮 Nechajte AI naplánovať vašu trasu „Beach Hopper” →" },
+  si: { title: "🇬🇷 Načrtujete dan na plaži v Grčiji?", text: "Nekatere znane plaže imajo otežen dostop ali se po 10. uri napolnijo, medtem ko plažni bari odpirajo senčnike ob stalnih urah.", cta: "🔮 Naj AI načrtuje vašo pot „Beach Hopper” →" },
+  lt: { title: "🇬🇷 Planuojate paplūdimio dieną Graikijoje?", text: "Kai kurie garsūs paplūdimiai sunkiai pasiekiami arba prisipildo po 10 val., o paplūdimio barai atidaro skėčius fiksuotu laiku.", cta: "🔮 Leiskite DI suplanuoti jūsų „Beach Hopper” maršrutą →" },
+  lv: { title: "🇬🇷 Plānojat pludmales dienu Grieķijā?", text: "Dažām slavenām pludmalēm ir grūti piekļūt vai tās pārpildās pēc plkst. 10, savukārt pludmales bāri atver saulessargus noteiktā laikā.", cta: "🔮 Ļaujiet MI ieplānot jūsu „Beach Hopper” maršrutu →" },
+  pt: { title: "🇬🇷 Estás a planear um dia de praia na Grécia?", text: "Algumas praias famosas têm acesso difícil ou ficam cheias depois das 10h, enquanto os beach bars abrem os guarda-sóis a horas fixas.", cta: "🔮 Deixa a IA organizar a tua rota «Beach Hopper» →" },
+  se: { title: "🇬🇷 Planerar du en strand dag i Grekland?", text: "Vissa berömda stränder är svåra att nå eller blir överfulla efter kl. 10, medan beach bars öppnar sina parasoller vid fasta tider.", cta: "🔮 Låt AI planera din „Beach Hopper”-rutt →" },
+  ee: { title: "🇬🇷 Kas planeerid rannapäeva Kreekas?", text: "Mõned kuulsad rannad on raskesti ligipääsetavad või täituvad pärast kella 10, samas kui rannabaarid avavad vihmavarjud kindlatel aegadel.", cta: "🔮 Lase tehisintellektil planeerida sinu „Beach Hopper” marsruut →" },
+};
+function greeceBeachPromoLabelsFor(lang) { return GREECE_BEACH_PROMO_LABELS[lang] || GREECE_BEACH_PROMO_LABELS.uk; }
+function buildGreeceBeachPromoCardHtml(lang) {
+  const t = greeceBeachPromoLabelsFor(lang);
+  const href = itineraryHrefFor("gr", lang);
+  return `<a href="${escapeHtml(href)}" class="itinerary-promo-card">
+    <div class="itinerary-promo-title">${escapeHtml(t.title)}</div>
+    <div class="itinerary-promo-text">${escapeHtml(t.text)}</div>
+    <div class="itinerary-promo-cta">${escapeHtml(t.cta)}</div>
+  </a>`;
+}
+
 // Etichete pentru votul anonim — "vot" (buton, inainte de a vota) și
 // "popular" (insigna, DOAR peste prag — vezi VOTE_POPULAR_THRESHOLD).
 const VOTE_LABELS = {
@@ -2948,6 +3098,72 @@ const VOTE_LABELS = {
 };
 function voteLabelsFor(lang) { return VOTE_LABELS[lang] || VOTE_LABELS.uk; }
 
+const BEACH_TAG_LABELS = {
+  ro: { access_car: "🚗 Acces Auto", access_boat: "⛵ Doar cu Barca", sunbeds_free: "🆓 Șezlonguri Gratuite", sunbeds_paid: "💰 Șezlonguri Contra Cost", sunbeds_with_drink: "🍹 Șezlonguri cu Consumație", terrain_family: "👶 Ideală pentru Familii", terrain_pebbles: "🪨 Pietriș / Stânci", free_parking: "🅿️ Parcare Gratuită" },
+  uk: { access_car: "🚗 Car Access", access_boat: "⛵ Boat Only", sunbeds_free: "🆓 Free Sunbeds", sunbeds_paid: "💰 Paid Sunbeds", sunbeds_with_drink: "🍹 Sunbeds with Drink", terrain_family: "👶 Family Friendly", terrain_pebbles: "🪨 Pebbles / Rocky", free_parking: "🅿️ Free Parking" },
+  de: { access_car: "🚗 Mit dem Auto erreichbar", access_boat: "⛵ Nur mit dem Boot", sunbeds_free: "🆓 Kostenlose Liegen", sunbeds_paid: "💰 Liegen gegen Gebühr", sunbeds_with_drink: "🍹 Liegen mit Getränk inklusive", terrain_family: "👶 Familienfreundlich", terrain_pebbles: "🪨 Kiesel / Felsig", free_parking: "🅿️ Kostenloser Parkplatz" },
+  fr: { access_car: "🚗 Accès en Voiture", access_boat: "⛵ Accès en Bateau Uniquement", sunbeds_free: "🆓 Transats Gratuits", sunbeds_paid: "💰 Transats Payants", sunbeds_with_drink: "🍹 Transats avec Consommation", terrain_family: "👶 Idéale pour Familles", terrain_pebbles: "🪨 Galets / Rochers", free_parking: "🅿️ Parking Gratuit" },
+  es: { access_car: "🚗 Acceso en Coche", access_boat: "⛵ Solo en Barco", sunbeds_free: "🆓 Tumbonas Gratis", sunbeds_paid: "💰 Tumbonas de Pago", sunbeds_with_drink: "🍹 Tumbonas con Consumición", terrain_family: "👶 Ideal para Familias", terrain_pebbles: "🪨 Guijarros / Rocas", free_parking: "🅿️ Aparcamiento Gratis" },
+  it: { access_car: "🚗 Accesso in Auto", access_boat: "⛵ Solo in Barca", sunbeds_free: "🆓 Lettini Gratuiti", sunbeds_paid: "💰 Lettini a Pagamento", sunbeds_with_drink: "🍹 Lettini con Consumazione", terrain_family: "👶 Ideale per Famiglie", terrain_pebbles: "🪨 Ciottoli / Rocce", free_parking: "🅿️ Parcheggio Gratuito" },
+  pl: { access_car: "🚗 Dojazd Samochodem", access_boat: "⛵ Tylko Łodzią", sunbeds_free: "🆓 Darmowe Leżaki", sunbeds_paid: "💰 Płatne Leżaki", sunbeds_with_drink: "🍹 Leżaki z Konsumpcją", terrain_family: "👶 Przyjazna Rodzinom", terrain_pebbles: "🪨 Kamyki / Skały", free_parking: "🅿️ Darmowy Parking" },
+  nl: { access_car: "🚗 Bereikbaar met Auto", access_boat: "⛵ Alleen per Boot", sunbeds_free: "🆓 Gratis Ligstoelen", sunbeds_paid: "💰 Betaalde Ligstoelen", sunbeds_with_drink: "🍹 Ligstoelen met Drankje", terrain_family: "👶 Gezinsvriendelijk", terrain_pebbles: "🪨 Kiezels / Rotsen", free_parking: "🅿️ Gratis Parkeren" },
+  da: { access_car: "🚗 Adgang med Bil", access_boat: "⛵ Kun med Båd", sunbeds_free: "🆓 Gratis Solsenge", sunbeds_paid: "💰 Betalte Solsenge", sunbeds_with_drink: "🍹 Solsenge med Drink", terrain_family: "👶 Familievenlig", terrain_pebbles: "🪨 Sten / Klipper", free_parking: "🅿️ Gratis Parkering" },
+  cz: { access_car: "🚗 Přístup Autem", access_boat: "⛵ Pouze Lodí", sunbeds_free: "🆓 Lehátka Zdarma", sunbeds_paid: "💰 Placená Lehátka", sunbeds_with_drink: "🍹 Lehátka s Konzumací", terrain_family: "👶 Vhodná pro Rodiny", terrain_pebbles: "🪨 Oblázky / Skály", free_parking: "🅿️ Parkování Zdarma" },
+  fi: { access_car: "🚗 Pääsy Autolla", access_boat: "⛵ Vain Veneellä", sunbeds_free: "🆓 Ilmaiset Aurinkotuolit", sunbeds_paid: "💰 Maksulliset Aurinkotuolit", sunbeds_with_drink: "🍹 Aurinkotuolit Juoman Kanssa", terrain_family: "👶 Perheystävällinen", terrain_pebbles: "🪨 Kivikko / Kalliot", free_parking: "🅿️ Ilmainen Pysäköinti" },
+  gr: { access_car: "🚗 Πρόσβαση με Αυτοκίνητο", access_boat: "⛵ Μόνο με Σκάφος", sunbeds_free: "🆓 Δωρεάν Ξαπλώστρες", sunbeds_paid: "💰 Ξαπλώστρες με Χρέωση", sunbeds_with_drink: "🍹 Ξαπλώστρες με Κατανάλωση", terrain_family: "👶 Ιδανική για Οικογένειες", terrain_pebbles: "🪨 Βότσαλα / Βράχια", free_parking: "🅿️ Δωρεάν Πάρκινγκ" },
+  hu: { access_car: "🚗 Autóval Megközelíthető", access_boat: "⛵ Csak Hajóval", sunbeds_free: "🆓 Ingyenes Napágyak", sunbeds_paid: "💰 Fizetős Napágyak", sunbeds_with_drink: "🍹 Napágyak Itallal", terrain_family: "👶 Családbarát", terrain_pebbles: "🪨 Kavics / Sziklás", free_parking: "🅿️ Ingyenes Parkolás" },
+  hr: { access_car: "🚗 Pristup Automobilom", access_boat: "⛵ Samo Brodom", sunbeds_free: "🆓 Besplatni Ležaljke", sunbeds_paid: "💰 Plaćene Ležaljke", sunbeds_with_drink: "🍹 Ležaljke s Pićem", terrain_family: "👶 Pogodna za Obitelji", terrain_pebbles: "🪨 Šljunak / Stijene", free_parking: "🅿️ Besplatan Parking" },
+  sk: { access_car: "🚗 Prístup Autom", access_boat: "⛵ Iba Loďou", sunbeds_free: "🆓 Ležadlá Zdarma", sunbeds_paid: "💰 Platené Ležadlá", sunbeds_with_drink: "🍹 Ležadlá s Konzumáciou", terrain_family: "👶 Vhodná pre Rodiny", terrain_pebbles: "🪨 Oblázky / Skaly", free_parking: "🅿️ Parkovanie Zdarma" },
+  si: { access_car: "🚗 Dostop z Avtomobilom", access_boat: "⛵ Samo s Čolnom", sunbeds_free: "🆓 Brezplačni Ležalniki", sunbeds_paid: "💰 Plačljivi Ležalniki", sunbeds_with_drink: "🍹 Ležalniki z Pijačo", terrain_family: "👶 Primerna za Družine", terrain_pebbles: "🪨 Prod / Skale", free_parking: "🅿️ Brezplačno Parkiranje" },
+  lt: { access_car: "🚗 Privažiavimas Automobiliu", access_boat: "⛵ Tik Valtimi", sunbeds_free: "🆓 Nemokami Gultai", sunbeds_paid: "💰 Mokami Gultai", sunbeds_with_drink: "🍹 Gultai su Gėrimu", terrain_family: "👶 Tinka Šeimoms", terrain_pebbles: "🪨 Akmenukai / Uolos", free_parking: "🅿️ Nemokamas Parkavimas" },
+  lv: { access_car: "🚗 Piekļuve ar Auto", access_boat: "⛵ Tikai ar Laivu", sunbeds_free: "🆓 Bezmaksas Sauļošanās Krēsli", sunbeds_paid: "💰 Maksas Sauļošanās Krēsli", sunbeds_with_drink: "🍹 Krēsli ar Dzērienu", terrain_family: "👶 Piemērota Ģimenēm", terrain_pebbles: "🪨 Oļi / Klintis", free_parking: "🅿️ Bezmaksas Stāvvieta" },
+  pt: { access_car: "🚗 Acesso de Carro", access_boat: "⛵ Apenas de Barco", sunbeds_free: "🆓 Espreguiçadeiras Grátis", sunbeds_paid: "💰 Espreguiçadeiras Pagas", sunbeds_with_drink: "🍹 Espreguiçadeiras com Consumo", terrain_family: "👶 Ideal para Famílias", terrain_pebbles: "🪨 Seixos / Rochas", free_parking: "🅿️ Estacionamento Grátis" },
+  se: { access_car: "🚗 Åtkomst med Bil", access_boat: "⛵ Endast med Båt", sunbeds_free: "🆓 Gratis Solstolar", sunbeds_paid: "💰 Betalda Solstolar", sunbeds_with_drink: "🍹 Solstolar med Dryck", terrain_family: "👶 Familjevänlig", terrain_pebbles: "🪨 Stenar / Klippor", free_parking: "🅿️ Gratis Parkering" },
+  ee: { access_car: "🚗 Ligipääs Autoga", access_boat: "⛵ Ainult Paadiga", sunbeds_free: "🆓 Tasuta Lamamistoolid", sunbeds_paid: "💰 Tasulised Lamamistoolid", sunbeds_with_drink: "🍹 Lamamistoolid Joogiga", terrain_family: "👶 Peresõbralik", terrain_pebbles: "🪨 Kivid / Kaljud", free_parking: "🅿️ Tasuta Parkimine" },
+};
+function beachTagLabelsFor(lang) { return BEACH_TAG_LABELS[lang] || BEACH_TAG_LABELS.uk; }
+
+// Etichete pentru butonul "Vezi tururi cu barca" (plaje boat-only) și
+// mesajul discret de închiriere auto (plaje medium/high access_difficulty)
+// — cerute explicit, la extinderea pentru plajele din Grecia.
+const BOAT_TOUR_LABELS = {
+  ro: "⛵ Vezi tururi cu barca", uk: "⛵ See boat tours", de: "⛵ Bootstouren ansehen",
+  fr: "⛵ Voir les excursions en bateau", es: "⛵ Ver tours en barco", it: "⛵ Vedi i tour in barca",
+  pl: "⛵ Zobacz wycieczki łodzią", nl: "⛵ Bekijk boottochten", da: "⛵ Se bådture",
+  cz: "⛵ Zobrazit lodní výlety", fi: "⛵ Katso venematkat", gr: "⛵ Δείτε βαρκάδες",
+  hu: "⛵ Nézd meg a hajótúrákat", hr: "⛵ Pogledaj izlete brodom", sk: "⛵ Zobraziť lodné výlety",
+  si: "⛵ Poglej izlete s čolnom", lt: "⛵ Žiūrėti kelionių valtimi", lv: "⛵ Skatīt laivu ekskursijas",
+  pt: "⛵ Ver passeios de barco", se: "⛵ Se båtturer", ee: "⛵ Vaata paadireise",
+};
+const CAR_ACCESS_HINT_LABELS = {
+  ro: (city) => `🚗 Pentru a ajunge la această plajă, ai nevoie de mașină. Vezi prețuri închirieri auto în ${city}`,
+  uk: (city) => `🚗 You'll need a car to reach this beach. See car rental prices in ${city}`,
+  de: (city) => `🚗 Für diesen Strand brauchst du ein Auto. Mietwagenpreise in ${city} ansehen`,
+  fr: (city) => `🚗 Une voiture est nécessaire pour atteindre cette plage. Voir les prix de location à ${city}`,
+  es: (city) => `🚗 Necesitas un coche para llegar a esta playa. Ver precios de alquiler en ${city}`,
+  it: (city) => `🚗 Per raggiungere questa spiaggia serve un'auto. Vedi i prezzi di noleggio a ${city}`,
+  pl: (city) => `🚗 Aby dotrzeć na tę plażę, potrzebujesz samochodu. Zobacz ceny wynajmu w ${city}`,
+  nl: (city) => `🚗 Je hebt een auto nodig om dit strand te bereiken. Bekijk huurprijzen in ${city}`,
+  da: (city) => `🚗 Du skal bruge en bil for at nå denne strand. Se lejepriser i ${city}`,
+  cz: (city) => `🚗 Na tuto pláž se dostanete jen autem. Zobrazit ceny půjčoven v ${city}`,
+  fi: (city) => `🚗 Tarvitset auton päästäksesi tälle rannalle. Katso vuokrahinnat kaupungissa ${city}`,
+  gr: (city) => `🚗 Χρειάζεσαι αυτοκίνητο για να φτάσεις σε αυτή την παραλία. Δες τιμές ενοικίασης στην ${city}`,
+  hu: (city) => `🚗 Ehhez a strandhoz autóra van szükséged. Nézd meg a bérlési árakat itt: ${city}`,
+  hr: (city) => `🚗 Do ove plaže treba vam automobil. Pogledajte cijene najma u ${city}`,
+  sk: (city) => `🚗 Na túto pláž sa dostanete len autom. Zobraziť ceny prenájmu v ${city}`,
+  si: (city) => `🚗 Do te plaže potrebujete avto. Oglejte si cene najema v ${city}`,
+  lt: (city) => `🚗 Norint pasiekti šį paplūdimį, reikia automobilio. Žiūrėti nuomos kainas ${city}`,
+  lv: (city) => `🚗 Lai nokļūtu šajā pludmalē, nepieciešama automašīna. Skatīt nomas cenas ${city}`,
+  pt: (city) => `🚗 Precisas de carro para chegar a esta praia. Vê preços de aluguer em ${city}`,
+  se: (city) => `🚗 Du behöver en bil för att nå denna strand. Se hyrpriser i ${city}`,
+  ee: (city) => `🚗 Sellele rannale jõudmiseks on vaja autot. Vaata rendihindu linnas ${city}`,
+};
+function boatTourLabelFor(lang) { return BOAT_TOUR_LABELS[lang] || BOAT_TOUR_LABELS.uk; }
+function carAccessHintLabelFor(lang, city) {
+  const fn = CAR_ACCESS_HINT_LABELS[lang] || CAR_ACCESS_HINT_LABELS.uk;
+  return fn(city);
+}
+
 function buildVoteWidgetHtml(slug, count, isPopular, lang) {
   const t = voteLabelsFor(lang);
   const popularBadge = isPopular ? `<span class="vote-popular-badge">${escapeHtml(t.popular)}</span>` : "";
@@ -2962,6 +3178,76 @@ function buildVoteWidgetHtml(slug, count, isPopular, lang) {
 // rămână "bifat" chiar și după reîncărcarea paginii — protecția REALĂ
 // (un IP nu poate vota de două ori) e pe server, prin UNIQUE(slug, ip_hash);
 // asta e doar feedback vizual, nu securitate.
+// Widget de etichete comunitare pentru PLAJE — cerut explicit, DOAR pentru
+// categoriile de plaje (nu apare la castele/muzee etc.). Câte un buton per
+// opțiune, grupate vizual; etichetele deja CÂȘTIGĂTOARE (peste prag) apar
+// separat, ca insigne, deasupra butoanelor de vot.
+function buildBeachTagsWidgetHtml(slug, winningTags, lang) {
+  const t = beachTagLabelsFor(lang);
+  const winningBadgesHtml = winningTags.length
+    ? `<div class="beach-tags-winning">${winningTags.map((tag) => `<span class="beach-tag-badge">${escapeHtml(t[tag] || tag)}</span>`).join("")}</div>`
+    : "";
+  const buttonsHtml = BEACH_ALL_TAGS
+    .map((tag) => `<button type="button" class="beach-tag-vote-btn" data-tag="${escapeHtml(tag)}">${escapeHtml(t[tag] || tag)}</button>`)
+    .join("");
+  return `<div class="beach-tags-widget" data-beach-tags-slug="${escapeHtml(slug)}">
+    ${winningBadgesHtml}
+    <div class="beach-tags-vote-row">${buttonsHtml}</div>
+  </div>`;
+}
+
+// Script client — buton de vot per etichetă (un click = un vot pentru acel
+// tag), cu aceeași protecție ca la votul general (localStorage doar pentru
+// feedback vizual, protecția reală e server-side, per IP).
+function buildBeachTagsWidgetScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var STORAGE_KEY = "poa_beach_tags_voted_v1";
+  var widget = document.querySelector(".beach-tags-widget");
+  if (!widget) return;
+  var slug = widget.getAttribute("data-beach-tags-slug");
+  if (!slug) return;
+
+  function getVoted(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function markVoted(tag){
+    try {
+      var voted = getVoted();
+      voted[slug] = voted[slug] || [];
+      if (voted[slug].indexOf(tag) === -1) voted[slug].push(tag);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(voted));
+    } catch (e) {}
+  }
+  function alreadyVoted(tag){
+    var voted = getVoted();
+    return voted[slug] && voted[slug].indexOf(tag) !== -1;
+  }
+
+  widget.querySelectorAll(".beach-tag-vote-btn").forEach(function(btn){
+    var tag = btn.getAttribute("data-tag");
+    if (alreadyVoted(tag)) { btn.classList.add("voted"); btn.disabled = true; }
+    btn.addEventListener("click", function(){
+      if (btn.disabled) return;
+      btn.disabled = true;
+      fetch("/api/tag-attraction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slug, tag: tag }),
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (data && data.ok) { btn.classList.add("voted"); markVoted(tag); }
+          else { btn.disabled = false; }
+        })
+        .catch(function(){ btn.disabled = false; });
+    });
+  });
+})();
+</script>`;
+}
+
 function buildVoteWidgetScript(nonce) {
   return `
 <script nonce="${nonce}">
@@ -3174,6 +3460,16 @@ const CATEGORY_GENERIC_SCHEDULE = {
     { open: "10:00", close: "19:00" }, { open: "10:00", close: "19:00" },
     { open: "10:00", close: "19:00" },
   ],
+  // Plaje organizate (cu bar de plajă) — cerut explicit, la solicitarea de
+  // extindere pentru Grecia — program tipic, fără zi de închidere (spre
+  // deosebire de muzee/castele, o plajă cu bar deschide în fiecare zi cât
+  // ține sezonul), dis-de-dimineață până seara târziu.
+  plaje_organizate: [
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+  ],
 };
 
 function genericScheduleForCategory(category) {
@@ -3212,11 +3508,18 @@ function computeGenericIsOpenNow(schedule) {
 // @param {string} [category] - categoria (pentru programul generic)
 // @param {boolean|null} [liveIsOpenNow] - rezultatul din date live, dacă există (null/undefined = nu există)
 // @returns {{ isOpenNow: boolean|null, source: "live"|"free_access"|"generic_schedule"|"unknown" }}
+// Categorii ÎNTOTDEAUNA acces liber — spre deosebire de FREE_ACCESS_PREFIXES
+// (bazat pe primul cuvânt din nume, ex. "Podul"), aici e categoria întreagă
+// care e liberă, indiferent de nume — cerut explicit, la extinderea pentru
+// plajele sălbatice din Grecia (numele lor variază mult, nu au un prefix
+// comun de detectat).
+const FREE_ACCESS_CATEGORIES = ["plaje_salbatice"];
+
 function determineAttractionOpenStatus({ name, category, liveIsOpenNow }) {
   if (liveIsOpenNow !== null && liveIsOpenNow !== undefined) {
     return { isOpenNow: liveIsOpenNow, source: "live" };
   }
-  if (isFreeAccessAttraction(name)) {
+  if (isFreeAccessAttraction(name) || FREE_ACCESS_CATEGORIES.includes(category)) {
     return { isOpenNow: true, source: "free_access" };
   }
   const schedule = genericScheduleForCategory(category);
@@ -3294,6 +3597,48 @@ const CATEGORY_LABELS = {
     muzee: "🖼️ Muzee de Artă, Istorie și Etnografie",
     cladiri_teatre: "🏛️ Clădiri Monumentale, Teatre și Piețe Urbane",
     parcuri_agrement: "🎢 Parcuri de Agrement și Recreere",
+    plaje_organizate: "🏖️ Korrastatud Rannad",
+    plaje_salbatice: "🌊 Metsikud Rannad",
+    plaje_organizate: "🏖️ Iekārtoti Pludmales",
+    plaje_salbatice: "🌊 Savvaļas Pludmales",
+    plaje_organizate: "🏖️ Sutvarkyti Paplūdimiai",
+    plaje_salbatice: "🌊 Laukiniai Paplūdimiai",
+    plaje_organizate: "🏖️ Urejene Plaže",
+    plaje_salbatice: "🌊 Divje Plaže",
+    plaje_organizate: "🏖️ Organizované Pláže",
+    plaje_salbatice: "🌊 Divoké Pláže",
+    plaje_organizate: "🏖️ Uređene Plaže",
+    plaje_salbatice: "🌊 Divlje Plaže",
+    plaje_organizate: "🏖️ Szervezett Strandok",
+    plaje_salbatice: "🌊 Vad Strandok",
+    plaje_organizate: "🏖️ Οργανωμένες Παραλίες",
+    plaje_salbatice: "🌊 Άγριες Παραλίες",
+    plaje_organizate: "🏖️ Järjestetyt Rannat",
+    plaje_salbatice: "🌊 Villit Rannat",
+    plaje_organizate: "🏖️ Organizované Pláže",
+    plaje_salbatice: "🌊 Divoké Pláže",
+    plaje_organizate: "🏖️ Praias Organizadas",
+    plaje_salbatice: "🌊 Praias Selvagens",
+    plaje_organizate: "🏖️ Organiserade Stränder",
+    plaje_salbatice: "🌊 Vilda Stränder",
+    plaje_organizate: "🏖️ Organiserede Strande",
+    plaje_salbatice: "🌊 Vilde Strande",
+    plaje_organizate: "🏖️ Georganiseerde Stranden",
+    plaje_salbatice: "🌊 Wilde Stranden",
+    plaje_organizate: "🏖️ Zorganizowane Plaże",
+    plaje_salbatice: "🌊 Dzikie Plaże",
+    plaje_organizate: "🏖️ Spiagge Organizzate",
+    plaje_salbatice: "🌊 Spiagge Selvagge",
+    plaje_organizate: "🏖️ Playas Organizadas",
+    plaje_salbatice: "🌊 Playas Salvajes",
+    plaje_organizate: "🏖️ Plages Organisées",
+    plaje_salbatice: "🌊 Plages Sauvages",
+    plaje_organizate: "🏖️ Organisierte Strände",
+    plaje_salbatice: "🌊 Wilde Strände",
+    plaje_organizate: "🏖️ Organized Beaches",
+    plaje_salbatice: "🌊 Wild Beaches",
+    plaje_organizate: "🏖️ Plaje Organizate",
+    plaje_salbatice: "🌊 Plaje Sălbatice",
   },
   uk: {
     castele_palate: "🏰 Castles, Palaces and Manors",
@@ -13642,10 +13987,20 @@ main{padding-top:8px;}
 .vote-btn.voted{color:var(--accent);border-color:var(--accent);cursor:default;}
 .vote-btn:disabled{opacity:.85;}
 .vote-popular-badge{font-size:12.5px;font-weight:700;color:var(--accent);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 12px;}
+.beach-tags-widget{margin:14px 0;}
+.beach-tags-winning{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.beach-tag-badge{font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(135deg,#1e90ff,#00c9a7);border-radius:999px;padding:6px 12px;}
+.beach-tags-vote-row{display:flex;flex-wrap:wrap;gap:6px;}
+.beach-tag-vote-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;color:var(--text);font-size:12px;font-weight:600;padding:8px 12px;cursor:pointer;font-family:var(--font-body);}
+.beach-tag-vote-btn:hover{border-color:var(--accent);}
+.beach-tag-vote-btn.voted{color:var(--accent);border-color:var(--accent);cursor:default;}
 .itinerary-promo-card{display:block;text-decoration:none;background:linear-gradient(135deg,var(--accent),#ff8a3d);border-radius:var(--radius-md);padding:18px 20px;margin:14px 0;box-shadow:0 4px 16px rgba(255,107,53,.25);}
 .itinerary-promo-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;}
 .itinerary-promo-text{font-size:13.5px;color:rgba(255,255,255,.92);line-height:1.4;margin-bottom:10px;}
 .itinerary-promo-cta{font-size:13.5px;font-weight:700;color:#fff;}
+.itinerary-promo-empty{margin:10px 0;padding:14px 16px;}
+.itinerary-promo-empty .itinerary-promo-title{font-size:14px;margin-bottom:4px;}
+.itinerary-promo-empty .itinerary-promo-cta{font-size:12.5px;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -14907,6 +15262,7 @@ function buildAttractionListFilterScript(nonce) {
   var STORAGE_KEY = "poa_open_only_mode_v1";
   var SCHEDULES = ${safeJson(CATEGORY_GENERIC_SCHEDULE)};
   var FREE_PREFIXES = ${safeJson(FREE_ACCESS_PREFIXES)};
+  var FREE_CATEGORIES = ${safeJson(FREE_ACCESS_CATEGORIES)};
 
   function isFreeAccess(name){
     for (var i=0;i<FREE_PREFIXES.length;i++){
@@ -14929,7 +15285,7 @@ function buildAttractionListFilterScript(nonce) {
   // reflectă exact ordinea din determineAttractionOpenStatus (server) —
   // fără treapta "live" (n-o trimitem la listă, ar costa per obiectiv)
   function isOpenForFilter(name, category){
-    if (isFreeAccess(name)) return true;
+    if (isFreeAccess(name) || FREE_CATEGORIES.indexOf(category) !== -1) return true;
     var schedule = SCHEDULES[category];
     if (schedule) return computeGenericOpen(schedule);
     return null; // necunoscut — nu presupunem, dar nici nu ascundem (vezi mai jos)
@@ -14950,10 +15306,18 @@ function buildAttractionListFilterScript(nonce) {
     var toggle = document.getElementById("attractionListOpenOnlyToggle");
     var onlyOpen = toggle && toggle.checked;
     var items = document.querySelectorAll(".attraction-accordion-item");
+    var visibleCount = 0;
     items.forEach(function(li){
-      if (!onlyOpen) { li.style.display = ""; return; }
-      li.style.display = (itemIsOpen(li) === false) ? "none" : "";
+      if (!onlyOpen) { li.style.display = ""; visibleCount++; return; }
+      var closed = itemIsOpen(li) === false;
+      li.style.display = closed ? "none" : "";
+      if (!closed) visibleCount++;
     });
+    // Mesaj "nimic deschis acum" — cerut explicit: quando filtrul ajunge la
+    // 0 rezultate (ex. seara târziu), arătăm o alternativă, spre itinerarul
+    // AI, în loc să lăsăm lista pur și simplu goală.
+    var noResultsEl = document.getElementById("noResultsAttractionItinPromo");
+    if (noResultsEl) noResultsEl.style.display = (onlyOpen && visibleCount === 0) ? "block" : "none";
   }
 
   // Filtrul CONTEXTUAL (checkbox-ul discret, sub titlul FIECĂREI categorii
@@ -15887,6 +16251,8 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 
   <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> Doar magazinele deschise acum</label>
 
+  ${buildNoResultsItineraryPromoHtml("noResultsStoreItinPromo", "ro", "ro")}
+
   ${listItemsGroupedHtml}
 
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce, "ro")}
@@ -15900,7 +16266,7 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 </main>
-${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildListStatusBadgeScript(nonce, statusDataset, "noResultsStoreItinPromo")}
 ${buildLiveMapPinsScript(orasDisplay, "ro", nonce)}
 ${buildLiveAttractionsMapPinsScript(orasDisplay, "ro", "ro", nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
@@ -16219,11 +16585,12 @@ async function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl,
   </div>
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
   <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(openOnlyStoreLabelFor(activeLang))}</label>
+  ${buildNoResultsItineraryPromoHtml("noResultsStoreItinPromo", countryCode, activeLang)}
   ${listItemsGroupedHtml}
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce, activeLang)}
   ${buildCityFaqHtml({ orasDisplay, lang: activeLang })}
 </main>
-${buildListStatusBadgeScript(nonce, statusDataset)}
+${buildListStatusBadgeScript(nonce, statusDataset, "noResultsStoreItinPromo")}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
 ${buildLiveAttractionsMapPinsScript(orasDisplay, countryCode, lang, nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
@@ -16355,7 +16722,8 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
       .map((code) => {
         if (code === primaryAttractionCountry) {
           const items = buildAttractionListForCountry(ATTRACTIONS[code], code, true, activeLang);
-          return `<h3 class="attractions-country" id="attractions-country-${code}">${COUNTRY_LABELS[code]}</h3>${items}`;
+          const grBanner = code === "gr" ? buildGreeceBeachPromoCardHtml(activeLang) : "";
+          return `${grBanner}<h3 class="attractions-country" id="attractions-country-${code}">${COUNTRY_LABELS[code]}</h3>${items}`;
         }
         return `<details class="attraction-country-lazy" data-lazy-country="${code}">
           <summary class="attractions-country">${COUNTRY_LABELS[code]} <span class="attraction-category-count">(${ATTRACTIONS[code].length})</span></summary>
@@ -16376,7 +16744,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     .map((code) => {
       return `
   <div class="country-filter-block" data-country-block="${code}" data-lazy-country="${code}" style="display:none">
-    
+    ${code === "gr" ? buildGreeceBeachPromoCardHtml(activeLang) : ""}
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.attractionsIn || "Attractions in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     <div class="lazy-attraction-target" data-loading-text="${escapeHtml(loadingTextFor(activeLang))}"></div>
   </div>`;
@@ -16427,6 +16795,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   <div class="sub-nav-panel" data-panel="attractions">
     ${buildItineraryPromoCardHtml(validDetected, activeLang)}
     <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>
+    ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", validDetected, activeLang)}
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
   </div>
@@ -17198,6 +17567,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   const live = await tryGetLiveStatus(slug, "ro", "attraction", isBotRequest(userAgent), ip);
   const voteCount = await getAttractionVoteCount(slug);
   const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
+  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
+  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
 
   let statusHtml;
   let widgetHtml = "";
@@ -17275,9 +17646,10 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
 
   ${statusHtml}
   ${buildVoteWidgetHtml(slug, voteCount, isPopular, "ro")}
+  ${isBeach ? buildBeachTagsWidgetHtml(slug, beachWinningTags, "ro") : ""}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name) })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name), accessDifficulty: attraction.accessDifficulty })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
   ${buildTravelGuidesBoxHtml()}
 
@@ -17293,6 +17665,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
 ${schemaHtml}
 ${widgetScriptHtml}
 ${buildVoteWidgetScript(nonce)}
+${buildBeachTagsWidgetScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}`;
 
@@ -17319,6 +17692,8 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const live = await tryGetLiveStatus(slug, googleLang, "attraction", isBotRequest(userAgent), ip);
   const voteCount = await getAttractionVoteCount(slug);
   const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
+  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
+  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
 
   let statusHtml;
   let widgetHtml = "";
@@ -17385,9 +17760,10 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 
   ${statusHtml}
   ${buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
+  ${isBeach ? buildBeachTagsWidgetHtml(slug, beachWinningTags, activeLang) : ""}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name), accessDifficulty: attraction.accessDifficulty })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name)}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
@@ -17398,6 +17774,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 ${schemaHtml}
 ${widgetScriptHtml}
 ${buildVoteWidgetScript(nonce)}
+${buildBeachTagsWidgetScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
@@ -17587,6 +17964,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <div class="sub-nav-panel" data-panel="attractions">
     ${buildItineraryPromoCardHtml("ro", "ro")}
     <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
+    ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", "ro", "ro")}
     <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
     <div class="attraction-accordion-wrap">${attractionItemsHtml}</div>
   </div>
@@ -18243,6 +18621,42 @@ app.post("/api/vote-attraction", async (req, res) => {
     res.status(200).json({ ok: true, count, isPopular: count >= VOTE_POPULAR_THRESHOLD });
   } catch (err) {
     console.error("vote-attraction a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Vot pe etichete comunitare pentru PLAJE — aceeași protecție ca la votul
+// general: UNIQUE(slug, tag, ip_hash) în bază + limitare de rată. Prag mai
+// mic decât la "Popular" (BEACH_TAG_THRESHOLD = 3), ca informația să
+// devină utilă rapid, nu doar după mulți vizitatori.
+app.post("/api/tag-attraction", async (req, res) => {
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const { slug, tag } = req.body || {};
+  if (typeof slug !== "string" || !slug || slug.length > 255) {
+    res.status(400).json({ error: "invalid_input" });
+    return;
+  }
+  if (typeof tag !== "string" || !BEACH_ALL_TAGS.includes(tag)) {
+    res.status(400).json({ error: "invalid_tag" });
+    return;
+  }
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "tag-attraction", 30, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+  try {
+    await dbPool.query(
+      `INSERT INTO attraction_info_tags (slug, tag, ip_hash) VALUES ($1, $2, $3) ON CONFLICT (slug, tag, ip_hash) DO NOTHING`,
+      [slug, tag, ipHash]
+    );
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("tag-attraction a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
   }
 });
@@ -19883,13 +20297,24 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   const familyInstruction = tipCalatorie === "family"
     ? `\nATENȚIE: acest itinerar e pentru o FAMILIE CU COPII. Dacă în lista de mai jos există parcuri de distracții/agrement, zoo-uri sau acvarii, include-le OBLIGATORIU în itinerar, cât mai devreme posibil (nu le ignora) — sunt cele mai potrivite obiective pentru copii. Preferă și restul obiectivelor mai puțin solicitante fizic/vizual pentru copii, unde ai de ales.\n`
     : "";
+  // Modul "Beach Hopper" — cerut explicit, DOAR pentru Grecia (regiunea cu
+  // plaje organizate/sălbatice, adăugate recent). Dacă lista de mai jos are
+  // obiective de tip plajă (recunoști numele lor — "Plaja X"), structurează
+  // ziua ca pe o zi de plajă reală: dimineața devreme la o plajă liniștită
+  // (înainte să se aglomereze), la prânz la o plajă cu bar/facilități
+  // (umbră, mâncare), seara la o plajă bună pentru apus. NU inventa plaje
+  // care nu apar în listă — dacă nu există deloc plaje în lista dată,
+  // ignoră complet această instrucțiune, comportă-te normal.
+  const beachHopperInstruction = tara === "Grecia"
+    ? `\nDacă în lista de mai jos există obiective de tip plajă (numele lor conțin "Plaja" sau termeni echivalenți de plajă), structurează ziua ca un traseu "Beach Hopper": dimineața devreme (înainte de aglomerație) la o plajă liniștită/sălbatică, la prânz la o plajă cu facilități (umbră, mâncare), seara la o plajă bună pentru apus. Menționează în descriere, pe scurt, DE CE ai ales acel moment al zilei pentru acea plajă (ex. "mai puțin aglomerată dimineața", "loc bun pentru apus"). Dacă lista NU conține deloc plaje, ignoră complet această instrucțiune.\n`
+    : "";
   // Numele obiectivelor rămân exact cum apar (nume proprii de locuri, nu se
   // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
   // cerută. Instrucțiunea de limbă e pusă explicit, de trei ori (la început,
   // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
   // limbă dacă apare o singură dată la începutul unui prompt lung.
   return `Ești un ghid turistic expert în ${tara}. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras} (${tara}). TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii, nu se traduc).
-${familyInstruction}
+${familyInstruction}${beachHopperInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
