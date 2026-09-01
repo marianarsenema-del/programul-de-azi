@@ -2883,6 +2883,44 @@ const RECOMMENDED_FIRST_LABELS = {
 };
 function recommendedFirstLabelFor(lang) { return RECOMMENDED_FIRST_LABELS[lang] || RECOMMENDED_FIRST_LABELS.uk; }
 
+// Card promoțional pentru itinerar — cerut explicit: mulți vizitatori vin
+// doar să verifice programul și pleacă, fără să știe de itinerarul AI.
+// O singură dată pe pagină (nu repetat la fiecare țară — ar fi obositor
+// vizual), deasupra listelor de obiective.
+const ITINERARY_PROMO_LABELS = {
+  ro: { title: "📍 Mergi la drum?", text: "Lasă AI-ul să îți organizeze vizita la obiectivele turistice, în funcție de preferințele tale.", cta: "Creează un itinerar →" },
+  uk: { title: "📍 Planning a trip?", text: "Let AI organize your visit to the tourist attractions, based on your own preferences.", cta: "Create an itinerary →" },
+  de: { title: "📍 Planst du eine Reise?", text: "Lass die KI deinen Besuch bei den Sehenswürdigkeiten organisieren, nach deinen eigenen Vorlieben.", cta: "Reiseroute erstellen →" },
+  fr: { title: "📍 Vous partez en voyage ?", text: "Laissez l'IA organiser votre visite des sites touristiques, selon vos propres préférences.", cta: "Créer un itinéraire →" },
+  es: { title: "📍 ¿Te vas de viaje?", text: "Deja que la IA organice tu visita a las atracciones turísticas, según tus propias preferencias.", cta: "Crear un itinerario →" },
+  it: { title: "📍 Stai per partire?", text: "Lascia che l'IA organizzi la tua visita alle attrazioni turistiche, secondo le tue preferenze.", cta: "Crea un itinerario →" },
+  pl: { title: "📍 Wybierasz się w podróż?", text: "Pozwól AI zorganizować Twoją wizytę w atrakcjach turystycznych, według Twoich preferencji.", cta: "Stwórz plan podróży →" },
+  nl: { title: "📍 Ga je op reis?", text: "Laat AI je bezoek aan de bezienswaardigheden organiseren, op basis van je eigen voorkeuren.", cta: "Maak een reisroute →" },
+  da: { title: "📍 Skal du ud at rejse?", text: "Lad AI'en organisere dit besøg til seværdighederne, ud fra dine egne præferencer.", cta: "Lav en rejseplan →" },
+  cz: { title: "📍 Chystáte se na cestu?", text: "Nechte AI zorganizovat vaši návštěvu turistických zajímavostí podle vašich preferencí.", cta: "Vytvořit trasu →" },
+  fi: { title: "📍 Lähdössä matkalle?", text: "Anna tekoälyn järjestää vierailusi nähtävyyksiin, omien mieltymystesi mukaan.", cta: "Luo matkasuunnitelma →" },
+  gr: { title: "📍 Ετοιμάζεστε για ταξίδι;", text: "Αφήστε το AI να οργανώσει την επίσκεψή σας στα αξιοθέατα, ανάλογα με τις προτιμήσεις σας.", cta: "Δημιουργήστε δρομολόγιο →" },
+  hu: { title: "📍 Utazásra készülsz?", text: "Hagyd, hogy a mesterséges intelligencia megszervezze a látnivalók megtekintését, a saját preferenciáid alapján.", cta: "Útiterv készítése →" },
+  hr: { title: "📍 Krećete na put?", text: "Neka AI organizira vaš posjet znamenitostima, prema vašim vlastitim preferencijama.", cta: "Izradi itinerar →" },
+  sk: { title: "📍 Chystáte sa na cestu?", text: "Nechajte AI zorganizovať vašu návštevu turistických atrakcií, podľa vašich preferencií.", cta: "Vytvoriť itinerár →" },
+  si: { title: "📍 Se odpravljate na pot?", text: "Naj AI organizira vaš obisk znamenitosti, glede na vaše lastne preference.", cta: "Ustvari itinerar →" },
+  lt: { title: "📍 Ruošiatės kelionei?", text: "Leiskite DI suorganizuoti jūsų apsilankymą lankytinose vietose, pagal jūsų pačių pageidavimus.", cta: "Sukurti kelionės planą →" },
+  lv: { title: "📍 Dodaties ceļojumā?", text: "Ļaujiet MI organizēt jūsu apmeklējumu apskates vietās, atbilstoši jūsu paša vēlmēm.", cta: "Izveidot maršrutu →" },
+  pt: { title: "📍 Vais viajar?", text: "Deixa a IA organizar a tua visita às atrações turísticas, de acordo com as tuas preferências.", cta: "Criar um itinerário →" },
+  se: { title: "📍 Planerar du en resa?", text: "Låt AI organisera ditt besök till sevärdheterna, utifrån dina egna preferenser.", cta: "Skapa en reseplan →" },
+  ee: { title: "📍 Kas lähed reisile?", text: "Lase tehisintellektil korraldada sinu külastus vaatamisväärsustesse, vastavalt sinu enda eelistustele.", cta: "Loo marsruut →" },
+};
+function itineraryPromoLabelsFor(lang) { return ITINERARY_PROMO_LABELS[lang] || ITINERARY_PROMO_LABELS.uk; }
+function buildItineraryPromoCardHtml(countryCode, lang) {
+  const t = itineraryPromoLabelsFor(lang);
+  const href = itineraryHrefFor(countryCode, lang);
+  return `<a href="${escapeHtml(href)}" class="itinerary-promo-card">
+    <div class="itinerary-promo-title">${escapeHtml(t.title)}</div>
+    <div class="itinerary-promo-text">${escapeHtml(t.text)}</div>
+    <div class="itinerary-promo-cta">${escapeHtml(t.cta)}</div>
+  </a>`;
+}
+
 // Etichete pentru votul anonim — "vot" (buton, inainte de a vota) și
 // "popular" (insigna, DOAR peste prag — vezi VOTE_POPULAR_THRESHOLD).
 const VOTE_LABELS = {
@@ -13604,6 +13642,10 @@ main{padding-top:8px;}
 .vote-btn.voted{color:var(--accent);border-color:var(--accent);cursor:default;}
 .vote-btn:disabled{opacity:.85;}
 .vote-popular-badge{font-size:12.5px;font-weight:700;color:var(--accent);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 12px;}
+.itinerary-promo-card{display:block;text-decoration:none;background:linear-gradient(135deg,var(--accent),#ff8a3d);border-radius:var(--radius-md);padding:18px 20px;margin:14px 0;box-shadow:0 4px 16px rgba(255,107,53,.25);}
+.itinerary-promo-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;}
+.itinerary-promo-text{font-size:13.5px;color:rgba(255,255,255,.92);line-height:1.4;margin-bottom:10px;}
+.itinerary-promo-cta{font-size:13.5px;font-weight:700;color:#fff;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -14118,8 +14160,16 @@ function buildSmartInstallScript(nonce, lang) {
   var deferredPrompt = null;
 
   var DISMISS_KEY = "oht_install_dismissed";
+  // sessionStorage, NU localStorage — cerut explicit: bannerul trebuie să
+  // rămână ascuns doar cât timp aplicația e instalată (deja acoperit
+  // corect de isStandalone(), mai sus), nu permanent, în Safari normal.
+  // Nu există niciun eveniment "aplicația a fost dezinstalată" pe care
+  // JavaScript să-l poată detecta pe iOS — cel mai apropiat comportament
+  // realizabil e ca "X"-ul să țină doar pentru sesiunea curentă (tab-ul
+  // deschis acum), reapărând natural la următoarea vizită din Safari/Google,
+  // fără să deranjeze în timpul aceleiași vizite.
   function dismissed(){
-    try { return localStorage.getItem(DISMISS_KEY) === "1"; } catch(e){ return false; }
+    try { return sessionStorage.getItem(DISMISS_KEY) === "1"; } catch(e){ return false; }
   }
 
   window.addEventListener("beforeinstallprompt", function(e){
@@ -14140,7 +14190,7 @@ function buildSmartInstallScript(nonce, lang) {
     closeBtn.addEventListener("click", function(e){
       e.stopPropagation();
       banner.style.display = "none";
-      try { localStorage.setItem(DISMISS_KEY, "1"); } catch(err){}
+      try { sessionStorage.setItem(DISMISS_KEY, "1"); } catch(err){}
     });
   }
 
@@ -16375,6 +16425,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
+    ${buildItineraryPromoCardHtml(validDetected, activeLang)}
     <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
@@ -17534,6 +17585,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
+    ${buildItineraryPromoCardHtml("ro", "ro")}
     <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
     <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
     <div class="attraction-accordion-wrap">${attractionItemsHtml}</div>
