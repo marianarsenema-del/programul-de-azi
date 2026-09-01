@@ -16367,6 +16367,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   ${adSlotHtml()}
 
   <div class="sub-nav-panel active" data-panel="stores">
+    <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(openOnlyStoreLabelFor(activeLang))}</label>
     ${storesAllBlockHtml}
     ${storesByCountryHtml}
   </div>
