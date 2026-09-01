@@ -148,6 +148,22 @@ function googlePeriodsToWeekly(periods) {
 // mare încât o problemă reală să rămână neafișată mult timp.
 const REPORT_THRESHOLD = 3;
 
+// Prag pentru insigna "🔥 Popular" — cerut explicit: votul rămâne TĂCUT
+// (fără nicio insignă vizibilă) sub acest prag, ca să nu arate site-ul
+// "gol"/nefuncțional la trafic mic — apare organic doar când chiar s-au
+// adunat destule voturi reale.
+const VOTE_POPULAR_THRESHOLD = 10;
+
+async function getAttractionVoteCount(slug) {
+  if (!dbPool) return 0;
+  try {
+    const { rows } = await dbPool.query(`SELECT COUNT(*)::int AS cnt FROM attraction_votes WHERE slug = $1`, [slug]);
+    return rows[0] ? rows[0].cnt : 0;
+  } catch (err) {
+    return 0; // tabela poate lipsi încă (nu s-a rulat SQL-ul de creare) — cădem elegant pe 0, nu crăpăm pagina
+  }
+}
+
 // Doar raportările NEREZOLVATE contează — odată ce tu (proprietarul)
 // verifici și marchezi rezolvat=true în bază, acelea nu mai intră la
 // numărătoare data viitoare. Ăsta e mecanismul de "resetare", fără să mai
@@ -2440,6 +2456,7 @@ function buildListStatusBadgeScript(nonce, statusDataset) {
 
   function syncAll(){
     var now = new Date();
+    var onlyOpen = window.__storeListOpenOnlyToggle && window.__storeListOpenOnlyToggle.checked;
     badges.forEach(function(badge){
       var key = badge.getAttribute("data-status-key");
       var entity = DATASET[key];
@@ -2447,11 +2464,34 @@ function buildListStatusBadgeScript(nonce, statusDataset) {
       var open = isOpenNow(entity, now);
       badge.classList.toggle("status-open", open);
       badge.classList.toggle("status-closed", !open);
+      // filtrare pe listă — cerut explicit ("de ce doar pe hartă, nu și pe
+      // prima pagină?") — ascunde rândul întreg din listă, nu doar insigna,
+      // când comutatorul "doar deschise acum" e bifat.
+      var li = badge.closest("li");
+      if (li && onlyOpen) li.style.display = open ? "" : "none";
+      else if (li) li.style.display = "";
     });
   }
 
   syncAll();
   setInterval(syncAll, 60000); // suficient pentru o listă — nu are nevoie de precizie per-secundă
+
+  var STORAGE_KEY = "poa_open_only_mode_v1";
+  var toggle = document.getElementById("storeListOpenOnlyToggle");
+  if (toggle) {
+    window.__storeListOpenOnlyToggle = toggle;
+    // preia preferința salvată — cerut explicit: dacă a fost bifat pe
+    // tab-ul de obiective, rămâne bifat și aici, fără să mai fie nevoie
+    // să repete acțiunea
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === "1") toggle.checked = true;
+    } catch (e) {}
+    toggle.addEventListener("change", function(){
+      try { localStorage.setItem(STORAGE_KEY, toggle.checked ? "1" : "0"); } catch (e) {}
+      syncAll();
+    });
+    syncAll();
+  }
 })();
 </script>`;
 }
@@ -2790,6 +2830,151 @@ function translateAttractionName(name, lang) {
   return name;
 }
 
+// Extrage numele PROPRIU (fără cuvântul generic din față) — pentru sortare
+// și indexul alfabetic (Quick-Jump), cerut explicit: "Castelul Bran" ar
+// trebui indexat la "B" (Bran), nu la "C" (Castelul) — nimeni nu caută
+// "The Beatles" la litera "T". Reutilizează exact aceleași prefixe
+// românești deja catalogate pentru traducere.
+function stripAttractionPrefix(name) {
+  if (!name) return name;
+  const words = Object.keys(ATTRACTION_PREFIX_TRANSLATIONS).sort((a, b) => b.length - a.length);
+  for (const word of words) {
+    if (name.startsWith(word + " ")) {
+      let rest = name.slice(word.length + 1);
+      rest = rest.replace(/^(din|de|al|ai|ale|a) /, "");
+      return rest;
+    }
+  }
+  return name;
+}
+
+// Prima literă, fără diacritice, majusculă — pentru gruparea în index
+function firstIndexLetter(name) {
+  const proper = stripAttractionPrefix(name);
+  const normalized = proper.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const ch = normalized.charAt(0).toUpperCase();
+  return /[A-Z]/.test(ch) ? ch : "#";
+}
+
+// Eticheta "Recomandat" — DOAR obiective mari, cunoscute, marcate manual cu
+// încredere reală (nu ghicite, nu generate automat pe baza de trafic/votun
+// insuficient — vezi discuția explicită despre limitele cunoștințelor mele).
+const RECOMMENDED_LABELS = {
+  ro: "Recomandat — obiectiv important", uk: "Recommended — must-see", de: "Empfohlen — nicht verpassen",
+  fr: "Recommandé — incontournable", es: "Recomendado — imprescindible", it: "Consigliato — da non perdere",
+  pl: "Polecane — warto zobaczyć", nl: "Aanbevolen — niet te missen", da: "Anbefalet — must-see",
+  cz: "Doporučeno — musíte vidět", fi: "Suositeltu — ehdottomasti nähtävä", gr: "Προτεινόμενο — απαραίτητο",
+  hu: "Ajánlott — kihagyhatatlan", hr: "Preporučeno — obavezno vidjeti", sk: "Odporúčané — musíte vidieť",
+  si: "Priporočeno — obvezno videti", lt: "Rekomenduojama — būtina pamatyti", lv: "Ieteicams — obligāti apskatāms",
+  pt: "Recomendado — imperdível", se: "Rekommenderad — måste ses", ee: "Soovitatud — kindlasti vaadatav",
+};
+function recommendedLabelFor(lang) { return RECOMMENDED_LABELS[lang] || RECOMMENDED_LABELS.uk; }
+
+// Eticheta comutatorului de sortare "Recomandate primele" — apare doar la
+// categoriile care chiar au obiective marcate (vezi hasRecommended, mai jos)
+const RECOMMENDED_FIRST_LABELS = {
+  ro: "👑 Arată mai întâi Recomandate", uk: "👑 Show Recommended first", de: "👑 Empfohlene zuerst anzeigen",
+  fr: "👑 Afficher les recommandés en premier", es: "👑 Mostrar recomendados primero", it: "👑 Mostra i consigliati per primi",
+  pl: "👑 Pokaż polecane najpierw", nl: "👑 Aanbevolen eerst tonen", da: "👑 Vis anbefalede først",
+  cz: "👑 Zobrazit doporučené jako první", fi: "👑 Näytä suositellut ensin", gr: "👑 Εμφάνιση προτεινόμενων πρώτα",
+  hu: "👑 Ajánlottak megjelenítése elsőként", hr: "👑 Prikaži preporučene prve", sk: "👑 Zobraziť odporúčané ako prvé",
+  si: "👑 Najprej prikaži priporočene", lt: "👑 Rodyti rekomenduojamus pirmiausia", lv: "👑 Vispirms rādīt ieteicamos",
+  pt: "👑 Mostrar recomendados primeiro", se: "👑 Visa rekommenderade först", ee: "👑 Näita soovitatuid esimesena",
+};
+function recommendedFirstLabelFor(lang) { return RECOMMENDED_FIRST_LABELS[lang] || RECOMMENDED_FIRST_LABELS.uk; }
+
+// Etichete pentru votul anonim — "vot" (buton, inainte de a vota) și
+// "popular" (insigna, DOAR peste prag — vezi VOTE_POPULAR_THRESHOLD).
+const VOTE_LABELS = {
+  ro: { vote: "👍 Îmi place acest obiectiv", voted: "✓ Ai votat, mulțumim!", popular: "🔥 Popular în comunitate" },
+  uk: { vote: "👍 I like this attraction", voted: "✓ Thanks for voting!", popular: "🔥 Popular with the community" },
+  de: { vote: "👍 Mir gefällt das", voted: "✓ Danke für deine Stimme!", popular: "🔥 Beliebt in der Community" },
+  fr: { vote: "👍 J'aime ce site", voted: "✓ Merci pour votre vote !", popular: "🔥 Populaire dans la communauté" },
+  es: { vote: "👍 Me gusta este lugar", voted: "✓ ¡Gracias por votar!", popular: "🔥 Popular en la comunidad" },
+  it: { vote: "👍 Mi piace questo posto", voted: "✓ Grazie per il voto!", popular: "🔥 Popolare nella community" },
+  pl: { vote: "👍 Podoba mi się", voted: "✓ Dziękujemy za głos!", popular: "🔥 Popularne w społeczności" },
+  nl: { vote: "👍 Ik vind dit leuk", voted: "✓ Bedankt voor je stem!", popular: "🔥 Populair bij de community" },
+  da: { vote: "👍 Jeg kan lide dette", voted: "✓ Tak for din stemme!", popular: "🔥 Populær i fællesskabet" },
+  cz: { vote: "👍 Líbí se mi to", voted: "✓ Díky za hlas!", popular: "🔥 Oblíbené v komunitě" },
+  fi: { vote: "👍 Pidän tästä", voted: "✓ Kiitos äänestä!", popular: "🔥 Suosittu yhteisössä" },
+  gr: { vote: "👍 Μου αρέσει", voted: "✓ Ευχαριστούμε για την ψήφο!", popular: "🔥 Δημοφιλές στην κοινότητα" },
+  hu: { vote: "👍 Tetszik", voted: "✓ Köszönjük a szavazatot!", popular: "🔥 Népszerű a közösségben" },
+  hr: { vote: "👍 Sviđa mi se", voted: "✓ Hvala na glasu!", popular: "🔥 Popularno u zajednici" },
+  sk: { vote: "👍 Páči sa mi to", voted: "✓ Ďakujeme za hlas!", popular: "🔥 Obľúbené v komunite" },
+  si: { vote: "👍 Všeč mi je", voted: "✓ Hvala za glas!", popular: "🔥 Priljubljeno v skupnosti" },
+  lt: { vote: "👍 Man patinka", voted: "✓ Ačiū už balsą!", popular: "🔥 Populiaru bendruomenėje" },
+  lv: { vote: "👍 Man patīk", voted: "✓ Paldies par balsojumu!", popular: "🔥 Populārs kopienā" },
+  pt: { vote: "👍 Gosto deste local", voted: "✓ Obrigado pelo voto!", popular: "🔥 Popular na comunidade" },
+  se: { vote: "👍 Jag gillar detta", voted: "✓ Tack för din röst!", popular: "🔥 Populärt i communityn" },
+  ee: { vote: "👍 Mulle meeldib see", voted: "✓ Täname hääle eest!", popular: "🔥 Populaarne kogukonnas" },
+};
+function voteLabelsFor(lang) { return VOTE_LABELS[lang] || VOTE_LABELS.uk; }
+
+function buildVoteWidgetHtml(slug, count, isPopular, lang) {
+  const t = voteLabelsFor(lang);
+  const popularBadge = isPopular ? `<span class="vote-popular-badge">${escapeHtml(t.popular)}</span>` : "";
+  return `<div class="vote-widget" data-vote-slug="${escapeHtml(slug)}">
+    <button type="button" class="vote-btn" data-vote-label="${escapeHtml(t.vote)}" data-voted-label="${escapeHtml(t.voted)}">${escapeHtml(t.vote)}</button>
+    ${popularBadge}
+  </div>`;
+}
+
+// Script client pentru butonul de vot — un singur click, fără text. Ține
+// minte local (localStorage) ce a votat DEJA acest browser, ca butonul să
+// rămână "bifat" chiar și după reîncărcarea paginii — protecția REALĂ
+// (un IP nu poate vota de două ori) e pe server, prin UNIQUE(slug, ip_hash);
+// asta e doar feedback vizual, nu securitate.
+function buildVoteWidgetScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var STORAGE_KEY = "poa_voted_slugs_v1";
+  var widget = document.querySelector(".vote-widget");
+  if (!widget) return;
+  var btn = widget.querySelector(".vote-btn");
+  var slug = widget.getAttribute("data-vote-slug");
+  if (!btn || !slug) return;
+
+  function getVoted(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function markVoted(){
+    try {
+      var voted = getVoted();
+      if (voted.indexOf(slug) === -1) { voted.push(slug); localStorage.setItem(STORAGE_KEY, JSON.stringify(voted)); }
+    } catch (e) {}
+  }
+
+  if (getVoted().indexOf(slug) !== -1) {
+    btn.textContent = btn.getAttribute("data-voted-label");
+    btn.disabled = true;
+    btn.classList.add("voted");
+  }
+
+  btn.addEventListener("click", function(){
+    if (btn.disabled) return;
+    btn.disabled = true;
+    fetch("/api/vote-attraction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: slug }),
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.ok) {
+          btn.textContent = btn.getAttribute("data-voted-label");
+          btn.classList.add("voted");
+          markVoted();
+        } else {
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){ btn.disabled = false; });
+  });
+})();
+</script>`;
+}
+
 // Obiective cu ACCES LIBER, fără program — semnalat direct, cu captură:
 // poduri, lacuri, munți, șosele nu au "orar de vizitare", spre deosebire de
 // peșteri/funiculare/telecabine (care AU program real, bilet, tur ghidat —
@@ -2869,6 +3054,44 @@ const SEASONAL_WARNING_LABELS = {
   ee: "❄️ Enne teele asumist kontrolli tee- ja ilmastikuolusid, eriti talvel.",
 };
 function freeAccessLabelFor(lang) { return FREE_ACCESS_LABELS[lang] || FREE_ACCESS_LABELS.uk; }
+
+// etichete pentru cele 2 comutatoare noi de filtrare pe listă (magazine +
+// obiective, pe prima pagină, nu doar pe hartă — cerut explicit)
+const OPEN_ONLY_STORE_LABELS = {
+  ro: "Doar magazinele deschise acum", uk: "Only stores open now", de: "Nur aktuell geöffnete Geschäfte",
+  fr: "Uniquement les magasins ouverts", es: "Solo tiendas abiertas ahora", it: "Solo negozi aperti ora",
+  pl: "Tylko otwarte teraz sklepy", nl: "Alleen nu geopende winkels", da: "Kun åbne butikker nu",
+  cz: "Jen aktuálně otevřené obchody", fi: "Vain nyt avoinna olevat kaupat", gr: "Μόνο ανοιχτά καταστήματα τώρα",
+  hu: "Csak most nyitva tartó üzletek", hr: "Samo trgovine otvorene sada", sk: "Len teraz otvorené obchody",
+  si: "Samo zdaj odprte trgovine", lt: "Tik dabar veikiančios parduotuvės", lv: "Tikai tagad atvērti veikali",
+  pt: "Apenas lojas abertas agora", se: "Endast öppna butiker nu", ee: "Ainult praegu avatud poed",
+};
+const OPEN_ONLY_ATTRACTION_LABELS = {
+  ro: "Doar obiectivele deschise acum", uk: "Only attractions open now", de: "Nur aktuell geöffnete Sehenswürdigkeiten",
+  fr: "Uniquement les sites ouverts", es: "Solo atracciones abiertas ahora", it: "Solo attrazioni aperte ora",
+  pl: "Tylko otwarte teraz atrakcje", nl: "Alleen nu geopende attracties", da: "Kun åbne seværdigheder nu",
+  cz: "Jen aktuálně otevřené zajímavosti", fi: "Vain nyt avoinna olevat kohteet", gr: "Μόνο ανοιχτά αξιοθέατα τώρα",
+  hu: "Csak most nyitva tartó látnivalók", hr: "Samo znamenitosti otvorene sada", sk: "Len teraz otvorené atrakcie",
+  si: "Samo zdaj odprte znamenitosti", lt: "Tik dabar veikiančios lankytinos vietos", lv: "Tikai tagad atvērtas apskates vietas",
+  pt: "Apenas atrações abertas agora", se: "Endast öppna sevärdheter nu", ee: "Ainult praegu avatud vaatamisväärsused",
+};
+function openOnlyStoreLabelFor(lang) { return OPEN_ONLY_STORE_LABELS[lang] || OPEN_ONLY_STORE_LABELS.uk; }
+function openOnlyAttractionLabelFor(lang) { return OPEN_ONLY_ATTRACTION_LABELS[lang] || OPEN_ONLY_ATTRACTION_LABELS.uk; }
+
+// eticheta scurtă, contextuală — cerut explicit ("checkbox discret imediat
+// sub titlul categoriei") — mai scurtă decât cea principală, se afișează
+// sub fiecare categorie extinsă (castele, muzee etc.), nu doar o dată pe
+// pagină.
+const OPEN_ONLY_SHORT_LABELS = {
+  ro: "Arată doar cele deschise acum", uk: "Show only open now", de: "Nur aktuell geöffnete zeigen",
+  fr: "Afficher seulement les ouverts", es: "Mostrar solo los abiertos ahora", it: "Mostra solo quelli aperti ora",
+  pl: "Pokaż tylko otwarte teraz", nl: "Alleen nu geopende tonen", da: "Vis kun åbne nu",
+  cz: "Zobrazit jen aktuálně otevřené", fi: "Näytä vain nyt avoinna olevat", gr: "Εμφάνιση μόνο ανοιχτών τώρα",
+  hu: "Csak most nyitva tartók", hr: "Prikaži samo otvorene sada", sk: "Zobraziť len teraz otvorené",
+  si: "Prikaži samo zdaj odprte", lt: "Rodyti tik dabar veikiančius", lv: "Rādīt tikai tagad atvērtos",
+  pt: "Mostrar apenas os abertos agora", se: "Visa endast öppna nu", ee: "Näita ainult praegu avatuid",
+};
+function openOnlyAttractionShortLabelFor(lang) { return OPEN_ONLY_SHORT_LABELS[lang] || OPEN_ONLY_SHORT_LABELS.uk; }
 function seasonalWarningLabelFor(lang) { return SEASONAL_WARNING_LABELS[lang] || SEASONAL_WARNING_LABELS.uk; }
 
 // Program GENERIC, pe categorie — cerut explicit: pentru obiectivele fără
@@ -2930,6 +3153,39 @@ function computeGenericIsOpenNow(schedule) {
   const [oh, om] = today.open.split(":").map(Number);
   const [ch, cm] = today.close.split(":").map(Number);
   return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
+}
+
+// FUNCȚIA UNIFICATĂ — un singur loc care decide "e deschis acum?", pentru
+// orice obiectiv turistic, indiferent unde e folosită (hartă, pagina
+// individuală, orice filtru viitor). Înainte, aceeași logică era scrisă de
+// mână, de mai multe ori, în locuri diferite — risc real ca cineva să
+// modifice o copie și să uite cealaltă. Acum există o singură sursă de
+// adevăr.
+//
+// Ordinea de încredere, de la cea mai sigură la cea mai slabă:
+//   1) date LIVE reale (Google, deja în cache) — cea mai de încredere
+//   2) acces liber (poduri, lacuri, munți) — la fel de sigur ca live data,
+//      doar din alt motiv (structural, nu are program deloc)
+//   3) program GENERIC pe categorie — doar o aproximare tipică, nu
+//      verificată individual
+//   4) necunoscut — nicio sursă nu se aplică, nu presupunem nimic
+//
+// @param {string} name - numele obiectivului (pentru verificarea "acces liber")
+// @param {string} [category] - categoria (pentru programul generic)
+// @param {boolean|null} [liveIsOpenNow] - rezultatul din date live, dacă există (null/undefined = nu există)
+// @returns {{ isOpenNow: boolean|null, source: "live"|"free_access"|"generic_schedule"|"unknown" }}
+function determineAttractionOpenStatus({ name, category, liveIsOpenNow }) {
+  if (liveIsOpenNow !== null && liveIsOpenNow !== undefined) {
+    return { isOpenNow: liveIsOpenNow, source: "live" };
+  }
+  if (isFreeAccessAttraction(name)) {
+    return { isOpenNow: true, source: "free_access" };
+  }
+  const schedule = genericScheduleForCategory(category);
+  if (schedule) {
+    return { isOpenNow: computeGenericIsOpenNow(schedule), source: "generic_schedule" };
+  }
+  return { isOpenNow: null, source: "unknown" };
 }
 
 // text scurt, cerut explicit: "urmează în curând programul live" — apare
@@ -3261,11 +3517,36 @@ function buildAttractionListForCountry(list, countryCode, isIntlContext, lang) {
   });
   return order
     .map((cat) => {
-      const items = byCategory[cat]
+      // sortare alfabetică, după numele PROPRIU (fără prefixul generic) —
+      // ca indexul de mai jos să aibă sens ("Bran" la B, nu "Castelul" la C)
+      const sorted = [...byCategory[cat]].sort((a, b) =>
+        stripAttractionPrefix(a.name).localeCompare(stripAttractionPrefix(b.name), "ro")
+      );
+      const items = sorted
         .map((a) => buildAttractionAccordionItem(a, countryCode, null, isIntlContext, lang))
         .join("");
+      // Index alfabetic (Quick-Jump) — cerut explicit, pentru categoriile
+      // mari (Italia/Germania, 100+ obiective) — DOAR literele care chiar
+      // apar în această categorie, nu tot alfabetul (ar fi multe butoane
+      // moarte, fără rost).
+      const lettersPresent = [...new Set(sorted.map((a) => firstIndexLetter(a.name)))];
+      const alphabetHtml = lettersPresent.length > 8
+        ? `<div class="attraction-alpha-index">${lettersPresent
+            .map((letter) => `<button type="button" class="alpha-index-btn" data-jump-letter="${escapeHtml(letter)}">${escapeHtml(letter)}</button>`)
+            .join("")}</div>`
+        : "";
+      // Sortare "Recomandate primele" — DOAR dacă această categorie chiar
+      // are măcar un obiectiv marcat (a.recommended) — altfel comutatorul
+      // n-ar avea niciun efect vizibil, confuz pentru utilizator.
+      const hasRecommended = sorted.some((a) => a.recommended);
+      const sortToggleHtml = hasRecommended
+        ? `<label class="category-context-filter category-sort-toggle"><input type="checkbox" class="category-recommended-first-checkbox"> ${escapeHtml(recommendedFirstLabelFor(lang))}</label>`
+        : "";
       return `<details class="attraction-category-group">
         <summary class="attraction-category-summary">${escapeHtml(categoryLabelFor(cat, lang))} <span class="attraction-category-count">(${byCategory[cat].length})</span></summary>
+        <label class="category-context-filter"><input type="checkbox" class="category-open-only-checkbox"> ${escapeHtml(openOnlyAttractionShortLabelFor(lang))}</label>
+        ${sortToggleHtml}
+        ${alphabetHtml}
         <ul class="attraction-accordion-list">${items}</ul>
       </details>`;
     })
@@ -3282,6 +3563,13 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext, 
   // dacă l-am fi tradus, un obiectiv salvat la favorite într-o limbă n-ar
   // mai fi recunoscut ca "același" în altă limbă.
   const displayName = translateAttractionName(a.name, lang);
+  // Insigna "Recomandat" — cerut explicit: DOAR obiective mari, cunoscute,
+  // marcate cu încredere reală (vezi a.recommended, câmp din date, aplicat
+  // manual, nu ghicit) — NU "Doar Exterior" (ar necesita cunoștințe despre
+  // starea fizică exactă a fiecărui loc, pe care nu le am fiabil).
+  const recommendedBadge = a.recommended
+    ? `<span class="attraction-recommended-badge" title="${escapeHtml(recommendedLabelFor(lang))}">👑</span>`
+    : "";
   // Acces liber (poduri, lacuri, munți, șosele) — exact captura semnalată:
   // acordeonul arăta "Vezi dacă e deschis acum, live" + "Rezervă bilet
   // online" la Podul cu Lanțuri, Insula Margareta, Lacul Balaton — link
@@ -3292,11 +3580,11 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext, 
     ? `<a href="${escapeHtml(detailHref)}" class="accordion-status-link">${escapeHtml(freeAccessLabelFor(lang))}</a>`
     : `<a href="${escapeHtml(detailHref)}" class="accordion-status-link">${escapeHtml(at.status)}</a>
       <div class="gyg-widget-fallback"><a href="${escapeHtml(ticketUrlFor(a.name))}" target="_blank" rel="noopener sponsored" class="accordion-ticket-btn">${escapeHtml(at.ticket)}</a></div>`;
-  return `<li class="attraction-accordion-item"${cityAttr}>
+  return `<li class="attraction-accordion-item"${cityAttr} data-category="${escapeHtml(a.category || "")}" data-letter="${escapeHtml(firstIndexLetter(a.name))}" data-recommended="${a.recommended ? "true" : "false"}">
     <div class="attraction-accordion-header-row">
       <button type="button" class="fav-star" data-name="${escapeHtml(a.name)}" data-type="attraction" data-country="${escapeHtml(countryCode)}" data-href="${escapeHtml(detailHref)}">☆</button>
       <button type="button" class="attraction-accordion-header" aria-expanded="false">
-        <span class="attraction-name">${escapeHtml(displayName)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
+        <span class="attraction-name">${recommendedBadge}${escapeHtml(displayName)}${cityLabel ? ` <span class="attraction-city-tag">· ${escapeHtml(cityLabel)}</span>` : ""}</span>
         <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
     </div>
@@ -5801,7 +6089,7 @@ const COUNTRIES = {
 // direct de la locul respectiv.
 const ATTRACTIONS = {
   at: [
-    { name: "Palatul Schönbrunn Wien", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Schönbrunn+Wien+Austria", category: "castele_palate", city: "Wien" },
+    { name: "Palatul Schönbrunn Wien", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Schönbrunn+Wien+Austria", category: "castele_palate", city: "Wien", recommended: true },
     { name: "Palatul Hofburg Wien", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Hofburg+Wien+Austria", category: "castele_palate", city: "Wien" },
     { name: "Palatul Belvedere Wien", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Belvedere+Wien+Austria", category: "castele_palate", city: "Wien" },
     { name: "Palatul Liechtenstein Wien", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Liechtenstein+Wien+Austria", category: "castele_palate", city: "Wien" },
@@ -6038,12 +6326,12 @@ const ATTRACTIONS = {
     { name: "Centrul Belgian al Benzilor Desenate (Comic Strip Center)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Belgian+al+Benzilor+Desenate+(Comic+Strip+Center)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
     { name: "Muzeul de Istorie Naturală (Institutul Regal)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+Naturală+(Institutul+Regal)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
     { name: "Muzeul Orașului Bruxelles (Maison du Roi)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Orașului+Bruxelles+(Maison+du+Roi)+Bruxelles+Belgium", category: "muzee", city: "Brussels" }, // Bruxelles
-    { name: "Atomium (Simbolul arhitectural monumental)", url: "https://www.google.com/maps/search/?api=1&query=Atomium+(Simbolul+arhitectural+monumental)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
-    { name: "Piața Mare (Grand-Place / Grote Markt - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+(Grand-Place+/+Grote+Markt+-+UNESCO)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Atomium (Simbolul arhitectural monumental)", url: "https://www.google.com/maps/search/?api=1&query=Atomium+(Simbolul+arhitectural+monumental)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels", recommended: true }, // Bruxelles
+    { name: "Piața Mare (Grand-Place / Grote Markt - UNESCO)", url: "https://www.google.com/maps/search/?api=1&query=Piața+Mare+(Grand-Place+/+Grote+Markt+-+UNESCO)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels", recommended: true }, // Bruxelles
     { name: "Clădirea Primăriei (Hôtel de Ville)", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Primăriei+(Hôtel+de+Ville)+Bruxelles,+Grand-Place+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles, Grand-Place
     { name: "Palatul de Justiție (Palais de Justice - Cea mai mare clădire din sec. XIX)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+de+Justiție+(Palais+de+Justice+-+Cea+mai+mare+clădire+din+sec.+XIX)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
     { name: "Galeriile Regale Saint-Hubert (Printre primele galerii comerciale acoperite)", url: "https://www.google.com/maps/search/?api=1&query=Galeriile+Regale+Saint-Hubert+(Printre+primele+galerii+comerciale+acoperite)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
-    { name: "Manneken Pis (Celebra statuie-simbol)", url: "https://www.google.com/maps/search/?api=1&query=Manneken+Pis+(Celebra+statuie-simbol)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
+    { name: "Manneken Pis (Celebra statuie-simbol)", url: "https://www.google.com/maps/search/?api=1&query=Manneken+Pis+(Celebra+statuie-simbol)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels", recommended: true }, // Bruxelles
     { name: "Jeanneke Pis (Varianta feminină a statuii)", url: "https://www.google.com/maps/search/?api=1&query=Jeanneke+Pis+(Varianta+feminină+a+statuii)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
     { name: "Parcul Europa în Miniatură (Mini-Europe)", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Europa+în+Miniatură+(Mini-Europe)+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
     { name: "Arcul de Triumf din Parcul Cinquantenaire", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+din+Parcul+Cinquantenaire+Bruxelles+Belgium", category: "cladiri_teatre", city: "Brussels" }, // Bruxelles
@@ -6231,7 +6519,7 @@ const ATTRACTIONS = {
     { name: "Plopsaqua Hannut-Landen", url: "https://www.google.com/maps/search/?api=1&query=Plopsaqua+Hannut-Landen+Belgium", category: "parcuri_agrement" },
   ],
   dk: [
-    { name: "Grădinile Tivoli Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+Copenhaga+Denmark", category: "parcuri_agrement" },
+    { name: "Grădinile Tivoli Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+Copenhaga+Denmark", category: "parcuri_agrement", recommended: true },
     { name: "Legoland Billund", url: "https://www.google.com/maps/search/?api=1&query=Legoland+Billund+Denmark", category: "parcuri_agrement" },
     { name: "Fårup Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Fårup+Sommerland+Denmark", category: "parcuri_agrement" },
     { name: "Djurs Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Djurs+Sommerland+Denmark", category: "parcuri_agrement" },
@@ -6272,7 +6560,7 @@ const ATTRACTIONS = {
     { name: "Turnul lui Ioan (Torre San Giovanni)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Ioan+(Torre+San+Giovanni)+Vatican+Italy", category: "cetati_turnuri", city: "Roma" }, // Vatican
     { name: "Porta Pia", url: "https://www.google.com/maps/search/?api=1&query=Porta+Pia+Roma+Italy", category: "cetati_turnuri", city: "Roma" }, // Roma
     { name: "Bazilica Sfântul Petru (San Pietro)", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Petru+(San+Pietro)+Vatican+Italy", category: "manastiri", city: "Roma" }, // Vatican
-    { name: "Panteonul (Pantheon)", url: "https://www.google.com/maps/search/?api=1&query=Panteonul+(Pantheon)+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
+    { name: "Panteonul (Pantheon)", url: "https://www.google.com/maps/search/?api=1&query=Panteonul+(Pantheon)+Roma+Italy", category: "manastiri", city: "Roma", recommended: true }, // Roma
     { name: "Bazilica Santa Maria Maggiore", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Santa+Maria+Maggiore+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
     { name: "Bazilica San Giovanni in Laterano", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Giovanni+in+Laterano+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
     { name: "Bazilica San Paolo fuori le Mura", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+San+Paolo+fuori+le+Mura+Roma+Italy", category: "manastiri", city: "Roma" }, // Roma
@@ -6313,9 +6601,9 @@ const ATTRACTIONS = {
     { name: "Muzeul Național Roman (Palazzo Massimo)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Roman+(Palazzo+Massimo)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
     { name: "Termele lui Dioclețian (Muzeul)", url: "https://www.google.com/maps/search/?api=1&query=Termele+lui+Dioclețian+(Muzeul)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
     { name: "MAXXI (Muzeul de Artă al Secolului XXI)", url: "https://www.google.com/maps/search/?api=1&query=MAXXI+(Muzeul+de+Artă+al+Secolului+XXI)+Roma+Italy", category: "muzee", city: "Roma" }, // Roma
-    { name: "Colosseum (Amfiteatrul Flavian)", url: "https://www.google.com/maps/search/?api=1&query=Colosseum+(Amfiteatrul+Flavian)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Colosseum (Amfiteatrul Flavian)", url: "https://www.google.com/maps/search/?api=1&query=Colosseum+(Amfiteatrul+Flavian)+Roma+Italy", category: "cladiri_teatre", city: "Roma", recommended: true }, // Roma
     { name: "Forumul Roman (Foro Romano)", url: "https://www.google.com/maps/search/?api=1&query=Forumul+Roman+(Foro+Romano)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
-    { name: "Fontana di Trevi", url: "https://www.google.com/maps/search/?api=1&query=Fontana+di+Trevi+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
+    { name: "Fontana di Trevi", url: "https://www.google.com/maps/search/?api=1&query=Fontana+di+Trevi+Roma+Italy", category: "cladiri_teatre", city: "Roma", recommended: true }, // Roma
     { name: "Piazza Navona", url: "https://www.google.com/maps/search/?api=1&query=Piazza+Navona+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
     { name: "Treptele Spaniole (Piazza di Spagna)", url: "https://www.google.com/maps/search/?api=1&query=Treptele+Spaniole+(Piazza+di+Spagna)+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
     { name: "Piazza del Popolo", url: "https://www.google.com/maps/search/?api=1&query=Piazza+del+Popolo+Roma+Italy", category: "cladiri_teatre", city: "Roma" }, // Roma
@@ -6341,7 +6629,7 @@ const ATTRACTIONS = {
     { name: "Castelul Verrazzano", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Verrazzano+Greve+in+Chianti+Italy", category: "castele_palate" }, // Greve in Chianti
     { name: "Palazzo Pubblico", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Pubblico+Siena+Italy", category: "castele_palate", city: "Siena" }, // Siena
     { name: "Palazzo Salimbeni", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Salimbeni+Siena+Italy", category: "castele_palate", city: "Siena" }, // Siena
-    { name: "Turnul Înclinat din Pisa (Torre di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Înclinat+din+Pisa+(Torre+di+Pisa)+Pisa+Italy", category: "cetati_turnuri", city: "Pisa" }, // Pisa
+    { name: "Turnul Înclinat din Pisa (Torre di Pisa)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Înclinat+din+Pisa+(Torre+di+Pisa)+Pisa+Italy", category: "cetati_turnuri", city: "Pisa", recommended: true }, // Pisa
     { name: "Turnurile Medievale din San Gimignano", url: "https://www.google.com/maps/search/?api=1&query=Turnurile+Medievale+din+San+Gimignano+San+Gimignano+Italy", category: "cetati_turnuri" }, // San Gimignano
     { name: "Fortezza da Basso", url: "https://www.google.com/maps/search/?api=1&query=Fortezza+da+Basso+Florența+Italy", category: "cetati_turnuri", city: "Firenze" }, // Florența
     { name: "Turnul Giotto (Campanile di Giotto)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Giotto+(Campanile+di+Giotto)+Florența+Italy", category: "cetati_turnuri", city: "Firenze" }, // Florența
@@ -6378,13 +6666,13 @@ const ATTRACTIONS = {
     { name: "Parcul Pinocchio", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Pinocchio+Collodi+Italy", category: "natura" }, // Collodi
     { name: "Izvoarele Termale Bagno Vignoni", url: "https://www.google.com/maps/search/?api=1&query=Izvoarele+Termale+Bagno+Vignoni+San+Quirico+d'Orcia+Italy", category: "natura" }, // San Quirico d'Orcia
     { name: "Șoseaua panoramică Chiantigiana (SR222)", url: "https://www.google.com/maps/search/?api=1&query=Șoseaua+panoramică+Chiantigiana+(SR222)+Regiunea+Chianti+Italy", category: "infrastructura" }, // Regiunea Chianti
-    { name: "Podul Vechi (Ponte Vecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Vechi+(Ponte+Vecchio)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
+    { name: "Podul Vechi (Ponte Vecchio)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Vechi+(Ponte+Vecchio)+Florența+Italy", category: "infrastructura", city: "Firenze", recommended: true }, // Florența
     { name: "Gara Santa Maria Novella (Firenze SMN)", url: "https://www.google.com/maps/search/?api=1&query=Gara+Santa+Maria+Novella+(Firenze+SMN)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
     { name: "Traseul serpentinelor de la Monticchiello", url: "https://www.google.com/maps/search/?api=1&query=Traseul+serpentinelor+de+la+Monticchiello+Pienza+Italy", category: "infrastructura" }, // Pienza
     { name: "Podul Santa Trinita", url: "https://www.google.com/maps/search/?api=1&query=Podul+Santa+Trinita+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
     { name: "Podul Diavolului (Ponte della Maddalena)", url: "https://www.google.com/maps/search/?api=1&query=Podul+Diavolului+(Ponte+della+Maddalena)+Borgo+a+Mozzano+Italy", category: "infrastructura" }, // Borgo a Mozzano
     { name: "Coridorul Vasari (Corridoio Vasariano)", url: "https://www.google.com/maps/search/?api=1&query=Coridorul+Vasari+(Corridoio+Vasariano)+Florența+Italy", category: "infrastructura", city: "Firenze" }, // Florența
-    { name: "Galeria Uffizi (Galleria degli Uffizi)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Uffizi+(Galleria+degli+Uffizi)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
+    { name: "Galeria Uffizi (Galleria degli Uffizi)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Uffizi+(Galleria+degli+Uffizi)+Florența+Italy", category: "muzee", city: "Firenze", recommended: true }, // Florența
     { name: "Galeria Academiei (Galleria dell'Accademia - Statuia David)", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Academiei+(Galleria+dell'Accademia+-+Statuia+David)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
     { name: "Muzeul Național Bargello", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Bargello+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
     { name: "Palazzo Strozzi (Expozițiile de Artă)", url: "https://www.google.com/maps/search/?api=1&query=Palazzo+Strozzi+(Expozițiile+de+Artă)+Florența+Italy", category: "muzee", city: "Firenze" }, // Florența
@@ -6490,7 +6778,7 @@ const ATTRACTIONS = {
     { name: "Turnul cu Ceas (Torre dell'Orologio)", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+(Torre+dell'Orologio)+Mantova+Italy", category: "cetati_turnuri" }, // Mantova
     { name: "Turnul de pază din Bellagio", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+pază+din+Bellagio+Lacul+Como+Italy", category: "cetati_turnuri" }, // Lacul Como
     { name: "Poarta Garibaldi", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Garibaldi+Milano+Italy", category: "cetati_turnuri", city: "Milano" }, // Milano
-    { name: "Domul din Milano (Duomo di Milano)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Milano+(Duomo+di+Milano)+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
+    { name: "Domul din Milano (Duomo di Milano)", url: "https://www.google.com/maps/search/?api=1&query=Domul+din+Milano+(Duomo+di+Milano)+Milano+Italy", category: "manastiri", city: "Milano", recommended: true }, // Milano
     { name: "Biserica Santa Maria delle Grazie (Unde se află „Cina cea de Taină”)", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Santa+Maria+delle+Grazie+(Unde+se+află+„Cina+cea+de+Taină”)+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
     { name: "Mănăstirea Certosa di Pavia", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Certosa+di+Pavia+Pavia+Italy", category: "manastiri" }, // Pavia
     { name: "Bazilica Sant'Ambrogio", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sant'Ambrogio+Milano+Italy", category: "manastiri", city: "Milano" }, // Milano
@@ -6796,7 +7084,7 @@ const ATTRACTIONS = {
     { name: "Peșterile Frasassi", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Frasassi+Italy", category: "natura" },
   ],
   pl: [
-    { name: "Castelul Regal Wawel Kraków", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+Wawel+Kraków+Poland", category: "castele_palate", city: "Kraków" },
+    { name: "Castelul Regal Wawel Kraków", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+Wawel+Kraków+Poland", category: "castele_palate", city: "Kraków", recommended: true },
     { name: "Palatul Episcopului din Cracovia Kraków", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopului+din+Cracovia+Kraków+Poland", category: "castele_palate", city: "Kraków" },
     { name: "Castelul Pieskowa Skała Parcul Național Ojcowski", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Pieskowa+Skała+Parcul+Național+Ojcowski+Poland", category: "castele_palate", city: "Parcul Național Ojcowski" },
     { name: "Castelul Wiśnicz Nowy Wiśnicz", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wiśnicz+Nowy+Wiśnicz+Poland", category: "castele_palate", city: "Nowy Wiśnicz" },
@@ -6976,7 +7264,7 @@ const ATTRACTIONS = {
     { name: "Podul celor Cincisprezece Poduri Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Podul+celor+Cincisprezece+Poduri+Amsterdam+Netherlands", category: "infrastructura", city: "Amsterdam" },
     { name: "Canalul Singel Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Canalul+Singel+Amsterdam+Netherlands", category: "infrastructura", city: "Amsterdam" },
     { name: "Portul de Pasageri Passenger Terminal Amsterdam Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Portul+de+Pasageri+Passenger+Terminal+Amsterdam+Amsterdam+Netherlands", category: "infrastructura", city: "Amsterdam" },
-    { name: "Rijksmuseum Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Rijksmuseum+Amsterdam+Netherlands", category: "muzee", city: "Amsterdam" },
+    { name: "Rijksmuseum Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Rijksmuseum+Amsterdam+Netherlands", category: "muzee", city: "Amsterdam", recommended: true },
     { name: "Muzeul Van Gogh Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Van+Gogh+Amsterdam+Netherlands", category: "muzee", city: "Amsterdam" },
     { name: "Casa Memorială Anne Frank Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Casa+Memorială+Anne+Frank+Amsterdam+Netherlands", category: "muzee", city: "Amsterdam" },
     { name: "Muzeul de Artă Contemporană Stedelijk Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+Contemporană+Stedelijk+Amsterdam+Netherlands", category: "muzee", city: "Amsterdam" },
@@ -7170,23 +7458,23 @@ const ATTRACTIONS = {
     { name: "Cartierul Cultural și Comercial Strijp-S Eindhoven", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Cultural+și+Comercial+Strijp-S+Eindhoven+Netherlands", category: "cladiri_teatre", city: "Eindhoven" },
     { name: "Districtul Istoric Wyck Maastricht", url: "https://www.google.com/maps/search/?api=1&query=Districtul+Istoric+Wyck+Maastricht+Netherlands", category: "cladiri_teatre", city: "Maastricht" },
   ],
-  ro: [    { name: "Castelul Bran", url: "https://bran-castle.com/" , category: "castele_palate" , city: "Bran" },
-    { name: "Castelul Peleș", url: "https://peles.ro/" , category: "castele_palate" , city: "Sinaia" },
-    { name: "Palatul Parlamentului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Parlamentului+Romania" , category: "castele_palate" , city: "București" },
+  ro: [    { name: "Castelul Bran", url: "https://bran-castle.com/" , category: "castele_palate" , city: "Bran", recommended: true },
+    { name: "Castelul Peleș", url: "https://peles.ro/" , category: "castele_palate" , city: "Sinaia", recommended: true },
+    { name: "Palatul Parlamentului", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Parlamentului+Romania" , category: "castele_palate" , city: "București", recommended: true },
     { name: "Salina Turda", url: "https://www.salinaturda.eu/" , category: "infrastructura" , city: "Turda" },
     { name: "Muzeul Antipa", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Antipa+Romania" , category: "muzee" , city: "București" },
     { name: "Therme București", url: "https://www.therme.ro/" , category: "parcuri_agrement" , city: "Balotesti" },
     { name: "Dino Parc Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Dino+Parc+Râșnov+Romania" , category: "parcuri_agrement" , city: "Rasnov" },
     { name: "Cetatea Alba Carolina", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Alba+Carolina+Romania" , category: "cetati_turnuri" , city: "Alba Iulia" },
-    { name: "Castelul Corvinilor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corvinilor+Romania" , category: "castele_palate" , city: "Hunedoara" },
-    { name: "Muzeul Satului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Romania" , category: "muzee" , city: "București" },
+    { name: "Castelul Corvinilor", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Corvinilor+Romania" , category: "castele_palate" , city: "Hunedoara", recommended: true },
+    { name: "Muzeul Satului", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Satului+Romania" , category: "muzee" , city: "București", recommended: true },
     { name: "Cetatea Deva", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Deva+Romania" , category: "cetati_turnuri" , city: "Deva" },
     { name: "Cetatea Râșnov", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Râșnov+Romania" , category: "cetati_turnuri" , city: "Rasnov" },
     { name: "Cetatea de Scaun a Sucevei", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+de+Scaun+a+Sucevei+Romania" , category: "cetati_turnuri" , city: "Suceava" },
     { name: "Salina Praid", url: "https://www.google.com/maps/search/?api=1&query=Salina+Praid+Romania" , category: "infrastructura" , city: "Praid" },
     { name: "Ansamblul Sculptural Constantin Brâncuși", url: "https://www.google.com/maps/search/?api=1&query=Ansamblul+Sculptural+Constantin+Brâncuși+Romania" , category: "cladiri_teatre" , city: "Târgu Jiu" },
     { name: "Castelul Cantacuzino Bușteni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Cantacuzino+Bușteni+Romania" , category: "castele_palate" , city: "Busteni" },
-    { name: "Turnul cu Ceas și Cetatea Sighișoara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+și+Cetatea+Sighișoara+Romania" , category: "cetati_turnuri" , city: "Sighișoara" },
+    { name: "Turnul cu Ceas și Cetatea Sighișoara", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+și+Cetatea+Sighișoara+Romania" , category: "cetati_turnuri" , city: "Sighișoara", recommended: true },
     { name: "Cetatea Făgăraș", url: "https://www.google.com/maps/search/?api=1&query=Cetatea+Făgăraș+Romania" , category: "cetati_turnuri" , city: "Făgăraș" },
     { name: "Muzeul Național Brukenthal Sibiu", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Brukenthal+Sibiu+Romania" , category: "muzee" , city: "Sibiu" },
     { name: "Palatul Culturii Iași", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Culturii+Iași+Romania" , category: "castele_palate" , city: "Iași" },
@@ -7466,7 +7754,7 @@ const ATTRACTIONS = {
     { name: "Detunatele (Detunata Goala si Detunata Flocoasa)", url: "https://www.google.com/maps/search/?api=1&query=Detunatele+(Detunata+Goala+si+Detunata+Flocoasa)+Bucium+Romania", category: "natura" , city: "Bucium" },
     { name: "Rapa Rosie", url: "https://www.google.com/maps/search/?api=1&query=Rapa+Rosie+Sebes+Romania", category: "natura" , city: "Sebeș" },
     { name: "Cheile Turzii", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Turzii+Petrestii+de+Jos+Romania", category: "natura" , city: "Petrestii de Jos" },
-    { name: "Cheile Bicazului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Bicazului+Bicaz-Chei+Romania", category: "natura" , city: "Bicaz-Chei, Judetele Neamt / Harghita" },
+    { name: "Cheile Bicazului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Bicazului+Bicaz-Chei+Romania", category: "natura" , city: "Bicaz-Chei, Judetele Neamt / Harghita", recommended: true },
     { name: "Cheile Nerei", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Nerei+Sasca+Montana+Romania", category: "natura" , city: "Sasca Montana" },
     { name: "Cheile Carasului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Carasului+Carasova+Romania", category: "natura" , city: "Carasova" },
     { name: "Cheile Sohodolului", url: "https://www.google.com/maps/search/?api=1&query=Cheile+Sohodolului+Runcu+Romania", category: "natura" , city: "Runcu" },
@@ -7687,7 +7975,7 @@ const ATTRACTIONS = {
     { name: "Turnul de Televiziune Berlin", url: "https://www.google.com/maps/search/?api=1&query=Turnul+de+Televiziune+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
     { name: "Citadela Spandau Berlin", url: "https://www.google.com/maps/search/?api=1&query=Citadela+Spandau+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
     { name: "Turnul Radioului Berlin", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Radioului+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
-    { name: "Poarta Brandenburg Berlin", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Brandenburg+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
+    { name: "Poarta Brandenburg Berlin", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Brandenburg+Berlin+Germany", category: "cetati_turnuri", city: "Berlin", recommended: true },
     { name: "Turnul Grunewald Berlin", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Grunewald+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
     { name: "Zidul Berlinului Berlin", url: "https://www.google.com/maps/search/?api=1&query=Zidul+Berlinului+Berlin+Germany", category: "cetati_turnuri", city: "Berlin" },
     { name: "Zidurile Medievale din Templin Templin", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Templin+Templin+Germany", category: "cetati_turnuri", city: "Templin" },
@@ -7720,7 +8008,7 @@ const ATTRACTIONS = {
     { name: "Podul Oberbaum Berlin", url: "https://www.google.com/maps/search/?api=1&query=Podul+Oberbaum+Berlin+Germany", category: "infrastructura", city: "Berlin" },
     { name: "Canalul Finow Brandenburg", url: "https://www.google.com/maps/search/?api=1&query=Canalul+Finow+Brandenburg+Germany", category: "infrastructura", city: "Brandenburg" },
     { name: "Liftul de vapoare Niederfinow Niederfinow", url: "https://www.google.com/maps/search/?api=1&query=Liftul+de+vapoare+Niederfinow+Niederfinow+Germany", category: "infrastructura", city: "Niederfinow" },
-    { name: "Muzeul Pergamon Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Pergamon+Berlin+Germany", category: "muzee", city: "Berlin" },
+    { name: "Muzeul Pergamon Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Pergamon+Berlin+Germany", category: "muzee", city: "Berlin", recommended: true },
     { name: "Muzeul Nou Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Nou+Berlin+Germany", category: "muzee", city: "Berlin" },
     { name: "Muzeul Altes Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Altes+Berlin+Germany", category: "muzee", city: "Berlin" },
     { name: "Galeria Națională Veche Berlin", url: "https://www.google.com/maps/search/?api=1&query=Galeria+Națională+Veche+Berlin+Germany", category: "muzee", city: "Berlin" },
@@ -7728,7 +8016,7 @@ const ATTRACTIONS = {
     { name: "Muzeul DDR Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+DDR+Berlin+Germany", category: "muzee", city: "Berlin" },
     { name: "Muzeul Evreiesc din Berlin Berlin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Evreiesc+din+Berlin+Berlin+Germany", category: "muzee", city: "Berlin" },
     { name: "Topografia Terorii Berlin", url: "https://www.google.com/maps/search/?api=1&query=Topografia+Terorii+Berlin+Germany", category: "muzee", city: "Berlin" },
-    { name: "Clădirea Reichstag Berlin", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Reichstag+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
+    { name: "Clădirea Reichstag Berlin", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Reichstag+Berlin+Germany", category: "cladiri_teatre", city: "Berlin", recommended: true },
     { name: "Piața Gendarmenmarkt Berlin", url: "https://www.google.com/maps/search/?api=1&query=Piața+Gendarmenmarkt+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
     { name: "Piața Alexanderplatz Berlin", url: "https://www.google.com/maps/search/?api=1&query=Piața+Alexanderplatz+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
     { name: "Coloana Victoriei Berlin", url: "https://www.google.com/maps/search/?api=1&query=Coloana+Victoriei+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
@@ -7736,7 +8024,7 @@ const ATTRACTIONS = {
     { name: "Piața Potsdamer Platz Berlin", url: "https://www.google.com/maps/search/?api=1&query=Piața+Potsdamer+Platz+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
     { name: "Opera de Stat din Berlin Berlin", url: "https://www.google.com/maps/search/?api=1&query=Opera+de+Stat+din+Berlin+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
     { name: "Teatrul Friedrichstadt-Palast Berlin", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Friedrichstadt-Palast+Berlin+Germany", category: "cladiri_teatre", city: "Berlin" },
-    { name: "Castelul Neuschwanstein Schwangau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Neuschwanstein+Schwangau+Germany", category: "castele_palate", city: "Schwangau" },
+    { name: "Castelul Neuschwanstein Schwangau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Neuschwanstein+Schwangau+Germany", category: "castele_palate", city: "Schwangau", recommended: true },
     { name: "Castelul Hohenschwangau Schwangau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Hohenschwangau+Schwangau+Germany", category: "castele_palate", city: "Schwangau" },
     { name: "Palatul Linderhof Ettal", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Linderhof+Ettal+Germany", category: "castele_palate", city: "Ettal" },
     { name: "Palatul Herrenchiemsee Insula Chiemsee", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Herrenchiemsee+Insula+Chiemsee+Germany", category: "castele_palate", city: "Insula Chiemsee" },
@@ -7782,7 +8070,7 @@ const ATTRACTIONS = {
     { name: "Muzeul Național German Nürnberg", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+German+Nürnberg+Germany", category: "muzee", city: "Nürnberg" },
     { name: "Centrul de Documentare al Partidului Nazist Nürnberg", url: "https://www.google.com/maps/search/?api=1&query=Centrul+de+Documentare+al+Partidului+Nazist+Nürnberg+Germany", category: "muzee", city: "Nürnberg" },
     { name: "Noua Primărie din München München", url: "https://www.google.com/maps/search/?api=1&query=Noua+Primărie+din+München+München+Germany", category: "cladiri_teatre", city: "München" },
-    { name: "Piața Marienplatz München", url: "https://www.google.com/maps/search/?api=1&query=Piața+Marienplatz+München+Germany", category: "cladiri_teatre", city: "München" },
+    { name: "Piața Marienplatz München", url: "https://www.google.com/maps/search/?api=1&query=Piața+Marienplatz+München+Germany", category: "cladiri_teatre", city: "München", recommended: true },
     { name: "Monumentul Walhalla Donaustauf", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Walhalla+Donaustauf+Germany", category: "cladiri_teatre", city: "Donaustauf" },
     { name: "Teatrul Național de Operă München", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Național+de+Operă+München+Germany", category: "cladiri_teatre", city: "München" },
     { name: "Stadionul Allianz Arena München", url: "https://www.google.com/maps/search/?api=1&query=Stadionul+Allianz+Arena+München+Germany", category: "cladiri_teatre", city: "München" },
@@ -7881,7 +8169,7 @@ const ATTRACTIONS = {
     { name: "Turnul cu Ceas din Münster Münster", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+din+Münster+Münster+Germany", category: "cetati_turnuri", city: "Münster" },
     { name: "Hahnentorburg Köln", url: "https://www.google.com/maps/search/?api=1&query=Hahnentorburg+Köln+Germany", category: "cetati_turnuri", city: "Köln" },
     { name: "Turnul Malakoff Köln", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Malakoff+Köln+Germany", category: "cetati_turnuri", city: "Köln" },
-    { name: "Catedrala din Köln Köln", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Köln+Köln+Germany", category: "manastiri", city: "Köln" },
+    { name: "Catedrala din Köln Köln", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Köln+Köln+Germany", category: "manastiri", city: "Köln", recommended: true },
     { name: "Catedrala din Aachen Aachen", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Aachen+Aachen+Germany", category: "manastiri", city: "Aachen" },
     { name: "Mănăstirea Corvey Höxter", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Corvey+Höxter+Germany", category: "manastiri", city: "Höxter" },
     { name: "Bazilica Sfântul Gereon Köln", url: "https://www.google.com/maps/search/?api=1&query=Bazilica+Sfântul+Gereon+Köln+Germany", category: "manastiri", city: "Köln" },
@@ -7999,14 +8287,14 @@ const ATTRACTIONS = {
     { name: "Muralul Procesiunea Prinților Dresda", url: "https://www.google.com/maps/search/?api=1&query=Muralul+Procesiunea+Prinților+Dresda+Germany", category: "cladiri_teatre", city: "Dresda" },
   ],
   uk: [
-    { name: "Buckingham Palace", url: "https://www.google.com/maps/search/?api=1&query=Buckingham+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
+    { name: "Buckingham Palace", url: "https://www.google.com/maps/search/?api=1&query=Buckingham+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London", recommended: true }, // Londra, Anglia
     { name: "Kensington Palace", url: "https://www.google.com/maps/search/?api=1&query=Kensington+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
     { name: "Hampton Court Palace", url: "https://www.google.com/maps/search/?api=1&query=Hampton+Court+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
     { name: "Kew Palace", url: "https://www.google.com/maps/search/?api=1&query=Kew+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
     { name: "St James's Palace", url: "https://www.google.com/maps/search/?api=1&query=St+James's+Palace+Londra,+Anglia+UK", category: "castele_palate", city: "London" }, // Londra, Anglia
-    { name: "Tower of London", url: "https://www.google.com/maps/search/?api=1&query=Tower+of+London+Londra,+Anglia+UK", category: "cetati_turnuri", city: "London" }, // Londra, Anglia
+    { name: "Tower of London", url: "https://www.google.com/maps/search/?api=1&query=Tower+of+London+Londra,+Anglia+UK", category: "cetati_turnuri", city: "London", recommended: true }, // Londra, Anglia
     { name: "Jewel Tower", url: "https://www.google.com/maps/search/?api=1&query=Jewel+Tower+Londra,+Anglia+UK", category: "cetati_turnuri", city: "London" }, // Londra, Anglia
-    { name: "Westminster Abbey", url: "https://www.google.com/maps/search/?api=1&query=Westminster+Abbey+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
+    { name: "Westminster Abbey", url: "https://www.google.com/maps/search/?api=1&query=Westminster+Abbey+Londra,+Anglia+UK", category: "manastiri", city: "London", recommended: true }, // Londra, Anglia
     { name: "St Paul's Cathedral", url: "https://www.google.com/maps/search/?api=1&query=St+Paul's+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
     { name: "Southwark Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Southwark+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
     { name: "Westminster Cathedral", url: "https://www.google.com/maps/search/?api=1&query=Westminster+Cathedral+Londra,+Anglia+UK", category: "manastiri", city: "London" }, // Londra, Anglia
@@ -8016,7 +8304,7 @@ const ATTRACTIONS = {
     { name: "Greenwich Park", url: "https://www.google.com/maps/search/?api=1&query=Greenwich+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
     { name: "Richmond Park", url: "https://www.google.com/maps/search/?api=1&query=Richmond+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
     { name: "St James's Park", url: "https://www.google.com/maps/search/?api=1&query=St+James's+Park+Londra,+Anglia+UK", category: "natura", city: "London" }, // Londra, Anglia
-    { name: "London Eye", url: "https://www.google.com/maps/search/?api=1&query=London+Eye+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
+    { name: "London Eye", url: "https://www.google.com/maps/search/?api=1&query=London+Eye+Londra,+Anglia+UK", category: "infrastructura", city: "London", recommended: true }, // Londra, Anglia
     { name: "Tower Bridge", url: "https://www.google.com/maps/search/?api=1&query=Tower+Bridge+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
     { name: "Millennium Bridge", url: "https://www.google.com/maps/search/?api=1&query=Millennium+Bridge+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
     { name: "Greenwich Foot Tunnel", url: "https://www.google.com/maps/search/?api=1&query=Greenwich+Foot+Tunnel+Londra,+Anglia+UK", category: "infrastructura", city: "London" }, // Londra, Anglia
@@ -8030,7 +8318,7 @@ const ATTRACTIONS = {
     { name: "Design Museum", url: "https://www.google.com/maps/search/?api=1&query=Design+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
     { name: "Imperial War Museum", url: "https://www.google.com/maps/search/?api=1&query=Imperial+War+Museum+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
     { name: "Tate Britain", url: "https://www.google.com/maps/search/?api=1&query=Tate+Britain+Londra,+Anglia+UK", category: "muzee", city: "London" }, // Londra, Anglia
-    { name: "Houses of Parliament & Big Ben", url: "https://www.google.com/maps/search/?api=1&query=Houses+of+Parliament+&+Big+Ben+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
+    { name: "Houses of Parliament & Big Ben", url: "https://www.google.com/maps/search/?api=1&query=Houses+of+Parliament+&+Big+Ben+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London", recommended: true }, // Londra, Anglia
     { name: "Royal Albert Hall", url: "https://www.google.com/maps/search/?api=1&query=Royal+Albert+Hall+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
     { name: "Shakespeare's Globe", url: "https://www.google.com/maps/search/?api=1&query=Shakespeare's+Globe+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
     { name: "Trafalgar Square", url: "https://www.google.com/maps/search/?api=1&query=Trafalgar+Square+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
@@ -8040,7 +8328,7 @@ const ATTRACTIONS = {
     { name: "Somerset House", url: "https://www.google.com/maps/search/?api=1&query=Somerset+House+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
     { name: "Royal Opera House", url: "https://www.google.com/maps/search/?api=1&query=Royal+Opera+House+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
     { name: "Covent Garden Market", url: "https://www.google.com/maps/search/?api=1&query=Covent+Garden+Market+Londra,+Anglia+UK", category: "cladiri_teatre", city: "London" }, // Londra, Anglia
-    { name: "Edinburgh Castle", url: "https://www.google.com/maps/search/?api=1&query=Edinburgh+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
+    { name: "Edinburgh Castle", url: "https://www.google.com/maps/search/?api=1&query=Edinburgh+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh", recommended: true }, // Edinburgh, Scoția
     { name: "Palace of Holyroodhouse", url: "https://www.google.com/maps/search/?api=1&query=Palace+of+Holyroodhouse+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
     { name: "Lauriston Castle", url: "https://www.google.com/maps/search/?api=1&query=Lauriston+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
     { name: "Craigmillar Castle", url: "https://www.google.com/maps/search/?api=1&query=Craigmillar+Castle+Edinburgh,+Scoția+UK", category: "castele_palate", city: "Edinburgh" }, // Edinburgh, Scoția
@@ -8300,7 +8588,7 @@ const ATTRACTIONS = {
     { name: "Teleférico de Madrid", url: "https://www.google.com/maps/search/?api=1&query=Teleférico+de+Madrid+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
     { name: "Viaducto de Segovia", url: "https://www.google.com/maps/search/?api=1&query=Viaducto+de+Segovia+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
     { name: "Estación de Atocha (Grădina Tropicală)", url: "https://www.google.com/maps/search/?api=1&query=Estación+de+Atocha+(Grădina+Tropicală)+Madrid+Spain", category: "infrastructura", city: "Madrid" }, // Madrid
-    { name: "Muzeul Național Prado", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Prado+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
+    { name: "Muzeul Național Prado", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Prado+Madrid+Spain", category: "muzee", city: "Madrid", recommended: true }, // Madrid
     { name: "Muzeul Național Centru de Artă Reina Sofía", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Național+Centru+de+Artă+Reina+Sofía+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
     { name: "Muzeul Thyssen-Bornemisza", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Thyssen-Bornemisza+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
     { name: "Muzeul Arheologic Național (MAN)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Arheologic+Național+(MAN)+Madrid+Spain", category: "muzee", city: "Madrid" }, // Madrid
@@ -8325,13 +8613,13 @@ const ATTRACTIONS = {
     { name: "Torre Glòries (Agbar)", url: "https://www.google.com/maps/search/?api=1&query=Torre+Glòries+(Agbar)+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Zidurile Romane din Barcelona", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Romane+din+Barcelona+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Torre de Collserola", url: "https://www.google.com/maps/search/?api=1&query=Torre+de+Collserola+Barcelona,+Catalonia+Spain", category: "cetati_turnuri", city: "Barcelona" }, // Barcelona, Catalonia
-    { name: "Sagrada Família", url: "https://www.google.com/maps/search/?api=1&query=Sagrada+Família+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Sagrada Família", url: "https://www.google.com/maps/search/?api=1&query=Sagrada+Família+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona", recommended: true }, // Barcelona, Catalonia
     { name: "Catedrala Sfânta Cruce și Sfânta Eulalia", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Sfânta+Cruce+și+Sfânta+Eulalia+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Basílica de Santa Maria del Mar", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Mar+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Basílica de Santa Maria del Pi", url: "https://www.google.com/maps/search/?api=1&query=Basílica+de+Santa+Maria+del+Pi+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Mănăstirea Pedralbes", url: "https://www.google.com/maps/search/?api=1&query=Mănăstirea+Pedralbes+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Temple Expiatori del Sagrat Cor (Tibidabo)", url: "https://www.google.com/maps/search/?api=1&query=Temple+Expiatori+del+Sagrat+Cor+(Tibidabo)+Barcelona,+Catalonia+Spain", category: "manastiri", city: "Barcelona" }, // Barcelona, Catalonia
-    { name: "Parcul Güell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Güell+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
+    { name: "Parcul Güell", url: "https://www.google.com/maps/search/?api=1&query=Parcul+Güell+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona", recommended: true }, // Barcelona, Catalonia
     { name: "Parc de la Ciutadella", url: "https://www.google.com/maps/search/?api=1&query=Parc+de+la+Ciutadella+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Parc del Laberint d'Horta", url: "https://www.google.com/maps/search/?api=1&query=Parc+del+Laberint+d'Horta+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
     { name: "Muntele Montjuïc", url: "https://www.google.com/maps/search/?api=1&query=Muntele+Montjuïc+Barcelona,+Catalonia+Spain", category: "natura", city: "Barcelona" }, // Barcelona, Catalonia
@@ -8415,7 +8703,7 @@ const ATTRACTIONS = {
     { name: "Plaza de la Virgen", url: "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Virgen+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
     { name: "Estación del Norte", url: "https://www.google.com/maps/search/?api=1&query=Estación+del+Norte+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
     { name: "Palau de la Música de València", url: "https://www.google.com/maps/search/?api=1&query=Palau+de+la+Música+de+València+Valencia,+Comunitatea+Valenciană+Spain", category: "cladiri_teatre", city: "Valencia" }, // Valencia, Comunitatea Valenciană
-    { name: "Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Alhambra+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
+    { name: "Alhambra", url: "https://www.google.com/maps/search/?api=1&query=Alhambra+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada", recommended: true }, // Granada, Andaluzia
     { name: "Palacio de Generalife", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Generalife+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
     { name: "Palacio de Carlos V", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Carlos+V+Granada,+Andaluzia+Spain", category: "castele_palate", city: "Granada" }, // Granada, Andaluzia
     { name: "Palacio de Viana", url: "https://www.google.com/maps/search/?api=1&query=Palacio+de+Viana+Córdoba,+Andaluzia+Spain", category: "castele_palate", city: "Córdoba" }, // Córdoba, Andaluzia
@@ -8571,16 +8859,16 @@ const ATTRACTIONS = {
     { name: "Palais du Luxembourg", url: "https://www.google.com/maps/search/?api=1&query=Palais+du+Luxembourg+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
     { name: "Palais Royal", url: "https://www.google.com/maps/search/?api=1&query=Palais+Royal+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
     { name: "Palais de l'Élysée", url: "https://www.google.com/maps/search/?api=1&query=Palais+de+l'Élysée+Paris,+Île-de-France+France", category: "castele_palate", city: "Paris" }, // Paris, Île-de-France
-    { name: "Castelul Versailles", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Versailles+Versailles+(lângă+Paris),+Île-de-France+France", category: "castele_palate", city: "Versailles" }, // Versailles (lângă Paris), Île-de-France
+    { name: "Castelul Versailles", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Versailles+Versailles+(lângă+Paris),+Île-de-France+France", category: "castele_palate", city: "Versailles", recommended: true }, // Versailles (lângă Paris), Île-de-France
     { name: "Castelul Fontainebleau", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Fontainebleau+Fontainebleau+(lângă+Paris),+Île-de-France+France", category: "castele_palate", city: "Fontainebleau" }, // Fontainebleau (lângă Paris), Île-de-France
     { name: "Castelul Vincennes", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Vincennes+Vincennes,+Île-de-France+France", category: "castele_palate" }, // Vincennes, Île-de-France
     { name: "Castelul Chantilly", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Chantilly+Chantilly+(lângă+Paris),+Hauts-de-France+France", category: "castele_palate", city: "Chantilly" }, // Chantilly (lângă Paris), Hauts-de-France
-    { name: "Turnul Eiffel", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Eiffel+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Turnul Eiffel", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Eiffel+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris", recommended: true }, // Paris, Île-de-France
     { name: "Tour Saint-Jacques", url: "https://www.google.com/maps/search/?api=1&query=Tour+Saint-Jacques+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
     { name: "Tour Montparnasse", url: "https://www.google.com/maps/search/?api=1&query=Tour+Montparnasse+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
     { name: "Conciergerie", url: "https://www.google.com/maps/search/?api=1&query=Conciergerie+Paris,+Île-de-France+France", category: "cetati_turnuri", city: "Paris" }, // Paris, Île-de-France
-    { name: "Catedrala Notre-Dame de Paris", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Notre-Dame+de+Paris+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
-    { name: "Basilique du Sacré-Cœur", url: "https://www.google.com/maps/search/?api=1&query=Basilique+du+Sacré-Cœur+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
+    { name: "Catedrala Notre-Dame de Paris", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+Notre-Dame+de+Paris+Paris,+Île-de-France+France", category: "manastiri", city: "Paris", recommended: true }, // Paris, Île-de-France
+    { name: "Basilique du Sacré-Cœur", url: "https://www.google.com/maps/search/?api=1&query=Basilique+du+Sacré-Cœur+Paris,+Île-de-France+France", category: "manastiri", city: "Paris", recommended: true }, // Paris, Île-de-France
     { name: "Sainte-Chapelle", url: "https://www.google.com/maps/search/?api=1&query=Sainte-Chapelle+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
     { name: "Basilique de Saint-Denis", url: "https://www.google.com/maps/search/?api=1&query=Basilique+de+Saint-Denis+Saint-Denis,+Île-de-France+France", category: "manastiri" }, // Saint-Denis, Île-de-France
     { name: "Église de la Madeleine", url: "https://www.google.com/maps/search/?api=1&query=Église+de+la+Madeleine+Paris,+Île-de-France+France", category: "manastiri", city: "Paris" }, // Paris, Île-de-France
@@ -8593,7 +8881,7 @@ const ATTRACTIONS = {
     { name: "Pont Neuf", url: "https://www.google.com/maps/search/?api=1&query=Pont+Neuf+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
     { name: "Pont Alexandre III", url: "https://www.google.com/maps/search/?api=1&query=Pont+Alexandre+III+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
     { name: "Canal Saint-Martin", url: "https://www.google.com/maps/search/?api=1&query=Canal+Saint-Martin+Paris,+Île-de-France+France", category: "infrastructura", city: "Paris" }, // Paris, Île-de-France
-    { name: "Muzeul Luvru (Musée du Louvre)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Luvru+(Musée+du+Louvre)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
+    { name: "Muzeul Luvru (Musée du Louvre)", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Luvru+(Musée+du+Louvre)+Paris,+Île-de-France+France", category: "muzee", city: "Paris", recommended: true }, // Paris, Île-de-France
     { name: "Musée d'Orsay", url: "https://www.google.com/maps/search/?api=1&query=Musée+d'Orsay+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
     { name: "Centre Pompidou", url: "https://www.google.com/maps/search/?api=1&query=Centre+Pompidou+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
     { name: "Musée Rodin", url: "https://www.google.com/maps/search/?api=1&query=Musée+Rodin+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
@@ -8603,7 +8891,7 @@ const ATTRACTIONS = {
     { name: "Musée Cluny (Evul Mediu)", url: "https://www.google.com/maps/search/?api=1&query=Musée+Cluny+(Evul+Mediu)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
     { name: "Musée de l'Armée (Invalides)", url: "https://www.google.com/maps/search/?api=1&query=Musée+de+l'Armée+(Invalides)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
     { name: "Musée Grévin (Ceară)", url: "https://www.google.com/maps/search/?api=1&query=Musée+Grévin+(Ceară)+Paris,+Île-de-France+France", category: "muzee", city: "Paris" }, // Paris, Île-de-France
-    { name: "Arcul de Triumf (Arc de Triomphe)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+(Arc+de+Triomphe)+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
+    { name: "Arcul de Triumf (Arc de Triomphe)", url: "https://www.google.com/maps/search/?api=1&query=Arcul+de+Triumf+(Arc+de+Triomphe)+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris", recommended: true }, // Paris, Île-de-France
     { name: "Opéra Garnier", url: "https://www.google.com/maps/search/?api=1&query=Opéra+Garnier+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
     { name: "Panthéon", url: "https://www.google.com/maps/search/?api=1&query=Panthéon+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
     { name: "Place de la Concorde", url: "https://www.google.com/maps/search/?api=1&query=Place+de+la+Concorde+Paris,+Île-de-France+France", category: "cladiri_teatre", city: "Paris" }, // Paris, Île-de-France
@@ -8665,7 +8953,7 @@ const ATTRACTIONS = {
     { name: "Orașul Fortificat Carcassonne", url: "https://www.google.com/maps/search/?api=1&query=Orașul+Fortificat+Carcassonne+Carcassonne,+Occitanie+France", category: "cetati_turnuri", city: "Carcassonne" }, // Carcassonne, Occitanie
     { name: "Zidurile Fortificate din Saint-Malo", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Fortificate+din+Saint-Malo+Saint-Malo,+Bretania+France", category: "cetati_turnuri", city: "Saint-Malo" }, // Saint-Malo, Bretania
     { name: "Citadela Vauban din Besançon", url: "https://www.google.com/maps/search/?api=1&query=Citadela+Vauban+din+Besançon+Besançon,+Bourgogne-Franche-Comté+France", category: "cetati_turnuri" }, // Besançon, Bourgogne-Franche-Comté
-    { name: "Abația Mont Saint-Michel", url: "https://www.google.com/maps/search/?api=1&query=Abația+Mont+Saint-Michel+Mont+Saint-Michel,+Normandia+France", category: "manastiri", city: "Mont Saint-Michel" }, // Mont Saint-Michel, Normandia
+    { name: "Abația Mont Saint-Michel", url: "https://www.google.com/maps/search/?api=1&query=Abația+Mont+Saint-Michel+Mont+Saint-Michel,+Normandia+France", category: "manastiri", city: "Mont Saint-Michel", recommended: true }, // Mont Saint-Michel, Normandia
     { name: "Catedrala din Reims", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Reims+Reims,+Grand+Est+France", category: "manastiri", city: "Reims" }, // Reims, Grand Est
     { name: "Catedrala din Chartres", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Chartres+Chartres,+Centre-Val+de+Loire+France", category: "manastiri", city: "Chartres" }, // Chartres, Centre-Val de Loire
     { name: "Catedrala din Amiens", url: "https://www.google.com/maps/search/?api=1&query=Catedrala+din+Amiens+Amiens,+Hauts-de-France+France", category: "manastiri" }, // Amiens, Hauts-de-France
@@ -8685,7 +8973,7 @@ const ATTRACTIONS = {
     { name: "Amfiteatrul Roman din Nîmes (Les Arènes)", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Nîmes+(Les+Arènes)+Nîmes,+Occitanie+France", category: "cladiri_teatre", city: "Nîmes" }, // Nîmes, Occitanie
     { name: "Teatrul Roman din Orange", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Roman+din+Orange+Orange,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre" }, // Orange, Provence-Alpes-Côte d'Azur
     { name: "Place Stanislas", url: "https://www.google.com/maps/search/?api=1&query=Place+Stanislas+Nancy,+Grand+Est+France", category: "cladiri_teatre" }, // Nancy, Grand Est
-    { name: "Palatul Papilor (Palais des Papes)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Papilor+(Palais+des+Papes)+Avignon,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Avignon" }, // Avignon, Provence-Alpes-Côte d'Azur
+    { name: "Palatul Papilor (Palais des Papes)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Papilor+(Palais+des+Papes)+Avignon,+Provence-Alpes-Côte+d'Azur+France", category: "cladiri_teatre", city: "Avignon", recommended: true }, // Avignon, Provence-Alpes-Côte d'Azur
     { name: "Disneyland Paris", url: "https://www.disneylandparis.com/", category: "parcuri_agrement", city: "Paris" },
     { name: "Parc Astérix", url: "https://www.google.com/maps/search/?api=1&query=Parc+Astérix+France", category: "parcuri_agrement" },
     { name: "Puy du Fou", url: "https://www.google.com/maps/search/?api=1&query=Puy+du+Fou+France", category: "parcuri_agrement" },
@@ -8812,7 +9100,7 @@ const ATTRACTIONS = {
     { name: "Palácio Galveias Lisabona", url: "https://www.google.com/maps/search/?api=1&query=Palácio+Galveias+Lisabona+Portugal", category: "castele_palate", city: "Lisabona" },
     { name: "Palácio de Palhavã Lisabona", url: "https://www.google.com/maps/search/?api=1&query=Palácio+de+Palhavã+Lisabona+Portugal", category: "castele_palate", city: "Lisabona" },
     { name: "Palácio de Queluz Queluz (Zona metropolitană)", url: "https://www.google.com/maps/search/?api=1&query=Palácio+de+Queluz+Queluz+(Zona+metropolitană)+Portugal", category: "castele_palate", city: "Queluz (Zona metropolitană)" },
-    { name: "Turnul Belém Lisabona", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Belém+Lisabona+Portugal", category: "cetati_turnuri", city: "Lisabona" },
+    { name: "Turnul Belém Lisabona", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Belém+Lisabona+Portugal", category: "cetati_turnuri", city: "Lisabona", recommended: true },
     { name: "Fortul São Bruno Caxias", url: "https://www.google.com/maps/search/?api=1&query=Fortul+São+Bruno+Caxias+Portugal", category: "cetati_turnuri", city: "Caxias" },
     { name: "Fortul São Julião da Barra Oeiras", url: "https://www.google.com/maps/search/?api=1&query=Fortul+São+Julião+da+Barra+Oeiras+Portugal", category: "cetati_turnuri", city: "Oeiras" },
     { name: "Zidurile Fernandine Lisabona", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Fernandine+Lisabona+Portugal", category: "cetati_turnuri", city: "Lisabona" },
@@ -9093,7 +9381,7 @@ const ATTRACTIONS = {
     { name: "Piața Lavradores Funchal", url: "https://www.google.com/maps/search/?api=1&query=Piața+Lavradores+Funchal+Portugal", category: "cladiri_teatre", city: "Funchal" },
   ],
   cz: [
-    { name: "Castelul Praga Praha", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Praga+Praha+Czech+Republic", category: "castele_palate", city: "Praha" },
+    { name: "Castelul Praga Praha", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Praga+Praha+Czech+Republic", category: "castele_palate", city: "Praha", recommended: true },
     { name: "Palatul Wallenstein Praha", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Wallenstein+Praha+Czech+Republic", category: "castele_palate", city: "Praha" },
     { name: "Palatul Lobkowicz Praha", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Lobkowicz+Praha+Czech+Republic", category: "castele_palate", city: "Praha" },
     { name: "Palatul Sternberg Praha", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Sternberg+Praha+Czech+Republic", category: "castele_palate", city: "Praha" },
@@ -9528,7 +9816,7 @@ const ATTRACTIONS = {
     { name: "Palatul Vechi al Parlamentului Athens", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Vechi+al+Parlamentului+Athens+Greece", category: "castele_palate", city: "Athens" },
     { name: "Palatul Prezidențial Athens", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Prezidențial+Athens+Greece", category: "castele_palate", city: "Athens" },
     { name: "Palatul Ilion Zografou Athens", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ilion+Zografou+Athens+Greece", category: "castele_palate", city: "Athens" },
-    { name: "Acropola din Atena Athens", url: "https://www.google.com/maps/search/?api=1&query=Acropola+din+Atena+Athens+Greece", category: "cetati_turnuri", city: "Athens" },
+    { name: "Acropola din Atena Athens", url: "https://www.google.com/maps/search/?api=1&query=Acropola+din+Atena+Athens+Greece", category: "cetati_turnuri", city: "Athens", recommended: true },
     { name: "Turnul Vânturilor Athens", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Vânturilor+Athens+Greece", category: "cetati_turnuri", city: "Athens" },
     { name: "Zidurile Temistocleene Athens", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Temistocleene+Athens+Greece", category: "cetati_turnuri", city: "Athens" },
     { name: "Fortăreata Phyle Attica", url: "https://www.google.com/maps/search/?api=1&query=Fortăreata+Phyle+Attica+Greece", category: "cetati_turnuri", city: "Attica" },
@@ -9738,7 +10026,7 @@ const ATTRACTIONS = {
     { name: "Muzeul de Istorie din Budapesta Budapest", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+din+Budapesta+Budapest+Hungary", category: "muzee", city: "Budapest" },
     { name: "Memento Park Budapest", url: "https://www.google.com/maps/search/?api=1&query=Memento+Park+Budapest+Hungary", category: "muzee", city: "Budapest" },
     { name: "Muzeul Agriculturii Ungare Budapest", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Agriculturii+Ungare+Budapest+Hungary", category: "muzee", city: "Budapest" },
-    { name: "Clădirea Parlamentului Ungar Budapest", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Parlamentului+Ungar+Budapest+Hungary", category: "cladiri_teatre", city: "Budapest" },
+    { name: "Clădirea Parlamentului Ungar Budapest", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Parlamentului+Ungar+Budapest+Hungary", category: "cladiri_teatre", city: "Budapest", recommended: true },
     { name: "Piața Eroilor Budapest", url: "https://www.google.com/maps/search/?api=1&query=Piața+Eroilor+Budapest+Hungary", category: "cladiri_teatre", city: "Budapest" },
     { name: "Opera de Stat din Budapesta Budapest", url: "https://www.google.com/maps/search/?api=1&query=Opera+de+Stat+din+Budapesta+Budapest+Hungary", category: "cladiri_teatre", city: "Budapest" },
     { name: "Baza Monumentală Halászbástya Budapest", url: "https://www.google.com/maps/search/?api=1&query=Baza+Monumentală+Halászbástya+Budapest+Hungary", category: "cladiri_teatre", city: "Budapest" },
@@ -9958,7 +10246,7 @@ const ATTRACTIONS = {
     { name: "Vila Banac Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Vila+Banac+Dubrovnik+Croatia", category: "castele_palate", city: "Dubrovnik" },
     { name: "Palatul Ohmučević Slano", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Ohmučević+Slano+Croatia", category: "castele_palate", city: "Slano" },
     { name: "Conacul Gučetić Trsteno", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Gučetić+Trsteno+Croatia", category: "castele_palate", city: "Trsteno" },
-    { name: "Zidurile Medievale din Dubrovnik Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Dubrovnik+Dubrovnik+Croatia", category: "cetati_turnuri", city: "Dubrovnik" },
+    { name: "Zidurile Medievale din Dubrovnik Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Dubrovnik+Dubrovnik+Croatia", category: "cetati_turnuri", city: "Dubrovnik", recommended: true },
     { name: "Fortăreața Lovrijenac Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Lovrijenac+Dubrovnik+Croatia", category: "cetati_turnuri", city: "Dubrovnik" },
     { name: "Turnul Minčeta Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Minčeta+Dubrovnik+Croatia", category: "cetati_turnuri", city: "Dubrovnik" },
     { name: "Fortăreața Revelin Dubrovnik", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Revelin+Dubrovnik+Croatia", category: "cetati_turnuri", city: "Dubrovnik" },
@@ -10138,7 +10426,7 @@ const ATTRACTIONS = {
     { name: "Muzeul Mic al Dublinului Dublin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Mic+al+Dublinului+Dublin+Ireland", category: "muzee", city: "Dublin" },
     { name: "Închisoarea-Muzeu Kilmainham Gaol Dublin", url: "https://www.google.com/maps/search/?api=1&query=Închisoarea-Muzeu+Kilmainham+Gaol+Dublin+Ireland", category: "muzee", city: "Dublin" },
     { name: "Muzeul Cimitirului Glasnevin Dublin", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Cimitirului+Glasnevin+Dublin+Ireland", category: "muzee", city: "Dublin" },
-    { name: "Depozitul de Bere Guinness Dublin", url: "https://www.google.com/maps/search/?api=1&query=Depozitul+de+Bere+Guinness+Dublin+Ireland", category: "cladiri_teatre", city: "Dublin" },
+    { name: "Depozitul de Bere Guinness Dublin", url: "https://www.google.com/maps/search/?api=1&query=Depozitul+de+Bere+Guinness+Dublin+Ireland", category: "cladiri_teatre", city: "Dublin", recommended: true },
     { name: "Colegiul Trinity Dublin", url: "https://www.google.com/maps/search/?api=1&query=Colegiul+Trinity+Dublin+Ireland", category: "cladiri_teatre", city: "Dublin" },
     { name: "Biblioteca Old Library Trinity College", url: "https://www.google.com/maps/search/?api=1&query=Biblioteca+Old+Library+Trinity+College+Ireland", category: "cladiri_teatre", city: "Trinity College" },
     { name: "Clădirea Parlamentului Dublin", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Parlamentului+Dublin+Ireland", category: "cladiri_teatre", city: "Dublin" },
@@ -10194,7 +10482,7 @@ const ATTRACTIONS = {
     { name: "Podul Somonului Galway", url: "https://www.google.com/maps/search/?api=1&query=Podul+Somonului+Galway+Ireland", category: "cladiri_teatre", city: "Galway" },
     { name: "Clădirea Quadrangle Galway", url: "https://www.google.com/maps/search/?api=1&query=Clădirea+Quadrangle+Galway+Ireland", category: "cladiri_teatre", city: "Galway" },
     { name: "Teatrul Druid Galway", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Druid+Galway+Ireland", category: "cladiri_teatre", city: "Galway" },
-    { name: "Castelul Blarney Blarney", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Blarney+Blarney+Ireland", category: "castele_palate", city: "Blarney" },
+    { name: "Castelul Blarney Blarney", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Blarney+Blarney+Ireland", category: "castele_palate", city: "Blarney", recommended: true },
     { name: "Castelul Ross Killarney", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Ross+Killarney+Ireland", category: "castele_palate", city: "Killarney" },
     { name: "Conacul Muckross House Parcul Național Killarney", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Muckross+House+Parcul+Național+Killarney+Ireland", category: "castele_palate", city: "Parcul Național Killarney" },
     { name: "Castelul Blackrock Cork", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Blackrock+Cork+Ireland", category: "castele_palate", city: "Cork" },
@@ -10290,7 +10578,7 @@ const ATTRACTIONS = {
     { name: "Piața St. George Belfast", url: "https://www.google.com/maps/search/?api=1&query=Piața+St.+George+Belfast+Ireland", category: "cladiri_teatre", city: "Belfast" },
   ],
   sk: [
-    { name: "Castelul Bratislava Bratislava", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bratislava+Bratislava+Slovakia", category: "castele_palate", city: "Bratislava" },
+    { name: "Castelul Bratislava Bratislava", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bratislava+Bratislava+Slovakia", category: "castele_palate", city: "Bratislava", recommended: true },
     { name: "Castelul Devín Devín", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Devín+Devín+Slovakia", category: "castele_palate", city: "Devín" },
     { name: "Palatul Primate Bratislava", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Primate+Bratislava+Slovakia", category: "castele_palate", city: "Bratislava" },
     { name: "Palatul Grassalkovich Bratislava", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Grassalkovich+Bratislava+Slovakia", category: "castele_palate", city: "Bratislava" },
@@ -10513,7 +10801,7 @@ const ATTRACTIONS = {
     { name: "Piața Centrală de Alimente Ljubljana", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+de+Alimente+Ljubljana+Slovenia", category: "cladiri_teatre", city: "Ljubljana" },
     { name: "Teatrul Național de Operă și Balet Ljubljana", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Național+de+Operă+și+Balet+Ljubljana+Slovenia", category: "cladiri_teatre", city: "Ljubljana" },
     { name: "Cartierul Cultural Alternativ Metelkova Mesto Ljubljana", url: "https://www.google.com/maps/search/?api=1&query=Cartierul+Cultural+Alternativ+Metelkova+Mesto+Ljubljana+Slovenia", category: "cladiri_teatre", city: "Ljubljana" },
-    { name: "Castelul Bled Bled", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bled+Bled+Slovenia", category: "castele_palate", city: "Bled" },
+    { name: "Castelul Bled Bled", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Bled+Bled+Slovenia", category: "castele_palate", city: "Bled", recommended: true },
     { name: "Castelul Predjama Postojna (Zona de acces Nord)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Predjama+Postojna+(Zona+de+acces+Nord)+Slovenia", category: "castele_palate", city: "Postojna (Zona de acces Nord)" },
     { name: "Castelul Kamen Begunje na Gorenjskem", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Kamen+Begunje+na+Gorenjskem+Slovenia", category: "castele_palate", city: "Begunje na Gorenjskem" },
     { name: "Castelul Jame Alpii Iulieni", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Jame+Alpii+Iulieni+Slovenia", category: "castele_palate", city: "Alpii Iulieni" },
@@ -10680,7 +10968,7 @@ const ATTRACTIONS = {
     { name: "Palatul Pac Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Pac+Vilnius+Lithuania", category: "castele_palate", city: "Vilnius" },
     { name: "Palatul Slushko Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Slushko+Vilnius+Lithuania", category: "castele_palate", city: "Vilnius" },
     { name: "Palatul Tiškevičiai Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Tiškevičiai+Vilnius+Lithuania", category: "castele_palate", city: "Vilnius" },
-    { name: "Turnul lui Gediminas Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Gediminas+Vilnius+Lithuania", category: "cetati_turnuri", city: "Vilnius" },
+    { name: "Turnul lui Gediminas Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Turnul+lui+Gediminas+Vilnius+Lithuania", category: "cetati_turnuri", city: "Vilnius", recommended: true },
     { name: "Turnul Bastionului din Vilnius Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Bastionului+din+Vilnius+Vilnius+Lithuania", category: "cetati_turnuri", city: "Vilnius" },
     { name: "Poarta Zorilor Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Poarta+Zorilor+Vilnius+Lithuania", category: "cetati_turnuri", city: "Vilnius" },
     { name: "Turnul cu Ceas al Catedralei Vilnius", url: "https://www.google.com/maps/search/?api=1&query=Turnul+cu+Ceas+al+Catedralei+Vilnius+Lithuania", category: "cetati_turnuri", city: "Vilnius" },
@@ -10801,7 +11089,7 @@ const ATTRACTIONS = {
     { name: "Teatrul de Dramă din Klaipėda Klaipėda", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+de+Dramă+din+Klaipėda+Klaipėda+Lithuania", category: "cladiri_teatre", city: "Klaipėda" },
     { name: "Vasul istoric cu pânze Meridianas Klaipėda", url: "https://www.google.com/maps/search/?api=1&query=Vasul+istoric+cu+pânze+Meridianas+Klaipėda+Lithuania", category: "cladiri_teatre", city: "Klaipėda" },
     { name: "Sculptura urbană Șoarecele Magic Klaipėda", url: "https://www.google.com/maps/search/?api=1&query=Sculptura+urbană+Șoarecele+Magic+Klaipėda+Lithuania", category: "cladiri_teatre", city: "Klaipėda" },
-    { name: "Castelul Trakai Trakai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Trakai+Trakai+Lithuania", category: "castele_palate", city: "Trakai" },
+    { name: "Castelul Trakai Trakai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Trakai+Trakai+Lithuania", category: "castele_palate", city: "Trakai", recommended: true },
     { name: "Castelul din Peninsula Trakai Trakai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+din+Peninsula+Trakai+Trakai+Lithuania", category: "castele_palate", city: "Trakai" },
     { name: "Castelul Medininkai Medininkai", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Medininkai+Medininkai+Lithuania", category: "castele_palate", city: "Medininkai" },
     { name: "Conacul Užutrakis Trakai", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Užutrakis+Trakai+Lithuania", category: "castele_palate", city: "Trakai" },
@@ -10881,7 +11169,7 @@ const ATTRACTIONS = {
     { name: "Muzeul de Istorie și Navigație din Riga Riga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Istorie+și+Navigație+din+Riga+Riga+Latvia", category: "muzee", city: "Riga" },
     { name: "Muzeul de Artă „Arsenāls” Riga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+de+Artă+„Arsenāls”+Riga+Latvia", category: "muzee", city: "Riga" },
     { name: "Muzeul Ghetoului din Riga Riga", url: "https://www.google.com/maps/search/?api=1&query=Muzeul+Ghetoului+din+Riga+Riga+Latvia", category: "muzee", city: "Riga" },
-    { name: "Casa Capetelor Negre Riga", url: "https://www.google.com/maps/search/?api=1&query=Casa+Capetelor+Negre+Riga+Latvia", category: "cladiri_teatre", city: "Riga" },
+    { name: "Casa Capetelor Negre Riga", url: "https://www.google.com/maps/search/?api=1&query=Casa+Capetelor+Negre+Riga+Latvia", category: "cladiri_teatre", city: "Riga", recommended: true },
     { name: "Monumentul Libertății Riga", url: "https://www.google.com/maps/search/?api=1&query=Monumentul+Libertății+Riga+Latvia", category: "cladiri_teatre", city: "Riga" },
     { name: "Biblioteca Națională a Letoniei Riga", url: "https://www.google.com/maps/search/?api=1&query=Biblioteca+Națională+a+Letoniei+Riga+Latvia", category: "cladiri_teatre", city: "Riga" },
     { name: "Piața Centrală din Riga Riga", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Riga+Riga+Latvia", category: "cladiri_teatre", city: "Riga" },
@@ -11020,7 +11308,7 @@ const ATTRACTIONS = {
     { name: "Castelul Glehn Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Glehn+Tallinn+Estonia", category: "castele_palate", city: "Tallinn" },
     { name: "Conacul Viimsi Viimsi (Zona metropolitană)", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Viimsi+Viimsi+(Zona+metropolitană)+Estonia", category: "castele_palate", city: "Viimsi (Zona metropolitană)" },
     { name: "Conacul Saka de Coastă (Tranzit Est)", url: "https://www.google.com/maps/search/?api=1&query=Conacul+Saka+de+Coastă+(Tranzit+Est)+Estonia", category: "castele_palate", city: "de Coastă (Tranzit Est)" },
-    { name: "Zidurile Medievale din Tallinn Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Tallinn+Tallinn+Estonia", category: "cetati_turnuri", city: "Tallinn" },
+    { name: "Zidurile Medievale din Tallinn Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Zidurile+Medievale+din+Tallinn+Tallinn+Estonia", category: "cetati_turnuri", city: "Tallinn", recommended: true },
     { name: "Turnul Kiek in de Kök Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Kiek+in+de+Kök+Tallinn+Estonia", category: "cetati_turnuri", city: "Tallinn" },
     { name: "Turnul Hermann cel Lung Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Hermann+cel+Lung+Tallinn+Estonia", category: "cetati_turnuri", city: "Tallinn" },
     { name: "Turnul Margareta cea Grasă Tallinn", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Margareta+cea+Grasă+Tallinn+Estonia", category: "cetati_turnuri", city: "Tallinn" },
@@ -11438,7 +11726,7 @@ const ATTRACTIONS = {
     { name: "Satul Tradițional Kalopanayiotis Munții Troodos", url: "https://www.google.com/maps/search/?api=1&query=Satul+Tradițional+Kalopanayiotis+Munții+Troodos+Cyprus", category: "cladiri_teatre", city: "Munții Troodos" },
   ],
   mt: [
-    { name: "Orașul vechi Valletta", url: "https://www.google.com/maps/search/?api=1&query=Valletta+Old+Town+Malta", category: "cladiri_teatre" },
+    { name: "Orașul vechi Valletta", url: "https://www.google.com/maps/search/?api=1&query=Valletta+Old+Town+Malta", category: "cladiri_teatre", recommended: true },
     { name: "Templele megalitice Ħaġar Qim", url: "https://www.google.com/maps/search/?api=1&query=Hagar+Qim+Malta", category: "cladiri_teatre" },
     { name: "Cetatea Mdina", url: "https://www.google.com/maps/search/?api=1&query=Mdina+Malta", category: "cetati_turnuri" },
     { name: "Laguna Albastră, Comino", url: "https://www.google.com/maps/search/?api=1&query=Blue+Lagoon+Comino+Malta", category: "natura" },
@@ -11447,7 +11735,7 @@ const ATTRACTIONS = {
     { name: "Peșterile Għar Dalam", url: "https://www.google.com/maps/search/?api=1&query=Ghar+Dalam+Malta", category: "natura" },
   ],
   lu: [
-    { name: "Cazematele Bock", url: "https://www.google.com/maps/search/?api=1&query=Bock+Casemates+Luxembourg", category: "cetati_turnuri" },
+    { name: "Cazematele Bock", url: "https://www.google.com/maps/search/?api=1&query=Bock+Casemates+Luxembourg", category: "cetati_turnuri", recommended: true },
     { name: "Palatul Marelui Duce", url: "https://www.google.com/maps/search/?api=1&query=Grand+Ducal+Palace+Luxembourg", category: "castele_palate" },
     { name: "Castelul Vianden", url: "https://www.google.com/maps/search/?api=1&query=Vianden+Castle+Luxembourg", category: "castele_palate" },
     { name: "Valea Mullerthal", url: "https://www.google.com/maps/search/?api=1&query=Mullerthal+Luxembourg", category: "natura" },
@@ -11456,7 +11744,7 @@ const ATTRACTIONS = {
     { name: "Castelul Bourscheid", url: "https://www.google.com/maps/search/?api=1&query=Bourscheid+Castle+Luxembourg", category: "cetati_turnuri" },
   ],
   tr: [
-    { name: "Palatul Topkapı Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Topkapı+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
+    { name: "Palatul Topkapı Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Topkapı+Istanbul+Turkey", category: "castele_palate", city: "Istanbul", recommended: true },
     { name: "Palatul Dolmabahçe Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Dolmabahçe+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
     { name: "Palatul Beylerbeyi Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Beylerbeyi+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
     { name: "Castelul Yıldız Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Yıldız+Istanbul+Turkey", category: "castele_palate", city: "Istanbul" },
@@ -11465,7 +11753,7 @@ const ATTRACTIONS = {
     { name: "Turnul Galata Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Galata+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
     { name: "Turnul Fecioarei Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Turnul+Fecioarei+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
     { name: "Fortăreața Yedikule Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Fortăreața+Yedikule+Istanbul+Turkey", category: "cetati_turnuri", city: "Istanbul" },
-    { name: "Sfânta Sofia Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Sfânta+Sofia+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
+    { name: "Sfânta Sofia Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Sfânta+Sofia+Istanbul+Turkey", category: "manastiri", city: "Istanbul", recommended: true },
     { name: "Moscheea Albastră Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Albastră+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
     { name: "Moscheea Süleymaniye Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Moscheea+Süleymaniye+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
     { name: "Biserica Chora Istanbul", url: "https://www.google.com/maps/search/?api=1&query=Biserica+Chora+Istanbul+Turkey", category: "manastiri", city: "Istanbul" },
@@ -13303,6 +13591,19 @@ main{padding-top:8px;}
 .fav-star{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;padding:8px;min-width:36px;min-height:36px;}
 /* Acordeon de obiective turistice, cu lazy-loading (vezi buildAttractionAccordionScript) */
 .attraction-accordion-list{list-style:none;margin:14px 18px 0;display:flex;flex-direction:column;gap:8px;}
+.category-context-filter{display:flex;align-items:center;gap:6px;margin:6px 18px 0;font-size:12.5px;color:var(--muted);cursor:pointer;}
+.category-context-filter input{cursor:pointer;}
+.attraction-alpha-index{display:flex;flex-wrap:wrap;gap:4px;margin:8px 18px 0;}
+.alpha-index-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;padding:4px 8px;min-width:26px;cursor:pointer;}
+.alpha-index-btn:hover,.alpha-index-btn:active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.attraction-accordion-item.alpha-jump-highlight{outline:2px solid var(--accent);outline-offset:2px;transition:outline-color .3s;}
+.attraction-recommended-badge{margin-right:4px;}
+.vote-widget{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;}
+.vote-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;color:var(--text);font-size:13.5px;font-weight:600;padding:10px 18px;cursor:pointer;font-family:var(--font-body);}
+.vote-btn:hover{border-color:var(--accent);}
+.vote-btn.voted{color:var(--accent);border-color:var(--accent);cursor:default;}
+.vote-btn:disabled{opacity:.85;}
+.vote-popular-badge{font-size:12.5px;font-weight:700;color:var(--accent);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 12px;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -14274,11 +14575,47 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
 // magazin (nu avem adrese exacte de sucursale) — asta ar fi o precizie
 // falsă. Harta oferă context vizual + zoom/pan; pentru locația exactă a
 // unui brand anume, link-urile din pagină duc spre căutarea reală Google Maps.
-function buildCityMapHtml(coords, cityName, nonce) {
+// Etichete pentru harta unificată — cerut explicit, gol găsit la verificare:
+// funcția nici nu primea parametru de limbă, textele erau hardcodate
+// românește, indiferent de pagina pe care apărea harta (inclusiv pe .eu,
+// în alte limbi).
+const MAP_UNIFIED_TOGGLE_LABELS = {
+  ro: "⚡ Deschise Acum / Acces 24/7", uk: "⚡ Open Now / Free Access", de: "⚡ Jetzt geöffnet / Freier Zugang",
+  fr: "⚡ Ouvert maintenant / Accès libre", es: "⚡ Abierto ahora / Acceso libre", it: "⚡ Aperto ora / Accesso libero",
+  pl: "⚡ Otwarte teraz / Wolny dostęp", nl: "⚡ Nu geopend / Vrije toegang", da: "⚡ Åben nu / Fri adgang",
+  cz: "⚡ Nyní otevřeno / Volný přístup", fi: "⚡ Nyt auki / Vapaa pääsy", gr: "⚡ Ανοιχτό τώρα / Ελεύθερη πρόσβαση",
+  hu: "⚡ Most nyitva / Szabad bejárás", hr: "⚡ Sada otvoreno / Slobodan pristup", sk: "⚡ Teraz otvorené / Voľný prístup",
+  si: "⚡ Zdaj odprto / Prost dostop", lt: "⚡ Dabar atidaryta / Laisvas įėjimas", lv: "⚡ Tagad atvērts / Brīva piekļuve",
+  pt: "⚡ Aberto agora / Acesso livre", se: "⚡ Öppet nu / Fritt tillträde", ee: "⚡ Praegu avatud / Vaba juurdepääs",
+};
+const MAP_LOADING_STORES_LABELS = {
+  ro: "Se încarcă statusul live al magazinelor...", uk: "Loading live store status...", de: "Live-Status der Geschäfte wird geladen …",
+  fr: "Chargement du statut en direct des magasins…", es: "Cargando el estado en vivo de las tiendas…", it: "Caricamento dello stato in tempo reale dei negozi…",
+  pl: "Ładowanie statusu sklepów na żywo…", nl: "Live status van winkels wordt geladen…", da: "Indlæser butikkers live-status…",
+  cz: "Načítání živého stavu obchodů…", fi: "Ladataan kauppojen reaaliaikaista tilaa…", gr: "Φόρτωση ζωντανής κατάστασης καταστημάτων…",
+  hu: "Üzletek élő állapotának betöltése…", hr: "Učitavanje statusa trgovina uživo…", sk: "Načítava sa živý stav obchodov…",
+  si: "Nalaganje statusa trgovin v živo…", lt: "Įkeliama parduotuvių gyva būsena…", lv: "Ielādē veikalu tiešraides statusu…",
+  pt: "A carregar o estado em direto das lojas…", se: "Laddar butikers livestatus…", ee: "Poodide reaalajas oleku laadimine…",
+};
+const MAP_LOADING_ATTRACTIONS_LABELS = {
+  ro: "Se încarcă obiectivele turistice...", uk: "Loading tourist attractions...", de: "Sehenswürdigkeiten werden geladen …",
+  fr: "Chargement des sites touristiques…", es: "Cargando las atracciones turísticas…", it: "Caricamento delle attrazioni turistiche…",
+  pl: "Ładowanie atrakcji turystycznych…", nl: "Toeristische attracties worden geladen…", da: "Indlæser seværdigheder…",
+  cz: "Načítání turistických zajímavostí…", fi: "Ladataan nähtävyyksiä…", gr: "Φόρτωση τουριστικών αξιοθέατων…",
+  hu: "Turisztikai látnivalók betöltése…", hr: "Učitavanje turističkih znamenitosti…", sk: "Načítavajú sa turistické atrakcie…",
+  si: "Nalaganje turističnih znamenitosti…", lt: "Įkeliamos lankytinos vietos…", lv: "Ielādē tūrisma apskates vietas…",
+  pt: "A carregar as atrações turísticas…", se: "Laddar sevärdheter…", ee: "Vaatamisväärsuste laadimine…",
+};
+function mapUnifiedToggleLabelFor(lang) { return MAP_UNIFIED_TOGGLE_LABELS[lang] || MAP_UNIFIED_TOGGLE_LABELS.uk; }
+function mapLoadingStoresLabelFor(lang) { return MAP_LOADING_STORES_LABELS[lang] || MAP_LOADING_STORES_LABELS.uk; }
+function mapLoadingAttractionsLabelFor(lang) { return MAP_LOADING_ATTRACTIONS_LABELS[lang] || MAP_LOADING_ATTRACTIONS_LABELS.uk; }
+
+function buildCityMapHtml(coords, cityName, nonce, lang) {
   if (!coords) return "";
 
-  const toggleHtml = `<label class="map-live-toggle"><input type="checkbox" id="mapOpenOnlyToggle"> Doar magazinele deschise acum</label>
-<p id="mapLiveStatus" class="map-live-status">Se încarcă statusul live al magazinelor...</p>`;
+  const toggleHtml = `<label class="map-live-toggle map-live-toggle-unified"><input type="checkbox" id="mapUnifiedOpenOnlyToggle"> ${escapeHtml(mapUnifiedToggleLabelFor(lang))}</label>
+<p id="mapLiveStatus" class="map-live-status">${escapeHtml(mapLoadingStoresLabelFor(lang))}</p>
+<p id="mapAttractionsLiveStatus" class="map-live-status">${escapeHtml(mapLoadingAttractionsLabelFor(lang))}</p>`;
 
   // dacă avem cheie Google Maps, o folosim pe aceea — altfel, fallback automat
   // pe OpenStreetMap + Leaflet (gratuit, fără cont/cheie necesară)
@@ -14329,7 +14666,7 @@ function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
 <script nonce="${nonce}">
 (function(){
   var statusEl = document.getElementById("mapLiveStatus");
-  var toggle = document.getElementById("mapOpenOnlyToggle");
+  var toggle = document.getElementById("mapUnifiedOpenOnlyToggle");
   if (!statusEl) return;
 
   function whenMapReady(cb, attemptsLeft){
@@ -14413,6 +14750,265 @@ function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
 </script>`;
 }
 
+// Pinuri de OBIECTIVE TURISTICE, pe aceeași hartă — la cerere explicită.
+// Culoare distinctă (albastru/gri), NU verde/roșu ca la magazine, ca cele
+// două categorii să fie ușor de distins vizual din prima privire, fără
+// legendă separată.
+function buildLiveAttractionsMapPinsScript(orasDisplay, countryCode, lang, nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var statusEl = document.getElementById("mapAttractionsLiveStatus");
+  var toggle = document.getElementById("mapUnifiedOpenOnlyToggle");
+  if (!statusEl) return;
+
+  function whenMapReady(cb, attemptsLeft){
+    if (window.__cityMapInstance) { cb(); return; }
+    if (attemptsLeft <= 0) return;
+    setTimeout(function(){ whenMapReady(cb, attemptsLeft - 1); }, 200);
+  }
+
+  whenMapReady(function(){
+    fetch("/api/city-attractions-map?oras=" + encodeURIComponent(${safeJson(orasDisplay)}) + "&tara=" + encodeURIComponent(${safeJson(countryCode)}) + "&lang=" + encodeURIComponent(${safeJson(lang)}))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var attractions = (data && data.attractions) || [];
+        if (!attractions.length) { statusEl.textContent = "Nu am găsit obiective turistice cu poziție confirmată pentru harta live."; return; }
+        statusEl.textContent = attractions.length + " obiective găsite — " + attractions.filter(function(a){ return a.isOpenNow; }).length + " deschise acum.";
+
+        var PIN_SVG_PATH = "M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z";
+        function buildPinSvgHtml(color){
+          return '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))"><path d="' + PIN_SVG_PATH + '" fill="' + color + '" stroke="#1a1a1a" stroke-width="0.5"/></svg>';
+        }
+
+        var markers = [];
+        var backend = window.__cityMapBackend;
+
+        attractions.forEach(function(attraction){
+          // albastru = deschis/acces liber, gri = închis SAU necunoscut —
+          // deliberat, nu roșu (roșu ar sugera o certitudine "închis" pe
+          // care n-o avem mereu; gri comunică mai corect incertitudinea)
+          var color = attraction.isOpenNow ? "#3B82F6" : "#6B7280";
+          var marker;
+          if (backend === "google" && typeof google !== "undefined") {
+            marker = new google.maps.Marker({
+              position: { lat: attraction.lat, lng: attraction.lng },
+              map: window.__cityMapInstance,
+              title: attraction.name,
+              icon: {
+                path: PIN_SVG_PATH,
+                fillColor: color,
+                fillOpacity: 1,
+                strokeColor: "#1a1a1a",
+                strokeWeight: 1,
+                scale: 1.4,
+                anchor: new google.maps.Point(12, 24),
+              },
+            });
+          } else if (backend === "leaflet" && typeof L !== "undefined") {
+            var pinIcon = L.divIcon({
+              html: buildPinSvgHtml(color),
+              className: "",
+              iconSize: [28, 28],
+              iconAnchor: [14, 28],
+              popupAnchor: [0, -28],
+            });
+            marker = L.marker([attraction.lat, attraction.lng], { icon: pinIcon })
+              .addTo(window.__cityMapInstance)
+              .bindPopup(attraction.name + (attraction.isOpenNow ? " — deschis acum" : " — închis acum / necunoscut"));
+          }
+          if (marker) markers.push({ marker: marker, isOpenNow: attraction.isOpenNow, backend: backend });
+        });
+
+        function applyFilter(){
+          var onlyOpen = toggle && toggle.checked;
+          markers.forEach(function(m){
+            var visible = !onlyOpen || m.isOpenNow;
+            if (m.backend === "google") {
+              m.marker.setVisible(visible);
+            } else {
+              var el = m.marker.getElement && m.marker.getElement();
+              if (el) el.style.display = visible ? "" : "none";
+            }
+          });
+        }
+
+        if (toggle) toggle.addEventListener("change", applyFilter);
+      })
+      .catch(function(){ statusEl.textContent = "Nu am putut încărca obiectivele turistice."; });
+  }, 25);
+})();
+</script>`;
+}
+
+
+// Filtrare "doar deschise acum" pe LISTA de obiective de pe prima pagină
+// (nu doar pe hartă) — cerut explicit ("de ce doar la hartă, nu și pe
+// prima pagină?"). Calculăm status-ul complet CLIENT-SIDE, folosind aceeași
+// logică exactă de pe server (categorie + acces liber) — NICIO cerere nouă
+// către server sau Google, cost $0, la fel ca la insignele de magazine.
+// NU verifică date live individuale (ar necesita o cerere per obiectiv,
+// exact ce evităm) — doar acces liber + program generic pe categorie,
+// aceeași aproximare, nu perfectă, dar suficientă pentru un filtru rapid.
+function buildAttractionListFilterScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var STORAGE_KEY = "poa_open_only_mode_v1";
+  var SCHEDULES = ${safeJson(CATEGORY_GENERIC_SCHEDULE)};
+  var FREE_PREFIXES = ${safeJson(FREE_ACCESS_PREFIXES)};
+
+  function isFreeAccess(name){
+    for (var i=0;i<FREE_PREFIXES.length;i++){
+      var p = FREE_PREFIXES[i];
+      if (name === p || name.indexOf(p + " ") === 0) return true;
+    }
+    return false;
+  }
+
+  function computeGenericOpen(schedule){
+    var now = new Date();
+    var today = schedule[now.getDay()];
+    if (!today) return false;
+    var nowMin = now.getHours()*60 + now.getMinutes();
+    var op = today.open.split(":"), cl = today.close.split(":");
+    var openMin = (+op[0])*60 + (+op[1]), closeMin = (+cl[0])*60 + (+cl[1]);
+    return nowMin >= openMin && nowMin < closeMin;
+  }
+
+  // reflectă exact ordinea din determineAttractionOpenStatus (server) —
+  // fără treapta "live" (n-o trimitem la listă, ar costa per obiectiv)
+  function isOpenForFilter(name, category){
+    if (isFreeAccess(name)) return true;
+    var schedule = SCHEDULES[category];
+    if (schedule) return computeGenericOpen(schedule);
+    return null; // necunoscut — nu presupunem, dar nici nu ascundem (vezi mai jos)
+  }
+
+  function itemIsOpen(li){
+    var star = li.querySelector(".fav-star[data-name]");
+    var name = star ? star.getAttribute("data-name") : "";
+    var category = li.getAttribute("data-category") || "";
+    return isOpenForFilter(name, category);
+  }
+
+  // Filtrul GLOBAL (comutatorul principal, de deasupra listei) — cerut
+  // explicit: sincronizat prin localStorage, ca preferința să rămână
+  // activă și după ce utilizatorul comută pe tab-ul de magazine, sau chiar
+  // dacă reîncarcă pagina.
+  function applyGlobalFilter(){
+    var toggle = document.getElementById("attractionListOpenOnlyToggle");
+    var onlyOpen = toggle && toggle.checked;
+    var items = document.querySelectorAll(".attraction-accordion-item");
+    items.forEach(function(li){
+      if (!onlyOpen) { li.style.display = ""; return; }
+      li.style.display = (itemIsOpen(li) === false) ? "none" : "";
+    });
+  }
+
+  // Filtrul CONTEXTUAL (checkbox-ul discret, sub titlul FIECĂREI categorii
+  // extinse) — cerut explicit: independent de cel global, se aplică DOAR
+  // în interiorul categoriei respective, nu salvat în localStorage (e o
+  // ajustare rapidă, temporară, cât timp explorezi ACEA categorie, nu o
+  // preferință de navigare pe tot site-ul).
+  function applyCategoryFilter(checkbox){
+    var group = checkbox.closest(".attraction-category-group");
+    if (!group) return;
+    var onlyOpen = checkbox.checked;
+    var items = group.querySelectorAll(".attraction-accordion-item");
+    items.forEach(function(li){
+      if (!onlyOpen) { li.style.display = ""; return; }
+      li.style.display = (itemIsOpen(li) === false) ? "none" : "";
+    });
+  }
+
+  function wireCategoryCheckboxes(){
+    document.querySelectorAll(".category-open-only-checkbox").forEach(function(cb){
+      if (cb.__wired) return;
+      cb.__wired = true;
+      cb.addEventListener("change", function(){ applyCategoryFilter(cb); });
+    });
+  }
+
+  // Index alfabetic (Quick-Jump) — cerut explicit, pentru categoriile mari
+  // (Italia/Germania, 100+ obiective). Sare la primul obiectiv cu litera
+  // aleasă, DOAR în interiorul categoriei respective (fiecare categorie
+  // are propriul index, independent).
+  function wireAlphaButtons(){
+    document.querySelectorAll(".alpha-index-btn").forEach(function(btn){
+      if (btn.__wired) return;
+      btn.__wired = true;
+      btn.addEventListener("click", function(){
+        var group = btn.closest(".attraction-category-group");
+        if (!group) return;
+        var letter = btn.getAttribute("data-jump-letter");
+        var target = group.querySelector('.attraction-accordion-item[data-letter="' + letter + '"]');
+        if (target && target.scrollIntoView) {
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+          target.classList.add("alpha-jump-highlight");
+          setTimeout(function(){ target.classList.remove("alpha-jump-highlight"); }, 1500);
+        }
+      });
+    });
+  }
+
+  // Sortare "Recomandate primele" — cerut explicit: reordonare pur
+  // client-side (fără nicio cerere nouă către server), mută elementele cu
+  // data-recommended="true" la începutul listei, păstrând restul ordinii
+  // (deja alfabetică) neschimbate. Independent per categorie, ca la
+  // filtrul contextual.
+  function wireRecommendedFirstCheckboxes(){
+    document.querySelectorAll(".category-recommended-first-checkbox").forEach(function(cb){
+      if (cb.__wired) return;
+      cb.__wired = true;
+      cb.addEventListener("change", function(){
+        var group = cb.closest(".attraction-category-group");
+        if (!group) return;
+        var list = group.querySelector(".attraction-accordion-list");
+        if (!list) return;
+        var items = Array.prototype.slice.call(list.children);
+        if (cb.checked) {
+          var recommended = items.filter(function(li){ return li.getAttribute("data-recommended") === "true"; });
+          var rest = items.filter(function(li){ return li.getAttribute("data-recommended") !== "true"; });
+          recommended.concat(rest).forEach(function(li){ list.appendChild(li); });
+        } else {
+          // revenim la ordinea alfabetică originală, salvată prima dată
+          if (!list.__originalOrder) list.__originalOrder = items.slice();
+          list.__originalOrder.forEach(function(li){ list.appendChild(li); });
+        }
+      });
+    });
+  }
+
+
+    // la încărcare — preia preferința salvată (dacă exista, de la
+    // comutatorul de magazine sau de la o vizită anterioară)
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === "1") globalToggle.checked = true;
+    } catch (e) {}
+    globalToggle.addEventListener("change", function(){
+      try { localStorage.setItem(STORAGE_KEY, globalToggle.checked ? "1" : "0"); } catch (e) {}
+      applyGlobalFilter();
+    });
+    applyGlobalFilter();
+  }
+
+  wireCategoryCheckboxes();
+  wireAlphaButtons();
+  wireRecommendedFirstCheckboxes();
+
+  // MutationObserver — prinde și blocurile de țară încărcate leneș ulterior
+  // (fiecare țară se încarcă la cerere, când utilizatorul o selectează)
+  var observer = new MutationObserver(function(){
+    wireCategoryCheckboxes();
+    wireAlphaButtons();
+    wireRecommendedFirstCheckboxes();
+    if (globalToggle && globalToggle.checked) applyGlobalFilter();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>`;
+}
 
 function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAttractionCountry) {
   return `
@@ -15237,9 +15833,11 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 
   <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
 
+  <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> Doar magazinele deschise acum</label>
+
   ${listItemsGroupedHtml}
 
-  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
+  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce, "ro")}
 
   ${buildCityFaqHtml({ orasDisplay, lang: "ro" })}
 
@@ -15252,6 +15850,7 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, "ro", nonce)}
+${buildLiveAttractionsMapPinsScript(orasDisplay, "ro", "ro", nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
@@ -15567,12 +16166,14 @@ async function renderIntlCityPage({ countryCode, orasSlug, orasDisplay, baseUrl,
     <div id="siteSearchResults" class="search-results"></div>
   </div>
   <h1 class="page-h1">${escapeHtml(orasDisplay)}</h1>
+  <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(openOnlyStoreLabelFor(activeLang))}</label>
   ${listItemsGroupedHtml}
-  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce)}
+  ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce, activeLang)}
   ${buildCityFaqHtml({ orasDisplay, lang: activeLang })}
 </main>
 ${buildListStatusBadgeScript(nonce, statusDataset)}
 ${buildLiveMapPinsScript(orasDisplay, lang, nonce)}
+${buildLiveAttractionsMapPinsScript(orasDisplay, countryCode, lang, nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
 
   return pageShell({
@@ -15771,6 +16372,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
+    <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
   </div>
@@ -15792,6 +16394,7 @@ ${buildTabsScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], null, activeLang, primaryAttractionCountry)}
 ${buildAttractionLazyScript(nonce, activeLang)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity, primaryAttractionCountry)}
+${buildAttractionListFilterScript(nonce)}
 ${buildAttractionAccordionScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, getExtraLabels(activeLang).pushSub, getExtraLabels(activeLang).pushUnsub) : ""}`;
 
@@ -16539,6 +17142,8 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   const canonical = `${baseUrl}/obiectiv/${slug}`;
 
   const live = await tryGetLiveStatus(slug, "ro", "attraction", isBotRequest(userAgent), ip);
+  const voteCount = await getAttractionVoteCount(slug);
+  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
 
   let statusHtml;
   let widgetHtml = "";
@@ -16615,6 +17220,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   ${adSlotHtml()}
 
   ${statusHtml}
+  ${buildVoteWidgetHtml(slug, voteCount, isPopular, "ro")}
   ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name) })}
@@ -16632,6 +17238,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
 </main>
 ${schemaHtml}
 ${widgetScriptHtml}
+${buildVoteWidgetScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}`;
 
@@ -16656,6 +17263,8 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 
   const googleLang = toGoogleLang(activeLang);
   const live = await tryGetLiveStatus(slug, googleLang, "attraction", isBotRequest(userAgent), ip);
+  const voteCount = await getAttractionVoteCount(slug);
+  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
 
   let statusHtml;
   let widgetHtml = "";
@@ -16721,6 +17330,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   </div>
 
   ${statusHtml}
+  ${buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
   ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) })}
@@ -16733,6 +17343,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 </main>
 ${schemaHtml}
 ${widgetScriptHtml}
+${buildVoteWidgetScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
@@ -16920,6 +17531,7 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
+    <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
     <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
     <div class="attraction-accordion-wrap">${attractionItemsHtml}</div>
   </div>
@@ -16942,6 +17554,7 @@ ${buildTabsScript(nonce)}
 ${buildCitySearchScript(nonce)}
 ${buildGeoScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1", "ro")}
+${buildAttractionListFilterScript(nonce)}
 ${buildAttractionAccordionScript(nonce)}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
 
@@ -17544,6 +18157,41 @@ app.post("/api/report-issue", async (req, res) => {
   }
 });
 
+// Vot anonim, tăcut — cerut explicit: un singur click, fără text, fără
+// moderare. Protecție anti-abuz în 2 straturi: (1) UNIQUE(slug, ip_hash) în
+// bază — un IP nu poate vota de două ori pe ACELAȘI obiectiv, aplicat la
+// nivel de bază de date, nu doar în cod (mai sigur); (2) limitare de rată
+// generală, ca la raportare — un IP nu poate vota masiv, pe sute de
+// obiective diferite, rapid.
+app.post("/api/vote-attraction", async (req, res) => {
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const { slug } = req.body || {};
+  if (typeof slug !== "string" || !slug || slug.length > 255) {
+    res.status(400).json({ error: "invalid_input" });
+    return;
+  }
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "vote-attraction", 30, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+  try {
+    await dbPool.query(
+      `INSERT INTO attraction_votes (slug, ip_hash) VALUES ($1, $2) ON CONFLICT (slug, ip_hash) DO NOTHING`,
+      [slug, ipHash]
+    );
+    const count = await getAttractionVoteCount(slug);
+    res.status(200).json({ ok: true, count, isPopular: count >= VOTE_POPULAR_THRESHOLD });
+  } catch (err) {
+    console.error("vote-attraction a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.get("/api/city-live-map", async (req, res) => {
   if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) {
     res.status(503).json({ error: "not_configured" });
@@ -17603,6 +18251,69 @@ app.get("/api/city-live-map", async (req, res) => {
     res.status(200).json({ stores: results.filter(Boolean) });
   } catch (err) {
     console.error("city-live-map a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Hartă pentru OBIECTIVE TURISTICE — la cerere explicită, aceeași structură
+// ca /api/city-live-map, dar pentru tip='attraction'. Statusul pentru
+// fiecare obiectiv se calculează în ordine de încredere: 1) date live reale
+// din cache (dacă există) 2) program generic pe categorie (dacă are
+// categoria una definită — vezi CATEGORY_GENERIC_SCHEDULE) 3) acces liber
+// (poduri, lacuri — mereu "deschis") 4) necunoscut — arătăm pinul, dar fără
+// culoare de status (nu presupunem). cacheOnly: true la fel ca la magazine
+// — NICIO cerere nouă către Google, niciodată, de la această rută.
+app.get("/api/city-attractions-map", async (req, res) => {
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const rateOk = await checkRateLimit(hashIp(getClientIp(req)), "city-attractions-map", 15, 10);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
+  const orasDisplay = toDisplayName(req.query.oras || "");
+  const countryCode = typeof req.query.tara === "string" ? req.query.tara : "ro";
+  const lang = typeof req.query.lang === "string" ? req.query.lang : "ro";
+  if (!orasDisplay) {
+    res.status(400).json({ error: "missing_oras" });
+    return;
+  }
+  try {
+    const { rows } = await dbPool.query(
+      "SELECT nume_locatie, slug, place_id FROM locatii WHERE oras = $1 AND tip = 'attraction'",
+      [orasDisplay]
+    );
+    const validRows = rows.filter((r) => r.place_id && r.place_id !== "ZERO_RESULTS" && !r.place_id.startsWith("ERROR_"));
+    const categoryByName = new Map((ATTRACTIONS[countryCode] || []).map((a) => [a.name, a.category]));
+
+    const results = await Promise.all(
+      validRows.map(async (row) => {
+        try {
+          const category = categoryByName.get(row.nume_locatie);
+          let liveIsOpenNow = null;
+          let liveLat = null, liveLng = null;
+          if (GOOGLE_PLACES_API_KEY_LIVE) {
+            const status = await getLocationStatus({ pool: dbPool, placeId: row.place_id, apiKey: GOOGLE_PLACES_API_KEY_LIVE, language: lang, cacheOnly: true, ttlHours: 720 });
+            if (!status.skipped) {
+              liveLat = status.lat; liveLng = status.lng;
+              liveIsOpenNow = status.isOpenNow;
+            }
+          }
+          const { isOpenNow } = determineAttractionOpenStatus({ name: row.nume_locatie, category, liveIsOpenNow });
+          if (liveLat == null || liveLng == null) return null; // fără coordonate reale, nu inventăm poziția
+          return { name: row.nume_locatie, slug: row.slug, lat: liveLat, lng: liveLng, isOpenNow };
+        } catch (e) {
+          return null;
+        }
+      })
+    );
+
+    res.status(200).json({ attractions: results.filter(Boolean) });
+  } catch (err) {
+    console.error("city-attractions-map a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
   }
 });
