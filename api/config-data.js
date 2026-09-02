@@ -1108,6 +1108,38 @@ exports.DISCOVERCARS_CITY_LINKS = {
   "Manchester": "https://www.discovercars.com/ro/united-kingdom/manchester?a_aid=23ea55cb",
   "Birmingham": "https://www.discovercars.com/ro/united-kingdom/birmingham?a_aid=23ea55cb",
   "Glasgow": "https://www.discovercars.com/ro/united-kingdom/glasgow?a_aid=23ea55cb",
+  // Grecia — plaje, linkuri furnizate direct (23ea55cb). Cheile trebuie să
+  // fie IDENTICE cu câmpul `city` folosit pe fiecare plajă în date — Rodos
+  // are 7 zone diferite folosite ca `city` (nu doar "Rodos"), toate
+  // primesc același link (aceeași insulă, un singur punct de ridicare
+  // relevant). Athena foloseşte "Riviera Ateniană" ca `city`, nu "Athena".
+  "Zakynthos": "https://www.discovercars.com/greece/zakynthos?a_aid=23ea55cb",
+  "Lefkada": "https://www.discovercars.com/greece/lefkada?a_aid=23ea55cb",
+  "Corfu": "https://www.discovercars.com/greece/corfu?a_aid=23ea55cb",
+  "Chania": "https://www.discovercars.com/greece-crete/chania?a_aid=23ea55cb",
+  "Heraklion": "https://www.discovercars.com/greece-crete/heraklion?a_aid=23ea55cb",
+  "Rethymno": "https://www.discovercars.com/greece-crete/rethymno?a_aid=23ea55cb",
+  "Lindos": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Faliraki": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Archangelos": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Prasonisi": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Kallithea": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Rhodos Town": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Afandou": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Milos": "https://www.discovercars.com/greece/milos?a_aid=23ea55cb",
+  "Kassandra": "https://www.discovercars.com/greece/kassandra?a_aid=23ea55cb",
+  "Sithonia": "https://www.discovercars.com/greece/sithonia?a_aid=23ea55cb",
+  "Riviera Ateniană": "https://www.discovercars.com/greece/athens?a_aid=23ea55cb",
+  "Nafplio": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Patras": "https://www.discovercars.com/greece/patra?a_aid=23ea55cb",
+  // Restul Peloponezului (Pylos, Kardamili, Mani) — nu a venit link dedicat
+  // pentru ele; folosim cel de Nafplio ca aproximare rezonabilă pentru toată
+  // regiunea, până apare un link specific.
+  "Pylos": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Kardamili": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Mani": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Monemvasia": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Thassos": "https://www.discovercars.com/greece/thassos?a_aid=23ea55cb",
 }
 
 exports.GLOVO_COUNTRIES = ["ro", "es", "it", "pt", "pl", "hr"]
