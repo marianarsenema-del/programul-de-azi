@@ -1618,46 +1618,60 @@ const BEACH_CONTENT_LABELS_RO = {
   turisti: "💬 Ce spun turiștii despre această plajă",
   tips: "💡 Informații practice & tips locale",
 };
-function buildBeachContentIntroHtml(content) {
+const BEACH_CONTENT_LABELS_UK = {
+  scurt: "🧭 About this beach",
+  cumAjungi: "🚗 How to get there",
+  echipament: "🎒 Beach gear & activities — our picks",
+  preturi: "💰 What to expect, price-wise",
+  turisti: "💬 What travelers say about this beach",
+  tips: "💡 Practical info & local tips",
+};
+function beachContentLabelsFor(lang) {
+  return lang === "uk" ? BEACH_CONTENT_LABELS_UK : BEACH_CONTENT_LABELS_RO;
+}
+function buildBeachContentIntroHtml(content, lang) {
   if (!content) return "";
+  const L = beachContentLabelsFor(lang);
   return `<div class="beach-content-block">
-    <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.scurt)}</h3>
+    <h3 class="beach-content-heading">${escapeHtml(L.scurt)}</h3>
     <p class="beach-content-text">${escapeHtml(content.scurt)}</p>
   </div>`;
 }
 function buildBeachContentEquipmentHtml(content, lang) {
   if (!content || !content.echipament || !content.echipament.length) return null; // null = cade pe placeholder-ul generic
+  const L = beachContentLabelsFor(lang);
   const itemsHtml = content.echipament
     .map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`)
     .join("");
   return `<div class="beach-content-block beach-content-equipment">
-    <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.echipament)}</h3>
+    <h3 class="beach-content-heading">${escapeHtml(L.echipament)}</h3>
     <ul class="beach-content-list">${itemsHtml}</ul>
   </div>`;
 }
-function buildBeachContentRestHtml(content) {
+function buildBeachContentRestHtml(content, lang) {
   if (!content) return "";
+  const L = beachContentLabelsFor(lang);
   const preturiHtml = content.preturi
     ? `<div class="beach-content-block">
-        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.preturi)}</h3>
+        <h3 class="beach-content-heading">${escapeHtml(L.preturi)}</h3>
         <p class="beach-content-text">${escapeHtml(content.preturi)}</p>
       </div>`
     : "";
   const turistiHtml = content.turisti && content.turisti.length
     ? `<div class="beach-content-block">
-        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.turisti)}</h3>
+        <h3 class="beach-content-heading">${escapeHtml(L.turisti)}</h3>
         <ul class="beach-content-list">${content.turisti.map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`).join("")}</ul>
       </div>`
     : "";
   const tipsHtml = content.tips && content.tips.length
     ? `<div class="beach-content-block">
-        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.tips)}</h3>
+        <h3 class="beach-content-heading">${escapeHtml(L.tips)}</h3>
         <ul class="beach-content-list">${content.tips.map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`).join("")}</ul>
       </div>`
     : "";
   const cumAjungiHtml = content.cumAjungi
     ? `<div class="beach-content-block">
-        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.cumAjungi)}</h3>
+        <h3 class="beach-content-heading">${escapeHtml(L.cumAjungi)}</h3>
         <p class="beach-content-text">${escapeHtml(content.cumAjungi)}</p>
       </div>`
     : "";
@@ -3386,6 +3400,26 @@ const ATTRACTIONS = require("./attractions-data.js");
 // Conținut editorial per plajă (Grecia) — furnizat direct de proprietar,
 // DOAR în română momentan (vezi nota din beach-content-data.js).
 const BEACH_CONTENT_DATA = require("./beach-content-data.js");
+// Traduceri per-limbă ale conținutului de plajă — încărcate LENEȘ (doar la
+// prima cerere reală în acea limbă, nu la pornirea serverului), ca să nu
+// crească memoria/timpul de Cold Start pentru limbi rar cerute. Fișierele
+// se pun în aceeași structură: beach-content-<lang>.js.
+const BEACH_CONTENT_LANG_CACHE = {};
+function getBeachContentForLang(attractionName, lang) {
+  if (lang === "ro") return BEACH_CONTENT_DATA[attractionName] || null;
+  if (!BEACH_CONTENT_LANG_FILES[lang]) return null; // nicio traducere disponibilă încă pentru limba asta
+  if (!BEACH_CONTENT_LANG_CACHE[lang]) {
+    try {
+      BEACH_CONTENT_LANG_CACHE[lang] = require(`./beach-content-${lang}.js`);
+    } catch (err) {
+      BEACH_CONTENT_LANG_CACHE[lang] = {}; // fișierul lipsește încă — cădem elegant, nu crăpăm pagina
+    }
+  }
+  return BEACH_CONTENT_LANG_CACHE[lang][attractionName] || null;
+}
+// Limbile care AU (sau vor avea) un fișier beach-content-<lang>.js — se
+// extinde pe măsură ce se traduce mai mult conținut.
+const BEACH_CONTENT_LANG_FILES = { uk: true };
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
 // nume NU conține orașul (Turnul Eiffel nu spune "Paris" nicăieri în nume),
@@ -8042,7 +8076,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const beachTagCounts = isBeach ? await getBeachTagCounts(slug) : {};
   // Conținut editorial bogat — DOAR română momentan (conținutul original,
   // scris de proprietar, există doar în RO).
-  const beachContent = isBeach && activeLang === "ro" ? BEACH_CONTENT_DATA[attraction.name] : null;
+  const beachContent = isBeach ? getBeachContentForLang(attraction.name, activeLang) : null;
 
   let statusHtml;
   let widgetHtml = "";
@@ -8109,7 +8143,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(displayName)}</p>
-  ${beachContent ? buildBeachContentIntroHtml(beachContent) : ""}
+  ${beachContent ? buildBeachContentIntroHtml(beachContent, activeLang) : ""}
   ${isBeach
     ? (buildBeachContentEquipmentHtml(beachContent, activeLang) || buildBeachMonetizationHtml(activeLang))
     : `<div class="search-box-wrap">
@@ -8119,7 +8153,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 
   ${statusHtml}
   ${isBeach ? buildBeachVoteCentralizationHtml(slug, beachTagCounts, activeLang) : buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
-  ${beachContent ? buildBeachContentRestHtml(beachContent) : ""}
+  ${beachContent ? buildBeachContentRestHtml(beachContent, activeLang) : ""}
   ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
