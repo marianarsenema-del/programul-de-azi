@@ -1605,6 +1605,65 @@ function discoverBeachLabelFor(lang) { return DISCOVER_BEACH_LABELS[lang] || DIS
 ;
 function beachReviewLabelsFor(lang) { return BEACH_REVIEW_LABELS[lang] || BEACH_REVIEW_LABELS.uk; }
 
+// Conținut editorial bogat, per plajă — DOAR română momentan (conținutul
+// original, scris de proprietar, există doar în RO). Îmbină "Cum ajungi"
+// (text descriptiv) cu butoanele existente (Discover Cars/Waze) și
+// înlocuiește placeholder-ul generic de monetizare cu echipamentul REAL,
+// specific fiecărei plaje, când există.
+const BEACH_CONTENT_LABELS_RO = {
+  scurt: "🧭 Pe scurt despre plajă",
+  cumAjungi: "🚗 Cum ajungi la plajă",
+  echipament: "🎒 Echipament de plajă & activități — recomandările noastre",
+  preturi: "💰 Prețuri orientative la fața locului",
+  turisti: "💬 Ce spun turiștii despre această plajă",
+  tips: "💡 Informații practice & tips locale",
+};
+function buildBeachContentIntroHtml(content) {
+  if (!content) return "";
+  return `<div class="beach-content-block">
+    <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.scurt)}</h3>
+    <p class="beach-content-text">${escapeHtml(content.scurt)}</p>
+  </div>`;
+}
+function buildBeachContentEquipmentHtml(content, lang) {
+  if (!content || !content.echipament || !content.echipament.length) return null; // null = cade pe placeholder-ul generic
+  const itemsHtml = content.echipament
+    .map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`)
+    .join("");
+  return `<div class="beach-content-block beach-content-equipment">
+    <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.echipament)}</h3>
+    <ul class="beach-content-list">${itemsHtml}</ul>
+  </div>`;
+}
+function buildBeachContentRestHtml(content) {
+  if (!content) return "";
+  const preturiHtml = content.preturi
+    ? `<div class="beach-content-block">
+        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.preturi)}</h3>
+        <p class="beach-content-text">${escapeHtml(content.preturi)}</p>
+      </div>`
+    : "";
+  const turistiHtml = content.turisti && content.turisti.length
+    ? `<div class="beach-content-block">
+        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.turisti)}</h3>
+        <ul class="beach-content-list">${content.turisti.map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`).join("")}</ul>
+      </div>`
+    : "";
+  const tipsHtml = content.tips && content.tips.length
+    ? `<div class="beach-content-block">
+        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.tips)}</h3>
+        <ul class="beach-content-list">${content.tips.map((it) => `<li><strong>${escapeHtml(it.titlu)}:</strong> ${escapeHtml(it.text)}</li>`).join("")}</ul>
+      </div>`
+    : "";
+  const cumAjungiHtml = content.cumAjungi
+    ? `<div class="beach-content-block">
+        <h3 class="beach-content-heading">${escapeHtml(BEACH_CONTENT_LABELS_RO.cumAjungi)}</h3>
+        <p class="beach-content-text">${escapeHtml(content.cumAjungi)}</p>
+      </div>`
+    : "";
+  return `${cumAjungiHtml}${preturiHtml}${turistiHtml}${tipsHtml}`;
+}
+
 function buildBeachVoteCentralizationHtml(slug, counts, lang) {
   const t = beachReviewLabelsFor(lang);
   const tagT = beachTagLabelsFor(lang);
@@ -3324,6 +3383,9 @@ const DK_STORE_CONFIG = {
 // arată locația reală, recenzii, și adesea orele curente preluate de Google
 // direct de la locul respectiv.
 const ATTRACTIONS = require("./attractions-data.js");
+// Conținut editorial per plajă (Grecia) — furnizat direct de proprietar,
+// DOAR în română momentan (vezi nota din beach-content-data.js).
+const BEACH_CONTENT_DATA = require("./beach-content-data.js");
 
 // Excepții manuale, verificate — pentru monumente foarte cunoscute al căror
 // nume NU conține orașul (Turnul Eiffel nu spune "Paris" nicăieri în nume),
@@ -4483,6 +4545,14 @@ main{padding-top:8px;}
 .beach-review-submit{background:linear-gradient(135deg,var(--accent),#ff8a3d);color:#fff;border:none;border-radius:var(--radius-md);padding:14px 20px;font-family:var(--font-display);font-weight:800;font-size:14.5px;cursor:pointer;}
 .beach-review-thanks{text-align:center;color:var(--accent);font-weight:700;font-size:13.5px;}
 .beach-monetization-banner{display:block;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 16px;margin:14px 18px 0;font-size:13px;color:var(--muted);text-align:center;}
+.beach-content-block{margin:16px 0;}
+.beach-content-heading{font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.beach-content-text{font-size:13.5px;color:var(--muted);line-height:1.5;}
+.beach-content-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.beach-content-list li{font-size:13.5px;color:var(--muted);line-height:1.5;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;}
+.beach-content-list li strong{color:var(--text);}
+.beach-content-equipment{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;margin:14px 18px 0;}
+.beach-content-equipment .beach-content-list li{background:none;border:none;padding:4px 0;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -7970,6 +8040,9 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
   const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
   const beachTagCounts = isBeach ? await getBeachTagCounts(slug) : {};
+  // Conținut editorial bogat — DOAR română momentan (conținutul original,
+  // scris de proprietar, există doar în RO).
+  const beachContent = isBeach && activeLang === "ro" ? BEACH_CONTENT_DATA[attraction.name] : null;
 
   let statusHtml;
   let widgetHtml = "";
@@ -8036,8 +8109,9 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(displayName)}</p>
+  ${beachContent ? buildBeachContentIntroHtml(beachContent) : ""}
   ${isBeach
-    ? buildBeachMonetizationHtml(activeLang)
+    ? (buildBeachContentEquipmentHtml(beachContent, activeLang) || buildBeachMonetizationHtml(activeLang))
     : `<div class="search-box-wrap">
     <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
@@ -8045,6 +8119,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
 
   ${statusHtml}
   ${isBeach ? buildBeachVoteCentralizationHtml(slug, beachTagCounts, activeLang) : buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
+  ${beachContent ? buildBeachContentRestHtml(beachContent) : ""}
   ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
