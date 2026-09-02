@@ -4568,11 +4568,14 @@ main{padding-top:8px;}
 .beach-vote-central{margin:16px 0;}
 .beach-vote-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:10px;}
 .beach-vote-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.beach-vote-grid[hidden],.beach-vote-title[hidden]{display:none;}
 .beach-vote-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;}
 .bvc-label{font-size:13.5px;color:var(--text);}
 .bvc-count{font-size:14px;font-weight:800;color:var(--accent);min-width:24px;text-align:right;}
 .beach-review-cta{display:block;width:100%;text-align:center;background:linear-gradient(135deg,var(--accent),#ff8a3d);color:#fff;border:none;border-radius:var(--radius-md);padding:16px 20px;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,.25);}
+.beach-review-cta[hidden]{display:none;}
 .beach-review-form{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.beach-review-form[hidden]{display:none;}
 .beach-review-q{display:flex;flex-direction:column;gap:6px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:12px 14px;}
 .beach-review-q-text{font-size:13.5px;font-weight:600;color:var(--text);}
 .beach-review-q label{font-size:13px;color:var(--muted);margin-right:14px;cursor:pointer;}
