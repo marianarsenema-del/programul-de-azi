@@ -492,8 +492,11 @@ const linkBileteTurism = "https://getyourguide.com?partner_id=LM6J21N&utm_medium
 const BEACH_MONETIZATION_URL = "https://www.discovercars.com/?a_aid=23ea55cb";
 ;
 function beachMonetizationLabelFor(lang) { return BEACH_MONETIZATION_LABELS[lang] || BEACH_MONETIZATION_LABELS.uk; }
+// Fără link deocamdată — cerut explicit: ideea (bannerul) rămâne, dar
+// Discover Cars nu are sens aici (nu vinde echipament de plajă). Rămâne
+// un <div>, nu <a>, până vine textul/link-ul real de la tine.
 function buildBeachMonetizationHtml(lang) {
-  return `<a href="${escapeHtml(BEACH_MONETIZATION_URL)}" target="_blank" rel="noopener sponsored" class="beach-monetization-banner">${escapeHtml(beachMonetizationLabelFor(lang))}</a>`;
+  return `<div class="beach-monetization-banner">${escapeHtml(beachMonetizationLabelFor(lang))}</div>`;
 }
 
 // URL-uri REALE, individuale, de pe GetYourGuide, per obiectiv turistic —
@@ -1200,12 +1203,21 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
     const accessOptionHtml = beachOptions.accessDifficulty === "boat-only"
       ? `<a href="${escapeHtml(ticketUrlFor(beachOptions.name))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(boatTourLabelFor(lang))}</a>`
       : (beachOptions.city ? `<a href="${escapeHtml(carRentalLinkFor(beachOptions.city))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(beachT.access_car || "🚗")} Discover Cars</a>` : "");
+    // Bug real, găsit prin testare: wazeHtml (de mai sus) rămâne mereu
+    // "hidden" — logica lui de afișare depinde de statusul deschis/închis
+    // (isOpen/isClosed), pe care plajele NU-l mai au (eliminat intenționat,
+    // vezi decizia de a nu mai arăta program generic la plaje). Aici,
+    // separat, un link Waze propriu, ÎNTOTDEAUNA vizibil — nu depinde de
+    // status, ID diferit (nu se ciocnește cu goNowBtn).
+    const beachWazeHtml = place
+      ? `<a class="how-to-get-there-option" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener">🧭 Waze</a>`
+      : "";
     return `
   <div class="how-to-get-there-block">
     <button type="button" class="how-to-get-there-btn" id="howToGetThereBtn">${escapeHtml(t.btn)}</button>
     <div class="how-to-get-there-panel" id="howToGetTherePanel" hidden>
       ${accessOptionHtml}
-      ${wazeHtml}
+      ${beachWazeHtml}
     </div>
   </div>`;
   }
@@ -1633,6 +1645,12 @@ function buildBeachVoteCentralizationScript(nonce) {
   ctaBtn.addEventListener("click", function(){
     form.hidden = false;
     ctaBtn.hidden = true;
+    // cerut explicit — ascunde și grila de voturi (nu doar butonul),
+    // "e foarte supărător vizual" să rămână amândouă vizibile deodată
+    var grid = wrap.querySelector(".beach-vote-grid");
+    var title = wrap.querySelector(".beach-vote-title");
+    if (grid) grid.hidden = true;
+    if (title) title.hidden = true;
   });
 
   form.addEventListener("submit", function(e){
@@ -1658,6 +1676,12 @@ function buildBeachVoteCentralizationScript(nonce) {
       });
       form.querySelectorAll("input, button").forEach(function(el){ el.disabled = true; });
       thanks.hidden = false;
+      // readucem grila (cu numerele proaspăt actualizate) — utilizatorul
+      // vede rezultatul votului lui, nu rămâne doar cu formularul gol
+      var grid = wrap.querySelector(".beach-vote-grid");
+      var title = wrap.querySelector(".beach-vote-title");
+      if (grid) grid.hidden = false;
+      if (title) title.hidden = false;
     });
   });
 })();
@@ -4442,6 +4466,23 @@ main{padding-top:8px;}
 .itinerary-promo-empty{margin:10px 0;padding:14px 16px;}
 .itinerary-promo-empty .itinerary-promo-title{font-size:14px;margin-bottom:4px;}
 .itinerary-promo-empty .itinerary-promo-cta{font-size:12.5px;}
+/* Card centralizat de voturi la plaje — cerut explicit: spațiere între
+   etichetă și număr, buton "Lasă recenzia" mare, portocaliu, centrat, care
+   ascunde restul (grila de voturi) la click, ca să nu rămână înghesuit. */
+.beach-vote-central{margin:16px 0;}
+.beach-vote-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.beach-vote-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.beach-vote-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;}
+.bvc-label{font-size:13.5px;color:var(--text);}
+.bvc-count{font-size:14px;font-weight:800;color:var(--accent);min-width:24px;text-align:right;}
+.beach-review-cta{display:block;width:100%;text-align:center;background:linear-gradient(135deg,var(--accent),#ff8a3d);color:#fff;border:none;border-radius:var(--radius-md);padding:16px 20px;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,.25);}
+.beach-review-form{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.beach-review-q{display:flex;flex-direction:column;gap:6px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:12px 14px;}
+.beach-review-q-text{font-size:13.5px;font-weight:600;color:var(--text);}
+.beach-review-q label{font-size:13px;color:var(--muted);margin-right:14px;cursor:pointer;}
+.beach-review-submit{background:linear-gradient(135deg,var(--accent),#ff8a3d);color:#fff;border:none;border-radius:var(--radius-md);padding:14px 20px;font-family:var(--font-display);font-weight:800;font-size:14.5px;cursor:pointer;}
+.beach-review-thanks{text-align:center;color:var(--accent);font-weight:700;font-size:13.5px;}
+.beach-monetization-banner{display:block;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 16px;margin:14px 18px 0;font-size:13px;color:var(--muted);text-align:center;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
