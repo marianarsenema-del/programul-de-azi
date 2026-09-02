@@ -4079,6 +4079,12 @@ module.exports = {
     { name: "Plaja Nei Pori Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nei+Pori+Pieria+Greece", category: "plaje_organizate", city: "Nei Pori" },
     { name: "Bazinul de Înot Monemvasia Monemvasia", url: "https://www.google.com/maps/search/?api=1&query=Bazinul+de+Înot+Monemvasia+Monemvasia+Greece", category: "plaje_salbatice", city: "Monemvasia", accessDifficulty: "medium" },
     { name: "Plaja Porto Kagio Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Kagio+Mani+Greece", category: "plaje_salbatice", city: "Mani", accessDifficulty: "high" },
+    { name: "Plaja Valtos Parga", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Valtos+Parga+Greece", category: "plaje_organizate", city: "Parga" },
+    { name: "Plaja Bella Vraka Syvota", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Bella+Vraka+Syvota+Greece", category: "plaje_organizate", city: "Syvota", accessDifficulty: "medium" },
+    { name: "Plaja Kryoneri Parga", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kryoneri+Parga+Greece", category: "plaje_organizate", city: "Parga" },
+    { name: "Plaja Lygia Epir", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Lygia+Epir+Greece", category: "plaje_salbatice", city: "Epir", accessDifficulty: "medium" },
+    { name: "Plaja Ammoussa Lefkada", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Ammoussa+Lefkada+Greece", category: "plaje_salbatice", city: "Lefkada", accessDifficulty: "medium" },
+    { name: "Plaja Kathara Faliraki", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kathara+Faliraki+Greece", category: "plaje_organizate", city: "Faliraki" },
   ],
   hu: [
     { name: "Castelul Buda Budapest", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Buda+Budapest+Hungary", category: "castele_palate", city: "Budapest" },
