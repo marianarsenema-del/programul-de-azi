@@ -1073,7 +1073,7 @@ exports.BEACH_TAG_GROUPS = {
   terrain: ["terrain_family", "terrain_pebbles"],
 }
 
-exports.BEACH_STANDALONE_TAGS = ["free_parking"]
+exports.BEACH_STANDALONE_TAGS = ["free_parking", "food_on_beach", "taverns_nearby"]
 
 exports.BEACH_ALL_TAGS = [...Object.values(exports.BEACH_TAG_GROUPS).flat(), ...exports.BEACH_STANDALONE_TAGS]
 
