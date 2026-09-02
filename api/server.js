@@ -31,7 +31,7 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // SEPARATE pe .eu (/guides/*, engleză, nu /ro/ghiduri/*, care nu există)
 // — bug real, prins prin testare, înainte de activare, nu doar teoretic.
 const RO_TO_EU_MIGRATION_ACTIVE = true;
-const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png", "/itinerar"];
+const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png", "/itinerar", "/propune", "/admin"];
 const RO_TO_EU_GUIDES_MAP = { "/ghiduri": "/guides", "/ghiduri/transport": "/guides/transport", "/ghiduri/parcari": "/guides/parking", "/ghiduri/restaurante": "/guides/restaurants" };
 app.use((req, res, next) => {
   if (!RO_TO_EU_MIGRATION_ACTIVE || isIntlHost(req)) return next();
@@ -66,6 +66,11 @@ app.use((req, res, next) => {
    ============================================================ */
 const DB_CONNECTION_STRING =
   process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || "";
+// Cheie secretă pentru pagina de administrare (/admin/propuneri) — setează-o
+// ca variabilă de mediu în Vercel (ADMIN_SECRET_KEY), NU o pune direct în
+// cod. Fără ea setată, pagina rămâne complet inaccesibilă (fail-safe, nu
+// fail-open) — mai sigur decât o parolă implicită ghicibilă.
+const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY || "";
 const GOOGLE_PLACES_API_KEY_LIVE = process.env.GOOGLE_PLACES_API_KEY || "";
 const dbPool = DB_CONNECTION_STRING
   ? new Pool({ connectionString: DB_CONNECTION_STRING, ssl: { rejectUnauthorized: false }, max: 3 })
@@ -147,6 +152,17 @@ function googlePeriodsToWeekly(periods) {
 // statusul după o singură persoană greșită/rău-voitoare, dar nu atât de
 // mare încât o problemă reală să rămână neafișată mult timp.
 const REPORT_THRESHOLD = 3;
+
+// Slug de DUPLICAT pentru propuneri de locuri noi — cerut explicit: dacă mai
+// mulți utilizatori propun ACELAȘI loc (nume + oraș asemănătoare), nu se
+// creează rânduri multiple în tabel, se incrementează un contor pe rândul
+// deja existent. Mai permisiv decât toDbSlug (nu elimină TOATE spațiile,
+// doar normalizează) — suficient pentru detectarea potrivirilor evidente,
+// fără să fie atât de strict încât variații mici de scriere să scape
+// nedetectate ca duplicate.
+function submissionDuplicateSlug(name, city) {
+  return normalizeSlug(`${name} ${city}`).replace(/\s+/g, " ").trim();
+}
 
 // Etichete comunitare pentru PLAJE — cerut explicit, ca turiștii să
 // contribuie cu detalii pe care le caută (parcare, șezlonguri, acces) —
@@ -5106,6 +5122,13 @@ function buildAttractionAccordionScript(nonce) {
 
 function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, primaryCountry) {
   const favEmptyText = FAV_EMPTY_TEXTS[lang] || FAV_EMPTY_TEXTS.uk;
+  // "Propune un loc" — cerut explicit, apare în starea "niciun rezultat" a
+  // căutării, exact momentul potrivit (utilizatorul tocmai a constatat că
+  // nu găsim ce caută). Distincție RO/internațional prin favKey, semnal
+  // deja existent — evită modificarea semnăturii funcției.
+  const isIntlSearch = favKey && favKey.indexOf("oht_") === 0;
+  const submitPlaceHref = isIntlSearch ? `/submit-place?lang=${lang}` : "/propune";
+  const submitPlaceLabel = SUBMIT_PLACE_NO_RESULTS_LABELS[lang] || SUBMIT_PLACE_NO_RESULTS_LABELS.uk;
   // Text pentru butonul contextual de itinerar din rezultatele căutării —
   // reutilizează traducerea deja existentă (navLabelsFor, cele 21 de limbi),
   // nu o propoziție nouă de tradus separat.
@@ -5248,7 +5271,7 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
       // UI-ul, doar arată mai mult din ce s-a găsit efectiv.
       matches = matches.slice(0, 40);
       if (!matches.length) {
-        results.innerHTML = '<div class="search-result-empty">No matches</div>';
+        results.innerHTML = '<div class="search-result-empty">No matches<br><a href="${escapeHtml(submitPlaceHref)}" class="search-result-submit-place">${escapeHtml(submitPlaceLabel)}</a></div>';
         results.style.display = "block";
         return;
       }
@@ -5993,6 +6016,335 @@ const BACK_BUTTON_LABELS = {
   pt: "Voltar", se: "Tillbaka", ee: "Tagasi",
 };
 function backButtonLabelFor(lang) { return BACK_BUTTON_LABELS[lang] || BACK_BUTTON_LABELS.uk; }
+
+// Formular "Propune un loc" — cerut explicit: utilizatorii pot propune un
+// magazin, obiectiv sau plajă nou, nu doar Google are acest tip de
+// contribuție. Etichete traduse complet, 21 de limbi.
+const SUBMIT_PLACE_LABELS = {
+  ro: { title: "📍 Propune un loc nou", intro: "Ai găsit un magazin, obiectiv turistic sau plajă pe care nu-l avem încă? Spune-ne, verificăm și-l adăugăm.",
+    typeLabel: "Ce propui?", typeStore: "🛒 Magazin", typeAttraction: "🏛️ Obiectiv turistic", typeBeach: "🏖️ Plajă",
+    nameLabel: "Nume", namePlaceholder: "ex. Castelul Corvinilor",
+    cityLabel: "Oraș / Insulă", cityPlaceholder: "ex. Hunedoara",
+    countryLabel: "Țară",
+    categoryLabel: "Categorie (opțional)", categoryPlaceholder: "ex. castel, muzeu, supermarket",
+    mapsLabel: "Link Google Maps (opțional, dar ajută mult)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Notă (opțional)", notePlaceholder: "Orice detaliu util — program, acces, etc.",
+    submit: "Trimite propunerea", thanks: "✓ Mulțumim! Propunerea ta a fost trimisă spre verificare.",
+    errorGeneric: "Ceva n-a mers. Încearcă din nou.", errorRate: "Ai trimis prea multe propuneri recent. Mai încearcă puțin mai târziu." },
+  uk: { title: "📍 Suggest a new place", intro: "Found a store, attraction, or beach we don't have yet? Let us know, we'll check and add it.",
+    typeLabel: "What are you suggesting?", typeStore: "🛒 Store", typeAttraction: "🏛️ Attraction", typeBeach: "🏖️ Beach",
+    nameLabel: "Name", namePlaceholder: "e.g. Corvin Castle",
+    cityLabel: "City / Island", cityPlaceholder: "e.g. Hunedoara",
+    countryLabel: "Country",
+    categoryLabel: "Category (optional)", categoryPlaceholder: "e.g. castle, museum, supermarket",
+    mapsLabel: "Google Maps link (optional, but really helps)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Note (optional)", notePlaceholder: "Any useful detail — hours, access, etc.",
+    submit: "Send suggestion", thanks: "✓ Thanks! Your suggestion was sent for review.",
+    errorGeneric: "Something went wrong. Try again.", errorRate: "You've sent too many suggestions recently. Try again a bit later." },
+  de: { title: "📍 Neuen Ort vorschlagen", intro: "Ein Geschäft, eine Sehenswürdigkeit oder einen Strand gefunden, den wir noch nicht haben? Sag uns Bescheid, wir prüfen und fügen ihn hinzu.",
+    typeLabel: "Was schlägst du vor?", typeStore: "🛒 Geschäft", typeAttraction: "🏛️ Sehenswürdigkeit", typeBeach: "🏖️ Strand",
+    nameLabel: "Name", namePlaceholder: "z.B. Burg Corvin",
+    cityLabel: "Stadt / Insel", cityPlaceholder: "z.B. Hunedoara",
+    countryLabel: "Land",
+    categoryLabel: "Kategorie (optional)", categoryPlaceholder: "z.B. Burg, Museum, Supermarkt",
+    mapsLabel: "Google Maps-Link (optional, hilft aber sehr)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Notiz (optional)", notePlaceholder: "Nützliche Details — Öffnungszeiten, Zugang, usw.",
+    submit: "Vorschlag senden", thanks: "✓ Danke! Dein Vorschlag wurde zur Prüfung gesendet.",
+    errorGeneric: "Etwas ist schiefgelaufen. Versuch es erneut.", errorRate: "Du hast kürzlich zu viele Vorschläge gesendet. Versuch es später erneut." },
+  fr: { title: "📍 Proposer un nouvel endroit", intro: "Vous avez trouvé un magasin, un site touristique ou une plage que nous n'avons pas encore ? Dites-le-nous, on vérifie et on l'ajoute.",
+    typeLabel: "Que proposez-vous ?", typeStore: "🛒 Magasin", typeAttraction: "🏛️ Site touristique", typeBeach: "🏖️ Plage",
+    nameLabel: "Nom", namePlaceholder: "ex. Château de Corvin",
+    cityLabel: "Ville / Île", cityPlaceholder: "ex. Hunedoara",
+    countryLabel: "Pays",
+    categoryLabel: "Catégorie (optionnel)", categoryPlaceholder: "ex. château, musée, supermarché",
+    mapsLabel: "Lien Google Maps (optionnel, mais très utile)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Note (optionnel)", notePlaceholder: "Tout détail utile — horaires, accès, etc.",
+    submit: "Envoyer la proposition", thanks: "✓ Merci ! Votre proposition a été envoyée pour vérification.",
+    errorGeneric: "Une erreur s'est produite. Réessayez.", errorRate: "Vous avez envoyé trop de propositions récemment. Réessayez plus tard." },
+  es: { title: "📍 Proponer un lugar nuevo", intro: "¿Encontraste una tienda, atracción o playa que aún no tenemos? Cuéntanos, lo verificamos y lo añadimos.",
+    typeLabel: "¿Qué propones?", typeStore: "🛒 Tienda", typeAttraction: "🏛️ Atracción turística", typeBeach: "🏖️ Playa",
+    nameLabel: "Nombre", namePlaceholder: "ej. Castillo de Corvin",
+    cityLabel: "Ciudad / Isla", cityPlaceholder: "ej. Hunedoara",
+    countryLabel: "País",
+    categoryLabel: "Categoría (opcional)", categoryPlaceholder: "ej. castillo, museo, supermercado",
+    mapsLabel: "Enlace de Google Maps (opcional, pero ayuda mucho)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Nota (opcional)", notePlaceholder: "Cualquier detalle útil — horario, acceso, etc.",
+    submit: "Enviar propuesta", thanks: "✓ ¡Gracias! Tu propuesta fue enviada para revisión.",
+    errorGeneric: "Algo salió mal. Inténtalo de nuevo.", errorRate: "Has enviado demasiadas propuestas recientemente. Inténtalo más tarde." },
+  it: { title: "📍 Proponi un nuovo luogo", intro: "Hai trovato un negozio, un'attrazione o una spiaggia che non abbiamo ancora? Dicci, verifichiamo e lo aggiungiamo.",
+    typeLabel: "Cosa proponi?", typeStore: "🛒 Negozio", typeAttraction: "🏛️ Attrazione turistica", typeBeach: "🏖️ Spiaggia",
+    nameLabel: "Nome", namePlaceholder: "es. Castello di Corvin",
+    cityLabel: "Città / Isola", cityPlaceholder: "es. Hunedoara",
+    countryLabel: "Paese",
+    categoryLabel: "Categoria (opzionale)", categoryPlaceholder: "es. castello, museo, supermercato",
+    mapsLabel: "Link Google Maps (opzionale, ma aiuta molto)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Nota (opzionale)", notePlaceholder: "Qualsiasi dettaglio utile — orari, accesso, ecc.",
+    submit: "Invia proposta", thanks: "✓ Grazie! La tua proposta è stata inviata per la verifica.",
+    errorGeneric: "Qualcosa è andato storto. Riprova.", errorRate: "Hai inviato troppe proposte di recente. Riprova più tardi." },
+  pl: { title: "📍 Zaproponuj nowe miejsce", intro: "Znalazłeś sklep, atrakcję lub plażę, których jeszcze nie mamy? Daj nam znać, sprawdzimy i dodamy.",
+    typeLabel: "Co proponujesz?", typeStore: "🛒 Sklep", typeAttraction: "🏛️ Atrakcja turystyczna", typeBeach: "🏖️ Plaża",
+    nameLabel: "Nazwa", namePlaceholder: "np. Zamek Corvinilor",
+    cityLabel: "Miasto / Wyspa", cityPlaceholder: "np. Hunedoara",
+    countryLabel: "Kraj",
+    categoryLabel: "Kategoria (opcjonalnie)", categoryPlaceholder: "np. zamek, muzeum, supermarket",
+    mapsLabel: "Link Google Maps (opcjonalnie, ale bardzo pomaga)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Notatka (opcjonalnie)", notePlaceholder: "Wszelkie przydatne szczegóły — godziny, dostęp, itp.",
+    submit: "Wyślij propozycję", thanks: "✓ Dziękujemy! Twoja propozycja została wysłana do weryfikacji.",
+    errorGeneric: "Coś poszło nie tak. Spróbuj ponownie.", errorRate: "Wysłałeś zbyt wiele propozycji ostatnio. Spróbuj później." },
+  nl: { title: "📍 Nieuwe plek voorstellen", intro: "Een winkel, bezienswaardigheid of strand gevonden dat we nog niet hebben? Laat het ons weten, we controleren het en voegen het toe.",
+    typeLabel: "Wat stel je voor?", typeStore: "🛒 Winkel", typeAttraction: "🏛️ Bezienswaardigheid", typeBeach: "🏖️ Strand",
+    nameLabel: "Naam", namePlaceholder: "bijv. Kasteel Corvin",
+    cityLabel: "Stad / Eiland", cityPlaceholder: "bijv. Hunedoara",
+    countryLabel: "Land",
+    categoryLabel: "Categorie (optioneel)", categoryPlaceholder: "bijv. kasteel, museum, supermarkt",
+    mapsLabel: "Google Maps-link (optioneel, maar erg nuttig)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Notitie (optioneel)", notePlaceholder: "Elk nuttig detail — openingstijden, toegang, enz.",
+    submit: "Voorstel versturen", thanks: "✓ Bedankt! Je voorstel is verzonden ter beoordeling.",
+    errorGeneric: "Er ging iets mis. Probeer opnieuw.", errorRate: "Je hebt recent te veel voorstellen verzonden. Probeer het later opnieuw." },
+  da: { title: "📍 Foreslå et nyt sted", intro: "Fundet en butik, seværdighed eller strand, vi ikke har endnu? Fortæl os det, vi tjekker og tilføjer det.",
+    typeLabel: "Hvad foreslår du?", typeStore: "🛒 Butik", typeAttraction: "🏛️ Seværdighed", typeBeach: "🏖️ Strand",
+    nameLabel: "Navn", namePlaceholder: "f.eks. Corvin Slot",
+    cityLabel: "By / Ø", cityPlaceholder: "f.eks. Hunedoara",
+    countryLabel: "Land",
+    categoryLabel: "Kategori (valgfri)", categoryPlaceholder: "f.eks. slot, museum, supermarked",
+    mapsLabel: "Google Maps-link (valgfri, men hjælper meget)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Note (valgfri)", notePlaceholder: "Enhver nyttig detalje — åbningstider, adgang, osv.",
+    submit: "Send forslag", thanks: "✓ Tak! Dit forslag er sendt til gennemgang.",
+    errorGeneric: "Noget gik galt. Prøv igen.", errorRate: "Du har sendt for mange forslag for nylig. Prøv igen senere." },
+  cz: { title: "📍 Navrhnout nové místo", intro: "Našli jste obchod, atrakci nebo pláž, kterou ještě nemáme? Dejte nám vědět, ověříme to a přidáme.",
+    typeLabel: "Co navrhujete?", typeStore: "🛒 Obchod", typeAttraction: "🏛️ Turistická atrakce", typeBeach: "🏖️ Pláž",
+    nameLabel: "Název", namePlaceholder: "např. Hunedoarský hrad",
+    cityLabel: "Město / Ostrov", cityPlaceholder: "např. Hunedoara",
+    countryLabel: "Země",
+    categoryLabel: "Kategorie (volitelné)", categoryPlaceholder: "např. hrad, muzeum, supermarket",
+    mapsLabel: "Odkaz Google Maps (volitelné, ale hodně pomáhá)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Poznámka (volitelné)", notePlaceholder: "Jakýkoli užitečný detail — otevírací doba, přístup atd.",
+    submit: "Odeslat návrh", thanks: "✓ Díky! Váš návrh byl odeslán k posouzení.",
+    errorGeneric: "Něco se pokazilo. Zkuste to znovu.", errorRate: "Nedávno jste odeslali příliš mnoho návrhů. Zkuste to později." },
+  fi: { title: "📍 Ehdota uutta paikkaa", intro: "Löysitkö kaupan, nähtävyyden tai rannan, jota meillä ei vielä ole? Kerro meille, tarkistamme ja lisäämme sen.",
+    typeLabel: "Mitä ehdotat?", typeStore: "🛒 Kauppa", typeAttraction: "🏛️ Nähtävyys", typeBeach: "🏖️ Ranta",
+    nameLabel: "Nimi", namePlaceholder: "esim. Corvinin linna",
+    cityLabel: "Kaupunki / Saari", cityPlaceholder: "esim. Hunedoara",
+    countryLabel: "Maa",
+    categoryLabel: "Kategoria (valinnainen)", categoryPlaceholder: "esim. linna, museo, supermarket",
+    mapsLabel: "Google Maps -linkki (valinnainen, mutta auttaa paljon)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Huomautus (valinnainen)", notePlaceholder: "Mikä tahansa hyödyllinen tieto — aukioloajat, pääsy, jne.",
+    submit: "Lähetä ehdotus", thanks: "✓ Kiitos! Ehdotuksesi lähetettiin tarkistettavaksi.",
+    errorGeneric: "Jokin meni pieleen. Yritä uudelleen.", errorRate: "Olet lähettänyt liikaa ehdotuksia viime aikoina. Yritä myöhemmin." },
+  gr: { title: "📍 Πρότεινε μια νέα τοποθεσία", intro: "Βρήκες ένα κατάστημα, αξιοθέατο ή παραλία που δεν έχουμε ακόμα; Πες μας, θα το ελέγξουμε και θα το προσθέσουμε.",
+    typeLabel: "Τι προτείνεις;", typeStore: "🛒 Κατάστημα", typeAttraction: "🏛️ Αξιοθέατο", typeBeach: "🏖️ Παραλία",
+    nameLabel: "Όνομα", namePlaceholder: "π.χ. Κάστρο Κόρβιν",
+    cityLabel: "Πόλη / Νησί", cityPlaceholder: "π.χ. Hunedoara",
+    countryLabel: "Χώρα",
+    categoryLabel: "Κατηγορία (προαιρετικό)", categoryPlaceholder: "π.χ. κάστρο, μουσείο, σούπερ μάρκετ",
+    mapsLabel: "Σύνδεσμος Google Maps (προαιρετικό, αλλά βοηθάει πολύ)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Σημείωση (προαιρετικό)", notePlaceholder: "Οποιαδήποτε χρήσιμη λεπτομέρεια — ωράριο, πρόσβαση, κλπ.",
+    submit: "Αποστολή πρότασης", thanks: "✓ Ευχαριστούμε! Η πρότασή σου στάλθηκε για έλεγχο.",
+    errorGeneric: "Κάτι πήγε στραβά. Δοκίμασε ξανά.", errorRate: "Έστειλες πολλές προτάσεις πρόσφατα. Δοκίμασε αργότερα." },
+  hu: { title: "📍 Új hely javaslása", intro: "Találtál egy üzletet, látnivalót vagy strandot, ami még nincs nálunk? Szólj, ellenőrizzük és hozzáadjuk.",
+    typeLabel: "Mit javasolsz?", typeStore: "🛒 Üzlet", typeAttraction: "🏛️ Látnivaló", typeBeach: "🏖️ Strand",
+    nameLabel: "Név", namePlaceholder: "pl. Corvin-vár",
+    cityLabel: "Város / Sziget", cityPlaceholder: "pl. Hunedoara",
+    countryLabel: "Ország",
+    categoryLabel: "Kategória (opcionális)", categoryPlaceholder: "pl. vár, múzeum, szupermarket",
+    mapsLabel: "Google Maps link (opcionális, de sokat segít)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Megjegyzés (opcionális)", notePlaceholder: "Bármilyen hasznos részlet — nyitvatartás, megközelítés, stb.",
+    submit: "Javaslat küldése", thanks: "✓ Köszönjük! A javaslatod ellenőrzésre elküldve.",
+    errorGeneric: "Valami hiba történt. Próbáld újra.", errorRate: "Nemrég túl sok javaslatot küldtél. Próbáld később." },
+  hr: { title: "📍 Predloži novo mjesto", intro: "Pronašli ste trgovinu, znamenitost ili plažu koju još nemamo? Javite nam, provjerit ćemo i dodati.",
+    typeLabel: "Što predlažete?", typeStore: "🛒 Trgovina", typeAttraction: "🏛️ Znamenitost", typeBeach: "🏖️ Plaža",
+    nameLabel: "Naziv", namePlaceholder: "npr. Dvorac Corvin",
+    cityLabel: "Grad / Otok", cityPlaceholder: "npr. Hunedoara",
+    countryLabel: "Zemlja",
+    categoryLabel: "Kategorija (neobavezno)", categoryPlaceholder: "npr. dvorac, muzej, supermarket",
+    mapsLabel: "Google Maps poveznica (neobavezno, ali jako pomaže)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Bilješka (neobavezno)", notePlaceholder: "Bilo koji koristan detalj — radno vrijeme, pristup, itd.",
+    submit: "Pošalji prijedlog", thanks: "✓ Hvala! Vaš prijedlog je poslan na provjeru.",
+    errorGeneric: "Nešto je pošlo po zlu. Pokušajte ponovno.", errorRate: "Nedavno ste poslali previše prijedloga. Pokušajte kasnije." },
+  sk: { title: "📍 Navrhnúť nové miesto", intro: "Našli ste obchod, atrakciu alebo pláž, ktorú ešte nemáme? Dajte nám vedieť, overíme to a pridáme.",
+    typeLabel: "Čo navrhujete?", typeStore: "🛒 Obchod", typeAttraction: "🏛️ Turistická atrakcia", typeBeach: "🏖️ Pláž",
+    nameLabel: "Názov", namePlaceholder: "napr. Hunedoarský hrad",
+    cityLabel: "Mesto / Ostrov", cityPlaceholder: "napr. Hunedoara",
+    countryLabel: "Krajina",
+    categoryLabel: "Kategória (voliteľné)", categoryPlaceholder: "napr. hrad, múzeum, supermarket",
+    mapsLabel: "Odkaz Google Maps (voliteľné, ale veľmi pomáha)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Poznámka (voliteľné)", notePlaceholder: "Akýkoľvek užitočný detail — otváracie hodiny, prístup, atď.",
+    submit: "Odoslať návrh", thanks: "✓ Ďakujeme! Váš návrh bol odoslaný na kontrolu.",
+    errorGeneric: "Niečo sa pokazilo. Skúste znova.", errorRate: "Nedávno ste odoslali príliš veľa návrhov. Skúste neskôr." },
+  si: { title: "📍 Predlagaj novo mesto", intro: "Ste našli trgovino, znamenitost ali plažo, ki je še nimamo? Povejte nam, preverimo in dodamo.",
+    typeLabel: "Kaj predlagate?", typeStore: "🛒 Trgovina", typeAttraction: "🏛️ Znamenitost", typeBeach: "🏖️ Plaža",
+    nameLabel: "Ime", namePlaceholder: "npr. Grad Corvin",
+    cityLabel: "Mesto / Otok", cityPlaceholder: "npr. Hunedoara",
+    countryLabel: "Država",
+    categoryLabel: "Kategorija (neobvezno)", categoryPlaceholder: "npr. grad, muzej, supermarket",
+    mapsLabel: "Povezava Google Maps (neobvezno, a zelo pomaga)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Opomba (neobvezno)", notePlaceholder: "Katerikoli koristen podatek — urnik, dostop, itd.",
+    submit: "Pošlji predlog", thanks: "✓ Hvala! Vaš predlog je poslan v pregled.",
+    errorGeneric: "Nekaj je šlo narobe. Poskusite znova.", errorRate: "Nedavno ste poslali preveč predlogov. Poskusite kasneje." },
+  lt: { title: "📍 Pasiūlyk naują vietą", intro: "Radote parduotuvę, lankytiną vietą ar paplūdimį, kurio dar neturime? Praneškite mums, patikrinsime ir pridėsime.",
+    typeLabel: "Ką siūlai?", typeStore: "🛒 Parduotuvė", typeAttraction: "🏛️ Lankytina vieta", typeBeach: "🏖️ Paplūdimys",
+    nameLabel: "Pavadinimas", namePlaceholder: "pvz. Korvinų pilis",
+    cityLabel: "Miestas / Sala", cityPlaceholder: "pvz. Hunedoara",
+    countryLabel: "Šalis",
+    categoryLabel: "Kategorija (neprivaloma)", categoryPlaceholder: "pvz. pilis, muziejus, prekybos centras",
+    mapsLabel: "Google Maps nuoroda (neprivaloma, bet labai padeda)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Pastaba (neprivaloma)", notePlaceholder: "Bet kokia naudinga informacija — darbo laikas, priėjimas ir t.t.",
+    submit: "Siųsti pasiūlymą", thanks: "✓ Ačiū! Jūsų pasiūlymas išsiųstas peržiūrai.",
+    errorGeneric: "Kažkas nutiko ne taip. Bandykite dar kartą.", errorRate: "Neseniai išsiuntėte per daug pasiūlymų. Bandykite vėliau." },
+  lv: { title: "📍 Ieteikt jaunu vietu", intro: "Atradāt veikalu, apskates vietu vai pludmali, kuras mums vēl nav? Paziņojiet mums, mēs pārbaudīsim un pievienosim.",
+    typeLabel: "Ko ieteicat?", typeStore: "🛒 Veikals", typeAttraction: "🏛️ Apskates vieta", typeBeach: "🏖️ Pludmale",
+    nameLabel: "Nosaukums", namePlaceholder: "piem. Korvinu pils",
+    cityLabel: "Pilsēta / Sala", cityPlaceholder: "piem. Hunedoara",
+    countryLabel: "Valsts",
+    categoryLabel: "Kategorija (neobligāti)", categoryPlaceholder: "piem. pils, muzejs, lielveikals",
+    mapsLabel: "Google Maps saite (neobligāti, bet ļoti palīdz)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Piezīme (neobligāti)", notePlaceholder: "Jebkura noderīga informācija — darba laiks, piekļuve, utt.",
+    submit: "Sūtīt ieteikumu", thanks: "✓ Paldies! Jūsu ieteikums nosūtīts pārbaudei.",
+    errorGeneric: "Kaut kas nogāja greizi. Mēģiniet vēlreiz.", errorRate: "Nesen esat nosūtījis pārāk daudz ieteikumu. Mēģiniet vēlāk." },
+  pt: { title: "📍 Propor um novo local", intro: "Encontraste uma loja, atração ou praia que ainda não temos? Diz-nos, verificamos e adicionamos.",
+    typeLabel: "O que propões?", typeStore: "🛒 Loja", typeAttraction: "🏛️ Atração turística", typeBeach: "🏖️ Praia",
+    nameLabel: "Nome", namePlaceholder: "ex. Castelo de Corvin",
+    cityLabel: "Cidade / Ilha", cityPlaceholder: "ex. Hunedoara",
+    countryLabel: "País",
+    categoryLabel: "Categoria (opcional)", categoryPlaceholder: "ex. castelo, museu, supermercado",
+    mapsLabel: "Link do Google Maps (opcional, mas ajuda muito)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Nota (opcional)", notePlaceholder: "Qualquer detalhe útil — horário, acesso, etc.",
+    submit: "Enviar proposta", thanks: "✓ Obrigado! A tua proposta foi enviada para revisão.",
+    errorGeneric: "Algo correu mal. Tenta novamente.", errorRate: "Enviaste demasiadas propostas recentemente. Tenta mais tarde." },
+  se: { title: "📍 Föreslå en ny plats", intro: "Hittade du en butik, sevärdhet eller strand som vi inte har än? Berätta för oss, vi kontrollerar och lägger till den.",
+    typeLabel: "Vad föreslår du?", typeStore: "🛒 Butik", typeAttraction: "🏛️ Sevärdhet", typeBeach: "🏖️ Strand",
+    nameLabel: "Namn", namePlaceholder: "t.ex. Corvin-slottet",
+    cityLabel: "Stad / Ö", cityPlaceholder: "t.ex. Hunedoara",
+    countryLabel: "Land",
+    categoryLabel: "Kategori (valfritt)", categoryPlaceholder: "t.ex. slott, museum, stormarknad",
+    mapsLabel: "Google Maps-länk (valfritt, men hjälper mycket)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Anteckning (valfritt)", notePlaceholder: "Alla användbara detaljer — öppettider, tillgång, osv.",
+    submit: "Skicka förslag", thanks: "✓ Tack! Ditt förslag har skickats för granskning.",
+    errorGeneric: "Något gick fel. Försök igen.", errorRate: "Du har skickat för många förslag nyligen. Försök igen senare." },
+  ee: { title: "📍 Soovita uut kohta", intro: "Leidsid poe, vaatamisväärsuse või ranna, mida meil veel pole? Anna teada, kontrollime ja lisame selle.",
+    typeLabel: "Mida soovitad?", typeStore: "🛒 Pood", typeAttraction: "🏛️ Vaatamisväärsus", typeBeach: "🏖️ Rand",
+    nameLabel: "Nimi", namePlaceholder: "nt Corvini loss",
+    cityLabel: "Linn / Saar", cityPlaceholder: "nt Hunedoara",
+    countryLabel: "Riik",
+    categoryLabel: "Kategooria (valikuline)", categoryPlaceholder: "nt loss, muuseum, supermarket",
+    mapsLabel: "Google Mapsi link (valikuline, kuid aitab palju)", mapsPlaceholder: "https://maps.google.com/...",
+    noteLabel: "Märkus (valikuline)", notePlaceholder: "Iga kasulik detail — lahtiolekuajad, juurdepääs jne.",
+    submit: "Saada ettepanek", thanks: "✓ Täname! Sinu ettepanek saadeti ülevaatamiseks.",
+    errorGeneric: "Midagi läks valesti. Proovi uuesti.", errorRate: "Oled hiljuti saatnud liiga palju ettepanekuid. Proovi hiljem uuesti." },
+};
+function submitPlaceLabelsFor(lang) { return SUBMIT_PLACE_LABELS[lang] || SUBMIT_PLACE_LABELS.uk; }
+
+// Text scurt, pentru linkul din starea "niciun rezultat" a căutării —
+// separat de SUBMIT_PLACE_LABELS (acela e pentru formular, textul lung).
+const SUBMIT_PLACE_NO_RESULTS_LABELS = {
+  ro: "Nu-l găsești? Propune-l →", uk: "Can't find it? Suggest it →", de: "Nicht gefunden? Vorschlagen →",
+  fr: "Introuvable ? Proposez-le →", es: "¿No lo encuentras? Propónlo →", it: "Non lo trovi? Proponilo →",
+  pl: "Nie znajdujesz? Zaproponuj →", nl: "Niet gevonden? Stel voor →", da: "Kan du ikke finde det? Foreslå →",
+  cz: "Nenašli jste? Navrhněte →", fi: "Etkö löydä? Ehdota →", gr: "Δεν το βρίσκεις; Πρότεινέ το →",
+  hu: "Nem találod? Javasold →", hr: "Ne pronalaziš? Predloži →", sk: "Nenašli ste? Navrhnite →",
+  si: "Ne najdete? Predlagajte →", lt: "Nerandate? Pasiūlykite →", lv: "Neatrodat? Ieteiciet →",
+  pt: "Não encontras? Propõe →", se: "Hittar du inte? Föreslå →", ee: "Ei leia? Soovita →",
+};
+
+// Pagina "Propune un loc nou" — cerut explicit: utilizatorii pot propune
+// un magazin, obiectiv sau plajă, nu doar Google poate. Funcționează
+// identic pe .ro (română fixă) și pe .eu (orice limbă suportată).
+async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
+  const t = submitPlaceLabelsFor(lang);
+  const canonical = `${baseUrl}${isIntl ? "/submit-place" : "/propune"}`;
+  const countryOptionsHtml = Object.keys(COUNTRY_LABELS)
+    .sort((a, b) => COUNTRY_LABELS[a].localeCompare(COUNTRY_LABELS[b]))
+    .map((cc) => `<option value="${escapeHtml(cc)}"${cc === "ro" ? " selected" : ""}>${escapeHtml(COUNTRY_LABELS[cc])}</option>`)
+    .join("");
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <div class="brand-stack"><a class="brand" href="/">${isIntl ? "Opening<span>HoursToday</span>" : "Programul<span>DeAzi</span>"}</a></div>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${isIntl ? escapeHtml(TRANSLATIONS[lang] ? TRANSLATIONS[lang].home : "Home") : "Acasă"}</a> / ${escapeHtml(t.title)}</p>
+  <h1 class="page-h1">${escapeHtml(t.title)}</h1>
+  <p class="intro-text">${escapeHtml(t.intro)}</p>
+
+  <form id="submitPlaceForm" class="submit-place-form">
+    <label class="submit-place-label">${escapeHtml(t.typeLabel)}
+      <select id="spType" required>
+        <option value="attraction">${escapeHtml(t.typeAttraction)}</option>
+        <option value="store">${escapeHtml(t.typeStore)}</option>
+        <option value="beach">${escapeHtml(t.typeBeach)}</option>
+      </select>
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.nameLabel)}
+      <input type="text" id="spName" placeholder="${escapeHtml(t.namePlaceholder)}" maxlength="255" required>
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.cityLabel)}
+      <input type="text" id="spCity" placeholder="${escapeHtml(t.cityPlaceholder)}" maxlength="255" required>
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.countryLabel)}
+      <select id="spCountry" required>${countryOptionsHtml}</select>
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.categoryLabel)}
+      <input type="text" id="spCategory" placeholder="${escapeHtml(t.categoryPlaceholder)}" maxlength="50">
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.mapsLabel)}
+      <input type="url" id="spMapsUrl" placeholder="${escapeHtml(t.mapsPlaceholder)}" maxlength="500">
+    </label>
+    <label class="submit-place-label">${escapeHtml(t.noteLabel)}
+      <textarea id="spNote" placeholder="${escapeHtml(t.notePlaceholder)}" maxlength="500" rows="3"></textarea>
+    </label>
+    <button type="submit" id="spSubmitBtn" class="submit-place-btn">${escapeHtml(t.submit)}</button>
+    <p id="spThanks" class="submit-place-thanks" hidden>${escapeHtml(t.thanks)}</p>
+    <p id="spError" class="submit-place-error" hidden></p>
+  </form>
+</main>
+<script nonce="${nonce}">
+(function(){
+  var ERROR_GENERIC = ${safeJson(t.errorGeneric)};
+  var ERROR_RATE = ${safeJson(t.errorRate)};
+  var form = document.getElementById("submitPlaceForm");
+  var btn = document.getElementById("spSubmitBtn");
+  var thanks = document.getElementById("spThanks");
+  var errorBox = document.getElementById("spError");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    errorBox.hidden = true;
+    btn.disabled = true;
+    fetch("/api/propune-loc", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: document.getElementById("spType").value,
+        name: document.getElementById("spName").value,
+        city: document.getElementById("spCity").value,
+        countryCode: document.getElementById("spCountry").value,
+        category: document.getElementById("spCategory").value,
+        mapsUrl: document.getElementById("spMapsUrl").value,
+        note: document.getElementById("spNote").value,
+      }),
+    })
+      .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, status: r.status, data: data }; }); })
+      .then(function(res){
+        if (res.ok) {
+          form.querySelectorAll("input, select, textarea, button").forEach(function(el){ el.disabled = true; });
+          thanks.hidden = false;
+        } else {
+          errorBox.textContent = res.status === 429 ? ERROR_RATE : ERROR_GENERIC;
+          errorBox.hidden = false;
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){
+        errorBox.textContent = ERROR_GENERIC;
+        errorBox.hidden = false;
+        btn.disabled = false;
+      });
+  });
+})();
+</script>`;
+  return pageShell({ title: t.title, description: t.intro, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: lang });
+}
 function buildGlobalBackButtonHtml(langCode) {
   return `<button type="button" id="globalBackBtn" class="global-back-btn" aria-label="${escapeHtml(backButtonLabelFor(langCode))}" hidden>←</button>`;
 }
@@ -8203,6 +8555,63 @@ app.post("/api/tag-attraction", async (req, res) => {
   }
 });
 
+// Propuneri de locuri noi (magazin/obiectiv/plajă) — cerut explicit: dacă
+// mai mulți utilizatori propun ACELAȘI loc, nu se creează rânduri
+// multiple — se incrementează submission_count pe rândul deja existent
+// (UPSERT, folosind indexul unic parțial pe slug, doar la status='pending'
+// — o propunere respinsă anterior poate fi repropusă, nu rămâne blocată
+// definitiv).
+const SUBMISSION_TYPES = ["store", "attraction", "beach"];
+app.post("/api/propune-loc", async (req, res) => {
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const { type, name, city, countryCode, category, mapsUrl, note } = req.body || {};
+  if (typeof name !== "string" || !name.trim() || name.length > 255) {
+    res.status(400).json({ error: "invalid_name" });
+    return;
+  }
+  if (typeof city !== "string" || !city.trim() || city.length > 255) {
+    res.status(400).json({ error: "invalid_city" });
+    return;
+  }
+  if (typeof type !== "string" || !SUBMISSION_TYPES.includes(type)) {
+    res.status(400).json({ error: "invalid_type" });
+    return;
+  }
+  if (typeof countryCode !== "string" || !COUNTRIES[countryCode]) {
+    res.status(400).json({ error: "invalid_country" });
+    return;
+  }
+  // link Maps opțional, dar dacă e completat, verificăm minim că arată a URL
+  const safeMapsUrl = typeof mapsUrl === "string" && /^https?:\/\//.test(mapsUrl) ? mapsUrl.slice(0, 500) : null;
+  const safeCategory = typeof category === "string" ? category.slice(0, 50) : null;
+  const safeNote = typeof note === "string" ? note.slice(0, 500) : null;
+
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "propune-loc", 10, 60);
+  if (!rateOk) {
+    res.status(429).json({ error: "too_many_requests" });
+    return;
+  }
+
+  const slug = submissionDuplicateSlug(name, city);
+  try {
+    await dbPool.query(
+      `INSERT INTO pending_submissions (slug, type, name, city, country_code, category, maps_url, note, ip_hash)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       ON CONFLICT (slug) WHERE status = 'pending'
+       DO UPDATE SET submission_count = pending_submissions.submission_count + 1, actualizat_la = now()`,
+      [slug, type, name.trim(), city.trim(), countryCode, safeCategory, safeMapsUrl, safeNote, ipHash]
+    );
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error("propune-loc a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.get("/api/city-live-map", async (req, res) => {
   if (!dbPool || !GOOGLE_PLACES_API_KEY_LIVE) {
     res.status(503).json({ error: "not_configured" });
@@ -8877,6 +9286,128 @@ app.get("/:oras/:magazin", async (req, res, next) => {
 // bug-ul găsit prin testare directă. Servim pagina direct, pe orice domeniu
 // ajunge cererea — la fel ca paginile de obiective turistice, deja
 // funcționale pe ambele domenii, fără niciun redirect forțat.
+// "Propune un loc nou" — cerut explicit, disponibil pe ambele domenii (RO
+// fix pe .ro, orice limbă pe .eu) — la fel ca /itinerar, nu redirecționat.
+app.get("/propune", async (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}/submit-place`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), "ro", false);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+app.get("/submit-place", async (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}/propune`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : "uk";
+  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), requestedLang, true);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// Pagina de administrare a propunerilor — DOAR pentru tine, română fixă
+// (nu are sens tradusă, nu e conținut public). Protejată prin
+// ADMIN_SECRET_KEY (variabilă de mediu) — fail-safe: fără cheia setată,
+// pagina refuză accesul complet, nu cade pe un mod "deschis".
+app.get("/admin/propuneri", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
+    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
+    return;
+  }
+  if (!dbPool) {
+    res.status(503).send("Baza de date nu e configurată.");
+    return;
+  }
+  let rows = [];
+  try {
+    const result = await dbPool.query(
+      `SELECT id, type, name, city, country_code, category, maps_url, note, submission_count, creat_la
+       FROM pending_submissions WHERE status = 'pending' ORDER BY submission_count DESC, creat_la ASC`
+    );
+    rows = result.rows;
+  } catch (err) {
+    res.status(500).send("Eroare la citirea propunerilor: " + escapeHtml(err.message));
+    return;
+  }
+  const typeLabels = { store: "🛒 Magazin", attraction: "🏛️ Obiectiv", beach: "🏖️ Plajă" };
+  const rowsHtml = rows.length
+    ? rows.map((r) => `
+      <div class="admin-submission-card">
+        <div class="admin-submission-header">
+          <span class="admin-submission-type">${escapeHtml(typeLabels[r.type] || r.type)}</span>
+          ${r.submission_count > 1 ? `<span class="admin-submission-count">👥 ${r.submission_count}× propus</span>` : ""}
+        </div>
+        <div class="admin-submission-name">${escapeHtml(r.name)}</div>
+        <div class="admin-submission-meta">${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}${r.category ? " · " + escapeHtml(r.category) : ""}</div>
+        ${r.maps_url ? `<a href="${escapeHtml(r.maps_url)}" target="_blank" rel="noopener">📍 Vezi pe hartă</a>` : ""}
+        ${r.note ? `<p class="admin-submission-note">${escapeHtml(r.note)}</p>` : ""}
+        <div class="admin-submission-actions">
+          <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
+          <button type="button" class="admin-reject-btn" data-id="${r.id}">✕ Respinge</button>
+        </div>
+      </div>`).join("")
+    : `<p>Nicio propunere în așteptare momentan.</p>`;
+
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html>
+<html lang="ro"><head><meta charset="UTF-8"><title>Propuneri utilizatori</title>
+<style>
+body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;background:#111;color:#eee;}
+.admin-submission-card{background:#1c1c1c;border-radius:10px;padding:16px;margin-bottom:12px;}
+.admin-submission-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.admin-submission-type{font-weight:700;}
+.admin-submission-count{color:#ff8a3d;font-weight:700;}
+.admin-submission-name{font-size:17px;font-weight:700;}
+.admin-submission-meta{color:#999;margin:4px 0;}
+.admin-submission-note{color:#ccc;font-style:italic;}
+.admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
+.admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+.admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+</style></head>
+<body>
+<h1>📋 Propuneri utilizatori (${rows.length})</h1>
+${rowsHtml}
+<script>
+var KEY = ${safeJson(req.query.key)};
+document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
+    fetch("/api/admin/propuneri/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
+      .then(function(){ btn.closest(".admin-submission-card").remove(); });
+  });
+});
+</script>
+</body></html>`);
+});
+
+app.post("/api/admin/propuneri/:id/:action", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
+    res.status(403).json({ error: "forbidden" });
+    return;
+  }
+  if (!dbPool) {
+    res.status(503).json({ error: "not_configured" });
+    return;
+  }
+  const { id, action } = req.params;
+  if (!["aproba", "respinge"].includes(action) || !/^\d+$/.test(id)) {
+    res.status(400).json({ error: "invalid_input" });
+    return;
+  }
+  const newStatus = action === "aproba" ? "approved" : "rejected";
+  try {
+    await dbPool.query(`UPDATE pending_submissions SET status = $1, actualizat_la = now() WHERE id = $2`, [newStatus, id]);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.get("/itinerar", (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
