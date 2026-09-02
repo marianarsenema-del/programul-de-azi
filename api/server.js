@@ -653,13 +653,39 @@ const BOOKING_HINT_TEMPLATES = {
   lv: (n) => `Atrodi apmešanos, stāvvietu un biļetes tiešsaistē vietai ${n} — viss vienuviet.`,
   ee: (n) => `Leia majutus, parkimine ja piletid veebist kohale ${n} — kõik ühes kohas.`,
 };
+// Cerut explicit: la plaje nu vindem bilete — text separat, fără mențiunea
+// asta, ca să nu promitem ceva ce nu oferim.
+const BOOKING_HINT_TEMPLATES_BEACH = {
+  ro: (n) => `Vezi cazări și parcare pentru ${n} — totul într-un singur loc.`,
+  uk: (n) => `Find nearby stays and parking for ${n} — all in one place.`,
+  de: (n) => `Finde Unterkünfte und Parkplätze für ${n} — alles an einem Ort.`,
+  es: (n) => `Encuentra alojamientos y aparcamiento para ${n} — todo en un solo lugar.`,
+  fr: (n) => `Trouvez des hébergements et un parking pour ${n} — le tout au même endroit.`,
+  it: (n) => `Trova alloggi e parcheggi per ${n} — tutto in un unico posto.`,
+  pl: (n) => `Znajdź noclegi i parking dla ${n} — wszystko w jednym miejscu.`,
+  nl: (n) => `Vind verblijven en parkeren voor ${n} — allemaal op één plek.`,
+  da: (n) => `Find overnatning og parkering til ${n} — alt på ét sted.`,
+  se: (n) => `Hitta boenden och parkering för ${n} — allt på ett ställe.`,
+  pt: (n) => `Encontra alojamentos e estacionamento para ${n} — tudo num só lugar.`,
+  cz: (n) => `Najdi ubytování a parkování pro ${n} — vše na jednom místě.`,
+  fi: (n) => `Löydä majoitus ja pysäköinti kohteelle ${n} — kaikki yhdessä paikassa.`,
+  gr: (n) => `Βρες διαμονή και πάρκινγκ για ${n} — όλα σε ένα μέρος.`,
+  hu: (n) => `Találj szállást és parkolást ehhez: ${n} — minden egy helyen.`,
+  hr: (n) => `Pronađi smještaj i parking za ${n} — sve na jednom mjestu.`,
+  sk: (n) => `Nájdi ubytovanie a parkovanie pre ${n} — všetko na jednom mieste.`,
+  si: (n) => `Poišči nastanitev in parkiranje za ${n} — vse na enem mestu.`,
+  lt: (n) => `Rask apgyvendinimą ir parkavimą vietai ${n} — viskas vienoje vietoje.`,
+  lv: (n) => `Atrodi apmešanos un stāvvietu vietai ${n} — viss vienuviet.`,
+  ee: (n) => `Leia majutus ja parkimine kohale ${n} — kõik ühes kohas.`,
+};
 
-function bookingPlanningLabelsFor(lang) {
+function bookingPlanningLabelsFor(lang, isBeach) {
   const e = getExtraLabels(lang);
   const isRo = lang === "ro";
+  const hintTemplates = isBeach ? BOOKING_HINT_TEMPLATES_BEACH : BOOKING_HINT_TEMPLATES;
   return {
     title: e.bpTitle,
-    hint: (name) => (BOOKING_HINT_TEMPLATES[lang] || BOOKING_HINT_TEMPLATES.uk)(name),
+    hint: (name) => (hintTemplates[lang] || hintTemplates.uk)(name),
     ticket: e.bpTicket,
     stays: e.bpStays,
     restaurant: e.bpRestaurant,
@@ -1201,8 +1227,8 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
     const lang = beachOptions.lang || "ro";
     const beachT = beachTagLabelsFor(lang);
     const accessOptionHtml = beachOptions.accessDifficulty === "boat-only"
-      ? `<a href="${escapeHtml(ticketUrlFor(beachOptions.name))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(boatTourLabelFor(lang))}</a>`
-      : (beachOptions.city ? `<a href="${escapeHtml(carRentalLinkFor(beachOptions.city))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(beachT.access_car || "🚗")} Discover Cars</a>` : "");
+      ? `<a href="${escapeHtml(ticketUrlFor(beachOptions.name))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(boatTourLabelFor(lang))} →</a>`
+      : (beachOptions.city ? `<a href="${escapeHtml(carRentalLinkFor(beachOptions.city))}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(beachT.access_car || "🚗")} Discover Cars →</a>` : "");
     // Bug real, găsit prin testare: wazeHtml (de mai sus) rămâne mereu
     // "hidden" — logica lui de afișare depinde de statusul deschis/închis
     // (isOpen/isClosed), pe care plajele NU-l mai au (eliminat intenționat,
@@ -1210,7 +1236,7 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
     // separat, un link Waze propriu, ÎNTOTDEAUNA vizibil — nu depinde de
     // status, ID diferit (nu se ciocnește cu goNowBtn).
     const beachWazeHtml = place
-      ? `<a class="how-to-get-there-option" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener">🧭 Waze</a>`
+      ? `<a class="how-to-get-there-option" href="${escapeHtml(wazeLinkFor(place))}" target="_blank" rel="noopener">🧭 Waze →</a>`
       : "";
     return `
   <div class="how-to-get-there-block">
@@ -4526,6 +4552,8 @@ main{padding-top:8px;}
 .search-result-row + .search-result-row{border-top:1px solid var(--border);}
 .search-result-item{flex:1 1 auto;display:block;padding:11px 4px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;}
 .search-result-empty{padding:14px 16px;font-size:13px;color:var(--muted);}
+.search-result-submit-place{display:inline-block;margin-top:8px;color:var(--accent);font-weight:700;text-decoration:none;font-size:13.5px;}
+.search-result-submit-place:hover{text-decoration:underline;}
 .search-result-itin-cta{display:block;padding:12px 16px;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;border-top:1px solid var(--border);background:rgba(255,255,255,.02);}
 .intro-inline-link{color:var(--accent);font-weight:700;text-decoration:none;}
 .intro-inline-link:hover{text-decoration:underline;}
@@ -4590,6 +4618,28 @@ main{padding-top:8px;}
 .beach-content-list li strong{color:var(--text);}
 .beach-content-equipment{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;margin:14px 18px 0;}
 .beach-content-equipment .beach-content-list li{background:none;border:none;padding:4px 0;}
+
+/* Formular "Propune un loc" — cerut explicit, era complet nestilizat (font
+   implicit de browser, minuscul, îngrămădit). Aranjat ca formular modern,
+   spațiat, cu text mare, lizibil. */
+.submit-place-form{display:flex;flex-direction:column;gap:18px;margin:20px 0;}
+.submit-place-label{display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;color:var(--text);}
+.submit-place-label input,
+.submit-place-label select,
+.submit-place-label textarea{
+  font-family:var(--font-body);font-size:16px;color:var(--text);background:var(--glass-bg);
+  border:1px solid var(--glass-border);border-radius:12px;padding:14px 16px;width:100%;box-sizing:border-box;
+}
+.submit-place-label textarea{resize:vertical;min-height:80px;}
+.submit-place-label input::placeholder,
+.submit-place-label textarea::placeholder{color:var(--muted);}
+.submit-place-btn{
+  display:block;width:100%;text-align:center;background:linear-gradient(135deg,var(--accent),#ff8a3d);
+  color:#fff;border:none;border-radius:var(--radius-md);padding:17px 20px;font-family:var(--font-display);
+  font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,.25);margin-top:6px;
+}
+.submit-place-thanks{text-align:center;color:var(--accent);font-weight:700;font-size:15px;margin-top:14px;}
+.submit-place-error{text-align:center;color:#e53935;font-weight:600;font-size:14px;margin-top:14px;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -5277,6 +5327,7 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
   const isIntlSearch = favKey && favKey.indexOf("oht_") === 0;
   const submitPlaceHref = isIntlSearch ? `/submit-place?lang=${lang}` : "/propune";
   const submitPlaceLabel = SUBMIT_PLACE_NO_RESULTS_LABELS[lang] || SUBMIT_PLACE_NO_RESULTS_LABELS.uk;
+  const noMatchesText = noMatchesLabelFor(lang);
   // Text pentru butonul contextual de itinerar din rezultatele căutării —
   // reutilizează traducerea deja existentă (navLabelsFor, cele 21 de limbi),
   // nu o propoziție nouă de tradus separat.
@@ -5419,7 +5470,7 @@ function buildSearchAndFavoritesScript(nonce, customSearchIndex, favKey, lang, p
       // UI-ul, doar arată mai mult din ce s-a găsit efectiv.
       matches = matches.slice(0, 40);
       if (!matches.length) {
-        results.innerHTML = '<div class="search-result-empty">No matches<br><a href="${escapeHtml(submitPlaceHref)}" class="search-result-submit-place">${escapeHtml(submitPlaceLabel)}</a></div>';
+        results.innerHTML = '<div class="search-result-empty">${escapeHtml(noMatchesText)}<br><a href="${escapeHtml(submitPlaceHref)}" class="search-result-submit-place">${escapeHtml(submitPlaceLabel)}</a></div>';
         results.style.display = "block";
         return;
       }
@@ -6381,6 +6432,17 @@ const SUBMIT_PLACE_LABELS = {
     errorGeneric: "Midagi läks valesti. Proovi uuesti.", errorRate: "Oled hiljuti saatnud liiga palju ettepanekuid. Proovi hiljem uuesti." },
 };
 function submitPlaceLabelsFor(lang) { return SUBMIT_PLACE_LABELS[lang] || SUBMIT_PLACE_LABELS.uk; }
+
+// "No matches" (căutare, fără rezultate) — cerut explicit, era fix în
+// engleză indiferent de limbă.
+const NO_MATCHES_LABELS = {
+  ro: "Niciun rezultat", uk: "No matches", de: "Keine Treffer", fr: "Aucun résultat", es: "Sin resultados",
+  it: "Nessun risultato", pl: "Brak wyników", nl: "Geen resultaten", da: "Ingen resultater", cz: "Žádné výsledky",
+  fi: "Ei tuloksia", gr: "Κανένα αποτέλεσμα", hu: "Nincs találat", hr: "Nema rezultata", sk: "Žiadne výsledky",
+  si: "Ni rezultatov", lt: "Rezultatų nėra", lv: "Nav rezultātu", pt: "Sem resultados", se: "Inga resultat",
+  ee: "Tulemusi ei leitud",
+};
+function noMatchesLabelFor(lang) { return NO_MATCHES_LABELS[lang] || NO_MATCHES_LABELS.uk; }
 
 // Text scurt, pentru linkul din starea "niciun rezultat" a căutării —
 // separat de SUBMIT_PLACE_LABELS (acela e pentru formular, textul lung).
@@ -8159,7 +8221,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${beachContent ? buildBeachContentRestHtml(beachContent, activeLang) : ""}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang, isBeach), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name, { isBeach, accessDifficulty: attraction.accessDifficulty, city: isBeach ? attraction.city : detectAttractionCity(attraction.name, countryCode), name: attraction.name, lang: activeLang })}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
