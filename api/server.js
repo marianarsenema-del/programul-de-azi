@@ -7491,7 +7491,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
 
   <div class="sub-nav-panel" data-panel="attractions">
     ${buildItineraryPromoCardHtml(validDetected, activeLang)}
-    <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>
+    ${validDetected !== "gr" ? `<label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>` : ""}
     ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", validDetected, activeLang)}
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
