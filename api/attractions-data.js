@@ -4077,6 +4077,8 @@ module.exports = {
     { name: "Plaja Platamonas Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Platamonas+Pieria+Greece", category: "plaje_organizate", city: "Platamonas" },
     { name: "Plaja Skotina Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Skotina+Pieria+Greece", category: "plaje_organizate", city: "Skotina" },
     { name: "Plaja Nei Pori Pieria", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Nei+Pori+Pieria+Greece", category: "plaje_organizate", city: "Nei Pori" },
+    { name: "Bazinul de Înot Monemvasia Monemvasia", url: "https://www.google.com/maps/search/?api=1&query=Bazinul+de+Înot+Monemvasia+Monemvasia+Greece", category: "plaje_salbatice", city: "Monemvasia", accessDifficulty: "medium" },
+    { name: "Plaja Porto Kagio Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Porto+Kagio+Mani+Greece", category: "plaje_salbatice", city: "Mani", accessDifficulty: "high" },
   ],
   hu: [
     { name: "Castelul Buda Budapest", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Buda+Budapest+Hungary", category: "castele_palate", city: "Budapest" },
