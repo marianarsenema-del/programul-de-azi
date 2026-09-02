@@ -5778,6 +5778,24 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
     document.querySelectorAll(".country-flag-btn").forEach(function(btn){
       btn.classList.toggle("active", btn.getAttribute("data-country-select") === target);
     });
+    // Cerut explicit: la selectarea unei țări, chip-ul ei sare primul în
+    // bară (imediat după "🌍 All") — altfel utilizatorul ar trebui să
+    // deruleze mereu bara ca s-o regăsească, chiar dacă tocmai a ales-o.
+    // Persistă doar în DOM (nu localStorage) — la reîncărcare, ordinea
+    // revine la cea alfabetică implicită.
+    if (target !== "all") {
+      var selectedBtn = document.querySelector('.country-flag-btn[data-country-select="' + target + '"]');
+      if (selectedBtn) {
+        var bar = selectedBtn.closest(".country-filter-bar");
+        if (bar) {
+          var allChip = bar.querySelector(".chip:not(.country-flag-btn)"); // "🌍 All", primul, fix
+          if (allChip && allChip.nextSibling !== selectedBtn) {
+            bar.insertBefore(selectedBtn, allChip.nextSibling);
+          }
+          if (selectedBtn.scrollIntoView) selectedBtn.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+        }
+      }
+    }
     if (target === PRIMARY_ATTRACTION_COUNTRY) {
       var anchor = document.getElementById("attractions-country-" + target);
       if (anchor && anchor.scrollIntoView) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
