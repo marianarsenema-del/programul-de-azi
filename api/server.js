@@ -10064,7 +10064,9 @@ ${listaText}
 
 Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
 
-Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile JSON (oras, zile, ziua, titlu, dimineata, pranz, seara, nume, descriere) rămân EXACT așa cum sunt aici, neschimbate — doar VALORILE pentru "titlu" și "descriere" trebuie scrise în ${langName}:
+FOARTE IMPORTANT: array-ul "zile" din JSON trebuie să conțină EXACT ${zile} ${zile === 1 ? "obiect" : "obiecte"} (câte unul pentru fiecare zi cerută — ziua 1${zile > 1 ? `, ziua 2${zile > 2 ? ", și așa mai departe până la ziua " + zile : ""}` : ""}). Exemplul de mai jos arată doar STRUCTURA unei singure zile, ca șablon — NU înseamnă că răspunsul tău trebuie să aibă o singură zi. Dacă am cerut ${zile} ${zile === 1 ? "zi" : "zile"}, array-ul "zile" trebuie să aibă ${zile === 1 ? "1 element" : `${zile} elemente, cu "ziua" numerotată de la 1 la ${zile}`}.
+
+Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile JSON (oras, zile, ziua, titlu, dimineata, pranz, seara, nume, descriere) rămân EXACT așa cum sunt aici, neschimbate — doar VALORILE pentru "titlu" și "descriere" trebuie scrise în ${langName}. Exemplul de mai jos arată o SINGURĂ zi, ca șablon de structură — repetă acest obiect în array de ${zile} ${zile === 1 ? "dată" : "ori"}, cu "ziua" numerotată corect:
 {
   "oras": "${oras}",
   "zile": [
@@ -10078,7 +10080,7 @@ Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile 
   ]
 }
 
-Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${langName}, nu în română, cu excepția cazului în care ${langName} chiar este română.`;
+Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${langName}, nu în română, cu excepția cazului în care ${langName} chiar este română. Nu uita nici de cerința de mai sus: array-ul "zile" trebuie să aibă EXACT ${zile} ${zile === 1 ? "element" : "elemente"}, nu doar unul singur.`;
 }
 
 // Pagină frontend — formular simplu + randare carduri pe zile. Cod separat,
