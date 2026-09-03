@@ -1065,7 +1065,7 @@ function reportedWrongBannerHtml(text) {
 // linkuri de afiliere specifice confirmate încă, cad pe site-urile publice,
 // funcționale — dacă ai coduri de link reale din Travelpayouts, pune-le
 // aici, direct.
-const linkGetTransferAffiliate = "";
+const linkGetTransferAffiliate = "https://gettransfer.tpk.lu/XPrEGhpT";
 const linkOmioAffiliate = "";
 
 function getTransferLinkFor() {
@@ -1247,15 +1247,20 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
     </div>
   </div>`;
   }
-  // Taxi/Transfer (GetTransfer) și Tren/Autobuz (Omio) — linkuri de
-  // afiliere GOALE momentan (vezi TRAVEL_GUIDES_MONETIZATION_READY, sus în
-  // fișier) — ascunse cât timp rămân necompletate, ca să nu trimitem
-  // vizitatori spre site-uri publice, nemonetizate, prezentate ca linkuri
-  // "ale noastre". Waze rămâne — e navigație reală, nu monetizare.
-  const affiliateOptionsHtml = TRAVEL_GUIDES_MONETIZATION_READY
-    ? `<a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>
-      <a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>`
+  // Taxi/Transfer (GetTransfer) — link real, activ, verificat direct pe
+  // propriul lui link (nu pe comutatorul general TRAVEL_GUIDES_MONETIZATION_READY,
+  // care ar porni și Omio — încă necompletat — trimițând vizitatori spre
+  // omio.com public, nemonetizat, exact ce comentariul de mai sus spune să
+  // evităm). Decuplat, la fel cum s-a făcut deja pentru parcare (vezi mai
+  // sus în fișier) — fiecare buton pornește individual, imediat ce are link
+  // real, fără să aștepte restul.
+  const getTransferHtml = linkGetTransferAffiliate
+    ? `<a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>`
     : "";
+  const omioHtml = linkOmioAffiliate
+    ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>`
+    : "";
+  const affiliateOptionsHtml = `${getTransferHtml}${omioHtml}`;
   return `
   <div class="how-to-get-there-block">
     <button type="button" class="how-to-get-there-btn" id="howToGetThereBtn">${escapeHtml(t.btn)}</button>
@@ -4530,12 +4535,12 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com",
-    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com",
+    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com",
     "worker-src 'self'",
     "manifest-src 'self'",
     "base-uri 'self'",
@@ -4664,6 +4669,12 @@ main{padding-top:8px;}
 
 /* Planifică vizita (buildBookingPlanningButtonsHtml) — pliabil, culori distincte per opțiune */
 .plan-visit-block{margin:14px 18px 0;}
+/* Widget extern (Kiwi/Travelpayouts) — fundal deschis, propriu, ca insulă
+   pe pagina închisă la culoare; widget-ul are componente proprii (câmpuri,
+   text) gândite pentru fundal deschis, indiferent de parametrii de culoare
+   trimiși în URL — încadrarea într-un card alb face tranziția vizuală
+   naturală, nu o pată bruscă pe fundalul dark al site-ului. */
+.flight-widget-card{margin:20px 18px 0;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:hidden;min-height:60px;}
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .plan-visit-hint{margin:8px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
