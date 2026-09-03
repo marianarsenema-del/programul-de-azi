@@ -1557,7 +1557,26 @@ function ticketUrlFor(attractionName) {
 // reordonarea corectă ar necesita gestionarea conectorilor ("din", "de",
 // "a", "ale"), mult mai complex. Rezultatul e clar mai bun decât română
 // peste tot, chiar dacă nu perfect gramatical în toate limbile.
+// Multe nume din date se construiesc ca "<Nume descriptiv> <Oraș>" (convenție
+// folosită ca să putem deduce automat orașul unui obiectiv din numele lui —
+// vezi mai jos). Când partea descriptivă e chiar numele orașului (ex: o
+// plajă numită identic cu satul ei), rezultă un nume vizual dublat:
+// "Plaja Afandou Afandou", "Castelul Mauterndorf Mauterndorf" etc. — găsit
+// la 886 de obiective din date, în toate țările, nu doar Grecia. Reparăm
+// STRICT la afișare (ultimul cuvânt == penultimul -> păstrăm o singură
+// apariție); slug-ul și restul logicii (căutare Google, potriviri de nume)
+// rămân pe numele original, neatins.
+function dedupeTrailingCityName(name) {
+  if (!name) return name;
+  const words = name.split(" ");
+  if (words.length < 2) return name;
+  const last = words[words.length - 1];
+  const secondLast = words[words.length - 2];
+  if (last === secondLast) return words.slice(0, -1).join(" ");
+  return name;
+}
 function translateAttractionName(name, lang) {
+  name = dedupeTrailingCityName(name);
   if (!name || lang === "ro") return name;
   const words = Object.keys(ATTRACTION_PREFIX_TRANSLATIONS).sort((a, b) => b.length - a.length);
   for (const word of words) {
@@ -8178,8 +8197,12 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce, lang }) {
 
 async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, ip }) {
   const slug = toDbSlug(attraction.name);
-  const title = `${attraction.name} — Program și Bilete`;
-  const description = `Vezi programul actualizat și rezervă bilete online pentru ${attraction.name}.`;
+  // displayName — DOAR pentru text vizibil (titlu, breadcrumb, footer);
+  // attraction.name original rămâne folosit la slug, căutare Google,
+  // detectare oraș etc. — vezi dedupeTrailingCityName mai sus.
+  const displayName = dedupeTrailingCityName(attraction.name);
+  const title = `${displayName} — Program și Bilete`;
+  const description = `Vezi programul actualizat și rezervă bilete online pentru ${displayName}.`;
   const canonical = `${baseUrl}/obiectiv/${slug}`;
 
   const live = await tryGetLiveStatus(slug, "ro", "attraction", isBotRequest(userAgent), ip);
@@ -8206,7 +8229,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
       : "";
     statusHtml = `
     <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
-      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="store-name">${escapeHtml(displayName)}</div>
       <div class="status-text">${live.isOpenNow ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
       <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
       <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
@@ -8228,7 +8251,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
       const isOpenGeneric = computeGenericIsOpenNow(genericSchedule);
       statusHtml = `
     <div class="status-card ${isOpenGeneric ? "is-open" : "is-closed"}" id="statusCard">
-      <div class="store-name">${escapeHtml(attraction.name)}</div>
+      <div class="store-name">${escapeHtml(displayName)}</div>
       <div class="status-text">${isOpenGeneric ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
       <div class="status-sub">${escapeHtml(estimatedScheduleLabelFor("ro"))}</div>
     </div>
@@ -8257,7 +8280,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">Acasă</a> / ${escapeHtml(attraction.name)}</p>
+  <p class="breadcrumb"><a href="/">Acasă</a> / ${escapeHtml(displayName)}</p>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
@@ -8271,10 +8294,10 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
   ${buildTravelGuidesBoxHtml()}
 
-  <p class="disclaimer">Informațiile despre ${escapeHtml(attraction.name)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
+  <p class="disclaimer">Informațiile despre ${escapeHtml(displayName)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
 
   <footer>
-    <p><strong>Programul de Azi</strong> îți arată dacă ${escapeHtml(attraction.name)} este deschis chiar acum, plus acces rapid la bilete online.</p>
+    <p><strong>Programul de Azi</strong> îți arată dacă ${escapeHtml(displayName)} este deschis chiar acum, plus acces rapid la bilete online.</p>
   </footer>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
