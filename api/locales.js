@@ -3590,7 +3590,7 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
     <div class="flight-widget-card">
-      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=ro&stops=any&show_hotels=true&powered_by=false&border_radius=1&plain=true&color_button=%23FF7A1A&color_button_text=%230F1115&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=ro&stops=any&show_hotels=true&powered_by=false&border_radius=1&plain=true&color_button=%23FF7A1A&color_button_text=%230F111500&promo_id=3414&campaign_id=111" charset="utf-8"></script>
     </div>`,
   },
 ]
