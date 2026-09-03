@@ -1172,7 +1172,10 @@ function flightSearchLinkFor(destinationCity) {
 }
 
 // Închiriere mașină — Discover Cars, program de afiliere DIRECT (nu prin
-// Travelpayouts) — confirmat cu link real: https://www.discovercars.com/?a_aid=marianarsene
+// Travelpayouts) — link real: https://www.discovercars.com/?a_aid=23ea55cb
+// (codul real de tracking, confirmat direct din cont — "Parent affiliate";
+// "marianarsene" era doar prefixul emailului de login, folosit din greșeală
+// aici înainte — reparat, vezi DISCOVERCARS_AFFILIATE_ID mai jos).
 //
 // Fără destinație pre-completată, deliberat — cercetat direct: căutarea lor
 // reală cere un ID INTERN de locație (pick_up_city_id etc.), obținut printr-un
@@ -1187,9 +1190,6 @@ function flightSearchLinkFor(destinationCity) {
 // generate direct din panoul Discover Cars (nu presupuse) — pentru acestea,
 // destinația CHIAR e pre-completată. Restul orașelor cad pe link-ul general
 // de mai sus. Format real observat: .../{limbă}/{țară}/{oraș}?a_aid=...
-// — codul de urmărire diferă de cel general ("23ea55cb", nu "marianarsene")
-// — probabil un ID separat pentru deep link-uri, generat automat de ei;
-// folosit exact cum a venit, nu modificat.
 //
 // Chei = numele noastre interne CANONICE (orasCanonic din
 // resolveCityToCountry) — două nepotriviri găsite și confirmate direct:
@@ -1197,7 +1197,14 @@ function flightSearchLinkFor(destinationCity) {
 // "Fiorentina" -> Firenze (așa a apărut în sistemul DiscoverCars, confirmat
 // că e tot Florența, nu alt loc).
 ;
-const DISCOVERCARS_AFFILIATE_ID = "marianarsene";
+// "marianarsene" NU era un cod de afiliat valid — era doar prefixul emailului
+// de login (marianarsene.ma@gmail.com), folosit din greșeală ca a_aid într-o
+// sesiune anterioară. Codul real de tracking, confirmat direct din contul
+// Discover Cars ("Parent affiliate"), e "23ea55cb" — același folosit deja
+// corect la cele 30 de deep link-uri de mai sus. Unificat aici, ca toate
+// linkurile Discover Cars din tot site-ul să ducă comisionul spre același
+// cont real.
+const DISCOVERCARS_AFFILIATE_ID = "23ea55cb";
 function carRentalLinkFor(destinationCity) {
   if (destinationCity && DISCOVERCARS_CITY_LINKS[destinationCity]) {
     return DISCOVERCARS_CITY_LINKS[destinationCity];
