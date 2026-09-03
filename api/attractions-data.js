@@ -3982,6 +3982,7 @@ module.exports = {
     { name: "Plaja Costa Navarino Pylos", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Costa+Navarino+Pylos+Greece", category: "plaje_organizate", city: "Pylos" },
     { name: "Plaja Rio Patras", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Rio+Patras+Greece", category: "plaje_organizate", city: "Patras" },
     { name: "Plaja Kalogria Achaia Patras", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Kalogria+Achaia+Patras+Greece", category: "plaje_organizate", city: "Patras" },
+    { name: "Plaja Gianiskari Patras", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Gianiskari+Patras+Greece", category: "plaje_salbatice", city: "Patras", accessDifficulty: "medium" },
     { name: "Plaja Foneas Kardamili", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Foneas+Kardamili+Greece", category: "plaje_salbatice", city: "Kardamili" },
     { name: "Plaja Limeni Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Limeni+Mani+Greece", category: "plaje_organizate", city: "Mani" },
     { name: "Plaja Marmari Mani", url: "https://www.google.com/maps/search/?api=1&query=Plaja+Marmari+Mani+Greece", category: "plaje_organizate", city: "Mani" },
