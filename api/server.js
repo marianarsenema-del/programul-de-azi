@@ -4674,7 +4674,7 @@ main{padding-top:8px;}
    text) gândite pentru fundal deschis, indiferent de parametrii de culoare
    trimiși în URL — încadrarea într-un card alb face tranziția vizuală
    naturală, nu o pată bruscă pe fundalul dark al site-ului. */
-.flight-widget-card{margin:20px 18px 0;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:hidden;min-height:60px;}
+.flight-widget-card{margin:20px 18px 0;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:visible;min-height:60px;}
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .plan-visit-hint{margin:8px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
