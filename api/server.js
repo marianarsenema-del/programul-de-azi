@@ -4567,6 +4567,68 @@ main{padding-top:8px;}
 .alpha-index-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;padding:4px 8px;min-width:26px;cursor:pointer;}
 .alpha-index-btn:hover,.alpha-index-btn:active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .attraction-accordion-item.alpha-jump-highlight{outline:2px solid var(--accent);outline-offset:2px;transition:outline-color .3s;}
+
+/* Grupuri de categorii/subcategorii (<details> native — categorii pe țară,
+   insulă -> Plaje Sălbatice/Organizate etc.). Nu aveau NICIUN stil propriu
+   până acum (rămâneau pe stilul brut de browser), de-asta grupurile
+   apăreau lipite unul sub altul, fără indentare pentru subgrupuri și
+   foarte înghesuite pe mobil. */
+.attraction-category-group{
+  margin:10px 18px 0;
+  background:var(--glass-bg);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+}
+.attraction-category-summary{
+  display:flex;align-items:center;gap:8px;
+  list-style:none;
+  padding:14px 16px;
+  cursor:pointer;
+  font-family:var(--font-body);
+  font-size:14.5px;font-weight:700;color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+}
+.attraction-category-summary::-webkit-details-marker{display:none;}
+.attraction-category-summary::before{
+  content:"";
+  flex:0 0 auto;width:8px;height:8px;
+  border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+  transform:rotate(-45deg);
+  transition:transform .2s ease;
+  margin-right:2px;
+}
+.attraction-category-group[open] > .attraction-category-summary::before{transform:rotate(45deg);}
+.attraction-category-count{margin-left:auto;font-weight:600;color:var(--muted);font-size:13px;flex:0 0 auto;}
+.attraction-category-group > .attraction-accordion-list{margin-top:10px;}
+.attraction-category-group > .category-context-filter{margin-top:0;padding-bottom:10px;}
+
+/* Subgrupurile (ex: o insulă, care conține la rândul ei Sălbatice/
+   Organizate) — indentate vizibil la dreapta față de grupul-părinte,
+   ca ierarhia să se vadă dintr-o privire, plus spațiu clar între ele
+   ca să nu mai pară lipite. */
+.attraction-category-group .attraction-category-group{
+  margin:10px 12px 12px 22px;
+}
+.attraction-category-group .attraction-category-group .attraction-category-summary{
+  font-size:14px;font-weight:600;padding:12px 14px;
+}
+/* al treilea nivel (Sălbatice/Organizate în interiorul unei insule) — un
+   pas suplimentar spre dreapta, mai vizibil separat */
+.attraction-category-group .attraction-category-group .attraction-category-group{
+  margin:8px 8px 10px 18px;
+}
+.beach-region-group + .beach-region-group{margin-top:10px;}
+.beach-subtype-group + .beach-subtype-group{margin-top:8px;}
+
+@media (max-width:420px){
+  .attraction-category-group{margin-left:12px;margin-right:12px;}
+  .attraction-category-summary{padding:13px 12px;font-size:14px;}
+  .attraction-category-group .attraction-category-group{margin-left:16px;margin-right:8px;}
+  .attraction-category-group .attraction-category-group .attraction-category-summary{font-size:13.5px;padding:11px 12px;}
+  .attraction-category-group .attraction-category-group .attraction-category-group{margin-left:14px;margin-right:6px;}
+}
 .attraction-recommended-badge{margin-right:4px;}
 .beach-island-heading{margin:14px 18px 4px;font-size:14px;font-weight:800;color:var(--accent);}
 .beach-car-hint a{color:var(--accent);text-decoration:none;font-weight:600;}
