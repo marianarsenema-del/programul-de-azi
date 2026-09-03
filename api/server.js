@@ -2475,7 +2475,12 @@ const GENERIC_PARTNER_OFFERS = [
   { name: "Bazarul Online", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d5075b651&redirect_to=https%3A%2F%2Fbazarulonline.ro%2F" },
   { name: "Librărie.net", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=da1148931&redirect_to=https%3A%2F%2Fwww.librarie.net%2F" },
   { name: "Electric Sun", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=bd37fbb23&redirect_to=https%3A%2F%2FElectricSun.de" },
-  { name: "BijuBox", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=2173f05f3&redirect_to=https%3A%2F%2Fbijubox.ro" },
+  {
+    name: "BijuBox",
+    url: "https://event.2performant.com/events/click?ad_type=banner&unique=e8588e01b&aff_code=c647d7f92&campaign_unique=2173f05f3",
+    banner: "https://img.2performant.com/system/paperclip/banner_pictures/pics/214311/original/214311.png",
+    alt: "bijubox.ro",
+  },
   { name: "Biomag", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=e7e590bd1&redirect_to=https%3A%2F%2Fwww.Biomag.ro" },
   { name: "Brico.ro", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=8727b63f4&redirect_to=https%3A%2F%2Fwww.brico.ro%2F" },
   { name: "Comenzi.ro", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=b09908f08&redirect_to=https%3A%2F%2Fwww.comenzi.ro%2F" },
@@ -2486,20 +2491,47 @@ const GENERIC_PARTNER_OFFERS = [
   { name: "Picadili", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d404a783d&redirect_to=https%3A%2F%2Fpicadili.ro" },
   { name: "Prosoape Hotel", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9dd5272cf&redirect_to=https%3A%2F%2Fwww.prosoapehotel.ro" },
 ];
+// Rotația efectivă a caruselului generic — SUPORTĂ o listă MIXTĂ de oferte
+// (unele cu banner-imagine, altele doar text), fiindcă bannerele reale vin
+// treptat, câte unul, de la fiecare partener. La fiecare pas, funcția
+// render() reconstruiește complet conținutul butonului (clasă + interior)
+// după tipul ofertei curente — dacă are `banner`, arată imaginea, curată,
+// fără fundal colorat; altfel, cade pe stilul CTA text + săgeată, ca acum.
 function buildGenericPartnerCarouselScript(buttonId, offers, nonce) {
   return `
 <script${nonce ? ` nonce="${nonce}"` : ""}>
 (function(){
   var btn = document.getElementById(${safeJson(buttonId)});
-  var nameEl = document.getElementById(${safeJson(buttonId + "_name")});
-  if (!btn || !nameEl) return;
+  if (!btn) return;
   var offers = ${safeJson(offers)};
   if (!offers || offers.length < 2) return;
   var idx = 0;
+  function render(item){
+    btn.href = item.url;
+    btn.innerHTML = "";
+    if (item.banner) {
+      btn.className = "affiliate-banner-link";
+      var img = document.createElement("img");
+      img.src = item.banner;
+      img.alt = item.alt || item.name || "";
+      img.loading = "lazy";
+      btn.appendChild(img);
+    } else {
+      btn.className = "affiliate-btn affiliate-btn-generic affiliate-btn-cta";
+      var textSpan = document.createElement("span");
+      textSpan.className = "affiliate-cta-text";
+      textSpan.textContent = "🛍️ Ofertă recomandată: " + (item.name || "");
+      var arrow = document.createElement("span");
+      arrow.className = "affiliate-cta-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "➜";
+      btn.appendChild(textSpan);
+      btn.appendChild(arrow);
+    }
+  }
   setInterval(function(){
     idx = (idx + 1) % offers.length;
-    btn.href = offers[idx].url;
-    nameEl.textContent = offers[idx].name;
+    render(offers[idx]);
   }, 7000);
 })();
 </script>`;
@@ -2508,7 +2540,9 @@ function buildGenericAffiliateCarouselHtml(nonce) {
   if (!GENERIC_PARTNER_OFFERS.length) return { html: "", scriptHtml: "" };
   const buttonId = "genericPartnerCarousel";
   const first = GENERIC_PARTNER_OFFERS[0];
-  const html = `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic" id="${buttonId}">🛍️ Ofertă recomandată: <span id="${buttonId}_name">${escapeHtml(first.name)}</span></a>`;
+  const html = first.banner
+    ? `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-banner-link" id="${buttonId}"><img src="${escapeHtml(first.banner)}" alt="${escapeHtml(first.alt || first.name || "")}" loading="lazy"></a>`
+    : `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic affiliate-btn-cta" id="${buttonId}"><span class="affiliate-cta-text">🛍️ Ofertă recomandată: <span>${escapeHtml(first.name)}</span></span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`;
   const scriptHtml = GENERIC_PARTNER_OFFERS.length > 1
     ? buildGenericPartnerCarouselScript(buttonId, GENERIC_PARTNER_OFFERS, nonce)
     : "";
@@ -4692,6 +4726,10 @@ main{padding-top:8px;}
 .affiliate-btn-emag:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(200,30,214,.55),0 8px 18px -6px rgba(0,88,204,.4);}
 .affiliate-btn-emag svg{width:20px;height:20px;flex:0 0 auto;}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
+.affiliate-btn-cta{display:flex;align-items:center;justify-content:center;gap:10px;}
+.affiliate-cta-arrow{font-size:22px;font-weight:900;line-height:1;flex:0 0 auto;animation:affiliateCtaNudge 1.4s ease-in-out infinite;}
+@keyframes affiliateCtaNudge{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
+@media (prefers-reduced-motion: reduce){.affiliate-cta-arrow{animation:none;}}
 .cinema-card{margin:14px 18px 0;padding:28px 24px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);text-align:center;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
