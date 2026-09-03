@@ -8637,6 +8637,12 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
        <a href="/${slugifyCityName(nearest.city)}/${magazinKey}" class="accordion-status-link">🕐 Vezi programul ${escapeHtml(magazinDisplay)} ${escapeHtml(nearest.city)} →</a>`
     : `<div class="geo-country-highlight">ℹ️ Nu avem confirmat niciun magazin ${escapeHtml(magazinDisplay)} în <strong>${escapeHtml(orasDisplay)}</strong>.</div>`;
 
+  // pagina asta n-a arătat NICIODATĂ vreun buton/carusel de afiliere — nefiind
+  // programul unui magazin real, cade direct pe fallback-ul generic (cele 13
+  // magazine partenere), la fel ca orice brand fără link propriu, ca traficul
+  // să nu rămână nemonetizat doar pentru că orașul cerut n-are acest brand.
+  const { html: brandNotInCityAffiliateHtml, scriptHtml: brandNotInCityAffiliateScriptHtml } = buildGenericAffiliateCarouselHtml(nonce);
+
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
@@ -8648,13 +8654,16 @@ function renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey, bas
   <p class="breadcrumb"><a href="/">Acasă</a> / <a href="/${slugifyCityName(orasDisplay)}">${escapeHtml(orasDisplay)}</a> / ${escapeHtml(magazinDisplay)}</p>
   ${nearestBlockHtml}
 
+  ${brandNotInCityAffiliateHtml}
+
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(magazinDisplay)} — toate orașele confirmate</h2>
   <ul class="mall-list">${allowedListHtml}</ul>
 
   <footer>
     <p><strong>Programul de Azi</strong> arată doar branduri cu prezență reală, verificată, în fiecare oraș.</p>
   </footer>
-</main>`;
+</main>
+${brandNotInCityAffiliateScriptHtml}`;
 
   return pageShell({
     title,
