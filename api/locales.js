@@ -3581,6 +3581,18 @@ exports.TRAVEL_GUIDES_RO = [
         : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
+  {
+    slug: "zboruri",
+    title: "Cum găsești cele mai bune bilete de avion",
+    intro: "Ghid de căutare zboruri, cu comparator de prețuri în timp real",
+    body: `
+    <p>Biletul de avion e de obicei cea mai mare cheltuială dintr-o vacanță — și cea mai ușor de optimizat, dacă știi unde să cauți. Diferențele de preț între companii, între zile ale săptămânii sau între aeroporturi apropiate pot ajunge la sute de euro pentru aceeași destinație.</p>
+    <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
+    <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=ro&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_EN = [
