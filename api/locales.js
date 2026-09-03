@@ -3590,7 +3590,7 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3649,7 +3649,7 @@ exports.TRAVEL_GUIDES_EN = [
     <p>A comparator that searches dozens of airlines at once (including low-cost carriers) shows you the cheapest option at a glance, no matter who operates it — much faster than checking every airline's site by hand.</p>
     <p>Search directly below, without leaving the page — enter your departure city and destination, and results appear in real time, with up-to-date prices.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3708,7 +3708,7 @@ exports.TRAVEL_GUIDES_DE = [
     <p>Ein Vergleichsportal, das gleichzeitig Dutzende Airlines durchsucht (auch Low-Cost-Anbieter), zeigt dir auf einen Blick die günstigste Option, egal wer sie betreibt — viel schneller, als jede Airline-Website einzeln zu prüfen.</p>
     <p>Suche direkt unten, ohne die Seite zu verlassen — gib Abflugort und Ziel ein, die Ergebnisse erscheinen in Echtzeit, mit aktuellen Preisen.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=de&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=de&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3767,7 +3767,7 @@ exports.TRAVEL_GUIDES_FR = [
     <p>Un comparateur qui interroge simultanément des dizaines de compagnies aériennes (y compris low-cost) affiche en un coup d'œil l'option la moins chère, quel que soit l'opérateur — bien plus rapide que de vérifier manuellement le site de chaque compagnie.</p>
     <p>Recherchez directement ci-dessous, sans quitter la page — indiquez la ville de départ et la destination, les résultats apparaissent en temps réel, avec des prix à jour.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=fr&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=fr&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3826,7 +3826,7 @@ exports.TRAVEL_GUIDES_ES = [
     <p>Un comparador que busca a la vez en decenas de aerolíneas (incluidas las low-cost) te muestra de un vistazo la opción más barata, sin importar quién la opere — mucho más rápido que revisar manualmente la web de cada aerolínea.</p>
     <p>Busca aquí abajo directamente, sin salir de la página — indica la ciudad de origen y el destino, y los resultados aparecen en tiempo real, con precios actualizados.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=es&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=es&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3885,7 +3885,7 @@ exports.TRAVEL_GUIDES_IT = [
     <p>Un comparatore che cerca contemporaneamente tra decine di compagnie aeree (incluse le low-cost) mostra a colpo d'occhio l'opzione più economica, chiunque la operi — molto più veloce che controllare manualmente il sito di ogni compagnia.</p>
     <p>Cerca qui sotto direttamente, senza lasciare la pagina — inserisci la città di partenza e la destinazione, e i risultati appaiono in tempo reale, con prezzi aggiornati.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=it&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=it&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3944,7 +3944,7 @@ exports.TRAVEL_GUIDES_PL = [
     <p>Porównywarka, która przeszukuje jednocześnie dziesiątki linii lotniczych (w tym tanie linie), pokazuje od razu najtańszą opcję, niezależnie od przewoźnika — znacznie szybciej niż ręczne sprawdzanie strony każdej linii z osobna.</p>
     <p>Szukaj bezpośrednio poniżej, bez opuszczania strony — wpisz miasto wylotu i cel podróży, a wyniki pojawią się w czasie rzeczywistym, z aktualnymi cenami.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=pl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=pl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -4003,7 +4003,7 @@ exports.TRAVEL_GUIDES_NL = [
     <p>Een vergelijker die tegelijk tientallen luchtvaartmaatschappijen doorzoekt (inclusief low-cost) toont je in één oogopslag de goedkoopste optie, ongeacht wie de vlucht uitvoert — veel sneller dan handmatig de site van elke maatschappij te checken.</p>
     <p>Zoek hieronder direct, zonder de pagina te verlaten — vul de vertrekstad en bestemming in, en de resultaten verschijnen in real time, met actuele prijzen.</p>
     <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=nl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=nl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
     </div>`,
   },
 ]
