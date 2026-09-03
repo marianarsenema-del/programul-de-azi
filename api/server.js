@@ -3641,15 +3641,20 @@ const BEACH_CONTENT_DATA = require("./beach-content-data.js");
 const BEACH_CONTENT_LANG_CACHE = {};
 function getBeachContentForLang(attractionName, lang) {
   if (lang === "ro") return BEACH_CONTENT_DATA[attractionName] || null;
-  if (!BEACH_CONTENT_LANG_FILES[lang]) return null; // nicio traducere disponibilă încă pentru limba asta
-  if (!BEACH_CONTENT_LANG_CACHE[lang]) {
+  // Orice altă limbă fără traducere proprie cade pe engleză (uk) — mai bine
+  // decât să nu arătăm nimic. Bug real, semnalat direct: până acum funcția
+  // întorcea direct `null` pentru orice limbă în afară de "uk", iar pagina
+  // rămânea fără descriere (doar widget-ul de vot), nu cu engleza cum ar
+  // fi trebuit.
+  const effectiveLang = BEACH_CONTENT_LANG_FILES[lang] ? lang : "uk";
+  if (!BEACH_CONTENT_LANG_CACHE[effectiveLang]) {
     try {
-      BEACH_CONTENT_LANG_CACHE[lang] = require(`./beach-content-${lang}.js`);
+      BEACH_CONTENT_LANG_CACHE[effectiveLang] = require(`./beach-content-${effectiveLang}.js`);
     } catch (err) {
-      BEACH_CONTENT_LANG_CACHE[lang] = {}; // fișierul lipsește încă — cădem elegant, nu crăpăm pagina
+      BEACH_CONTENT_LANG_CACHE[effectiveLang] = {}; // fișierul lipsește încă — cădem elegant, nu crăpăm pagina
     }
   }
-  return BEACH_CONTENT_LANG_CACHE[lang][attractionName] || null;
+  return BEACH_CONTENT_LANG_CACHE[effectiveLang][attractionName] || null;
 }
 // Limbile care AU (sau vor avea) un fișier beach-content-<lang>.js — se
 // extinde pe măsură ce se traduce mai mult conținut.
