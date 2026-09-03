@@ -7543,7 +7543,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
    ============================================================ */
 
 // Pagină de magazin internațională: /:tara/:oras/:magazin
-async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, baseUrl, lang, nonce, userAgent, ip }) {
+async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay, locatieDisplay, store, magazinKey, baseUrl, lang, nonce, userAgent, ip }) {
   const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
   // pagină hiper-locală (cartier) — același program ca pagina de oraș, doar
@@ -7632,6 +7632,21 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   const amazonButtonHtml = linkAmazonAffiliate
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
     : "";
+
+  // Butonul/caruselul de afiliere per-brand (Catena, Spring Pharma, cele 13
+  // magazine partenere ș.a.m.d.) — DOAR pentru România. Aceste linkuri sunt
+  // în lei/RON, cu text în română, pentru comercianți români — n-are sens să
+  // apară pe o pagină de magazin din Germania sau UK. Necesar aici (nu doar
+  // în renderStorePage) fiindcă, odată cu migrarea .ro -> .eu, orice vizitator
+  // ajuns pe .ro e redirecționat spre .eu, unde ruta /:tara/:oras/:magazin
+  // (cu tara="ro") ajunge la ACEASTĂ funcție, nu la renderStorePage.
+  let roAffiliateHtml = "";
+  let roAffiliateScriptHtml = "";
+  if (countryCode === "ro") {
+    const roAffBtn = buildStoreAffiliateButtonHtml(magazinKey, magazinDisplay, nonce);
+    roAffiliateHtml = roAffBtn.html;
+    roAffiliateScriptHtml = roAffBtn.scriptHtml;
+  }
 
   // status live (Google) — același slug generat la popularea bazei
   // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
@@ -7728,6 +7743,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   ${statusCardHtml}
 
   ${amazonButtonHtml}
+  ${roAffiliateHtml}
 
   ${weeklySectionHtml}
 
@@ -7744,7 +7760,8 @@ ${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce, reportIssueLabelsFor(activeLang))}
 ${buildHowToGetThereScript(nonce)}
-${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}
+${roAffiliateScriptHtml}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -9615,7 +9632,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, magazinKey: found.key, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -9657,7 +9674,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, store: found.config, magazinKey: found.key, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
