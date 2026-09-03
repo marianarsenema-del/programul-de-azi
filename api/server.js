@@ -2474,6 +2474,7 @@ function buildStoreAffiliateCarouselScript(buttonId, links, nonce, isBanner) {
 const GENERIC_PARTNER_OFFERS = [
   { name: "Bazarul Online", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d5075b651&redirect_to=https%3A%2F%2Fbazarulonline.ro%2F" },
   { name: "Librărie.net", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=da1148931&redirect_to=https%3A%2F%2Fwww.librarie.net%2F" },
+  { name: "Zandra.ro", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=436288837&redirect_to=https%3A%2F%2Fzandra.ro" },
   { name: "Electric Sun", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=bd37fbb23&redirect_to=https%3A%2F%2FElectricSun.de" },
   {
     name: "BijuBox",
@@ -4734,6 +4735,7 @@ main{padding-top:8px;}
 .cinema-note{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 18px;}
 .cinema-btn{display:inline-block;background:linear-gradient(135deg,#E63946,#FF6B6B);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:100px;box-shadow:0 12px 26px -10px rgba(230,57,70,.5);}
 .amazon-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;background:linear-gradient(135deg,#131A22,#232F3E);color:#FF9900;border:1px solid #FF9900;box-shadow:0 12px 26px -10px rgba(0,0,0,.5);}
+.amazon-btn-cta{display:flex;align-items:center;justify-content:center;gap:10px;}
 .ticket-btn{display:block;text-align:center;width:calc(100% - 36px);margin:8px 18px 16px;padding:14px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:14.5px;text-decoration:none;background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;box-shadow:0 12px 26px -10px rgba(255,85,51,.5);}
 .sub-nav-tabs{display:flex;gap:6px;margin:14px 18px 0;background:#1e1e1e;border-radius:var(--radius-md);padding:6px;}
 .sub-nav-tab{flex:1 1 0;min-width:0;background:transparent;border:none;border-radius:calc(var(--radius-md) - 4px);padding:13px 10px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--muted);cursor:pointer;transition:background .18s ease,color .18s ease;text-align:center;min-height:44px;word-break:break-word;overflow-wrap:break-word;}
@@ -7668,7 +7670,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   }
 
   const amazonButtonHtml = linkAmazonAffiliate
-    ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn">${escapeHtml(t.amazonBtn)}</a>`
+    ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn amazon-btn-cta"><span class="affiliate-cta-text">${escapeHtml(t.amazonBtn)}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
     : "";
 
   // Butonul/caruselul de afiliere per-brand (Catena, Spring Pharma, cele 13
