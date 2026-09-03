@@ -8172,31 +8172,6 @@ function buildTravelGuidesBoxHtml() {
   </div>`;
 }
 
-// Injectorul pentru widget-ul de căutare zboruri (Travelpayouts) — vezi
-// ghidul de zboruri (TRAVEL_GUIDES_RO etc., slug "zboruri"/"flights"), care
-// randează DOAR un <div id="tp-flight-search-widget" data-tp-widget-src="...">
-// gol, fără <script> direct în text. Acest script rulează după ce pagina s-a
-// încărcat complet (DOMContentLoaded), citește URL-ul complet din atributul
-// data-tp-widget-src și abia atunci creează + adaugă tag-ul <script> real,
-// care descarcă widget-ul de la Travelpayouts. No-op sigur pe orice altă
-// pagină (containerul pur și simplu nu există acolo).
-function buildFlightWidgetInjectorScript(nonce) {
-  return `
-<script nonce="${nonce}">
-document.addEventListener("DOMContentLoaded", function() {
-  var container = document.getElementById("tp-flight-search-widget");
-  if (!container) return;
-  var src = container.getAttribute("data-tp-widget-src");
-  if (!src) return;
-  var tpScript = document.createElement("script");
-  tpScript.async = true;
-  tpScript.charset = "utf-8";
-  tpScript.src = src;
-  container.appendChild(tpScript);
-});
-</script>`;
-}
-
 async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   const title = `${guide.title} — Ghiduri Utile`;
   const description = `${guide.intro}. Sfaturi practice pentru turiști, plus linkuri directe către rezervări.`;
@@ -8233,8 +8208,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
-</main>
-${buildFlightWidgetInjectorScript(nonce)}`;
+</main>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -8408,8 +8382,7 @@ async function renderTravelGuidePageIntl({ guide, baseUrl, nonce, lang }) {
   <footer>
     <p><strong>Opening Hours Today</strong> — ${escapeHtml(t.footer)}</p>
   </footer>
-</main>
-${buildFlightWidgetInjectorScript(nonce)}`;
+</main>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
 }
