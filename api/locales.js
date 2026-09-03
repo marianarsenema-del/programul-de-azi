@@ -3640,6 +3640,18 @@ exports.TRAVEL_GUIDES_EN = [
         : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
   },
+  {
+    slug: "flights",
+    title: "How to find the best flight tickets",
+    intro: "Flight search guide, with real-time price comparison",
+    body: `
+    <p>The flight is usually the biggest expense in a trip — and the easiest one to optimise, if you know where to look. Price differences between airlines, between days of the week, or between nearby airports can add up to hundreds of euros for the same destination.</p>
+    <p>A comparator that searches dozens of airlines at once (including low-cost carriers) shows you the cheapest option at a glance, no matter who operates it — much faster than checking every airline's site by hand.</p>
+    <p>Search directly below, without leaving the page — enter your departure city and destination, and results appear in real time, with up-to-date prices.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_DE = [
@@ -3685,6 +3697,18 @@ exports.TRAVEL_GUIDES_DE = [
         ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Auf TheFork suchen (Frankreich, Italien, Spanien)</a>
       <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Auf OpenTable suchen (UK, Deutschland)</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "flights",
+    title: "So findest du die besten Flugtickets",
+    intro: "Flugsuche mit Preisvergleich in Echtzeit",
+    body: `
+    <p>Der Flug ist meist die größte Ausgabe einer Reise — und die am leichtesten zu optimierende, wenn man weiß, wo man suchen muss. Preisunterschiede zwischen Airlines, Wochentagen oder nahegelegenen Flughäfen können für dasselbe Ziel Hunderte von Euro ausmachen.</p>
+    <p>Ein Vergleichsportal, das gleichzeitig Dutzende Airlines durchsucht (auch Low-Cost-Anbieter), zeigt dir auf einen Blick die günstigste Option, egal wer sie betreibt — viel schneller, als jede Airline-Website einzeln zu prüfen.</p>
+    <p>Suche direkt unten, ohne die Seite zu verlassen — gib Abflugort und Ziel ein, die Ergebnisse erscheinen in Echtzeit, mit aktuellen Preisen.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=de&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3734,6 +3758,18 @@ exports.TRAVEL_GUIDES_FR = [
         : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
     </div>`,
   },
+  {
+    slug: "flights",
+    title: "Comment trouver les meilleurs billets d'avion",
+    intro: "Guide de recherche de vols, avec comparateur de prix en temps réel",
+    body: `
+    <p>Le billet d'avion est généralement la plus grosse dépense d'un voyage — et la plus facile à optimiser, si l'on sait où chercher. Les écarts de prix entre compagnies, entre jours de la semaine ou entre aéroports proches peuvent atteindre des centaines d'euros pour la même destination.</p>
+    <p>Un comparateur qui interroge simultanément des dizaines de compagnies aériennes (y compris low-cost) affiche en un coup d'œil l'option la moins chère, quel que soit l'opérateur — bien plus rapide que de vérifier manuellement le site de chaque compagnie.</p>
+    <p>Recherchez directement ci-dessous, sans quitter la page — indiquez la ville de départ et la destination, les résultats apparaissent en temps réel, avec des prix à jour.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=fr&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_ES = [
@@ -3779,6 +3815,18 @@ exports.TRAVEL_GUIDES_ES = [
         ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Buscar en TheFork (Francia, Italia, España)</a>
       <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Buscar en OpenTable (Reino Unido, Alemania)</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "flights",
+    title: "Cómo encontrar los mejores billetes de avión",
+    intro: "Guía de búsqueda de vuelos, con comparador de precios en tiempo real",
+    body: `
+    <p>El billete de avión suele ser el gasto más grande de un viaje — y el más fácil de optimizar, si sabes dónde buscar. Las diferencias de precio entre aerolíneas, entre días de la semana o entre aeropuertos cercanos pueden llegar a cientos de euros para el mismo destino.</p>
+    <p>Un comparador que busca a la vez en decenas de aerolíneas (incluidas las low-cost) te muestra de un vistazo la opción más barata, sin importar quién la opere — mucho más rápido que revisar manualmente la web de cada aerolínea.</p>
+    <p>Busca aquí abajo directamente, sin salir de la página — indica la ciudad de origen y el destino, y los resultados aparecen en tiempo real, con precios actualizados.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=es&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
     </div>`,
   },
 ]
@@ -3828,6 +3876,18 @@ exports.TRAVEL_GUIDES_IT = [
         : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
     </div>`,
   },
+  {
+    slug: "flights",
+    title: "Come trovare i migliori biglietti aerei",
+    intro: "Guida alla ricerca di voli, con comparatore di prezzi in tempo reale",
+    body: `
+    <p>Il biglietto aereo è di solito la spesa più grande di un viaggio — ed è anche la più facile da ottimizzare, se si sa dove cercare. Le differenze di prezzo tra compagnie, tra i giorni della settimana o tra aeroporti vicini possono arrivare a centinaia di euro per la stessa destinazione.</p>
+    <p>Un comparatore che cerca contemporaneamente tra decine di compagnie aeree (incluse le low-cost) mostra a colpo d'occhio l'opzione più economica, chiunque la operi — molto più veloce che controllare manualmente il sito di ogni compagnia.</p>
+    <p>Cerca qui sotto direttamente, senza lasciare la pagina — inserisci la città di partenza e la destinazione, e i risultati appaiono in tempo reale, con prezzi aggiornati.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=it&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_PL = [
@@ -3875,6 +3935,18 @@ exports.TRAVEL_GUIDES_PL = [
         : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
     </div>`,
   },
+  {
+    slug: "flights",
+    title: "Jak znaleźć najlepsze bilety lotnicze",
+    intro: "Przewodnik po wyszukiwaniu lotów, z porównywarką cen w czasie rzeczywistym",
+    body: `
+    <p>Bilet lotniczy to zwykle największy wydatek podczas podróży — i najłatwiejszy do zoptymalizowania, jeśli wiesz, gdzie szukać. Różnice cen między liniami lotniczymi, dniami tygodnia czy pobliskimi lotniskami mogą sięgać setek euro dla tego samego kierunku.</p>
+    <p>Porównywarka, która przeszukuje jednocześnie dziesiątki linii lotniczych (w tym tanie linie), pokazuje od razu najtańszą opcję, niezależnie od przewoźnika — znacznie szybciej niż ręczne sprawdzanie strony każdej linii z osobna.</p>
+    <p>Szukaj bezpośrednio poniżej, bez opuszczania strony — wpisz miasto wylotu i cel podróży, a wyniki pojawią się w czasie rzeczywistym, z aktualnymi cenami.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=pl&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_NL = [
@@ -3920,6 +3992,18 @@ exports.TRAVEL_GUIDES_NL = [
         ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Zoek op TheFork (Frankrijk, Italië, Spanje)</a>
       <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Zoek op OpenTable (VK, Duitsland)</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
+    </div>`,
+  },
+  {
+    slug: "flights",
+    title: "Hoe vind je de beste vliegtickets",
+    intro: "Gids voor het zoeken van vluchten, met prijsvergelijking in real time",
+    body: `
+    <p>Het vliegticket is meestal de grootste uitgave van een reis — en de gemakkelijkste om te optimaliseren, als je weet waar je moet zoeken. Prijsverschillen tussen luchtvaartmaatschappijen, tussen dagen van de week of tussen nabijgelegen luchthavens kunnen honderden euro's schelen voor dezelfde bestemming.</p>
+    <p>Een vergelijker die tegelijk tientallen luchtvaartmaatschappijen doorzoekt (inclusief low-cost) toont je in één oogopslag de goedkoopste optie, ongeacht wie de vlucht uitvoert — veel sneller dan handmatig de site van elke maatschappij te checken.</p>
+    <p>Zoek hieronder direct, zonder de pagina te verlaten — vul de vertrekstad en bestemming in, en de resultaten verschijnen in real time, met actuele prijzen.</p>
+    <div class="flight-widget-card">
+      <script async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=nl&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%23FF7A1A&color_button_text=%231A1200&promo_id=3414&campaign_id=111" charset="utf-8"></script>
     </div>`,
   },
 ]
