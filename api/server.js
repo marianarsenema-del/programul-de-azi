@@ -4413,6 +4413,7 @@ body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,2
 /* Comutator manual de temă — buton plutitor, sus-dreapta */
 .theme-toggle-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));right:14px;z-index:11;width:38px;height:38px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
 .global-back-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));left:14px;z-index:11;width:42px;height:42px;border-radius:50%;background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:var(--text);cursor:grab;box-shadow:0 10px 24px -6px rgba(0,0,0,.45),0 2px 6px -1px rgba(0,0,0,.3);transition:box-shadow .15s ease,transform .15s ease;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.global-back-btn[hidden]{display:none;}
 .global-back-btn:active{transform:translateY(1px) scale(.94);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);}
 .global-back-btn.is-dragging{cursor:grabbing;transform:scale(1.08);box-shadow:0 18px 38px -8px rgba(0,0,0,.55),0 5px 12px -2px rgba(0,0,0,.4);}
 @media (min-width:900px){.global-back-btn:hover{box-shadow:0 14px 30px -6px rgba(0,0,0,.5),0 3px 8px -1px rgba(0,0,0,.35);}}
