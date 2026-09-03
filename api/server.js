@@ -4535,13 +4535,13 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com",
-    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com",
-    "worker-src 'self'",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io",
+    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
+    "worker-src 'self' blob:",
     "manifest-src 'self'",
     "base-uri 'self'",
     "form-action 'self'",
