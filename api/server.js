@@ -1677,7 +1677,11 @@ const BEACH_CONTENT_LABELS_UK = {
   tips: "💡 Practical info & local tips",
 };
 function beachContentLabelsFor(lang) {
-  return lang === "uk" ? BEACH_CONTENT_LABELS_UK : BEACH_CONTENT_LABELS_RO;
+  // Aceeași reparație ca la getBeachContentForLang: orice limbă în afară de
+  // română cade pe etichetele în engleză, nu doar "uk" exact — altfel
+  // titlurile secțiunilor rămâneau în română chiar și când conținutul
+  // propriu-zis era corect tradus (bug real, semnalat direct, cu captură).
+  return lang === "ro" ? BEACH_CONTENT_LABELS_RO : BEACH_CONTENT_LABELS_UK;
 }
 function buildBeachContentIntroHtml(content, lang) {
   if (!content) return "";
