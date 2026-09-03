@@ -4696,9 +4696,9 @@ main{padding-top:8px;}
 .beach-monetization-banner{display:block;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 16px;margin:14px 18px 0;font-size:13px;color:var(--muted);text-align:center;}
 .beach-content-block{margin:16px 0;}
 .beach-content-heading{font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:8px;}
-.beach-content-text{font-size:13.5px;color:var(--muted);line-height:1.5;}
+.beach-content-text{font-size:13.5px;color:var(--muted);line-height:1.5;text-align:justify;text-justify:inter-word;hyphens:auto;}
 .beach-content-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.beach-content-list li{font-size:13.5px;color:var(--muted);line-height:1.5;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;}
+.beach-content-list li{font-size:13.5px;color:var(--muted);line-height:1.5;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;text-align:justify;text-justify:inter-word;hyphens:auto;}
 .beach-content-list li strong{color:var(--text);}
 .beach-content-equipment{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:14px 16px;margin:14px 18px 0;}
 .beach-content-equipment .beach-content-list li{background:none;border:none;padding:4px 0;}
