@@ -2316,6 +2316,21 @@ const linkAfiliatJysk = "";
 // cheile din STORE_CONFIG de mai jos (forma colapsată, fără cratime).
 // Restul brandurilor noi rămân "" — completează-le aici pe măsură ce primești
 // aprobările, la fel cum ai făcut cu Lidl/Kaufland.
+//
+// Valoarea poate fi:
+//  - un STRING gol "" -> fără buton de afiliere pe pagina acelui brand.
+//  - un STRING cu un link -> buton fix, single-link (comportamentul vechi,
+//    neschimbat — "🔥 Vezi catalogul cu reduceri X de azi").
+//  - un ARRAY de linkuri -> "carusel de linkuri": un singur buton, cu textul
+//    FIX "🛒 Cumpără online de la [Nume Magazin]" (nu se schimbă niciodată),
+//    dar href-ul din spatele lui rotește automat prin toate linkurile din
+//    array, la fiecare 7 secunde (vezi buildStoreAffiliateCarouselScript mai
+//    jos) — util când ai mai multe linkuri de afiliere valide pentru ACELAȘI
+//    brand (ex: mai multe programe/rețele de afiliere pentru Catena) și vrei
+//    să le distribui expunerea, fără să aglomerezi pagina cu mai multe
+//    butoane sau bannere. Un array cu un singur link e valid și el — href-ul
+//    rămâne fix, dar poți adăuga altele oricând, fără nicio altă modificare
+//    de cod.
 const STORE_AFFILIATE_LINKS = {
   lidl: linkCatalogLidl,
   kaufland: linkCatalogKaufland,
@@ -2338,8 +2353,16 @@ const STORE_AFFILIATE_LINKS = {
   drmax: "",
   farmaciatei: "",
   remedia: "",
-  springpharma: "",
-  catena: "",
+  springpharma: [
+    "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=1ec3596e6&redirect_to=https%3A%2F%2Fwww.springfarma.com",
+  ],
+  catena: [
+    {
+      url: "https://event.2performant.com/events/click?ad_type=banner&unique=be9a074a6&aff_code=c647d7f92&campaign_unique=938c02434",
+      banner: "https://img.2performant.com/system/paperclip/banner_pictures/pics/269655/original/269655.jpg",
+      alt: "catenapascupas.ro",
+    },
+  ],
   sensiblu: "",
   helpnet: "",
   dona: "",
@@ -2365,6 +2388,132 @@ const STORE_AFFILIATE_LINKS = {
   dpd: "",
   gls: "",
 };
+
+// Butonul de afiliere per magazin (Lidl/Kaufland/Catena/...) — vezi comentariul
+// de deasupra STORE_AFFILIATE_LINKS pentru cele 2 moduri posibile (link fix,
+// STRING, vs. "carusel de linkuri", ARRAY). Randează un SINGUR <a>, mereu — nu
+// mai multe butoane/bannere — deci nu aglomerează pagina, indiferent de câte
+// linkuri sunt disponibile pentru brandul respectiv.
+// Returnează { html, scriptHtml } — scriptHtml e "" în afara modului carusel
+// (adică pentru toate brandurile vechi, cu link simplu, comportament identic
+// cu înainte) și conține rotația JS DOAR când chiar avem 2+ linkuri de rotit.
+function buildStoreAffiliateButtonHtml(magazinKey, magazinDisplay, nonce) {
+  const raw = magazinKey ? STORE_AFFILIATE_LINKS[magazinKey] : null;
+  const hasOwnLink = !!raw && (typeof raw === "string" ? raw.length > 0 : raw.length > 0);
+  if (!hasOwnLink) {
+    // fallback — brandul ăsta n-are încă link propriu de afiliere: arătăm
+    // caruselul generic cu cele 13 magazine partenere, ca pagina să nu
+    // rămână fără nimic de monetizare.
+    return buildGenericAffiliateCarouselHtml(nonce);
+  }
+
+  if (typeof raw === "string") {
+    // comportamentul vechi, neschimbat — link fix, un singur brand text
+    const html = `<a href="${escapeHtml(raw)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic">🔥 Vezi catalogul cu reduceri ${escapeHtml(magazinDisplay)} de azi</a>`;
+    return { html, scriptHtml: "" };
+  }
+
+  // mod carusel — fiecare element poate fi:
+  //  - un STRING (link simplu) -> buton text, ca înainte.
+  //  - un OBJECT { url, banner, alt } -> bannerul REAL primit de la rețeaua
+  //    de afiliere (imagine), afișat în loc de text. La 2+ elemente, atât
+  //    href-ul cât și imaginea rotesc împreună, la fiecare 7 secunde.
+  const links = raw.filter((l) => l && (typeof l === "string" || l.url));
+  if (!links.length) return { html: "", scriptHtml: "" };
+  const buttonId = `storeAffCarousel_${magazinKey}`;
+  const first = links[0];
+  const firstIsBanner = first && typeof first === "object" && first.banner;
+
+  const html = firstIsBanner
+    ? `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-banner-link" id="${escapeHtml(buttonId)}"><img src="${escapeHtml(first.banner)}" alt="${escapeHtml(first.alt || magazinDisplay)}" width="336" height="280" loading="lazy"></a>`
+    : `<a href="${escapeHtml(first)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic" id="${escapeHtml(buttonId)}">🛒 Cumpără online de la ${escapeHtml(magazinDisplay)}</a>`;
+  const scriptHtml = links.length > 1
+    ? buildStoreAffiliateCarouselScript(buttonId, links, nonce, !!firstIsBanner)
+    : "";
+  return { html, scriptHtml };
+}
+
+// Rotația efectivă — un singur element randat în HTML (buton text SAU
+// banner-imagine), doar href-ul (și, în mod banner, și img.src) se schimbă
+// din 7 în 7 secunde, prin toate elementele primite.
+function buildStoreAffiliateCarouselScript(buttonId, links, nonce, isBanner) {
+  return `
+<script${nonce ? ` nonce="${nonce}"` : ""}>
+(function(){
+  var btn = document.getElementById(${safeJson(buttonId)});
+  if (!btn) return;
+  var links = ${safeJson(links)};
+  if (!links || links.length < 2) return;
+  var isBanner = ${isBanner ? "true" : "false"};
+  var img = isBanner ? btn.querySelector("img") : null;
+  var idx = 0;
+  setInterval(function(){
+    idx = (idx + 1) % links.length;
+    var item = links[idx];
+    if (isBanner) {
+      btn.href = item.url;
+      if (img) { img.src = item.banner; if (item.alt) img.alt = item.alt; }
+    } else {
+      btn.href = item;
+    }
+  }, 7000);
+})();
+</script>`;
+}
+
+// "Magazine partenere" generice (2Performant) — folosite ca FALLBACK, DOAR pe
+// paginile de magazin care N-AU niciun link propriu în STORE_AFFILIATE_LINKS
+// (marea majoritate: Penny, Mega Image, Carrefour, Sensiblu, DM ș.a.m.d.).
+// Spre deosebire de caruselul per-brand de mai sus (unde textul e fix, un
+// singur brand, mai multe linkuri), aici e un singur widget care rotește
+// ATÂT numele cât și link-ul, din 7 în 7 secunde, prin toți partenerii —
+// pentru că fiecare e un magazin diferit, nu variante ale aceluiași brand.
+// Momentan doar text + link; quando primim bannerele reale de la fiecare
+// partener, se pot înlocui ușor cu <img>, rotind img.src în loc de text
+// (același script, aceeași structură de date).
+const GENERIC_PARTNER_OFFERS = [
+  { name: "Bazarul Online", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d5075b651&redirect_to=https%3A%2F%2Fbazarulonline.ro%2F" },
+  { name: "Librărie.net", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=da1148931&redirect_to=https%3A%2F%2Fwww.librarie.net%2F" },
+  { name: "Electric Sun", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=bd37fbb23&redirect_to=https%3A%2F%2FElectricSun.de" },
+  { name: "BijuBox", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=2173f05f3&redirect_to=https%3A%2F%2Fbijubox.ro" },
+  { name: "Biomag", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=e7e590bd1&redirect_to=https%3A%2F%2Fwww.Biomag.ro" },
+  { name: "Brico.ro", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=8727b63f4&redirect_to=https%3A%2F%2Fwww.brico.ro%2F" },
+  { name: "Comenzi.ro", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=b09908f08&redirect_to=https%3A%2F%2Fwww.comenzi.ro%2F" },
+  { name: "Fără Dăunători", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=46f8cd5eb&redirect_to=https%3A%2F%2Fwww.fara-daunatori.ro" },
+  { name: "Herbagetica", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=853fff54b&redirect_to=https%3A%2F%2Fherbagetica.ro%2F" },
+  { name: "Încălțăminte la Modă", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=b0d815997&redirect_to=https%3A%2F%2Fwww.incaltamintelamoda.ro" },
+  { name: "JoJo Fashion", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9148cd6c4&redirect_to=https%3A%2F%2Fwww.jojofashion.ro" },
+  { name: "Picadili", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d404a783d&redirect_to=https%3A%2F%2Fpicadili.ro" },
+  { name: "Prosoape Hotel", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9dd5272cf&redirect_to=https%3A%2F%2Fwww.prosoapehotel.ro" },
+];
+function buildGenericPartnerCarouselScript(buttonId, offers, nonce) {
+  return `
+<script${nonce ? ` nonce="${nonce}"` : ""}>
+(function(){
+  var btn = document.getElementById(${safeJson(buttonId)});
+  var nameEl = document.getElementById(${safeJson(buttonId + "_name")});
+  if (!btn || !nameEl) return;
+  var offers = ${safeJson(offers)};
+  if (!offers || offers.length < 2) return;
+  var idx = 0;
+  setInterval(function(){
+    idx = (idx + 1) % offers.length;
+    btn.href = offers[idx].url;
+    nameEl.textContent = offers[idx].name;
+  }, 7000);
+})();
+</script>`;
+}
+function buildGenericAffiliateCarouselHtml(nonce) {
+  if (!GENERIC_PARTNER_OFFERS.length) return { html: "", scriptHtml: "" };
+  const buttonId = "genericPartnerCarousel";
+  const first = GENERIC_PARTNER_OFFERS[0];
+  const html = `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic" id="${buttonId}">🛍️ Ofertă recomandată: <span id="${buttonId}_name">${escapeHtml(first.name)}</span></a>`;
+  const scriptHtml = GENERIC_PARTNER_OFFERS.length > 1
+    ? buildGenericPartnerCarouselScript(buttonId, GENERIC_PARTNER_OFFERS, nonce)
+    : "";
+  return { html, scriptHtml };
+}
 
 /* ============================================================
    0.7) MULTILINGV — extindere internațională (DE/UK/ES)
@@ -4535,6 +4684,9 @@ main{padding-top:8px;}
 .secondary-badge.sb-open .sb-state{color:var(--open-bg);}
 .secondary-badge.sb-closed .sb-state{color:#F87171;}
 .affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
+.affiliate-banner-link{display:block;text-align:center;margin:14px 18px 0;}
+.affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
+.affiliate-banner-link:hover img{transform:translateY(-2px);}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
 .affiliate-btn-emag{background:linear-gradient(135deg,#0058CC 0%,#6A2FD9 55%,#C81ED6 100%);color:#fff;box-shadow:0 12px 26px -10px rgba(106,47,217,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
 .affiliate-btn-emag:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(200,30,214,.55),0 8px 18px -6px rgba(0,88,204,.4);}
@@ -7081,6 +7233,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   let mainHtml = "";
   let dataForClient;
   let schemaHtml = "";
+  let affiliateCarouselScriptHtml = "";
 
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
@@ -7130,11 +7283,12 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     `;
     dataForClient = { type: "general", weekly: [], holidays: [] }; // păstrează ceasul din header activ
   } else {
-    // link specific brandului (Lidl/Kaufland/...), gol până e completat manual în cod
-    const catalogLink = magazinKey ? STORE_AFFILIATE_LINKS[magazinKey] || "" : "";
-    const affiliateButtonHtml = catalogLink
-      ? `<a href="${escapeHtml(catalogLink)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic">🔥 Vezi catalogul cu reduceri ${escapeHtml(magazinDisplay)} de azi</a>`
-      : "";
+    // link specific brandului (Lidl/Kaufland/Catena/...), gol până e completat
+    // manual în cod — vezi STORE_AFFILIATE_LINKS și buildStoreAffiliateButtonHtml
+    // pentru cele 2 moduri posibile (link fix vs. carusel de linkuri).
+    const affBtn = buildStoreAffiliateButtonHtml(magazinKey, magazinDisplay, nonce);
+    const affiliateButtonHtml = affBtn.html;
+    affiliateCarouselScriptHtml = affBtn.scriptHtml;
 
     // status live (Google), DOAR pentru magazine normale, fără hiper-local
     // (paginile de cartier nu au propriul place_id, sunt variații ale
@@ -7246,7 +7400,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
 ${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce)}
-${buildHowToGetThereScript(nonce)}`;
+${buildHowToGetThereScript(nonce)}
+${affiliateCarouselScriptHtml}`;
 
   // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
   // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
