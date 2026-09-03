@@ -1987,6 +1987,25 @@ exports.SITEMAP_CITIES = [
   "Adjud", "Aiud", "Băilești", "Bârlad", "Beiuș", "Blaj", "Brad", "Calafat", "Câmpia Turzii", "Câmpina", "Câmpulung", "Câmpulung Moldovenesc", "Caracal", "Caransebeș", "Carei", "Codlea", "Curtea de Argeș", "Dej", "Dorohoi", "Drăgășani", "Făgăraș", "Fălticeni", "Fetești", "Gheorgheni", "Gherla", "Hunedoara", "Huși", "Lugoj", "Lupeni", "Mangalia", "Marghita", "Medgidia", "Mediaș", "Moinești", "Moreni", "Motru", "Odorheiu Secuiesc", "Oltenița", "Onești", "Orăștie", "Orșova", "Pașcani", "Petroșani", "Rădăuți", "Râmnicu Sărat", "Reghin", "Roman", "Roșiorii de Vede", "Săcele", "Salonta", "Sebeș", "Sighetu Marmației", "Sighișoara", "Târgu Secuiesc", "Târnăveni", "Tecuci", "Toplița", "Turda", "Turnu Măgurele", "Urziceni", "Vatra Dornei", "Vulcan",
 ]
 
+// România lipsea COMPLET din exports.COUNTRIES — bug real, sever, preexistent
+// (nu introdus de vreo modificare recentă): orice pagină de magazin din
+// România (Lidl, Catena, absolut orice brand, în orice oraș), odată ajunsă
+// pe domeniul .eu (fie direct, fie prin migrarea RO_TO_EU_MIGRATION_ACTIVE
+// din server.js, care redirecționează TOT traficul de pe .ro), dădea crash
+// la server — ruta `/:tara/:oras/:magazin` face `COUNTRIES[countryCode].config`
+// fără să verifice întâi dacă `COUNTRIES[countryCode]` există, iar
+// COUNTRIES.ro era `undefined`. Adăugat abia AICI (nu direct în blocul
+// exports.COUNTRIES de mai sus) — ordinea contează: STORE_CONFIG și
+// SITEMAP_CITIES sunt definite DUPĂ exports.COUNTRIES în acest fișier, deci
+// n-ar fi existat încă dacă le refeream direct acolo (același motiv pentru
+// care exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL e calculat separat,
+// mai jos de COUNTRIES, nu în interiorul lui).
+exports.COUNTRIES.ro = {
+  config: exports.STORE_CONFIG,
+  t: TRANSLATIONS.ro,
+  cities: exports.SITEMAP_CITIES,
+};
+
 exports.CITY_COORDS = {
   "Adjud": [46.1054, 27.1808],
   "Aiud": [46.3106, 23.7211],
