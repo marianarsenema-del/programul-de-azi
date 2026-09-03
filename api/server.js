@@ -4393,7 +4393,10 @@ body{background:var(--bg) radial-gradient(600px circle at 88% -8%,rgba(255,122,2
 
 /* Comutator manual de temă — buton plutitor, sus-dreapta */
 .theme-toggle-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));right:14px;z-index:11;width:38px;height:38px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
-.global-back-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));left:14px;z-index:11;width:38px;height:38px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:var(--text);cursor:pointer;}
+.global-back-btn{position:fixed;top:calc(64px + env(safe-area-inset-top));left:14px;z-index:11;width:42px;height:42px;border-radius:50%;background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:var(--text);cursor:grab;box-shadow:0 10px 24px -6px rgba(0,0,0,.45),0 2px 6px -1px rgba(0,0,0,.3);transition:box-shadow .15s ease,transform .15s ease;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.global-back-btn:active{transform:translateY(1px) scale(.94);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);}
+.global-back-btn.is-dragging{cursor:grabbing;transform:scale(1.08);box-shadow:0 18px 38px -8px rgba(0,0,0,.55),0 5px 12px -2px rgba(0,0,0,.4);}
+@media (min-width:900px){.global-back-btn:hover{box-shadow:0 14px 30px -6px rgba(0,0,0,.5),0 3px 8px -1px rgba(0,0,0,.35);}}
 .bottom-nav-item{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--muted);font-family:var(--font-display);font-size:11px;font-weight:600;}
 .bottom-nav-icon{font-size:20px;line-height:1;}
 @media (min-width: 900px){.bottom-nav{display:none;}body{padding-bottom:48px;}}
@@ -6631,12 +6634,121 @@ function buildGlobalBackButtonScript(nonce) {
   // history.back() n-ar face nimic vizibil)
   var path = window.location.pathname;
   var isHome = path === "/" || /^\\/[a-z]{2}\\/?$/.test(path);
-  if (!isHome && window.history.length > 1) {
-    btn.hidden = false;
-    btn.addEventListener("click", function(){ window.history.back(); });
-  }
   var headerRow = document.querySelector(".header-row");
   if (headerRow) headerRow.insertBefore(btn, headerRow.firstChild);
+  if (isHome || window.history.length <= 1) return;
+  btn.hidden = false;
+
+  // --- Buton plutitor trasabil: stă implicit stânga-sus, dar poate fi
+  // mutat cu degetul/mouse-ul oriunde pe verticală, iar la eliberare se
+  // lipește de marginea (stânga sau dreapta) cea mai apropiată, ca să nu
+  // rămână niciodată în mijlocul textului. Poziția aleasă e reținută
+  // (per dispozitiv) și se păstrează la navigarea pe alte pagini.
+  var STORAGE_KEY = "backBtnPos";
+  var EDGE_MARGIN = 10;
+  var dragging = false, moved = false, suppressClick = false;
+  var startX, startY, startLeft, startTop;
+
+  function headerBottom(){
+    var header = document.querySelector("header");
+    return header ? header.getBoundingClientRect().bottom : 60;
+  }
+  function bottomLimit(){
+    var nav = document.querySelector(".bottom-nav");
+    var navH = (nav && getComputedStyle(nav).display !== "none") ? nav.getBoundingClientRect().height : 0;
+    return window.innerHeight - navH - EDGE_MARGIN - btn.offsetHeight;
+  }
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  function applyPosition(left, top){
+    var maxLeft = window.innerWidth - btn.offsetWidth - EDGE_MARGIN;
+    var minTop = headerBottom() + EDGE_MARGIN;
+    var maxTop = Math.max(minTop, bottomLimit());
+    left = clamp(left, EDGE_MARGIN, Math.max(EDGE_MARGIN, maxLeft));
+    top = clamp(top, minTop, maxTop);
+    btn.style.left = left + "px";
+    btn.style.top = top + "px";
+    btn.style.right = "auto";
+    return { left: left, top: top };
+  }
+
+  function savePosition(left, top){
+    try {
+      var side = (left + btn.offsetWidth / 2) < (window.innerWidth / 2) ? "left" : "right";
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ side: side, top: top }));
+    } catch (e) {}
+  }
+
+  function restorePosition(){
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch (e) {}
+    if (!saved) return;
+    var left = saved.side === "right"
+      ? window.innerWidth - btn.offsetWidth - EDGE_MARGIN
+      : EDGE_MARGIN;
+    applyPosition(left, saved.top);
+  }
+
+  function snapToNearestEdge(left, top){
+    var center = left + btn.offsetWidth / 2;
+    var snappedLeft = center < window.innerWidth / 2
+      ? EDGE_MARGIN
+      : window.innerWidth - btn.offsetWidth - EDGE_MARGIN;
+    btn.style.transition = "left .25s cubic-bezier(.22,1,.36,1), top .25s cubic-bezier(.22,1,.36,1)";
+    var pos = applyPosition(snappedLeft, top);
+    savePosition(pos.left, pos.top);
+    window.setTimeout(function(){ btn.style.transition = ""; }, 260);
+  }
+
+  function onPointerDown(e){
+    if (e.button !== undefined && e.button !== 0) return; // doar click stânga la mouse
+    dragging = true;
+    moved = false;
+    var rect = btn.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+    startX = e.clientX;
+    startY = e.clientY;
+    btn.classList.add("is-dragging");
+    if (btn.setPointerCapture && e.pointerId != null) {
+      try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+  }
+  function onPointerMove(e){
+    if (!dragging) return;
+    var dx = e.clientX - startX;
+    var dy = e.clientY - startY;
+    if (!moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) moved = true;
+    if (!moved) return;
+    e.preventDefault();
+    applyPosition(startLeft + dx, startTop + dy);
+  }
+  function onPointerUp(){
+    if (!dragging) return;
+    dragging = false;
+    btn.classList.remove("is-dragging");
+    if (moved) {
+      suppressClick = true;
+      var rect = btn.getBoundingClientRect();
+      snapToNearestEdge(rect.left, rect.top);
+    }
+  }
+
+  btn.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerUp);
+  window.addEventListener("resize", function(){
+    var rect = btn.getBoundingClientRect();
+    applyPosition(rect.left, rect.top);
+  });
+
+  btn.addEventListener("click", function(ev){
+    if (suppressClick) { suppressClick = false; ev.preventDefault(); ev.stopPropagation(); return; }
+    window.history.back();
+  });
+
+  restorePosition();
 })();
 </script>`;
 }
