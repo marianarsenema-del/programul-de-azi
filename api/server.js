@@ -475,7 +475,7 @@ const codAnalytics = `<!-- Google tag (gtag.js) -->
    butonul corespunzător nu apare deloc — fără spații goale pe pagină.
    Completează-le direct aici, în cod, când primești aprobările.
    ============================================================ */
-const linkEmagMall = ""; // profitshare.ro a respins colaborarea — gol, deliberat, până punem altceva; butonul dispare automat când e gol
+const linkMallAffiliate = "https://temu.to/k/enth85ro42s"; // Temu — eMAG (profitshare.ro) a respins colaborarea, locul ăsta a stat gol până acum; Temu se potrivește tematic (marketplace general — electronice, casă, modă), exact intenția utilizatorului pe o pagină de mall.
 const linkCatalogLidl = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 const linkCatalogKaufland = ""; // O lăsăm goală momentan, o vei adăuga tu din mers când ai aprobarea
 // link Amazon Affiliate — folosit DOAR pe paginile internaționale (DE/UK/ES),
@@ -499,6 +499,43 @@ function beachMonetizationLabelFor(lang) { return BEACH_MONETIZATION_LABELS[lang
 // un <div>, nu <a>, până vine textul/link-ul real de la tine.
 function buildBeachMonetizationHtml(lang) {
   return `<div class="beach-monetization-banner">${escapeHtml(beachMonetizationLabelFor(lang))}</div>`;
+}
+
+// Carusel de parteneri, DOAR pentru pagina de plajă — subset FILTRAT din
+// GENERIC_PARTNER_OFFERS (14 parteneri), cerut explicit: doar 3 categorii,
+// relevante pentru cineva care citește despre o plajă (nu bricolaj, nu
+// deratizare, nu încălțăminte) — cărți, produse de îngrijire, bijuterii.
+// Verificat manual ce vinde fiecare (nu presupus din nume):
+//  - Librărie.net = cărți
+//  - Biomag = cosmetică/produse bio (categorie "cosmetica" confirmată pe site)
+//  - Herbagetica = suplimente naturale/wellness (produse de îngrijire)
+//  - BijuBox = bijuterii (are deja bannerul lui real, pus mai devreme)
+// Reutilizează EXACT același mecanism de rotație (buildGenericPartnerCarouselScript)
+// ca și caruselul general — doar cu altă listă de oferte și alt buttonId
+// (ca să nu se ciocnească dacă, teoretic, ar apărea vreodată pe aceeași
+// pagină cu celălalt carusel).
+const BEACH_PARTNER_OFFERS = [
+  { name: "Librărie.net", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=da1148931&redirect_to=https%3A%2F%2Fwww.librarie.net%2F" },
+  { name: "Biomag", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=e7e590bd1&redirect_to=https%3A%2F%2Fwww.Biomag.ro" },
+  { name: "Herbagetica", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=853fff54b&redirect_to=https%3A%2F%2Fherbagetica.ro%2F" },
+  {
+    name: "BijuBox",
+    url: "https://event.2performant.com/events/click?ad_type=banner&unique=e8588e01b&aff_code=c647d7f92&campaign_unique=2173f05f3",
+    banner: "https://img.2performant.com/system/paperclip/banner_pictures/pics/214311/original/214311.png",
+    alt: "bijubox.ro",
+  },
+];
+function buildBeachPartnerCarouselHtml(nonce) {
+  if (!BEACH_PARTNER_OFFERS.length) return { html: "", scriptHtml: "" };
+  const buttonId = "beachPartnerCarousel";
+  const first = BEACH_PARTNER_OFFERS[0];
+  const html = first.banner
+    ? `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-banner-link" id="${buttonId}"><img src="${escapeHtml(first.banner)}" alt="${escapeHtml(first.alt || first.name || "")}" loading="lazy"></a>`
+    : `<a href="${escapeHtml(first.url)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-generic affiliate-btn-cta" id="${buttonId}"><span class="affiliate-cta-text">🛍️ Ofertă recomandată: <span>${escapeHtml(first.name)}</span></span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`;
+  const scriptHtml = BEACH_PARTNER_OFFERS.length > 1
+    ? buildGenericPartnerCarouselScript(buttonId, BEACH_PARTNER_OFFERS, nonce)
+    : "";
+  return { html, scriptHtml };
 }
 
 // URL-uri REALE, individuale, de pe GetYourGuide, per obiectiv turistic —
@@ -4689,8 +4726,8 @@ header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-fil
 .store-scroll::-webkit-scrollbar{display:none;}
 .chip{flex:0 0 auto;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:9px 16px;border-radius:100px;white-space:nowrap;transition:all .15s ease;}
 /* micro-interacțiuni: feedback tactil discret la apăsare, pe toate butoanele importante */
-.chip,.city-search-btn,.geo-btn,.sub-nav-tab,.fav-star,.country-flag-btn,.clear-country-btn,a.affiliate-btn,a.amazon-btn,a.ticket-btn,.affiliate-btn-emag,.affiliate-btn-generic{transition:transform .12s ease,opacity .12s ease,background .15s ease,color .15s ease;}
-.chip:active,.city-search-btn:active,.geo-btn:active,.sub-nav-tab:active,.fav-star:active,.country-flag-btn:active,.clear-country-btn:active,a.affiliate-btn:active,a.amazon-btn:active,a.ticket-btn:active,.affiliate-btn-emag:active,.affiliate-btn-generic:active{transform:scale(.96);}
+.chip,.city-search-btn,.geo-btn,.sub-nav-tab,.fav-star,.country-flag-btn,.clear-country-btn,a.affiliate-btn,a.amazon-btn,a.ticket-btn,.affiliate-btn-temu,.affiliate-btn-generic{transition:transform .12s ease,opacity .12s ease,background .15s ease,color .15s ease;}
+.chip:active,.city-search-btn:active,.geo-btn:active,.sub-nav-tab:active,.fav-star:active,.country-flag-btn:active,.clear-country-btn:active,a.affiliate-btn:active,a.amazon-btn:active,a.ticket-btn:active,.affiliate-btn-temu:active,.affiliate-btn-generic:active{transform:scale(.96);}
 .status-card:active{transform:scale(.995);}
 .brand-badge{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;margin-right:12px;flex:0 0 auto;vertical-align:middle;box-shadow:0 3px 8px -2px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 1px rgba(0,0,0,.2);}
 .mall-list li{display:flex;align-items:center;padding-left:16px;}
@@ -4786,9 +4823,9 @@ main{padding-top:8px;}
 .affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
 .affiliate-banner-link:hover img{transform:translateY(-2px);}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
-.affiliate-btn-emag{background:linear-gradient(135deg,#0058CC 0%,#6A2FD9 55%,#C81ED6 100%);color:#fff;box-shadow:0 12px 26px -10px rgba(106,47,217,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
-.affiliate-btn-emag:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(200,30,214,.55),0 8px 18px -6px rgba(0,88,204,.4);}
-.affiliate-btn-emag svg{width:20px;height:20px;flex:0 0 auto;}
+.affiliate-btn-temu{background:#FF7A1A;color:#fff;box-shadow:0 12px 26px -10px rgba(255,122,26,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
+.affiliate-btn-temu:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(255,122,26,.55);}
+.affiliate-btn-temu svg{width:20px;height:20px;flex:0 0 auto;}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
 .affiliate-btn-cta{display:flex;align-items:center;justify-content:center;gap:10px;}
 .affiliate-cta-arrow{font-size:22px;font-weight:900;line-height:1;flex:0 0 auto;animation:affiliateCtaNudge 1.4s ease-in-out infinite;}
@@ -7340,8 +7377,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
 
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
-    const affiliateButtonHtml = linkEmagMall
-      ? `<a href="${escapeHtml(linkEmagMall)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-emag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Vezi magazinele cu reduceri de azi pe eMAG</a>`
+    const affiliateButtonHtml = linkMallAffiliate
+      ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">Cod aly786477 — reduceri <strong>Temu</strong> + livrare gratuită</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
       : "";
 
     mainHtml = `
@@ -8672,6 +8709,13 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
   const schemaHtml = buildTouristAttractionSchema({ name: attraction.name, officialUrl: attraction.url, live });
 
+  // carusel de parteneri (cărți/îngrijire/bijuterii) — DOAR pe pagina de
+  // plajă, calculat aici ca să avem scriptHtml disponibil și pentru
+  // asamblarea finală a paginii, mai jos
+  const { html: beachPartnerCarouselHtml, scriptHtml: beachPartnerCarouselScriptHtml } = isBeach
+    ? buildBeachPartnerCarouselHtml(nonce)
+    : { html: "", scriptHtml: "" };
+
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
@@ -8683,11 +8727,12 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   <p class="breadcrumb"><a href="/">${escapeHtml(t.home)}</a> / ${escapeHtml(displayName)}</p>
   ${beachContent ? buildBeachContentIntroHtml(beachContent, activeLang) : ""}
   ${isBeach
-    ? (buildBeachContentEquipmentHtml(beachContent, activeLang) || buildBeachMonetizationHtml(activeLang))
+    ? buildBeachContentEquipmentHtml(beachContent, activeLang)
     : `<div class="search-box-wrap">
     <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
   </div>`}
+  ${isBeach ? beachPartnerCarouselHtml : ""}
 
   ${statusHtml}
   ${isBeach ? buildBeachVoteCentralizationHtml(slug, beachTagCounts, activeLang) : buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
@@ -8708,6 +8753,7 @@ ${buildVoteWidgetScript(nonce)}
 ${buildBeachVoteCentralizationScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}
+${beachPartnerCarouselScriptHtml}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
 
   return pageShell({
