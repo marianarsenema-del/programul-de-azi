@@ -4823,7 +4823,7 @@ main{padding-top:8px;}
 .affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
 .affiliate-banner-link:hover img{transform:translateY(-2px);}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
-.affiliate-btn-temu{background:#FF7A1A;color:#fff;box-shadow:0 12px 26px -10px rgba(255,122,26,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
+.affiliate-btn-temu{background:#FF7A1A;color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,122,26,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
 .affiliate-btn-temu:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(255,122,26,.55);}
 .affiliate-btn-temu svg{width:20px;height:20px;flex:0 0 auto;}
 .affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
@@ -7430,6 +7430,12 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     const affiliateButtonHtml = affBtn.html;
     affiliateCarouselScriptHtml = affBtn.scriptHtml;
 
+    // Temu — pe toate magazinele normale, inclusiv România — poziționat
+    // imediat sub cardul de status, cerut explicit.
+    const temuButtonHtml = linkMallAffiliate
+      ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels("ro").temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
+      : "";
+
     // status live (Google), DOAR pentru magazine normale, fără hiper-local
     // (paginile de cartier nu au propriul place_id, sunt variații ale
     // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
@@ -7459,6 +7465,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
       ${specialBanner}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
+      ${temuButtonHtml}
       ${affiliateButtonHtml}
 
       <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
@@ -7478,6 +7485,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
+      ${temuButtonHtml}
       ${affiliateButtonHtml}
 
       <h2 class="section-title"><span class="bar"></span>Program săptămânal</h2>
@@ -7774,13 +7782,9 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn amazon-btn-cta"><span class="affiliate-cta-text">${escapeHtml(t.amazonBtn)}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
     : "";
 
-  // Temu — cerut explicit, pe TOATE paginile de magazin normal din afara
-  // României (Germania, UK, Franța etc.) — până acum apărea doar pe mall-uri
-  // (RO + internațional) și, indirect, pe magazinele RO prin caruselul
-  // general. România rămâne exclusă aici — are deja propriul sistem bogat
-  // de afiliere (Catena, Spring Pharma, caruselul cu 14 parteneri), n-are
-  // nevoie și de asta pe deasupra.
-  const temuButtonHtml = linkMallAffiliate && countryCode !== "ro"
+  // Temu — pe TOATE paginile de magazin normal, orice țară (inclusiv
+  // România acum — cerut explicit, nu mai e exclusă).
+  const temuButtonHtml = linkMallAffiliate
     ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels(activeLang).temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
     : "";
 
@@ -7893,8 +7897,8 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   ${reportedWrongHtml}
   ${statusCardHtml}
 
-  ${amazonButtonHtml}
   ${temuButtonHtml}
+  ${amazonButtonHtml}
   ${roAffiliateHtml}
 
   ${weeklySectionHtml}
