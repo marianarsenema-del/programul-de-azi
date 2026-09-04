@@ -123,6 +123,19 @@ function bricolajWeekly() {
   ];
 }
 
+// Helper parametrizabil — KiK (spre deosebire de restul brandurilor) are ore
+// diferite pe oraș, dar Luni-Sâmbătă sunt mereu identice (doar Duminica
+// diferă în datele reale primite), deci un singur helper cu 4 parametri
+// acoperă toate cele 33 de orașe, fără să repetăm de mână array-uri de 7
+// elemente peste tot. sunOpen/sunClose = null => închis duminica.
+function kikWeekly(sunOpen, sunClose, weekOpen, weekClose) {
+  const weekday = { open: weekOpen, close: weekClose };
+  return [
+    sunOpen ? { open: sunOpen, close: sunClose } : null, // Duminică
+    weekday, weekday, weekday, weekday, weekday, weekday, // Luni-Sâmbătă
+  ];
+}
+
 function metroWeekly() {
   return [
     { open: "08:00", close: "18:00" }, // Duminică
@@ -1622,6 +1635,74 @@ exports.STORE_CONFIG = {
   hornbach: { name: "Hornbach", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   jysk: { name: "Jysk", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ikea: { name: "Ikea", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  kik: {
+    name: "KiK",
+    type: "store",
+    // Program general "reprezentativ" pentru orașele cu un singur magazin —
+    // folosit DOAR ca fallback; toate cele 33 de orașe reale au propriul
+    // program exact în PER_CITY_WEEKLY (mai jos), care suprascrie asta.
+    weekly: kikWeekly("09:00", "18:00", "09:00", "21:00"),
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  mathaus: {
+    name: "MatHaus",
+    type: "store",
+    weekly: kikWeekly("08:00", "16:00", "08:00", "20:00"),
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  // Arabesque — program UNIFORM în toate locațiile (spre deosebire de
+  // KiK/MatHaus, care variază pe oraș), deci fără nevoie de PER_CITY_WEEKLY:
+  // Luni-Vineri 08-17, Sâmbătă program redus 08:30-12:30, Duminică închis.
+  arabesque: {
+    name: "Arabesque",
+    type: "store",
+    weekly: [
+      null, // Duminică — închis
+      { open: "08:00", close: "17:00" }, // Luni
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" }, // Vineri
+      { open: "08:30", close: "12:30" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  xxxlutz: {
+    name: "XXXLutz",
+    type: "store",
+    // Program real, confirmat direct de pe xxxlutz.ro/locatii — diferit de
+    // șablonul generic bricolajWeekly() (care presupunea 08:00, greșit).
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Duminică
+      { open: "10:00", close: "20:00" }, // Luni
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" }, // Vineri
+      { open: "10:00", close: "21:00" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  // Mömax — brand SEPARAT de XXXLutz (același grup austriac, magazine
+  // diferite, orașe diferite) — confirmat direct din datele oficiale de pe
+  // moemax.ro/magazine. Program identic în toate cele 7 locații: Luni-
+  // Duminică, 10:00-20:00, fără variație de weekend (spre deosebire de
+  // XXXLutz, care are program prelungit sâmbăta).
+  momax: {
+    name: "Mömax",
+    slug: "momax",
+    type: "store",
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Duminică
+      { open: "10:00", close: "20:00" }, // Luni
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" }, // Vineri
+      { open: "10:00", close: "20:00" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
   altex: { name: "Altex", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   flanco: { name: "Flanco", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   dm: { name: "Dm", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
@@ -1680,6 +1761,413 @@ exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL = exports.COUNTRIES.fr.cities.fil
   (c) => !FR_TINY_MONUMENT_VILLAGES.includes(c)
 );
 
+// Program non-stop (24/7) — convenție identică cu cea deja folosită în
+// server.js (googlePeriodsToWeekly) pentru date live de la Google: fără
+// "close" real, deschis toată ziua -> "00:00"-"23:59" în toate cele 7 zile.
+const NONSTOP_WEEKLY = [
+  { open: "00:00", close: "23:59" }, // Duminică
+  { open: "00:00", close: "23:59" }, // Luni
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" }, // Vineri
+  { open: "00:00", close: "23:59" }, // Sâmbătă
+];
+
+// Suprascriere de program PE LOCAȚIE EXACTĂ — nivel NOU, mai fin decât
+// PER_CITY_WEEKLY de mai jos. Motiv: primite 62 de filiale Mega Image/Profi
+// non-stop, cu adresă exactă — DAR nu toate filialele din orașele respective
+// sunt non-stop, doar astea specific. Aplicarea unui program non-stop la
+// nivel de ORAȘ întreg ar fi fost o minciună pentru restul filialelor din
+// același oraș care nu sunt non-stop. Verificat/aplicat DOAR pe paginile
+// hiper-locale (/oras/magazin/locatie), unde chiar există un nume de
+// filială de potrivit — pe pagina generală de oraș (fără locatie), rămâne
+// programul normal, neschimbat.
+// Structură: { <țară>: { <brand>: { <oraș>: { <nume filială, ca-n
+// coloana "Nume Filiala" din CSV, fără prefixul brandului>: weekly } } } }
+// 2 filiale REMAPATE, la cerere explicită — nu sunt tratate ca orașe
+// separate (nu sunt în lista celor 103 orașe verificate ale site-ului),
+// ci puse sub orașul mare de lângă ele: Mega Image Otopeni Central și
+// Mega Image Militari Rezidential (Chiajna) -> "București"; Profi Floresti
+// Eroilor -> "Cluj-Napoca" (același precedent ca la Mömax/XXXLutz).
+exports.PER_LOCATION_WEEKLY = {
+  ro: {
+    megaimage: {
+      "București": {
+        "Piata Amzei": NONSTOP_WEEKLY,
+        "Ion Mihalache": NONSTOP_WEEKLY,
+        "Cobalcescu": NONSTOP_WEEKLY,
+        "Lacul Tei": NONSTOP_WEEKLY,
+        "Iancului": NONSTOP_WEEKLY,
+        "Pantelimon": NONSTOP_WEEKLY,
+        "Vitan": NONSTOP_WEEKLY,
+        "Camil Ressu": NONSTOP_WEEKLY,
+        "Tineretului": NONSTOP_WEEKLY,
+        "Giurgiului": NONSTOP_WEEKLY,
+        "Rahova": NONSTOP_WEEKLY,
+        "Moghioros": NONSTOP_WEEKLY,
+        "Crangasi": NONSTOP_WEEKLY,
+        // Otopeni și Chiajna (Ilfov) — mutate aici, la cerere explicită:
+        // localități mici, lipite de București, tratate ca parte din oraș
+        // (același principiu ca la XXXLutz Militari/Domnești).
+        "Otopeni Central": NONSTOP_WEEKLY,
+        "Militari Rezidential": NONSTOP_WEEKLY,
+      },
+      "Constanța": {
+        "Tomis": NONSTOP_WEEKLY,
+        "Delfinariu": NONSTOP_WEEKLY,
+      },
+      "Brașov": {
+        "Brasov Civic": NONSTOP_WEEKLY,
+      },
+      "Ploiești": {
+        "Ploiesti Central": NONSTOP_WEEKLY,
+      },
+    },
+    profi: {
+      "Deva": {
+        "City Deva Mihai Viteazu": NONSTOP_WEEKLY,
+        "Loco Deva Gara": NONSTOP_WEEKLY,
+      },
+      "Hunedoara": {
+        "City Hunedoara": NONSTOP_WEEKLY,
+      },
+      "Timișoara": {
+        "City Timisoara Take Ionescu": NONSTOP_WEEKLY,
+        "Timisoara Circumvalatiunii": NONSTOP_WEEKLY,
+        "Timisoara Complex": NONSTOP_WEEKLY,
+        "City Sagului": NONSTOP_WEEKLY,
+      },
+      "Cluj-Napoca": {
+        "City Cluj Zorilor": NONSTOP_WEEKLY,
+        "Cluj Marasti": NONSTOP_WEEKLY,
+        "City Cluj Central": NONSTOP_WEEKLY,
+        "Floresti Eroilor": NONSTOP_WEEKLY, // remapat din "Florești", vezi nota de mai sus
+      },
+      "Oradea": {
+        "Oradea Decebal": NONSTOP_WEEKLY,
+        "Oradea Nufarului": NONSTOP_WEEKLY,
+      },
+      "Arad": {
+        "Arad Vlaicu": NONSTOP_WEEKLY,
+        "City Arad Centru": NONSTOP_WEEKLY,
+      },
+      "Iași": {
+        "City Iasi Copou": NONSTOP_WEEKLY,
+        "Iasi Nicolina": NONSTOP_WEEKLY,
+        "City Iasi Tatarasi": NONSTOP_WEEKLY,
+      },
+      "Craiova": {
+        "Craiova Calea Bucuresti": NONSTOP_WEEKLY,
+        "Craiova Rovine": NONSTOP_WEEKLY,
+      },
+      "Pitești": {
+        "Pitesti Craiovei": NONSTOP_WEEKLY,
+        "City Pitesti Centru": NONSTOP_WEEKLY,
+      },
+      "Sibiu": {
+        "Sibiu Mihai Viteazu": NONSTOP_WEEKLY,
+        "City Sibiu Rahovei": NONSTOP_WEEKLY,
+      },
+      "Târgu Mureș": {
+        "Targu Mures Pandurilor": NONSTOP_WEEKLY,
+        "City 1 Decembrie": NONSTOP_WEEKLY,
+      },
+      "Alba Iulia": {
+        "Alba Iulia Cetate": NONSTOP_WEEKLY,
+      },
+      "Reșița": {
+        "Resita Govandari": NONSTOP_WEEKLY,
+      },
+      "Târgu Jiu": {
+        "Targu Jiu Ecaterina": NONSTOP_WEEKLY,
+      },
+      "Râmnicu Vâlcea": {
+        "Ramnicu Valcea Ostroveni": NONSTOP_WEEKLY,
+      },
+      "Slatina": {
+        "Slatina Crisan": NONSTOP_WEEKLY,
+      },
+      "Drobeta-Turnu Severin": {
+        "Severin Crişan": NONSTOP_WEEKLY,
+      },
+      "Satu Mare": {
+        "Satu Mare Lucaciu": NONSTOP_WEEKLY,
+      },
+      "Baia Mare": {
+        "Baia Mare Traian": NONSTOP_WEEKLY,
+      },
+      "Zalău": {
+        "Zalau Simion Barnutiu": NONSTOP_WEEKLY,
+      },
+      "Bistrița": {
+        "Bistrita Andrei Muresanu": NONSTOP_WEEKLY,
+      },
+      "Suceava": {
+        "Suceava George Enescu": NONSTOP_WEEKLY,
+      },
+      "Botoșani": {
+        "Botosani Primaverii": NONSTOP_WEEKLY,
+      },
+      "Piatra Neamț": {
+        "Piatra Neamt Decebal": NONSTOP_WEEKLY,
+      },
+      "Bacău": {
+        "Bacau Stefan cel Mare": NONSTOP_WEEKLY,
+      },
+      "Vaslui": {
+        "Vaslui Traian": NONSTOP_WEEKLY,
+      },
+      "Focșani": {
+        "Focsani Unirii": NONSTOP_WEEKLY,
+      },
+      "Galați": {
+        "Galati Siderurgistilor": NONSTOP_WEEKLY,
+      },
+      "Brăila": {
+        "Braila Dorobantilor": NONSTOP_WEEKLY,
+      },
+      "Buzău": {
+        "Buzau Unirii": NONSTOP_WEEKLY,
+      },
+      "Târgoviște": {
+        "Targoviste Mircea": NONSTOP_WEEKLY,
+      },
+      "Alexandria": {
+        "Alexandria Dunarii": NONSTOP_WEEKLY,
+      },
+      "Giurgiu": {
+        "Giurgiu Bucuresti": NONSTOP_WEEKLY,
+      },
+      "Călărași": {
+        "Calarasi Republicii": NONSTOP_WEEKLY,
+      },
+      "Slobozia": {
+        "Slobozia Matei Basarab": NONSTOP_WEEKLY,
+      },
+      "Tulcea": {
+        "Tulcea Babadag": NONSTOP_WEEKLY,
+      },
+    },
+  },
+};
+
+// Suprascriere de program PE ORAȘ — mecanism NOU, prima dată folosit aici.
+// Toate brandurile de mai sus (STORE_CONFIG) au UN SINGUR program, aplicat
+// identic în toate orașele lor — corect pentru majoritatea, dar Brico Depot
+// chiar are ore diferite de la un oraș la altul (confirmat cu date reale,
+// de pe bricodepot.ro), deci un singur "weekly" ar fi fost greșit undeva.
+// Structură: { <țară>: { <cheie brand>: { <oraș exact, ca în SITEMAP_CITIES>: [program 7 zile, Duminică->Sâmbătă] } } }
+// Verificat manual în server.js (vezi effectiveStore) — dacă orașul cerut
+// NU are o intrare aici, brandul cade pe programul general din STORE_CONFIG.
+exports.PER_CITY_WEEKLY = {
+  ro: {
+    bricodepot: {
+      // București + Ilfov (Orhideea, Pantelimon, Băneasa, Militari, Vitan,
+      // Chiajna) — program identic în toate cele 6 locații, deci o singură
+      // intrare pentru "București" acoperă tot grupul.
+      "București": [
+        { open: "08:00", close: "20:00" }, // Duminică
+        { open: "07:00", close: "21:00" }, // Luni
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" }, // Vineri
+        { open: "08:00", close: "21:00" }, // Sâmbătă
+      ],
+      "Cluj-Napoca": [
+        { open: "09:00", close: "19:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Timișoara": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Brașov": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      // Duminica — sursa avea "09:00-7:00" (evident o greșeală, ora de
+      // închidere nu poate fi înaintea deschiderii). Am pus temporar
+      // 08:00-20:00, ca restul orașelor similare — verifică programul
+      // real și corectează dacă e nevoie.
+      "Arad": [
+        { open: "08:00", close: "20:00" }, // ⚠️ neconfirmat, vezi nota de mai sus
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Oradea": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Târgu Mureș": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Deva": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" }, // Vineri
+        { open: "08:00", close: "20:00" }, // Sâmbătă — diferit de restul (aici Sâmbăta se închide la 20:00, nu 21:00)
+      ],
+      "Iași": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Focșani": [
+        { open: "09:00", close: "19:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Craiova": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Pitești": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Drobeta-Turnu Severin": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Constanța": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+    },
+    // KiK — program primit direct de la tine, per oraș (46 de magazine, 35
+    // localități — 2 excluse, vezi nota de la SELECTIVE_BRAND_CITIES.ro.kik).
+    // Pentru orașele cu 2 magazine cu ore DIFERITE (majoritatea) am ales
+    // programul mall-ului/celui mai generos — nu media, nici cel central —
+    // fiindcă site-ul arată un singur program pe oraș, nu pe adresă exactă.
+    // Marcat mai jos, la fiecare oraș afectat, care variantă am ales.
+    kik: {
+      // 6 magazine, ore diferite pe sector — ales varianta de mall (Sect.
+      // 1/4/6: Băneasa, Grand Arena, Militari), 10-22 în fiecare zi.
+      "București": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Deva (mall), 10-22.
+      "Deva": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Hunedoara": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Petroșani": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine — ales Vivo! Cluj (mall), 10-22.
+      "Cluj-Napoca": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Timișoara (mall), 10-22.
+      "Timișoara": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — unul închis duminica (Arad Center); ales Agora Arad,
+      // care are program și duminica.
+      "Arad": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine, ore apropiate — ales Primavera Oradea (duminică mai lungă).
+      "Oradea": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      // 2 magazine — ales Coresi Shopping Resort (mall), 10-22.
+      "Brașov": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Sibiu (mall), 10-22.
+      "Sibiu": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine, ore identice — fără ambiguitate.
+      "Iași": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine — ales Vivo! Constanța (mall), 10-22.
+      "Constanța": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — unul închis duminica (Craiova Center); ales
+      // Electroputere Parc (mall), 10-22.
+      "Craiova": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Value Centre Ploiești (mall), 10-22.
+      "Ploiești": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Pitești": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Galați": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Brăila": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Bacău": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Suceava": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Botoșani": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Piatra Neamț": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Focșani": kikWeekly("09:00", "19:00", "09:00", "21:00"),
+      "Râmnicu Vâlcea": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Drobeta-Turnu Severin": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Alba Iulia": kikWeekly("08:00", "22:00", "08:30", "22:00"),
+      "Bistrița": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Baia Mare": kikWeekly("10:00", "21:00", "10:00", "21:00"),
+      "Satu Mare": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Zalău": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Târgu Mureș": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Mediaș": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Sighișoara": kikWeekly("09:00", "16:00", "09:00", "20:00"),
+      "Lugoj": kikWeekly("09:00", "16:00", "09:00", "20:00"),
+    },
+    // MatHaus — Luni-Sâmbătă identic peste tot (08-20); doar Duminica
+    // diferă, și doar la Suceava (17:00 în loc de 16:00 peste tot altundeva).
+    mathaus: {
+      "București": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Suceava": kikWeekly("08:00", "17:00", "08:00", "20:00"),
+      "Iași": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Galați": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Constanța": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Craiova": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Pitești": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Oradea": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+    },
+  },
+};
+
 exports.SELECTIVE_BRAND_CITIES = {
   ro: {
     metro: [
@@ -1694,6 +2182,40 @@ exports.SELECTIVE_BRAND_CITIES = {
       "Sibiu", "Târgu Mureș",
     ],
     ikea: ["București", "Timișoara"],
+    xxxlutz: ["București"],
+    momax: [
+      "București", "Ploiești", "Pitești", "Timișoara", "Arad", "Oradea",
+      "Cluj-Napoca",
+    ],
+    // KiK — 46 de magazine în 35 de localități (listă completă primită
+    // direct de la tine). 2 localități LIPSESC aici — Dumbrăvița și
+    // Jimbolia — pentru că nu sunt în lista celor 103 orașe verificate ale
+    // site-ului (localități mai mici, lângă Timișoara); adăugarea lor ca
+    // orașe noi ar afecta tot site-ul (sitemap, homepage), nu doar KiK.
+    kik: [
+      "București", "Deva", "Hunedoara", "Petroșani", "Cluj-Napoca",
+      "Timișoara", "Arad", "Oradea", "Brașov", "Sibiu", "Iași", "Constanța",
+      "Craiova", "Ploiești", "Pitești", "Galați", "Brăila", "Bacău",
+      "Suceava", "Botoșani", "Piatra Neamț", "Focșani", "Râmnicu Vâlcea",
+      "Drobeta-Turnu Severin", "Alba Iulia", "Bistrița", "Baia Mare",
+      "Satu Mare", "Zalău", "Târgu Mureș", "Mediaș", "Sighișoara", "Lugoj",
+    ],
+    mathaus: [
+      "București", "Suceava", "Iași", "Galați", "Constanța", "Craiova",
+      "Pitești", "Oradea",
+    ],
+    // Arabesque — 14 locații primite, 2 excluse (Chitila, Glina — localități
+    // mici din Ilfov, nu sunt în lista de orașe verificate a site-ului).
+    arabesque: [
+      "Timișoara", "Cluj-Napoca", "Brașov", "Deva", "Baia Mare",
+      "Târgu Mureș", "Bacău", "Buzău", "Focșani", "Piatra Neamț", "Sibiu",
+      "Arad",
+    ],
+    bricodepot: [
+      "București", "Cluj-Napoca", "Timișoara", "Brașov", "Arad", "Oradea",
+      "Târgu Mureș", "Deva", "Iași", "Focșani", "Craiova", "Pitești",
+      "Drobeta-Turnu Severin", "Constanța",
+    ],
     cinemacity: [
       "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
       "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
@@ -1774,15 +2296,6 @@ exports.SELECTIVE_BRAND_CITIES = {
       "București", "Cluj-Napoca", "Craiova", "Ploiești", "Pitești", "Brașov",
       "Constanța", "Sibiu", "Suceava", "Târgu Mureș", "Bacău", "Iași",
       "Timișoara", "Oradea", "Târgoviște", "Arad",
-    ],
-    // Brico Depot — ~30-35 de magazine în ~25 de orașe (conform
-    // bricodepot.ro); listă conservatoare cu orașele confirmate individual
-    // prin căutare — probabil incompletă față de cele 25 reale, dar mai
-    // bine lipsă un oraș real decât unul inventat.
-    bricodepot: [
-      "București", "Oradea", "Deva", "Drobeta-Turnu Severin", "Cluj-Napoca",
-      "Satu Mare", "Baia Mare", "Târgu Mureș", "Brăila", "Iași", "Suceava",
-      "Târgoviște", "Constanța", "Piatra Neamț",
     ],
     // Hornbach — cel mai concentrat brand de bricolaj: doar 11 magazine
     // fizice (confirmat direct pe hornbach.ro), în doar 7 orașe.
