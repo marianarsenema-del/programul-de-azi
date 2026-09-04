@@ -7774,6 +7774,16 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
     ? `<a href="${escapeHtml(linkAmazonAffiliate)}" target="_blank" rel="noopener sponsored" class="amazon-btn amazon-btn-cta"><span class="affiliate-cta-text">${escapeHtml(t.amazonBtn)}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
     : "";
 
+  // Temu — cerut explicit, pe TOATE paginile de magazin normal din afara
+  // României (Germania, UK, Franța etc.) — până acum apărea doar pe mall-uri
+  // (RO + internațional) și, indirect, pe magazinele RO prin caruselul
+  // general. România rămâne exclusă aici — are deja propriul sistem bogat
+  // de afiliere (Catena, Spring Pharma, caruselul cu 14 parteneri), n-are
+  // nevoie și de asta pe deasupra.
+  const temuButtonHtml = linkMallAffiliate && countryCode !== "ro"
+    ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels(activeLang).temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
+    : "";
+
   // Butonul/caruselul de afiliere per-brand (Catena, Spring Pharma, cele 13
   // magazine partenere ș.a.m.d.) — DOAR pentru România. Aceste linkuri sunt
   // în lei/RON, cu text în română, pentru comercianți români — n-are sens să
@@ -7884,6 +7894,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   ${statusCardHtml}
 
   ${amazonButtonHtml}
+  ${temuButtonHtml}
   ${roAffiliateHtml}
 
   ${weeklySectionHtml}
