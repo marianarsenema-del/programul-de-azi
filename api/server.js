@@ -7378,7 +7378,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   if (store.type === "mall") {
     // link unic, general pe toată țara — nu variază per oraș/mall
     const affiliateButtonHtml = linkMallAffiliate
-      ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">Cod aly786477 — reduceri <strong>Temu</strong> + livrare gratuită</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
+      ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels("ro").temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
       : "";
 
     mainHtml = `
@@ -7729,7 +7729,8 @@ async function renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazin
   <tbody>${store.zones.hypermarket.weekly.map((w, i) => `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${w ? `${w.open} – ${w.close}` : t.closedWord}</td></tr>`).join("")}</tbody></table></div>
 
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.holidaysTitle)}</h2>
-  <div class="holiday-card">${store.zones.shopping.holidays.map((h) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(h.label)}</span><span class="holiday-hours ${h.hours ? "" : "closed"}">${h.hours ? `${h.hours[0]} – ${h.hours[1]}` : t.closedWord}</span></div>`).join("")}</div>`;
+  <div class="holiday-card">${store.zones.shopping.holidays.map((h) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(h.label)}</span><span class="holiday-hours ${h.hours ? "" : "closed"}">${h.hours ? `${h.hours[0]} – ${h.hours[1]}` : t.closedWord}</span></div>`).join("")}</div>
+  ${linkMallAffiliate ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(mc.temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>` : ""}`;
       dataForClient = { type: "mall", zones: store.zones };
     } else {
       mainHtml = `
