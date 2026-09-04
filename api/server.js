@@ -266,6 +266,8 @@ const {
   STORE_CONFIG,
   FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
   SELECTIVE_BRAND_CITIES,
+  PER_CITY_WEEKLY,
+  PER_LOCATION_WEEKLY,
   SITEMAP_CITIES,
   CITY_COORDS,
   OBIECTIVE_ITINERAR,
@@ -2363,6 +2365,13 @@ const STORE_AFFILIATE_LINKS = {
   hornbach: "",
   jysk: linkAfiliatJysk,
   ikea: "",
+  momax: "",
+  kik: "",
+  mathaus: "",
+  arabesque: "",
+  xxxlutz: [
+    "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=556733a1b&redirect_to=https%3A%2F%2Fxxxlutz.ro",
+  ],
   altex: linkAfiliatAltex,
   flanco: "",
   dm: "",
@@ -4153,10 +4162,10 @@ function curierWeekly() {
 // PROGRAMATIC peste STORE_CONFIG (nu editat manual, 48 de linii, risc mare
 // de greșeală) — fiecare cheie capătă un câmp "categorie".
 const STORE_CATEGORY_BY_KEY = {
-  lidl: "magazine", kaufland: "magazine", penny: "magazine", megaimage: "magazine",
+  lidl: "magazine", kaufland: "magazine", penny: "magazine", megaimage: "magazine", kik: "magazine",
   carrefour: "magazine", auchan: "magazine", profi: "magazine", metro: "magazine", selgros: "magazine",
   dedeman: "bricolaj_electro", leroymerlin: "bricolaj_electro", bricodepot: "bricolaj_electro",
-  hornbach: "bricolaj_electro", jysk: "bricolaj_electro", ikea: "bricolaj_electro",
+  hornbach: "bricolaj_electro", jysk: "bricolaj_electro", ikea: "bricolaj_electro", xxxlutz: "bricolaj_electro", momax: "bricolaj_electro", mathaus: "bricolaj_electro", arabesque: "bricolaj_electro",
   altex: "bricolaj_electro", flanco: "bricolaj_electro", mrbricolage: "bricolaj_electro", dm: "farmacii",
   drmax: "farmacii", farmaciatei: "farmacii", remedia: "farmacii", springpharma: "farmacii",
   catena: "farmacii", sensiblu: "farmacii", helpnet: "farmacii", dona: "farmacii", ropharma: "farmacii",
@@ -4346,6 +4355,33 @@ function isSelectiveBrandAllowedInCity(countryCode, magazinKey, orasDisplay) {
   if (!allowedCities) return true; // brand nerestricționat — universal, ca înainte
   const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
   return allowedCities.some((c) => strip(c) === strip(orasDisplay));
+}
+
+// Suprascrie store.weekly cu programul REAL — verifică ÎNTÂI o suprascriere
+// pe LOCAȚIE EXACTĂ (PER_LOCATION_WEEKLY — ex. "Mega Image Piata Amzei",
+// non-stop, dar restul filialelor din București NU sunt non-stop), apoi pe
+// ORAȘ (PER_CITY_WEEKLY — ex. tot Brico Depot din Cluj-Napoca). locatieDisplay
+// e opțional — paginile fără segment de locație (fără "/oras/magazin/locatie"
+// în URL) pur și simplu sar peste primul pas. Returnează store NESCHIMBAT
+// dacă nu există nicio suprascriere pentru combinația respectivă.
+function applyPerCityWeeklyOverride(store, countryCode, magazinKey, orasDisplay, locatieDisplay) {
+  if (!store || !magazinKey) return store;
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+
+  if (locatieDisplay) {
+    const brandLocations = PER_LOCATION_WEEKLY[countryCode] && PER_LOCATION_WEEKLY[countryCode][magazinKey];
+    const cityLocations = brandLocations && Object.keys(brandLocations).find((c) => strip(c) === strip(orasDisplay));
+    if (cityLocations) {
+      const locKey = Object.keys(brandLocations[cityLocations]).find((l) => strip(l) === strip(locatieDisplay));
+      if (locKey) return { ...store, weekly: brandLocations[cityLocations][locKey] };
+    }
+  }
+
+  const brandOverrides = PER_CITY_WEEKLY[countryCode] && PER_CITY_WEEKLY[countryCode][magazinKey];
+  if (!brandOverrides) return store;
+  const matchKey = Object.keys(brandOverrides).find((c) => strip(c) === strip(orasDisplay));
+  if (!matchKey) return store;
+  return { ...store, weekly: brandOverrides[matchKey] };
 }
 
 function isKnownRoCity(orasDisplay) {
@@ -9696,10 +9732,15 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
     return;
   }
 
+  // Ruta asta nu avea deloc suprascriere de program (nici pe oraș, nici pe
+  // locație) — folosea direct found.config, neschimbat. Adăugat acum,
+  // consistent cu ruta hiper-locală RO de mai jos.
+  const effectiveStore = applyPerCityWeeklyOverride(found.config, countryCode, found.key, orasDisplay, locatieDisplay);
+
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
   const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : null;
-  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: found.config, magazinKey: found.key, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
+  const html = await renderIntlStorePage({ countryCode, orasSlug, orasDisplay, magazinSlug, magazinDisplay: found.displayName, locatieDisplay, store: effectiveStore, magazinKey: found.key, baseUrl: baseUrlFor(req), lang: requestedLang, nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -9803,7 +9844,10 @@ app.get("/:oras/:magazin/:locatie", async (req, res, next) => {
     return;
   }
 
-  const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
+  const effectiveStore = applyPerCityWeeklyOverride(
+    found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+    "ro", found ? found.key : null, orasDisplay, locatieDisplay
+  );
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
@@ -9923,7 +9967,10 @@ app.get("/:oras/:magazin", async (req, res, next) => {
 
   // dacă brand-ul nu e cunoscut, folosim tot programul standard național ca implicit,
   // dar păstrăm numele exact așa cum a fost tastat în URL
-  const effectiveStore = found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS };
+  const effectiveStore = applyPerCityWeeklyOverride(
+    found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+    "ro", found ? found.key : null, orasDisplay
+  );
 
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
