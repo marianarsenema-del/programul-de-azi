@@ -10198,6 +10198,30 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     // ticketUrlFor (și tabela ATTRACTION_TICKET_URLS) deja existentă, fără
     // s-o duplicăm în JS-ul trimis către browser.
     const parcTicketLink = resolved.parcGasit ? ticketUrlFor(resolved.parcGasit) : null;
+
+    // Link către pagina proprie a fiecărui obiectiv/plajă din itinerar —
+    // cerut explicit, ca utilizatorul să poată da clic și să vadă descrierea
+    // completă de pe site. Calculat AICI, pe server, cu toDbSlug (aceeași
+    // funcție folosită peste tot pe site) — NU reconstruit în JS pe client,
+    // ca să nu riscăm o mică diferență de logică între cele două și linkuri
+    // sparte. "nume" vine EXACT ca în lista trimisă la AI (promptul cere
+    // explicit asta), deci slug-ul calculat aici se potrivește garantat cu
+    // pagina reală a obiectivului.
+    if (itinerar && Array.isArray(itinerar.zile)) {
+      const intervalKeys = ["dimineata", "pranz", "seara"];
+      for (const zi of itinerar.zile) {
+        for (const key of intervalKeys) {
+          if (!Array.isArray(zi[key])) continue;
+          for (const item of zi[key]) {
+            if (!item || typeof item.nume !== "string" || !item.nume) continue;
+            const slug = toDbSlug(item.nume);
+            if (!slug) continue;
+            item.link = tara === "ro" ? `/obiectiv/${slug}` : `/${tara}/obiectiv/${slug}`;
+          }
+        }
+      }
+    }
+
     res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic, parcGasit: resolved.parcGasit, parcTicketLink });
   } catch (err) {
     console.error("genereaza-itinerar a eșuat:", err.message);
@@ -10487,16 +10511,14 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   const familyInstruction = tipCalatorie === "family"
     ? `\nATENȚIE: acest itinerar e pentru o FAMILIE CU COPII. Dacă în lista de mai jos există parcuri de distracții/agrement, zoo-uri sau acvarii, include-le OBLIGATORIU în itinerar, cât mai devreme posibil (nu le ignora) — sunt cele mai potrivite obiective pentru copii. Preferă și restul obiectivelor mai puțin solicitante fizic/vizual pentru copii, unde ai de ales.\n`
     : "";
-  // Modul "Beach Hopper" — cerut explicit, DOAR pentru Grecia (regiunea cu
-  // plaje organizate/sălbatice, adăugate recent). Dacă lista de mai jos are
-  // obiective de tip plajă (recunoști numele lor — "Plaja X"), structurează
-  // ziua ca pe o zi de plajă reală: dimineața devreme la o plajă liniștită
-  // (înainte să se aglomereze), la prânz la o plajă cu bar/facilități
-  // (umbră, mâncare), seara la o plajă bună pentru apus. NU inventa plaje
-  // care nu apar în listă — dacă nu există deloc plaje în lista dată,
-  // ignoră complet această instrucțiune, comportă-te normal.
+  // Modul "Beach Day" — CORECTAT explicit: NU mai propunem 3 plaje diferite
+  // într-o zi (varianta veche, "Beach Hopper", încuraja exact asta — greșit,
+  // nimeni nu merge la plajă ca să facă cross, ci ca să se relaxeze). Acum:
+  // maxim 1 plajă principală pe zi (dimineață până seara), cu o singură
+  // excepție posibilă — a doua plajă DOAR seara, DOAR dacă are o priveliște
+  // clar mai bună pentru apus, niciodată o a treia.
   const beachHopperInstruction = tara === "Grecia"
-    ? `\nDacă în lista de mai jos există obiective de tip plajă (numele lor conțin "Plaja" sau termeni echivalenți de plajă), structurează ziua ca un traseu "Beach Hopper": dimineața devreme (înainte de aglomerație) la o plajă liniștită/sălbatică, la prânz la o plajă cu facilități (umbră, mâncare), seara la o plajă bună pentru apus. Menționează în descriere, pe scurt, DE CE ai ales acel moment al zilei pentru acea plajă (ex. "mai puțin aglomerată dimineața", "loc bun pentru apus"). Dacă lista NU conține deloc plaje, ignoră complet această instrucțiune.\n`
+    ? `\nDacă în lista de mai jos există obiective de tip plajă (numele lor conțin "Plaja" sau termeni echivalenți de plajă), o zi de plajă înseamnă RELAXARE, nu alergătură: alege O SINGURĂ plajă principală pentru toată ziua (dimineața, prânzul), pusă în "dimineata" sau "pranz" — nu împărți aceeași zi pe mai multe plaje diferite dimineața/prânzul. Poți propune o a DOUA plajă, diferită, DOAR pentru "seara", și DOAR dacă are explicit o priveliște mai bună pentru apus decât cea principală — altfel las-o tot pe cea principală și seara. NU propune niciodată 3 plaje diferite în aceeași zi. Menționează pe scurt, în descriere, de ce ai ales acel moment (ex. "loc bun pentru apus"). Dacă lista NU conține deloc plaje, ignoră complet această instrucțiune.\n`
     : "";
   // Numele obiectivelor rămân exact cum apar (nume proprii de locuri, nu se
   // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
@@ -10508,20 +10530,20 @@ ${familyInstruction}${beachHopperInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
-Organizează obiectivele pe zile, logic din punct de vedere geografic (nu sări dintr-o parte în alta fără motiv), împărțite pe intervale: "dimineata", "pranz", "seara". Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
+Organizează obiectivele pe zile: GRUPEAZĂ-LE geografic, pe localitate/zonă — obiectivele din aceeași localitate sau zonă apropiată trebuie puse ÎMPREUNĂ, în aceeași zi sau în zile consecutive, NICIODATĂ împrăștiate în zile diferite, neconsecutive (ex: greșit — cetatea din Localitatea A în ziua 1, altceva în Localitatea B în ziua 2, apoi mănăstirea tot din Localitatea A în ziua 3; corect — toate obiectivele din Localitatea A grupate în ziua 1, apoi treci definitiv la Localitatea B din ziua 2 înainte). În interiorul unei zile, organizează și intervalele "dimineata", "pranz", "seara" logic din punct de vedere geografic (nu sări dintr-o parte a orașului în cealaltă și înapoi fără motiv). Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
 
 FOARTE IMPORTANT: array-ul "zile" din JSON trebuie să conțină EXACT ${zile} ${zile === 1 ? "obiect" : "obiecte"} (câte unul pentru fiecare zi cerută — ziua 1${zile > 1 ? `, ziua 2${zile > 2 ? ", și așa mai departe până la ziua " + zile : ""}` : ""}). Exemplul de mai jos arată doar STRUCTURA unei singure zile, ca șablon — NU înseamnă că răspunsul tău trebuie să aibă o singură zi. Dacă am cerut ${zile} ${zile === 1 ? "zi" : "zile"}, array-ul "zile" trebuie să aibă ${zile === 1 ? "1 element" : `${zile} elemente, cu "ziua" numerotată de la 1 la ${zile}`}.
 
-Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile JSON (oras, zile, ziua, titlu, dimineata, pranz, seara, nume, descriere) rămân EXACT așa cum sunt aici, neschimbate — doar VALORILE pentru "titlu" și "descriere" trebuie scrise în ${langName}. Exemplul de mai jos arată o SINGURĂ zi, ca șablon de structură — repetă acest obiect în array de ${zile} ${zile === 1 ? "dată" : "ori"}, cu "ziua" numerotată corect:
+Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile JSON (oras, zile, ziua, titlu, dimineata, pranz, seara, nume, descriere, distanta) rămân EXACT așa cum sunt aici, neschimbate — doar VALORILE pentru "titlu" și "descriere" trebuie scrise în ${langName}. Pentru "distanta", scrie distanța aproximativă (estimarea ta cea mai bună, în km, cu tot cu simbolul "~" care arată clar că e aproximativă) de la centrul localității ${oras} până la obiectivul respectiv — ex. "~5 km", "~20 km". Exemplul de mai jos arată o SINGURĂ zi, ca șablon de structură — repetă acest obiect în array de ${zile} ${zile === 1 ? "dată" : "ori"}, cu "ziua" numerotată corect:
 {
   "oras": "${oras}",
   "zile": [
     {
       "ziua": 1,
       "titlu": "un titlu scurt și atractiv pentru ziua respectivă, în ${langName}",
-      "dimineata": [{ "nume": "...", "descriere": "descriere în ${langName}" }],
-      "pranz": [{ "nume": "...", "descriere": "descriere în ${langName}" }],
-      "seara": [{ "nume": "...", "descriere": "descriere în ${langName}" }]
+      "dimineata": [{ "nume": "...", "descriere": "descriere în ${langName}", "distanta": "~5 km" }],
+      "pranz": [{ "nume": "...", "descriere": "descriere în ${langName}", "distanta": "~5 km" }],
+      "seara": [{ "nume": "...", "descriere": "descriere în ${langName}", "distanta": "~5 km" }]
     }
   ]
 }
@@ -10645,7 +10667,10 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   .itin-interval-label{font-family:var(--font-display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:14px 0 8px;}
   .itin-interval-label:first-of-type{margin-top:0;}
   .itin-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:8px;}
-  .itin-item-name{font-weight:700;font-size:14.5px;margin-bottom:4px;}
+  .itin-item-name{font-weight:700;font-size:14.5px;margin-bottom:4px;display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;}
+  .itin-item-link{color:var(--text);text-decoration:none;border-bottom:1px dashed var(--accent);}
+  .itin-item-link:hover{color:var(--accent);}
+  .itin-item-distance{font-weight:600;font-size:12.5px;color:var(--muted);white-space:nowrap;}
   .itin-item-desc{font-size:13.5px;color:var(--muted);line-height:1.5;}
 </style>
 <script nonce="${nonce}">
@@ -10751,7 +10776,13 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   function renderItems(items){
     if (!items || !items.length) return "";
     return items.map(function(it){
-      return '<div class="itin-item"><div class="itin-item-name">' + escapeHtmlClient(it.nume) + '</div><div class="itin-item-desc">' + escapeHtmlClient(it.descriere) + '</div></div>';
+      var nameHtml = it.link
+        ? '<a class="itin-item-link" href="' + it.link + '">' + escapeHtmlClient(it.nume) + '</a>'
+        : escapeHtmlClient(it.nume);
+      var distanceHtml = it.distanta
+        ? '<span class="itin-item-distance">📍 ' + escapeHtmlClient(it.distanta) + '</span>'
+        : '';
+      return '<div class="itin-item"><div class="itin-item-name">' + nameHtml + distanceHtml + '</div><div class="itin-item-desc">' + escapeHtmlClient(it.descriere) + '</div></div>';
     }).join("");
   }
 
