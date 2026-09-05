@@ -3616,6 +3616,16 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
     <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
   },
+  {
+    slug: "transfer-aeroport",
+    title: "Cum rezervi un transfer sigur de la aeroport",
+    intro: "Rezervă un transfer privat sau shuttle de la aeroport, direct din pagină",
+    body: `
+    <p>La aterizare, într-un oraș nou, ultimul lucru pe care-l vrei e să cauți un taxi la întâmplare sau să negociezi prețul cu un șofer necunoscut. Un transfer rezervat dinainte are preț fix, șofer confirmat și te așteaptă exact la ora aterizării — fără surprize, fără stres.</p>
+    <p>Rezervarea din timp e de obicei mai ieftină decât un taxi luat pe loc, și elimină complet riscul de a rămâne blocat la aeroport dacă zborul întârzie.</p>
+    <p>Caută mai jos direct — introdu aeroportul de plecare și adresa de destinație, iar prețul apare instant.</p>
+    <script data-cfasync="true" async src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23FF7A1A&color_button=%23D11F1Fff&promo_id=4674&campaign_id=22" charset="utf-8"></script>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_EN = [
