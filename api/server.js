@@ -4650,11 +4650,11 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io`,
+    `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io https://scripts.stay22.com https://*.stay22.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://tp-em.com https://tpembd.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
@@ -7400,6 +7400,20 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
+<!-- Stay22 LinkSwap — transformă automat linkurile simple către Booking/Agoda/
+     Expedia/Hotels.com/KAYAK/Vrbo/GetYourGuide în linkuri de afiliere urmărite,
+     fără să fi avut nevoie de aprobare separată de la fiecare companie. -->
+<script nonce="${nonce}">
+  (function (s, t, a, y, twenty, two) {
+    s.Stay22 = s.Stay22 || {};
+    s.Stay22.params = { lmaID: '6a9c733810fb99ee3ebd2a0b' };
+    twenty = t.createElement(a);
+    two = t.getElementsByTagName(a)[0];
+    twenty.async = 1;
+    twenty.src = y;
+    two.parentNode.insertBefore(twenty, two);
+  })(window, document, 'script', 'https://scripts.stay22.com/letmeallez.js');
+</script>
 <!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts, cod diferit per domeniu (Project separat) -->
 ${travelpayoutsScript}
 <meta charset="UTF-8">
