@@ -3624,7 +3624,122 @@ exports.TRAVEL_GUIDES_RO = [
     <p>La aterizare, într-un oraș nou, ultimul lucru pe care-l vrei e să cauți un taxi la întâmplare sau să negociezi prețul cu un șofer necunoscut. Un transfer rezervat dinainte are preț fix, șofer confirmat și te așteaptă exact la ora aterizării — fără surprize, fără stres.</p>
     <p>Rezervarea din timp e de obicei mai ieftină decât un taxi luat pe loc, și elimină complet riscul de a rămâne blocat la aeroport dacă zborul întârzie.</p>
     <p>Apasă mai jos ca să cauți și să rezervi transferul tău, direct pe platforma partenerului.</p>
-    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
+    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+    <script data-cfasync="true" async src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23FF7A1A&color_button=%23942020ff&promo_id=4674&campaign_id=22" charset="utf-8"></script>`,
+  },
+  {
+    slug: "excursii-tururi-europa",
+    title: "Cele mai bune excursii și tururi ghidate din Europa",
+    intro: "Excursii de o zi și tururi ghidate în marile orașe europene, rezervabile din timp",
+    body: `
+    <p>O excursie rezervată din timp înseamnă loc garantat, ghid confirmat și, de multe ori, acces la locuri unde altfel ai sta la coadă ore întregi. Am adunat mai jos câteva dintre cele mai apreciate tururi și excursii de o zi din marile orașe europene — de la plimbări cu barca pe Dunăre, până la trasee prin istoria antică a Romei sau Atenei.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de excursii, ai nevoie de zbor, poate și de o mașină — le găsești chiar aici, fără să mai cauți în altă parte.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+      <div class="gyg-search-widget-wrap">
+        <div data-gyg-widget="search" data-gyg-partner-id="LM6J21N" data-gyg-locale-code="ro-RO"></div>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>Excursii recomandate</h2>
+
+    <h3>București — Mănăstirea Snagov, Palatul Mogoșoaia și Salina Slănic</h3>
+    <p>O excursie de o zi perfectă pentru cine vrea să vadă, într-un singur traseu, trei fețe complet diferite ale zonei din jurul Bucureștiului: liniștea insulei mănăstirii Snagov, eleganța Palatului Mogoșoaia și impresionanta Salină Slănic, sculptată adânc în munte. Ideală dacă ai doar o zi liberă în capitală și vrei să ieși din agitația orașului.</p>
+    <a href="https://www.getyourguide.com/slanic-l91935/snagov-monastery-mogosoaia-salt-mine-day-trip-bucharest-t1221626/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Snagov, Mogoșoaia și Salina Slănic</a>
+
+    <h3>București — Excursie de o zi în Delta Dunării</h3>
+    <p>Delta Dunării e una dintre cele mai spectaculoase rezervații naturale din Europa, cu o biodiversitate unică — pelicani, cormorani și sute de specii de păsări, printre canale înguste și sate de pescari. O excursie de o zi din București, cu tot cu deplasare, e cea mai simplă variantă să prinzi atmosfera Deltei fără să-ți organizezi singur transportul.</p>
+    <a href="https://www.getyourguide.com/bucharest-l111/from-bucharest-day-trip-to-danube-delta-t662170/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Delta Dunării</a>
+
+    <h3>Viena — Croazieră pe Dunăre, cu prânz opțional</h3>
+    <p>Viena văzută de pe apă are cu totul altă poveste — poduri istorice, clădiri imperiale și parcuri verzi, toate defilând pe malul Dunării. O croazieră relaxantă, cu opțiune de prânz la bord, e o pauză binevenită după o dimineață de mers pe jos prin centrul istoric.</p>
+    <a href="https://www.getyourguide.com/vienna-l7/vienna-city-cruise-with-optional-lunch-t58823/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă croaziera — Viena</a>
+
+    <h3>Budapesta — Croazieră de seară pe Dunăre</h3>
+    <p>Budapesta luminată noaptea e, pentru mulți, cea mai frumoasă panoramă urbană din Europa Centrală — Parlamentul, Podul cu Lanțuri și Cetatea Buda, toate strălucind pe malurile Dunării. O croazieră de seară e modul clasic, aproape obligatoriu, de a vedea orașul din perspectiva potrivită.</p>
+    <a href="https://www.getyourguide.com/budapest-l29/budapest-evening-sightseeing-cruise-on-the-danube-t1117141/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă croaziera — Budapesta</a>
+
+    <h3>Amsterdam — Excursie de o zi la Bruges</h3>
+    <p>Bruges e considerat unul dintre cele mai bine păstrate orașe medievale din Europa — canale, poduri de piatră și clădiri gotice, toate concentrate într-un centru istoric compact, ușor de explorat pe jos. O excursie de o zi din Amsterdam, cu ghid vorbitor de engleză sau spaniolă, e alegerea simplă pentru cine nu vrea să-și complice transportul.</p>
+    <a href="https://www.getyourguide.com/amsterdam-l36/from-amsterdam-bruges-day-tour-in-spanish-or-english-t2633/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program&cmp=amsterdam" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Bruges, din Amsterdam</a>
+
+    <h3>Haga — Bilet de intrare la Muzeul Panorama Mesdag</h3>
+    <p>Panorama Mesdag e o pictură circulară uriașă, din 1881, care înconjoară complet vizitatorul cu o priveliște a satului de pescari Scheveningen din secolul XIX — o experiență vizuală unică, greu de imaginat până n-o vezi cu ochii tăi. Un muzeu mic, dar spectaculos, la doar câțiva pași de centrul Hagăi.</p>
+    <a href="https://www.getyourguide.com/the-hague-l1267/the-hague-entry-ticket-to-the-panorama-mesdag-museum-t391318/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Muzeul Panorama Mesdag, Haga</a>
+
+    <h3>Praga — Cetatea Vyšehrad, bijuteria ascunsă a orașului</h3>
+    <p>În timp ce majoritatea turiștilor se înghesuie la Castelul Praga, Vyšehrad rămâne o alegere mult mai liniștită — o fortăreață istorică pe malul Vltavei, cu priveliști superbe și un cimitir unde sunt îngropate mari personalități cehe. Un loc perfect pentru cine vrea Praga fără aglomerație.</p>
+    <a href="https://www.getyourguide.com/prague-l10/prague-s-best-hidden-gem-vysehrad-castle-historic-fort-t1011583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Cetatea Vyšehrad, Praga</a>
+
+    <h3>Roma — Colosseum cu acces pe arenă și Forumul Roman</h3>
+    <p>Puțini vizitatori ajung vreodată chiar pe podeaua arenei Colosseumului, exact acolo unde luptau gladiatorii — un acces special, disponibil doar cu bilete dedicate. Combinat cu o vizită ghidată la Forumul Roman, tura reconstituie, pas cu pas, viața de zi cu zi din Roma Antică.</p>
+    <a href="https://www.getyourguide.com/rome-l33/rome-colosseum-gladiator-floor-access-roman-forum-tour-t633431/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Colosseum și Forumul Roman</a>
+
+    <h3>Paris — Tur în grup mic în interiorul Catedralei Notre-Dame</h3>
+    <p>După ani de restaurare, o vizită în interiorul Notre-Dame capătă o greutate aparte — arhitectura gotică, vitraliile și istoria catedralei, explicate de un ghid local, în grupuri mici de maxim 5 persoane, pentru o experiență mult mai personală decât o vizită obișnuită.</p>
+    <a href="https://www.getyourguide.com/paris-l16/paris-small-group-interior-tour-of-notre-dame-max-5-people-t607051/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Interiorul Catedralei Notre-Dame</a>
+
+    <h3>Madrid — Biletul combinat San Antonio de los Alemanes și Mănăstirea San Placido</h3>
+    <p>Două dintre cele mai puțin cunoscute, dar spectaculoase, biserici baroce din centrul Madridului — bolți pictate, altare aurite și o liniște rar întâlnită în inima orașului. Un bilet combinat, ideal pentru cine vrea să vadă Madridul dincolo de muzeele mari, aglomerate de turiști.</p>
+    <a href="https://www.getyourguide.com/madrid-l46/combo-entry-to-san-antonio-de-los-alemanes-and-the-monastery-of-san-placido-t1103055/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul combinat — Madrid</a>
+
+    <h3>Bratislava — Tur panoramic cu autobuzul</h3>
+    <p>Bratislava se lasă descoperită repede și confortabil dintr-un autobuz panoramic — Castelul Bratislava, Poarta lui Mihai și clădirile istorice ale capitalei slovace, toate într-un traseu simplu, fără efort, ideal mai ales dacă ai puțin timp la dispoziție într-un city-break.</p>
+    <a href="https://www.getyourguide.com/bratislava-l765/bratislava-sightseeing-bus-tour-t28703/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Bratislava</a>
+
+    <h3>Lisabona — Muzeul Tezaurului Regal</h3>
+    <p>Coroane, bijuterii regale și obiecte de o valoare istorică imensă, expuse într-unul dintre cele mai puțin aglomerate muzee ale Lisabonei. O oprire scurtă, dar spectaculoasă, pentru cine vrea să vadă o altă față a monarhiei portugheze, departe de traseele turistice clasice.</p>
+    <a href="https://www.getyourguide.com/lisbon-l42/lisbon-royal-treasure-museum-entry-ticket-t425344/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Muzeul Tezaurului Regal, Lisabona</a>
+
+    <h3>Atena — Excursie de o zi la Delphi</h3>
+    <p>Delphi, considerat în Antichitate "buricul pământului", găzduia cel mai important oracol al lumii grecești — ruine impresionante, într-un peisaj muntos spectaculos, la câteva ore de Atena. Excursia include audio-ghid în mai multe limbi, ideală pentru cine vrea istorie antică fără bătaia de cap a organizării proprii.</p>
+    <a href="https://www.getyourguide.com/athens-l91/from-athens-delphi-day-trip-with-multilingual-audioguide-t748369/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Delphi, din Atena</a>
+
+    <h3>Istanbul — Cină și spectacol pe Cornul de Aur și Bosfor</h3>
+    <p>O seară pe apă, cu Istanbul luminat de-o parte și de alta a Bosforului — cină la bord, muzică live și dansuri tradiționale, într-o croazieră care combină priveliștea orașului cu o experiență culturală completă. Un final de zi memorabil pentru orice vizită în Istanbul.</p>
+    <a href="https://www.getyourguide.com/istanbul-l56/istanbul-golden-horn-bosphorus-dinner-and-show-t459410/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă croaziera cu cină — Istanbul</a>
+
+    <h3>Stockholm — Tur cu barca prin arhipelag</h3>
+    <p>Arhipelagul Stockholmului înseamnă peste 30.000 de insule și insulițe, presărate cu căsuțe roșii tradiționale suedeze — un peisaj pe care nu-l vezi din centrul orașului. Un tur cu barca, de câteva ore, deschide o cu totul altă latură a capitalei suedeze, mult mai liniștită și naturală.</p>
+    <a href="https://www.getyourguide.com/stockholm-l50/stockholm-archipelago-boat-tour-t811343/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Arhipelagul Stockholm</a>
+
+    <h3>Konstanz — Bilet de intrare pe Insula Mainau</h3>
+    <p>Insula Mainau, pe Lacul Constanța, e cunoscută ca "insula florilor" — grădini botanice impecabile, un castel baroc și priveliști spectaculoase spre Alpi, la granița dintre Germania, Elveția și Austria. Un loc perfect pentru o zi relaxantă, departe de traseele urbane clasice.</p>
+    <a href="https://www.getyourguide.com/konstanz-l204/entrance-ticket-for-the-mainau-island-t561436/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Insula Mainau, Konstanz</a>
+
+    <h3>Monaco — Tur panoramic Monaco-Monte Carlo (Hop-on Hop-off)</h3>
+    <p>Monaco e mic, dar dens în atracții — Palatul Prințiar, celebrul Cazinou din Monte Carlo și circuitul de Formula 1, toate accesibile cu un singur bilet de autobuz panoramic, cu oprire liberă la fiecare punct de interes, în ritmul tău.</p>
+    <a href="https://www.getyourguide.com/monaco-l515/monaco-monte-carlo-hop-on-hop-off-bus-tour-t170400/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Monaco &amp; Monte Carlo</a>
+
+    <h3>München — Tur ghidat cu trotineta electrică, 2 ore, prin cele mai importante obiective</h3>
+    <p>O modalitate rapidă și distractivă de a vedea centrul Münchenului — Marienplatz, Frauenkirche, Grădina Engleză și restul reperelor esențiale — pe trotinetă electrică, ghidat, în doar 2 ore. Ideal pentru cine are puțin timp în oraș dar vrea să vadă cât mai mult, fără oboseala mersului pe jos.</p>
+    <a href="https://www.getyourguide.com/munich-l26/munchen-top-sights-2h-guided-e-scooter-tour-t463376/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — München cu trotineta electrică</a>
+
+    <h3>Barcelona — Bilet fără coadă la Sagrada Família</h3>
+    <p>Sagrada Família e, probabil, cea mai cunoscută operă neterminată din istoria arhitecturii — capodopera lui Gaudí, cu turnuri ce urcă spre cer și vitralii care transformă lumina în interior într-un spectacol de culoare. Un bilet fără coadă îți economisește ore întregi de așteptare, mai ales în sezonul turistic aglomerat.</p>
+    <a href="https://www.getyourguide.com/barcelona-l45/sagrada-familia-skip-the-line-ticket-t50027/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul fără coadă — Sagrada Família</a>
+
+    <h3>Veneția — Bilet fără coadă la Bazilica San Marco, cu aplicație audio</h3>
+    <p>Bazilica San Marco, cu mozaicurile ei aurii și cupolele bizantine, e inima Veneției — dar și una dintre cele mai vizitate biserici din lume, cu cozi care pot dura ore în plin sezon. Un bilet fără coadă, cu aplicație audio inclusă, te lasă să te bucuri de interior în ritmul tău, fără să pierzi timpul afară, la rând.</p>
+    <a href="https://www.getyourguide.com/venice-l35/venice-st-mark-s-basilica-skip-the-line-ticket-audio-app-t395051/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul fără coadă — Bazilica San Marco, Veneția</a>
+
+    <h3>Florența — Muzeul Interactiv Leonardo da Vinci</h3>
+    <p>Un muzeu neobișnuit, dedicat integral geniului lui Leonardo da Vinci — machete funcționale, replici ale invențiilor sale mecanice și exponate interactive, pe care le poți atinge și încerca, nu doar privi de la distanță. O oprire distractivă și educativă, potrivită mai ales pentru familii cu copii.</p>
+    <a href="https://www.getyourguide.com/florence-l32/florence-leonardo-interactive-museum-entry-ticket-t86558/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Muzeul Interactiv Leonardo, Florența</a>
+
+    <h3>Zürich — Muzeul Lindt Home of Chocolate</h3>
+    <p>Cea mai mare fântână de ciocolată din lume, procesul complet de fabricare a ciocolatei explicat pas cu pas, și, desigur, degustări — un muzeu dedicat integral pasiunii elvețienilor pentru ciocolată. O experiență dulce, potrivită pentru orice vârstă, la doar câțiva pași de lacul din Zürich.</p>
+    <a href="https://www.getyourguide.com/zurich-l55/lindt-home-of-chocolate-museum-entry-ticket-t396265/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Lindt Home of Chocolate, Zürich</a>
+
+    <h3>Berlin — Tur cu ricșa, o zi întreagă, cu preluare de la hotel</h3>
+    <p>O variantă neobișnuită și relaxantă de a explora Berlinul — pe ricșa electrică, cu un ghid local care combină istoria orașului cu povești și cultură, într-un ritm mult mai lejer decât un tur clasic pe jos. Include preluare directă de la hotel, deci nu trebuie să-ți faci griji cum ajungi la punctul de întâlnire.</p>
+    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul cu ricșa — Berlin</a>`,
   },
 ]
 
