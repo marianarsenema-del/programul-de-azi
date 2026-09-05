@@ -555,8 +555,33 @@ const ATTRACTION_TICKET_URLS = {
   "Mănăstirea Voroneț": "https://www.getyourguide.com/voronet-monastery-l129098/",
   "Cetatea Poenari": "https://www.getyourguide.com/poenari-castle-l138468/",
   "Cetatea Alba Carolina": "https://www.getyourguide.com/alba-carolina-citadel-l127593/",
+  "Disneyland Paris": "https://www.getyourguide.com/paris-l16/disneyland-paris-2-parks-ticket-1-2-3-4-5-day-t395320/",
 };
 const GYG_PARTNER_ID = "LM6J21N";
+
+// Opțiuni SUPLIMENTARE de bilete/tururi, per obiectiv — DIFERITE de biletul
+// de intrare normal (ATTRACTION_TICKET_URLS, mai sus, un singur link).
+// Aici pot merge mai multe intrări pentru același obiectiv (ex. un tur mai
+// larg care include și alte locuri) — cerut explicit, ca opțiune "în plus",
+// nu ca înlocuire a biletului normal. Fiecare obiectiv poate avea 0, 1 sau
+// mai multe astfel de opțiuni.
+const ATTRACTION_EXTRA_TICKET_LINKS = {
+  "Castelul Bran": [
+    {
+      label: "🚌 Excursie de o zi din București (Transilvania)",
+      url: "https://www.getyourguide.com/bucharest-l111/from-bucharest-transylvania-day-trip-t151028/",
+    },
+  ],
+};
+function extraTicketLinksHtml(attractionName) {
+  const extras = ATTRACTION_EXTRA_TICKET_LINKS[attractionName];
+  if (!extras || !extras.length) return "";
+  return extras.map((e) => {
+    const separator = e.url.includes("?") ? "&" : "?";
+    const fullUrl = `${e.url}${separator}partner_id=${GYG_PARTNER_ID}&utm_medium=affiliate&utm_source=partner_program`;
+    return `<a href="${escapeHtml(fullUrl)}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">${escapeHtml(e.label)}</a>`;
+  }).join("");
+}
 
 // Widget contextual de urgență (vezi buildContextualWidgetHtml mai jos) —
 // linkuri de afiliere OPȚIONALE, goale la început. Fără linkuri de
@@ -4765,6 +4790,16 @@ main{padding-top:8px;}
    trimiși în URL — încadrarea într-un card alb face tranziția vizuală
    naturală, nu o pată bruscă pe fundalul dark al site-ului. */
 .flight-widget-card{width:100vw;max-width:700px;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;margin-top:20px;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:visible;min-height:60px;}
+/* Card "trip toolkit" — designul premium cerut pentru ghidul de excursii:
+   fundal glass, bordură discretă cu accent, cele 3 butoane grupate curat,
+   una lângă alta pe ecrane late, stivuite pe mobil. */
+.trip-toolkit-card{margin:20px 18px 0;padding:22px 20px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);box-shadow:0 16px 34px -14px rgba(255,122,26,.25);}
+.trip-toolkit-title{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
+.trip-toolkit-subtitle{font-size:14px;color:var(--muted);margin:0 0 16px;line-height:1.5;}
+.trip-toolkit-buttons{display:flex;flex-direction:column;gap:10px;}
+.trip-toolkit-buttons .affiliate-btn{margin:0;width:100%;}
+.gyg-search-widget-wrap{margin-top:16px;}
+@media (min-width:640px){.trip-toolkit-buttons{flex-direction:row;}.trip-toolkit-buttons .affiliate-btn{flex:1;}}
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .plan-visit-hint{margin:8px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
@@ -7281,6 +7316,41 @@ function buildBottomNavScript(nonce) {
 </script>`;
 }
 
+// Faza 1 de monetizare bazată pe date — cerut explicit: momentan urmăream
+// zero click-uri pe butoanele de afiliere (doar page-view-uri generice în
+// Google Analytics). UN SINGUR script, cu delegare de evenimente pe
+// document (nu un listener separat per buton, la fiecare buton nou
+// construit) — detectează orice link relevant după clasa lui CSS deja
+// existentă, oriunde apare pe orice pagină, și trimite un eveniment GA4
+// standard "affiliate_click", cu brandul/tipul (din clasă) și eticheta
+// vizibilă a butonului (din text). Zero cod nou de adăugat la fiecare
+// buton individual — se prinde automat, retroactiv, peste tot.
+// EXCLUS intenționat: .go-now-btn (Waze) — e navigație, nu monetizare.
+function buildAffiliateClickTrackingScript(nonce, pageCountryCode) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var SELECTOR = ".affiliate-btn, .amazon-btn, .affiliate-banner-link, .accordion-ticket-btn, .plan-visit-option, .how-to-get-there-option";
+  document.addEventListener("click", function(e){
+    var el = e.target.closest(SELECTOR);
+    if (!el) return;
+    if (typeof gtag !== "function") return;
+    var linkType = el.className.split(" ").filter(function(c){ return c.indexOf("affiliate-btn-") === 0 || c.indexOf("plan-visit-") === 0; })[0] || el.className.split(" ")[0];
+    var label = (el.textContent || "").replace(/\\s+/g, " ").trim().slice(0, 60);
+    try {
+      gtag("event", "affiliate_click", {
+        link_type: linkType,
+        link_label: label,
+        link_href: el.href || "",
+        page_path: location.pathname,
+        page_country: ${safeJson(pageCountryCode || "ro")},
+      });
+    } catch (err) {}
+  }, true);
+})();
+</script>`;
+}
+
 function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
   const meta = LANG_META[langCode] || LANG_META.ro;
   // banner + modal de instalare — nume de brand corect, per domeniu; textul
@@ -7396,6 +7466,7 @@ ${buildGlobalBackButtonScript(nonce)}
 ${buildThemeToggleScript(nonce)}
 ${smartInstallScript}
 ${canonical.includes(INTL_DOMAIN) ? buildLanguageSwitcherScript(nonce) : ""}
+${buildAffiliateClickTrackingScript(nonce, pageCountryCode)}
 <script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function(){
