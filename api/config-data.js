@@ -148,9 +148,24 @@ function metroWeekly() {
   ];
 }
 
+// Sărbători care chiar ÎNCHID marile magazine/supermarketuri din România —
+// NU toate cele 17 zile libere legale (vezi ROMANIAN_LEGAL_HOLIDAYS_2026,
+// mai jos în server.js, pentru lista completă, folosită doar la banner-ul
+// "azi e sărbătoare"). Verificat cu bun-simț + cunoștințe reale despre
+// piața de retail: Lidl/Kaufland/Carrefour etc. rămân deschise normal de
+// Ziua Copilului, Sf. Andrei, Ziua Unirii, Boboteaza, Ziua Muncii, Rusalii —
+// sunt zile libere legale pentru ANGAJAȚI (cu program special/spor conform
+// Codului Muncii), nu zile în care marile magazine chiar închid porțile.
+// Doar Crăciunul, Anul Nou și Paștele ortodox sunt respectate real, cu
+// închidere sau program redus, de marii retaileri.
 const SUPERMARKET_HOLIDAYS = [
   { date: "12-25", label: "Crăciun (25 decembrie)", hours: null },
+  { date: "12-26", label: "A doua zi de Crăciun (26 decembrie)", hours: ["09:00", "14:00"] },
   { date: "01-01", label: "Anul Nou (1 ianuarie)", hours: null },
+  // Paștele ortodox (mobil) — dată fixă DOAR pentru 2026 (12-13 aprilie);
+  // trebuie actualizată manual, anual, exact ca ROMANIAN_LEGAL_HOLIDAYS_2026.
+  { date: "04-12", label: "Paștele Ortodox (2026)", hours: null },
+  { date: "04-13", label: "A doua zi de Paște (2026)", hours: ["09:00", "14:00"] },
 ];
 
 function supermarketWeekly() {
@@ -1157,10 +1172,31 @@ exports.DISCOVERCARS_CITY_LINKS = {
 
 exports.GLOVO_COUNTRIES = ["ro", "es", "it", "pt", "pl", "hr"]
 
-exports.FREE_ACCESS_PREFIXES = [
-  "Podul", "Lacul", "Muntele", "Insula", "Insulele", "Cheile",
-  "Șoseaua", "Traseul", "Pasul", "Cascada", "Golful",
-]
+// Obiective cu ACCES LIBER, fără program — cu restricție de CATEGORIE per
+// prefix (nu doar nume), fiindcă unele prefixe se suprapun peste categorii
+// diferite cu sens complet diferit — verificat direct în date, nu presupus:
+// 7 parcuri de AGREMENT PLĂTITE încep cu "Parc"/"Parcul" (Tibidabo, Astérix
+// etc., categoria parcuri_agrement) — de-asta "Parcul" e limitat DOAR la
+// categoria "natura", altfel le-ar fi arătat greșit ca gratuite. La fel,
+// "Piața"/"Piata"/"Bulevardul"/"Strada" trăiesc în categoria "cladiri_teatre"
+// (verificat: 146+14 intrări), amestecate cu clădiri PLĂTITE (Opera,
+// Parlamentul, Teatrul Național) — de-asta prefixul se verifică STRICT
+// per categorie, nu global pe tot numele.
+exports.FREE_ACCESS_PREFIXES_BY_CATEGORY = {
+  natura: [
+    "Podul", "Lacul", "Lacurile", "Muntele", "Munții", "Insula", "Insulele",
+    "Cheile", "Cascada", "Golful", "Parcul", "Parc", "Dealul", "Dealurile",
+    "Valea", "Râul", "Capul", "Peninsula", "Faleza", "Falezele", "Stânca",
+    "Stâncile", "Vârful", "Pădurea", "Padurea",
+  ],
+  infrastructura: [
+    "Podul", "Șoseaua", "Traseul", "Pasul", "Bulevardul", "Gara", "Portul",
+    "Drumul", "Tunelul", "Digul", "Promenada", "Aleea",
+  ],
+  cladiri_teatre: [
+    "Piața", "Piata", "Strada", "Bulevardul",
+  ],
+}
 
 exports.SEASONAL_WARNING_PREFIXES = ["Șoseaua", "Traseul", "Pasul"]
 
@@ -1715,7 +1751,11 @@ exports.STORE_CONFIG = {
   helpnet: { name: "Help Net", slug: "help-net", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  mrbricolage: { name: "Mr. Bricolage", slug: "mr-bricolage", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  // Mr. Bricolage a dispărut complet din România — proprietarul (Cezar
+  // Rapotan, prin Arabesque) a renunțat la franciza franceză și a
+  // transformat magazinele în MatHaus, brandul propriu. Confirmat direct,
+  // cu sursă (businesspedia.ro/rise-and-fall-retaileri-de-bricolaj).
+  // Intrarea veche a fost eliminată complet — nu mai există de vizitat.
   cinemacity: { name: "Cinema City", slug: "cinema-city", type: "cinema", ticketUrl: "https://www.cinemacity.ro/", weekly: cinemaWeekly(), holidays: [] },
   cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/", weekly: cinemaWeekly(), holidays: [] },
   happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/", weekly: cinemaWeekly(), holidays: [] },
