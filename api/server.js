@@ -252,7 +252,7 @@ const {
   BEACH_ALL_TAGS,
   DISCOVERCARS_CITY_LINKS,
   GLOVO_COUNTRIES,
-  FREE_ACCESS_PREFIXES,
+  FREE_ACCESS_PREFIXES_BY_CATEGORY,
   SEASONAL_WARNING_PREFIXES,
   CATEGORY_GENERIC_SCHEDULE,
   FREE_ACCESS_CATEGORIES,
@@ -2064,9 +2064,11 @@ function buildVoteWidgetScript(nonce) {
 // restul (poduri, lacuri, insule) n-au relevanță meteo.
 ;
 
-function isFreeAccessAttraction(name) {
-  if (!name) return false;
-  return FREE_ACCESS_PREFIXES.some((prefix) => name === prefix || name.startsWith(prefix + " "));
+function isFreeAccessAttraction(name, category) {
+  if (!name || !category) return false;
+  const allowedPrefixes = FREE_ACCESS_PREFIXES_BY_CATEGORY[category];
+  if (!allowedPrefixes) return false;
+  return allowedPrefixes.some((prefix) => name === prefix || name.startsWith(prefix + " "));
 }
 function needsSeasonalWarning(name) {
   if (!name) return false;
@@ -2155,7 +2157,7 @@ function determineAttractionOpenStatus({ name, category, liveIsOpenNow }) {
   if (liveIsOpenNow !== null && liveIsOpenNow !== undefined) {
     return { isOpenNow: liveIsOpenNow, source: "live" };
   }
-  if (isFreeAccessAttraction(name) || FREE_ACCESS_CATEGORIES.includes(category)) {
+  if (isFreeAccessAttraction(name, category) || FREE_ACCESS_CATEGORIES.includes(category)) {
     return { isOpenNow: true, source: "free_access" };
   }
   const schedule = genericScheduleForCategory(category);
@@ -2326,7 +2328,7 @@ function buildAttractionAccordionItem(a, countryCode, cityLabel, isIntlContext, 
   // online" la Podul cu Lanțuri, Insula Margareta, Lacul Balaton — link
   // simplu spre detalii, fără pretenția unui status live, fără buton de
   // bilet (nimeni nu "rezervă" o vizită la un pod).
-  const freeAccess = isFreeAccessAttraction(a.name);
+  const freeAccess = isFreeAccessAttraction(a.name, a.category);
   const isBeach = a.category === "plaje_organizate" || a.category === "plaje_salbatice";
   let panelHtml;
   if (isBeach) {
@@ -2429,7 +2431,6 @@ const STORE_AFFILIATE_LINKS = {
   helpnet: "",
   dona: "",
   ropharma: "",
-  mrbricolage: "",
   cinemacity: "",
   cineplexx: "",
   happycinema: "",
@@ -4203,7 +4204,7 @@ const STORE_CATEGORY_BY_KEY = {
   carrefour: "magazine", auchan: "magazine", profi: "magazine", metro: "magazine", selgros: "magazine",
   dedeman: "bricolaj_electro", leroymerlin: "bricolaj_electro", bricodepot: "bricolaj_electro",
   hornbach: "bricolaj_electro", jysk: "bricolaj_electro", ikea: "bricolaj_electro", xxxlutz: "bricolaj_electro", momax: "bricolaj_electro", mathaus: "bricolaj_electro", arabesque: "bricolaj_electro",
-  altex: "bricolaj_electro", flanco: "bricolaj_electro", mrbricolage: "bricolaj_electro", dm: "farmacii",
+  altex: "bricolaj_electro", flanco: "bricolaj_electro", dm: "farmacii",
   drmax: "farmacii", farmaciatei: "farmacii", remedia: "farmacii", springpharma: "farmacii",
   catena: "farmacii", sensiblu: "farmacii", helpnet: "farmacii", dona: "farmacii", ropharma: "farmacii",
   cinemacity: "cinema", cineplexx: "cinema", happycinema: "cinema", movieplex: "cinema",
@@ -4627,7 +4628,7 @@ function buildCsp(nonce) {
     `script-src 'self' 'nonce-${nonce}' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://tp-em.com https://tpembd.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io",
     "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
     "worker-src 'self' blob:",
@@ -6170,12 +6171,14 @@ function buildAttractionListFilterScript(nonce) {
 (function(){
   var STORAGE_KEY = "poa_open_only_mode_v1";
   var SCHEDULES = ${safeJson(CATEGORY_GENERIC_SCHEDULE)};
-  var FREE_PREFIXES = ${safeJson(FREE_ACCESS_PREFIXES)};
+  var FREE_PREFIXES_BY_CATEGORY = ${safeJson(FREE_ACCESS_PREFIXES_BY_CATEGORY)};
   var FREE_CATEGORIES = ${safeJson(FREE_ACCESS_CATEGORIES)};
 
-  function isFreeAccess(name){
-    for (var i=0;i<FREE_PREFIXES.length;i++){
-      var p = FREE_PREFIXES[i];
+  function isFreeAccess(name, category){
+    var prefixes = FREE_PREFIXES_BY_CATEGORY[category];
+    if (!prefixes) return false;
+    for (var i=0;i<prefixes.length;i++){
+      var p = prefixes[i];
       if (name === p || name.indexOf(p + " ") === 0) return true;
     }
     return false;
@@ -6194,7 +6197,7 @@ function buildAttractionListFilterScript(nonce) {
   // reflectă exact ordinea din determineAttractionOpenStatus (server) —
   // fără treapta "live" (n-o trimitem la listă, ar costa per obiectiv)
   function isOpenForFilter(name, category){
-    if (isFreeAccess(name) || FREE_CATEGORIES.indexOf(category) !== -1) return true;
+    if (isFreeAccess(name, category) || FREE_CATEGORIES.indexOf(category) !== -1) return true;
     var schedule = SCHEDULES[category];
     if (schedule) return computeGenericOpen(schedule);
     return null; // necunoscut — nu presupunem, dar nici nu ascundem (vezi mai jos)
@@ -8591,7 +8594,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   let statusHtml;
   let widgetHtml = "";
   let widgetScriptHtml = "";
-  if (isFreeAccessAttraction(attraction.name)) {
+  if (isFreeAccessAttraction(attraction.name, attraction.category)) {
     const seasonalHtml = needsSeasonalWarning(attraction.name)
       ? `<p class="plan-visit-hint" style="margin-top:8px">${escapeHtml(seasonalWarningLabelFor("ro"))}</p>`
       : "";
@@ -8667,7 +8670,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   ${isBeach ? buildBeachTagsWidgetHtml(slug, beachWinningTags, "ro") : ""}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name), accessDifficulty: attraction.accessDifficulty })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name, attraction.category), accessDifficulty: attraction.accessDifficulty })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
   ${buildTravelGuidesBoxHtml()}
 
@@ -8743,7 +8746,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     // iar "estimarea" ar induce în eroare. Cardul de voturi (mai jos)
     // înlocuiește complet zona de status/program.
     statusHtml = "";
-  } else if (isFreeAccessAttraction(attraction.name)) {
+  } else if (isFreeAccessAttraction(attraction.name, attraction.category)) {
     const seasonalHtml = needsSeasonalWarning(attraction.name)
       ? `<p class="plan-visit-hint" style="margin-top:8px">${escapeHtml(seasonalWarningLabelFor(activeLang))}</p>`
       : "";
@@ -8803,7 +8806,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${beachContent ? buildBeachContentRestHtml(beachContent, activeLang) : ""}
   ${widgetHtml}
 
-  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang, isBeach), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
+  ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang, isBeach), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name, attraction.category) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name, { isBeach, accessDifficulty: attraction.accessDifficulty, city: isBeach ? attraction.city : detectAttractionCity(attraction.name, countryCode), name: attraction.name, lang: activeLang })}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
