@@ -5928,8 +5928,7 @@ function mapLoadingAttractionsLabelFor(lang) { return MAP_LOADING_ATTRACTIONS_LA
 function buildCityMapHtml(coords, cityName, nonce, lang) {
   if (!coords) return "";
 
-  const toggleHtml = `<label class="map-live-toggle map-live-toggle-unified"><input type="checkbox" id="mapUnifiedOpenOnlyToggle"> ${escapeHtml(mapUnifiedToggleLabelFor(lang))}</label>
-<p id="mapLiveStatus" class="map-live-status">${escapeHtml(mapLoadingStoresLabelFor(lang))}</p>
+  const toggleHtml = `<p id="mapLiveStatus" class="map-live-status">${escapeHtml(mapLoadingStoresLabelFor(lang))}</p>
 <p id="mapAttractionsLiveStatus" class="map-live-status">${escapeHtml(mapLoadingAttractionsLabelFor(lang))}</p>`;
 
   // dacă avem cheie Google Maps, o folosim pe aceea — altfel, fallback automat
@@ -5981,7 +5980,7 @@ function buildLiveMapPinsScript(orasDisplay, lang, nonce) {
 <script nonce="${nonce}">
 (function(){
   var statusEl = document.getElementById("mapLiveStatus");
-  var toggle = document.getElementById("mapUnifiedOpenOnlyToggle");
+  var toggle = document.getElementById("storeListOpenOnlyToggle");
   if (!statusEl) return;
 
   function whenMapReady(cb, attemptsLeft){
@@ -6074,7 +6073,7 @@ function buildLiveAttractionsMapPinsScript(orasDisplay, countryCode, lang, nonce
 <script nonce="${nonce}">
 (function(){
   var statusEl = document.getElementById("mapAttractionsLiveStatus");
-  var toggle = document.getElementById("mapUnifiedOpenOnlyToggle");
+  var toggle = document.getElementById("storeListOpenOnlyToggle");
   if (!statusEl) return;
 
   function whenMapReady(cb, attemptsLeft){
@@ -6344,6 +6343,15 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
   var INITIAL_CITY = ${safeJson(initialCity ? normalizeSlug(initialCity) : null)};
   var PRIMARY_ATTRACTION_COUNTRY = ${safeJson(primaryAttractionCountry || null)};
 
+  // Persistență REALĂ, peste navigare/reîncărcare — cerut explicit: alegerea
+  // manuală a utilizatorului (țară + oraș) trebuie să rămână activă cât timp
+  // nu alege alta, indiferent câte pagini vizitează între timp. Înainte,
+  // "persistența" era doar în DOM, pe durata unei singure încărcări —
+  // la orice navigare, se pierdea și pagina revenea la geo-detectarea
+  // automată (server-side, din IP), ignorând alegerea reală a omului.
+  var STORAGE_KEY_COUNTRY = "poa_selected_country_v1";
+  var STORAGE_KEY_CITY = "poa_selected_city_v1";
+
   function selectCountry(code){
     var target = code || "all";
     // obiectivele turistice ale țării principale NU mai au un bloc separat
@@ -6400,6 +6408,10 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
       if (anchor && anchor.scrollIntoView) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     if (typeof window.refreshFavoriteStars === "function") window.refreshFavoriteStars();
+    try {
+      if (target === "all") { localStorage.removeItem(STORAGE_KEY_COUNTRY); localStorage.removeItem(STORAGE_KEY_CITY); }
+      else localStorage.setItem(STORAGE_KEY_COUNTRY, target);
+    } catch (e) {}
   }
 
   // filtrare secundară, pe oraș, DOAR în interiorul blocului de țară activ momentan
@@ -6412,6 +6424,10 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
       var show = target === "all" || li.getAttribute("data-city") === target;
       li.style.display = show ? "" : "none";
     });
+    try {
+      if (target === "all") localStorage.removeItem(STORAGE_KEY_CITY);
+      else localStorage.setItem(STORAGE_KEY_CITY, target);
+    } catch (e) {}
   }
 
   document.addEventListener("click", function(e){
@@ -6440,13 +6456,32 @@ function buildCountryFilterScript(nonce, initialCountry, initialCity, primaryAtt
     }
   });
 
-  if (INITIAL_COUNTRY) {
-    selectCountry(INITIAL_COUNTRY);
-    if (INITIAL_CITY) {
-      var activeBlock = document.querySelector('.country-filter-block[data-country-block="' + INITIAL_COUNTRY + '"]');
-      var cityBtnMatch = activeBlock && activeBlock.querySelector('.city-flag-btn[data-city-select="' + INITIAL_CITY + '"]');
-      if (activeBlock && cityBtnMatch) selectCity(activeBlock, INITIAL_CITY);
+  var savedCountry = null, savedCity = null;
+  try {
+    savedCountry = localStorage.getItem(STORAGE_KEY_COUNTRY);
+    savedCity = localStorage.getItem(STORAGE_KEY_CITY);
+  } catch (e) {}
+  var effectiveInitialCountry = savedCountry || INITIAL_COUNTRY;
+  var effectiveInitialCity = savedCity || INITIAL_CITY;
+
+  // try/finally — dacă restaurarea de mai sus eșuează dintr-un motiv
+  // neprevăzut (element lipsă etc.), clasa de ascundere tot trebuie
+  // eliminată, altfel pagina rămâne invizibilă permanent pentru acel
+  // vizitator, ceva mult mai grav decât mica săritură vizuală reparată aici.
+  try {
+    if (effectiveInitialCountry) {
+      selectCountry(effectiveInitialCountry);
+      if (effectiveInitialCity) {
+        var activeBlock = document.querySelector('.country-filter-block[data-country-block="' + effectiveInitialCountry + '"]');
+        var cityBtnMatch = activeBlock && activeBlock.querySelector('.city-flag-btn[data-city-select="' + effectiveInitialCity + '"]');
+        if (activeBlock && cityBtnMatch) selectCity(activeBlock, effectiveInitialCity);
+      }
     }
+  } finally {
+    // Starea corectă e deja aplicată — arătăm acum totul dintr-o dată, fără
+    // nicio "săritură" vizibilă (vezi clasa pusă devreme, în <head>, înainte
+    // de primul randare a paginii).
+    document.documentElement.classList.remove("filter-restore-pending");
   }
 })();
 </script>`;
@@ -7301,8 +7336,21 @@ ${travelpayoutsScript}
     var t = localStorage.getItem("theme");
     if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
   } catch(e){}
+  // Ascunde imediat zona de filtrare țară/oraș DACĂ există o alegere salvată
+  // de la o vizită anterioară — altfel utilizatorul vede o clipă starea
+  // implicită ("toate țările"), apoi sare brusc la alegerea lui, senzație
+  // de "ecran care se rupe"/clipește, semnalată direct. Elimină exact la
+  // fel ca la temă, mai sus — scriptul de mai jos, care aplică efectiv
+  // filtrul (buildCountryFilterScript), scoate clasa asta la final, o
+  // singură dată, cu starea deja corectă gata pusă.
+  try {
+    if (localStorage.getItem("poa_selected_country_v1") || localStorage.getItem("poa_selected_city_v1")) {
+      document.documentElement.classList.add("filter-restore-pending");
+    }
+  } catch(e){}
 })();
 </script>
+<style>html.filter-restore-pending .country-filter-bar,html.filter-restore-pending .sub-nav-panel{visibility:hidden;}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- Verificare proprietate site — Impact.com (platforma care găzduiește
      programul de afiliere Skyscanner) — pusă în antetul comun, pe toate
@@ -8216,7 +8264,7 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   ${adSlotHtml()}
 
   <div class="sub-nav-panel active" data-panel="stores">
-    <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(openOnlyStoreLabelFor(activeLang))}</label>
+    <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(mapUnifiedToggleLabelFor(activeLang))}</label>
     ${storesAllBlockHtml}
     ${storesByCountryHtml}
   </div>
@@ -8991,7 +9039,8 @@ ${buildGeoScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, buildSearchIndexRO(), "poa_favorites_v1", "ro")}
 ${buildAttractionListFilterScript(nonce)}
 ${buildAttractionAccordionScript(nonce)}
-${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}`;
+${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, "🔔 Abonează-te la notificări (sărbători, program special)", "🔕 Dezabonează-te de la notificări") : ""}
+<script nonce="${nonce}">document.documentElement.classList.remove("filter-restore-pending");</script>`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
@@ -10309,13 +10358,27 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
     const parcTicketLink = resolved.parcGasit ? ticketUrlFor(resolved.parcGasit) : null;
 
     // Link către pagina proprie a fiecărui obiectiv/plajă din itinerar —
-    // cerut explicit, ca utilizatorul să poată da clic și să vadă descrierea
-    // completă de pe site. Calculat AICI, pe server, cu toDbSlug (aceeași
-    // funcție folosită peste tot pe site) — NU reconstruit în JS pe client,
-    // ca să nu riscăm o mică diferență de logică între cele două și linkuri
-    // sparte. "nume" vine EXACT ca în lista trimisă la AI (promptul cere
-    // explicit asta), deci slug-ul calculat aici se potrivește garantat cu
-    // pagina reală a obiectivului.
+    // cerut explicit. Calculat AICI, pe server, cu toDbSlug — dar acum
+    // VALIDAT contra listei reale trimise la AI (resolved.obiective), nu
+    // presupus direct din "nume" cum era înainte. Bug real, semnalat direct
+    // cu exemple: unele clicuri duceau la pagină albă — AI-ul nu reproduce
+    // mereu exact numele (mai ales la România, unde numele trimis la AI are
+    // "(localitate)" adăugat doar pentru prompt, pe care AI-ul îl scapă la
+    // răspuns). Acum construim o listă de nume REALE cunoscute (curățate de
+    // sufixul de localitate acolo unde există), și punem link DOAR dacă
+    // "nume"-le din răspuns se potrivește cu unul real — altfel `.link`
+    // rămâne nesetat, iar clientul afișează text simplu, nu un link mort.
+    const knownNames = (resolved.obiective || []).map((o) => o.replace(/\s*\([^)]*\)\s*$/, ""));
+    const knownNamesByNorm = new Map(knownNames.map((n) => [normalizeJudetInput(n), n]));
+    // coordonatele orașului CĂUTAT — dacă există în CITY_COORDS, putem
+    // calcula distanța REALĂ (Haversine) până la orașul/regiunea fiecărui
+    // obiectiv, în loc să ne bazăm pe estimarea AI-ului, dovedită nesigură
+    // (exemplu real, semnalat direct: pentru un itinerar în Hanioti, AI-ul a
+    // arătat Atena la "~100 km", deși e la peste 600 km). Acoperire parțială
+    // — CITY_COORDS nu are toate stațiunile mici (ex. Hanioti însuși) — deci
+    // păstrăm estimarea AI-ului ca fallback DOAR când nu putem calcula real.
+    const searchCoords = CITY_COORDS[resolved.orasCanonic];
+
     if (itinerar && Array.isArray(itinerar.zile)) {
       const intervalKeys = ["dimineata", "pranz", "seara"];
       for (const zi of itinerar.zile) {
@@ -10323,9 +10386,28 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
           if (!Array.isArray(zi[key])) continue;
           for (const item of zi[key]) {
             if (!item || typeof item.nume !== "string" || !item.nume) continue;
-            const slug = toDbSlug(item.nume);
-            if (!slug) continue;
-            item.link = tara === "ro" ? `/obiectiv/${slug}` : `/${tara}/obiectiv/${slug}`;
+            const matchedName = knownNamesByNorm.get(normalizeJudetInput(item.nume));
+            if (!matchedName) continue; // numele din răspunsul AI nu se regăsește real — fără link, mai bine decât unul spart
+            const slug = toDbSlug(matchedName);
+            if (slug) item.link = tara === "ro" ? `/obiectiv/${slug}` : `/${tara}/obiectiv/${slug}`;
+
+            const itemCity = resolved.cityByName && resolved.cityByName[matchedName];
+            const destCoords = itemCity && CITY_COORDS[itemCity];
+            if (searchCoords && destCoords) {
+              // Factor de corecție drum vs. linie dreaptă — oamenii circulă
+              // cu mașina, pe șosele, nu prin aer. Haversine dă mereu
+              // distanța minimă geometrică, care poate subestima serios
+              // distanța reală de condus, mai ales în zone cu golfuri/munți
+              // (exact cazul semnalat: Halkidiki -> Atena, unde ocolul e
+              // mare). 1.4x e o aproximare rezonabilă, general acceptată
+              // pentru conversia linie-dreaptă -> șosea în Europa — nu
+              // perfectă (ar necesita un API real de rutare, gen Google
+              // Directions, neconectat aici), dar mult mai aproape de
+              // realitate decât linia dreaptă simplă.
+              const straightKm = haversineKm(searchCoords[0], searchCoords[1], destCoords[0], destCoords[1]);
+              const realKm = Math.round(straightKm * 1.4);
+              item.distanta = realKm === 0 ? "~0 km" : `~${realKm} km`;
+            }
           }
         }
       }
@@ -10523,6 +10605,16 @@ function boostParcuriAgrement(items, getCategory, getName, activ) {
 // EXACTE, corect scrise, din COUNTRIES[cc].cities.
 ;
 
+function buildCityByNameMap(items, nameFn, cityFn) {
+  const map = {};
+  for (const item of items) {
+    const name = nameFn(item);
+    const city = cityFn(item);
+    if (name && city) map[name] = city;
+  }
+  return map;
+}
+
 function resolveCityToCountry(orasInput, tipCalatorie) {
   const aliasMatch = CITY_ALIASES_RO[normalizeJudetInput(orasInput)];
   if (aliasMatch) orasInput = aliasMatch;
@@ -10544,7 +10636,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       (o) => o.nume,
       familyMode
     );
-    return { tara: "ro", obiective: sortedRo.map((o) => `${o.nume} (${o.localitate})`), orasCanonic: matchedRo || toTitleCase(orasInput), parcGasit };
+    return { tara: "ro", obiective: sortedRo.map((o) => `${o.nume} (${o.localitate})`), cityByName: buildCityByNameMap(sortedRo, (o) => o.nume, (o) => o.localitate), orasCanonic: matchedRo || toTitleCase(orasInput), parcGasit };
   }
 
   const norm = normalizeJudetInput(orasInput);
@@ -10557,7 +10649,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
       if (obiective.length) {
         const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-        return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: matched, parcGasit };
+        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: matched, parcGasit };
       }
     }
   }
@@ -10575,7 +10667,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
     if (islandMatch) {
       const islandObiective = list.filter((a) => a.city && normalizeJudetInput(a.city) === norm);
       const { sorted, parcGasit } = boostParcuriAgrement(islandObiective, (a) => a.category, (a) => a.name, familyMode);
-      return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: islandMatch.city, parcGasit };
+      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: islandMatch.city, parcGasit };
     }
   }
 
@@ -10586,7 +10678,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
       if (obiective.length) {
         const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-        return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: matched, parcGasit };
+        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: matched, parcGasit };
       }
     }
   }
@@ -10595,7 +10687,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
     const { obiective, gasitExactInOras } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
     if (gasitExactInOras) {
       const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-      return { tara: cc, obiective: sorted.map((a) => a.name), orasCanonic: toTitleCase(orasInput), parcGasit };
+      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: toTitleCase(orasInput), parcGasit };
     }
   }
 
@@ -10639,7 +10731,7 @@ ${familyInstruction}${beachHopperInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
-Organizează obiectivele pe zile: GRUPEAZĂ-LE geografic, pe localitate/zonă — obiectivele din aceeași localitate sau zonă apropiată trebuie puse ÎMPREUNĂ, în aceeași zi sau în zile consecutive, NICIODATĂ împrăștiate în zile diferite, neconsecutive (ex: greșit — cetatea din Localitatea A în ziua 1, altceva în Localitatea B în ziua 2, apoi mănăstirea tot din Localitatea A în ziua 3; corect — toate obiectivele din Localitatea A grupate în ziua 1, apoi treci definitiv la Localitatea B din ziua 2 înainte). În interiorul unei zile, organizează și intervalele "dimineata", "pranz", "seara" logic din punct de vedere geografic (nu sări dintr-o parte a orașului în cealaltă și înapoi fără motiv). Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval. Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
+Organizează obiectivele pe zile: GRUPEAZĂ-LE geografic, pe localitate/zonă — obiectivele din aceeași localitate sau zonă apropiată trebuie puse ÎMPREUNĂ, în aceeași zi sau în zile consecutive, NICIODATĂ împrăștiate în zile diferite, neconsecutive (ex: greșit — cetatea din Localitatea A în ziua 1, altceva în Localitatea B în ziua 2, apoi mănăstirea tot din Localitatea A în ziua 3; corect — toate obiectivele din Localitatea A grupate în ziua 1, apoi treci definitiv la Localitatea B din ziua 2 înainte). REGULĂ STRICTĂ de distanță: NU propune NICIODATĂ un obiectiv la mai mult de 150 km de ${oras} — nimeni nu petrece o zi întreagă pe drum ca să vadă un singur obiectiv. Dacă nu ai destule obiective potrivite, apropiate, în lista de mai jos, e mult mai bine să incluzi mai puține (chiar și doar 1-2 pe zi) decât să umpli ziua cu ceva îndepărtat doar ca să pară completă. În interiorul unei zile, organizează și intervalele "dimineata", "pranz", "seara" logic din punct de vedere geografic (nu sări dintr-o parte a orașului în cealaltă și înapoi fără motiv). Nu toate intervalele trebuie neapărat completate — dacă nu ai un obiectiv potrivit pentru un interval, poți lăsa lista goală pentru acel interval.${beachHopperInstruction ? " Pentru intervalul \"seara\", dacă ziua respectivă e despre plajă, alege de preferință ceva din afara listei stricte de plaje, dacă are sens contextual — o zonă de promenadă, o zonă cu restaurante/taverne, sau un loc bun pentru apus, ca alternativă la a repeta tot plaja principală." : ""} Pentru fiecare obiectiv, scrie o descriere scurtă, atractivă, de maxim 2 propoziții, ÎN ${langName.toUpperCase()}.
 
 FOARTE IMPORTANT: array-ul "zile" din JSON trebuie să conțină EXACT ${zile} ${zile === 1 ? "obiect" : "obiecte"} (câte unul pentru fiecare zi cerută — ziua 1${zile > 1 ? `, ziua 2${zile > 2 ? ", și așa mai departe până la ziua " + zile : ""}` : ""}). Exemplul de mai jos arată doar STRUCTURA unei singure zile, ca șablon — NU înseamnă că răspunsul tău trebuie să aibă o singură zi. Dacă am cerut ${zile} ${zile === 1 ? "zi" : "zile"}, array-ul "zile" trebuie să aibă ${zile === 1 ? "1 element" : `${zile} elemente, cu "ziua" numerotată de la 1 la ${zile}`}.
 
