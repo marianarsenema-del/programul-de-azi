@@ -1,1518 +1,3513 @@
-// Conținut editorial, per plajă, scris de proprietarul site-ului — extras
-// din documente Word furnizate direct (2 loturi). Cheia e numele EXACT din
-// attractions-data.js (câmpul `name`). Separat de restul datelor, dat
-// fiind volumul mare de text. Acoperire: toate cele 188 de plaje din date.
-module.exports = {
-  "Plaja Golden Beach Thassos": {
-    scurt: "Golden Beach (sau Chrysi Ammoudia) este cea mai lungă, populară și spectaculoasă plajă din Thassos. Întinsă pe câțiva kilometri într-un golf uriaș înconjurat de munți verzi, plaja își merită pe deplin numele datorită nisipului fin care strălucește ca aurul sub razele soarelui. Apa este curată ca lacrima și are o intrare extrem de lină, fiind un loc de vis unde copiii se pot juca în siguranță, iar adulții se pot relaxa fără nicio grijă.",
-    cumAjungi: "Plaja unește practic două sate turistice importante, Skala Potamia și Skala Panagia. Deși există autobuze locale, acestea circulă după un orar fix și devin sufocante în plin sezon. Cu o mașină închiriată ai libertatea să explorezi ambele capete ale golfului, să-ți lași bagajele grele la câțiva pași de șezlong și să urci seara în satul tradițional Panagia pentru o cină la umbra plataniilor. Parcarea este generoasă de-a lungul întregii plaje, existând atât spații publice gratuite, cât și locuri amenajate de beach baruri.",
-    echipament: [{ titlu: "Mască de snorkeling", text: "În zonele unde plaja întâlnește porțiunile stâncoase de la marginea golfului, viața marină este foarte activă și apa e perfect clară." }, { titlu: "Zmeu sau accesorii pentru jocuri pe nisip", text: "Plaja este atât de lată și liberă în anumite porțiuni, încât ai spațiu din belșug pentru activități relaxante fără să-i deranjezi pe ceilalți." }, { titlu: "O cremă de soare rezistentă la apă", text: "Briza mării este înșelătoare aici și te poți arde foarte ușor în timp ce te plimbi pe malul lung al apei." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă între 10 - 15 EUR, dar cele mai multe beach baruri oferă șezlongul gratuit în schimbul unei consumații minime de aceeași valoare (o bere, o cafea sau un suc). Prețul unui gyros la tavernele de pe faleză este în jur de 4 - 5 EUR, iar o masă completă pentru două persoane ajunge la 30 - 40 EUR.",
-    turisti: [{ titlu: "Paradisul copiilor", text: "Toți părinții laudă faptul că trebuie să mergi zeci de metri în larg pentru ca apa să-ți ajungă la talie." }, { titlu: "Faleză plină de viață", text: "Turiștii apreciază că ai absolut tot ce-ți trebuie la un minut distanță: supermarketuri, dușuri, cabină de schimb și taverne excelente." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi în capătul din stânga al plajei (zona Skala Panagia) dacă vrei un nisip și mai fin și o mare complet lipsită de valuri, fiind cel mai adăpostit colț din întreg golful." }],
-  },
-  "Plaja Saliara (Marble Beach) Thassos": {
-    scurt: "Saliara este probabil cea mai exotică și unică plajă din Thassos. În loc de nisip clasic, întreaga plajă este formată din pietricele mici, perfect rotunde și albe din marmură pură (provenite de la cariera din apropiere). Datorită acestui fundal alb, apa mării capătă o nuanță de turcoaz electric atât de intensă, încât ai impresia că te afli în Caraibe sau Maldive. Este un loc incredibil de fotogenic, dar albul imaculat reflectă soarele foarte puternic.",
-    cumAjungi: "Plaja este izolată și ascunsă pe coasta de nord-est a insulei, iar transportul public nu ajunge deloc aici. De la drumul principal asfaltat care duce spre Makryammos, ai de parcurs un drum forestier neasfaltat de aproximativ 4-5 km. Drumul este foarte prăfuit, cu denivelări și pietre, motiv pentru care o mașină este absolut necesară pentru a te deplasa în siguranță și fără grabă. Parcarea de jos este amenajată direct în pădurea de pini și este gratuită.",
-    echipament: [{ titlu: "Ochelari de soare polarizați", text: "Lumina reflectată de pietricelele de marmură albă este orbitoare la amiază. Fără ochelari buni, îți va fi greu să admiri peisajul." }, { titlu: "Papuci de plajă sau aqua shoes", text: "Pietricelele de marmură devin extrem de fierbinți sub soarele arzător, iar mersul desculț până la apă poate fi o provocare." }, { titlu: "Cameră subacvatică sau husă waterproof", text: "Claritatea apei în acest golf este legendară, fiind ideală pentru filmări și poze sub apă." }],
-    preturi: "Plaja este administrată în totalitate de un beach bar exclusivist, ceea ce înseamnă că prețurile sunt mai ridicate decât media de pe insulă. Închirierea unui set de două șezlonguri cu umbrelă pornește de la 25 - 35 EUR (în funcție de rândul ales), iar de cele mai multe ori prețul include doar accesul, fără băuturi. O cafea sau o bere la bar costă în jur de 5 - 6 EUR.",
-    turisti: [{ titlu: "Pregătește-te pentru praf", text: "Toți vizitatorii avertizează că, după drumul spre plajă, mașina va fi acoperită complet de un strat fin de praf alb de marmură." }, { titlu: "Foarte aglomerată în sezon", text: "Din cauza celebrității sale pe rețelele sociale, plaja se umple până la refuz încă de la primele ore ale dimineții." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino foarte devreme, ideal înainte de ora 08:45. Vei prinde cel mai bun loc de parcare la umbră, șezlong în primul rând și vei putea face poze spectaculoase înainte ca golful să se umple de oameni." }],
-  },
-  "Plaja Porto Vathy Thassos": {
-    scurt: "Situată la doar câteva sute de metri după Marble Beach, Porto Vathy este sora mai mică, dar la fel de spectaculoasă, a acesteia. Plaja împarte același secret magic: este acoperită cu pietriș fin de marmură albă, iar apa mării are o culoare turcoaz ireală. Avantajul major al plajei Porto Vathy este că peisajul este puțin mai deschis, fiind încadrat de o carieră de marmură masivă chiar în fundal, ceea ce îi dă un aer industrial îmblânzit de natură.",
-    cumAjungi: "Drumul de acces este continuarea directă a drumului forestier neasfaltat care duce la Marble Beach. Condițiile sunt identice: praf alb, pietriș și denivelări. Este un traseu pe care nu vrei să-l parcurgi pe jos sau cu un scuter mic. O mașină îți oferă siguranța de care ai nevoie și te scutește de efort. Parcarea este gratuită, amenajată în spatele plajei, chiar lângă măslinii bătrâni.",
-    echipament: [{ titlu: "Mască de snorkeling", text: "Mergi spre latura stâncoasă a golfului; claritatea apei îți permite să vezi bancuri întregi de pești care caută hrană printre pietre." }, { titlu: "Șervețele umede în mașină", text: "Îți vor prinde extrem de bine la plecare pentru a te curăța rapid de praful alb de marmură înainte de a urca la volan." }, { titlu: "Cremă de soare cu factor mare (SPF 50)", text: "Reflexia luminii pe pietricelele albe accelerează bronzul, dar crește și riscul de arsuri rapide." }],
-    preturi: "Plaja este amenajată cu un beach bar modern, cu muzică relaxantă (chill-out). Un set de șezlonguri costă în jur de 20 - 25 EUR, iar uneori suma poate fi transformată în credit pentru băuturi sau gustări de la bar. Un burger simplu sau un club sandwich costă în jur de 8 - 10 EUR.",
-    turisti: [{ titlu: "O alternativă excelentă la Marble Beach", text: "Mulți turiști care găsesc Marble Beach prea aglomerată aleg să meargă câteva minute mai încolo, la Porto Vathy, unde atmosfera este adesea un pic mai relaxată." }, { titlu: "Peisaj spectaculos", text: "Cariera de marmură din spate oferă un contrast vizual unic, foarte apreciat de pasionații de fotografie." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să prinzi o atmosferă cu adevărat relaxantă, vino după ora 16:30. Soarele începe să coboare ușor, culorile apei devin mai calde, iar majoritatea turiștilor încep deja să plece spre hoteluri." }],
-  },
-  "Plaja Aliki Thassos": {
-    scurt: "Aliki este una dintre cele mai fermecătoare și încărcate de istorie locații din Thassos. Situată pe o peninsulă îngustă din sud-estul insulei, Aliki îți oferă de fapt două plaje gemene așezate spate în spate. Golful principal este mic, adăpostit complet de vânturi și tăiat parcă dintr-o carte poștală: apă de smarald, nisip fin și taverne cochete ale căror mese ating aproape buza mării. În plus, locul este plin de ruine antice grecești și romane.",
-    cumAjungi: "Aliki se află la aproximativ 30 km de Limenas (capitala insulei). Drumul principal din jurul insulei este asfaltat și impecabil, oferind peisaje marine superbe, dar are destul de multe pante și curbe. Mașina este cea mai confortabilă metodă de transport, permițându-ți să ajungi devreme, deoarece marea problemă la Aliki este parcarea. Spațiile sunt limitate pe marginea drumului principal, iar coborârea spre plajă se face pe jos, pe o alee pietonală scurtă.",
-    echipament: [{ titlu: "Încălțăminte comodă de mers (sandale sau adidași ușori)", text: "Peninsula ascunde ruinele unui templu antic și o fostă carieră romană de marmură scufundată parțial în mare. Merită din plin o plimbare de 20 de minute printre pini ca să le vizitezi." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de calmă și adăpostită, este perfectă pentru o sesiune lungă de explorat fundul mării." }],
-    preturi: "Datorită spațiului strâmt, tavernele administrează șezlongurile de pe nisip. De regulă, un set de șezlonguri este gratuit dacă alegi să iei prânzul la taverna respectivă (sau dacă ai o consumație minimă de aproximativ 20 - 30 EUR). O porție de pește proaspăt sau fructe de mare costă în jur de 12 - 16 EUR.",
-    turisti: [{ titlu: "Mâncare excelentă la malul mării", text: "Toată lumea laudă experiența de a savura un prânz tradițional grecesc la doar un pas de apa de smarald." }, { titlu: "Foarte aglomerată în iulie și august", text: "Golful fiind mic, șezlongurile sunt așezate destul de aproape unele de altele, iar plaja devine neîncăpătoare rapid." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să eviți aglomerația de pe plaja principală cu taverne, mergi pe cealaltă plajă (cea din spatele peninsulei). Este mult mai sălbatică, adesea neamenajată, perfectă pentru cei care vor să stea liniștiți pe prosop." }],
-  },
-  "Giola Thassos": {
-    scurt: "Giola nu este o plajă în sensul clasic al cuvântului, ci o lagună sau o piscină naturală spectaculoasă, săpată de valuri direct în stânca de pe malul mării. Înconjurată de pereți de piatră înalți de până la 8 metri, Giola se umple constant cu apă proaspătă din mare prin valurile care se sparg de marginea ei. Apa din piscină este adesea mai caldă decât cea din mare și are o nuanță superbă de verde jad. Este locul ideal pentru cei curajoși, dornici să sară în apă de la înălțime.",
-    cumAjungi: "Giola se află în sudul insulei, în apropierea localității Astris. Transportul public nu te lasă nicăieri aproape de acest obiectiv. Mașina este esențială. De la șoseaua principală asfaltată, pornește un drum de pământ destul de abrupt, accidentat și plin de pietre mari. Există o parcare amenajată cu plată (în jur de 3 - 4 EUR) lângă o tavernă locală, iar de acolo mai ai de mers pe jos, în coborâre pe stânci, în jur de 10-15 minute până la piscină.",
-    echipament: [{ titlu: "Pantofi cu talpă aderentă sau adidași", text: "Coborârea și mersul pe stâncile din jurul Giolei pot fi foarte alunecoase și periculoase în șlapi simpli de plajă." }, { titlu: "Rucsac ușor cu apă", text: "Jos, la piscină, nu există absolut nicio amenajare, magazin sau umbră naturală. Este doar stâncă goală expusă la soare." }, { titlu: "Aqua shoes pentru baie", text: "Marginile interioare ale piscinei sunt pline de arici de mare, așa că dacă nu vrei să sari și preferi să cobori încet în apă, încălțările speciale te vor proteja." }],
-    preturi: "Accesul la piscina naturală este complet gratuit. Singurul cost este parcarea de sus (dacă alegi să nu lași mașina mai departe, pe marginea drumului accidentat). La taverna de unde pornește poteca pe jos, o băutură rece sau o gustare costă în jur de 3 - 5 EUR.",
-    turisti: [{ titlu: "Atenție la sărituri", text: "Mulți turiști recomandă să verifici adâncimea apei și să fii atent la ceilalți oameni înainte de a sări de pe stâncile cele mai înalte." }, { titlu: "Drumul pe jos este obositor la întoarcere", text: "Urcarea înapoi spre parcare, la orele prânzului, poate fi foarte solicitantă din cauza căldurii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi la Giola dimineața, în jur de ora 08:00 - 08:30. Vei prinde piscina complet goală, apa va fi perfect curată (fără creme de soare la suprafață) și vei putea face acele poze spectaculoase, de revistă, fără zeci de oameni în fundal." }],
-  },
-  "Plaja Psili Ammos Thassos": {
-    scurt: "Psili Ammos înseamnă literar „Nisip Fin\", iar plaja își respectă numele cu sfințenie. Situată în sudul insulei, este o plajă vibrantă, cu un aer foarte tineresc și cosmopolit. Golful este flancat de dealuri acoperite cu pini și măslini, iar apa mării este de o claritate rară. Este locul preferat al celor care vor să combine o zi de plajă excelentă cu muzica bună mixată de DJ-ii de la beach barurile moderne de pe mal.",
-    cumAjungi: "Plaja este situată la aproximativ 5 km de stațiunea Potos. Deși autobuzele mai opresc pe șoseaua principală de deasupra plajei, să depinzi de ele în arșița verii nu este deloc plăcut. Cu mașina ajungi în mai puțin de 10 minute din Potos sau Limenaria. Parcarea gratuită se află chiar în spatele plajei, la umbra măslinilor, dar spațiul devine neîncăpător după ora 10:30.",
-    echipament: [{ titlu: "Mască de snorkeling", text: "În ambele capete ale golfului sunt formațiuni stâncoase subacvatice foarte spectaculoase, pline de pești și caracatițe ascunse." }, { titlu: "Căști antifonice pentru copii", text: "Dacă mergi cu bebeluși, așază-te mai departe de boxele mari ale barurilor, deoarece muzica poate fi destul de tare după prânz." }, { titlu: "O loțiune după plajă", text: "Nisipul de aici tinde să rețină căldura puternic, așa că pielea ta va avea nevoie de hidratare suplimentară seara." }],
-    preturi: "Șezlongurile sunt de obicei condiționate de o consumație minimă la beach baruri, care variază între 15 - 25 EUR de persoană, în funcție de cât de aproape de apă vrei să stai. Un cocktail costă în jur de 8 - 10 EUR, iar o porție de cartofi prăjiți sau un club sandwich este în jur de 6 - 8 EUR.",
-    turisti: [{ titlu: "Apa este mai rece aici", text: "Mulți turiști notează că apa din acest golf tinde să fie cu 1-2 grade mai răcoroasă decât în nordul insulei, din cauza unor curenți reci, dar este incredibil de revigorantă în iulie și august." }, { titlu: "Atmosferă excelentă seara", text: "Petrecerile de la apus sunt foarte lăudate de cei tineri." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în jurul orei 09:15 dimineața. Vei prinde parcare la umbră adâncă sub măslini și vei putea alege cele mai bune șezlonguri din primul rând, chiar la buza apei." }],
-  },
-  "Plaja Potos Thassos": {
-    scurt: "Plaja Potos este plaja urbană a uneia dintre cele mai animate stațiuni din Thassos. Dacă îți place să fii în centrul acțiunii, unde plaja se îmbină natural cu tavernele, cafenelele și magazinele de suvenire, acesta este locul ideal. Plaja are un amestec de nisip și pietriș mărunt, iar apa este calmă și curată. Este genul de plajă extrem de confortabilă, unde poți trece de la o baie în mare direct la o masă cu pește proaspăt.",
-    cumAjungi: "Potos este un nod rutier important în sudul insulei. Dacă ești cazat chiar în stațiune, ajungi pe jos în câteva minute. Dacă vii din alte zone (cum ar fi Limenaria sau Thassos Town), mașina este cea mai bună opțiune. Parcarea în interiorul stațiunii Potos poate fi o provocare imensă în sezon; există parcări private cu plată (în jur de 4 - 5 EUR pe zi) foarte aproape de faleză, care te scutesc de învârtit în cerc pe straduțele înguste.",
-    echipament: [{ titlu: "Aqua shoes (pantofi de apă)", text: "Deși există mult nisip, la intrarea în apă sunt porțiuni cu pietricele și ocazional câțiva arici de mare ascunși pe lângă stânci." }, { titlu: "Bani cash în buzunar", text: "Unele dintre tavernele mai mici sau vânzătorii ambulanți de gogoși de pe plajă preferă plata cash." }, { titlu: "Minge de volei", text: "Există adesea filee de volei montate pe plajă de către barurile locale." }],
-    preturi: "Sistemul de închiriere este foarte prietenos: majoritatea tavernelor îți oferă șezlongurile gratuit dacă comanzi băuturi sau mâncare de la ei (o consumație minimă de 10 - 15 EUR per set). Un frappe costă 3,50 EUR, iar un prânz complet pentru o familie costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Aproape de tot ce ai nevoie", text: "Turiștii apreciază enorm confortul de a avea toalete, dușuri, farmacii și magazine la doar câțiva pași de plajă." }, { titlu: "Aglomerație pe faleză", text: "Seara, zona din spatele plajei devine pietonală și extrem de populată." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până la apus. Coasta de sud-vest a insulei oferă un spectacol superb când soarele coboară în mare, iar tavernele își aprind luminile romantice chiar pe nisip." }],
-  },
-  "Plaja Skala Rachoni Thassos": {
-    scurt: "Dacă Paradise sau Psili Ammos sunt plaje vibrante și zgomotoase, Skala Rachoni este exact opusul: o oază de liniște, pace și relaxare totală. Situată în nord-vestul insulei, plaja este faimoasă pentru pinii săi uriași care cresc direct din nisip și își întind crengile deasupra apei, oferind o umbră naturală genială. Apa este mică, curată și atât de caldă și calmă încât seamănă cu un lac uriaș.",
-    cumAjungi: "Plaja se află la aproximativ 10 km distanță de Thassos Town (Limenas). Drumul este perfect asfaltat, plat și foarte ușor de parcurs. Cu mașina ajungi rapid și poți parca gratuit direct la umbra copacilor din spatele plajei, fără stresul pe care îl găsești în stațiunile mari. Este o destinație excelentă pentru cei care vor o zi de deconectare totală în natură.",
-    echipament: [{ titlu: "O carte bună", text: "Atmosfera este atât de liniștită (fără muzică bubuitoare în difuzoare), încât este locul perfect pentru citit la umbra pinilor." }, { titlu: "Saltea gonflabilă", text: "Apa fiind plată ca o oglindă, te poți lăsa purtat de curent ore în șir fără teama de valuri mari." }, { titlu: "Spray împotriva insectelor", text: "Din cauza vegetației bogate și a pinilor de pe plajă, după-amiaza târziu pot apărea câteva insecte mici." }],
-    preturi: "Setul de șezlonguri costă în jur de 8 - 12 EUR, sau este oferit la fel, în schimbul unei consumații minime reduse la tavernele din apropiere. Prețurile la mâncare sunt ceva mai mici decât în stațiunile din sud: o porție de tzatziki costă 4 EUR, iar o porție de pește local la grătar este în jur de 10 - 12 EUR.",
-    turisti: [{ titlu: "Umbra naturală este perfectă", text: "Mulți turiști laudă faptul că nu au avut nevoie de umbrelă datorită pinilor bătrâni care oferă răcoare toată ziua." }, { titlu: "Ideala pentru seniori și copii", text: "Liniștea și adâncimea mică a apei sunt punctele forte menționate des în recenzii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este superbă în a doua parte a zilei. Fiind orientată spre vest, te poți bucura de soare până târziu și de un apus curat, liniștit și extrem de romantic." }],
-  },
-  "Plaja Metalia Thassos": {
-    scurt: "Metalia este una dintre cele mai neobișnuite și misterioase plaje din Thassos, având un puternic caracter industrial și istoric. Situată lângă Limenaria, plaja se află pe locul unei foste fabrici germane de prelucrare a minereului (de unde și numele de Metalia). Peisajul este marcat de ruinele vechilor cuptoare din piatră, guri de mină părăsite și, cel mai interesant, un labirint uriaș realizat din pietre pe platoul de deasupra plajei, împreună cu semne zodiacale sculptate în marmură.",
-    cumAjungi: "Plaja se află chiar la marginea stațiunii Limenaria. Poți ajunge pe jos din port peste deal, dar drumul este obositor și abrupt. Cu mașina, accesul se face pe un drum secundar care coboară din șoseaua principală. Drumul este neasfaltat, destul de abrupt și cu pietriș, așa că trebuie parcurs cu viteză mică. Parcarea de jos este gratuită, spațioasă și amenajată chiar lângă ruinele istorice.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Fundul mării este acoperit în totalitate de o placă mare de stâncă naturală, alunecoasă și plină de denivelări, unde s-au stabilit mulți arici de mare. Fără încălțăminte specială, intrarea în apă este extrem de riscantă." }, { titlu: "Mască de snorkeling", text: "Zona stâncoasă și industrială de sub apă a atras o mulțime de specii de pești și plante marine; este un loc fascinant pentru explorat." }, { titlu: "Aparat foto/Telefon", text: "Ruinele și labirintul de piatră de sus sunt perfecte pentru o sesiune de poze atipice, cu un aer misterios." }],
-    preturi: "Există un singur beach bar deschis pe plajă în timpul verii. Un set de șezlonguri costă în jur de 10 - 15 EUR. O bere sau un suc la bar costă 4 EUR, iar gustările rapide sunt în jur de 6 - 8 EUR.",
-    turisti: [{ titlu: "Un muzeu în aer liber", text: "Toți vizitatorii sunt fascinați de istoria locului și recomandă să urcați neapărat pe platoul de deasupra plajei pentru a vedea semnele zodiacale din marmură." }, { titlu: "Intrarea în apă e dificilă", text: "Recenziile avertizează constant despre placa de stâncă de la intrarea în mare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rezervă-ți o oră din zi (ideal înainte de apus, când nu mai este atât de cald) pentru a explora vechile tunele și clădiri părăsite ale fabricii. Lumina care trece prin ferestrele de piatră oferă o atmosferă incredibilă." }],
-  },
-  "Plaja Astris Thassos": {
-    scurt: "Astris (sau Plaja Astrida) este o plajă pitorească situată într-un golf deschis din sudul insulei, cunoscută pentru apele sale de un albastru profund și atmosfera liniștită, ferită de turismul de masă. Plaja este formată dintr-un amestec de nisip grosier și pietricele fine. Numele său înseamnă „Insula Stelelor\", iar localnicii povestesc că în nopțile senine de vară cerul se vede de aici într-un mod absolut spectaculos.",
-    cumAjungi: "Plaja se află în sudul extrem, la aproximativ 7 km după stațiunea Potos, chiar înainte de a ajunge la piscina naturală Giola. Transportul în comun este aproape inexistent în această zonă izolată a coastei. O mașină închiriată este esențială pentru a ajunge aici confortabil. Accesul de la șoseaua principală circulară este extrem de facil, asfaltat, iar mașina poate fi lăsată într-o parcare improvizată pe pământ direct în spatele plajei, complet gratuit.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, la intrarea în mare există porțiuni cu pietre destul de alunecoase și câteva pante abrupte." }, { titlu: "Umbrelă de plajă proprie", text: "Zona amenajată cu șezlonguri este destul de mică. Dacă preferi intimitatea, marginea sălbatică a plajei este perfectă, dar expusă complet la soare." }, { titlu: "Echipament de pescuit sau snorkeling", text: "Golful fiind deschis și stâncos pe margini, atrage o varietate mare de pești." }],
-    preturi: "Dacă prinzi loc în zona amenajată, un set de două șezlonguri cu umbrelă costă în jur de 10 EUR sau este oferit în schimbul unei consumații minime la taverna de peste drum. O masă simplă pentru două persoane la taverna locală (renumită pentru peștele proaspăt) te va costa în jur de 30 - 35 EUR.",
-    turisti: [{ titlu: "Atenție la curenți", text: "Mulți turiști menționează că golful fiind deschis, marea se adâncește destul de repede și pot apărea valuri puternice în zilele cu vânt." }, { titlu: "Liniște deplină", text: "Este foarte lăudată de cei care vor să fugă de muzica tare din Potos sau Limenaria." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este o oprire strategică excelentă pentru prânz sau relaxare după ce ai vizitat piscina naturală Giola dimineața devreme. Taverna de aici oferă una dintre cele mai bune bucătării tradiționale din sud." }],
-  },
-  "Plaja Pefkari Thassos": {
-    scurt: "Pefkari este una dintre plajele de top din sudul insulei Thassos, premiată în repetate rânduri cu certificatul Blue Flag pentru curățenia exemplară a apei. Numele său provine de la „pefko\" (pin în limba greacă), deoarece întreaga plajă este tivită de o pădure superbă de pini care coboară până aproape de buza mării, parfumând aerul cu o aromă unică de rășină și briză sărată. Plaja este formată din nisip grosier amestecat cu pietricele albe lucioase.",
-    cumAjungi: "Pefkari se află într-un golfuleț cochet situat exact între stațiunile Limenaria și Potos. Distanța mică (sub 2 km de fiecare) o face ușor accesibilă dacă ai mașină. Șoseaua te lasă chiar în spatele plajei. Deși parcarea pe strduțele înguste de lângă hoteluri poate fi aglomerată în iulie și august, există spații amenajate gratuit de-a lungul drumului de acces. Mașina îți permite să te muți rapid aici dacă plaja urbană din Potos ți se pare prea plină.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Intrarea în apă se face peste o placă de stâncă netedă, dar destul de alunecoasă în anumite porțiuni, unde s-au stabilit mici familii de arici de mare." }, { titlu: "Buget pentru sporturi nautice", text: "Pefkari este faimoasă pe insulă pentru cel mai bun centru de sporturi de apă (parasailing, jet-ski, schi nautic sau bărci cu pedale)." }, { titlu: "Mască de snorkeling", text: "Apa este atât de transparentă încât vizibilitatea sub apă depășește adesea 15 metri." }],
-    preturi: "Seturile de șezlonguri aparțin barurilor și hotelurilor de pe mal și costă în jur de 12 - 15 EUR pe zi, sau sunt incluse dacă faci o comandă de băuturi de o valoare similară. Un frappe costă 4 EUR, iar o bere rece este în jur de 4,50 EUR.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Turiștii apreciază că plaja este foarte curată, are dușuri, cabine de schimb și este plină de taverne excelente la umbra pinilor." }, { titlu: "Nu este potrivită pentru copii foarte mici", text: "Deoarece apa devine adâncă destul de repede, părinții trebuie să fie atenți la cei mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Skala Pefkari este renumită pentru centrul de scufundări (Diving Center). Dacă vrei să încerci o primă lecție de scufundări în Grecia, dimineața este cel mai bun moment, când marea este calmă ca o oglindă." }],
-  },
-  "Plaja Kinira Thassos": {
-    scurt: "Plaja Kinira este definiția sălbăticiei și a intimității pe coasta de est a insulei Thassos. Situată în fața micului sat pescăresc cu același nume, plaja se întinde de-a lungul unui golf liniștit, având direct în față insula privată stâncoasă Kinirioti. Este o plajă lungă și îngustă, formată în cea mai mare parte din pietriș mărunțit și nisip, fiind complet ocolită de zgomotul barurilor sau al muzicii comerciale.",
-    cumAjungi: "Kinira se află la aproximativ 24 km de capitala Limenas și la doar 4 km nord de faimoasa Paradise Beach. Autobuzul local te lasă la șoseaua principală, dar coborârea spre plajă se face pe strduțe înguste din pământ și pietriș. Mașina închiriată este de departe cea mai bună soluție, permițându-ți să transporți umbrelele și prosoapele direct până la buza apei. Parcarea este complet gratuită și liberă oriunde găsești un spațiu pe marginea drumului de lângă plajă.",
-    echipament: [{ titlu: "Umbrelă de plajă și rogojină groasă", text: "Plaja este în mare parte neamenajată și nu există pini aproape de apă care să ofere umbră, iar pietricelele cer o saltea un pic mai groasă pentru confort." }, { titlu: "Lada frigorifică portabilă", text: "Nu există beach baruri pe nisip, așa că e vital să ai la tine apă rece, fructe și gustări cumpărate din sat." }, { titlu: "Pantofi de apă", text: "Intrarea în marea Egee este stâncoasă în primele rânduri de la mal." }],
-    preturi: "Fiind o plajă liberă, costul este zero. Dacă vrei să mănânci, va trebui să urci la tavernele tradiționale din satul Kinira (situate deasupra șoselei). Prețurile sunt foarte accesibile și mai mici decât în restul insulei: o porție uriașă de souvlaki sau o salată grecească proaspătă costă în jur de 7 - 9 EUR.",
-    turisti: [{ titlu: "O plajă doar pentru tine", text: "Mulți turiști laudă faptul că, chiar și în luna august, poți sta la o distanță de zeci de metri de următoarea persoană." }, { titlu: "Priveliște minunată", text: "Insula privată din larg oferă un decor sălbatic superb pentru pasionații de peisaje marine." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino aici la răsărit sau dimineața devreme. Coasta de est oferă o priveliște spectaculoasă când soarele răsare direct din spatele insulei stâncoase din larg, creând o atmosferă de liniște deplină." }],
-  },
-  "Plaja Skala Prinou Thassos": {
-    scurt: "Skala Prinou este a doua poartă de intrare pe insulă (aici acostează feriboturile care vin din Kavala) și adăpostește o plajă extrem de lungă, plată și liniștită în partea sa de nord-vest. Plaja este complet acoperită cu un nisip fin, de culoare deschisă, iar apa este incredibil de calmă, mică ca adâncime și curată. Este o destinație recunoscută pentru apusurile sale spectaculoase și pentru vibe-ul foarte relaxat de vacanță tradițională.",
-    cumAjungi: "Locația este situată pe coasta de vest. Dacă vii cu feribotul din Kavala, ajungi direct pe plajă. Dacă ești cazat în restul insulei, mașina îți oferă un confort uriaș, deoarece drumul principal vestic este foarte drept, plat și rapid de parcurs. În plus, din Skala Prinou poți urca cu mașina în doar 10 minute în satul montan Kazaviti, cel mai vechi și spectaculos sat din piatră de pe insulă. Parcarea lângă plajă este publică, uriașă și gratuită.",
-    echipament: [{ titlu: "Lojă pentru plimbări lungi", text: "Plaja fiind întinsă pe kilometri întregi și foarte fină, este ideală pentru mersul pe jos pe la buza apei." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este integral din nisip fin, curat și fără pietre, perfect pentru picioare sensibile." }, { titlu: "Cremă solară hidrosolubilă", text: "Soarele bate direct din față în a doua parte a zilei, așa că protecția este foarte importantă." }],
-    preturi: "Seturile de șezlonguri sunt destul de ieftine sau incluse la o consumație de doar 8 - 10 EUR total de la tavernele din spate. Un prânz excelent bazat pe preparate tradiționale grecești costă în jur de 12 EUR de persoană.",
-    turisti: [{ titlu: "Perfectă pentru copii", text: "Intrarea lină în apă și lipsa totală a valurilor mari o transformă într-o destinație favorită pentru familii." }, { titlu: "Apusuri memorabile", text: "Toată lumea menționează că apusul văzut de aici, cu profilul continentului în depărtare, este cel mai frumos din Thassos." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți ziua astfel încât să faci plajă aici după-amiaza, iar spre seară urcă neapărat cu mașina în satul Megalos Prinos (Kazaviti) pentru a cina la o tavernă tradițională ascunsă în munte, sub umbra unor copaci seculari." }],
-  },
-  "Plaja Limenaria Thassos": {
-    scurt: "Plaja Limenaria este plaja urbană principală a celui de-al doilea oraș ca mărime de pe insulă. Întinsă de-a lungul unei promenade cochete, plaja oferă un amestec de nisip fin și pietricele în anumite zone. Ceea ce o face foarte iubită este accesibilitatea ei: ești la doar un minut distanță de hoteluri, cofetării, magazine și portul turistic, având în același timp o mare curată și o priveliște largă asupra mării Egee.",
-    cumAjungi: "Limenaria se află în sud-vestul insulei Thassos. Orașul este ușor de accesat pe drumul principal circular, dar găsirea unui loc de parcare gratuit pe străduțele centrale din spatele plajei poate deveni un sport extrem după-amiaza. Cel mai bine este să folosești parcarea publică mare și gratuită situată în zona portului (în capătul din stânga al plajei) și să mergi pe jos un minut pe faleză. Mașina îți dă libertatea de a sta la plajă aici și de a fugi rapid la cumpărături în restul insulei.",
-    echipament: [{ titlu: "Aqua shoes opționali", text: "În funcție de porțiunea de plajă pe care te așezi, la intrarea în mare pot apărea plăci de stâncă sau pietre mai mari." }, { titlu: "Ochelari de înot", text: "Apa din port este curată, iar în zona digului poți vedea mulți pești mici." }, { titlu: "Pălărie chic de oraș", text: "Faleza fiind plină de cafenele moderne, o plimbare între sesiunile de înot cere o ținută lejeră de vacanță." }],
-    preturi: "Aproape toate șezlongurile sunt oferite gratuit dacă comanzi o cafea, un frappe sau un snack de la barurile de pe faleză (o consumație medie de 10 - 15 EUR pentru tot setul). Un prânz cu fructe de mare la tavernele renumite de pe faleză costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Foarte confortabilă", text: "Turiștii laudă proximitatea față de toate facilitățile urbane (ATM-uri, magazine, farmacii)." }, { titlu: "Variază de la o zonă la alta", text: "Recenziile menționează că unele porțiuni au nisip perfect, în timp ce altele cer puțină atenție la intrarea în apă din cauza pietrelor." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă mergi în capătul din dreapta al plajei (spre ieșirea din oraș), plaja devine mult mai lată, mai nisipoasă și mult mai liberă, fiind ideală dacă vrei să scapi de agitația din centrul falezei comerciale." }],
-  },
-  "Plaja Makriammos Thassos": {
-    scurt: "Makriammos este o plajă privată superbă, situată într-un golf izolat și închis, complet înconjurată de o pădure de pini de un verde crud. Nisipul este fin, de culoare deschisă, iar apa este de o claritate excepțională și are o nuanță smarald strălucitoare. Plaja este administrată de un complex hotelier renumit și este considerată una dintre cele mai îngrijite și sigure plaje din nordul insulei, având chiar și o mică rezervație de cerbi în spatele ei.",
-    cumAjungi: "Plaja se află la doar 2 km est de capitala insulei, Limenas. Deși distanța este mică, drumul de acces urcă și coboară o pantă abruptă prin pădure, fiind obositor de parcurs pe jos în arșița verii. Cu o mașină ajungi în doar 5 minute. Intrarea pe plajă se face pe la recepția complexului, unde există o parcare uriașă, bine umbrită de copaci și complet gratuită pentru vizitatori.",
-    echipament: [{ titlu: "Aparat foto sau telefonul încărcat", text: "În spatele plajei, în zona de parc, cerbii și păunii umblă liberi și sunt foarte obișnuiți cu oamenii, fiind o atracție genială pentru poze." }, { titlu: "Fără încălțăminte specială", text: "Întregul golf are un fund marin acoperit cu nisip moale și fin, fiind o plăcere să mergi desculț prin apă." }, { titlu: "Ochelari de înot", text: "Apa este atât de liniștită încât seamănă cu o piscină, ideală pentru înot lung sau lecții pentru cei mici." }],
-    preturi: "Fiind o plajă privată cu servicii premium, există o taxă de acces la intrare (în jur de 3 - 5 EUR de persoană). Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR. O băutură la beach bar costă aproximativ 4 - 5 EUR, iar complexul dispune și de o tavernă excelentă pe malul mării.",
-    turisti: [{ titlu: "Curățenie impecabilă", text: "Toate recenziile laudă faptul că nisipul este cernut zilnic, iar apa nu are deloc alge sau pietre." }, { titlu: "Perfectă pentru familii", text: "Părinții apreciază siguranța locului, intrarea lină în mare și prezența salvamarilor." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:30. Vei prinde răcoarea pădurii de pini, loc bun de parcare la umbră și vei putea hrăni cerbii din complex înainte ca plaja să devină foarte animată." }],
-  },
-  "Plaja Sani Kassandra": {
-    scurt: "Plaja Sani este definiția luxului și a eleganței pe brațul Kassandra. Situată în interiorul unui complex privat uriaș de resorturi de 5 stele, această plajă te va surprinde cu nisipul ei alb, fin ca pudra, și cu apa de o transparență ireală, colorată în nuanțe strălucitoare de turcoaz. Totul este flancat de o pădure de pini impecabil întreținută și de o zonă de promenadă exclusivistă, oferind un vibe sofisticat, asemănător cu cel din Saint-Tropez.",
-    cumAjungi: "Sani Resort se află pe coasta de nord-vest a peninsulei Kassandra. Deși este o zonă privată, plaja este accesibilă tuturor vizitatorilor. Transportul public nu are rute directe și eficiente până în inima complexului, așa că o mașină închiriată este obligatorie dacă vrei să ajungi aici confortabil. Drumul este complet asfaltat și semnalizat excelent. Pentru vizitatorii de o zi, complexul pune la dispoziție parcări uriașe organizate (unele gratuite, altele cu plată în apropierea portului privat). Mașina îți dă și libertatea de a pleca târziu, după ce vezi faimosul apus de la Sani.",
-    echipament: [{ titlu: "Haine lejere, dar elegante pentru seară", text: "Portul privat (Sani Marina) este tivit de restaurante fine și boutique-uri de lux; merită să te plimbi pe acolo după plajă." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip fin, curat și extrem de moale, fără nicio piatră sau arici de mare." }, { titlu: "Ochelari de soare polarizați", text: "Nisipul alb și fin reflectă puternic lumina soarelui la orele prânzului." }],
-    preturi: "Fiind o destinație exclusivistă, prețurile sunt mult peste media din Halkidiki. Închirierea unui set de două șezlonguri cu umbrelă în zonele administrate de hoteluri poate costa între 30 - 50 EUR (sau chiar mai mult în plin sezon). Există însă și mici porțiuni libere unde poți pune prosopul gratuit. Un frappe sau un suc la barurile de pe mal costă în jur de 6 - 7 EUR, iar o cină la restaurantele din marină pornește de la 25 - 30 EUR de persoană.",
-    turisti: [{ titlu: "Servicii și curățenie de top", text: "Toate recenziile laudă curățenia impecabilă a nisipului (care este cernut zilnic) și atenția la detalii a personalului." }, { titlu: "Apusul este obligatoriu", text: "Turiștii menționează că apusurile de soare văzute de pe dealul unde se află turnul vechi din Sani sunt cele mai frumoase din regiune." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața. Vei găsi parcare lejer și te poți bucura de liniștea deplină a golfului înainte ca oaspeții din resorturi să coboare pe plajă. Dacă prinzi perioada verii, verifică dacă se desfășoară Sani Festival -- au loc concerte geniale de jazz în aer liber, chiar pe dealul de lângă mare." }],
-  },
-  "Plaja Possidi Kassandra": {
-    scurt: "Plaja Possidi (mai exact, Possidi Cape sau Cazul Possidi) este unul dintre cele mai uluitoare fenomene naturale din Halkidiki. Imaginați-vă o „limbă\" uriașă și ascuțită de nisip fin, de un alb strălucitor, care înaintează câteva sute de metri direct în apele adânci ale mării Egee. Ceea ce o face cu adevărat magică este faptul că își schimbă forma, lungimea și orientarea de la o săptămână la alta, în funcție de curenții maritimi și de vânt. Este un loc complet sălbatic, spectaculos și extrem de aerisit.",
-    cumAjungi: "Plaja se află în sud-vestul brațului Kassandra, în apropierea satului Possidi. Transportul public te lasă doar în centrul localității, de unde ai de mers kilometri buni pe jos prin soare. Mașina este vitală pentru a ajunge la acest punct spectaculos. Drumul până la farul istoric (construit în 1864), situat la baza limbii de nisip, este asfaltat. Poți lăsa mașina gratuit în parcarea de pământ de lângă far. De acolo, aventura începe pe jos: ai de mers cam 10-15 minute pe nisipul fierbinte până în vârful ascuțit al peninsulei.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și cort de plajă", text: "Pe limba de nisip Possidi nu există absolut niciun beach bar, șezlong sau copac. Ești doar tu, nisipul și marea, așa că umbra proprie este o chestiune de supraviețuire." }, { titlu: "O ladă frigorifică plină cu apă și gustări", text: "Cel mai apropiat magazin este în sat, la cel puțin 20 de minute de mers pe jos." }, { titlu: "Atenție mare la înotatori", text: "Nu înotați niciodată în vârful extrem al limbii de nisip! Curenții de acolo sunt incredibil de puternici și imprevizibili, marea devenind extrem de periculoasă chiar și pentru înotătorii profesioniști." }],
-    preturi: "Accesul pe limba de nisip Possidi Cape este complet liber și gratuit, la fel și parcarea de lângă far. Dacă vrei confort, la începutul plajei (lângă hoteluri) există zone amenajate unde un set de șezlonguri costă în jur de 12 - 15 EUR. La tavernele din satul Possidi, un prânz tradițional delicios costă în jur de 15 EUR de persoană.",
-    turisti: [{ titlu: "Te simți ca în mijlocul oceanului", text: "Turiștii sunt fascinați de senzația pe care o ai când stai în vârful limbii de nisip, având marea în stânga, în dreapta și în față." }, { titlu: "Mersul pe jos prin nisip e greu", text: "Mulți avertizează că nisipul este foarte moale și fin, ceea ce face ca drumeția până în vârf cu bagaje grele să fie destul de obositoare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți vizita după ora 16:30 sau chiar la apus. Soarele nu mai este atât de necruțător (important, având în vedere că nu există umbră), iar fotografiile făcute cu farul istoric și cu marea care se lovește din două direcții diferite au o lumină absolut magică." }],
-  },
-  "Plaja Xenia Kassandra": {
-    scurt: "Plaja Xenia (cunoscută local și sub numele de Chroussou sau Paliouri) este considerată una dintre cele mai bune și confortabile plaje pentru familii de pe întreaga Kassandră. Situată într-un golf larg, perfect adăpostit de vânturi, plaja oferă un nisip extrem de fin, curat și plăcut la atingere, de o culoare aurie caldă. Apa mării este caldă, de o claritate uluitoare și are o adâncime foarte mică pe o distanță mare în larg, ceea ce o face să semene cu o piscină uriașă pentru copii.",
-    cumAjungi: "Plaja se află în sudul extrem al brațului Kassandra, în apropiere de localitatea Paliouri. Fiind situată aproape de capătul peninsulei, distanța față de stațiunile animate din nord este considerabilă. Transportul public este rar și are stații doar la drumul principal, lăsându-te cu o coborâre obositoare pe jos. Cu o mașină ajungi rapid și poți coborî direct până în spatele plajei. Există o parcare foarte mare pe pământ, parțial umbrită de pini, unde poți lăsa mașina complet gratuit.",
-    echipament: [{ titlu: "Saltele gonflabile și jucării de nisip", text: "Este plaja ideală pentru activități în apă; fundul mării este exclusiv din nisip fin, fără nicio piatră." }, { titlu: "Fără pantofi de apă", text: "Nu ai nevoie de încălțăminte specială aici, riscul de a te înțepa sau aluneca este zero." }, { titlu: "Cremă solară rezistentă", text: "Apa fiind mică și caldă, vei tinde să petreci ore în șir în mare fără să-ți dai seama cum trece timpul." }],
-    preturi: "Plaja este împărțită între câteva beach baruri mari și zone libere extinse. Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR (adesea sub formă de consumație obligatorie la bar). Un frappe costă 4 EUR, un burger sau o porție de club sandwich este în jur de 8 - 10 EUR. Din când în când, pe plajă trec comercianți locali cu gogoși calde cu miere și scorțișoară (3 EUR).",
-    turisti: [{ titlu: "Raiul familiilor cu copii", text: "Părinții laudă la unison intrarea extrem de lină în apă și lipsa totală a valurilor mari." }, { titlu: "Se aglomerează în weekend", text: "Turiștii notează că sâmbăta și duminica plaja devine destul de plină, fiind vizitată și de mulți localnici din Salonic." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi în partea stângă a plajei (cum privești marea), aproape de micul port de unde pleacă bărcile. Acolo pinii sunt mai aproape de nisip, iar apa este adesea cea mai calmă din întreg golful." }],
-  },
-  "Plaja Hanioti Kassandra": {
-    scurt: "Plaja Hanioti este plaja urbană a uneia dintre cele mai cochete și vizitate stațiuni de pe Kassandra. Dacă iubești stilul clasic de vacanță, unde o plajă lungă și amenajată se îmbină perfect cu un parc verde, taverne tradiționale și străzi pietonale pline de viață, Hanioti te va cuceri imediat. Plaja este formată dintr-un amestec de nisip fin și pietricele mici la buza apei, iar marea este de un albastru curat și revigorant.",
-    cumAjungi: "Hanioti este situată pe coasta de est a Kassandrei. Dacă ești cazat chiar în stațiune, ajungi la plajă în câteva minute de mers pe jos. Dacă însă vrei să o vizitezi venind din alte zone ale brațului, mașina este cea mai bună alegere. Găsirea unui loc de parcare gratuit pe străduțele strâmte din apropierea plajei poate fi o misiune aproape imposibilă în iulie și august. Sfatul nostru este să lași mașina în parcările publice mari de la intrarea în stațiune sau în spațiile private cu plată (aproximativ 5 EUR pe zi) și să traversezi parcul central pe jos spre mare.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, la intrarea în apă există o bandă destul de lată de pietre rotunde care pot fi deranjante la tălpi." }, { titlu: "Mască de snorkeling", text: "În zona digurilor sau a platformelor de piatră din apă poți vedea mulți pești mici." }, { titlu: "Încălțăminte comodă pentru seară", text: "Faleza și centrul stațiunii devin exclusiv pietonale după-amiaza, fiind ideale pentru plimbări lungi." }],
-    preturi: "Sistemul este cel clasic grecesc: majoritatea beach barurilor îți oferă șezlongul gratuit dacă comanzi de la ei băuturi sau gustări de o valoare minimă (în jur de 15 - 20 EUR pentru un set). Un frappe costă 4 EUR, iar o bere rece este 4,50 EUR. Tavernele din spatele plajei oferă meniuri excelente, o cină completă pentru două persoane ajungând la 35 - 45 EUR.",
-    turisti: [{ titlu: "Parcul din spate este o binecuvântare", text: "Turiștii apreciază enorm parcul plin de verdeață și copaci care mărginește plaja, oferind un loc perfect de plimbare la umbră în orele de amiază." }, { titlu: "Se adâncește destul de repede", text: "Recenziile menționează că apa nu este la fel de mică la mal ca la plaja Xenia, adâncindu-se după doar câțiva pași." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o terasă de pe faleză până la lăsarea serii. Hanioti are o atmosferă estivală superbă la apus, când tarabele cu suvenire se deschid, iar aerul devine plin de arome de porumb copt și vafe calde." }],
-  },
-  "Plaja Glarokavos Kassandra": {
-    scurt: "Plaja Glarokavos este una dintre cele mai interesante și bine păstrate secrete din sudul brațului Kassandra. Cunoscută și sub numele de „Laguna Glarokavos\", acest loc este de fapt o combinație unică între o plajă uriașă, complet sălbatică, o pădure de pini de coastă și o lagună naturală ascunsă care servește drept port natural pentru micile bărci pescărești. Plaja are nisip alb amestecat cu pietricele fine, iar apa este de o claritate remarcabilă, perfectă pentru cei care vor să evadeze din stațiunile comerciale.",
-    cumAjungi: "Plaja se află la aproximativ 4 km sud de stațiunea Pefkohori. Nu există linii de autobuz care să te lase aproape de lagună. Mașina este obligatorie pentru a explora această zonă. Drumul din Pefkohori este asfaltat în mare parte, dar accesul final spre plajă și în jurul lagunei se face pe drumuri de pământ și nisip destul de denivelate. Poți conduce încet și poți parca mașina complet gratuit oriunde vrei, direct sub pinii bătrâni care oferă o umbră densă și răcoroasă pe tot parcursul zilei.",
-    echipament: [{ titlu: "O ladă frigorifică portabilă și umbrelă", text: "Deși în ultimii ani a apărut un beach bar într-unul dintre capete, cea mai mare parte a plajei (care se întinde pe kilometri întregi) este complet sălbatică și neamenajată." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt utili deoarece la intrarea în mare există zone cu pietriș și pietre plate." }, { titlu: "Echipament de snorkeling sau pescuit", text: "Zona din jurul gurii de vărsare a lagunei în mare este un loc excelent pentru a observa fauna marină." }],
-    preturi: "Fiind o plajă preponderent liberă, costurile sunt minime sau zero. Dacă alegi să te așezi în zona amenajată de beach bar, un set de șezlonguri implică o consumație de aproximativ 15 - 20 EUR. O apă plată mare este 1,50 EUR, iar un frappe costă în jur de 4 EUR. Pentru prânz, cel mai bine este să conduci câteva minute înapoi în Pefkohori.",
-    turisti: [{ titlu: "Spațiu imens și liniște", text: "Toți turiștii care vor să scape de înghesuiala din Pefkohori laudă dimensiunile impresionante ale plajei Glarokavos, unde poți sta la distanță uriașă de ceilalți." }, { titlu: "Loc perfect pentru camping și umbră", text: "Mulți vizitatori apreciază pinii care permit adăpostirea mașinilor la umbră adâncă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi exact în zona unde laguna îngustă se deschide în marea liberă. Peisajul de acolo, cu bărcile pescărești din lemn care trec încet pe lângă limba de nisip, este incredibil de pitoresc și oferă un cadru perfect pentru fotografii relaxante de vacanță." }],
-  },
-  "Plaja Kavourotrypes Sithonia": {
-    scurt: "Kavourotrypes (cunoscută și sub numele de Orange Beach) este probabil cel mai spectaculos și exotic loc din toată Sithonia. Nu este o singură plajă clasică, ci o rețea de micro-golfulețe intime, ascunse printre pini și stânci albe de calcar moale, pe care valurile le-au șlefuit în forme ciudate. Apa de aici are o culoare turcoaz-smarald atât de clară și de intensă, încât locul pare decupat dintr-o insulă exotică exotică. Este raiul fotografilor, dar și al celor care iubesc vibe-ul boem.",
-    cumAjungi: "Plaja este situată pe coasta de est a Sithoniei, la vreo 10 minute de mers spre nord de stațiunea Sarti. Nu există indicatoare mari la șosea, ci doar o ieșire discretă pe un drum de pământ accidentat, prin pădure. Fără mașină este aproape imposibil să o găsești sau să ajungi la ea. Conducând încet, poți lăsa mașina complet gratuit la umbra pinilor din pădurea din spate, iar de acolo mai ai de mers pe jos vreo 5 minute pe poteci înguste.",
-    echipament: [{ titlu: "Mască de snorkeling", text: "Stâncile albe lucioase continuă și sub apă, creând mici peșteri și canale pline de pești. Este unul dintre cele mai bune locuri de snorkeling din regiune." }, { titlu: "Rogojină sau prosop gros", text: "Dacă nu prinzi loc pe micile fâșii de nisip, cele mai bune puncte de stat sunt direct pe platformele plate de stâncă albă, unde un prosop subțire nu este prea comod." }, { titlu: "Încălțăminte comodă de mers", text: "Evită șlapii simpli pentru drumul prin pădure și pe stânci, deoarece potecile sunt abrupte și alunecoase." }],
-    preturi: "Cea mai mare parte a golfulețelor este complet liberă și gratuită. Există o singură zonă amenajată cu un beach bar (Portokali), unde un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR, adesea sub formă de consumație minimă. Un frappe costă în jur de 4,50 EUR, iar un sandwich rapid este 6 - 7 EUR.",
-    turisti: [{ titlu: "Se umple extrem de repede", text: "Golfulețele fiind mici, plaja pare arhiplină imediat. Turiștii recomandă să veniți foarte devreme pentru a prinde un loc pe nisip." }, { titlu: "Peisaj incredibil", text: "Toată lumea laudă contrastul dintre pinii verzi, stânca albă și marea turcoaz." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino înainte de ora 08:30 dimineața. Vei prinde parcare bună, o liniște deplină și vei putea admira claritatea apei înainte ca aceasta să fie tulburată de sutele de turiști." }],
-  },
-  "Plaja Karidi Sithonia": {
-    scurt: "Plaja Karidi, situată în zona Vourvourou, este considerată perla naturală a Sithoniei și plaja ideală pentru familii. Imaginează-ți un golf perfect închis, protejat de vânturi, unde nisipul este atât de fin și de alb încât pare pudră de talc. Apa mării este caldă ca într-o cadă, nu are deloc valuri și este atât de mică încât trebuie să mergi zeci de metri în larg pentru ca apa să-ți treacă de genunchi. Fundalul este decorat de pini seculari cu forme spectaculoase.",
-    cumAjungi: "Karidi se află la marginea localității Vourvourou. Deși s-ar putea ajunge pe jos dacă ești cazat foarte aproape, majoritatea turiștilor vin din alte stațiuni, caz în care mașina este indispensabilă. Drumul până la plajă este asfaltat, iar marea surpriză plăcută este că poți parca mașina complet gratuit chiar în pădurea de pini din spatele nisipului, la doar 20 de metri de mare. Acest lucru face ca transportul jucăriilor de plajă și al genților frigorifice să fie extrem de simplu.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă", text: "Karidi este o plajă 100% sălbatică și neamenajată. Nu există șezlonguri sau umbrele de închiriat, așa că trebuie să vii cu totul de acasă." }, { titlu: "Saltele gonflabile mari", text: "Marea fiind complet plată ca o oglindă, este locul perfect pe insulă pentru a pluti relaxat ore în șir." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este integral din nisip fin, extrem de moale și curat, fără nicio piatră sau arici de mare." }],
-    preturi: "Fiind o plajă liberă, costul este zero. În plin sezon, în pădurea din spatele plajei se așază 1-2 rulote (cantine) mobile de unde poți cumpăra apă, frappe, sucuri (în jur de 3 - 4 EUR) și gogoși sau sandwich-uri (5 - 7 EUR). Pentru un prânz serios, va trebui să conduci 3-4 minute până la tavernele din centrul Vourvourou.",
-    turisti: [{ titlu: "Raiul copiilor", text: "Toți părinții laudă siguranța deplină pe care o oferă apa mică și lipsa valurilor pentru cei mici." }, { titlu: "Pinii oferă o umbră genială", text: "Mulți turiști menționează că, dacă prinzi loc devreme sub pinii de pe margine, nu mai ai nevoie de umbrelă clasică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața înainte de ora 09:00. Golful se aglomerează foarte tare în timpul zilei. Un mic truc local: în partea dreaptă a plajei, dincolo de stâncile rotunjite, se află o a doua plajă mai mică (Micro Karidi), unde este adesea mult mai multă liniște." }],
-  },
-  "Plaja Kalogria Sithonia": {
-    scurt: "Plaja Kalogria este o fâșie lungă și elegantă de nisip auriu fin, situată pe coasta de vest a Sithoniei, o zonă renumită pentru apele sale calme și apusurile calde. Ceea ce o face deosebită este limpezimea apei -- marea are o nuanță superbă de turcoaz deschis și este atât de transparentă încât poți vedea perfect peștii înotând pe lângă picioarele tale. Este o plajă echilibrată, oferind atât zone cu baruri moderne, cât și porțiuni mari de plajă liberă.",
-    cumAjungi: "Kalogria se află la aproximativ 6 km sud de Nikiti. Deși este aproape de șoseaua principală asfaltată, distanța nu este una de parcurs pe jos de la nicio stațiune mare. Mașina îți oferă flexibilitatea de a ajunge rapid în doar câteva minute din Nikiti sau Neos Marmaras. Parcarea de lângă plajă este gratuită, pe pământ, amenajată de-a lungul drumului îngust de acces, dar locurile la umbră se epuizează rapid după ora 09:30.",
-    echipament: [{ titlu: "Ochelari de înot sau mască", text: "Chiar în mijlocul golfului, la vreo 50 de metri de mal, se află o mică insulă stâncoasă (o stâncă mare cu pini). Este o plăcere să înoți până la ea și să faci snorkeling în jurul ei, deoarece este plină de viață marină." }, { titlu: "Cremă de soare rezistentă la apă", text: "Intrarea în mare este foarte lină, cu nisip fin, ceea ce te va face să petreci mult timp în apă." }],
-    preturi: "Plaja are zone organizate de beach baruri unde un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR (sau consumație obligatorie la bar). Un frappe costă în jur de 4 EUR, un cocktail este 9 - 11 EUR, iar un snack rapid la bar ajunge la 8 EUR.",
-    turisti: [{ titlu: "Apa este ca o piscină", text: "Toți turiștii laudă lipsa pietrelor și claritatea apei, fiind considerată una dintre cele mai curate plaje de pe braț." }, { titlu: "Aglomerație la parcare", text: "Mulți avertizează că drumul de acces este îngust și parcarea poate deveni haotică la orele prânzului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până târziu. Fiind orientată spre vest, Kalogria oferă unul dintre cele mai spectaculoase și curate apusuri de soare din Sithonia, soarele coborând direct în mare, în spatele brațului Kassandra aflat în depărtare." }],
-  },
-  "Plaja Tristinika Sithonia": {
-    scurt: "Dacă vrei să scapi complet de aglomerație și cauți un spațiu imens, liber și aerisit, Plaja Tristinika este destinația perfectă. Situată în sud-vestul Sithoniei, aceasta este o plajă uriașă, lungă de câțiva kilometri și foarte lată, formată dintr-un nisip auriu curat. Marea de aici este curată, de un albastru profund și deschis, oferind o senzație unică de libertate. Este locul ideal pentru cei care vor să asculte doar briza și valurile, fără muzică de club în spate.",
-    cumAjungi: "Plaja se află în apropierea localității Toroni. Accesul de la șoseaua principală se face pe un drum secundar neasfaltat de pământ, lung de aproximativ 1,5 km, care trece pe lângă câteva ferme și măslini. Transportul în comun nu ajunge deloc în zonă. O mașină este absolut necesară pentru a parcurge acest drum fără bătăi de cap. Parcarea este uriașă, gratuită și la liber direct pe câmpul de pământ din spatele dunelor de nisip.",
-    echipament: [{ titlu: "Umbrelă proprie și cort de plajă", text: "Plaja fiind imensă și în mare parte complet sălbatică, nu există pini sau umbră naturală aproape de apă." }, { titlu: "O saltea de plajă comodă", text: "Nisipul este excelent, dar spațiul uriaș te va invita la sesiuni lungi de relaxare la soare." }, { titlu: "Atenție la copii", text: "Intrarea în apă este destul de bruscă, marea devenind adâncă după doar 3-4 pași de la mal." }],
-    preturi: "Plaja fiind majoritar liberă, costul este zero. Totuși, într-unul dintre capete se află celebrul bar Ethnik, un bar boem așezat sus pe stâncă, cu o atmosferă hippie-relaxată. O bere la bar costă 4 - 5 EUR, un cocktail este 10 EUR, iar șezlongurile de sub bar se închiriază cu aproximativ 15 EUR per set.",
-    turisti: [{ titlu: "Spațiu infinit", text: "Turiștii sunt încântați că nu trebuie să stea „înghesuiți ca sardinele\" și că pot avea o zonă imensă doar pentru ei, chiar și în plină vară." }, { titlu: "Ethnik Bar merită vizitat", text: "Toată lumea laudă designul și vibe-ul barului de pe stâncă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino după-amiaza în jurul orei 16:00. Bucură-te de o baie relaxantă în marea adâncă și curată, iar la apus urcă neapărat pe terasa barului Ethnik. Este considerat unul dintre cele mai bune puncte din tot Halkidiki-ul pentru a savura un cocktail în timp ce vezi soarele cum apune spectaculos în mare." }],
-  },
-  "Plaja Porto Koufo Sithonia": {
-    scurt: "Porto Koufo este una dintre cele mai sigure și neobișnuite locații maritime din Grecia. Numele său înseamnă „Portul Surd\", deoarece este cel mai mare și mai adânc port natural al țării, fiind un golf uriaș înconjurat aproape complet de munți înalți de piatră, lăsând doar o deschidere îngustă spre mare. Din acest motiv, în interiorul golfului nu există niciodată valuri sau vânt, marea fiind plată și liniștită ca un lac montan. Plaja este o fâșie lungă și îngustă de nisip amestecat cu pietricele, ideală pentru o zi de relaxare totală.",
-    cumAjungi: "Locația se află în sudul extrem al Sithoniei. Distanța mare față de intrarea pe braț face ca mașina să fie singura metodă rațională de transport. Drumul principal care face turul peninsulei te lasă exact la intrarea în satul Porto Koufo. Accesul este complet asfaltat și foarte spectaculos, oferind de sus o vedere panoramică uluitoare asupra întregului port natural. Poți parca mașina complet gratuit în parcările publice amenajate lângă micul port pescăresc sau chiar pe marginea drumului de lângă plajă.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, intrarea în marea lăuntrică se face peste pietricele rotunde și destul de abrupte." }, { titlu: "Echipament de snorkeling sau ochelari de înot", text: "Apa fiind extrem de adâncă în mijlocul golfului (folosit în trecut ca ascunzătoare pentru submarine în timpul războiului), pe lângă pereții de stâncă de pe margini fauna marină este foarte bogată." }, { titlu: "Fără saltele mari dacă bate vântul în larg", text: "Deși în golf e liniște, curenții din deschiderea spre mare pot fi înșelători." }],
-    preturi: "Plaja este în mare parte liberă și gratuită, având doar mici porțiuni amenajate de pensiunile din zonă. Mărețul avantaj aici este mâncarea: Porto Koufo este faimos pentru cele mai bune taverne pescărești din Halkidiki. O masă copioasă cu pește proaspăt adus de pescari în acea dimineață sau calamari la grătar costă în jur de 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "Cel mai proaspăt pește de pe braț", text: "Toate recenziile recomandă să iei prânzul sau cina la tavernele din port, mâncarea fiind legendară." }, { titlu: "O mare ciudată, dar fascinantă", text: "Turiștii remarcă des senzația deosebită de a înota într-o mare complet liniștită, înconjurată de munți uriași de stâncă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în a doua parte a zilei pentru a te bucura de o baie relaxantă în apa liniștită, iar spre seară rezervă o masă la una dintre tavernele de la malul apei (cum ar fi Taverna O Psaras). Atmosfera cu bărcile pescărești din lemn care trag la mal la apus este incredibil de pitorească și autentic grecească." }],
-  },
-  "Plaja Navagio Zakynthos": {
-    scurt: "Plaja Navagio (sau Plaja Epavei) este, fără îndoială, cea mai faimoasă și fotografiată plajă din întreaga Grecie. Ascunsă într-un golf izolat de pe coasta de nord-vest, plaja este înconjurată de stânci de calcar alb, verticale, înalte de peste 200 de metri. Pe nisipul format din pietricele albe fine se odihnește epava navei Panagiotis, eșuată în anul 1980. Culoarea apei de aici este absolut ireală -- un albastru lăptos, stralucitor, intens ca un neon, datorat izvoarelor sulfuroase subacvatice și calcarului dizolvat.",
-    cumAjungi: "La plaja Navagio de jos se poate ajunge exclusiv pe cale maritimă. Totuși, ai nevoie neapărat de o mașină pentru a ajunge în porturile de unde pleacă bărcile rapide (cum ar fi Porto Vromi, Agios Nikolaos sau Skinari). Drumul montan spre aceste porturi este spectaculos, plin de serpentine și peisaje ascuțite. În plus, cu mașina poți urca ulterior la punctul de belvedere de pe stânci pentru a face celebra poză de sus. Parcarea în porturi este gratuită, dar locurile sunt limitate în august.",
-    echipament: [{ titlu: "Papuci de plajă rezistenți sau aqua shoes", text: "Plaja nu este cu nisip fin, ci cu pietricele albe rotunde care se încing puternic sub soare și pot fi dureroase la mers." }, { titlu: "Haină impermeabilă subțire (Windbreaker)", text: "Pe bărcile rapide care te duc spre golf curentul este foarte puternic și te poți uda de la stropii de apă." }, { titlu: "Pălărie și ochelari de soare", text: "Stâncile albe reflectă lumina soarelui ca o oglindă uriașă, iar jos pe plajă nu există absolut nicio amenajare sau umbră." }],
-    preturi: "Un bilet pentru o excursie cu barca rapidă (care include de obicei și vizitarea Peșterilor Albastre) costă între 20 - 30 EUR de persoană. Fiind o plajă complet protejată și sălbatică, jos nu există magazine, baruri sau șezlonguri. Toate cheltuielile tale vor fi limitate la biletul de barcă și gustările cumpărate din port înainte de plecare.",
-    turisti: [{ titlu: "Verificați regulile de acces", text: "Turiștii avertizează des că, din cauza riscului de căderi de pietre de pe versanți, autoritățile interzic uneori debarcarea pe nisip, caz în care bărcile doar opresc în golf pentru înot direct din barcă." }, { titlu: "Culoarea apei este reală", text: "Toți vizitatorii confirmă că nuanța de albastru aprins nu este un truc de editare, ci arată exact ca în poze." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Alege o excursie care pleacă din Porto Vromi dimineața devreme, în jur de ora 08:30 - 09:00. Vei ajunge în golf înaintea marilor vapoare de croazieră care aduc sute de turiști simultan, având șansa să admiri locul în liniște." }],
-  },
-  "Plaja Gerakas Zakynthos": {
-    scurt: "Situată în extremitatea sudică a peninsulei Vassilikos, Gerakas este considerată una dintre cele mai frumoase, curate și protejate plaje din Zakynthos. Este o fâșie lungă și lată de nisip fin, de o culoare aurie caldă, flancată de dealuri din argilă și formațiuni stâncoase deosebite. Plaja face parte integrantă din Parcul Național Maritim, fiind locul preferat de cuibărit pentru faimoasele țestoase marine Caretta-Caretta. Din acest motiv, plaja a rămas complet virgină, fără construcții moderne sau sporturi nautice zgomotoase.",
-    cumAjungi: "Plaja se află la aproximativ 18 km sud de Zakynthos Town. Drumul este complet asfaltat, șerpuiește printre plantații de măslini și este foarte plăcut de parcurs. Autobuzele locale circulă rar și au un program rigid, greu de sincronizat cu o zi relaxantă de plajă. Cu o mașină închiriată ajungi rapid și poți lăsa vehiculul într-o parcare publică mare și gratuită situată la aproximativ 200 de metri de plajă. De acolo, coborârea spre mare se face pe o pasarelă din lemn construită special pentru a proteja cuiburile de țestoase din dune.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă", text: "Deși există o zonă mică unde voluntarii parcului închiriază umbrele ecologice din lemn, acestea se epuizează rapid. Este bine să ai o umbrelă la tine, dar atenție: fixarea ei în nisip este permisă doar în anumite zone marcate, pentru a nu distruge ouăle de țestoasă." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit în întregime de un nisip fin, fin și curat, iar intrarea în apă este extrem de lină și plăcută." }, { titlu: "Ochelari de înot", text: "Apa este caldă, liniștită și foarte limpede, excelentă pentru înot lung." }],
-    preturi: "Închirierea unei umbrele simple ecologice costă în jur de 5 - 7 EUR pe zi (nu există șezlonguri din plastic, ci doar scaune mici pliabile sau direct statul pe prosop). La intrarea pe poteca spre plajă se află un centru de informare despre țestoase și câteva taverne excelente. O masă caldă cu preparate tradiționale te va costa în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Reguli stricte, dar necesare", text: "Turiștii menționează că voluntarii parcului îți fac un scurt ghidaj la intrare și îți explică regulile (nu aveți voie să folosiți umbrele proprii cu vârf ascuțit în afara zonelor permise și nu aveți voie să stați pe plajă după apusul soarelui)." }, { titlu: "Liniște totală", text: "Este foarte lăudată pentru lipsa muzicii stridente și a ambarcațiunilor cu motor." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:00. Vei prinde o atmosferă incredibil de calmă, iar dacă ai noroc, poți vedea voluntarii cum marchează cuiburile noi făcute de țestoase în timpul nopții. În plus, evită să atingi sau să urci pe dealurile de argilă din capătul plajei -- este interzis deoarece structura lor este extrem de fragilă și se poate prăbuși." }],
-  },
-  "Plaja Laganas Zakynthos": {
-    scurt: "Plaja Laganas este epicentrul distracției, al vieții de noapte și al turismului vibrant din Zakynthos. Întinsă pe o lungime impresionantă de aproape 9 kilometri într-un golf uriaș din sudul insulei, plaja este formată din nisip fin și este tivită de o linie continuă de beach baruri moderne, cluburi, hoteluri și taverne. Este locul unde muzica pulsează toată ziua, iar atmosfera este mereu festivă, fiind destinația preferată a tinerilor din toată Europa.",
-    cumAjungi: "Laganas se află la doar 8 km de capitala insulei și foarte aproape de aeroport. Drumul este drept, plat și foarte circulat. Deși stațiunea este conectată mai bine la transportul public, o mașină închiriată îți oferă un avantaj uriaș: parcarea în centrul stațiunii Laganas este un coșmar din cauza aglomerației. Cu mașina poți merge spre capătul plajei (zona Kalamaki sau Agios Sostis) unde poți parca gratuit pe spațiile de pământ din spatele barurilor și ai acces rapid la o zonă mult mai aerisită a golfului.",
-    echipament: [{ titlu: "Buget pentru închiriat bărci", text: "Laganas este cel mai bun punct de pe insulă de unde poți închiria o mică barcă cu motor (fără a avea nevoie de permis) pentru a pleca în căutarea țestoaselor Caretta-Caretta sau pentru a vizita insula Marathonisi (Insula Țestoaselor)." }, { titlu: "Căști pentru muzică (dacă vrei liniște)", text: "Plaja fiind foarte comercială, boxele barurilor sunt active permanent." }, { titlu: "Fără încălțăminte specială", text: "Intrarea în apă este extrem de lină, exclusiv pe nisip fin, apa rămânând mică pe o distanță uriașă în larg." }],
-    preturi: "Competiția fiind mare, prețurile sunt accesibile. Majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă gratuit dacă comanzi băuturi de o valoare minimă (în jur de 10 - 15 EUR total). Un cocktail mare costă 7 - 9 EUR, un frappe este 3,50 EUR, iar un prânz rapid de tip gyros sau club sandwich costă în jur de 5 - 8 EUR.",
-    turisti: [{ titlu: "Locul perfect pentru petrecăreți", text: "Tinerii laudă la unison viața de noapte și cluburile care se află la doar câțiva metri de nisip." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să experimentezi faimoasa viață de noapte, vino pe plajă în a doua parte a după-amiezii, rămâi la un cocktail la apus și mută-te apoi pe strada principală a stațiunii, care devine complet pietonală și extrem de animată după ora 21:00." }],
-  },
-  "Plaja Kalamaki Zakynthos": {
-    scurt: "Plaja Kalamaki este situată în același golf uriaș cu Laganas, dar din punct de vedere al atmosferei, se află la polul opus. Este o plajă extrem de liniștită, curată și aerisită, cu un nisip fin și auriu care se întinde impecabil până la o mare curată ca lacrima. Fiind o zonă de maximă importanță pentru Parcul Național Maritim (aici se află cele mai multe cuiburi de țestoase), plaja a fost ferită de dezvoltarea comercială agresivă, oferind o relaxare profundă în mijlocul naturii.",
-    cumAjungi: "Kalamaki se află la doar 5 km distanță de Zakynthos Town și este practic vecina mai liniștită a stațiunii Laganas. Mașina închiriată îți oferă un confort deplin pentru a parcurge drumul asfaltat care duce spre plajă. Există o parcare publică mare, pe pământ, chiar la intrarea pe plajă, unde poți lăsa vehiculul complet gratuit. De acolo, mai ai de mers doar un minut pe jos pe o alee protejată.",
-    echipament: [{ titlu: "Umbrelă proprie (ecologică)", text: "Deși există o mică zonă centrală cu câteva șezlonguri de închiriat, cea mai mare parte a plajei este complet liberă. Dacă aduci umbrelă de acasă, voluntarii îți vor arăta exact unde o poți pune pentru a nu pune în pericol cuiburile subterane." }, { titlu: "Fără sporturi nautice sau mingi", text: "Jocurile cu mingea sau rachetele aproape de dune sunt restricționate pentru a nu stresa fauna protejată. Plaja este dedicată exclusiv înotului și relaxării." }, { titlu: "Aparatul foto", text: "Stâncile de gresie din capătul plajei (zona numită Crystal Beach) oferă un fundal superb pentru fotografii." }],
-    preturi: "Un set de două șezlonguri cu umbrelă în zona mică amenajată costă în jur de 12 - 15 EUR. În spatele plajei (la câteva minute de mers pe jos) se află câteva taverne și hoteluri cochete. Un frappe costă 3,50 EUR, iar o salată grecească mare sau un prânz lejer costă în jur de 8 - 12 EUR.",
-    turisti: [{ titlu: "Intrare incredibil de lină", text: "Toate familiile cu copii mici laudă faptul că poți merge zeci de metri în larg și apa îți ajunge doar până la genunchi, fundul mării fiind ca o podea de nisip fin." }, { titlu: "Avioanele trec pe deasupra plajei", text: "Turiștii menționează ca o atracție inedită faptul că avioanele care aterizează pe aeroportul din apropiere trec destul de jos, direct pe deasupra golfului Kalamaki." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi spre capătul din dreapta al plajei (cum privești marea), unde stâncile mari de gresie întâlnesc nisipul. Acolo atmosfera este și mai intimă, iar apa este de obicei extrem de caldă. Reține că plaja se închide obligatoriu cu o oră înainte de apus, când voluntarii parcului încep evacuarea pentru a lăsa plaja liberă țestoaselor care ies la mal să își depună ouăle." }],
-  },
-  "Plaja Dafni Zakynthos": {
-    scurt: "Plaja Dafni este una dintre cele mai sălbatice, izolate și autentice plaje ascunse din Zakynthos. Situată în interiorul golfului Laganas, dar ascunsă în spatele unor dealuri abrupte, Dafni te va surprinde cu un peisaj spectaculos: o fâșie lată de nisip grosier amestecat cu pietricele, o apă incredibil de caldă și o priveliște directă, superbă, către insula nelocuită Pelouzo. Fiind o zonă strict protejată de voluntarii de mediu, aici nu există hoteluri mari sau rețele de baruri, locul păstrând un aer de tavernă grecească de altădată.",
-    cumAjungi: "Accesul la plaja Dafni este motivul principal pentru care ai absolut nevoie de o mașină rezistentă. De la șoseaua principală asfaltată din Vassilikos, pornește un drum secundar de pământ și pietriș, lung de aproximativ 3-4 km, care coboară șerpuind pe marginea dealului. Drumul este foarte abrupt, îngust, plin de praf și denivelări serioase, fiind considerat unul dintre cele mai dificile trasee auto de pe insulă. Autobuzele nu ajung aici sub nicio formă. Jos, la capătul drumului, tavernele locale oferă spații mari de parcare complet gratuite la umbră improvisată din plasă pentru clienții lor.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietre plate și stânci subacvatice unde s-au stabilit mici colonii de arici de mare." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de curată și liniștită (protejată de insula Pelouzo), zona stâncoasă de sub apă este plină de viață marină interesantă de explorat." }, { titlu: "Cremă de soare cu factor mare", text: "Golful este foarte cald, temperatura apei fiind printre cele mai ridicate de pe insulă, așa că vei sta mult timp la baie." }],
-    preturi: "Sistemul de pe plajă este foarte primitor: micile taverne de familie din spate oferă șezlongurile de pe nisip gratuit sau în schimbul unei consumații minime la terasă (o cafea sau o bere cumpărată de la ei). Prețurile la mâncare sunt foarte corecte pentru Zakynthos: o porție de pește proaspăt la grătar sau preparate tradiționale la cuptor costă în jur de 10 - 14 EUR.",
-    turisti: [{ titlu: "Drumul este de groază, dar plaja este un rai", text: "Toate recenziile menționează că traseul auto auto este foarte solicitant și cere atenție maximă, dar odată ajuns jos, frumusețea și liniștea locului compensează tot efortul." }, { titlu: "Cea mai caldă apă de pe insulă", text: "Turiștii laudă temperatura incredibil de plăcută a mării în acest golf protejat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:30 dimineața pentru a parcurge drumul forestier în coborâre înainte de a se aglomera cu alte mașini care vin din sens opus (drumul fiind foarte îngust, trecerea a două mașini una pe lângă alta cere manevre atente). De asemenea, respectă cu sfințenie colivile din lemn sau sârmă montate pe nisip -- acestea protejează cuiburile active ale țestoaselor Caretta-Caretta." }],
-  },
-  "Plaja Banana Beach Zakynthos": {
-    scurt: "Banana Beach este cea mai mare și mai lată plajă de nisip de pe întreaga insulă Zakynthos. Situată pe peninsula Vassilikos, această plajă impresionantă îți oferă un decor exotic, cu nisip fin, auriu, și ape limpezi care capătă nuanțe spectaculoase de turcoaz în bătaia soarelui. Este un loc plin de energie, complet organizat, unde barurile moderne pe plajă se îmbină perfect cu spațiile deschise imense. Dacă vrei confort, muzică bună și spațiu din belșug, Banana Beach este destinația ideală.",
-    cumAjungi: "Plaja se află la aproximativ 14 km de Zakynthos Town. Deși există autobuze care merg spre Vassilikos, orarul lor este imprevizibil, iar stația te lasă destul de departe de mal. O mașină închiriată este de departe cea mai bună soluție. Drumul de acces este complet asfaltat, iar din șoseaua principală cobori direct într-o parcare uriașă, amenajată pe pământ sub copaci, unde poți lăsa mașina complet gratuit. Spațiul mare de parcare înseamnă că nu vei avea niciodată stresul de a găsi un loc, indiferent de oră.",
-    echipament: [{ titlu: "Buget pentru sporturi nautice", text: "Banana Beach este faimoasă pentru cel mai mare și mai bine dotat centru de sporturi de apă de pe insulă (parasailing, flyboard, jet-ski sau ambarcațiuni gonflabile trase de barcă)." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip fin, ideal pentru picioare sensibile, iar intrarea în apă este extrem de lină." }, { titlu: "Ochelari de soare polarizați", text: "Întinderea uriașă de nisip auriu reflectă puternic lumina la orele prânzului." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR, în funcție de rândul ales și de beach bar. Un frappe costă 4 EUR, un cocktail este în jur de 9 - 11 EUR, iar un prânz rapid de tip club sandwich sau burger la restaurantele cochete din spate costă 10 - 12 EUR.",
-    turisti: [{ titlu: "Nu te simți niciodată înghesuit", text: "Turiștii laudă dimensiunile plajei; chiar și în cele mai aglomerate zile din august, există destul spațiu personal pentru toată lumea." }, { titlu: "Servicii excelente", text: "Recenziile menționează adesea calitatea barurilor (cum ar fi Casa Playa) și prezența dușurilor și a vestiarelor curate." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în jurul orei 10:00 dimineața pentru a prinde locuri pe primele rânduri de șezlonguri. Dacă prinzi o zi cu vânt ușor de sud, marea va avea valuri mici și foarte distractive, ideale pentru sărituri." }],
-  },
-  "Plaja Tsilivi Zakynthos": {
-    scurt: "Plaja Tsilivi este o plajă urbană lungă și vibrantă, premiată cu certificatul Blue Flag pentru calitatea excelentă a apei și a organizării. Situată pe coasta de est a insulei, plaja este formată din nisip fin și este perfectă pentru toate categoriile de turiști: de la familii cu copii mici, care apreciază marea calmă și mică la mal, până la tineri care caută baruri animate pe plajă și activități nautice. Fundalul este completat de dealuri verzi pline de măslini.",
-    cumAjungi: "Tsilivi se află la doar 5 km nord de Zakynthos Town. Dacă ești cazat chiar în stațiune, ajungi pe jos în câteva minute. Dacă vii din alte zone ale insulei, mașina închiriată îți va asigura un confort sporit. Parcarea chiar lângă plajă poate fi destul de dificilă la orele amiezii; există însă mici parcări pe pământ în spatele barurilor principale sau locuri gratuite de-a lungul străzilor care duc spre mare. Cu mașina poți fugi rapid după-amiaza spre plajele mai retrase din nord.",
-    echipament: [{ titlu: "Palete de plajă (Beach tennis)", text: "Nisipul este fin și compact la buza apei, ideal pentru jocuri dinamice pe mal." }, { titlu: "Fără încălțăminte specială", text: "Intrarea în marea Ionică este lină, complet pe nisip moale, fără pietre sau pericole." }, { titlu: "Cremă de soare rezistentă la apă", text: "Vei petrece mult timp în mare, deoarece apa rămâne mică pe o distanță generoasă în larg." }],
-    preturi: "În funcție de barul ales, un set de două șezlonguri cu umbrelă costă între 12 - 20 EUR. Multe locații oferă șezlongurile în baza unei consumații minime de la bar. Un gyros la tavernele de pe faleză costă 4 - 5 EUR, iar o cină completă pentru două persoane ajunge la 35 - 45 EUR.",
-    turisti: [{ titlu: "O plajă completă", text: "Vizitatorii apreciază că ai la dispoziție absolut tot ce-ți trebuie: dușuri, toalete, salvamari, magazine și o gamă largă de taverne la doar un pas de nisip." }, { titlu: "Foarte populară", text: "În plin sezon, plaja devine destul de animată și zgomotoasă în zonele centrale cu muzică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei mai multă liniște, mergi în capătul din stânga al plajei (zona numită Bouka Beach), unde turiștii sunt mai puțini, iar peisajul cu micul port pescăresc oferă o atmosferă mult mai relaxată." }],
-  },
-  "Plaja Alykes Zakynthos": {
-    scurt: "Plaja Alykes este situată pe coasta de nord-est a insulei și își trage numele de la vechile saline (alykes în limba greacă) aflate în spatele stațiunii. Este o plajă superbă, lungă și îngustă, acoperită cu un nisip alb extrem de fin, care oferă apei mării o nuanță turcoaz-deschis incredibil de strălucitoare. Golful este foarte bine protejat, oferind o mare caldă, extrem de liniștită și plată ca o oglindă, fiind considerată una dintre cele mai sigure plaje de pe insulă.",
-    cumAjungi: "Alykes se află la aproximativ 18 km nord de Zakynthos Town. Drumul de coastă care duce aici este asfaltat, pitoresc și ușor de parcurs cu mașina. Transportul public este destul de rar pe această rută. Mașina este cea mai bună opțiune pentru a ajunge devreme și pentru a explora și plaja vecină, Alykanas, aflată în același golf. Parcarea este gratuită, pe marginea drumului secundar din spatele plajei sau în spațiile dedicate ale tavernelor de pe mal.",
-    echipament: [{ titlu: "Saltea gonflabilă", text: "Marea fiind complet lipsită de valuri în cele mai multe zile, este o plăcere să plutești pe apă." }, { titlu: "Fără aqua shoes", text: "Intrarea în marea Ionică este extrem de lină, exclusiv pe un nisip moale și curat, perfect pentru copii." }, { titlu: "Mască de snorkeling", text: "Apa este foarte limpede, deși viața marină este mai activă spre marginile stâncoase ale golfului." }],
-    preturi: "Prețurile sunt foarte prietenoase: un set de șezlonguri costă în jur de 10 - 15 EUR sau este oferit gratuit dacă comanzi prânzul sau băuturi de la tavernele de pe mal. Un frappe costă 3,50 EUR, iar o porție de pește proaspăt sau preparate locale la cuptor costă în jur de 11 - 14 EUR.",
-    turisti: [{ titlu: "Ideală pentru relaxare în familie", text: "Toate recenziile laudă siguranța deplină pe care o oferă apa mică la mal pentru copii și atmosfera calmă." }, { titlu: "Peisaj pitoresc", text: "Turiștii apreciază podul vechi din piatră din apropiere și râul mic care se varsă în mare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:15. Peisajul este incredibil de liniștit atunci, apa este complet transparentă și poți face o plimbare scurtă până în spatele stațiunii pentru a vedea canalele vechilor saline istorice." }],
-  },
-  "Plaja Alykanas Zakynthos": {
-    scurt: "Plaja Alykanas împarte același golf mare cu plaja Alykes, fiind continuarea naturală a acesteia spre sud. Este o plajă lată, cu nisip fin, auriu, și un aer ceva mai aerisit și relaxat decât vecina sa. Apa mării este remarcabil de curată, are o culoare turcoaz superbă și o intrare foarte lină. Alykanas îmbină perfect confortul unei plaje complet organizate cu zone întinse de natură virgină, unde pinii coboară aproape de nisip.",
-    cumAjungi: "Alykanas se află la aproximativ 16 km nord de capitala insulei. Cu o mașină închiriată ajungi rapid pe drumul asfaltat principal. Mașina îți oferă un avantaj major, deoarece stațiunea este întinsă, iar plaja are mai multe puncte de acces secundare. Poți parca complet gratuit în spațiile mari de pământ din spatele plajei sau în zona micului port turistic din capătul golfului.",
-    echipament: [{ titlu: "Mască de snorkeling", text: "În zona portului și a digului de piatră din capătul plajei, apa ascunde multe specii de pești mici, fiind un loc foarte bun de explorat." }, { titlu: "Umbrelă proprie (opțional)", text: "Dacă vrei să te așezi în zonele mai puțin comerciale și mai libere ale plajei, ai spațiu din belșug pentru prosop." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este curat, fără pietre sau arici de mare." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă variază între 10 - 15 EUR, în funcție de bar. Multe taverne tradiționale oferă șezlongurile gratuit clienților care comandă mâncare. Un prânz complet bazat pe preparate tradiționale grecești costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Mai mult spațiu decât în Alykes", text: "Mulți turiști notează în recenzii că Alykanas este o idee mai lată și mai puțin aglomerată decât Alykes, oferind mai multă intimitate." }, { titlu: "Excursii excelente cu barca", text: "Turiștii apreciază că din micul port de aici poți lua bărci pentru a vizita mult mai rapid Plaja Navagio sau Peșterile Albastre din nord." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până la orele după-amiezii târzii. Lumina soarelui care începe să apună în spatele munților din vest oferă întregului golf o atmosferă caldă, liniștită și extrem de relaxantă." }],
-  },
-  "Plaja Agios Nikolaos Zakynthos": {
-    scurt: "Plaja Agios Nikolaos (situată în regiunea Vassilikos, a nu se confunda cu portul cu același nume din nord) este una dintre cele mai spectaculoase plaje organizate din sudul insulei. Dispune de un nisip fin, auriu, și de o apă de o claritate rară, de un albastru profund. Elementul ei emblematic este o mică biserică albă din piatră așezată pe o colină stâncoasă în capătul drept al plajei, care oferă locului un aer autentic grecesc și un fundal superb pentru fotografii.",
-    cumAjungi: "Plaja se află în sud-estul insulei, la aproximativ 15 km de Zakynthos Town. Drumul de acces prin peninsula Vassilikos este complet asfaltat, șerpuind printre păduri de pini și măslini. Deși unele baruri mari pun la dispoziție autobuze gratuite din stațiunile mari, programul lor este fix și te limitează. Cu o mașină închiriată ai libertate totală. Parcarea de jos, de lângă plajă, este uriașă, amenajată pe pământ la umbra copacilor și complet gratuită.",
-    echipament: [{ titlu: "Buget pentru sporturi nautice sau scufundări", text: "Plaja găzduiește unul dintre cele mai bune centre de scuba diving și sporturi acvatice de pe insulă." }, { titlu: "Fără aqua shoes", text: "Intrarea în apă este foarte lină și curată, exclusiv pe nisip moale, fiind extrem de plăcută." }, { titlu: "Aparatul foto/Telefonul", text: "O scurtă plimbare până sus la bisericuța albă de pe stânci îți va oferi un cadru panoramic uluitor asupra întregului golf." }],
-    preturi: "Seturile de șezlonguri cu umbrelă costă în jur de 15 - 20 EUR, dar pot fi găsite și zone incluse în baza unei consumații minime la beach barurile moderne de pe mal. Un frappe costă 4 EUR, un cocktail este în jur de 10 EUR, iar o masă lejeră la tavernele de deasupra plajei costă în jur de 15 EUR de persoană.",
-    turisti: [{ titlu: "Atmosferă excelentă și muzică bună", text: "Turiștii laudă vibe-ul plajei, fiind un loc animat, curat și foarte bine întreținut." }, { titlu: "Bisericuța de pe deal merită vizitată", text: "Toată lumea recomandă urcarea ușoară până la capelă pentru peisajul spectaculos." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:45 dimineața pentru a prinde cele mai bune locuri la umbră în parcare și șezlonguri aproape de mare. Dacă vrei o sesiune de snorkeling excelentă, mergi chiar la baza stâncii pe care se află biserica, unde fauna subacvatică este extrem de bogată." }],
-  },
-  "Plaja Porto Vromi Zakynthos": {
-    scurt: "Porto Vromi este de fapt un fjord natural îngust și adânc, ascuns printre versanți muntoși abrupți acoperiți cu vegetație mediteraneeană. Nu este o plajă clasică de dimensiuni mari, ci un golfuleț pitoresc cu pietricele albe și o apă de o transparență ireală, în nuanțe intense de smarald și turcoaz. Locul are un aer extrem de pitoresc și sălbatic, servind în același timp ca punct de plecare principal pentru bărcile care duc turiștii spre faimoasa plajă Navagio.",
-    cumAjungi: "Porto Vromi se află pe coasta de vest, izolată complet de marile stațiuni comerciale. Există două drumuri complet separate care coboară spre acest fjord (unul dinspre satul Anafonitria și altul dinspre Maries), care nu se unesc jos. Mașina închiriată este absolut obligatorie, deoarece transportul public nu ajunge aici sub nicio formă. Drumul auto este spectaculos, cu serpentine strânse și pante înclinate, dar complet asfaltat. Jos, chiar lângă apă, există o parcare mică din pământ unde poți lăsa mașina complet gratuit.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Malul și fundul mării sunt acoperite în întregime cu pietre și pietricele albe; încălțămintea specială este vitală pentru confort." }, { titlu: "Mască de snorkeling", text: "Deoarece golful este protejat natural de stânci înalte, apa este calmă ca o piscină și plină de pești de-a lungul pereților de stâncă subacvatici." }, { titlu: "Aparatul foto/Telefonul", text: "Peisajul fjordului văzut de sus, în timp ce cobori cu mașina, este pur și simplu spectaculos." }],
-    preturi: "Plaja fiind foarte mică, nu este amenajată cu șezlonguri în stil comercial masiv. Există o mică cantină/bar lângă debarcader de unde poți cumpăra apă, frappe sau sucuri cu 3 - 4 EUR. O excursie cu barca închiriată sau un tur organizat de aici către Navagio și Peșterile Albastre te va costa în jur de 20 - 25 EUR de persoană.",
-    turisti: [{ titlu: "Cel mai bun punct de plecare spre Navagio", text: "Turiștii recomandă Porto Vromi deoarece este cel mai apropiat port de plaja epavei, ceea ce înseamnă un drum scurt cu barca și mai puțin rău de mișcare." }, { titlu: "Un loc autentic", text: "Mulți apreciază lipsa hotelurilor și aerul pur, neatins de comercializare al golfului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 08:30. Vei găsi parcare chiar lângă bărci, vei evita aglomerația și poți lua prima barcă a dimineții spre Navagio pentru a prinde plaja liberă. În plus, pe peretele de stâncă al golfului poți căuta cu privirea „Profilul lui Poseidon\" -- o formă stâncoasă sculptată natural de vânt care seamănă perfect cu un chip uman." }],
-  },
-  "Plaja Makris Gialos Zakynthos": {
-    scurt: "Makris Gialos este o plajă superbă, lungă și relativ îngustă, situată pe coasta muntoasă de nord-est a insulei. Spre deosebire de plajele cu nisip din sud, Makris Gialos oferă un decor dramatic, cu pietricele albe curate și o apă mării de un albastru electric incredibil de clar. Golful este adânc și curat, fiind considerat unul dintre cele mai bune locuri din Zakynthos pentru cei care vor să înoate în ape adânci și limpezi, într-un cadru natural spectaculos flancat de stânci.",
-    cumAjungi: "Plaja se află la aproximativ 25 km nord de capitala Zakynthos Town, pe drumul secundar de coastă care duce spre portul Agios Nikolaos. Transportul public este rar și total nepractic pentru o zi de plajă. Mașina închiriată îți asigură o călătorie relaxantă pe o șosea complet asfaltată, cu panorame marine de vis. Parcarea este gratuită și se face direct pe marginea șoselei de deasupra plajei sau în mica parcare amenajată lângă taverna locală. Accesul la apă se face coborând câteva trepte ușoare de piatră.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Pietricelele albe de pe plajă și din apă pot fi incomode la mers și se încing puternic la orele prânzului." }, { titlu: "Ochelari și tub de snorkeling", text: "Apa fiind adâncă și flancată de pereți stâncoși, fauna subacvatică este foarte bogată. Poți explora și micile peșteri marine accesibile prin înot chiar de pe plajă." }, { titlu: "O umbrelă proprie (opțional)", text: "Porțiunea amenajată cu șezlonguri este mică, așa că dacă vrei să stai în zona liberă, vei avea nevoie de propria umbră." }],
-    preturi: "În zona mică amenajată, un set de două șezlonguri și o umbrelă costă în jur de 10 - 15 EUR. Chiar deasupra plajei se află o tavernă tradițională grecească excelentă. Un frappe costă 3,50 EUR, iar un prânz cu pește proaspăt sau souvlaki gustos costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Claritatea apei este uimitoare", text: "Vizitatorii laudă transparența mării, menționând că poți vedea fundul apei chiar și acolo unde marea este foarte adâncă." }, { titlu: "Atenție la adâncimea apei", text: "Recenziile avertizează că apa devine adâncă după doar doi pași de la mal, nefiind o plajă ideală pentru copii mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a prinde un loc de parcare bun pe marginea drumului și pentru a te bucura de mare când este perfect calmă. Din acest loc se organizează și tururi private mai scurte și ieftine cu barca spre Peșterile Albastre." }],
-  },
-  "Plaja Pelagaki Zakynthos": {
-    scurt: "Pelagaki este o plajă mică, ascunsă și extrem de intimă, situată imediat lângă mult mai cunoscuta plajă Xigia. Este renumită local sub numele de „Warm Springs\" (Izvoarele Calde), deși o mare parte a apei este influențată de aceleași izvoare sulfuroase terapeutice cu proprietăți de colagen ca și Xigia. Este un golf pitoresc flancat de stânci înalte, acoperit cu pietricele fine albe și oferă o mare de un albastru-lăptos deosebit, fiind mult mai puțin aglomerată decât vecina ei.",
-    cumAjungi: "Locația se află pe coasta de nord-est, la aproximativ 22 km de Zakynthos Town. Nu există nicio linie de autobuz care să te lase aproape de acest golf ascuns. O mașină închiriată este esențială. Accesul se face din șoseaua de coastă spre Agios Nikolaos, coborând pe un drum secundar îngust. Poți parca gratuit pe spațiul de pământ de deasupra plajei, în apropierea unei mici taverne. De acolo, ai de coborât o cărare amenajată cu trepte direct pe nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil pe pietricelele de pe plajă și de la intrarea în marea adâncă." }, { titlu: "Mască de snorkeling", text: "Apa lăptoasă și plină de minerale oferă o experiență de înot inedită, iar pe lângă stânci poți observa viața marină atrasă de izvoare." }, { titlu: "Pungi sigilate pentru accesorii", text: "Mirosul de sulf (asemănător cu cel de ouă fierte) este prezent din cauza izvoarelor terapeutice; este bine ca hainele uscate să fie protejate în rucsac." }],
-    preturi: "Plaja are o mică zonă organizată în plin sezon, unde un set de șezlonguri costă în jur de 12 - 15 EUR. Taverna de sus oferă băuturi și gustări rapide. Un frappe costă 3,50 EUR, iar un prânz rapid de tip salată sau souvlaki este în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "Mai liniștită decât Xigia", text: "Turiștii o consideră o alternativă genială la plaja Xigia principală, având aceleași proprietăți terapeutice ale apei, dar mult mai puțini oameni." }, { titlu: "Mirosul caracteristic", text: "Majoritatea recenziilor menționează mirosul puternic de sulf, dar notează că te obișnuiești cu el după primele 10 minute." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în jur de ora 10:00 dimineața. Soarele luminează direct golful în prima parte a zilei, făcând culoarea apei să pară fosforescentă. Apa are un efect terapeutic excelent pentru piele și articulații datorită sulfului și colagenului natural din izvoare." }],
-  },
-  "Plaja Porto Katsiki Lefkada": {
-    scurt: "Părăsim Zakynthos și începem explorarea celebrei Insule Lefkada chiar cu emblema ei: Porto Katsiki. Aceasta este una dintre cele mai spectaculoase și dramatice plaje din întreaga lume. O fâșie lungă de pietricele albe ca zăpada este strivită la poalele unui perete de stâncă de calcar vertical, uriaș și impunător. Apa mării Ionice are aici o culoare albastru-lăptos absolut unică, de o intensitate electrică ce pare ireală. Peisajul este de o măreție sălbatică care îți va tăia răsuflarea de la prima vedere.",
-    cumAjungi: "Porto Katsiki se află în colțul de sud-vest al insulei Lefkada. Drumul este complet asfaltat, dar reprezintă o provocare: este îngust, plin de curbe strânse, serpentine și coborâri abrupte prin sate de munte. Autobuzele publice nu au rute eficiente aici, așa că mașina închiriată este vitală pentru a ajunge în siguranță. Sus, pe platoul de deasupra stâncii, există câteva parcări mari private (costă în jur de 10 EUR pe zi). De la parcare, accesul la plajă se face coborând aproximativ 100 de trepte sigure din beton.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Plaja este formată din pietricele albe rotunde care pot fi foarte dureroase la mers și se încing puternic. Intrarea în mare se face tot peste pietre." }, { titlu: "Fii atent în apă", text: "Marea se adâncește extrem de brusc (după doar doi pași de la mal), iar după-amiaza se pot forma valuri mari și curenți puternici. Nu este o plajă recomandată pentru copii lăsați nesupravegheați." }, { titlu: "Rucsac în loc de genți de mână", text: "Coborârea și mai ales urcarea celor 100 de trepte cu bagaje grele este obositoare; un rucsac îți va lăsa mâinile libere pentru balustradă." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă între 25 - 35 EUR pe zi, fiind printre cele mai scumpe de pe insulă. Cantinele și tavernele de deasupra stâncii au un sistem ingenios: poți comanda mâncare (gyros, burgeri, salate) și băuturi prin telefon sau aplicație, iar chelnerii îți coboară comanda direct la șezlong. Un frappe costă 4 EUR, iar un prânz rapid este în jur de 10 - 14 EUR.",
-    turisti: [{ titlu: "Nu stați lipiți de stâncă", text: "Vizitatorii și autoritățile avertizează constant că există riscul căderilor de pietre de pe versantul vertical, așa că este mult mai sigur să vă așezați umbrela sau șezlongul aproape de buza apei." }, { titlu: "Apusul este spectaculos", text: "Toată lumea laudă momentul în care soarele serii colorează stânca uriașă de calcar în nuanțe calde de portocaliu și auriu." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește foarte devreme, ideal înainte de ora 09:00. Vei prinde loc în prima parcare de lângă scări, vei prinde mare calmă ca o piscină și vei putea savura măreția locului înainte de sosirea zecilor de vapoare de croazieră care aduc mii de turiști din Nidri începând cu ora 11:00." }],
-  },
-  "Plaja Egremni Lefkada": {
-    scurt: "Egremni este cealaltă plajă legendară a insulei Lefkada, situată la nord de Porto Katsiki. Este o întindere uriașă și impunătoare de nisip alb amestecat cu pietricele fine, lungă de aproape 3 kilometri, străjuită de o stâncă de calcar înaltă și abruptă. Culoarea mării de aici este considerată de mulți ca fiind cea mai frumoasă din toată Grecia -- un albastru electric, lăptos și incredibil de intens. Datorită dimensiunilor sale masive, Egremni păstrează o atmosferă mult mai sălbatică, liberă și aerisită decât Porto Katsiki.",
-    cumAjungi: "Situată pe coasta de sud-vest, Egremni a fost mulți ani accesibilă doar cu barca, după ce cutremurul din 2015 a distrus scările. Astăzi, drumul auto și scările au fost complet refăcute! Ai nevoie neapărat de o mașină, drumul fiind asfaltat până la un punct, urmat de o porțiune de pământ unde poți lăsa mașina pe marginea drumului (sau într-o parcare improvizată contra unei taxe de 5 - 10 EUR). De la parcare, ai de mers pe jos cam 1 km pe drumul interzis mașinilor, urmat de coborârea celor peste 400 de trepte metalice suspendate pe stâncă.",
-    echipament: [{ titlu: "Destulă apă plată și gustări", text: "Urcarea celor 400 de trepte înapoi la mașină în soare este un adevărat test de rezistență fizică. Ia-ți rezerve de hidratare!" }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt foarte utili pentru a merge confortabil pe pietricelele fine de pe mal și din apă." }, { titlu: "Umbrelă de plajă proprie", text: "Cea mai mare parte a acestei plaje imense este complet sălbatică și neamenajată, fără pic de umbră naturală." }],
-    preturi: "Accesul pe plajă este gratuit. În plin sezon, există o mică porțiune amenajată cu șezlonguri în dreptul scărilor, unde un set costă în jur de 20 - 25 EUR. Există și o mică rulotă/chioșc la baza scărilor de unde poți cumpăra apă rece sau un suc cu 3 - 4 EUR. Toate celelalte zone ale plajei lungi de 3 km sunt libere și gratuite.",
-    turisti: [{ titlu: "Efortul merită 100%", text: "Toți turiștii menționează că drumul și scările sunt extrem de obositoare la întoarcere, dar culoarea ireală a apei și lipsa aglomerației fac din Egremni o experiență de neuitat." }, { titlu: "O mare spectaculoasă", text: "Vizitatorii notează că valurile pot deveni foarte mari și puternice după-amiaza." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:00. Vei coborî scările pe umbră (stânca uriașă blochează soarele în prima parte a dimineții) și te vei putea bucura de plajă în condiții de temperatură mult mai plăcute înainte ca arșița zilei să se instaleze." }],
-  },
-  "Plaja Mylos Lefkada": {
-    scurt: "Mylos este una dintre cele mai spectaculoase și virgine plaje din Lefkada. Situată în nord-vestul insulei, această fâșie uriașă de nisip alb și pietricele fine este flancată de dealuri muntoase abrupte și oferă o apă de un albastru-lăptos incredibil. Pentru că nu are acces auto direct, plaja și-a păstrat un aer complet sălbatic și neatins de comercializare, fiind destinația ideală pentru cei care caută natură pură și libertate.",
-    cumAjungi: "Plaja se află chiar lângă satul pitoresc Agios Nikitas. Mașina închiriată este necesară pentru a parcurge drumul principal de pe insulă până la intrarea în sat. Odată ajuns în Agios Nikitas, ai două variante pentru a trece dealul spre Mylos: fie printr-o drumeție pe jos de 20-25 de minute pe o potecă destul de abruptă și stâncoasă (care oferă o panoramă de vis de sus), fie cu un taxi acvatic (o barcă mică) din portul satului.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă obligatorie", text: "Pe Mylos nu există deloc beach baruri sau șezlonguri închiriate. Ești doar tu și natura, deci ai nevoie de propria umbră." }, { titlu: "Rucsac cu rezerve mari de apă și gustări", text: "Nu există chioșcuri jos, iar efortul drumeției sau soarele puternic te vor deshidrata repede." }, { titlu: "Încălțăminte de sport (adidași)", text: "Dacă alegi să mergi pe potecă peste deal, evită cu desăvârșire șlapii." }],
-    preturi: "Accesul pe plajă este complet gratuit. Dacă alegi să mergi sau să te întorci cu taxiul acvatic (barca), un bilet costă în jur de 5 - 7 EUR de persoană pe sens. În satul Agios Nikitas, unde vei lăsa mașina, prețul unui prânz la tavernă este de aproximativ 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Peisajul merită tot efortul", text: "Toată lumea laudă vederea spectaculoasă asupra plajei din vârful potecii de pe deal." }, { titlu: "Atenție la valuri", text: "Turiștii notează că după-amiaza se pot forma valuri foarte mari și curenți puternici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața devreme, în jur de ora 09:00. Vei găsi mult mai ușor un loc de parcare gratuit la intrarea în satul Agios Nikitas (unde parcarea devine un haos mai târziu) și vei trece dealul pe jos pe o temperatură plăcută." }],
-  },
-  "Plaja Kathisma Lefkada": {
-    scurt: "Kathisma este cea mai cosmopolită, vibrantă și lungă plajă organizată de pe coasta de vest a insulei. Este o întindere uriașă de nisip fin amestecat cu pietricele albe, tivită de o mare ionică de un turcoaz electric. Spre deosebire de plajele sălbatice din jur, Kathisma este raiul confortului: este plină de beach baruri moderne, piscine elegante pe malul mării, restaurante și facilități excelente pentru sporturi nautice.",
-    cumAjungi: "Plaja se află la aproximativ 15 km sud de orașul Lefkada. Mașina închiriată este de departe cea mai bună opțiune, deoarece drumul este complet asfaltat, lat și coboară chiar până lângă nisip. Avantajul uriaș este că poți parca mașina direct în spatele plajei. Există atât o parcare publică mare gratuită pe marginea drumului, cât și parcări private cu plată (în jur de 5 - 10 EUR) oferite de baruri.",
-    echipament: [{ titlu: "Fără pantofi de apă în zonele cu nisip", text: "Nisipul este foarte plăcut pe cea mai mare parte a plajei, deși la buza apei pot apărea pietricele." }, { titlu: "Buget pentru zbor cu paragliding", text: "Kathisma este faimoasă pentru zborurile în tandem cu parapanta care decolează de pe muntele din spate și aterizează direct pe plajă." }, { titlu: "Atenție mare la mare", text: "Marea se adâncește rapid, iar valurile de aici pot deveni uriașe și extrem de violente în a doua parte a zilei." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR, în funcție de bar și de apropierea de apă. Un frappe costă 4 EUR, un cocktail este în jur de 10 EUR, iar un prânz complet la restaurantele mari de deasupra plajei ajunge la 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "Facilități excelente", text: "Toată lumea laudă prezența dușurilor, a vestiarelor și curățenia generală a plajei." }, { titlu: "Apusul este de revistă", text: "Orientarea spre vest oferă un spectacol minunat când soarele coboară în mare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei mai multă liniște, mergi în capătul din dreapta al plajei (cum privești marea), dincolo de stâncile mari din apă. Acolo zona este complet liberă, mult mai puțin aglomerată și perfectă pentru a sta pe prosop direct pe nisip." }],
-  },
-  "Plaja Agiofili Lefkada": {
-    scurt: "Agiofili este o adevărată bijuterie ascunsă într-un golfuleț pitoresc din sudul insulei. Strânsă între stânci albe de calcar acoperite cu tufe verzi, plaja te va cuceri instantaneu prin transparența uluitoare a apei sale, care seamănă cu un acvariu natural. Plaja este formată din pietricele mici albe și strălucitoare, iar marea are o culoare turcoaz deschis atât de curată, încât este considerată una dintre cele mai bune locații de snorkeling din Lefkada.",
-    cumAjungi: "Plaja se află la doar 3 km de stațiunea sudică Vassiliki. Mașina închiriată te va ajuta să parcurgi drumul asfaltat din Vassiliki, urmat de o porțiune scurtă de drum forestier neasfaltat și destul de îngust până la parcarea privată de deasupra plajei (costă în jur de 5 EUR). De la parcare, cobori pe o serie de trepte din lemn direct pe nisip. Alternativ, poți lăsa mașina în Vassiliki și poți lua o barcă-taxi din port.",
-    echipament: [{ titlu: "Mască de snorkeling obligatorie", text: "Claritatea apei și relieful stâncos fac din acest golf locul perfect pentru a observa peștii înotând chiar de lângă mal." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Mersul desculț pe pietricelele albe poate fi dureros, iar intrarea în apă este plină de pietre rotunjite." }, { titlu: "Ochelari de soare polarizați", text: "Stâncile albe reflectă puternic lumina la amiază." }],
-    preturi: "Dacă alegi varianta cu barca din Vassiliki, biletul costă în jur de 7 - 8 EUR dus-întors. Pe plajă există o mică zonă organizată în sezon unde un set de șezlonguri costă 15 - 20 EUR. Nu există taverne mari jos, doar un mic chioșc cu băuturi, așa că o apă plată este în jur de 1,50 EUR.",
-    turisti: [{ titlu: "Un acvariu natural în miniatură", text: "Toți pasionații de snorkeling laudă claritatea apei și numărul mare de pești." }, { titlu: "Devine neîncăpătoare la prânz", text: "Golful fiind mic, plaja pare foarte aglomerată imediat ce sosesc bărci cu turiști." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața foarte devreme, înainte de ora 09:00 cu mașina. Vei prinde golful complet gol, marea plată ca o oglindă și vei experimenta o liniște deplină înainte ca primele bărci-taxi să aducă grupuri de turiști din port." }],
-  },
-  "Plaja Vassiliki Lefkada": {
-    scurt: "Plaja Vassiliki, situată în golful larg din sudul insulei, este recunoscută la nivel mondial ca fiind una dintre cele mai bune locații pentru windsurfing din întreaga Europă. Acest lucru se datorează unui fenomen climatic unic numit „Eric\" -- un vânt local puternic care începe să bată în mod regulat în fiecare după-amiază de pe munții din jur peste golf. Plaja este o fâșie lungă formată dintr-un amestec de nisip și pietriș mărunt, iar apa este caldă și foarte sigură.",
-    cumAjungi: "Vassiliki este o stațiune majoră aflată în sudul insulei, la aproximativ 38 km de orașul Lefkada. Drumul principal care traversează insula de la nord la sud este complet asfaltat, larg și oferă peisaje superbe. O mașină îți oferă confortul de a aduce echipamentul de plajă și de a face opriri în satele tradiționale de pe traseu. Parcarea este foarte lejeră: există spații publice mari gratuite chiar în spatele plajei și de-a lungul falezei stațiunii.",
-    echipament: [{ titlu: "Aqua shoes (pantofi de apă)", text: "Sunt utili mai ales la intrarea în mare, unde pietricelele pot fi deranjante." }, { titlu: "Buget pentru lecții de windsurfing", text: "Chiar dacă nu ai mai încercat niciodată, școlile de pe plajă oferă instructori excelenți și echipament complet pentru începători." }, { titlu: "O jachetă subțire pentru după-amiază", text: "Vântul de după-amiază este puternic și poate crea o senzație de răcoare după ce ieși din apă." }],
-    preturi: "Seturile de șezlonguri aparțin barurilor și cluburilor de windsurfing de pe mal și costă în jur de 10 - 15 EUR pe zi, sau sunt incluse la o consumație similară. Un prânz excelent la tavernele pescărești renumite din portul Vassiliki costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Spectacolul velelor colorate", text: "Turiștii menționează ca o atracție deosebită imaginea sutelor de windsurferi care umplu golful în fiecare după-amiază." }, { titlu: "Diminețile sunt perfecte pentru copii", text: "În prima parte a zilei, marea este complet calmă, fără vânt și foarte sigură pentru cei mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți liniștit sau mergi cu copiii, vino dimineața între orele 08:30 - 11:30. Golful este plat ca un lac atunci. Dacă vrei adrenalină și vrei să încerci windsurfing, momentul tău este după ora 14:00, când vântul se activează la intensitate maximă." }],
-  },
-  "Plaja Nidri Lefkada": {
-    scurt: "Nidri este plaja urbană a celei mai animate și dezvoltate stațiuni turistice din Lefkada. Este o plajă lungă și relativ îngustă, formată dintr-un amestec de nisip și pietriș fin, dar marele ei atu este priveliștea. Golful este orientat spre est și este complet adăpostit de un arhipelag de insule verzi superbe aflate în larg (printre care celebra insulă privată Skorpios a familiei Onassis). Din acest motiv, apa de aici este caldă, extrem de liniștită și plată ca un lac, fără valuri mari.",
-    cumAjungi: "Nidri se află pe coasta de est, la aproximativ 17 km de capitală. Șoseaua este complet asfaltată și foarte dreaptă. Dacă ești cazat în Nidri, ajungi pe jos imediat. Dacă vii cu mașina din alte zone, parcarea pe strduțele înguste din apropierea apei poate fi dificilă în plin sezon. Cel mai bine este să folosești parcările mari publice cu plată (în jur de 3 - 5 EUR pe zi) semnalizate la intrarea în stațiune și să mergi pe jos două minute până la nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Pietricelele mici de la intrarea în mare pot fi incomode la mers." }, { titlu: "Închiriere de bărci cu motor", text: "Nidri este cel mai bun punct de pe insulă pentru a închiria o barcă mică cu motor (fără permis) și a explora insulele verzi din larg." }, { titlu: "Haine lejere pentru faleză", text: "Zona din spatele plajei este plină de restaurante, cafenele și magazine de suvenire animate." }],
-    preturi: "Seturile de șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi, de multe ori fiind oferite gratuit în baza unei comenzi similare de la bar. Un frappe costă 3,50 EUR, iar un prânz complet la tavernele de pe faleză ajunge la aproximativ 13 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Priveliște de milioane", text: "Toată lumea laudă peisajul cu insulele verzi de la orizont, care opresc valurile mari și dau plajei o atmosferă unică." }, { titlu: "Infrastructură completă", text: "Vizitatorii apreciază că ai toate facilitățile posibile la un pas distanță." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este o oprire ideală după-amiaza. Iar dacă vrei o scurtă aventură în natură, ia mașina și condu 10 minute până la Cascadele Dimosari (aflate la marginea stațiunii Nidri). O plimbare răcoroasă prin chei până la cascada ascunsă în munte este perfectă pentru a completa o zi reușită." }],
-  },
-  "Plaja Gyra Lefkada": {
-    scurt: "Plaja Gyra este o fâșie lungă și spectaculoasă de nisip fin amestecat cu pietricele, situată în nordul extrem al insulei, pe cordonul de pământ care închide laguna din fața orașului Lefkada. Este o plajă aerisită, deschisă direct spre marea deschisă, ceea ce înseamnă că apa este incredibil de curată, revigorantă și de un albastru profund. Decorul este completat într-un mod inedit de morile de vânt istorice aflate în depărtare.",
-    cumAjungi: "Plaja se află la doar 3-4 km distanță de capitala insulei (Lefkada Town). Mașina este extrem de utilă, deoarece drumul care înconjoară laguna este complet asfaltat, plat și foarte rapid. Cu mașina poți parcurge întreaga zonă de coastă de la nord și poți schimba locul de plajă în câteva minute. Parcarea este uriașă, pe pământ direct în spatele dunelor, și este complet gratuită și liberă la orice oră din zi.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă", text: "Deși există o mică zonă amenajată cu șezlonguri lângă taverna principală, cea mai mare parte a acestei plaje lungi de câțiva kilometri este complet sălbatică." }, { titlu: "Aparatul foto", text: "Peisajul lagunei de pe o parte a drumului și marea deschisă de pe cealaltă oferă oportunități excelente pentru fotografii unice." }, { titlu: "Fără saltele gonflabile mari în zilele cu vânt", text: "Fiind expusă spre larg, briza poate crea curenți care te pot îndepărta rapid de mal." }],
-    preturi: "În zona mică organizată, un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR. Există o tavernă tradițională excelentă chiar pe marginea drumului, unde un frappe costă 3,50 EUR, iar o porție de souvlaki sau o salată grecească proaspătă este în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "Liniște la un pas de oraș", text: "Turiștii apreciază enorm că poți scăpa de agitația capitalei în doar 5 minute de condus, găsind o plajă unde ai spațiu din belșug." }, { titlu: "Valuri distractive", text: "Mulți notează în recenzii că după-amiaza se formează adesea valuri superbe, perfecte pentru distracție." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau plimbă-te cu mașina de-a lungul cordonului de nisip la apus. Fiind poziționată în nord-vest, Gyra oferă un spectacol uimitor când soarele coboară în mare, colorând cerul și laguna în nuanțe intense de roz și violet." }],
-  },
-  "Plaja Ammoglossa Lefkada": {
-    scurt: "Ammoglossa înseamnă literar „Limba de Nisip\", iar plaja își respectă numele cu sfințenie, fiind situată exact la intrarea pe insulă, chiar lângă podul mobil și fortăreața istorică Santa Maura. Este o limbă spectaculoasă de nisip alb extrem de fin și moale care înaintează în mare. Apa de aici este incredibil de limpede și caldă, iar nuanțele ei variază de la verde deschis la albastru electric. Este o plajă complet sălbatică, perfectă pentru cei care vor o primă baie de neuitat imediat ce au trecut puntea pe insulă.",
-    cumAjungi: "Plaja se află exact în punctul de legătură dintre continent și Lefkada. Mașina este esențială pentru a ajunge pe insulă, iar Ammoglossa este prima oprire strategică. Drumul este complet asfaltat. Poți lăsa mașina gratuit în parcarea de pământ de lângă fortăreața Santa Maura sau chiar pe marginea drumului de acces spre plajă. De acolo, ai de mers doar un minut pe jos pe nisipul fin.",
-    echipament: [{ titlu: "Umbrelă de plajă și rogojină", text: "Plaja este 100% sălbatică și protejată. Nu există șezlonguri, baruri sau umbră naturală, așa că trebuie să vii complet echipat de acasă." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit de un nisip fin și foarte plăcut, fără pietre sau arici de mare." }, { titlu: "Lada frigorifică portabilă", text: "Ia-ți băuturi reci și gustări la tine, cel mai apropiat magazin fiind în oraș." }],
-    preturi: "Fiind o plajă complet publică și liberă, accesul și parcarea sunt zero. Dacă vrei să vizitezi fortăreața medievală Santa Maura aflată la un minut distanță (lucru pe care ți-l recomandăm din plin), biletul de intrare costă în jur de 3 - 4 EUR.",
-    turisti: [{ titlu: "O primă oprire magică", text: "Mulți turiști povestesc în recenzii că oprirea la Ammoglossa imediat ce au intrat pe insulă le-a dat instantaneu vibe-ul perfect de vacanță." }, { titlu: "Curenții pot fi înșelători", text: "Din cauza poziției dintre lagună și marea deschisă, apa se adâncește destul de brusc, iar curenții din vârful limbii de nisip pot fi puternici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața între orele 08:30 - 10:30. Marea este de obicei calmă ca o oglindă, iar lumina dimineții luminează perfect zidurile vechi ale fortăreței din spate, creând un decor istoric spectaculos pentru baie și fotografii." }],
-  },
-  "Plaja Nikiana Lefkada": {
-    scurt: "Plaja Nikiana este o plajă urbană cochetă și liniștită, situată pe coasta de est a insulei, în fața satului pescăresc cu același nume. Formată dintr-un amestec plăcut de nisip fin și pietricele mici albe, plaja este ocolită de valurile mari datorită poziției sale adăpostite din golful interior dintre insulă și continent. Apa mării este caldă, curată și foarte calmă, amintind de o piscină naturală relaxantă, perfectă pentru cei care vor să scape de agitația din Nidri.",
-    cumAjungi: "Nikiana este situată la aproximativ 9 km nord de Nidri și 9 km sud de Lefkada Town. Drumul principal de pe coasta de est este complet asfaltat, plat și foarte ușor de parcurs. O mașină închiriată îți asigură flexibilitatea de a parcurge această rută rapid. Parcarea este gratuită și se poate face în spațiile amenajate de-a lungul portului pescăresc din sat sau pe străduțele secundare care coboară din șoseaua principală direct spre plajă.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, la intrarea în mare pietricelele pot fi ușor deranjante la tălpi." }, { titlu: "Saltea gonflabilă sau placă de stand-up paddle (SUP)", text: "Marea fiind plată ca o oglindă în majoritatea zilelor, este locul ideal de pe insulă pentru a te plimba pe apă în liniște." }, { titlu: "Ochelari de înot", text: "Vizibilitatea în apă este excelentă, ideală pentru înot lung și relaxant." }],
-    preturi: "Seturile de șezlonguri cu umbrelă aparțin barurilor și tavernelor de pe mal și costă în jur de 10 - 12 EUR pe zi, sau sunt incluse în baza unei consumații minime de aceeași valoare. Un frappe costă 3,50 EUR, iar un prânz delicios cu fructe de mare proaspete la tavernele tradiționale din portul Nikiana costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Atmosferă intimă și relaxantă", text: "Vizitatorii apreciază că plaja nu este niciodată la fel de sufocantă sau zgomotoasă ca cea din Nidri, păstrând un aer tradițional grecesc." }, { titlu: "Excelentă pentru copii", text: "Intrarea destul de lină și lipsa totală a valurilor sunt puncte forte menționate des de părinți." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o tavernă din port pentru masa de prânz. Portul din Nikiana este renumit pentru pescarii locali care aduc pește proaspăt în fiecare dimineață, oferind una dintre cele mai autentice experiențe culinare de pe coasta de est." }],
-  },
-  "Plaja Desimi Lefkada": {
-    scurt: "Plaja Desimi este o nestemată ascunsă într-un golf adânc, perfect închis și protejat, situat pe peninsula văii Vlycho din estul insulei. Flancată de dealuri muntoase spectaculoase acoperite integral de o pădure densă de măslini și pini, Desimi te va surprinde cu o mare complet plată, caldă și fără valuri, de o culoare verde-smarald incredibilă. Plaja este formată din pietricele albe fine și are un aer intim, retras și extrem de liniștitor.",
-    cumAjungi: "Plaja se află la aproximativ 22 km sud de orașul Lefkada și la doar câțiva kilometri de Nidri. Din șoseaua principală asfaltată, pornește un drum secundar îngust și șerpuitor care coboară prin plantațiile de măslini până la plajă. Transportul în comun nu ajunge aici deloc, așa că mașina este obligatorie. Jos, în spatele plajei, spațiul de parcare este destul de limitat; poți lăsa mașina gratuit în parcările amenajate de cele două campinguri din zonă sau contra unei taxe mici (în jur de 3 - 5 EUR) dacă nu ești clientul lor.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Malul și întreaga intrare în mare sunt din pietricele și pietre plate; încălțămintea specială îți va asigura un confort deplin." }, { titlu: "Buget pentru închiriat o hidrobicicletă sau caiac", text: "Golful Desimi este faimos pentru peșterile marine ascunse de-a lungul stâncilor din jur, la care poți ajunge extrem de ușor în doar 10 minute vâslind la caiac." }, { titlu: "Mască de snorkeling", text: "Relieful stâncos de pe marginile golfului ascunde o mulțime de specii de pești mici și plante marine." }],
-    preturi: "Închirierea unei hidrobiciclete pentru o oră costă în jur de 15 EUR. Pe plajă există două taverne tradiționale excelente administrate de familii locale. Un set de șezlonguri costă aproximativ 10 - 12 EUR (sau consumație la tavernă). Un frappe costă 3,50 EUR, iar o porție de calamari proaspeți la grătar este în jur de 11 - 13 EUR.",
-    turisti: [{ titlu: "O piscină naturală de smarald", text: "Toți vizitatorii laudă culoarea unică a apei și faptul că marea este complet liniștită, ideală pentru înot în siguranță totală." }, { titlu: "Aventura peșterilor ascunse", text: "Explorarea grotelor cu caiacul este menționată ca fiind o experiență de top în vacanță." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Vei prinde cel mai bun loc de parcare la umbra măslinilor și vei putea închiria un caiac pentru a explora micile peșteri marine de pe marginea stâncilor înainte ca soarele să devină prea puternic." }],
-  },
-  "Plaja Episkopos Lefkada": {
-    scurt: "Plaja Episkopos este o fâșie mică, îngustă și extrem de liniștită, situată pe coasta de est a insulei, într-o zonă dominată de o vegetație luxuriantă. Formată dintr-un amestec de nisip grosier și pietricele rotunde albe, plaja oferă o mare caldă, curată și complet plată, fără valuri mari sau curenți periculoși. Este o plajă cu un aer foarte intim, ideală pentru cei care vor să citească o carte în liniște sau să facă o baie rapidă, departe de agitația comercială a marilor stațiuni.",
-    cumAjungi: "Episkopos se află la aproximativ 8 km sud de capitala Lefkada Town și la doar 2 km înainte de a ajunge în Nikiana. Drumul principal este complet asfaltat, plat și șerpuiește chiar pe lângă buza apei în această porțiune. Mașina închiriată te va ajuta să ajungi rapid și confortabil. Parcarea este simplă și gratuită: poți lăsa vehiculul direct pe marginea drumului principal sau în micile alveole de pământ amenajate lângă accesul pe plajă.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele de la intrarea în mare." }, { titlu: "O carte bună sau căști", text: "Atmosfera fiind foarte calmă, este locul ideal pentru relaxare totală fără zgomot de fundal." }, { titlu: "Umbrelă proprie (opțional)", text: "Porțiunea amenajată comercial este mică, restul plajei fiind complet liber pentru prosoape." }],
-    preturi: "Dacă alegi zona cu șezlonguri din dreptul micilor pensiuni sau baruri cochete, un set costă în jur de 8 - 10 EUR pe zi, sau consumație minimă la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar o gustare rapidă la bar este în jur de 6 - 8 EUR.",
-    turisti: [{ titlu: "O oprire perfectă la drum", text: "Mulți turiști menționează în recenzii că Episkopos este plaja ideală pentru o oprire rapidă de o oră-două pentru o baie răcoroasă în timp ce explorezi coasta de est cu mașina." }, { titlu: "Liniște deplină", text: "Vizitatorii apreciază lipsa aglomerației sufocante și a muzicii stridente." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este minunată în prima parte a zilei, între orele 09:00 - 12:00. Soarele luminează direct coasta de est atunci, făcând apa mării să pară incredibil de transparentă și perfectă pentru înot lung înainte de prânz." }],
-  },
-  "Plaja Glyfada Vestul insulei": {
-    scurt: "Glyfada este una dintre cele mai populare, mari și apreciate plaje cu nisip de pe întreaga insulă Corfu. Situată pe coasta de vest, această plajă este o întindere generoasă de nisip fin, de o culoare aurie caldă, încadrată spectaculos de stânci abrupte acoperite cu pini și măslini. Apa mării este de o claritate excepțională și are o nuanță superbă de turcoaz. Este o plajă completă, extrem de cosmopolită, ideală pentru cei care caută un confort impecabil, beach baruri moderne și sporturi nautice într-un cadru natural de vis.",
-    cumAjungi: "Plaja se află la aproximativ 16 km vest de capitala insulei, Corfu Town. Drumul traversează insula de la est la vest printr-o zonă montană pitorească, plină de curbe strânse și coborâri abrupte spre coastă. Autobuzele locale circulă destul de rar și te lasă la șosea, de unde ai de mers pe jos. O mașină închiriată este vitală pentru a ajunge aici confortabil. În spatele plajei există o parcare publică mare, amenajată pe pământ, unde poți lăsa mașina complet gratuit, precum și spații cu plată (în jur de 5 - 10 EUR) oferite de baruri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit cu nisip moale și fin, iar intrarea în apă este lină și extrem de plăcută." }, { titlu: "Buget pentru sporturi nautice", text: "Glyfada este recunoscută pe insulă pentru centrele sale excelente de sporturi acvatice (jet-ski, schi nautic, hidrobiciclete)." }, { titlu: "Ochelari de soare polarizați", text: "Nisipul fin reține căldura și reflectă puternic lumina soarelui la orele prânzului." }],
-    preturi: "În funcție de beach barul ales, închirierea unui set de două șezlonguri cu umbrelă costă între 15 - 25 EUR pe zi. Un frappe la bar costă 4 EUR, un cocktail este în jur de 10 EUR, iar un prânz rapid de tip gyros sau club sandwich este în jur de 7 - 10 EUR. Tavernele tradiționale din spatele plajei oferă preparate proaspete, o masă pentru două persoane ajungând la 35 - 45 EUR.",
-    turisti: [{ titlu: "Raiul familiilor și al tinerilor", text: "Turiștii apreciază intrarea lină în apă și calitatea serviciilor oferite de barurile de pe mal (cum ar fi celebrul bar Aloha)." }, { titlu: "Apusul este de poveste", text: "Fiind orientată spre vest, plaja oferă un spectacol minunat când soarele coboară direct în marea Ionică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a prinde loc în parcarea gratuită cea mai apropiată de nisip. Dacă vrei o panoramă uluitoare deasupra plajei înainte de a coborî, oprește mașina pe marginea șoselei în satul Pelekas (la punctul panoramic numit Kaiser\\'s Throne)." }],
-  },
-  "Plaja Porto Timoni Corfu": {
-    scurt: "Porto Timoni este, fără îndoială, cea mai faimoasă, fotografiată și spectaculoasă plajă sălbatică din Corfu. Imaginează-ți două plaje gemene superbe, așezate spate în spate și despărțite doar de o fâșie îngustă de pământ verde. Fiecare plajă se deschide spre un golf diferit, ceea ce înseamnă că au culori și temperaturi diferite ale apei: una este turcoaz deschis, iar cealaltă este de un smarald profund. Locul este complet virgin, sălbatic și ascuns între dealuri stâncoase abrupte.",
-    cumAjungi: "Plaja se află în nord-vestul insulei, lângă satul tradițional Afionas. Transportul în comun nu ajunge deloc în această zonă izolată, așa că mașina închiriată este absolut obligatorie. Conduci până în Afionas, unde poți lăsa mașina într-o parcare privată cu plată la intrarea în sat (costă în jur de 5 EUR pe zi). De acolo, aventura începe pe jos: ai de parcurs o drumeție solicitantă de 20-30 de minute pe o potecă stâncoasă și abruptă care coboară spre mare.",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași)", text: "Poteca este plină de pietre libere și porțiuni abrupte. Coborârea sau urcarea în șlapi clasici de plajă este extrem de periculoasă." }, { titlu: "Umbrelă de plajă proprie și apă din abundență", text: "Porto Timoni este 100% publică și neamenajată. Nu există baruri, magazine sau șezlonguri jos. Trebuie să vii complet echipat cu mâncare și hidratare de acasă." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Ambele plaje gemene sunt formate dintr-un amestec de pietricele și pietre, atât pe mal, cât și la intrarea în marea adâncă." }],
-    preturi: "Accesul pe plajă este complet gratuit. Singurul cost obligatoriu este parcarea de sus din sat. Dacă nu vrei să parcurgi drumeția obositoare la întoarcere, poți închiria un taxi acvatic (o barcă mică) de pe plajă care te va duce în golful vecin, Agios Georgios, contra unei taxe de 10 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Peisajul este ireal", text: "Toată lumea recomandă să te oprești la jumătatea potecii pentru a face faimoasa poză de sus, de unde se văd perfect ambele golfuri gemene." }, { titlu: "Urcarea înapoi este grea", text: "Mulți turiști avertizează că drumul de întoarcere, în urcare la orele prânzului, este obositor și necesită condiție fizică minimă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în satul Afionas foarte devreme, ideal înainte de ora 08:30. Vei prinde loc de parcare lejer, vei coborî poteca pe umbră și te vei bucura de plajele gemene în liniște totală, înainte ca bărcile cu turiști din stațiunile vecine să înceapă să aducă grupuri mari de oameni după ora 10:30." }],
-  },
-  "Plaja Myrtiotissa Corfu": {
-    scurt: "Myrtiotissa este descrisă adesea ca fiind una dintre cele mai izolate, sălbatice și pline de farmec plaje ascunse din Corfu. Strânsă între stânci uriașe de calcar acoperite de o vegetație luxuriantă de un verde intens, această plajă mică oferă un nisip fin, argintiu, și o apă mării extrem de curată și transparentă. Locul și-a păstrat un aer boem și relaxat, fiind renumit istoric pe insulă ca o zonă parțial dedicată nudiștilor și celor care caută o comuniune totală cu natura pură.",
-    cumAjungi: "Plaja se află pe coasta de vest, chiar între satele Pelekas și Vatos. Transportul public este complet inexistent pentru această locație retrasă. Ai absolut nevoie de o mașină pentru a parcurge drumul principal, urmat de o coborâre secundară deosebit de abruptă, îngustă și plină de curbe strânse. Sfatul nostru este să lași mașina gratuit în parcarea de pământ de lângă mănăstirea istorică Myrtiotissa (situată la jumătatea pantei) și să cobori ultimii 300 de metri pe jos, pentru a nu risca să blochezi vehiculul pe panta foarte înclinată de lângă nisip.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie", text: "Zona amenajată comercial este minimă sau inexistentă în funcție de lună. Majoritatea spațiului este complet liber pentru prosoape." }, { titlu: "Mască de snorkeling", text: "Stâncile mari care mărginesc golful continuă și sub apă, creând canale spectaculoase pline de pești mici, ideale pentru explorat." }, { titlu: "Rucsac ușor pentru drumeție", text: "Îți va lăsa mâinile libere în timpul coborârii și urcării pe drumul foarte înclinat spre mașină." }],
-    preturi: "Accesul pe plajă este gratuit. Există un mic chioșc pe plajă de unde poți închiria ocazional șezlonguri cu 10 - 12 EUR per set sau de unde poți cumpăra o apă ori un frappe cu 3 - 4 EUR. Lângă mănăstirea de sus se află o mică tavernă de familie unde o salată grecească sau o porție de souvlaki proaspăt costă în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "O bijuterie ascunsă", text: "Vizitatorii laudă frumusețea sălbatică a stâncilor acoperite de verdeață și transparența uluitoare a apei." }, { titlu: "Drumul auto cere atenție maximă", text: "Mulți turiști avertizează în recenzii că panta finală este una dintre cele mai abrupte din Corfu și recomandă să coborâți pe jos dacă nu aveți o mașină puternică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vizitează plaja dimineața în jur de orele 09:00 - 11:30. Soarele luminează direct golful vestic atunci, făcând apa să pară complet transparentă. În plus, pe drum poți vizita mănăstirea istorică de secol XIV Myrtiotissa, o oază de liniște și măslini pitorească situată chiar deasupra mării." }],
-  },
-  "Plaja Dassia Corfu": {
-    scurt: "Plaja Dassia este o plajă urbană lungă, plată și excelent organizată, situată pe coasta de est a insulei. Premiată des pentru infrastructura sa completă, plaja este compusă dintr-un amestec de nisip fin și pietricele mici albe. Pentru că este orientată spre golful interior dintre Corfu și continent, marea de aici este caldă, extrem de liniștită și plată ca o oglindă, fiind ferită de valurile mari sau de curenții periculoși. Este destinația favorită a celor care vor confort, sporturi nautice și baruri moderne pe mal.",
-    cumAjungi: "Dassia se află la doar 12 km nord de capitala Corfu Town, de-a lungul șoselei principale de coastă. Accesul este extrem de simplu și complet asfaltat. Deși este deservită de autobuze locale frecvente, o mașină închiriată îți oferă un confort uriaș pentru a aduce gențile grele de plajă și a te deplasa rapid spre plajele din nord în cursul după-amiezii. Parcarea este simplă: există numeroase locuri publice gratuite pe străduțele secundare din spatele plajei sau spații dedicate puse la dispoziție de beach barurile mari.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați mai ales la intrarea în marea liniștită, unde pietricelele mici pot fi incomode la mersul desculț." }, { titlu: "Buget pentru schi nautic sau wakeboarding", text: "Dassia este recunoscută ca fiind un punct excelent pentru sporturi nautice dinamice datorită mării plate ca un lac." }, { titlu: "Haine lejere de zi", text: "Faleza este tivită de cafenele moderne și restaurante cochete unde poți lua o pauză răcoroasă la prânz." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 12 - 20 EUR pe zi, dar pot fi găsite și baruri moderne (cum ar fi Malibu Beach Club) unde șezlongul este inclus în baza unei consumații minime obligatorii. Un frappe costă 4 EUR, un cocktail este 9 - 11 EUR, iar o masă completă la tavernele excelente de pe faleză ajunge la 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Turiștii apreciază curățenia, prezența dușurilor, a vestiarelor și a salvamarilor de pe plajă." }, { titlu: "O mare foarte sigură", text: "Toate familiile cu copii laudă lipsa totală a valurilor mari și temperatura caldă a apei în acest golf protejat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei. Dacă vrei o zonă cu iarbă verde și umbră sub copaci chiar lângă nisip, mergi în capătul din stânga al plajei, unde atmosfera este mult mai relaxată și mai puțin comercială." }],
-  },
-  "Plaja Barbati Corfu": {
-    scurt: "Plaja Barbati este una dintre cele mai elegante, spectaculoase și curate plaje din nord-estul insulei Corfu, fiind distinsă regulat cu certificatul european Blue Flag. Situată la poalele impunătorului munte Pantokrator, plaja este o fâșie lungă de pietre și pietricele albe ca zăpada, perfect șlefuite de valuri. Contrastul dintre muntele verde masiv, albul imaculat al plajei și marea de un albastru-turcoaz extrem de transparent este absolut uluitor. Este un loc ideal pentru cei care iubesc apele adânci, curate și peisajele montane pe malul mării.",
-    cumAjungi: "Plaja se află la aproximativ 20 km nord de Corfu Town. Șoseaua principală de coastă este complet asfaltată, dar destul de îngustă și plină de curbe montane strânse. Autobuzele circulă destul de rar pe această rută. Mașina închiriată este de departe cea mai bună soluție. Din șoseaua principală, cobori pe un drum secundar înclinat direct spre mare. Există spații mari de parcare pe pământ în spatele plajei (unele gratuite, altele private aparținând barurilor contra unei taxe mici de 3 - 5 EUR).",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Plaja și întreaga intrare în mare sunt formate exclusiv din pietre și pietricele albe; mersul desculț este extrem de incomod." }, { titlu: "Mască și tub de snorkeling", text: "Apa fiind adâncă din primii pași și incredibil de transparentă, relieful stâncos subacvatic atrage bancuri mari de pești, fiind un adevărat paradis pentru snorkeling." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Pietrele albe de pe mal sunt superbe, dar o saltea un pic mai groasă îți va asigura un confort sporit dacă vrei să stai în zonele libere." }],
-    preturi: "Închirirea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. De-a lungul plajei lungi de un kilometru se află mai multe baruri și taverne moderne cochete. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz excelent bazat pe preparate din pește sau fructe de mare proaspete la taverne costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Claritatea apei este uluitoare", text: "Toți vizitatorii laudă transparența mării, menționând că poți vedea fundul mării chiar și acolo unde apa depășește adâncimea de 10 metri." }, { titlu: "Peisaj montan deosebit", text: "Turiștii sunt fascinați de imaginea muntelui înalt Pantokrator care pare că se prăbușește direct în marea Ionică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:15 dimineața. Golful este foarte liniștit atunci, iar soarele dimineții luminează perfect pietricelele albe, creând culori fosforescente în apă. Reține că apa devine adâncă rapid (după doar doi pași de la mal), așa că plaja este ideală pentru înotători buni și mai puțin potrivită pentru bebeluși lăsați la buza apei." }],
-  },
-  "Plaja Paleokastritsa și Grotele Palaiokastritsa": {
-    scurt: "Paleokastritsa este considerată cea mai spectaculoasă și faimoasă regiune de coastă din Corfu. Golful central este o bijuterie strânsă între pereți de stâncă uriași, îmbrăcați în păduri dense de pini și măslini. Plaja este un amestec de nisip fin și pietricele albe, iar apa mării are o nuanță incredibilă de verde-smarald strălucitor, fiind atât de limpede încât bărcile par că plutesc în aer. Este un loc legendar, de o frumusețe dramatică.",
-    cumAjungi: "Paleokastritsa se află pe coasta de vest, la aproximativ 25 km de Corfu Town. Drumul este complet asfaltat, dar plin de pante abrupte și curbe strânse. Mașina închiriată este esențială, deoarece regiunea este formată din 6 golfuri diferite întinse pe kilometri întregi, iar o mașină îți permite să te muți rapid de la un golf la altul. Parcarea din golful central (lângă port) este mare, parțial gratuită și parțial cu plată (în jur de 5 EUR pe zi), dar devine extrem de aglomerată după ora 10:00.",
-    echipament: [{ titlu: "Mască de snorkeling obligatorie", text: "Relieful stâncos și peșterile subacvatice fac din acest loc cel mai bun punct de snorkeling de pe insulă." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, în apă vei întâlni pietre mari și stânci." }, { titlu: "Hanorac sau prosop mare la plecare", text: "Apa de aici este renumită pentru faptul că este cea mai rece de pe insulă, din cauza unor curenți adânci, fiind extrem de revigorantă în august." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR. O excursie de 30 de minute cu barca locală pentru a vizita peșterile marine ascunse (cum ar fi Nausika sau Blue Eye) costă în jur de 15 EUR de persoană. Un prânz complet la tavernele cocoțate pe stânci costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Peisaje de top mondial", text: "Toți vizitatorii laudă panoramele uluitoare și recomandă să urcați cu mașina și la mănăstirea de secol XIII de pe deal." }, { titlu: "Apa este cu adevărat înghețată", text: "Mulți avertizează în recenzii că apa este considerabil mai rece decât pe coasta de est." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:00 dimineața. Vei prinde loc de parcare chiar lângă plajă și vei putea lua o barcă spre peșteri înainte ca soarele să bată prea puternic și să creeze reflexii dure pe apă." }],
-  },
-  "Plaja Halikounas Corfu": {
-    scurt: "Halikounas este o plajă uriașă, complet sălbatică și unică, reprezentând un paradis neatins de turismul comercial masiv. Este practic o limbă masivă de nisip fin de culoare închisă, lungă de peste 3 kilometri, care despart marea Ionică de lacul sărat și protejat Korission. Pentru că este expusă constant vânturilor puternice din larg, Halikounas este recunoscută ca fiind cel mai important punct de întâlnire din Corfu pentru pasionații de kitesurfing și windsurfing.",
-    cumAjungi: "Plaja se află pe coasta de sud-vest a insulei. Transportul public nu ajunge deloc în această rezervație naturală izolată, așa că mașina este absolut obligatorie. Drumul este asfaltat până la intrarea pe plajă, unde se transformă într-un drum lung de pământ și nisip care șerpuiește de-a lungul dunelor. Poți conduce încet și poți parca mașina complet gratuit oriunde dorești direct pe marginea plajei, chiar lângă nisip.",
-    echipament: [{ titlu: "Umbrelă de plajă și cort de plajă rezistent", text: "Vântul bate aproape permanent aici, ridicând nisipul, așa că un cort mic de plajă îți va asigura un confort sporit." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Plaja fiind imensă și protejată ecologic, nu există clădiri, hoteluri sau magazine în apropiere." }, { titlu: "Fără pantofi de apă", text: "Întreaga plajă și fundul mării sunt formate exclusiv din nisip fin, intrarea în marea deschisă fiind liberă de pietre." }],
-    preturi: "Accesul și parcarea pe cei 3 km de plajă sunt 100% gratuite. În plin sezon, la începutul plajei funcționează un singur beach bar mobil din lemn și o școală de kitesurfing. Un frappe costă 4 EUR, iar închirierea unui echipament de kite este în jur de 40 - 50 EUR pe oră. Pentru mâncare, va trebui să conduci 5 minute până la tavernele din satele învecinate.",
-    turisti: [{ titlu: "Spațiu infinit și libertate", text: "Turiștii care vor să evadeze din zonele aglomerate laudă dimensiunile impresionante ale plajei, unde poți sta la distanță uriașă de ceilalți." }, { titlu: "Spectacolul zmeielor colorate", text: "Vizitatorii sunt fascinați de zecile de kitesurferi care fac acrobații spectaculoase pe cer după-amiaza." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să vezi păsări flamingo sau alte specii protejate, treci puntea mică de lemn din spatele plajei spre lacul Korission dimineața devreme. Dacă vrei o zi relaxantă pe prosop, alege o zi din prognoză în care vântul este mai slab, pentru a evita nisipul spulberat." }],
-  },
-  "Plaja Sidari Corfu": {
-    scurt: "Plaja mare din Sidari este plaja urbană principală a uneia dintre cele mai dezvoltate și animate stațiuni din nordul insulei. Este o plajă foarte lungă și lată, acoperită cu un nisip fin de culoare aurie. Golful este deschis, dar apa este remarcabil de caldă și are o intrare extrem de lină și de mică ca adâncime, marea fiind perfect sigură. În spatele plajei se află o faleză comercială imensă plină de viață, hoteluri și facilități de distracție.",
-    cumAjungi: "Sidari se află în nordul insulei Corfu, la aproximativ 36 km distanță de capitală. Drumul este complet asfaltat, dar destul de lung și muntos în zona centrală. Mașina închiriată îți asigură o independență totală, permițându-ți să transporți bagajele de familie confortabil. În stațiune există parcări publice mari gratuite chiar în spatele plajei, pe pământ, precum și parcări cu plată (aproximativ 4 EUR pe zi) lângă portul de unde pleacă bărcile.",
-    echipament: [{ titlu: "Jucării de nisip și saltele mari", text: "Este plaja ideală pentru activități în apă și pe mal, nisipul fiind perfect curat și fără pietre." }, { titlu: "Fără încălțăminte specială", text: "Intrarea în mare se face exclusiv pe nisip moale, riscul de a te înțepa în arici fiind zero." }, { titlu: "Cremă solară din abundență", text: "Zona fiind deschisă, soarele arde puternic de-a lungul întregii zile." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă sunt foarte accesibile, costând în jur de 10 - 12 EUR pe zi, sau sunt oferite gratuit de baruri în baza unei consumații minime de aceeași valoare. Un frappe costă 3,50 EUR, un gyros pe faleză este 4 EUR, iar o cină completă pentru o familie la tavernele britanice sau grecești costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură comercială imensă", text: "Turiștii englezi și europeni laudă numărul uriaș de baruri, piscine cu acces liber, magazine și agenții de turism din spatele plajei." }, { titlu: "Apa rămâne mică foarte mult", text: "Părinții apreciază siguranța deplină pe care o oferă marea mică pentru copii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este ideală pentru o zi completă de distracție cu familia. De aici poți merge pe jos în doar 10 minute de-a lungul stâncilor pentru a vizita și celebrul complex Canal d\\'Amour, situat în capătul din stânga al aceleiași stațiuni." }],
-  },
-  "Plaja Kassiopi Corfu": {
-    scurt: "Plaja Kassiopi (mai exact, plaja Kalamionas sau golfulețele din jurul peninsulei Kassiopi) este o plajă pitorească situată într-un sat tradițional pescăresc superb din nord-estul insulei. Format dintr-un amestec de pietricele albe lucioase și nisip grosier, golful oferă o apă de o transparență uluitoare, nuanțată în tonuri de smarald. Fundalul este dominat de un mic port de iahturi elegant și de ruinele unei vechi cetăți bizantine de secol XIV cocoțate pe deal.",
-    cumAjungi: "Kassiopi se află la aproximativ 35 km nord de Corfu Town, de-a lungul drumului pitoresc de coastă. Drumul este complet asfaltat, spectaculos, oferind panorame superbe spre coasta Albaniei aflate la mică distanță. Autobuzele verzi circulă destul de rar, făcând mașina închiriată absolut necesară pentru o călătorie relaxantă. Parcarea în apropierea plajelor din port poate fi grea; există o parcare publică mare cu plată (în jur de 5 EUR pe zi) la intrarea în sat, de unde mergi pe jos două minute.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja principală, cât și golfulețele ascunse (ca Bataria sau Pipitos) sunt exclusiv cu pietre și pietricele; mersul desculț este dureros." }, { titlu: "Mascá de snorkeling", text: "Apa fiind adâncă și flancată de stânci albe mari, vizibilitatea sub apă este legendară, fiind plină de pești colorați." }, { titlu: "Sandale comode de mers", text: "Ruinele castelului bizantin din spatele portului merită o vizită de 15 minute pentru o panoramă superbă." }],
-    preturi: "Închirirea unui set de două șezlonguri costă în jur de 12 - 15 EUR pe zi. Satul fiind un port pescăresc activ, tavernele din jur sunt renumite pentru mâncarea excelentă. Un frappe costă 3,50 EUR, iar un prânz delicios bazat pe pește proaspăt sau calamari costă în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Golfurile Bataria și Pipitos sunt de vis", text: "Toți vizitatorii recomandă în recenzii să treceți dincolo de plaja mare spre golfulețele ascunse din spatele peninsulei, peisajul de acolo fiind considerat mult mai spectaculos." }, { titlu: "Sat plin de farmec autentic", text: "Turiștii apreciază atmosfera elegantă și liniștită a portului seară." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:15 dimineața. Mergi direct în golful Bataria (cel mai frumos colț din Kassiopi). Vei prinde primele șezlonguri chiar sub stânci, marea va fi complet plată ca un acvariu și vei putea înota în liniște deplină înainte ca micul golf să devină foarte populat." }],
-  },
-  "Plaja Lindos Lindos": {
-    scurt: "Plaja Lindos (cunoscută și sub numele de Megali Paralia) este una dintre cele mai spectaculoase și încărcate de istorie locații din Grecia. Situată într-un golf natural perfect adăpostit, plaja se întinde chiar la poalele celebrului sat alb Lindos și ale acropolei sale antice cocoțate pe stâncă. Nisipul este fin și auriu, iar apa mării este incredibil de caldă, curată și atât de liniștită încât pare o piscină uriașă în aer liber, oferind un fundal istoric de o frumusețe rară.",
-    cumAjungi: "Lindos se află pe coasta de est, la aproximativ 50 km sud de orașul Rodos. Deși există autobuze care fac legătura cu capitala, drumul pe timp de vară este obositor, iar orarul te limitează. Cu o mașină închiriată ai libertate totală și confort pe o șosea rapidă și complet asfaltată. Marea provocare în Lindos este parcarea: satul fiind exclusiv pietonal, mașinile se lasă sus, în parcările mari de pe deal (unele gratuite, altele contra unei taxe de 5 - 7 EUR), de unde cobori pe jos spre plajă pe o alee amenajată.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit cu un nisip moale și extrem de fin, fiind o plăcere să mergi desculț prin apă." }, { titlu: "Pălărie de soare și protecție mare (SPF 50)", text: "Golful este ferit de vânt, ceea ce înseamnă că temperaturile la prânz pot deveni foarte ridicate, iar căldura este resimțită puternic." }, { titlu: "Haine lejere și pantofi de mers", text: "După câteva ore de plajă, este obligatoriu să urci pe străduțele înguste ale satului Lindos sau să vizitezi acropola antică." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Chiar în spatele plajei se află taverne cochete cu mâncare excelentă. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz complet bazat pe pește proaspăt sau preparate tradiționale costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Ideală pentru cei mici", text: "Părinții laudă la unison intrarea extrem de lină în apă, marea rămânând mică și caldă pe o distanță foarte mare de la mal." }, { titlu: "Priveliște de revistă", text: "Toți turiștii sunt fascinați de imaginea acropolei care domină cerul direct de deasupra șezlongurilor." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:00 dimineața. Vei găsi un loc de parcare mult mai aproape de sat și vei putea alege cele mai bune șezlonguri. Dacă vrei și mai multă liniște, mergi în golful imediat următor, numit Pallas Beach, situat în aceeași zonă, unde atmosfera este un pic mai retrasă." }],
-  },
-  "Plaja Afandou Afandou": {
-    scurt: "Plaja Afandou este una dintre cele mai lungi și extinse plaje de pe insula Rodos, întinzându-se pe o lungime impresionantă de aproape 4 kilometri. Format dintr-un amestec de nisip grosier și pietricele fine, rotunjite de valuri, acest golf uriaș este definiția spațiului și a libertății. Datorită dimensiunilor sale masive, Afandou nu pare niciodată aglomerată, fiind locul ideal pentru turiștii care vor să scape de înghesuială și să se bucure de o mare extrem de curată, adâncă și revigorantă.",
-    cumAjungi: "Plaja se află pe coasta de est, la aproximativ 20 km distanță de orașul Rodos și foarte aproape de Faliraki. Transportul public te lasă doar la marginea satului Afandou, de unde ai de mers pe jos peste un kilometru prin soare. O mașină este absolut necesară pentru a ajunge direct pe malul mării. Accesul de la șoseaua principală este complet asfaltat, plat și extrem de facil. Parcarea este una dintre cele mai lejere de pe insulă: poți lăsa mașina complet gratuit direct în spatele plajei, pe marginea drumului lung care urmărește linia țărmului.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt foarte recomandați pentru a păși confortabil peste banda de pietricele de la intrarea în marea adâncă." }, { titlu: "Umbrelă proprie de plajă", text: "Cea mai mare parte a acestei plaje imense este complet sălbatică și neamenajată, oferind spațiu nelimitat pentru cei care vor să stea pe prosop." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de transparentă și curată, vizibilitatea sub apă este excelentă, mai ales în apropierea formațiunilor de piatră de la capătul plajei." }],
-    preturi: "În puținele porțiuni amenajate din dreptul pensiunilor, un set de două șezlonguri costă în jur de 10 - 12 EUR pe zi. Există câteva rulote și taverne locale împrăștiate de-a lungul coastei. O apă plată mare costă 1,50 EUR, un frappe este 3,50 EUR, iar prețurile la mâncare sunt considerabil mai mici decât în Lindos.",
-    turisti: [{ titlu: "O plajă imensă doar pentru tine", text: "Vizitatorii sunt încântați că pot sta la o distanță uriașă de următorul turist, chiar și în plină vară." }, { titlu: "Apa se adâncește rapid", text: "Recenziile menționează că marea devine adâncă după doar 3-4 pași de la mal, fiind ideală pentru înotători buni." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi în capătul din dreapta al plajei (zona cunoscută sub numele de Traganou), unde stâncile mari ascund peșteri marine spectaculoase. Este cel mai fotogenic punct al plajei și oferă o umbră naturală deosebită în a doua parte a zilei." }],
-  },
-  "Plaja Agathi Archangelos": {
-    scurt: "Plaja Agathi (cunoscută des și sub numele de Plaja de Aur) este o mică nestemată ascunsă într-un golf adăpostit de pe coasta de est a insulei Rodos. Este o plajă superbă, acoperită cu un nisip extrem de fin, moale și curat, de o nuanță aurie caldă. Apa mării este de o claritate remarcabilă, are o culoare turcoaz deschis și este foarte calmă, fără valuri mari. Atmosfera este una relaxantă și caldă, fiind considerată una dintre cele mai intime și plăcute plaje pentru familii de pe insulă.",
-    cumAjungi: "Plaja se află în apropierea localității Haraki și la vreo 10 km nord de Lindos. Autobuzele locale nu au stații aproape de acest golf retras. Mașina închiriată este singura opțiune confortabilă. Din șoseaua principală, urmezi un drum secundar parțial asfaltat și parțial din pământ bătătorit care coboară spre mare, trecând pe lângă o capelă medievală săpată în stâncă. Parcarea de jos este improvizată pe pământ în spatele plajei, spațioasă și complet gratuită.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin curat, acoperit exclusiv cu nisip fin, intrarea în marea mică fiind o plăcere." }, { titlu: "Mască de snorkeling", text: "Mergi spre marginile stâncoase ale golfului; claritatea apei îți permite să vezi mulți peștișori ascunși printre pietre." }, { titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este legendară, fiind ideal pentru castele de nisip." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. În spatele plajei funcționează 2-3 taverne/cantine mobile din lemn administrat de localnici. Un frappe costă 3,50 EUR, iar un prânz rapid de tip gyros, souvlaki sau salată proaspătă este în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "O plajă sigură și curată", text: "Părinții apreciază intrarea foarte lină în apă și faptul că golful este protejat de vânturi, marea fiind mereu calmă." }, { titlu: "Castelul de pe deal", text: "Mulți turiști recomandă să admiri de pe plajă ruinele castelului medieval Feraklos, cocoțat pe muntele din apropiere." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este incredibil de liniștit în prima parte a zilei, iar soarele luminează direct nisipul auriu, oferind apei nuanțe unice de piscină tropicală. Pe drum, oprește un minut pentru a vizita micuța biserică rupestră bizantină Agios Nikolaos, situată chiar pe marginea drumului spre plajă." }],
-  },
-  "Plaja Prasonisi Prasonisi": {
-    scurt: "Prasonisi este un loc unic în lume și una dintre cele mai spectaculoase atracții geografice ale Greciei. Situată în punctul cel mai sudic al insulei Rodos, Prasonisi este o peninsulă (sau o insulă legată de uscat printr-o fâșie lungă de nisip fin) unde se întâlnesc două mări diferite: Marea Egee și Marea Mediterană. Fenomenul creează un contrast uluitor: pe o parte a limbii de nisip marea are valuri mari și vânt puternic, fiind raiul mondial al windsurferilor, în timp ce pe cealaltă parte apa este complet plată, calmă și liniștită.",
-    cumAjungi: "Prasonisi se află la aproximativ 90 km sud de orașul Rodos. Din cauza distanței mari și a izolării sale, transportul public este aproape inexistent. O mașină este absolut obligatorie pentru a ajunge în acest capăt de lume. Drumul principal de pe insulă este complet asfaltat, plat și foarte drept în ultima sa porțiune. Ajuns la destinație, poți conduce direct pe fâșia lată de nisip de la baza plajei, unde parcarea este uriașă și complet gratuită. Atenție însă să nu parcați prea aproape de apă pentru a nu rămâne blocați în nisipul ud la flux.",
-    echipament: [{ titlu: "Ochelari de soare polarizați și o eșarfă", text: "Vântul suflă aproape permanent cu putere aici, ridicând nisipul fin, așa că protecția ochilor este vitală." }, { titlu: "Zmeu sau accesorii rezistente", text: "Dacă nu practici windsurfing, simpla plimbare pe limba de nisip unde se bat cele două mări este o experiență memorabilă." }, { titlu: "Fără saltele gonflabile mari", text: "Din cauza vântului puternic de pe partea egeeană, există riscul major de a fi purtat în larg." }],
-    preturi: "Intrarea pe plajă este gratuită. Există câteva porțiuni cu șezlonguri în zona protejată, unde un set costă în jur de 15 EUR. În spatele plajei s-a dezvoltat un mic sat turistic plin de școli de windsurfing, magazine de echipamente și taverne. Un prânz complet costă în jur de 12 - 15 EUR de persoană, iar închirierea unui echipament de windsurf sau kitesurf pornește de la 40 EUR pe oră.",
-    turisti: [{ titlu: "Un spectacol al naturii", text: "Toate recenziile laudă senzația unică de a sta pe o fâșie de nisip și a vedea valurile mari în dreapta și o mare liniștită ca un lac în stânga." }, { titlu: "Aparatul foto e obligatoriu", text: "Imaginea sutelor de vele colorate pe cerul albastru oferă un decor incredibil pentru fotografii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să explorezi insula stâncoasă din capătul plajei, mergi la plimbare dimineața. În anii în care fluxul nu acoperă fâșia de nisip, poți trece pe jos direct pe insulă pentru a urca până la farul vechi din vârf, de unde ai o panoramă uluitoare asupra „sărutului celor două mări\"." }],
-  },
-  "Plaja Kallithea Kallithea": {
-    scurt: "Plaja Kallithea este o destinație elegantă și plină de rafinament, renumită pentru complexul său istoric de băi termale cu arhitectură oriental-italiană restaurată, construite în perioada interbelică. Plaja propriu-zisă nu este o întindere mare de nisip, ci un golf pitoresc format din platforme de piatră și mici fâșii de nisip, amenajate impecabil printre palmieri și grădini înflorite. Apa este incredibil de curată, are o nuanță profundă de smarald și este considerată locul numărul unu din Rodos pentru scufundări și snorkeling.",
-    cumAjungi: "Kallithea Springs se află pe coasta de est, la doar 9 km sud de orașul Rodos și la 4 km nord de Faliraki. Drumul este complet asfaltat, modern și foarte rapid. Cu o mașină ajungi în mai puțin de 10 minute din capitală. Complexul monumental dispune de o parcare proprie imensă, excelent organizată pe pământ la umbra copacilor, unde poți lăsa vehiculul complet gratuit. Mașina îți permite să combini o dimineață relaxantă la băi cu o plimbare de după-amiază în orașul vechi din Rodos.",
-    echipament: [{ titlu: "Mască și tub de snorkeling obligatorii", text: "Golful stâncos și adânc este un adevărat acvariu natural. Vizibilitatea sub apă este legendară, fiind plină de pești colorați și corali mici ascunși în crăpăturile stâncilor." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși în siguranță pe platformele de piatră și stânci de la intrarea în mare." }, { titlu: "Haine lejere, dar elegante", text: "Complexul restaurat (cu pavilioane albe, mozaicuri rotunde din piatră și fântâni) este o capodoperă arhitecturală care cere o sesiune lungă de fotografii de revistă." }],
-    preturi: "Intrarea în complexul istoric se face pe bază de bilet (costă în jur de 3 - 4 EUR de persoană). Închirierea unui set de două șezlonguri premium așezate direct pe platformele de piatră de lângă apă costă în jur de 15 - 20 EUR. În incintă funcționează un beach bar elegant. Un frappe costă 4 EUR, o apă este 1,50 EUR, iar gustările rapide sunt în jur de 10 EUR.",
-    turisti: [{ titlu: "O atmosferă relaxantă și rafinată", text: "Turiștii laudă designul superb al locației, muzica chill-out de fundal și curățenia impecabilă a întregului complex." }, { titlu: "Raiul scufundătorilor", text: "Toți pasionații de diving menționează că aici se află cele mai bune școli de scufundări de pe insulă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:15 dimineața. Vei vizita pavilioanele istorice pe o temperatură plăcută, vei prinde cele mai bune șezlonguri chiar lângă mare și te vei bucura de o sesiune de snorkeling fantastică înainte ca lumina soarelui să devină prea puternică." }],
-  },
-  "Plaja Stegna Archangelos": {
-    scurt: "Stegna este o plajă fermecătoare și autentică, situată în dreptul localității Archangelos, pe coasta de est a insulei. Spre deosebire de stațiunile mari și comerciale, Stegna a reușit să-și păstreze aerul unui sat tradițional grecesc de pescari. Plaja este lungă, formată dintr-un amestec de nisip fin și pietricele mărunte, iar apa este calmă și limpede ca cristalul. Este locul ideal pentru turiștii care vor să evadeze din agitație și să experimenteze o vacanță relaxantă, unde viața curge în ritm lent.",
-    cumAjungi: "Plaja se află la aproximativ 30 km sud de orașul Rodos. Drumul principal este excelent, dar coborârea finală din Archangelos spre golful Stegna se face pe o șosea îngustă, plină de serpentine strânse și pante înclinate care îți oferă panorame marine superbe. Autobuzele locale ajung rar aici, făcând mașina închiriată absolut necesară. Un mare avantaj este că poți parca gratuit direct pe marginea drumului care urmărește linia plajei sau în spațiile mari din apropierea portului pescăresc.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietricele și pietre plate." }, { titlu: "Mască de snorkeling", text: "În partea dreaptă a golfului, unde stâncile mari întâlnesc marea, relieful subacvatic este plin de pești colorați." }, { titlu: "Ochelari de soare polarizați", text: "Soarele reflectat în apa curată din acest golf adăpostit este foarte puternic la amiază." }],
-    preturi: "Prețurile din Stegna sunt foarte rezonabile. Un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR pe zi. Satul este renumit pentru tavernele sale cu specific pescăresc. Un frappe costă 3,50 EUR, iar un prânz delicios bazat pe pește proaspăt pescuit în acea dimineață sau fructe de mare ajunge la aproximativ 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Vibe autentic grecesc", text: "Toate recenziile laudă liniștea locului și lipsa hotelurilor uriașe de tip resort, apreciind restaurantele afacerilor de familie." }, { titlu: "O mare foarte curată", text: "Turiștii notează că transparența apei este impecabilă, ideală pentru înot lung." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă pentru cină. Tavernele așezate direct pe marginea drumului, la un pas de mare, oferă o atmosferă incredibil de romantică și relaxantă odată cu lăsarea serii, când portul pescăresc se liniștește complet." }],
-  },
-  "Plaja Glystra Lindos": {
-    scurt: "Plaja Glystra este o mică oază de liniște și natură virgină, ascunsă într-un golfuleț circular perfect adăpostit din sud-estul insulei. Este o plajă mică, acoperită cu un nisip fin, moale și auriu, fiind complet flancată de dune de nisip și tufe verzi de ienupăr. Apa este mică ca adâncime, caldă ca într-o piscină și plată ca o oglindă, fiind complet ferită de valuri. Este una dintre cele mai intime și relaxante plaje de pe insulă, un loc ideal pentru a citi o carte sau pentru a-ți lăsa copiii să se joace în siguranță.",
-    cumAjungi: "Glystra se află la aproximativ 11 km sud de Lindos, în direcția Kiotari. Transportul public este rar în această porțiune mai retrasă a coastei. Cu o mașină ajungi foarte ușor, plaja fiind situată chiar lângă șoseaua principală complet asfaltată. Parcarea este gratuită, spațioasă, amenajată pe pământ la umbra copacilor chiar în spatele plajei. Acest lucru face ca accesul auto să fie extrem de confortabil, fiind la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip extrem de moale și curat, fără nicio piatră sau arici de mare." }, { titlu: "Jucăriile de nisip", text: "Dacă călătorești cu cei mici, nisipul fin și maleabil de aici este cel mai bun de pe insulă pentru castele de nisip." }, { titlu: "Ochelari de înot", text: "Apa fiind extrem de calmă, este o plăcere să înoți relaxat de-a lungul golfului protejat." }],
-    preturi: "Plaja oferă o mică zonă amenajată comercial. Un set de două șezlonguri cu umbrelă costă în jur de 12 EUR pe zi. În spatele plajei funcționează un singur chioșc/cantină administrat de localnici. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar gustările rapide (cum ar fi un sandwich sau o plăcintă caldă) sunt în jur de 5 - 7 EUR.",
-    turisti: [{ titlu: "Un secret bine păstrat", text: "Vizitatorii o descriu ca fiind alternativa perfectă, liniștită, la plajele aglomerate din Lindos sau Pefkos." }, { titlu: "Intrare extrem de lină în mare", text: "Părinții apreciază în recenzii faptul că poți merge zeci de metri în larg și apa rămâne mică, ideală pentru copii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei, iar soarele luminează direct nisipul auriu, dând apei nuanțe strălucitoare. Dacă vrei o sesiune de snorkeling relaxantă, mergi spre marginile stâncoase care închid golful în stânga și în dreapta." }],
-  },
-  "Plaja Elli Rhodos Town": {
-    scurt: "Plaja Elli este plaja urbană principală a capitalei Rodos Town, fiind considerată de mulți istorici una dintre cele mai elegante și cosmopolite plaje de oraș din întreaga Mediterană. Întinsă chiar în vârful nordic al insulei, plaja este formată dintr-un amestec fin de nisip și pietricele mărunte, albe. Apa mării este remarcabil de curată, de un albastru profund și revigorant. Punctul ei emblematic este trambulina istorică din beton (The Trampoline), ridicată în mijlocul mării în perioada italiană, de pe care turiștii sar direct în valuri.",
-    cumAjungi: "Plaja se află la distanță de mers pe jos de centrul istoric și de orașul vechi din Rodos Town. Dacă ești cazat în capitală, ajungi pe jos imediat. Dacă însă vii din alte stațiuni ale insulei (Faliraki, Ialyssos sau Lindos), mașina închiriată îți va oferi un confort deplin pe drumul asfaltat rapid. Găsirea unui loc de parcare gratuit în apropierea plajei Elli poate fi o misiune imposibilă la amiază. Sfatul nostru este să lași mașina în parcările publice mari din zona portului Mandraki (la doar 5 minute de mers pe jos) și să traversezi esplanada spre mare.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "În funcție de porțiunea pe care te așezi, pietricelele de la intrarea în mare pot fi ușor incomode la mers." }, { titlu: "Ochelari de înot sau mască", text: "Înotul până la celebra trambulină din beton situată în larg este activitatea principală a plajei; merită să arunci o privire și sub apă." }, { titlu: "Pălărie chic de oraș", text: "Faleza fiind plină de baruri moderne, cazinouri și clădiri istorice, o plimbare lungă cere o ținută lejeră de vacanță." }],
-    preturi: "Fiind o plajă de oraș foarte populară, prețurile sunt medii spre mari. Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. De-a lungul plajei funcționează numeroase beach baruri și restaurante de top (cum ar fi Ronda). Un frappe costă 4 EUR, un cocktail este în jur de 10 EUR, iar un prânz complet pornește de la 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "Totul la îndemână", text: "Turiștii apreciază enorm proximitatea față de restaurante, hoteluri, magazine și obiectivele istorice din orașul vechi." }, { titlu: "Săriturile de pe trambulină", text: "Toată lumea menționează platforma din beton ca fiind o experiență distractivă obligatorie când vizitezi plaja Elli." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este superbă în a doua parte a zilei. Deoarece se află exact în vârful insulei, briza mării este constantă și plăcută, iar din acest loc te poți bucura de soare până târziu. După plajă, poți merge direct la o plimbare pe jos prin portul istoric Mandraki pentru a vedea locul unde se spune că se afla faimosul Colos din Rodos." }],
-  },
-  "Plaja Faliraki Faliraki": {
-    scurt: "Plaja Faliraki este inima divertismentului și a turismului de masă de pe insula Rodos. Întinsă pe o lungime impresionantă de peste 5 kilometri pe coasta de est, această plajă imensă este formată integral din nisip fin, auriu. Apa mării este curată, caldă și are o intrare lină, golful fiind adăpostit de vânturi mari. Faliraki este probabil cea mai bine dotată plajă de pe insulă: este o succesiune continuă de beach baruri moderne, taverne, hoteluri și centre comerciale, oferind o atmosferă plină de viață și energie.",
-    cumAjungi: "Faliraki se află la aproximativ 12 km sud de orașul Rodos. Drumul este o șosea modernă, lată și complet asfaltată. Deși este cea mai bine conectată stațiune la transportul public, o mașină închiriată îți oferă un avantaj uriaș: plaja fiind uriașă, o mașină îți permite să te muți rapid dintr-un capăt în altul sau să vizitezi faimosul Water Park Faliraki (cel mai mare parc acvatic din Grecia, aflat pe dealul din apropiere). Parcarea este simplă și gratuită în spațiile mari de pământ amenajate în spatele plajei.",
-    echipament: [{ titlu: "Buget pentru sporturi acvatice", text: "Faliraki este paradisul sporturilor pe apă; poți încerca absolut orice, de la parasailing și jet-ski, până la hidrobiciclete și bărci cu motor de închiriat." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este integral acoperit de un nisip fin și moale, fără nicio piatră sau arici de mare." }, { titlu: "Cremă solară cu protecție mare", text: "Întinderea lungă de nisip auriu reține căldura și reflectă puternic lumina de-a lungul întregii zile." }],
-    preturi: "Competiția mare face ca prețurile să fie foarte accesibile. Un set de două șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi, sau este inclus la o comandă minimă la baruri. Un frappe costă 3,50 EUR, un gyros rapid este în jur de 4 EUR, iar o cină completă pentru o familie la nenumăratele taverne din spate costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură de nota 10", text: "Toți vizitatorii laudă facilitățile complete: dușuri din belșug, toalete, cabine de schimb și prezența salvamarilor pe toată lungimea plajei." }, { titlu: "Excelentă pentru copii", text: "Intrarea lină în apă și nisipul moale sunt foarte apreciate de părinți." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să scapi de muzica tare din zona centrală și cauți mai multă liniște, mergi în capătul din sud al plajei (zona numită Kathara Beach), aproape de portul pescăresc. Acolo atmosfera este mult mai relaxată, nisipul este la fel de fin, iar peisajul cu micile bărci din lemn este foarte pitoresc." }],
-  },
-  "Plaja Ladiko Faliraki": {
-    scurt: "Plaja Ladiko este o adevărată bijuterie naturală, situată într-un golfuleț stâncos extrem de pitoresc, aflat chiar pe partea cealaltă a dealului de lângă celebra plajă Anthony Quinn. Este o plajă mică, formată dintr-un amestec plăcut de nisip fin și pietricele albe, strânsă între dealuri verzi pline de pini și formațiuni stâncoase inedite care ies direct din mare. Apa din acest golf este de o transparență legendară, nuanțată în tonuri de smarald strălucitor, fiind un loc ideal pentru relaxare liniștită și snorkeling.",
-    cumAjungi: "Golful se află la aproximativ 3 km sud de stațiunea Faliraki și 15 km de orașul Rodos. Autobuzele locale nu au linii directe până în acest golf retras, lăsându-te destul de departe. Mașina închiriată este esențială pentru a ajunge aici confortabil. Drumul din Faliraki este complet asfaltat, modern și oferă peisaje superbe. Ajuns jos, există o parcare mare publică, pe pământ direct în spatele plajei, unde poți lăsa vehiculul complet gratuit. Locurile la umbră se ocupă însă rapid în sezon.",
-    echipament: [{ titlu: "Mască și tub de snorkeling obligatorii", text: "Relieful stâncos subacvatic din acest golf adăpostit este plin de viață. Vizibilitatea este deosebită, fiind un loc ideal pentru a observa bancurile de pești care caută hrană pe lângă stânci." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip, la intrarea în mare există pietre plate și stânci subacvatice unde se pot găsi arici de mare." }, { titlu: "Prosop mare sau saltea", text: "Golful fiind mic, șezlongurile sunt așezate destul de aproape unele de altele în sezon." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Pe plajă funcționează o tavernă tradițională de familie excelentă. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz cald cu mâncare tradițională grecească sau fructe de mare la tavernă costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O piscină de smarald", text: "Toți turiștii laudă culoarea unică a apei și claritatea uimitoare a mării în acest golf protejat natural de valuri mari." }, { titlu: "Mai relaxantă decât Anthony Quinn", text: "Mulți vizitatori notează că Ladiko are ceva mai mult nisip pe mal și o atmosferă un pic mai accesibilă pentru relaxare decât golful vecin." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața. Golful fiind mic și foarte popular, șezlongurile din primul rând și locurile bune de parcare se ocupă complet până la ora 10:30. În plus, dimineața marea este de o liniște deosebită, ideală pentru o sesiune lungă de snorkeling înainte de prânz." }],
-  },
-  "Plaja Kolymbia Archangelos": {
-    scurt: "Plaja Kolymbia este o destinație elegantă și extrem de liniștită, situată într-un golf pitoresc ferit de vânturi, pe coasta de est a insulei. Format dintr-un amestec de nisip fin și pietricele mici albe, malul este mărginit de resorturi cochete și de stânci verzi spectaculoase. Marea este calmă, limpede ca cristalul și capătă nuanțe superbe de azur, fiind o alegere ideală pentru turiștii care vor un confort complet, dar fără agitația din Faliraki.",
-    cumAjungi: "Kolymbia se află la jumătatea distanței dintre orașul Rodos și Lindos (aproximativ 25 km de fiecare). Drumul de acces de la șoseaua principală este celebru pe insulă: o linie dreaptă de 2 kilometri mărginită de eucalipți uriași (Bulevardul Eucalipților). Autobuzele te lasă doar la drumul mare, așa că o mașină închiriată este esențială pentru a ajunge direct la mare. Parcarea este gratuită, spațioasă și amenajată pe pământ chiar în spatele plajei.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea liniștită există o bandă de pietricele rotunde." }, { titlu: "Mască de snorkeling", text: "În partea dreaptă a golfului, unde stânca masivă intră în mare, peștii sunt foarte activi." }, { titlu: "Aparatul foto", text: "O scurtă plimbare până pe stânca din marginea golfului îți va oferi un cadru panoramic superb asupra întregii coaste." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Tavernele tradiționale din spatele plajei oferă preparate proaspete, o masă pentru două persoane ajungând la 35 - 45 EUR. Un frappe la bar costă 3,50 EUR, iar o apă plată mare este în jur de 1,50 EUR.",
-    turisti: [{ titlu: "O atmosferă relaxantă și curată", text: "Vizitatorii laudă dimensiunile generoase ale plajei, care nu pare niciodată sufocant de aglomerată, păstrând un aer select." }, { titlu: "Intrare relativ lină", text: "Toate familiile apreciază că marea este foarte calmă și sigură pentru înot în acest golf protejat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei. Dacă vrei o zonă complet liberă pentru prosop, mergi în capătul din stânga al plajei, unde atmosfera este mult mai retrasă și sălbatică." }],
-  },
-  "Plaja Ixia Rhodos Town": {
-    scurt: "Plaja Ixia este situată pe coasta de nord-vest a insulei și este complet diferită de cele de pe coasta estică. Este o plajă lungă și modernă, formată în principal din pietricele mari albe și pietre șlefuite de valuri. Fiind orientată direct spre marea deschisă și expusă vânturilor constante de tip Meltemi, Ixia este un punct de întâlnire de top pentru pasionații de windsurfing și kitesurfing. Apa mării este de un albastru profund, dynamic și extrem de curat.",
-    cumAjungi: "Plaja se află la doar 5 km vest de orașul Rodos, de-a lungul șoselei de coastă care duce spre aeroport. Accesul este complet asfaltat, plat și foarte rapid. O mașină închiriată îți asigură o independență totală, permițându-ți să transporți echipamentul de plajă confortabil și să te muți rapid spre plajele din est dacă vrei o mare calmă. Parcarea este simplă și gratuită: poți lăsa vehiculul direct pe marginea drumului principal sau în spațiile dedicate ale marilor hoteluri de pe faleză.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în mare sunt exclusiv cu pietre mari; mersul desculț este extrem de incomod și dureros." }, { titlu: "Buget pentru lecții de windsurfing", text: "Ixia găzduiește unele dintre cele mai bune școli de windsurf de pe insulă, fiind locul ideal pentru a învăța acest sport." }, { titlu: "Ochelari de soare polarizați", text: "Pietrele albe reflectă puternic lumina soarelui de-a lungul întregii zile." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi. De-a lungul falezei funcționează numeroase baruri și restaurante de hotel. Un frappe costă 4 EUR, un cocktail este în jur de 10 EUR, iar un prânz rapid de tip gyros sau club sandwich este în jur de 7 - 10 EUR.",
-    turisti: [{ titlu: "Apusuri memorabile", text: "Toată lumea menționează că apusul văzut de aici, cu profilul coastelor Turciei în depărtare, este printre cele mai frumoase din Rodos." }, { titlu: "Nu este pentru copii mici", text: "Recenziile avertizează că valurile constante și pietrele de la intrare fac ca plaja să fie mai puțin potrivită pentru cei mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți în siguranță când marea este mai calmă, vino dimineața între orele 08:30 - 11:00. Golful este mult mai liniștit atunci. Dacă vrei adrenalină și vrei să încerci windsurfing, momentul tău este după ora 14:00, când vântul se activează la intensitate maximă." }],
-  },
-  "Plaja Pefkos Lindos": {
-    scurt: "Plaja Pefkos (cunoscută oficial și ca Lee Beach) este o plajă superbă și foarte primitoare, situată în fața stațiunii cochete cu același nume. Numele său provine de la pinii bătrâni („pefko\") care flanchează golful și oferă aerului o aromă unică de rășină și briză sărată. Plaja este acoperită cu un nisip extrem de fin, de o culoare aurie caldă, iar apa mării este foarte mică la mal, curată și complet lipsită de valuri mari, oferind o atmosferă extrem de intimă și relaxantă.",
-    cumAjungi: "Pefkos se află la doar 5 km sud de faimosul sat Lindos. Mașina închiriată te va ajuta să ajungi rapid pe drumul asfaltat principal, evitând aglomerația și prețurile mari din Lindos. Stațiunea fiind întinsă pe dealuri, o mașină îți oferă un confort sporit pentru a coborî direct până în spatele plajei. Există mici parcări pe pământ în spatele barurilor principale sau locuri gratuite de-a lungul străzilor care duc spre mare, dar spațiile se ocupă rapid după ora 10:00.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip fin, moale și curat, riscul de a te înțepa în arici fiind zero." }, { titlu: "Mască de snorkeling", text: "În zonele unde plaja se termină și încep stâncile din marginea golfului, viața subacvatică este foarte activă." }, { titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este ideală pentru cei mici, fiind fin și compact la buza apei." }],
-    preturi: "În funcție de barul ales, un set de două șezlonguri cu umbrelă costă între 12 - 15 EUR pe zi. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz rapid de tip gyros sau club sandwich este în jur de 6 - 8 EUR. Tavernele din spatele plajei sunt excelente, o masă pentru o familie ajungând la 35 - 45 EUR.",
-    turisti: [{ titlu: "Alternativa perfectă la Lindos", text: "Mulți turiști o consideră în recenzii o opțiune mult mai aerisită, mai ieftină și mai relaxantă decât plajele din Lindos." }, { titlu: "Excelentă pentru copii", text: "Părinții laudă la unison intrarea extrem de lină în apă și lipsa totală a valurilor mari." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:15 dimineața. Golful este de o liniște deosebită în prima parte a zilei. Dacă vrei o zonă complet liberă pentru prosop, mergi în capătul din dreapta al plajei (zona numită Plaja Kavos), unde atmosfera este mult mai retrasă și stâncoasă." }],
-  },
-  "Plaja Ialyssos Rhodos Town": {
-    scurt: "Plaja Ialyssos (sau Trianda) este o fâșie lungă și cosmopolită de coastă, situată în nord-vestul insulei, în dreptul uneia dintre cele mai mari și dezvoltate stațiuni din Rodos. Asemănătoare cu vecina ei, Ixia, plaja este formată dintr-un amestec de pietricele albe și nisip grosier. Este o locație faimoasă la nivel mondial pentru windsurfing și kitesurfing, datorită vânturilor constante care bat dinspre mare și creează valuri lungi și ideale pentru sporturi nautice de dinamică.",
-    cumAjungi: "Ialyssos se află la aproximativ 8 km vest de orașul Rodos. Șoseaua principală de coastă este complet asfaltată, dreaptă și foarte rapid de parcurs. Autobuzele circulă frecvent, dar o mașină închiriată îți oferă un confort sporit pentru a aduce gențile grele de plajă și echipamentul. Găsirea unui loc de parcare este destul de simplă: există numeroase spații publice gratuite de-a lungul aleilor lungi care coboară din centrul stațiunii direct spre mare sau pe marginea plajei.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Pietricelele mari de pe mal și de la intrarea în mare pot fi foarte incomode la mersul desculț." }, { titlu: "Buget pentru sporturi de apă", text: "Ialyssos găzduiește competiții internaționale de windsurf; merită să iei o lecție cu un instructor autorizat de la centrele de pe mal." }, { titlu: "Haine lejere pentru faleză", text: "Zona din spatele plajei are o faleză pietonală lungă, plină de cafenele moderne, restaurante și magazine animate." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR pe zi, fiind foarte accesibile. Un frappe costă 3,50 EUR, un gyros pe faleză este 4 EUR, iar o cină completă pentru o familie la tavernele excelente din spate costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură comercială imensă", text: "Turiștii apreciază numărul uriaș de baruri, piscine cu acces liber, hoteluri și facilități din spatele plajei." }, { titlu: "Apusuri de neuitat", text: "La fel ca pe toată coasta de vest, apusul soarelui văzut de pe plajă este considerat o atracție zilnică obligatorie." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți liniștit, vino dimineața între orele 08:30 - 11:00, când marea este calmă. Dacă vrei acțiune, vino după-amiaza pentru a urmări spectacolul zecilor de vele colorate pe cer. După plajă, ia mașina și urcă 10 minute pe muntele învecinat Filerimos pentru a vizita mănăstirea istorică și a vedea păunii care umblă liberi prin pădure." }],
-  },
-  "Plaja Kedrodasos Chania": {
-    scurt: "Părăsim Rodos și ne întoarcem pe Insula Creta pentru una dintre cele mai sălbatice, spectaculoase și unice plaje din toată Grecia: Kedrodasos. Numele său înseamnă „Pădurea de Cedri\", deoarece plaja este flancată de o pădure antică uriașă de ienupări și cedri seculari care cresc direct din nisipul alb. Apa mării Libiei are aici o nuanță de un turcoaz electric incredibil și este curată ca lacrima. Este un loc complet virgin, fără amenajări, considerat un adevărat sanctuar natural.",
-    cumAjungi: "Plaja se află în sud-vestul extrem al Cretei, la doar 2-3 km de celebra plajă Elafonisi. Nu există transport public până aici, așa că mașina închiriată este absolut obligatorie. Din șoseaua principală asfaltată care duce spre Elafonisi, pornește un drum secundar de pământ și piatră accidentat, plin de denivelări, pe care trebuie să conduci încet. La capătul drumului lași mașina gratuit într-o parcare improvizată, iar de acolo mai ai de mers pe jos cam 10-15 minute pe o potecă stâncoasă nemarcată prin soare până la nisip.",
-    echipament: [{ titlu: "Umbrelă de plajă și rogojină proprie", text: "Kedrodasos este 100% publică și neamenajată. Deși cedrii oferă umbră naturală pe margini, copacii sunt protejați prin lege și este interzis să rupi crengi sau să campezi direct sub ei." }, { titlu: "O ladă frigorifică plină cu apă și gustări", text: "Cel mai apropiat magazin este la câțiva kilometri buni distanță, în zona Elafonisi." }, { titlu: "Încălțăminte comodă de mers (adidași)", text: "Poteca de la parcare până jos este stâncoasă și alunecoasă în șlapi de plajă." }],
-    preturi: "Accesul pe plajă și parcarea sunt complet libere și gratuite. Nu există facilități, gherete sau beach baruri jos, așa că costul tău aici va fi zero. Pentru un prânz cald după plajă, cel mai bine este să conduci 10 minute înapoi spre micile taverne de familie din satele de pe drumul spre Chania.",
-    turisti: [{ titlu: "O alternativă liniștită la Elafonisi", text: "Toate recenziile o laudă ca fiind locul perfect pentru a scăpa de miile de turiști din Elafonisi, oferind o intimitate totală în natură." }, { titlu: "Un peisaj idilic", text: "Vizitatorii sunt fascinați de contrastul dintre nisipul alb, stâncile vulcanice negre și cedrii bătrâni." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața. Vei prinde o temperatură mult mai plăcută pentru drumeția pe jos de la parcare și vei putea alege cele mai bune locuri pe nisip. Reține că plaja este foarte apreciată de comunitățile de nudiști și de camperi care caută liniște, așa că respectul pentru natură și discreția sunt reguli locale nescrise." }],
-  },
-  "Plaja Sougia Chania": {
-    scurt: "Sougia este o plajă uriașă, relaxantă și plină de personalitate, situată pe coasta de sud a Cretei. Întinsă pe mai bine de un kilometru într-un golf liniștit, plaja este formată din pietricele curate de mărime medie și nisip grosier întunecat. Ceea ce o face unică este sentimentul de izolare totală și libertate: este una dintre puținele plaje mari din Creta care a rămas în mare parte neamenajată, păstrând acel vibe boem al anilor \\'70. Apa este incredibil de adâncă, curată și de un albastru închis, regal.",
-    cumAjungi: "Satul Sougia se află la aproximativ 70 km sud de Chania. Drumul care traversează insula prin Munții Albi (Lefka Ori) este spectaculos, complet asfaltat, dar plin de serpentine strânse, porțiuni înguste și pante abrupte. Autobuzele locale circulă extrem de rar (adesea doar o dată sau de două ori pe zi). O mașină închiriată este absolut necesară pentru a călători în siguranță și în propriul ritm. Ajuns jos, parcarea este extrem de simplă: există un spațiu public imens, gratuit, amenajat chiar în spatele plajei, la umbra copacilor.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât pe mal, cât și la intrarea în mare sunt pietre mari și pietricele care se încing puternic la prânz." }, { titlu: "Umbrelă proprie de plajă", text: "Deși există o mică zonă centrală cu șezlonguri, peste 80% din plajă este complet liberă. Dacă prinzi loc devreme sub tamariștii (copacii) de pe margine, ai umbră naturală toată ziua." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de adâncă chiar de la mal și foarte limpede, relieful stâncos subacvatic este ideal pentru explorat." }],
-    preturi: "Sougia este una dintre cele mai accesibile destinații din Creta. Un set de două șezlonguri cu umbrelă costă în jur de 8 - 10 EUR. Satul din spate are taverne fantastice de familie. Un frappe costă 3 EUR, o bere rece este 3,50 EUR, iar un prânz copios cu mâncare tradițională cretană te va costa în jur de 10 - 12 EUR de persoană.",
-    turisti: [{ titlu: "Deconectare totală de la tehnologie", text: "Turiștii laudă liniștea mistică a locului; nu există cluburi sau muzică stridentă pe plajă." }, { titlu: "Atenție la adâncimea apei", text: "Recenziile avertizează că apa devine foarte adâncă după doar doi pași de la mal, nefiind recomandată copiilor mici lăsați nesupravegheați." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până la apus. În capătul din stânga al plajei (zona preferată istoric de nudiști și camperi), stâncile uriașe blochează soarele mai devreme, dar oferă un decor natural incredibil pentru fotografii la crepuscul." }],
-  },
-  "Plaja Plakias Rethymno": {
-    scurt: "Plaja Plakias este o întindere uriașă și impunătoare de nisip fin amestecat cu pietricele mărunte, situată într-un golf larg de pe coasta sudică a Cretei. Cunoscută ca fiind una dintre cele mai lungi plaje din sud, Plakias îți oferă o priveliște largă asupra mării Libiei și a munților stâncoși din jur. Apa este curată ca lacrima, revigorantă și de un albastru profund. Este o plajă extrem de aerisită și foarte bine organizată, ideală pentru cei care vor să combine peisajul sălbatic din sud cu facilitățile complete.",
-    cumAjungi: "Plakias se află la aproximativ 35 km sud de orașul Rethymno. Drumul este spectaculos, trecând direct prin impresionanta Cheie Kourtaliotiko (unde stâncile par că se prăbușesc peste șosea). Drumul este complet asfaltat și sigur, dar autobuzele au un orar rigid. O mașină este extrem de confortabilă pentru a explora golful și pentru a parca gratuit direct pe marginea plajei sau în spațiile mari amenajate în spatele tavernelor din stațiune.",
-    echipament: [{ titlu: "Ochelari de soare buni și protecție", text: "Golful fiind foarte deschis, soarele bate direct din față în a doua parte a zilei." }, { titlu: "Fără încălțăminte specială în zonele de nisip", text: "Plaja principală este predominant nisipoasă, deși la intrarea în apă pot apărea benzi de pietricele fine." }, { titlu: "Palete de plajă sau minge", text: "Spațiul generos îți permite să faci activități pe nisip fără să-ți deranjezi vecinii de șezlong." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR pe zi. Faleza din spatele plajei este plină de cafenele și taverne excelente. Un frappe costă 3,50 EUR, un gyros rapid este 4 EUR, iar o cină completă bazată pe preparate din pește proaspăt sau mâncare tradițională costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Locul perfect pentru relaxare în familie", text: "Vizitatorii apreciază curățenia plajei, prezența dușurilor, a vestiarelor și a salvamarilor." }, { titlu: "Vântul poate fi puternic", text: "Multe recenzii menționează că, fiind o zonă deschisă în sud, uneori vântul de nord (Meltemi) coboară puternic din chei spre mare, ridicând nisipul." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Mergi în capătul din stânga al plajei, spre zona numită Paligremnos. Acolo se află un perete de stâncă vertical uriaș, înalt de peste 80 de metri, care intră direct în mare. Este un punct extrem de spectaculos pentru fotografii, iar stânca oferă o umbră naturală uriașă în a doua parte a după-amiezii." }],
-  },
-  "Plaja Damnoni Rethymno": {
-    scurt: "Plaja Damnoni este o plajă superbă și foarte modernă, situată într-un golfuleț vecin cu stațiunea Plakias. Este acoperită cu un nisip alb grosier amestecat cu pietricele fine, ceea ce face ca apa mării să aibă o culoare turcoaz-deschis de o claritate uluitoare, asemănătoare unei piscine olimpice. Fiind protejată natural de două promontorii stâncoase mari, Damnoni este mult mai adăpostită de vânturile puternice din sud decât plaja mare din Plakias, oferind o mare liniștită și sigură.",
-    cumAjungi: "Plaja se află la doar 5 km est de Plakias și la aproximativ 33 km de Rethymno. Transportul public nu ajunge direct la această plajă, oprindu-se în stațiunea principală. Mașina închiriată este absolut obligatorie pentru a ajunge jos în golf. Drumul este asfaltat, coborând ușor printre măslini. Parcarea de jos este uriașă, amenajată pe pământ în spatele plajei și complet gratuită, fiind la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Buget pentru sporturi nautice", text: "Damnoni găzduiește unul dintre cele mai bune centre de sporturi acvatice din sudul Cretei (caiac, windsurfing, schi acvatic sau bărci de închiriat)." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip curat, la intrarea în mare pietricelele pot fi ușor deranjante la tălpi." }, { titlu: "Mască de snorkeling", text: "Zona stâncoasă din capătul drept al golfului este plină de pești mici și formațiuni subacvatice interesante." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. În spatele plajei se află 2-3 taverne excelente de familie, renumite pentru preparatele din carne la grătar și măslinele locale. Un frappe costă 3,50 EUR, iar un prânz complet ajunge la aproximativ 13 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Mai adăpostită decât Plakias", text: "Mulți turiști notează în recenzii că, în zilele în care în Plakias bate vântul prea tare, Damnoni este refugiul perfect, marea fiind mult mai calmă." }, { titlu: "Curățenie de nota 10", text: "Toți vizitatorii laudă transparența apei și organizarea excelentă a plajei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este incredibil de calm atunci, iar lumina soarelui oferă apei nuanțe strălucitoare. Din acest loc poți lua și bărci-taxi mici care te pot duce rapid într-o excursie de câteva ore spre celebra plajă cu palmieri Preveli." }],
-  },
-  "Plaja Agios Pavlos Rethymno": {
-    scurt: "Agios Pavlos (Sfântul Pavel) este una dintre cele mai izolate, spectaculoase și sălbatice locații din sudul Cretei. Zona este faimoasă pentru cele două plaje ale sale: un golfuleț mic, stâncos și extrem de adăpostit, situat lângă o mică așezare pescărească, și plaja mare din stânga (cunoscută ca Plaja Dunelor de Nisip). Aici, dune uriașe de nisip fin, de culoare închisă, coboară spectaculos de pe munte direct în marea Libiei. Este un loc de o frumusețe primitivă, dramatică, perfect pentru cei care vor să se simtă la capătul lumii.",
-    cumAjungi: "Locația se află în sudul extrem al regiunii Rethymno, departe de orice traseu turistic comercial. Transportul public nu ajunge deloc aici, așa că mașina este absolut obligatorie. Drumul de acces de la șoseaua principală este asfaltat, dar este foarte îngust, plin de serpentine strânse și coborâri abrupte pe marginea prăpastiei. Poți parca mașina complet gratuit în parcarea de pământ de deasupra golfului mic. Pentru a ajunge la plaja dunelor mari, ai de parcurs o scurtă plimbare pe jos peste stânci și o coborâre abruptă direct pe nisip.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și cort de plajă", text: "Pe plaja dunelor mari nu există absolut nicio amenajare, magazin sau umbră naturală. Ești doar tu, nisipul fierbinte și marea." }, { titlu: "Încălțăminte cu aderență bună (adidași)", text: "Coborârea și mai ales urcarea înapoi pe dunele abrupte de nisip este obositoare și imposibil de parcurs în șlapi de plajă." }, { titlu: "Mască de snorkeling", text: "Apa este de o claritate uluitoare, iar formațiunile stâncoase unice pliante (stâncile stratificate) de pe margine continuă și sub apă, oferind peisaje subacvatice fantastice." }],
-    preturi: "Intrarea pe plaje este gratuită. În golful mic, organizarea este minimă, un set de șezlonguri costând în jur de 8 - 10 EUR. Deasupra golfului se află o singură tavernă de familie cu o priveliște de vis. Un frappe costă 3 EUR, iar o porție de mâncare cretană gătită în casă costă în jur de 9 - 12 EUR.",
-    turisti: [{ titlu: "Un peisaj care îți taie răsuflarea", text: "Toți turiștii sunt fascinați de măreția dunelor de nisip și de liniștea deplină a locului, departe de civilizație." }, { titlu: "Urcarea pe dune este grea", text: "Recenziile avertizează că efortul de a urca înapoi dealul de nisip la orele amiezii este considerabil și necesită rezistență." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plaja dunelor mari până la apus. Agios Pavlos este considerat unul dintre cele mai spirituale și spectaculoase puncte din Creta pentru a urmări cum soarele apune direct în mare, profilul stâncilor stratificate oferind fotografii unice, memorabile." }],
-  },
-  "Plaja Triopetra Rethymno": {
-    scurt: "Plaja Triopetra își trage numele de la cele trei stânci uriașe, spectaculoase și stratificate (trio petra - trei pietre în limba greacă) care ies maiestuos din mare la capătul peninsulei, separând plaja în două zone distincte. Este o plajă imensă, formată dintr-un nisip grosier curat amestecat cu pietricele fine, întinsă pe kilometri întregi de-a lungul mării Libiei. Apa de aici este renumită pentru puritatea ei cristalină și pentru nuanțele profunde de albastru. Locul emană o energie specială, fiind o plajă sălbatică, aerisită și plină de măreție naturală.",
-    cumAjungi: "Triopetra se află pe coasta de sud a regiunii Rethymno, izolată complet de marile orașe. Nu există linii de autobuz care să ajungă în această zonă sălbatică. Mașina închiriată este indispensabilă pentru a parcurge drumul asfaltat care șerpuiește prin munți și plantații de măslini. Coborârea finală spre mare este spectaculoasă. Parcarea este extrem de simplă: plaja fiind imensă, poți lăsa mașina complet gratuit în spațiile mari de pământ din spatele dunelor sau direct lângă micile taverne de pe mal.",
-    echipament: [{ titlu: "Umbrelă de plajă și rogojină proprie", text: "Deși există mici zone amenajate în dreptul celor două taverne, peste 90% din această plajă uriașă este complet liberă și sălbatică." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil la intrarea în mare, unde pot apărea plăci de stâncă plate subacvatice." }, { titlu: "Mască de snorkeling", text: "Zona din jurul celor trei stânci uriașe din mare este un loc de top pentru snorkeling, fiind plină de pești și canale din piatră de explorat." }],
-    preturi: "Dacă prinzi loc în zona mică amenajată, un set de două șezlonguri costă în jur de 10 EUR sau este inclus dacă comanzi prânzul la una dintre cele două taverne de familie din spate. Un frappe costă 3,50 EUR, o porție de tzatziki proaspăt este 4 EUR, iar preparatele tradiționale la cuptor costă în jur de 10 - 13 EUR.",
-    turisti: [{ titlu: "Spațiu infinit și energie unică", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, unde te poți bucura de mare în liniște totală, fără aglomerație, chiar și în august." }, { titlu: "Vântul poate crea valuri mari", text: "Recenziile menționează că, fiind o plajă complet deschisă în sud, vântul de nord poate crea valuri spectaculoase și curenți puternici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vizitează mai întâi plaja mică din estul stâncilor (Triopetra Mică), care este mai adăpostită de vânt, iar după-amiaza mută-te pe plaja mare din vest. Mergi pe jos până la baza celor trei stânci uriașe la apus -- straturile geologice perfecte din piatră oferă un decor incredibil pentru fotografii profesionale de vacanță." }],
-  },
-  "Plaja Kommos Heraklion": {
-    scurt: "Plaja Kommos este o fâșie uriașă și impunătoare de nisip fin, de culoare închisă, întinsă pe kilometri întregi de-a lungul mării Libiei. Situată chiar lângă faimoasa stațiune Matala, Kommos îți oferă un decor complet diferit: este un loc sălbatic, liniștit și încărcat de istorie. Chiar la marginea dunelor de nisip se află situl arheologic al unui vechi port minoic. Este o plajă aerisită, renumită pentru faptul că este o arie protejată unde țestoasele marine Caretta-Caretta își depun ouăle și pentru stânca misterioasă Volakas care răsare din larg.",
-    cumAjungi: "Plaja se află în sudul regiunii Heraklion, la doar câțiva kilometri de Pitsidia și Matala. Autobuzele locale te lasă doar în satele din jur, de unde drumul pe jos prin soare este lung și obositor. O mașină închiriată este esențială pentru a ajunge direct la plajă. Drumul secundar este asfaltat în mare parte și se termină într-o zonă largă pe pământ unde poți lăsa mașina complet gratuit, chiar în spatele plajei și a ruinelor minoice.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este doar nisip fin, la intrarea în mare există o placă mare de stâncă naturală, plată și destul de alunecoasă, pe care e bine să pășești cu atenție." }, { titlu: "Umbrelă proprie de plajă", text: "Zona este considerată rezervație naturală, așa că organizarea cu șezlonguri este limitată doar la o mică porțiune centrală." }, { titlu: "Ochelari de soare de calitate", text: "Plaja fiind lungă și complet deschisă, lumina soarelui la amiază este foarte puternică." }],
-    preturi: "În zona mică amenajată, un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR. Există o singură tavernă excelentă poziționată deasupra plajei, pe stânci. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar o porție de mâncare tradițională cretană gătită în casă este în jur de 10 - 13 EUR.",
-    turisti: [{ titlu: "Spațiu infinit și apusuri de vis", text: "Toate recenziile laudă faptul că plaja nu este niciodată aglomerată, iar apusul de soare văzut de aici este considerat printre cele mai spectaculoase din sudul Cretei." }, { titlu: "Atenție la zona de nudiști", text: "Turiștii menționează că porțiunea dinspre nord a plajei (zona cea mai sălbatică) este folosită tradițional pentru nudism." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în a doua parte a după-amiezii, în jur de ora 16:30. Bucură-te de o baie lungă în marea curată, iar spre seară rezervă o masă la taverna de pe deal pentru a cina în timp ce admiri cum soarele apune direct în mare, în spatele insulelor Paximadia vizibile la orizont." }],
-  },
-  "Plaja Agiofaraggo Heraklion": {
-    scurt: "Agiofaraggo (în traducere „Canionul Sfinților\") este una dintre cele mai mistice, izolate și uluitoare destinații sălbatice din întreaga Grecie. Situată la capătul unui canion adânc flancat de pereți verticali de stâncă uriași, plaja se deschide brusc către marea Libiei ca o recompensă divină. Este un golf mic, perfect adăpostit, acoperit cu pietricele fine albe și rotunde, iar apa mării este de o transparență ireală, colorată în nuanțe profunde de smarald. Locul a fost în trecut un refugiu pentru pustnici și păstrează o energie de liniște absolută.",
-    cumAjungi: "Plaja este situată în sudul extrem al regiunii Heraklion și este complet izolată. O mașină cu gardă înaltă sau un condus extrem de atent sunt vitale, deoarece de la mănăstirea Odigitria pornește un drum forestier din pământ și piatră accidentat, lung de aproximativ 5-6 km, plin de denivelări. La capătul drumului lași mașina gratuit într-o parcare improvizată, iar de acolo începe o drumeție spectaculoasă pe jos de 25-30 de minute prin cheile adânci ale canionului, mergând pe albia secată a unui râu printre oleandri și pini sălbatici.",
-    echipament: [{ titlu: "Încălțăminte comodă de mers (adidași)", text: "Traseul prin canion necesită atenție, fiind plin de pietre mari, iar mersul în șlapi este total nerecomandat." }, { titlu: "Rucsac complet cu mâncare, apă și umbrelă", text: "Agiofaraggo este 100% virgină. Nu există magazine, baruri, șezlonguri sau semnal la telefon jos. Ești complet pe cont propriu în mijlocul naturii." }, { titlu: "Mască de snorkeling obligatorie", text: "Pereții verticali de stâncă coboară direct în marea adâncă și limpede, creând un peisaj subacvatic fantastic plin de pești, peșteri și canale din piatră de explorat." }],
-    preturi: "Accesul pe plajă, parcurgerea canionului și parcarea sunt complet libere și gratuite. Nu există nicio facilitate comercială în zonă, așa că costul tău direct pe plajă va fi zero. Pe traseul prin canion poți vizita gratuit bisericuța istorică de secol XIV Agios Antonios și peștera veche a pustnicilor din apropiere.",
-    turisti: [{ titlu: "O experiență spirituală unică", text: "Toți turiștii sunt copleșiți de frumusețea drumeției prin chei și de imaginea plajei care apare brusc printre stâncile uriașe de la capătul drumului." }, { titlu: "Atenție la caprele sălbatice", text: "Recenziile menționează adesea caprele semi-sălbatice simpatice din canion, care vin foarte aproape de turiști pentru a le fura mâncarea din rucsac." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește în drumeție dimineața devreme, în jur de ora 09:00. Canionul este răcoros și parțial la umbră atunci, iar când vei ajunge pe plajă vei prinde marea plată ca o oglindă și o liniște deplină, înainte de sosirea micilor bărci de excursie care vin uneori din Matala după-amiaza." }],
-  },
-  "Insula Chrissi Lasithi": {
-    scurt: "Insula Chrissi (cunoscută oficial și sub numele de Gaidouronisi) este o rezervație naturală unică, situată în marea Libiei, renumită pentru peisajul său exotic care amintește de insulele din Caraibe. Insula este complet nelocuită și adăpostește cea mai mare pădure naturală de ienupăr de Liban din Europa. Plaja principală de pe coastă (faimoasa Golden Beach) este o întindere spectaculoasă de nisip alb fin amestecat cu milioane de cochilii mici rozalii, iar apa mării are o culoare turcoaz-deschis de o transparență ireală și este extrem de caldă.",
-    cumAjungi: "Chrissi se află la aproximativ 15 km sud de coasta Cretei. Pentru a ajunge acolo, ai nevoie de o mașină pentru a conduce până în orașul portuar Ierapetra (cel mai sudic oraș al Europei), drumul fiind complet asfaltat și rapid. Din portul Ierapetra se iau vapoarele mari de croazieră sau bărcile rapide private care fac legătura cu insula. Mașina se poate lăsa complet gratuit în parcările publice mari din zona portului Ierapetra.",
-    echipament: [{ titlu: "Umbrelă de plajă și rogojină proprie obligatorii", text: "Din dorința de a proteja ecosistemul fragil al insulei, autoritățile elene au interzis debarcarea masivă pe mal și au eliminat toate beach barurile sau șezlongurile. Ești dator să vii cu propria umbră de pe continent." }, { titlu: "Încălțăminte comodă de mers (sandale sau adidași ușori)", text: "Pădurea de ienupăr este protejată prin garduri, iar deplasarea de la locul unde te lasă barca până la plaja de aur se face pe poteci amenajate prin nisipul fierbinte." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de limpede și mică la mal, vizibilitatea subacvatică pe patul de nisip alb este deosebită." }],
-    preturi: "Un bilet pentru feribotul dus-întors din Ierapetra către insula Chrissi costă între 25 - 35 EUR de persoană, în funcție de compania aleasă. De asemenea, se plătește o mică taxă ecologică de municipalitate (în jur de 1 EUR), inclusă de obicei în bilet. Având în vedere că pe insulă nu mai funcționează magazine, este vital să îți cumperi mâncare și apă din portul Ierapetra, unde un frappe costă 3,50 EUR, iar un sandwich este 5 EUR.",
-    turisti: [{ titlu: "Un paradis tropical în Europa", text: "Toți vizitatorii sunt impresionați de culoarea turcoaz electric a apei și de nisipul fin plin de reflexii roz." }, { titlu: "Verificați regulile actuale", text: "Multe recenzii recente menționează că, pentru protejarea pădurii de cedri, uneori vapoarele doar opresc în golf la câțiva metri de mal pentru înot direct din barcă, fără debarcare pe plajă. Informați-vă în port înainte de a cumpăra biletul." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Alege o barcă rapidă privată (speed boat) de dimensiuni mici care pleacă la ora 08:30 din Ierapetra. Vei ajunge în golful de aur înaintea vapoarelor mari de croazieră, având șansa să înoți în apa caldă și cristalină în condiții de liniște deplină." }],
-  },
-  "Plaja Voulisma Lasithi": {
-    scurt: "Plaja Voulisma (cunoscută des și sub numele de Golden Beach) este una dintre cele mai frumoase și organizate plaje din estul Cretei. Situată în golful pitoresc Mirabello, lângă localitatea Istro, plaja te va uimi prin contrastul cromatic spectaculos: un nisip alb fin ca pudra se întâlnește cu o apă a mării de un turcoaz electric incredibil de strălucitor. Golful este flancat de pereți din pământ galben acoperiți cu tufe verzi, oferind plajei un aspect exotic, asemănător unei lagune din insulele îndepărtate.",
-    cumAjungi: "Voulisma se află la aproximativ 12 km sud-est de orașul Agios Nikolaos, de-a lungul drumului principal asfaltat care duce spre Sitia. Mașina închiriată este cea mai confortabilă metodă de transport, permițându-ți să parcurgi drumul rapid și să faci opriri pe coasta superbă a golfului Mirabello. Deasupra plajei există o parcare publică mare pe pământ unde poți lăsa vehiculul complet gratuit. De la parcare, coborârea spre nisip se face pe o scară lungă din piatră frumos amenajată.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit cu un nisip moale, fin și fin, intrarea în marea curată fiind o adevărată plăcere." }, { titlu: "Ochelari de soare buni", text: "Reflexia luminii pe nisipul alb și în apa turcoaz este foarte puternică la orele prânzului." }, { titlu: "Rucsac în loc de genți", text: "Scarile lungi de piatră de la parcare sunt mai ușor de coborât sau urcat dacă ai mâinile libere." }],
-    preturi: "Fiind o plajă de top foarte populară, este complet organizată. Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Deasupra plajei, chiar la începutul scărilor, funcționează un snack-bar modern. Un frappe costă 4 EUR, o apă mare este 1,50 EUR, iar un prânz rapid de tip gyros sau club sandwich este în jur de 8 - 10 EUR.",
-    turisti: [{ titlu: "Culoarea apei este incredibilă", text: "Toate recenziile laudă nuanțele unice de turcoaz ale golfului, menționând că este una dintre cele mai frumoase ape din toată Creta." }, { titlu: "Se aglomerează rapid", text: "Turiștii avertizează că, plaja fiind îngustă, șezlongurile sunt așezate destul de aproape unele de altele, iar locul devine neîncăpătoare după ora 10:30." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde loc de parcare bun la umbră, vei putea alege cele mai bune șezlonguri în primul rând și te vei bucura de mare când este complet liniștită ca o piscină. Reține că golful fiind deschis spre nord, în zilele cu vânt puternic (Meltemi) se pot forma valuri mari care aduc alge la mal; alege o zi calmă din prognoză pentru o experiență perfectă." }],
-  },
-  "Plaja Sarakiniko Milos": {
-    scurt: "Sarakiniko este una dintre cele mai faimoase și fotografiate plaje din Grecia, oferind un peisaj complet selenar. Aici nu vei găsi nisip clasic, ci o întindere spectaculoasă de roci vulcanice de un alb imaculat, modelate de vânt și valuri în forme fluide și canioane înguste. Apa mării are o nuanță de un albastru electric profund în contrast cu albul orbitor al pietrei. Este un loc de o frumusețe primitivă care te va face să te simți ca pe o altă planetă.",
-    cumAjungi: "Plaja se află pe coasta de nord a insulei Milos. Transportul public ajunge rar, iar orarul rigid te va face să pierzi cele mai bune momente ale zilei. O mașină închiriată este absolut necesară pentru a explora această zonă spectaculoasă în ritmul tău. Drumul de acces este complet asfaltat, iar mașina se lasă gratuit într-o parcare mare de pământ amenajată chiar deasupra formațiunilor stâncoase. De acolo, ai de mers doar 2-3 minute pe jos.",
-    echipament: [{ titlu: "Ochelari de soare polarizați buni", text: "Rocile vulcanice albe reflectă lumina soarelui extrem de puternic, exact ca zăpada iarna." }, { titlu: "Umbrelă proprie sau cort de plajă", text: "Sarakiniko este 100% publică și neamenajată. Nu există șezlonguri, baruri sau umbră naturală." }, { titlu: "Pantofi cu talpă aderentă (adidași)", text: "Deși rocile par fine, mersul în șlapi simpli pe formele șlefuite și abrupte poate fi alunecos și periculos." }],
-    preturi: "Accesul pe stânci și parcarea sunt complet libere și gratuite. În plin sezon, o rulotă (food-truck) se așază în zona parcării, de unde poți cumpăra apă rece sau un frappe cu 3,50 - 4 EUR. Nu există alte costuri comerciale jos în golf.",
-    turisti: [{ titlu: "Fotografii de revistă", text: "Toată lumea recomandă să explorezi micile peșteri și tuneluri săpate în stânca albă, locurile fiind incredibil de fotogenice." }, { titlu: "Săriturile de pe stânci", text: "Cei curajoși laudă zonele înalte de unde poți sări direct în apa adâncă și curată a mării." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește fie la răsărit (pentru o atmosferă mistică, complet goală), fie după ora 17:00. Lumina caldă a apusului colorează stâncile albe în nuanțe palide de roz și auriu, iar dacă rămâi după lăsarea serii în nopțile cu lună plină, peisajul devine absolut ireal." }],
-  },
-  "Kleftiko Milos": {
-    scurt: "Kleftiko nu este o plajă tradițională, ci un complex monumental de stânci vulcanice, arcade de piatră albă și peșteri spectaculoase care ies direct din marea Libiei. În trecut, acest loc ascuns a servit drept refugiu și bază secretă pentru pirații care atacau corăbiile în Mediterană. Apa este de o claritate legendară, nuanțată în tonuri de turcoaz lăptos și smarald, fiind considerat cel mai spectaculos punct de snorkeling și scufundări de pe întreaga insulă.",
-    cumAjungi: "Kleftiko se află în colțul de sud-vest al insulei și este accesibil aproape exclusiv pe cale maritimă, prin excursii organizate cu barca. Totuși, ai nevoie de o mașină pentru a ajunge în portul principal din Adamas sau în golful provizoriu din sud (Plaja Provatas), de unde pleacă zilnic ambarcațiunile. Drumurile spre porturi sunt asfaltate și rapide. Există și o potecă terestră grea care coboară prin munți spre Kleftiko, dar necesită o mașină 4x4 și o drumeție lungă, periculoasă, nemarcată prin soare.",
-    echipament: [{ titlu: "Mască și tub de snorkeling obligatorii", text: "Vei înota direct prin peșterile de pirați și pe sub arcadele mari din piatră; vizibilitatea sub apă este absolut uluitoare." }, { titlu: "Cameră de acțiune waterproof", text: "Peisajele subacvatice și stâncile albe oferă cadre geniale pe care vei dori cu siguranță să le filmezi." }, { titlu: "Cremă de soare rezistentă la apă", text: "Vei petrece mult timp înotând în larg direct de pe barcă." }],
-    preturi: "O excursie completă de o zi cu barca sau catamaranul către Kleftiko (care include adesea prânzul la bord, băuturi și echipament de snorkeling inclus) costă între 40 - 70 EUR de persoană, în funcție de tipul de ambarcațiune ales. Jos, în complexul de peșteri, nu există nicio unitate comercială terestră.",
-    turisti: [{ titlu: "Experiența numărul unu în Milos", text: "Toate recenziile afirmă la unison că o vacanță în Milos nu este completă fără un tur cu barca la Kleftiko." }, { titlu: "Înotul prin peșteri este magic", text: "Turiștii sunt fascinați de modul în care lumina soarelui pătrunde prin deschizăturile stâncilor, schimbând culoarea apei sub apă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Alege un tur cu o barcă mai mică sau un velier mic care pleacă dimineața devreme, în jur de ora 08:30. Ambarcațiunile mai mici pot intra mult mai adânc în interiorul peșterilor strâmte, permițându-ți să explorezi locuri unde vapoarele mari de croazieră nu au acces." }],
-  },
-  "Plaja Tsigrado Milos": {
-    scurt: "Tsigrado este probabil cea mai aventuroasă, izolată și comentată plajă din Milos. Este un golfuleț minuscul de un farmec sălbatic incredibil, strâns între pereți de stâncă vulcanică roșiatică înalți și abrupți. Nisipul de jos este fin și alb, iar apa este calmă, mică la mal și are o nuanță de smarald curat. Ceea ce o face faimoasă în toată lumea este accesul: pentru a ajunge pe nisip, trebuie să cobori printr-o crăpătură strâmtă în stâncă, folosind o scară veche din lemn și o sfoară ancorată în piatră.",
-    cumAjungi: "Plaja se află pe coasta de sud a insulei. Nu există mijloace de transport în comun care să ajungă în această zonă stâncoasă și retrasă. O mașină închiriată este esențială. Drumul final este parțial asfaltat și parțial din pământ bătătorit, ușor de parcurs dacă conduci încet. Poți lăsa mașina complet gratuit în parcarea mare de pământ situată chiar pe platoul de deasupra stâncilor. De acolo, mergi un minut până la buza prăpastiei unde începe scara.",
-    echipament: [{ titlu: "Adidași sau încălțăminte cu talpă aderentă", text: "Coborârea pe scară și pe sfoară prin pasajul îngust plin de nisip alunecos este periculoasă în șlapi simpli de plajă." }, { titlu: "Rucsac în loc de genți de mână", text: "Este vital să ai ambele mâini libere pentru a te ține bine de sfoară și de treptele scării în timpul coborârii." }, { titlu: "Umbrelă proprie și apă", text: "Golful este complet sălbatic, umbra naturală apare doar târziu după-amiază sub stâncă și nu există facilități comerciale jos." }],
-    preturi: "Accesul pe plajă și parcarea de sus sunt complet libere și gratuite. Nu există comercianți jos pe nisip. Pentru mâncare sau băuturi, cel mai simplu este să mergi cu mașina două minute până la plaja vecină amenajată, Firiplaka, unde funcționează un beach bar modern.",
-    turisti: [{ titlu: "Nu este pentru oricine", text: "Turiștii avertizează des că persoanele care suferă de vertij, claustrofobie sau familiile cu copii foarte mici ar trebui să evite coborârea, plaja putând fi admirată în siguranță de sus, de pe marginea stâncii." }, { titlu: "O aventură de neuitat", text: "Cei care coboară laudă vibe-ul de „plajă secretă\" și frumusețea apei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește dimineața devreme, în jur de ora 08:30 - 09:00. Vei coborî scara în siguranță, fără a fi nevoit să aștepți la rând în pasajul strâmt (unde se creează blocaje când alți turiști încearcă să urce), și vei prinde micul petec de nisip complet liber." }],
-  },
-  "Plaja Firiplaka Milos": {
-    scurt: "Firiplaka este una dintre cele mai lungi, confortabile și spectaculoase plaje de pe coasta sudică a insulei Milos. Spre deosebire de golfulețele minuscule din jur, aceasta oferă o fâșie lată de nisip fin, argintiu, flancată maiestuos de stânci vulcanice uriașe, stratificate în nuanțe calde de galben, roz și ocru. Apa mării este caldă, de o transparență rară și are o nuanță turcoaz deschis, intrarea în marea Libiei fiind lină și perfectă pentru relaxare completă.",
-    cumAjungi: "Plaja se află poziționată exact lângă plaja Tsigrado, în sudul insulei. Transportul public este rar și are stații destul de departe de mal. Mașina închiriată îți oferă un confort deplin. Drumul auto secundar este din pământ bătătorit în ultima sa porțiune, plat și ușor de parcurs. Parcarea este gratuită, pe marginea drumului de deasupra plajei, dar din cauza popularității sale mari, locurile apropiate de cărarea de acces se ocupă rapid după ora 10:00. Coborârea spre plajă se face pe o potecă ușoară de pământ.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este curat, acoperit în totalitate de un nisip fin și foarte plăcut la atingere, riscul de a te înțepa fiind zero." }, { titlu: "Ochelari de soare buni", text: "Stâncile vulcanice colorate reflectă lumina puternică a amiezii direct pe nisip." }, { titlu: "Aparatul foto", text: "O stâncă uriașă prăbușită în mare chiar în mijlocul plajei oferă un decor superb pentru fotografii inedite." }],
-    preturi: "Plaja este parțial amenajată. Un set de două șezlonguri cu umbrelă în zona administrată de beach barul ecologic costă în jur de 15 - 20 EUR pe zi. Un frappe costă 4 EUR, o apă rece este 1,50 EUR, iar gustările rapide (sandwich-uri, salate) sunt în jur de 7 - 9 EUR. Restul plajei este complet liber și gratuit pentru prosoape.",
-    turisti: [{ titlu: "Cea mai confortabilă plajă din sud", text: "Toate vizitatorii laudă echilibrul perfect dintre peisajul vulcanic sălbatic și prezența șezlongurilor confortabile." }, { titlu: "Perfectă pentru familii", text: "Intrarea lină în marea liniștită este un punct forte menționat des de părinți." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:15 dimineața pentru a prinde loc de parcare aproape de potecă. Dacă vrei mai multă intimitate, mergi pe jos spre capătul din dreapta al plajei (trecând de stânca uriașă din apă). Acolo zona este complet sălbatică, liniștită și ferită de muzica barului." }],
-  },
-  "Plaja Provatas Milos": {
-    scurt: "Plaja Provatas este o destinație fermecătoare și extrem de primitoare, situată într-un golf larg de pe coasta de sud a insulei. Este renumită pe Milos sub numele de „Plaja de Aur\", datorită nisipului său fin care are o culoare roșiatică-aurie deosebit de caldă. Apa mării este curată, liniștită, ferită de valurile mari din nord și are o adâncime foarte mică pe o distanță generoasă în larg. Este considerată cea mai accesibilă, confortabilă și potrivită plajă pentru familii cu copii mici de pe insulă.",
-    cumAjungi: "Provatas se află la aproximativ 13 km sud de portul principal Adamas. Șoseaua principală care traversează insula spre sud este complet asfaltată, modernă și foarte rapidă de parcurs cu mașina. O mașină închiriată îți asigură un confort deplin, scutindu-te de orarul rigid al autobuzelor sezoniere. Parcarea de jos este publică, spațioasă, amenajată pe pământ chiar în spatele plajei și este complet gratuită, oferind un acces auto extrem de facil, la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Jucării de nisip pentru copii", text: "Nisipul auriu-roșiatic este foarte fin, curat și maleabil, fiind ideal pentru cei mici." }, { titlu: "Fără încălțăminte specială", text: "Fundul golfului este o masă continuă de nisip fin, moale și complet lipsit de pietre sau arici de mare." }, { titlu: "Cremă solară cu protecție mare", text: "Apa fiind mică și caldă, copiii vor tinde să petreacă ore în șir în mare fără să simtă arșița." }],
-    preturi: "Plaja este foarte bine organizată. Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Chiar deasupra plajei, pe deal, funcționează câteva taverne tradiționale excelente. Un frappe costă 3,50 EUR, iar un prânz complet bazat pe preparate cretane/cicladeze sau pește proaspăt costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Cea mai sigură plajă pentru copii", text: "Toate familiile laudă în recenzii faptul că marea rămâne mică și caldă ca într-o piscină naturală pe o distanță lungă în larg." }, { titlu: "Acces extrem de simplu", text: "Spre deosebire de Tsigrado sau Sarakiniko, turiștii apreciază că aici nu ai de coborât scări sau stânci grele, totul fiind la nivelul drumului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a alege cele mai bune șezlonguri din primul rând. Golful fiind orientat spre sud, este o oprire strategică excelentă în zilele în care vântul de nord (Meltemi) bate puternic pe insulă și creează valuri mari pe plajele din nord (cum ar fi Sarakiniko), în Provatas marea rămânând complet liniștită." }],
-  },
-  "Plaja Pollonia Milos": {
-    scurt: "Plaja Pollonia este plaja urbană a încântătorului sat pescăresc situat în colțul de nord-est al insulei Milos. Este un golf liniștit, în formă de semilună, acoperit cu nisip fin și auriu, umbrit natural de un rând generos de tamariști. Apa mării este caldă, extrem de curată și foarte mică la mal, fiind protejată de valurile mari de o peninsulă stâncoasă. Atmosfera de aici este una tipic cicladică, relaxantă și boemă, unde bărcile din lemn își leagănă lent siluetele la ancoră.",
-    cumAjungi: "Pollonia se află la aproximativ 10 km de portul principal Adamas. Deși există o linie de autobuz local, mașina închiriată îți oferă un confort sporit și libertatea de a nu depinde de un orar rigid în timpul serii. Drumul este complet asfaltat, modern și foarte simplu. Un avantaj uriaș este parcarea: există un spațiu public imens, amenajat gratuit pe pământ chiar la intrarea în sat, la doar două minute de mers pe jos de nisip. Din portul Pollonia poți lua feribotul scurt pentru a vizita insula vecină, Kimolos.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării în interiorul golfului este integral format din nisip fin, curat și extrem de moale." }, { titlu: "Rogojină sau prosop mare", text: "Pădurea de tamariști de pe plajă oferă o umbră naturală densă și gratuită, perfectă pentru a sta direct pe sol." }, { titlu: "Jucării de nisip", text: "Este o locație ideală pentru copii, nisipul fiind ideal pentru activități la buza apei." }],
-    preturi: "Plaja are o porțiune mică amenajată cu șezlonguri, unde un set costă în jur de 12 - 15 EUR pe zi. Satul este renumit pentru unele dintre cele mai bune taverne cu specific pescăresc de pe insulă, situate chiar de-a lungul falezei. Un frappe costă 3,50 EUR, o porție de caracatiță la grătar este în jur de 14 - 16 EUR, iar o masă completă pentru două persoane ajunge la 40 EUR.",
-    turisti: [{ titlu: "Totul la un pas distanță", text: "Vizitatorii apreciază enorm proximitatea față de brutării, supermarketuri, locuri de joacă și restaurante excelente." }, { titlu: "Liniște și siguranță", text: "Toate familiile laudă lipsa valurilor mari și faptul că poți savura cina în timp ce copiii se joacă pe nisip, la câțiva metri distanță." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi în Pollonia pentru cină. Golful oferă o atmosferă incredibil de caldă și pitorească la apus, când luminile tavernelor se aprind pe malul apei, reflectându-se în marea liniștită." }],
-  },
-  "Plaja Achivadolimni Milos": {
-    scurt: "Achivadolimni este cea mai lungă plajă cu nisip de pe insulă, situată chiar în interiorul golfului uriaș natural din Milos. Numele său provine de la „clame\" și „lac\", datorită unui lac mic din apropiere plin de scoici. Este o fâșie imensă de nisip fin, de o culoare deschisă, mângâiată de o mare curată, care variază de la albastru deschis la turcoaz. Datorită dimensiunilor sale impresionante, plaja oferă o senzație rară de spațiu deschis și libertate totală, fiind ocolită de zgomotul marilor aglomerații comerciale.",
-    cumAjungi: "Plaja este situată la aproximativ 6 km sud de Adamas, pe drumul care duce spre aeroport. Transportul public are stații pe șoseaua principală de deasupra dunelor, dar o mașină închiriată este mult mai confortabilă pentru a transporta umbrelele și gențile frigorifice. Drumul este complet asfaltat și foarte rapid. Parcarea este uriașă, gratuită și la liber direct pe marginea drumului secundar care urmărește linia plajei, fiind la doar un minut de mers pe jos de apă.",
-    echipament: [{ titlu: "Umbrelă proprie și cort de plajă", text: "Cea mai mare parte a acestei plaje imense este complet sălbatică și neamenajată, iar pinii sunt rari în zona dunelor." }, { titlu: "Echipament de windsurfing sau kitesurfing", text: "În zilele în care vântul din nord se activează, golful deschis din Achivadolimni oferă condiții excelente pe insulă pentru aceste sporturi." }, { titlu: "Fără aqua shoes", text: "Intrarea în mare este foarte lină, exclusiv pe un nisip moale și curat, liber de pietre." }],
-    preturi: "Accesul pe plajă și parcarea sunt gratuite. În sezon, există o mică porțiune amenajată de un camping din apropiere, unde un set de șezlonguri costă în jur de 10 - 12 EUR. O cantină mobilă vinde apă rece și frappe cu 3 - 4 EUR. Pentru o masă caldă completă, cel mai bine este să conduci 5 minute înapoi spre portul Adamas.",
-    turisti: [{ titlu: "Spațiu nelimitat", text: "Turiștii sunt încântați că nu trebuie să stea așezați aproape de alții, plaja fiind ideală pentru plimbări lungi pe la buza apei." }, { titlu: "Intrare lină", text: "Este lăudată de familii pentru adâncimea mică a apei pe o distanță bună de la mal." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în zilele în care prognoza anunță vânt slab. Golful va fi liniștit, plat ca o oglindă, iar apa va avea o culoare turcoaz superbă. Partea de nord a plajei este destul de apreciată de pasionații de windsurf datorită brizei constante de după-amiază." }],
-  },
-  "Plaja Papafragas Milos": {
-    scurt: "Papafragas este una dintre cele mai spectaculoase, ciudate și unice formațiuni geologice de pe insula Milos. Nu este o plajă clasică, ci o mică bandă de nisip ascunsă la capătul unui canal îngust de apă, săpat natural în stânci vulcanice înalte și abrupte. Locul seamănă cu o piscină rectangulară secretă care comunică cu marea deschisă printr-o arcadă superbă din piatră. Apa își schimbă nuanțele de la smarald la albastru închis în funcție de lumină, oferind un peisaj de o frumusețe sălbatică uluitoare.",
-    cumAjungi: "Locația se află pe coasta de nord a insulei, pe șoseaua care leagă Adamas de Pollonia. Nu există linii de transport public dedicate acestei atracții naturale izolate, așa că mașina este obligatorie. Traseul este complet asfaltat. Deasupra stâncilor există o parcare mică de pământ unde poți lăsa vehiculul complet gratuit. Atenție mare: accesul de sus până la plaja mică de jos se face coborând pe o cărare extrem de îngustă, abruptă și stâncoasă tăiată în peretele versantului, care nu are balustradă și poate fi periculoasă.",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași)", text: "Coborârea pe cărarea abruptă și alunecoasă este complet interzisă în șlapi simpli de plajă." }, { titlu: "Rucsac în loc de genți", text: "Este vital să ai mâinile libere pentru a te sprijini de stânci în timpul coborârii." }, { titlu: "Mască de snorkeling", text: "Canalul îngust din piatră continuă sub apă cu peșteri marine fantastice și arcade de explorat." }],
-    preturi: "Vizitarea sitului natural și parcarea sunt complet libere și gratuite. Jos în canal nu există nicio amenajare, magazin sau chioșc, așa că costul tău direct pe plajă va fi zero. Pentru gustări sau băuturi, poți conduce 3 minute până în stațiunea Pollonia.",
-    turisti: [{ titlu: "Un loc de o frumusețe dramatică", text: "Toate recenziile laudă peisajul spectaculos și forma unică a canalului stâncos, considerat o oprire obligatorie pentru poze de revistă." }, { titlu: "Accesul final cere atenție", text: "Mulți turiști avertizează că poteca de coborâre este periculoasă și recomandă să admirați locul în siguranță de sus, de pe marginea stâncii, dacă suferiți de vertij." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește dimineața foarte devreme, în jur de ora 08:30. Spațiul de pe micul petec de nisip de jos este extrem de strâmt (încap doar câteva persoane), iar venind devreme poți prinde locul liber. De asemenea, evită să înoți în afara arcadei de piatră spre marea deschisă dacă prinzi o zi cu vânt din nord, deoarece curenții din canal pot deveni periculoși." }],
-  },
-  "Plaja Alogomandra Milos": {
-    scurt: "Alogomandra este o altă plajă spectaculoasă și atipică din nordul insulei Milos, renumită pentru relieful său stâncos inedit. Numele său înseamnă „țarcul cailor\", deoarece golful mic este protejat natural de o stâncă uriașă în formă de arcadă sau peșteră deschisă, care seamănă cu un adăpost protector. Plaja are o fâșie fină de nisip alb, fin, iar apa mării are o nuanță turcoaz-deschis incredibil de transparentă și curată, oferind un cadru intim și foarte relaxant.",
-    cumAjungi: "Plaja se află pe coasta de nord, în apropierea localității Agios Konstantinos. Transportul public nu are stații aproape de acest golf ascuns, făcând mașina închiriată absolut necesară. Drumul principal este asfaltat, iar ultima porțiune scurtă este un drum de pământ plat și ușor de parcurs. Parcarea este gratuită, pe pământ chiar deasupra plajei. De acolo, cobori pe jos un minut pe o cărare ușoară de nisip.",
-    echipament: [{ titlu: "Fără umbrelă dacă prinzi loc sub stâncă", text: "Marea stâncă în formă de peșteră deschisă oferă o umbră naturală densă și răcoroasă pe tot parcursul zilei direct pe nisip." }, { titlu: "Lada frigorifică portabilă", text: "Plaja este complet sălbatică și neamenajată, fără baruri sau șezlonguri." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de limpede, relieful stâncos din jurul golfului este foarte frumos de explorat sub apă." }],
-    preturi: "Fiind o plajă 100% publică și liberă, accesul și parcarea sunt zero. Nu există comercianți jos pe nisip, așa că toate cheltuielile tale vor fi nule aici. Pentru un prânz cald, poți conduce 5 minute până în Adamas sau Pollonia.",
-    turisti: [{ titlu: "Umbra naturală este perfectă", text: "Vizitatorii laudă formațiunea stâncoasă care te protejează de soarele puternic al amiezii fără a mai avea nevoie de umbrelă de plastic." }, { titlu: "Peisaj minunat pentru poze", text: "Contrastul dintre nisipul alb și forma de arcă a stâncii este foarte apreciat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:00 în zilele în care vântul bate dinspre sud. Fiind situată în nord, plaja este perfect protejată în aceste zile, marea rămânând plată ca o piscină. Evită zilele cu vânt puternic de nord (Meltemi), deoarece valurile pot acoperi complet fâșia îngustă de nisip de sub stâncă." }],
-  },
-  "Plaja Firopotamos Milos": {
-    scurt: "Firopotamos este una dintre cele mai pitorești, autentice și fermecătoare locații de pe insula Milos. Este practic o combinație unică între un golf mic cu apă de un turcoaz electric strălucitor și un sat tradițional de pescari cu case albe numite syrmata (locuințe vechi săpate în stâncă, ale căror uși colorate de la parter servesc ca garaj pentru bărci). Plaja este formată din nisip fin amestecat cu pietricele albe, fiind un loc plin de culoare și autenticitate cicladică.",
-    cumAjungi: "Plaja se află în nordul insulei, la doar câteva minute de mers cu mașina de capitala Plaka sau de portul Adamas. Drumul este asfaltat complet, dar este foarte îngust și coboară în pante strânse spre mare. Transportul public este inexistent pe această rută secundară, așa că o mașină este esențială. Parcarea de jos este pe pământ, gratuită, situată chiar la intrarea în satul de pescari, dar devine aglomerată rapid în iulie și august.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Deși pe mal este mult nisip curat, la intrarea în marea cristalină pot apărea câteva pietre plate." }, { titlu: "Mască de snorkeling", text: "Golful este înconjurat de stânci și ruine vechi scufundate parțial pe margini, fiind un loc minunat pentru a observa fauna marină." }, { titlu: "Aparatul foto", text: "Casele pescărești cu uși albastre și verzi chiar la buza apei și bisericuța albă de pe stânci oferă un decor de vis pentru poze." }],
-    preturi: "În plin sezon, pe plajă funcționează o mică zonă amenajată cu șezlonguri de un beach bar mobil, unde un set costă în jur de 15 EUR. Un frappe costă 4 EUR, iar o băutură rece este în jur de 3,50 EUR. Pentru o masă completă la tavernă, cel mai simplu este să urci cu mașina în satul istoric Plaka.",
-    turisti: [{ titlu: "Un loc rupt dintr-o carte poștală", text: "Toți vizitatorii sunt cuceriți de frumusețea caselor tradiționale de pescari și de transparența uluitoare a apei din golf." }, { titlu: "Atmosferă relaxantă", text: "Recenziile laudă aerul autentic și intim al locului, ferit de marile hoteluri." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jur de ora 09:15 dimineața. Vei prinde loc de parcare lejer și te vei putea plimba pe jos printre casele syrmata ale pescarilor și până sus la ruinele vechii biserici de pe promontoriu, înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Mandrakia Milos": {
-    scurt: "Mandrakia este, înainte de toate, un sat tradițional de pescari de o frumusețe rară, faimos pentru casele sale de tip syrmata---garaje pentru bărci săpate direct în stânca vulcanică și decorate cu uși vopsite în culori aprinse. Plaja propriu-zisă este mică, intimă și formată din pietricele amestecate cu nisip, însă atracția principală este golful protejat cu ape de un turcoaz lăptos. Este un loc pitoresc și plin de farmec autentic cicladic.",
-    cumAjungi: "Satul se află pe coasta de nord, la doar 4 km de portul Adamas. Deși distanța este mică, nu există transport în comun fiabil către acest punct ascuns. Cu mașina închiriată ajungi în doar 5-10 minute, drumul fiind complet asfaltat, dar îngust și cu pante ușoare. Există o parcare gratuită pe pământ chiar la intrarea în sat. Mașina îți dă libertatea de a lăsa lucrurile grele în portbagaj și de a explora ulițele la pas.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Intrarea în marea cristalină se face peste pietre și stânci plate destul de alunecoase." }, { titlu: "Aparat foto sau telefonul bine încărcat", text: "Contrastul dintre albul caselor, culorile vii ale ușilor și albastrul mării oferă unele dintre cele mai instagramabile cadre din Grecia." }, { titlu: "Mască de snorkeling", text: "În jurul digului din piatră poți vedea o mulțime de pești mici ascunși printre alge." }],
-    preturi: "Plaja este complet liberă și nu există șezlonguri de închiriat. Satul găzduiește una dintre cele mai renumite taverne de pe insulă (Medusa), unde clienții stau la coadă pentru fructe de mare. Un frappe costă 3,50 EUR, o porție de caracatiță marinată este în jur de 14 - 16 EUR, iar o masă completă te va costa în jur de 20 - 25 EUR de persoană.",
-    turisti: [{ titlu: "O carte poștală vie", text: "Toți vizitatorii laudă arhitectura unică și calmul locului înainte de ora prânzului." }, { titlu: "Taverna este de vis", text: "Majoritatea recenziilor menționează că mâncarea de la Medusa merită din plin timpul de așteptare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:00. Vei prinde satul în liniște totală, lumina perfectă pentru poze fără umbre dure și îți poți rezerva un loc la tavernă înainte de sosirea valurilor mari de turiști." }],
-  },
-  "Plaja Plathiena Milos": {
-    scurt: "Plathiena este un golf larg și izolat situat în nordul insulei, renumit pentru atmosfera sa extrem de relaxantă și pașnică. Este o plajă acoperită cu un nisip fin, moale și auriu, flancată de dealuri stâncoase joase care o protejează parțial de curenți. Apa mării este de o claritate uluitoare, are nuanțe superbe de turcoaz deschis și o intrare foarte lină, oferind un refugiu perfect pentru cei care vor să evite plajele aglomerate din sud.",
-    cumAjungi: "Plaja se află la nord de capitala Plaka. Nu există rute de autobuz care să coboare până în acest golf, așa că mașina închiriată este obligatorie. Drumul de acces este asfaltat în cea mai mare parte, dar devine un drum de pământ îngust și ușor șerpuitor în ultima porțiune. Parcarea este gratuită, spațioasă, amenajată pe pământ chiar în spatele plajei, oferind un acces auto facil la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul golfului este o masă continuă de nisip moale și curat, liber de pietre mari." }, { titlu: "Umbrelă proprie (opțional)", text: "Deși există o zonă amenajată cu șezlonguri, cea mai mare parte a plajei este complet liberă pentru prosoape." }, { titlu: "Ochelari de soare de calitate", text: "Orientarea golfului face ca lumina pe nisipul deschis să fie foarte puternică la amiază." }],
-    preturi: "În zona amenajată, un set de două șezlonguri cu umbrelă costă în jur de 15 EUR pe zi. Există o singură cantină/beach bar pe plajă în sezon de unde poți cumpăra un frappe (4 EUR), o apă mare (1,50 EUR) sau un sandwich rapid (6 - 8 EUR).",
-    turisti: [{ titlu: "Oaza de liniște din nord", text: "Vizitatorii o consideră o opțiune excelentă pentru relaxare, lipsită de muzica stridentă a marilor cluburi." }, { titlu: "Intrare lină", text: "Familiile apreciază că poți merge câțiva metri buni în larg și apa rămâne mică." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Plathiena este superbă în a doua parte a zilei. Fiind orientată spre nord-vest, oferă un apus de soare curat și spectaculos. Evită totuși plaja dacă prognoza anunță vânt puternic de nord (Meltemi), deoarece golful devine agitat și se pot forma valuri mari." }],
-  },
-  "Plaja Mytakas Milos": {
-    scurt: "Mytakas este o plajă pitorească și adesea trecută cu vederea, situată pe coasta de nord a insulei, oferind o incursiune în viața tradițională din Milos. Plaja este o fâșie lungă de nisip amestecat cu pietricele fine, poziționată lângă un mic cătun de pescari cu case syrmata. Apa este mică la mal și are o nuanță superbă de smarald deschis, golful fiind adăpostit natural în zilele calme, dând senzația unei piscine private secrete.",
-    cumAjungi: "Plaja se află între Adamas și Pollonia. Transportul public are stație doar la drumul principal de deasupra coastei, lăsându-te cu o coborâre obositoare pe jos. Cu o mașină închiriată ajungi rapid și poți coborî pe drumul secundar direct până în spatele plajei. Parcarea este gratuită, direct pe marginea drumului de pământ de lângă măslini.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip fin, la intrarea în marea cristalină pot apărea câteva pietre plate și stânci subacvatice." }, { titlu: "Lada frigorifică portabilă", text: "Organizarea comercială este minimă sau inexistentă în funcție de lună, așa că e vital să ai apă rece și gustări la tine." }, { titlu: "Mască de snorkeling", text: "Zona stâncoasă din jurul caselor de pescari ascunde mulți pești mici și canale interesante." }],
-    preturi: "Fiind o plajă preponderent liberă, costul este zero. În plin sezon, un mic chioșc mobil poate oferi băuturi reci și frappe cu 3 - 4 EUR. Pentru un prânz serios la tavernă, cel mai simplu este să conduci 5 minute până în Pollonia.",
-    turisti: [{ titlu: "Farmec rustic neschimbat", text: "Turiștii apreciază liniștea deplină a locului și peisajul autentic oferit de bărcile pescărești ancorate la mal." }, { titlu: "Excelentă pentru relaxare", text: "Este foarte lăudată de cei care vor să pună prosopul pe nisip departe de zonele comerciale masive." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este liniștit atunci, iar dacă mergi în partea stângă a plajei, vei găsi mici zone de nisip perfect protejate de pini, ideale pentru o lectură la umbră." }],
-  },
-  "Plaja Agia Kyriaki Milos": {
-    scurt: "Agia Kyriaki este una dintre cele mai spectaculoase și întinse plaje de pe coasta de sud a insulei Milos. Format dintr-un amestec de nisip alb fin și pietricele mărunte, lucioase, acest golf larg te va uimi prin contrastul cromatic: stâncile vulcanice din spate au nuanțe de roșu și galben, în timp ce marea Libiei are o culoare turcoaz-electric extrem de transparentă. Este o plajă complet organizată, lungă și aerisită, ideală pentru o zi completă de confort.",
-    cumAjungi: "Plaja se află la aproximativ 12 km sud-est de portul Adamas. Drumul care traversează insula este complet asfaltat, dar îngust și cu pante ușoare spre final. Autobuzele circulă destul de rar pe această rută secundară, făcând mașina închiriată cea mai bună soluție. Parcarea de jos este publică, uriașă, amenajată pe pământ direct în spatele plajei și complet gratuită, oferind un acces auto extrem de confortabil.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea adâncă pietricelele mici albe pot fi deranjante la mersul desculț." }, { titlu: "Mască de snorkeling", text: "Apa este incredibil de curată, iar vizibilitatea depășește adesea 15 metri de-a lungul stâncilor de pe margine." }, { titlu: "Cremă solară cu protecție mare", text: "Stâncile deschise la culoare reflectă puternic lumina puternică a amiezii." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Pe plajă funcționează baruri moderne și o tavernă tradițională excelentă. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar o cină completă bazată pe fructe de mare proaspete costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Turiștii apreciază curățenia exemplară a plajei, prezența dușurilor, a vestiarelor și a salvamarilor." }, { titlu: "Spațiu imens", text: "Datorită lungimii sale, plaja oferă porțiuni mari complet libere pentru cei care vor să stea pe prosop în liniște." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este foarte liniștit în prima parte a zilei. Fiind orientată spre sud, Agiofili este un adăpost strategic excelent în zilele în care vântul de nord (Meltemi) bate puternic pe insulă și face marea agitată pe plajele din nord." }],
-  },
-  "Plaja Toroni Sithonia": {
-    scurt: "Plaja Toroni este una dintre cele mai spectaculoase fâșii de coastă din sud-vestul Sithoniei. Întinsă pe aproape 2 kilometri, această plajă lată se remarcă prin nisipul său auriu cu granulație mare (care nu se lipește de piele) și prin apa de o claritate ireală. Ceea ce o face cu adevărat deosebită este îmbinarea dintre frumusețea naturală și istorie: chiar în capătul plajei, pe un promontoriu stâncos, se află ruinele vechii cetăți bizantine Likythos, oferind un fundal istoric fascinant.",
-    cumAjungi: "Toroni se află în sudul brațului Sithonia. Drumul principal ce înconjoară peninsula este complet asfaltat, modern și oferă peisaje superbe. O mașină închiriată este cea mai bună opțiune, permițându-ți să parcurgi distanța considerabilă din nordul brațului rapid și confortabil. Parcarea este extrem de facilă și complet gratuită: drumul local trece chiar prin spatele plajei, existând spațiu din belșug pentru a lăsa mașina direct sub copaci, la câțiva pași de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă în zonele cu nisip", text: "Fundul mării este acoperit de un nisip curat și plăcut, deși marea se adâncește destul de rapid (după 4-5 pași)." }, { titlu: "Mască de snorkeling", text: "În apropierea promontoriului stâncos unde se află ruinele cetății, apa ascunde structuri antice scufundate și mulți pești." }, { titlu: "Incalțăminte lejeră de plimbare", text: "Merită să urci pe jos 5 minute până la ruinele cetății Likythos pentru o vedere panoramică superbă asupra întregului golf." }],
-    preturi: "Sistemul este cel clasic: majoritatea beach barurilor oferă șezlongurile gratuit în baza unei consumații minime rezonabile (în jur de 10 - 15 EUR per set). Un frappe costă 3,50 EUR, un gyros la tavernele din spatele plajei este 4 EUR, iar o masă completă pentru două persoane ajunge la 30 - 35 EUR.",
-    turisti: [{ titlu: "Nisipul ideal", text: "Vizitatorii laudă granulația nisipului, menționând că este perfect deoarece se scutură foarte ușor și nu se lipește de haine sau prosoape." }, { titlu: "Liniște chiar și în sezon", text: "Plaja fiind foarte lungă, oferă mereu spațiu generos pentru toată lumea, fără senzația de aglomerație." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până la apus. Toroni este faimoasă pentru unul dintre cele mai curate și spectaculoase apusuri de soare de pe braț, soarele coborând direct în mare și oferind un spectacol de culori calde deasupra ruinelor bizantine." }],
-  },
-  "Plaja Vourvourou Sithonia": {
-    scurt: "Plaja Vourvourou este de fapt o succesiune de fâșii înguste de nisip fin situate în fața uneia dintre cele mai pitorești așezări din Sithonia. Ceea ce face acest loc complet unic în Halkidiki este arhipelagul de 9 insule mici verzi aflate chiar în larg (dintre care cea mai mare este insula Diaporos). Aceste insule blochează complet valurile mari din larg, transformând marea într-o lagună uriașă cu ape calde, incredibil de liniștite și mici ca adâncime, perfecte pentru relaxare totală.",
-    cumAjungi: "Vourvourou se află pe coasta de est a Sithoniei. Mașina închiriată este absolut necesară pentru a parcurge drumul principal asfaltat și pentru a te deplasa între diferitele puncte de acces ascunse printre proprietățile private și vilele de pe malul mării. Parcarea este gratuită, pe pământ direct pe străduțele secundare care coboară spre apă sau în zonele verzi din apropierea porturilor de bărci.",
-    echipament: [{ titlu: "Buget pentru închiriat bărci cu motor", text: "Aceasta este activitatea numărul unu în Vourvourou! Poți închiria o mică barcă cu motor (fără a avea nevoie de permis) pentru a traversa marea liniștită spre insula Diaporos și a descoperi plaje ascunse uluitoare (cum ar fi Blue Lagoon)." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit de un nisip fin, moale și curat, apa rămânând mică pe o distanță uriașă în larg." }, { titlu: "Cremă solară din belșug", text: "Marea fiind plată ca o oglindă, reflexia soarelui este foarte puternică în timpul plimbărilor cu barca." }],
-    preturi: "Plaja din fața satului este în mare parte liberă. Închirierea unei bărci mici cu motor pentru o zi completă costă între 60 - 100 EUR (plus combustibilul consumat, în jur de 15 - 20 EUR). La tavernele excelente din localitate, un prânz cu specific grecesc costă în jur de 12 - 15 EUR de persoană, iar un frappe este 3,50 EUR.",
-    turisti: [{ titlu: "O experiență de neuitat cu barca", text: "Toate recenziile recomandă cu entuziasm închirierea unei bărci pentru a explora insula Diaporos, experiența fiind considerată de top pentru o vacanță în Halkidiki." }, { titlu: "Ideala pentru copii", text: "Lipsa totală a valurilor și apa mică fac din acest loc o zonă extrem de sigură pentru cei mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rezervă o barcă cu motor dimineața devreme, în jur de ora 08:30. Vei parcurge procedurile de închiriere rapid, vei primi instruajul de siguranță și vei ajunge în faimoasa lagună Blue Lagoon de pe insula Diaporos înaintea tuturor, bucurându-te de o apă de un turcoaz nepământean în liniște deplină." }],
-  },
-  "Plaja Voula Riviera Ateniană": {
-    scurt: "Plaja Voula (cunoscută des și sub numele de Akti Voulas) este una dintre cele mai accesibile, moderne și bine organizate plaje urbane de pe Riviera Atenei. Situată la doar câțiva kilometri de centrul capitalei, plaja oferă o fâșie lată de nisip fin, auriu, spălată de o mare curată, cu o intrare destul de lină. Este o destinație cosmopolită, extrem de animată, tivită de beach baruri mari, terenuri de sport și facilități excelente, fiind locul ideal unde localnicii și turiștii deopotrivă vin să scape de arșița orașului.",
-    cumAjungi: "Voula se află în sudul Atenei, la aproximativ 18 km de Piața Syntagma. Deși este una dintre puținele plaje conectate la linia de tramvai urban, drumul cu transportul în comun poate fi lung și aglomerat în weekend. O mașină închiriată îți oferă un confort total, permițându-ți să transporți bagajele de plajă fără efort și să explorezi și alte golfuri mai îndepărtate de pe coastă. Complexul dispune de o parcare proprie mare, amenajată pe pământ, parțial la umbră, unde accesul este de regulă gratuit sau inclus în biletul de intrare pe plajă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit aproape în totalitate de un nisip fin și foarte curat, riscul de a te înțepa fiind zero." }, { titlu: "Rachete de plajă sau minge de volei", text: "Plaja este renumită pentru facilitățile sale sportive, având adesea terenuri de volei și tenis pe nisip amenajate impecabil." }, { titlu: "Cremă solară cu factor mare", text: "Zona fiind deschisă, soarele arde puternic de-a lungul întregii zile." }],
-    preturi: "Fiind o plajă organizată cu facilități premium, intrarea în complex se face pe bază de bilet (costă în jur de 6 - 8 EUR de persoană în timpul săptămânii și poate ajunge la 10 EUR în weekend). Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR, în funcție de barul ales. Un frappe costă 4 EUR, un cocktail este în jur de 10 EUR, iar gustările rapide sunt 8 - 10 EUR.",
-    turisti: [{ titlu: "Organizare de nota 10", text: "Toată lumea laudă prezența salvamarilor, a dușurilor curate, a vestiarelor și a zonelor verzi frumos amenajate chiar lângă nisip." }, { titlu: "Se aglomerează în weekend", text: "Turiștii notează că sâmbăta și duminica plaja devine destul de plină, fiind asaltată de localnicii din Atena." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața, mai ales în weekend. Vei evita aglomerația de la casele de bilete de la intrare, vei prinde cele mai bune locuri de parcare la umbră și șezlonguri aproape de mare, când apa este complet liniștită ca o piscină." }],
-  },
-  "Plaja Varkiza Riviera Ateniană": {
-    scurt: "Plaja Varkiza (cunoscută și sub numele de Yabanaki Beach) este o altă destinație de top de pe Riviera Ateniană, organizată sub forma unui parc acvatic și cultural uriaș la malul mării. Este o plajă foarte lungă și lată, acoperită cu un nisip fin și auriu, situată într-un golf perfect adăpostit de vânturile puternice. Apa este mică la mal, curată și foarte caldă, fiind considerată una dintre cele mai sigure și complete plaje pentru familii din întreaga regiune a Atticăi.",
-    cumAjungi: "Varkiza se află la aproximativ 27 km sud de centrul Atenei. Distanța considerabilă față de oraș face ca transportul public să fie destul de rar și obositor. O mașină închiriată este cea mai bună opțiune, drumul de coastă (șoseaua Leoforos Poseidonos) fiind complet asfaltat, modern și oferind peisaje marine de vis. Complexul dispune de o parcare proprie imensă, unde poți lăsa vehiculul în siguranță, accesul auto fiind extrem de facil și confortabil.",
-    echipament: [{ titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este legendară pentru zona Atenei, fiind fin și ideal pentru cei mici." }, { titlu: "Buget pentru windsurfing sau stand-up paddle (SUP)", text: "Golful adăpostit oferă condiții excelente pe timp de dimineață pentru a învăța bazele sporturilor nautice." }, { titlu: "Haine lejere de zi", text: "În interiorul complexului există o adevărată piațetă comercială cu magazine, pizzerii, cafenele și locuri de joacă." }],
-    preturi: "Intrarea în complexul organizat se face pe bază de bilet (costă în jur de 7 - 9 EUR de persoană). De regulă, prețul biletului poate include sau nu șezlongul, în funcție de zona aleasă. Un set complet premium costă în jur de 20 - 30 EUR. Un frappe la bar costă 4 EUR, un prânz cu pizza sau souvlaki este în jur de 10 - 14 EUR de persoană, iar o apă plată mare este 1,50 EUR.",
-    turisti: [{ titlu: "Un mini-sat de vacanță", text: "Vizitatorii apreciază enorm infrastructura complexului, menționând că ai absolut tot ce-ți trebuie pentru a petrece o zi întreagă fără să părăsești plaja." }, { titlu: "Intrare excelentă în marea liniștită", text: "Părinții laudă la unison siguranța deplină pe care o oferă apa mică și lipsa valurilor mari pentru copii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a evita cozile de la intrare. Dacă vrei o zonă complet publică și liberă unde să pui prosopul gratuit, mergi imediat în afara gardului complexului, spre partea dreaptă a golfului, unde atmosfera este mult mai sălbatică și retrasă." }],
-  },
-  "Plaja Schinias Riviera Ateniană": {
-    scurt: "Plaja Schinias este una dintre cele mai spectaculoase, lungi și virgine plaje din regiunea Atticăi, oferind o evadare totală în mijlocul naturii pure. Situată în nord-est, lângă Marathon, această plajă imensă de nisip fin se întinde pe kilometri întregi și este faimoasă pentru pădurea sa densă și antică de pini umbrelă (pinus pinea) care crește direct pe nisip, ajungând până la câțiva metri de buza apei. Apa mării este caldă, curată și are o intrare extrem de lină, fiind un loc de o frumusețe sălbatică rară.",
-    cumAjungi: "Schinias se află la aproximativ 45 km nord-est de Atena. Distanța mare și statutul de parc național protejat fac ca transportul public să fie aproape inexistent pe această rută. O mașină închiriată este absolut obligatorie pentru a ajunge aici. Drumul este complet asfaltat și plat. Parcarea este una dintre cele mai lejere și frumoase: poți conduce încet pe drumul de pământ și poți lăsa mașina complet gratuit direct sub pinii uriași din pădurea de coastă, la doar un pas de nisip.",
-    echipament: [{ titlu: "Adio umbrele de plastic", text: "Pădurea de pini oferă o umbră naturală densă, răcoroasă și complet gratuită toată ziua, fiind o plăcere să pui rogojina direct sub copaci." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Cea mai mare parte a plajei fiind rezervație naturală protejată, nu există beach baruri sau magazine pe nisip." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip fin și foarte moale, fără nicio piatră sau arici de mare." }],
-    preturi: "Fiind o plajă în mare parte liberă și publică, costul este zero. Totuși, la începutul plajei (zona din afara pădurii protejate) funcționează câteva cluburi de windsurfing și taverne. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz rapid la tavernele din apropiere este în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O senzație unică de libertate", text: "Turiștii sunt încântați că pot sta la distanțe uriașe unii de alții și că se pot bucura de parfumul pinilor combinat cu briza mării." }, { titlu: "Perfectă pentru copii", text: "Toate familiile laudă apa mică și caldă care rămâne la nivelul genunchilor pe o distanță lungă în larg." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jurul orei 09:00. Vei prinde cea mai curată și răcoroasă umbră sub pini și marea plată ca o oglindă. Reține că, fiind orientată spre est, plaja este o opțiune strategică excelentă în zilele în care vântul puternic de nord-vest (Meltemi) face valuri mari pe celelalte plaje ale Atticăi, în Schinias marea rămânând liniștită." }],
-  },
-  "Plaja Althea Riviera Ateniană": {
-    scurt: "Plaja Althea (cunoscută local și sub numele de Plaja Agia Marina) este o mică bijuterie ascunsă și extrem de pitorească de pe Riviera Ateniană. Strânsă într-un golfuleț mic protejat de stânci joase, plaja te va uimi prin transparența uluitoare a apei sale, care capătă o nuanță superbă de turcoaz deschis, asemănătoare unei piscine naturale ascunse. Plaja este formată dintr-un amestec fin de nisip și pietricele albe fine, oferind o atmosferă intimă, mult mai liniștită decât marile plaje comerciale din apropiere.",
-    cumAjungi: "Plaja se află la aproximativ 35 km sud de Atena, de-a lungul șoselei de coastă spre Sounion. Nu există linii de autobuz urban care să aibă stații aproape de acest golf retras. O mașină închiriată este esențială pentru a ajunge aici confortabil. Drumul principal este complet asfaltat, iar din șosea cobori pe o strduță secundară îngustă spre mare. Există o parcare mică de pământ deasupra plajei unde poți lăsa vehiculul complet gratuit, dar locurile se ocupă rapid în sezon.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă obligatorie", text: "Althea este o plajă preponderent sălbatică și neamenajată. Nu există șezlonguri sau baruri pe nisip, așa că trebuie să vii complet echipat de acasă." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea cristalină pot apărea câteva pietre plate și stânci subacvatice." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de limpede și adăpostită de stânci, zona este excelentă pentru a observa peștii mici chiar de lângă mal." }],
-    preturi: "Fiind o plajă complet publică și liberă, accesul și parcarea sunt zero. Nu există facilități comerciale jos pe nisip, așa că costul tău direct pe plajă va fi nul. Pentru gustări sau băuturi, poți urca la micile magazine sau taverne situate de-a lungul șoselei principale de deasupra golfului, unde un frappe costă 3,50 EUR.",
-    turisti: [{ titlu: "O piscină de cristal ascunsă", text: "Toți turiștii laudă culoarea unică a apei și claritatea uimitoare a mării în acest golf protejat natural de valuri mari." }, { titlu: "Se aglomerează repede", text: "Vizitatorii notează că, golful fiind mic, plaja pare plină imediat, mai ales în weekend când vin localnicii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește foarte devreme, ideal înainte de ora 08:30 dimineața. Vei prinde un loc de parcare bun chiar deasupra scărilor de acces, marea va fi complet plată ca o oglindă și te vei putea bucura de liniștea golfului în siguranță totală înainte de venirea amiezii." }],
-  },
-  "Plaja Costa Navarino Pylos": {
-    scurt: "Plaja Costa Navarino (asociată adesea cu plaja The Dunes sau plajele din golful Navarino) este una dintre cele mai spectaculoase, lungi și exclusiviste destinații de coastă din regiunea Messinia, în Peloponez. Este o întindere uriașă de nisip fin, de o culoare aurie caldă, mângâiată de apele adânci și curate ale mării Ionice. Flancată de dune de nisip protejate ecologic și de plantații întinse de măslini, plaja oferă un echilibru perfect între luxul resorturilor de talie mondială și natura sălbatică, neatinsă.",
-    cumAjungi: "Plaja se află pe coasta de vest a Peloponezului, în apropierea orașului istoric Pylos. Distanța mare față de marile aeroporturi din Atena sau Kalamata face ca mașina să fie absolut obligatorie pentru a călători în această regiune. Drumul principal este complet asfaltat, modern și oferă peisaje montane și marine uluitoare. Pentru vizitatorii de o zi, există puncte de acces publice bine semnalizate, unde poți parca complet gratuit mașina pe spațiile mari de pământ din spatele dunelor de nisip, la doar un minut de mers pe jos de plajă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întreaga plajă și fundul mării sunt acoperite exclusiv de un nisip fin, moale și curat, intrarea în marea deschisă fiind o adevărată plăcere." }, { titlu: "Umbrelă proprie de plajă (opțional)", text: "Plaja fiind uriașă, porțiunile organizate comerciale ocupă doar spații limitate în dreptul resorturilor, restul plajei oferind spațiu nelimitat pentru prosoape." }, { titlu: "Ochelari de soare polarizați buni", text: "Întinderea lungă de nisip reflectă puternic lumina la orele prânzului." }],
-    preturi: "În zonele amenajate de beach cluburile de lux, prețurile sunt destul de ridicate, un set de șezlonguri putând costa între 20 - 40 EUR pe zi în funcție de facilități. Totuși, accesul pe plajă în zonele libere este complet gratuit. Un frappe costă în jur de 4 - 5 EUR, iar un prânz la tavernele excelente din satele vecine (cum ar fi Gialova) costă în jur de 15 EUR de persoană.",
-    turisti: [{ titlu: "Un peisaj natural impecabil", text: "Toate recenziile laudă modul în care dunele de nisip sunt protejate și întreținute, plaja oferind un aer foarte select și curat." }, { titlu: "Apusuri memorabile", text: "Vizitatorii sunt fascinați de spectacolul soarelui care apune direct în marea deschisă, colorând cerul în nuanțe uluitoare de roșu și auriu." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Marea este de obicei extrem de calmă în prima parte a zilei. Dacă ești pasionat de istorie sau natură, folosește mașina după-amiaza pentru a conduce 10 minute până la celebra plajă în formă de semilună perfectă Voidokilia sau până la ruinele castelului Paleokastro, situate în imediata apropiere a golfului Navarino." }],
-  },
-  "Plaja Paralia Katerini": {
-    scurt: "Paralia Katerini este probabil cea mai cunoscută și animată plajă de pe întreaga Rivieră a Olimpului. Este o fâșie lungă de nisip fin și auriu, spălată de o mare caldă, cu o intrare extrem de lină în apă. Plaja este complet integrată în stațiune, fiind tivită de o faleză vibrantă, plină de hoteluri, magazine de blănuri, suvenire și restaurante. Atmosfera este extrem de dinamică, fiind destinația ideală pentru cei care iubesc animația, viața de noapte și vor să aibă toate facilitățile la un pas distanță.",
-    cumAjungi: "Stațiunea se află la aproximativ 8 km de orașul Katerini și este foarte ușor de accesat de pe autostrada principală E75. Deși există autobuze locale din Katerini, o mașină închiriată este un avantaj uriaș pe această Rivieră. Îți permite să transporți bagajele grele fără efort, să fugi de aglomerație spre plajele mai libere din nord (cum ar fi Korinos) și să urci seara pe munte, în satul tradițional Litochoro. Parcarea chiar în centrul stațiunii este dificilă în plin sezon; cel mai bine este să lași mașina gratuit în parcările mari de la intrarea în localitate sau în zonele marcate de la marginea plajei.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit în întregime cu nisip moale și fin, riscul de a te înțepa în pietre sau arici de mare fiind zero." }, { titlu: "Ochelari de soare buni", text: "Plaja fiind deschisă spre est, soarele de dimineață luminează puternic nisipul auriu." }, { titlu: "Buget pentru sporturi nautice", text: "Există centre excelente de unde poți închiria hidrobiciclete, sky-jet-uri sau poți încerca plimbări cu banana gonflabilă." }],
-    preturi: "Paralia Katerini este una dintre cele mai economice zone din Grecia. Multe beach baruri oferă șezlongul gratuit în schimbul unei consumații minime (o cafea, o bere sau un frappe care costă în jur de 3,50 - 5 EUR). Un gyros pe faleză este în jur de 4 - 4,50 EUR, iar o cină completă pentru două persoane la tavernele tradiționale costă în jur de 25 - 35 EUR.",
-    turisti: [{ titlu: "Perfectă pentru familii", text: "Părinții laudă la unison intrarea lină în mare, menționând că poți merge mult în larg până când apa devine adâncă." }, { titlu: "Foarte aglomerată în iulie și august", text: "Recenziile avertizează că în plin sezon plaja devine extrem de populată, fiind un loc foarte zumzăitor." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino pe plajă dimineața devreme, în jur de ora 08:30. Marea este complet calmă, plată ca o oglindă, iar aerul este curat și răcoros. Dacă vrei mai mult spațiu liber, mergi spre capătul din dreapta al plajei (în direcția Olimpiaki Akti), unde fâșia de nisip devine mult mai lată și mai aerisită." }],
-  },
-  "Plaja Olympiaki Akti Pieria": {
-    scurt: "Olympiaki Akti (sau Olympic Beach) este o plajă superbă, mult mai lată și ceva mai aerisită decât vecina ei, Paralia Katerini, cu care este de altfel conectată printr-o pistă lungă de biciclete și o alee pietonală de-a lungul mării. Plaja este o întindere uriașă de nisip fin, curat, cu o intrare extrem de lină în marea Egee. Mărginită de un parc cochet și de o faleză plină de taverne și magazine, Olympic Beach oferă o atmosferă mult mai relaxată și liniștită, fiind o destinație favorită pentru familii și cupluri.",
-    cumAjungi: "Plaja se află la doar 3 km sud de Paralia Katerini și la aproximativ 9 km de orașul Katerini. Accesul auto este complet asfaltat și foarte simplu. Mașina închiriată îți oferă flexibilitatea de a explora întreaga Rivieră a Olimpului. Spre deosebire de Paralia, în Olympic Beach parcarea este mult mai lejeră: există o zonă uriașă de parcare gratuită pe pământ chiar la intrarea în stațiune, la doar două minute de mers pe jos de nisip.",
-    echipament: [{ titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este legendară, fiind foarte fin, moale și ideal pentru cei mici." }, { titlu: "Fără încălțăminte specială", text: "Fundul mării este exclusiv din nisip curat, fiind o plăcere să mergi desculț prin apă." }, { titlu: "O minge de volei", text: "Plaja fiind extrem de lată, există porțiuni mari cu filee montate de barurile locale pentru clienți." }],
-    preturi: "Prețurile sunt similare cu cele din Paralia Katerini, fiind foarte prietenoase cu portofelul. Un set de două șezlonguri cu umbrelă este oferit de obicei la achiziționarea a două băuturi de la bar (aproximativ 8 - 12 EUR total). Un frappe costă 3,50 EUR, iar un prânz complet bazat național pe souvlaki sau pește proaspăt este în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Mai mult spațiu personal", text: "Toate recenziile menționează că plaja este mult mai lată decât cea din Paralia, ceea ce înseamnă că nu te simți niciodată înghesuit, chiar și în weekend." }, { titlu: "Plimbările de seară sunt magice", text: "Vizitatorii apreciază pista pietonală luminată care leagă cele două stațiuni pe malul mării." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă în a doua parte a după-amiezii. Fundalul este dominat spectaculos de silueta impunătoare a Muntelui Olimp, care se vede perfect de pe nisip, oferind un cadru minunat pentru fotografii de vacanță când soarele începe să coboare în spatele munților." }],
-  },
-  "Plaja Korinos Pieria": {
-    scurt: "Dacă vrei să scapi de agitația, muzica tare și comerțul strident din stațiunile mari ale Rivierei, Plaja Korinos este refugiul ideal. Situată în partea de nord a regiunii Pieria, aceasta este o plajă imensă, lungă de câțiva kilometri și extrem de lată, formată dintr-un nisip fin, curat și de o culoare deschisă. Apa mării este limpede, liniștită și are o intrare lină în apă. Este o plajă aerisită, care îmbină perfect porțiunile amenajate discret cu zone uriașe de natură virgină, oferind o relaxare profundă.",
-    cumAjungi: "Korinos se află la aproximativ 5 km nord de Paralia Katerini. Deoarece stațiunea este mai aerisită și nu are o infrastructură comercială masivă, transportul public este destul de rar. O mașină închiriată este absolut necesară pentru a ajunge aici confortabil. Drumul este complet asfaltat, plat și foarte rapid. Parcarea este una dintre cele mai lejere de pe Rivieră: poți lăsa mașina complet gratuit direct în spatele plajei, pe marginea drumului lung local, la doar câțiva pași de nisip.",
-    echipament: [{ titlu: "Umbrelă proprie și rogojină", text: "Peste 70% din această plajă uriașă este complet liberă și neamenajată, neexistând copaci aproape de apă care să ofere umbră naturală." }, { titlu: "O carte bună sau căști", text: "Atmosfera fiind foarte calmă, fără muzică stridentă în difuzoare, este locul perfect pentru relaxare totală în sunetul valurilor." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip moale și curat, liber de pietre mari." }],
-    preturi: "În zonele amenajate din dreptul puţinelor hoteluri, un set de două șezlonguri costă în jur de 10 EUR sau este inclus în baza unei consumații la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar prețurile la mâncare la micile taverne din apropiere sunt foarte accesibile, un prânz lejer fiind în jur de 10 - 12 EUR de persoană.",
-    turisti: [{ titlu: "Oază de liniște pe Rivieră", text: "Toți vizitatorii care fug de aglomerația din Paralia laudă dimensiunile impresionante ale plajei Korinos, unde poți sta la distanță mare de următorul turist." }, { titlu: "Apa este remarcabil de curată", text: "Recenziile menționează adesea că lipsa aglomerației masive menține apa mării deosebit de transparentă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața. Vei prinde o mare plată ca o oglindă și o liniște deplină, perfectă pentru a începe ziua cu o sesiune lungă de înot relaxant înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Plaka Litochoro Pieria": {
-    scurt: "Plaka Litochoro este o plajă unică și plină de personalitate, situată exact la poalele miticului Munte Olimp, acolo unde muntele pare că întâlnește direct marea Egee. Spre deosebire de plajele complet nisipoase din nord, Plaka este formată dintr-un amestec pitoresc de nisip grosier și pietre mari, rotunjite spectaculos de valuri. Apa mării este de o claritate excepțională, revigorantă și de un albastru profund. Este o plajă cu un aer sălbatic, ideală pentru cei care caută un peisaj natural deosebit și o atmosferă liniștită.",
-    cumAjungi: "Plaja se află la aproximativ 20 km sud de Katerini și în dreptul orașului montan Litochoro. Transportul în comun te lasă doar la drumul mare sau în gară, de unde ai de mers pe jos. Mașina închiriată este indispensabilă pentru a parcurge drumul asfaltat care coboară din șoseaua națională spre mare. Găsirea unui loc de parcare este destul de simplă: există spații publice gratuite de-a lungul drumului de coastă sau în parcările dedicate ale tavernelor și beach barurilor cochete de pe mal.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Malul și întreaga intrare în marea cristalină sunt formate din pietre mari; încălțămintea specială este vitală pentru a păși confortabil." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de transparentă și relieful stâncos, fauna subacvatică este mult mai activă aici decât pe plajele cu nisip din nord, fiind un loc foarte bun de explorat." }, { titlu: "Rucsac complet cu prosoape groase", text: "Pietrele de pe plajă cer o așezare mai atentă dacă alegi să stai în zonele libere, neamenajate." }],
-    preturi: "Pe plajă funcționează câteva beach baruri și taverne elegante. Închirierea unui set de două șezlonguri costă în jur de 12 - 15 EUR pe zi, sau este inclusă la o comandă minimă similară. Un frappe costă 4 EUR, iar o porție de pește proaspăt sau calamari la grătar la tavernele de deasupra plajei este în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Peisaj montan uluitor", text: "Toți vizitatorii sunt impresionați de imaginea masivului Olimp care domină cerul direct în spatele plajei." }, { titlu: "Claritatea apei este de revistă", text: "Turiștii laudă transparența mării, menționând că este mult mai curată datorită solului cu pietre." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este o oprire strategică excelentă după-amiaza. Planifică-ți ziua astfel încât dimineața să faci o drumeție răcoroasă prin Canionul Enipeas din Litochoro, pe munte, iar după prânz coboară cu mașina la Plaka Litochoro pentru o baie revigorantă în marea adâncă și curată." }],
-  },
-  "Plaja Leptokarya Pieria": {
-    scurt: "Plaja Leptokarya este o plajă urbană lungă, plată și excelent organizată, situată în dreptul uneia dintre cele mai dinamice și dezvoltate stațiuni de pe întreaga Rivieră a Olimpului. Plaja este compusă dintr-un amestec foarte plăcut de nisip fin și pietricele mărunte la buza apei, iar marea este curată și revigorantă. În spatele plajei se află o faleză comercială lungă, plină de viață, taverne tradiționale, hoteluri și magazine, oferind o atmosferă estivală clasică și foarte confortabilă.",
-    cumAjungi: "Leptokarya se află în sudul regiunii Pieria, la aproximativ 25 km de Katerini. Orașul este conectat excelent la autostradă și la linia de cale ferată. Cu o mașină închiriată ajungi foarte rapid și ai confortul de a transporta toate bagajele de familie. Găsirea unui loc de parcare chiar lângă plajă poate fi o provocare la orele prânzului în sezon; cel mai bine este să folosești parcările publice gratuite semnalizate de-a lungul străzilor paralele cu faleza comercială.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietricele care poate fi incomodă la mersul desculț." }, { titlu: "Fără saltele mari dacă sunt valuri", text: "Marea se adâncește o idee mai repede aici decât în Nei Pori, iar după-amiaza pot apărea valuri mici." }, { titlu: "Haine lejere de zi", text: "Faleza fiind plină de magazine și cofetării, o plimbare lungă cere o ținută confortabilă." }],
-    preturi: "Prețurile sunt foarte accesibile, specifice Rivierei Olimpului. Majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă gratuit în schimbul unei comenzi de băuturi de o valoare minimă (în jur de 10 - 15 EUR pentru tot setul). Un frappe costă 3,50 EUR, iar un prânz complet la tavernele de pe faleză costă în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură completă", text: "Vizitatorii apreciază curățenia, prezența dușurilor, a vestiarelor și a magazinelor la doar câțiva pași de nisip." }, { titlu: "O stațiune animată", text: "Turiștii laudă atmosfera plină de viață a serii, când faleza devine pietonală." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este liniștit atunci, iar marea este foarte calmă. Din Leptokarya poți lua mașina după-amiaza pentru a vizita în doar 15 minute impresionantul Castel Platamonas (o fortăreață medievală cruciată superbă situată pe dealul din sud), de unde ai o vedere panoramică uluitoare asupra întregii Riviere." }],
-  },
-  "Plaja Panteleimonas Pieria": {
-    scurt: "Plaja Panteleimonas este una dintre cele mai spectaculoase și fotogenice locații de pe Riviera Olimpului. Această fâșie lată de nisip amestecat cu pietricele fine este situată exact la poalele dealului pe care se înalță impunătorul Castel Platamonas (o fortăreață cruciată de secol XII). Apa mării este incredibil de curată, revigorantă și capătă nuanțe superbe de azur în bătaia soarelui. Este o plajă care îmbină perfect un cadru natural sălbatic, umbrit parțial de pini, cu un fundal istoric de poveste.",
-    cumAjungi: "Plaja se află în sudul regiunii Pieria, la aproximativ 30 km de Katerini. Mașina închiriată este de departe cea mai confortabilă metodă de transport pentru a ajunge aici, deoarece drumul principal de coastă este complet asfaltat, modern și rapid. Cu o mașină poți urca ulterior și în satul montan tradițional Palaios Panteleimonas, situat la 500 de metri altitudine pe Muntele Olimp. Parcarea este gratuită, spațioasă, amenajată pe pământ chiar în spatele plajei sau de-a lungul aleilor umbrite de pini.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea cristalină există o bandă de pietre rotunjite de valuri." }, { titlu: "Mască de snorkeling", text: "În zona de sub stânca castelului, relieful subacvatic este foarte interesant și plin de pești mici, ideal de explorat." }, { titlu: "Aparatul foto", text: "Imaginea castelului medieval care domină plaja direct de deasupra șezlongurilor este spectaculoasă și obligatorie pentru poze de vacanță." }],
-    preturi: "Prețurile sunt foarte accesibile: un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR sau este oferit la schimbul unei consumații minime la bar (o cafea sau un frappe fiind în jur de 3,50 - 4 EUR). O masă completă la tavernele excelente din spatele plajei costă în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "O priveliște unică", text: "Toți vizitatorii laudă în recenzii fundalul istoric oferit de castel și atmosfera mult mai relaxată decât în Paralia Katerini." }, { titlu: "Umbră naturală excelentă", text: "Turiștii apreciază copacii din spatele plajei unde te poți adăposti la amiază." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este foarte liniștit în prima parte a zilei, iar marea este plată ca o oglindă. După-amiaza, ia mașina și urcă 15 minute până în satul de munte Palaios Panteleimonas pentru a te plimba pe străduțele din piatră și a lua cina la o tavernă tradițională cu vedere spre mare." }],
-  },
-  "Plaja Platamonas Pieria": {
-    scurt: "Plaja Platamonas este plaja urbană a uneia dintre cele mai cochete, verzi și animate stațiuni de pe Riviera Olimpului. Este o plajă formată dintr-un amestec plăcut de nisip și pietricele fine la buza apei, iar marea este curată, liniștită și perfect sigură pentru înot, fiind adăpostită parțial de un dig de piatră. Ceea ce o face deosebită este faleza sa plină de viață, tivită de un port turistic elegant de iahturi, taverne pescărești excelente și platani bătrâni care oferă umbră și un aer pitoresc întregii stațiuni.",
-    cumAjungi: "Platamonas se află în sudul regiunii Pieria, chiar lângă autostrada principală Salonic-Atena. Cu o mașină închiriată ajungi foarte rapid pe drumul complet asfaltat și ai confortul de a transporta toate bagajele. Găsirea unui loc de parcare chiar lângă plajă poate fi o provocare la orele prânzului în sezon; cel mai bine este să folosești parcările publice gratuite din zona portului sau de-a lungul străzilor paralele cu faleza comercială, la doar câteva minute de mers pe jos de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Pietricelele mici de la intrarea în marea liniștită pot fi incomode la mersul desculț." }, { titlu: "Haine lejere de zi", text: "Faleza și portul de iahturi fiind foarte cochete, o plimbare între sesiunile de înot cere o ținută confortabilă." }, { titlu: "Fără saltele mari dacă sunt valuri", text: "Marea se adâncește o idee mai repede aici decât în Nei Pori, dar digurile sparg de obicei valurile mari." }],
-    preturi: "Sistemul este cel clasic și foarte economic: majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă gratuit dacă comanzi băuturi de la ei (o consumație minimă de 10 - 15 EUR total). Un frappe costă 3,50 EUR, iar un prânz delicios bazat pe pește proaspăt sau fructe de mare la tavernele din port costă în jur de 13 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Atmosferă elegantă și relaxată", text: "Vizitatorii apreciază enorm portul de ambarcațiuni și faleza plină de viață a serii, când zona devine exclusiv pietonală." }, { titlu: "Infrastructură completă", text: "Turiștii laudă prezența dușurilor, a vestiarelor și curățenia generală a stațiunii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o terasă din port până la lăsarea serii. Platamonas are un farmec estival deosebit la apus, când luminile iahturilor se aprind, iar tavernele își așază mesele aproape de buza apei pentru o cină romantică în sunetul mării." }],
-  },
-  "Plaja Skotina Pieria": {
-    scurt: "Dacă vrei să scapi de agitația comercială din Leptokarya sau Platamonas și cauți o plajă imensă, aerisită și foarte liniștită, Plaja Skotina este alegerea perfectă. Situată într-un golf larg, aceasta este o întindere uriașă de nisip fin, de o culoare aurie deschisă, cu o intrare lină în apa curată a mării Egee. Este o plajă care a fost ferită de dezvoltarea hotelieră masivă, fiind preferată de localnici și de turiștii care vor să pună prosopul pe nisip în liniște deplină, având deasupra lor doar profilul maiestuos al Muntelui Olimp.",
-    cumAjungi: "Plaja se află la aproximativ 5 km nord de Platamonas. Deoarece zona este mai aerisită și preponderent rezidențială, transportul public este rar și te lasă departe de mal. O mașină închiriată este absolut obligatorie pentru a ajunge aici confortabil. Drumul de acces de la șoseaua principală este complet asfaltat și plat. Parcarea este una dintre cele mai lejere de pe întreaga Rivieră: există spații publice imense pe pământ direct în spatele plajei unde poți lăsa mașina complet gratuit, la doar un minut de mers pe jos de apă.",
-    echipament: [{ titlu: "Umbrelă proprie și rogojină", text: "Peste 80% din această plajă imensă este complet liberă și neamenajată, neexistând copaci aproape de apă care să ofere umbră naturală." }, { titlu: "Fără pantofi de apă", text: "Fundul mării este o masă continuă de nisip moale și curat, liber de pietre mari sau arici." }, { titlu: "O carte bună sau căști", text: "Lipsa muzicii stridente de club transformă acest loc în spațiul ideal pentru relaxare totală în sunetul brizei." }],
-    preturi: "Accesul pe plajă și parcarea sunt gratuite. În puținele zone amenajate din dreptul campingurilor sau al micilor pensiuni, un set de două șezlonguri costă în jur de 10 EUR sau este oferit la o consumație minimă la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz lejer la micile taverne din apropiere este în jur de 10 - 12 EUR de persoană.",
-    turisti: [{ titlu: "Oaza de liniște a Rivierei", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, menționând că nu te simți niciodată înghesuit, chiar și în plină vară." }, { titlu: "Apa este excelentă", text: "Recenziile menționează adesea că lipsa aglomerației masive menține apa mării deosebit de curată și transparentă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de orele 08:30 - 11:30. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă. Este momentul perfect pentru a te bucura de înot liniștit și de o panoramă clară asupra Muntelui Olimp înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Nei Pori Pieria": {
-    scurt: "Nei Pori este considerată pe bună dreptate raiul familiilor cu copii și una dintre cele mai bune plaje de pe întreaga coastă de est a Greciei continentale. Este o plajă incredibil de lată (peste 100 de metri în anumite porțiuni) și lungă de câțiva kilometri, acoperită în totalitate de un nisip fin, curat și moale ca pudra. Apa mării Egee este extrem de caldă, curată și are o intrare atât de lină, încât trebuie să mergi zeci de metri în larg pentru ca apa să-ți treacă de brâu. Fundalul este dominat spectaculos de silueta impunătoare a Muntelui Olimp.",
-    cumAjungi: "Stațiunea se află în sudul extrem al regiunii Pieria, chiar la granița cu regiunea Larisa. Drumul de acces de la autostradă este modern și complet asfaltat. O mașină închiriată îți asigură un confort deplin pentru a transporta toate bagajele de familie și umbrelele. Orașul fiind construit după un plan urbanistic modern, cu străzi foarte largi, parcarea este extrem de simplă: poți lăsa mașina complet gratuit chiar de-a lungul bulevardului imens din spatele plajei, la doar câțiva metri de nisip.",
-    echipament: [{ titlu: "Jucării de nisip din belșug pentru cei mici", text: "Calitatea și lățimea nisipului de aici sunt ideale pentru castele de nisip și jocuri dinamice pe mal." }, { titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit exclusiv cu nisip fin, riscul de a te înțepa în pietre sau arici fiind zero." }, { titlu: "Loțiune solară cu protecție mare", text: "Apa fiind mică și caldă, copiii vor petrece ore în șir în mare fără să simtă cum trece timpul." }],
-    preturi: "Prețurile sunt printre cele mai accesibile din Grecia. Un set de două șezlonguri cu umbrelă este oferit gratuit în schimbul unei consumații minime reduse la beach baruri (în jur de 10 - 15 EUR total pentru două băuturi). Un frappe costă 3,50 EUR, un gyros uriaș pe faleză este 4,50 EUR, iar un prânz complet la nenumăratele taverne din spate costă în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "Cea mai sigură plajă pentru copii", text: "Toate familiile laudă în recenzii lungimea și panta extrem de lină a intrării în mare, marea fiind ca o piscină naturală uriașă." }, { titlu: "Nu te simți niciodată sufocat", text: "Vizitatorii apreciază lățimea impresionantă a plajei, unde ai spațiu personal uriaș chiar și în plină vară." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă în a doua parte a după-amiezii. Muntele Olimp, situat chiar în spatele stațiunii, oferă o priveliște clară și plină de măreție direct de pe șezlong, iar lumina serii este caldă și ideală pentru fotografii de familie memorabile." }],
-  },
-  "Bazinul de Înot Monemvasia Monemvasia": {
-    scurt: "Părăsim Riviera Olimpului și coborâm în sudul extrem al Peloponezului pentru o locație complet atipică, unică și plină de istorie: Bazinul de Înot Monemvasia (cunoscut local ca plaja Portello). Nu este o plajă clasică cu nisip, ci o zonă de acces în mare amenajată ingenios direct la baza zidurilor medievale uriașe ale faimosului oraș-cetate Monemvasia (Gibraltarul Greciei). Accesul în marea deschisă se face de pe o platformă de piatră prin scări metalice, oferind senzația unică de a înota într-o apă de un albastru profund, chiar sub zidurile unei fortărețe medievale intacte.",
-    cumAjungi: "Monemvasia se află pe o stâncă uriașă legată de continent printr-un pod îngust, în sudul Laconiei. Distanța imensă față de Atena (aproximativ 300 km) face ca mașina să fie absolut obligatorie pentru a călători în această regiune izolată. Drumul este asfaltat, dar montan și șerpuitor spre final. Deoarece orașul vechi din interiorul cetății este complet pietonal (fără mașini), vehiculul se lasă gratuit pe marginea drumului care duce spre poarta cetății sau în parcarea de pe continent, de unde iei un microbuz local. Din interiorul cetății, urmezi indicatoarele pietonale spre poarta de la mare (Portello).",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) sau sandale aderente", text: "Platformele din piatră de pe mal pot fi alunecoase din cauza valurilor, iar scările metalice cer atenție." }, { titlu: "Mască de snorkeling", text: "Apa mării este extrem de adâncă chiar de la mal, curată și oferă o vizibilitate impecabilă de-a lungul pereților uriași de stâncă ai cetății, unde fauna marină este bogată." }, { titlu: "Fără copii mici sau înotători neexperimentați", text: "Neexistând o zonă cu apă mică sau nisip, locul este dedicat exclusiv celor care știu să înoate bine în ape adânci." }],
-    preturi: "Accesul la poarta Portello și înotul sub ziduri sunt complet gratuite. Nu există beach baruri, șezlonguri sau umbrele pe platformele de piatră. Totuși, la doar 5 minute de mers pe jos, pe strduțele magice din interiorul cetății, se află cafenele și taverne fantastice din piatră. Un frappe costă 4 EUR, o apă mare este 1,50 EUR, iar un prânz cu vedere la mare costă în jur de 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "O experiență istorică incredibilă", text: "Toate recenziile laudă senzația unică și dramatică de a ieși prin poarta veche din piatră a zidului cetății direct în marea deschisă pentru o baie răcoroasă." }, { titlu: "Apa este impecabilă", text: "Vizitatorii apreciază puritatea apei adânci a mării Libiei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de orele 08:30 - 10:30. Soarele luminează direct zidurile estice ale cetății atunci, făcând apa să pară de un albastru strălucitor. În plus, evită locul în zilele în care prognoza anunță vânt puternic de sud sau est, deoarece valurile mari care se sparg de platformele de piatră pot face intrarea și ieșirea din apă periculoase." }],
-  },
-  "Plaja Porto Kagio Mani": {
-    scurt: "Porto Kagio este una dintre cele mai izolate și fascinante plaje din sudul Peloponezului, situată într-un golf natural aproape perfect închis, care seamănă cu un lac ascuns printre munți de piatră. Plaja este o fâșie îngustă formată din pietricele albe și nisip grosier, iar apa mării este incredibil de calmă, limpede și capătă nuanțe profunde de smarald. Numele său înseamnă „Portul Guguștiucilor\", fiind din antichitate un loc de popas pentru păsările migratoare și un refugiu legendar pentru pirați.",
-    cumAjungi: "Plaja se află în sudul extrem al peninsulei Mani, la doar câțiva kilometri de Capul Matapan (cel mai sudic punct al Greciei continentale). Transportul în comun este complet inexistent în această zonă sălbatică. O mașină este absolut obligatorie pentru a parcurge drumul complet asfaltat, dar spectaculos și plin de serpentine strânse, care coboară printre turnurile de piatră caracteristice regiunii Mani. Parcarea este gratuită, direct pe pietrișul din spatele plajei sau în apropierea micilor taverne de pe mal.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât pe mal, cât și la intrarea în mare sunt pietre rotunjite care pot fi incomode la mersul desculț." }, { titlu: "Mască de snorkeling", text: "Golful fiind adăpostit natural de stânci mari, apa este plată ca o oglindă și oferă o vizibilitate impecabilă de-a lungul pereților de piatră subacvatici." }, { titlu: "O jachetă subțire pentru seară", text: "Zona fiind înconjurată de munți golași, briza serii poate deveni răcoroasă după apus." }],
-    preturi: "Porto Kagio păstrează un aer autentic și prețuri corecte. Nu există mari complexe de șezlonguri, dar micile taverne oferă câteva seturi clienților care comandă băuturi sau prânzul (o consumație minimă de 10 - 15 EUR). Un frappe costă 3,50 EUR, o porție de pește proaspăt prins de pescarii locali este în jur de 12 - 15 EUR, iar o masă completă pentru două persoane ajunge la 35 EUR.",
-    turisti: [{ titlu: "Senzația de capăt al lumii", text: "Toate recenziile laudă liniștea mistică a golfului și frumusețea sălbatică a peisajului muntos care înconjoară apa plată." }, { titlu: "Taverne pescărești excelente", text: "Vizitatorii apreciază calitatea mâncării oferite de micile afaceri de familie de pe mal." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în prima parte a zilei. Este o oprire strategică excelentă dacă vrei să combini o dimineață de plajă cu o drumeție de 45 de minute (pe jos, de la capătul drumului auto) până la faimosul Far de la Capul Matapan, locul unde vechii greci credeau că se află una dintre porțile de intrare în Infern." }],
-  },
-  "Plaja Stoupa Mani": {
-    scurt: "Plaja Stoupa este plaja urbană principală a unei stațiuni cochete și pline de viață situată în regiunea Exo Mani (Mani-ul Exterior). Spre deosebire de relieful arid din sud, Stoupa este o oază verde, cu o plajă lată formată dintr-un nisip fin, auriu și extrem de plăcut. Apa mării este de o curățenie exemplară (premiată des cu Blue Flag) și are o culoare turcoaz strălucitoare. Este o plajă extrem de confortabilă și complet organizată, fiind destinația favorită din Peloponez pentru familii și pentru cei care vor facilități de top.",
-    cumAjungi: "Stațiunea se află la aproximativ 45 km sud de orașul Kalamata. Drumul principal este complet asfaltat, modern și oferă peisaje superbe între munte și mare, trecând pe lângă livezi întinse de măslini. Deși există autobuze sezoniere din Kalamata, mașina închiriată îți oferă un confort deplin și libertatea de a transporta toate bagajele de familie. Parcarea este gratuită, amenajată pe strduțele secundare din spatele falezei sau în parcările publice mari de la intrarea în localitate, la doar 2-3 minute de mers pe jos de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit în întregime cu un nisip fin și foarte moale, riscul de a te înțepa fiind zero." }, { titlu: "Ochelari de soare buni", text: "Plaja fiind orientată spre vest, soarele de după-amiază luminează puternic întregul golf." }, { titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este ideală pentru cei mici, intrarea în marea liniștită fiind foarte lină." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi, sau este oferit la o consumație similară de la beach barurile de pe faleză. Un frappe costă 3,50 EUR, un gyros rapid este 4 EUR, iar o cină completă pentru o familie la nenumăratele taverne excelente de pe faleză costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Vizitatorii apreciază curățenia plajei, prezența dușurilor, a vestiarelor și a salvamarilor." }, { titlu: "Apa este excelentă, dar are porțiuni reci", text: "Mulți turiști notează că în mare există izvoare de apă dulce subacvatice care pot crea curenți revigoranți, perfecți în zilele fierbinți de iulie și august." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o terasă de pe faleză până la apus. Stoupa este faimoasă pentru apusurile sale curate direct în mare. Un mic secret local: satul din spate este locul unde scriitorul Nikos Kazantzakis a trăit și s-a inspirat pentru a scrie celebra sa carte, Zorba Grecul, plaja vecină (Kalogria) fiind locul real al aventurilor lui Zorba." }],
-  },
-  "Plaja Mavrovouni Gytheio": {
-    scurt: "Plaja Mavrovouni este o întindere uriașă și impunătoare de nisip auriu grosier amestecat cu pietricele fine, care se întinde pe o lungime de peste 5 kilometri în apropierea orașului istoric Gytheio. Este o plajă spectaculoasă, de o măreție sălbatică, renumită pe insulă pentru două lucruri: este un loc ideal pentru windsurfing și kitesurfing datorită brizei constante de după-amiază și este o arie protejată unde țestoasele marine Caretta-Caretta își depun cuiburile în dunele mari de nisip.",
-    cumAjungi: "Mavrovouni se află la doar 3 km sud de Gytheio. Distanțele mari din regiunea Laconiei fac ca mașina să fie absolut obligatorie pentru a călători confortabil. Șoseaua este complet asfaltată, plată și foarte rapidă. Parcarea este una dintre cele mai lejere din Peloponez: plaja fiind imensă, poți lăsa mașina complet gratuit direct pe spațiile mari de pământ din spatele plajei, la umbra măslinilor sau în zonele dedicate ale campingurilor cochete de pe mal, la doar un pas de nisip.",
-    echipament: [{ titlu: "Umbrelă proprie și cort de plajă rezistent", text: "Vântul suflă destul de des după-amiază, iar cea mai mare parte a plajei este complet liberă și neamenajată, fără umbră naturală aproape de apă." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea deschisă pietricelele fine pot fi deranjante la mersul desculț." }, { titlu: "Fără saltele gonflabile mari în larg", text: "Din cauza brizei de după-amiază, curenții te pot îndepărta rapid de mal, marea adâncindu-se după doar 4-5 pași." }],
-    preturi: "Plaja fiind preponderent liberă, costurile sunt minime. În zonele amenajate din dreptul campingurilor, un set de două șezlonguri costă în jur de 10 EUR sau este oferit la o consumație de la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar o masă completă la tavernele din apropiere este în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "Spațiu infinit și libertate", text: "Turiștii sunt încântați că nu trebuie să stea „înghesuiți ca sardinele\", plaja fiind ideală dacă vrei să ai o zonă imensă doar pentru tine, chiar și în plină vară." }, { titlu: "Apa este remarcabil de curată", text: "Recenziile laudă puritatea mării, menționând claritatea impecabilă a apei adânci." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a te bucura de o mare plată ca o oglindă și complet liniștită. Respectă cu sfințenie colivile metalice montate de voluntari pe nisip -- acestea protejează cuiburile subterane ale țestoaselor marine. După-amiază, poți lua mașina pentru a vizita orașul portuar vecin Gytheio și mica lui insulă Cranae, locul unde legenda spune că Paris și Elena din Troia au petrecut prima lor noapte împreună." }],
-  },
-  "Plaja Finikounda Messinia": {
-    scurt: "Plaja Finikounda este plaja urbană principală a unui sat turistic fermecător din sud-vestul Peloponezului, situat într-un golf larg și foarte bine adăpostit. Este o plajă superbă, acoperită cu un nisip fin, auriu și moale, iar apa mării este extrem de curată, caldă și are o nuanță azurie strălucitoare. Stațiunea a păstrat un aer relaxat și foarte primitor, plaja fiind tivită de o faleză scurtă plină de taverne pescărești excelente, fiind o destinație de top pentru familii și pentru cei care vor confort într-un stil tradițional.",
-    cumAjungi: "Finikounda se află poziționată exact între orașele istorice Methoni și Koroni. Distanța mare față de marile centre urbane face ca mașina să fie indispensabilă pentru a parcurge drumul principal complet asfaltat care șerpuiește printre dealuri pline de pini și măslini. Cu mașina proprie poți parca gratuit în parcările publice mari amenajate pe pământ chiar la intrarea în sat sau de-a lungul străzilor din spatele plajei, la doar două minute de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit exclusiv cu nisip fin, moale și complet lipsit de pietre sau arici de mare, intrarea fiind foarte lină." }, { titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului de aici este ideală pentru cei mici, marea fiind de obicei foarte calmă și fără valuri mari." }, { titlu: "Cremă solară cu protecție mare", text: "Apa fiind mică și caldă la mal, vei petrece mult timp în mare fără să simți arșița." }],
-    preturi: "Prețurile sunt foarte prietenoase: majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă în schimbul unei comenzi de băuturi de la bar (o consumație minimă de 10 - 15 EUR per set). Un frappe costă 3,50 EUR, o porție de pește proaspăt la tavernele din port este în jur de 12 - 14 EUR, iar un prânz rapid de tip gyros costă 4 EUR.",
-    turisti: [{ titlu: "O stațiune perfectă pentru relaxare", text: "Toți vizitatorii laudă vibe-ul calm al satului și ospitalitatea localnicilor, fiind ocolită de turismul de masă agresiv." }, { titlu: "Apa este ca o piscină", text: "Părinții apreciază în recenzii siguranța deplină pe care o oferă marea mică și liniștită pentru copii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei. Un mic truc local: dacă vrei o zonă complet sălbatică și imensă de nisip, ia mașina și condu 3 minute spre est până la plaja vecină Anemomilos (extensia plajei Finikounda), care este uriașă, aerisită și foarte populară printre pasionații de windsurf." }],
-  },
-  "Plaja Kalo Nero Kyparissia": {
-    scurt: "Plaja Kalo Nero (în traducere „Apa Bună\") este o fâșie lungă și spectaculoasă de nisip fin amestecat cu pietricele mărunte, situată pe coasta de vest a Peloponezului. Este o plajă dynamică, deschisă direct spre marea deschisă, renumită pentru apele sale de un albastru profund și pentru faptul că este una dintre cele mai importante zone biologice din Grecia pentru protejarea cuiburilor țestoaselor marine Caretta-Caretta. Satul din spate este liniștit, oferind o atmosferă relaxantă de vacanță pe malul mării.",
-    cumAjungi: "Plaja se află la aproximativ 6 km nord de orașul Kyparissia. Distanțele considerabile din vestul Peloponezului fac ca mașina să fie absolut necesară pentru a explora regiunea. Șoseaua principală este complet asfaltată și plată. Găsirea unui loc de parcare este extrem de simplă: drumul local trece chiar prin spatele plajei, existând spațiu din belșug pentru a lăsa mașina complet gratuit direct sub copaci sau pe marginea drumului, la doar câțiva pași de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Deși pe mal este mult nisip cald, la intrarea în mare există plăci de stâncă plate și pietricele care pot fi alunecoase." }, { titlu: "Umbrelă proprie și rogojină (opțional)", text: "Plaja fiind foarte lungă, porțiunile amenajate sunt mici, restul plajei oferind spațiu nelimitat pentru cei care vor să stea pe prosop în liniște." }, { titlu: "Fără saltele mari dacă sunt valuri", text: "Fiind orientată spre vest, în a doua parte a zilei se pot forma valuri mari și curenți din larg." }],
-    preturi: "Prețurile sunt foarte accesibile: majoritatea tavernelor oferă șezlongurile gratuit în baza unei comenzi mici la bar (în jur de 10 EUR per set). Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz excelent la tavernele tradiționale din spatele plajei costă în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "Apusuri de neuitat", text: "Toate recenziile laudă spectacolul soarelui care apune direct în marea deschisă, oferind imagini superbe de pe faleză." }, { titlu: "Protejarea naturii", text: "Vizitatorii apreciază eforturile ecologice ale voluntarilor care marchează cuiburile de țestoase de pe plajă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața, când marea este de obicei foarte calmă și perfectă pentru înot. Respectă cu strictețe semnele de protecție ale cuiburilor de țestoase și reține că plaja este o bază excelentă de plecare dacă vrei să vizitezi cu mașina situl arheologic antic Olympia, situat la aproximativ 45 de minute de mers spre nord." }],
-  },
-  "Plaja Tolo Nafplio": {
-    scurt: "Plaja Tolo (cunoscută și ca Plaja Psili Ammos) este o fâșie lungă, îngustă și deosebit de primitoare de nisip auriu extrem de fin. Golful este adăpostit natural de dealurile din jur și de două insulițe verzi fermecătoare aflate în larg (Romi și Koronisi), ceea ce face ca valurile mari să fie o raritate aici. Apa mării este caldă, curată și are o adâncime foarte mică pe o distanță uriașă în larg, motiv pentru care este considerată una dintre cele mai relaxante și sigure plaje de familie din estul Peloponezului.",
-    cumAjungi: "Tolo se află la doar 10 km sud-est de orașul istoric Nafplio. Deși există autobuze locale din Nafplio, mașina închiriată rămâne opțiunea ideală pentru a explora coasta Argolidei. Drumul este complet asfaltat, plat și foarte rapid. În plin sezon, străduțele înguste din interiorul stațiunii Tolo devin un test de răbdare din cauza lipsei locurilor de parcare. Sfatul nostru este să lași mașina în parcările publice gratuite mari amenajate pe pământ la intrarea dinspre Nafplio (în zona plajei late), de unde ajungi pe nisip în doar un minut.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul întregului golf este o masă continuă de nisip moale și fin, fiind complet lipsit de pietre sau pericole." }, { titlu: "Buget pentru închiriat hidrobiciclete sau bărci cu pedale", text: "Marea fiind plată ca o oglindă, este o plăcere să vâslești sau să pedalezi până la insulița Koronisi din larg, unde se află o mică biserică albă." }, { titlu: "Jucării de nisip pentru copii", text: "Calitatea nisipului compact de la buza apei este perfectă pentru micii constructori de castele." }],
-    preturi: "Tolo oferă prețuri foarte rezonabile. Un set de două șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi, multe baruri oferindu-le gratuit la o consumație de aceeași valoare. Un frappe costă 3,50 EUR, un gyros rapid la tavernele din spatele plajei este 4 EUR, iar o cină completă cu fructe de mare la terasele care au mesele așezate direct pe nisip costă în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Ca o piscină uriașă", text: "Toate familiile cu copii mici laudă în recenzii panta extrem de lină a intrării în mare și lipsa curenților periculoși." }, { titlu: "Taverne cu picioarele în apă", text: "Turiștii sunt încântați de restaurantele de pe mal unde poți cina la câțiva centimetri de valurile calme." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața pentru a prinde parcare gratuită aproape de nisip și pentru a evita aglomerația. Un mic pont local: cu cât mergi mai mult spre partea stângă a plajei (zona opusă portului), cu atât plaja devine mai lată, iar nisipul este mai fin și mai aerisit." }],
-  },
-  "Plaja Methoni Messinia": {
-    scurt: "Plaja Methoni oferă un peisaj unic în Grecia, unde relaxarea la mare se îmbină spectaculos cu o lecție de istorie vie. Este o plajă lungă și liniștită formată dintr-un amestec de nisip fin și pietricele mărunte, dar elementul ei emblematic este fundalul: plaja este străjuită în totalitate de zidurile masive de piatră ale uneia dintre cele mai mari și mai bine păstrate fortărețe medievale din Mediterană (Castelul Methoni). Apa mării este de un albastru strălucitor, caldă și complet lipsită de valuri mari datorită golfului protejat.",
-    cumAjungi: "Plaja se află în sud-vestul extrem al Peloponezului. Din cauza distanțelor mari și a lipsei transportului în comun rapid în această regiune izolată, mașina este absolut obligatorie. Drumul principal este asfaltat complet și șerpuiește pitoresc printre dealuri acoperite cu plantații de măslini. Parcarea este extrem de simplă și confortabilă: poți lăsa mașina complet gratuit în spațiile mari amenajate pe pământ chiar la intrarea în castel, la doar 50 de metri de plajă și de mare.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Deși pe mal este mult nisip, la intrarea în mare există o bandă de pietre plate care pot fi alunecoase." }, { titlu: "Mască de snorkeling", text: "De-a lungul zidurilor de piatră ale castelului medieval care intră direct în mare, relieful subacvatic este plin de viață marină interesantă." }, { titlu: "Sandale comode de mers", text: "Este păcat să vii aici și să nu vizitezi interiorul fortăreței venețiene și celebrul turn octogonal Bourtzi din capătul stâncii." }],
-    preturi: "Plaja fiind foarte liniștită, zonele organizate cu șezlonguri sunt puține, un set costând în jur de 10 EUR sau fiind oferit la o comandă de la bar. Un frappe costă 3,50 EUR, iar în satul cochet din spatele zidurilor găsești taverne tradiționale excelente. Un prânz complet cu preparate locale te va costa în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "Un decor de film", text: "Toate recenziile laudă priveliștea copleșitoare a castelului medieval care domină golful, oferind fotografii incredibile de vacanță." }, { titlu: "O atmosferă calmă și sigură", text: "Vizitatorii notează că golful este foarte protejat, apa fiind mică la mal și ideală pentru copii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică\\--ți vizita dimineața devreme, în jur de ora 09:00. Vizitează mai întâi interiorul castelului de piatră înainte ca soarele să ardă prea puternic (fortăreața fiind uriașă și fără umbră), iar la prânz coboară direct pe plaja de lângă ziduri pentru o baie răcoroasă în marea liniștită." }],
-  },
-  "Plaja Karathona Nafplio": {
-    scurt: "Plaja Karathona este o plajă uriașă, spectaculoasă și extrem de aerisită, situată într-un golf în formă perfectă de potcoavă, la doar câteva minute de mers de orașul istoric Nafplio. Este o întindere imensă de nisip fin, de o culoare deschisă, tivită pe toată lungimea ei de o pădure bogată de palmieri, eucalipți și pini care ajung aproape până la plajă. Apa este curată, foarte liniștită și are o intrare extrem de lină, fiind plaja preferată a localnicilor pentru spațiul generos și relaxarea completă în natură.",
-    cumAjungi: "Plaja se află ascunsă în spatele stâncii uriașe pe care se înalță faimoasa fortăreață Palamidi din Nafplio. Autobuzele locale circulă foarte rar spre acest golf, așa că mașina închiriată îți asigură cel mai bun confort. Drumul este complet asfaltat, modern și ușor. Un avantaj major la Karathona este parcarea: fiind o plajă imensă, poți conduce pe drumul local din spate și poți parca mașina complet gratuit direct sub eucalipții uriași, la umbră adâncă, la doar doi pași de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin format exclusiv din nisip moale și curat, fără pietre sau arici de mare." }, { titlu: "Palete de plajă sau minge de volei", text: "Lățimea și lungimea plajei îți oferă spațiu nelimitat pentru activități sportive fără să-i deranjezi pe cei de pe șezlonguri." }, { titlu: "Umbrelă proprie (opțional)", text: "Deși există câteva beach baruri mari amenajate, peste 70% din plajă este liberă și gratuită, având umbră naturală oferită de copacii din spate." }],
-    preturi: "Prețurile sunt foarte accesibile, fiind o plajă frecventată intens de localnici. Un set de două șezlonguri cu umbrelă costă în jur de 10 EUR sau este oferit la o consumație minimă la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar micile taverne din spatele copacilor oferă gustări tradiționale la prețuri excelente.",
-    turisti: [{ titlu: "Spațiu și relaxare din belșug", text: "Toate recenziile laudă dimensiunile impresionante ale plajei, menționând că nu te simți niciodată sufocat, chiar și în plină vară." }, { titlu: "Intrare ideală în mare", text: "Părinții apreciază panta foarte lină a mării, apa rămânând mică pe o distanță generoasă în larg." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața pentru a prinde cel mai bun loc sub copaci. Dacă ești pasionat de drumeții, există o potecă pietonală superbă de coastă, lungă de aproximativ 4 km, care pornește din portul Arvanitia (Nafplio) și șerpuiește pe la baza stâncilor până la plaja Karathona -- un traseu ideal de parcurs dimineața devreme pentru panorame de vis." }],
-  },
-  "Plaja Voidokilia Pylos": {
-    scurt: "Voidokilia este una dintre cele mai spectaculoase, faimoase și instagramabile plaje din întreaga Grecie. Imaginează-ți un golf în formă perfectă de semilună (sau litera grecească Omega), unde două promontorii stâncoase mari îngustează ieșirea spre marea deschisă, protejând complet apa de valuri. Nisipul este fin ca pudra de talc, iar apa este caldă, foarte mică și de un turcoaz nepământean. Fiind o rezervație naturală protejată de o importanță ecologică și istorică uriașă, plaja a rămas complet virgină și neatinsă de comerț.",
-    cumAjungi: "Plaja se află pe coasta de vest a Peloponezului, în regiunea Messinia, aproape de orașul Pylos. Transportul în comun nu ajunge deloc în această rezervație naturală izolată, așa că mașina este absolut obligatorie. Drumul final este parțial asfaltat și parțial din pământ bătătorit îngust, șerpuind pe lângă lacul sărat Gialova. Poți conduce încet și poți parca mașina complet gratuit direct în parcarea de pământ amenajată în spatele dunelor de nisip, la doar un minut de mers pe jos de plajă.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și cort de plajă", text: "Voidokilia este 100% publică și neamenajată. Nu există baruri, șezlonguri sau chioșcuri pe nisip. Trebuie să vii complet echipat cu propria umbră de acasă." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Ia-ți rezerve mari de apă plată rece și gustări, cel mai apropiat magazin fiind în satul Gialova, la câțiva kilometri distanță." }, { titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin acoperit exclusiv de un nisip fin, moale și curat, riscul de a te înțepa fiind zero." }],
-    preturi: "Accesul pe plajă și parcarea din spatele dunelor sunt complet libere și gratuite. Nu există comercianți jos pe nisip, așa că toate cheltuielile tale vor fi nule aici. Pentru un prânz cald după plajă, cel mai bine este să conduci 10 minute până la tavernele cochete de pe faleza din satul vecin Gialova.",
-    turisti: [{ titlu: "Un peisaj care îți taie răsuflarea", text: "Toate recenziile laudă forma perfectă a golfului și culoarea uluitoare a apei, asemănătoare unei lagune exotice." }, { titlu: "Urcați la castel pentru panoramă", text: "Mulți turiști recomandă o drumeție scurtă dar abruptă pe jos până la ruinele vechiului castel Paleokastro situat pe stânca de deasupra plajei, de unde se vede cel mai bine forma perfectă de Omega a golfului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde poteca de acces mai liberă, marea va fi complet plată ca o oglindă și te vei putea bucura de liniștea golfului înainte ca soarele să ardă prea puternic. Respectă cu sfințenie semnele de protecție ale dunelor de nisip, unde cresc plante rare protejate prin lege." }],
-  },
-  "Plaja Limeni Mani": {
-    scurt: "Limeni este una dintre cele mai spectaculoase și fotogenice așezări de coastă din regiunea Mani, recunoscută pentru casele sale fortificate din piatră construite chiar pe buza apei. Nu este o plajă clasică cu o întindere mare de nisip, ci un golf stâncos idilic unde marea are o nuanță incredibilă de verde-azuriu intens. Accesul în marea caldă și limpede ca cristalul se face direct de pe platformele din piatră sau pe scări. Locul este renumit în întreaga Grecie pentru broaștele țestoase marine uriașe (Caretta-Caretta) care înoată libere și vin des foarte aproape de mal.",
-    cumAjungi: "Limeni se află pe coasta de vest a peninsulei Mani, la aproximativ 5 km nord de Areopoli. Transportul public este rar și rigid în această zonă stâncoasă a Peloponezului, făcând mașina închiriată absolut obligatorie. Drumul principal este complet asfaltat, șerpuind spectaculos deasupra mării muntoase. Găsirea unui loc de parcare gratuit este destul de simplă: poți lăsa mașina pe marginea drumului lung local care coboară prin sat spre portul vechi, la doar un minut de mers pe jos de zonele de baie și de taverne.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Neexistând nisip, accesul în mare se face direct de pe platformele stâncoase naturale sau pe pietre plate care pot fi alunecoase." }, { titlu: "Mască și tub de snorkeling", text: "Apa fiind extrem de curată și adâncă chiar de la mal, vizibilitatea subacvatică este legendară. Este locul ideal pentru a înota alături de țestoasele marine uriașe care populează golful." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Platformele din piatră sunt netede și curate, ideale pentru a întinde un prosop bun dacă vrei să stai la soare." }],
-    preturi: "Accesul la zonele de piatră și baie este complet gratuit. Pe terasele din piatră ale tavernelor pescărești celebre (cum ar fi Takis) poți savura preparate proaspete. Un frappe costă 4 EUR, o apă mare este 1,50 EUR, iar un prânz delicios bazat pe pește local sau caracatiță la grătar este în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Întâlnirea cu țestoasele este magică", text: "Toți vizitatorii menționează în recenzii că au reușit să vadă și să înoate la doar câțiva metri distanță de țestoasele marine, experiența fiind de neuitat." }, { titlu: "Un sat rupt din povești", text: "Turiștii sunt cuceriți de arhitectura din piatră a turnurilor specifice Mani reflectate în apa azurie." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în sat în jurul orei 09:30 dimineața. Golful este foarte liniștit în prima parte a zilei, marea fiind plată ca o oglindă, iar țestoasele sunt foarte active aproape de mal. Reține o regulă locală importantă: deși țestoasele sunt blânde și obișnuite cu oamenii, este strict interzis să le atingeți, să le hrăniți sau să le stresați în timpul înotului." }],
-  },
-  "Plaja Paradise Thassos": {
-    scurt: "Paradise Beach își merită pe deplin numele, fiind una dintre cele mai exotice plaje de pe insulă. Nisipul de aici este atât de fin încât pare pudră, iar fundalul este completat de o insuliță stâncoasă plină de verdeață aflată în larg. Ceea ce o face cu adevărat specială în Thassos sunt valurile: fiind deschisă spre est, este una dintre puținele plaje unde se formează constant valuri mari și distractive, perfecte pentru distracție în apă.",
-    cumAjungi: "Plaja se află pe coasta de est, între satele Kinira și Aliki. Șoseaua principală de pe insulă este excelentă, însă coborârea de la drumul principal până la plajă se face pe o potecă auto din pământ, foarte abruptă, îngustă și plină de gropi adânci. Mulți turiști preferă să lase mașina sus, pe marginea șoselei, și să coboare pe jos. Totuși, dacă ai o mașină cu gardă puțin mai înaltă sau conduci cu mare atenție, poți coborî până la parcarea improvizată de pe nisip.",
-    echipament: [{ titlu: "Placă de boogie boarding sau saltea gonflabilă", text: "Valurile de aici sunt geniale; o placă mică sau o saltea îți vor asigura ore întregi de distracție garantată." }, { titlu: "Pălărie cu șnur", text: "Din cauza deschiderii golfului, briza poate fi destul de puternică și îți poate lua ușor pălăria de pe cap." }, { titlu: "Fără pantofi de apă", text: "Spre deosebire de alte plaje, aici fundul mării este acoperit de un nisip fin și moale, fără pietre sau arici." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR. Există o tavernă și un beach bar direct pe plajă. O masă simplă cu souvlaki sau burger costă în jur de 10 - 14 EUR de persoană, iar o apă plată mare este în jur de 1,50 EUR.",
-    turisti: [{ titlu: "Apa rămâne mică foarte mult", text: "Turiștii menționează că poți merge zeci de metri în larg și apa îți ajunge doar până la brâu, fiind foarte sigură pentru copii, în ciuda valurilor." }, { titlu: "Atenție la zona de nudiști", text: "În capătul din stânga al plajei, dincolo de stânci, există o zonă folosită istoric de nudiști." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să prinzi valuri mari și spectaculoase, verifică prognoza meteo și vino într-o zi în care vântul bate dinspre est (Marea Egee). Dacă vrei o mare calmă ca o piscină, vino în zilele fără vânt, dimineața devreme." }],
-  },
-  "Canal d'Amour Sidari": {
-    scurt: "Canal d\\'Amour (Canalul Iubirii) este una dintre cele mai unice și bizare formațiuni geologice din toată Grecia. Situată în stațiunea Sidari, plaja este formată din stânci din gresie galbenă stratificată, pe care vântul și valurile le-au sculptat sub formă de canale înguste, grote și arcade spectaculoase. Plaja propriu-zisă este de dimensiuni foarte mici, fiind așezată la capătul unui canal de apă turcoaz. Locul este legendar și atrage mii de îndrăgostiți în fiecare vară.",
-    cumAjungi: "Sidari se află în nordul extrem al insulei Corfu, la aproximativ 36 km de capitală. Drumul principal este asfaltat, dar traversează munții din centrul insulei, având multe porțiuni înguste și curbe strânse. Mașina închiriată îți asigură un confort uriaș, permițându-ți să parcurgi această distanță lungă în ritmul tău. În apropierea canalului există mici parcări private cu plată (în jur de 4 - 5 EUR pe zi) și locuri gratuite pe străduțele secundare din spatele hotelurilor.",
-    echipament: [{ titlu: "Rogojină sau prosop gros", text: "Plaja fiind minusculă, majoritatea turiștilor se așază direct pe platformele netede de gresie galbenă de pe stânci." }, { titlu: "Mască de snorkeling", text: "Stâncile din gresie moale continuă și sub apă, creând tunele subacvatice fascinante prin care poți înota." }, { titlu: "Fără lucruri de valoare lăsate nesupravegheate", text: "Zona stâncoasă este foarte circulată, fiind bine să ai un rucsac impermeabil mic pe care să-l iei cu tine." }],
-    preturi: "Accesul la monumentul natural este gratuit. Pe stânci există câteva rânduri de șezlonguri oferite de baruri cu aproximativ 15 EUR pe set. Un frappe costă 4 EUR, iar o porție de clătite sau un snack rapid la piscinele barurilor din spate este în jur de 6 - 8 EUR.",
-    turisti: [{ titlu: "Legenda este vie", text: "Toată lumea amintește de mitul local care spune că cuplurile care înoată împreună prin canal vor rămâne îndrăgostite pe viață, iar cei singuri își vor găsi sufletul pereche." }, { titlu: "Foarte aglomerat și zgomotos", text: "Recenziile menționează că locul este extrem de turistic și strâmt, devenind sufocant la prânz." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino după-amiaza târziu, în jur de ora 17:30. Majoritatea autocarelor cu turiști au plecat deja, stâncile galbene capătă o culoare caldă, portocalie în lumina apusului, iar atmosfera devine mult mai romantică și potrivită pentru poze." }],
-  },
-  "Red Beach Heraklion": {
-    scurt: "Red Beach (sau Kokkini Ammos) este una dintre cele mai spectaculoase, izolate și inedite plaje din Creta. Ascunsă într-un golf pitoresc situat chiar la sud de Matala, plaja îți va tăia răsuflarea prin decorul său dramatic: nisipul are o culoare roșiatică-arămie intensă, iar golful este flancat de stânci abrupte din gresie de culoare ocru. Apa mării este de o claritate rară și capătă nuanțe de verde-smarald strălucitor în contrast cu nisipul roșu. Este o plajă complet sălbatică, renumită pentru vibe-ul ei liber și nonconformist.",
-    cumAjungi: "Plaja nu are niciun drum auto de acces direct, fiind protejată de un munte stâncos. Ai nevoie de o mașină pentru a ajunge în Matala, unde poți lăsa vehiculul în parcarea mare din centrul stațiunii (costă în jur de 3 - 5 EUR pe zi). De acolo, aventura începe pe jos: ai de parcurs o drumeție solicitantă de 25-30 de minute peste deal. Poteca pornește din spatele satului, este abruptă, stâncoasă și marcată parțial, necesitând efort fizic, mai ales la urcare.",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași)", text: "Poteca peste deal este plină de pietre libere și porțiuni unde trebuie să escaladezi ușor stânca. Evită cu desăvârșire șlapii clasici de plajă pentru acest traseu!" }, { titlu: "Rucsac cu multă apă plată", text: "Jos în golf resursele sunt extrem de limitate, iar efortul drumeției sub soarele arzător te va deshidrata rapid." }, { titlu: "Fără pantofi de apă", text: "Odată ajuns jos, nisipul roșiatic este fin și moale, iar intrarea în mare este curată și liberă de pietre mari." }],
-    preturi: "Accesul pe plajă este gratuit. În plin sezon, un localnic inedit deschide o mică baracă din lemn improvizată direct pe nisip (faimosul Yannis Mojito bar), de unde poți cumpăra băuturi reci sau celebrele lui cocktailuri cu 7 - 9 EUR. Ocazional, există câteva șezlonguri rustice din lemn de închiriat cu aproximativ 10 - 15 EUR per set.",
-    turisti: [{ titlu: "Un loc complet diferit", text: "Vizitatorii sunt fascinați de culoarea unică a nisipului și de desenele sculptate de artiști în stâncile de la marginea plajei." }, { titlu: "Traseul este obositor dar merită", text: "Toate recenziile avertizează că urcarea înapoi peste deal la orele amiezii este foarte grea din cauza căldurii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește la drum dimineața devreme, în jur de ora 08:30. Vei trece dealul pe o temperatură plăcută, poteca fiind încă parțial la umbră, și vei prinde plaja roșie într-o liniște deplină, înainte de sosirea altor turiști. Reține că o bună parte a plajei este folosită în mod tradițional de comunitățile de nudiști, locul fiind recunoscut pentru toleranță și respect reciproc." }],
-  },
-  "Plaja Valtos Parga": {
-    scurt: "Plaja Valtos este cea mai mare, populară și spectaculoasă plajă din regiunea pitorească a orașului Parga. Situată într-un golf larg, chiar în spatele impunătorului castel venețian care domină zona de pe stâncă, plaja este o întindere superbă de nisip fin amestecat cu pietricele mărunte albe. Apa mării este de o curățenie exemplară și are o nuanță intensă de turcoaz. Locul este vibrant și cosmopolit, oferind un echilibru perfect între confortul beach barurilor moderne și frumusețea unui peisaj muntos verde.",
-    cumAjungi: "Valtos se află la doar 2 km de centrul orașului Parga. Deși se poate ajunge și pe jos trecând dealul pe scări de la castel, urcarea la întoarcere în arșița verii este epuizantă. O mașină închiriată îți asigură un confort total, permițându-ți să aduci bagajele mari la plajă și să explorezi și alte golfuri secrete din regiunea Epirului (cum ar fi plajele din Syvota). Drumul este complet asfaltat. În spatele plajei există parcări mari (atât publice gratuite pe pământ, cât și private oferite de taverne contra unei consumații), unde poți lăsa vehiculul în siguranță.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietricele rotunde care pot fi ușor inconfortabile la mers." }, { titlu: "Buget pentru sporturi nautice", text: "Valtos este centrul distracției acvatice din Parga, oferind de la jet-ski și parasailing până la hidrobiciclete de închiriat." }, { titlu: "Aparatul foto/Telefonul încărcat", text: "Imaginea zidurilor vechi ale castelului venețian cocoțat pe stânca din stânga plajei oferă un fundal incredibil pentru fotografii." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi, în funcție de cât de aproape de apă te așezi. Un frappe la bar costă 4 EUR, un gyros rapid la tavernele de pe faleză este 4,50 EUR, iar un prânz complet cu fructe de mare proaspete la restaurantele de pe mal ajunge la 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură de nota 10", text: "Toată lumea laudă facilitățile complete: dușuri din belșug, toalete, vestiare și restaurante excelente la câțiva pași de nisip." }, { titlu: "Se aglomerează în plin sezon", text: "Recenziile avertizează că în iulie și august golful devine extrem de populat, fiind o plajă foarte animată." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Golful este liniștit atunci, marea este plată ca o oglindă, iar soarele luminează perfect apa turcoaz. Dacă vrei mai multă liniște, mergi în capătul din dreapta al plajei (zona cea mai îndepărtată de castel), unde fâșia de nisip este mai liberă." }],
-  },
-  "Plaja Bella Vraka Syvota": {
-    scurt: "Bella Vraka este una dintre cele mai neobișnuite, exotice și spectaculoase plaje din întreaga Grecie continentală. Situată în stațiunea Syvota, această plajă este de fapt o fâșie dublă de nisip alb și fin care unește uscatul de mica insulă nelocuită Mourtemeno. Apa este mică ca adâncime, incredibil de caldă și are nuanțe fascinante de verde-smarald și turcoaz, fiind complet ferită de valuri mari datorită insulelor din jur. Este un loc de o frumusețe sălbatică rară, care te va face să te simți ca într-o lagună din Polinezia.",
-    cumAjungi: "Syvota se află pe coasta de vest a Greciei, la aproximativ 25 km sud de portul Igoumenitsa. Transportul public este rar în această regiune pitorească, făcând mașina închiriată absolut obligatorie. Traseul este complet asfaltat, dar plin de curbe și peisaje spectaculoase. Deasupra plajei există o parcare mică de pământ unde poți lăsa vehiculul complet gratuit. Marea aventură începe de acolo: pentru a ajunge pe plajă și pe insulă, trebuie să cobori o potecă și să traversezi marea pe jos prin apă, apa ajungându-ți doar până la genunchi sau brâu, în funcție de flux.",
-    echipament: [{ titlu: "Rucsac impermeabil (Waterproof bag)", text: "Deoarece vei traversa marea pe jos prin apă pentru a ajunge pe plajă, un rucsac impermeabil îți va proteja telefonul, aparatul foto și hainele uscate." }, { titlu: "Umbrelă proprie și rogojină", text: "Plaja de pe insulă este 100% publică, sălbatică și neamenajată. Nu există șezlonguri sau umbrele de plastic, locul fiind protejat ecologic." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt foarte utili pentru a merge confortabil prin apă în timpul traversării și pentru a explora cărările cu nisip de pe insulă." }],
-    preturi: "Accesul pe plaja Bella Vraka și traversarea lagunei sunt complet libere și gratuite. Nu există facilități comerciale sau baruri jos pe insulă, așa că costul tău direct pe nisip va fi zero. Pentru mâncare, apă și gustări, va trebui să folosești micile magazine sau tavernele din apropierea parcării de sus, unde un frappe costă 3,50 EUR.",
-    turisti: [{ titlu: "O experiență complet unică", text: "Toți vizitatorii sunt fascinați de senzația de a trece prin mare pe jos pentru a ajunge pe o insulă nelocuită plină de pini." }, { titlu: "Peisajul este incredibil", text: "Imaginile lagunei verzi văzute de pe deal sunt considerate printre cele mai frumoase din nord-vestul Greciei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește dimineața foarte devreme, în jur de ora 08:30. Vei prinde poteca de coborâre pe umbră, laguna va fi complet goală, curată, și te vei putea bucura de liniștea insulei în siguranță totală înainte de sosirea bărcilor de excursie după ora 10:30." }],
-  },
-  "Plaja Kryoneri Parga": {
-    scurt: "Plaja Kryoneri este plaja urbană principală a orașului Parga, situată chiar în fața promenadei centrale animate. Este o plajă fermecătoare formată dintr-un amestec plăcut de nisip și pietricele fine, spălată de o apă curată ca cristalul. Ceea ce o face absolut unică este priveliștea: chiar în mijlocul golfului, la doar o sută de metri de mal, se înalță spectaculoasa Insulă a Fecioarei Maria (Panagia), o insulă verde acoperită cu pini pe care se află o mică biserică albă și ruinele unei fortificații franceze.",
-    cumAjungi: "Plaja se află direct în centrul orașului Parga, fiind extrem de ușor de accesat pe jos dacă ești cazat în localitate. Dacă vii din alte stațiuni ale coastei ionice, mașina închiriată este cea mai bună opțiune. Găsirea unui loc de parcare gratuit în centrul orașului Parga este o misiune imposibilă în sezon. Sfatul nostru este să lași mașina în parcările publice mari cu plată (în jur de 5 - 8 EUR pe zi) semnalizate la intrarea în oraș și să cobori pe jos două minute prin zona pietonală direct spre faleză.",
-    echipament: [{ titlu: "Ochelari de înot sau mască", text: "Înotul până la insula Panagia din larg este activitatea principală a plajei; marea fiind calmă, poți parcurge distanța scurtă în doar câteva minute." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele de la intrarea în mare și pentru a explora potecile de piatră de pe insuliță." }, { titlu: "Haine lejere de zi", text: "Faleza fiind plină de cafenele colorate, taverne și magazine de suvenire, o plimbare lungă cere o ținută lejeră de vacanță." }],
-    preturi: "Fiind o plajă centrală foarte populară, prețurile sunt medii. Un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Un frappe la cafenelele de pe faleză costă 3,50 EUR, un gyros pe faleză este 4 EUR, iar o cină completă pentru două persoane la tavernele tradiționale din spatele plajei costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Totul la îndemână", text: "Turiștii apreciază enorm proximitatea față de restaurante, hoteluri și farmecul strduțelor înguste în stil venețian care urcă spre castel." }, { titlu: "Înotul până la insulă", text: "Toată lumea menționează vizitarea insuliței Panagia prin înot ca fiind o experiență distractivă și obligatorie în Parga." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Această plajă este superbă în a doua parte a zilei. Rămâi pe nisip sau la o terasă de pe faleză până la apus. Lumina serii colorează casele suspendate pe deal ale orașului Parga în nuanțe calde de pastel, iar imaginea insulei luminate din larg oferă o atmosferă incredibil de romantică." }],
-  },
-  "Plaja Lygia Epir": {
-    scurt: "Plaja Lygia (sau Ligia) este o destinație liniștită, extinsă și aerisită, situată pe coasta Epirului, ocolită de turismul de masă agresiv. Este o plajă lungă formată dintr-un amestec plăcut de nisip grosier și pietricele fine, mângâiată de o mare ionică de un albastru profund și curat. Golful este încadrat de dealuri verzi pline de măslini și pini, fiind locul ideal pentru turiștii care vor să pună prosopul pe nisip în liniște deplină, având parte de spațiu generos și de sunetul natural al valurilor.",
-    cumAjungi: "Plaja se află la aproximativ 25 km sud de Parga, de-a lungul șoselei naționale de coastă spre Preveza. Nu există linii de autobuz eficiente care să oprească aproape de acest golf retras, făcând mașina închiriată absolut necesară. Drumul principal este complet asfaltat, plat și foarte rapid. Parcarea este una dintre cele mai lejere din regiune: poți lăsa mașina complet gratuit direct pe spațiile mari de pământ din spatele plajei, la umbra măslinilor, la doar câțiva pași de nisip.",
-    echipament: [{ titlu: "Umbrelă proprie și rogojină", text: "Peste 80% din această plajă lungă este complet liberă și neamenajată, neexistând copaci aproape de apă care să ofere umbră naturală densă." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietricele fine care poate fi inconfortabilă la mersul desculț." }, { titlu: "O carte bună sau căști", text: "Lipsa muzicii stridente de club transformă acest loc în spațiul ideal pentru relaxare totală și detașare." }],
-    preturi: "Fiind o plajă preponderent publică și liberă, costurile sunt minime. În puținele zone amenajate din dreptul micilor pensiuni, un set de două șezlonguri costă în jur de 10 EUR sau este oferit gratuit în schimbul unei consumații la bar. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar micile taverne din apropiere oferă prânzuri tradiționale excelente cu aproximativ 12 EUR de persoană.",
-    turisti: [{ titlu: "Oază de liniște pe coastă", text: "Toți vizitatorii care fug de aglomerația din Parga laudă dimensiunile plajei Lygia, unde poți sta la distanță mare de următorul turist." }, { titlu: "Apa se adâncește relativ repede", text: "Recenziile notează că marea devine adâncă după doar câțiva pași de la mal, fiind ideală pentru înotători buni." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă. Este momentul perfect pentru a începe ziua cu o sesiune lungă de înot relaxant înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Ammoussa Lefkada": {
-    scurt: "Plaja Ammoussa (sau Ammouso) este o mică nestemată ascunsă într-un golfuleț pitoresc situat în sudul insulei Lefkada. Strânsă între dealuri muntoase joase acoperite cu tufe verzi și măslini, plaja te va cuceri instantaneu prin transparența uluitoare a apei sale, care seamănă cu o piscină naturală de un verde-turcoaz strălucitor. Plaja este formată din pietricele albe mari și lucioase, iar marea este mereu calmă și lipsită de valuri mari, fiind considerată una dintre cele mai intime locații din sud.",
-    cumAjungi: "Plaja se află în sudul insulei, în apropierea localității Marantochori și la vreo 10 km de stațiunea Vassiliki. Transportul public nu ajunge deloc în acest golf izolat, făcând mașina închiriată absolut obligatorie. Din șoseaua principală asfaltată care face turul insulei, pornește un drum secundar asfaltat, dar destul de îngust și șerpuitor care coboară prin plantațiile de măslini până la mare. Parcarea de jos este pe pământ, gratuită, situată chiar în spatele plajei, oferind un acces auto facil la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în mare sunt formate exclusiv din pietre și pietricele albe mari; mersul desculț este extrem de incomod." }, { titlu: "Mască și tub de snorkeling", text: "Apa fiind extrem de limpede și adăpostită natural de stânci, relieful stâncos subacvatic este plin de pești colorați și arici de mare ascunși, fiind un loc de top pentru snorkeling." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Pietrele albe de pe mal cer o saltea un pic mai groasă pentru confort dacă vrei să stai în zonele libere." }],
-    preturi: "Plaja este foarte bine organizată în sezon. Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. În spatele plajei funcționează un beach bar modern și o tavernă tradițională excelentă. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar o porție de calamari proaspeți la grătar la tavernă este în jur de 11 - 13 EUR.",
-    turisti: [{ titlu: "O piscină naturală ascunsă", text: "Toți vizitatorii laudă culoarea unică a apei și faptul că marea este complet liniștită, ideală pentru înot în siguranță totală." }, { titlu: "Mai intimă decât plajele din vest", text: "Turiștii o consideră o alternativă excelentă, mult mai calmă și mai ferită de valurile mari de pe coasta vestică a insulei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful fiind mic și foarte popular, șezlongurile din primul rând și locurile bune de parcare se ocupă complet până la ora 11:00, când sosesc mai mulți turiști cu mașinile." }],
-  },
-  "Plaja Kathara Faliraki": {
-    scurt: "Plaja Kathara este o fâșie superbă de nisip fin situată în capătul sudic al celebrei și aglomeratei stațiuni Faliraki din Rodos. Numele său înseamnă „Curată\", iar plaja își merită pe deplin renumele datorită apei sale limpezi și a nisipului impecabil. Este un loc deosebit de pitoresc, flancat de un mic port pescăresc cu bărci din lemn, oferind o atmosferă mult mai calmă, intimă și relaxantă decât zona centrală plină de cluburi din Faliraki.",
-    cumAjungi: "Plaja se află la aproximativ 13 km sud de orașul Rodos. Drumul este o șosea modernă, lată și complet asfaltată. O mașină închiriată îți asigură un confort uriaș, permițându-ți să ajungi în siguranță și să parchezi complet gratuit direct în spațiile mari amenajate pe pământ în spatele portului pescăresc, la doar un pas de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit exclusiv de un nisip fin, moale și curat, iar intrarea în marea liniștită este foarte lină." }, { titlu: "Mască de snorkeling", text: "În zonele unde plaja se termină și încep stâncile mici din marginea golfului, poți observa mulți peștișori." }, { titlu: "Saltea gonflabilă", text: "Golful fiind perfect adăpostit de vânturi mari, apa este plată ca o oglindă în majoritatea zilelor." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 10 - 15 EUR pe zi. Tavernele tradiționale din jurul portului pescăresc oferă prânzuri excelente bazate pe pește proaspăt. Un frappe costă 3,50 EUR, iar o masă completă cu fructe de mare este în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Refugiul perfect din Faliraki", text: "Toți vizitatorii laudă în recenzii liniștea plajei Kathara, considerând-o alternativa ideală la aglomerația sufocantă din centru." }, { titlu: "Excelentă pentru copii", text: "Intrarea lină și nisipul moale sunt foarte apreciate de părinți." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Vei prinde cele mai bune șezlonguri aproape de apă și te vei putea bucura de peisajul pitoresc cu bărcile din lemn care ies în larg, înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Simos Elafonisos": {
-    scurt: "Plaja Simos este inclusă constant în topurile celor mai frumoase plaje din Europa și este o adevărată minune a naturii. Situată pe mica insulă Elafonisos din sudul Peloponezului, Simos este o plajă uriașă în formă de opt, formată din două golfuri gemene așezate spate în spate, despărțite de o limbă lungă de nisip alb-rozaliu fin ca pudra de talc. Apa are o nuanță turcoaz deschis atât de strălucitoare și este atât de limpede, încât golful seamănă cu o piscină tropicală ruptă direct din Caraibe.",
-    cumAjungi: "Pentru a ajunge în acest paradis, ai nevoie neapărat de o mașină pentru a conduce până în micul port Pounta din sudul Laconiei, drumul de pe continent fiind complet asfaltat. Din Pounta se ia un feribot local scurt (cursa durează doar 10 minute) care transportă mașini direct pe insula Elafonisos. Odată debarcat, mai conduci doar 4 km pe un drum asfaltat printre dune până la parcarea imensă din spatele plajei Simos. Mașina este vitală pentru a transporta bagajele de familie și umbrelele pe insulă. Parcarea de la plajă este gratuită.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund mării acoperit exclusiv cu nisip fin, moale și curat, riscul de a te înțepa fiind zero." }, { titlu: "Umbrelă proprie și rogojină", text: "Plaja fiind uriașă și protejată ecologic, porțiunile organizate ocupă doar spații limitate, restul plajei oferind spațiu nelimitat pentru cei care vor să stea direct pe dune." }, { titlu: "Ochelari de soare polarizați buni", text: "Nisipul alb reflectă puternic lumina puternică a amiezii." }],
-    preturi: "Un bilet de feribot pentru mașină și pasageri costă în jur de 15 - 20 EUR pe sens. Pe plajă, în zonele amenajate, un set de două șezlonguri costă în jur de 15 - 20 EUR pe zi. Un frappe costă 4 EUR, iar în spatele plajei există o tavernă excelentă de familie unde un prânz complet te va costa în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Un paradis tropical în Europa", text: "Toți vizitatorii sunt copleșiți de culoarea uluitoare a apei și de nisipul fin plin de reflexii roz." }, { titlu: "Nu te simți niciodată înghesuit", text: "Turiștii apreciază dimensiunile impresionante ale plajei, unde ai un spațiu personal uriaș chiar și în august." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește pe plajă în jurul orei 09:15 dimineața. Golful este incredibil de liniștit în prima parte a zilei. Explorează pe jos potecile dintre cele două golfuri gemene pentru a admira dunele mari de nisip și plantele rare protejate prin lege." }],
-  },
-  "Golful Anthony Quinn Faliraki": {
-    scurt: "Golful Anthony Quinn este una dintre cele mai pitorești, celebre și fotogenice plaje din Rodos. Numele său provine de la celebrul actor care a cumpărat acest golf după ce a filmat aici scene din „Tunurile din Navarone\". Plaja este strânsă într-un golfuleț stâncos îngust, înconjurat de pini verzi, unde stâncile mari ies direct din mare. Apa are o culoare verde-smarald ireală și o transparență legendară, fiind considerat locul numărul unu de pe insulă pentru snorkeling.",
-    cumAjungi: "Golful se află pe coasta de est, la doar 3 km sud de stațiunea Faliraki și 15 km de orașul Rodos. Autobuzele locale te lasă la șoseaua principală, de unde ai de mers pe jos o distanță obositoare prin căldură. Mașina închiriată este esențială pentru a coborî confortabil direct până la plajă. Drumul este complet asfaltat, modern și rapid. Deasupra golfului există o parcare mare publică, pe pământ, unde poți lăsa vehiculul complet gratuit, deși locurile la umbră se ocupă rapid.",
-    echipament: [{ titlu: "Mască și tub de snorkeling obligatorii", text: "Relieful stâncos subacvatic din acest golf este un adevărat acvariu natural, plin de pești colorați și canale din piatră de explorat." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Plaja și întreaga intrare în marea adâncă sunt formate din pietre mari și platforme stâncoase destul de alunecoase." }, { titlu: "Prosop mare sau saltea", text: "Mulți turiști aleg să își așeze prosoapele direct pe platformele netede de stâncă de pe margini." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 15 EUR pe zi. Deasupra golfului, pe stânci, funcționează un snack-bar excelent cu o priveliște de vis. Un frappe costă 4 EUR, o apă mare este 1,50 EUR, iar gustările rapide sunt în jur de 8 - 10 EUR.",
-    turisti: [{ titlu: "O piscină de smarald", text: "Toată lumea laudă culoarea unică a apei și claritatea uimitoare a mării, ideală pentru scufundări." }, { titlu: "Devine foarte aglomerată", text: "Golful fiind strâmt și foarte popular pe internet, șezlongurile sunt așezate destul de aproape unele de altele." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde cele mai bune locuri chiar sub pini și vei putea face snorkeling în liniște totală înainte ca golful să devină foarte populat." }],
-  },
-  "Plaja Matala Heraklion": {
-    scurt: "Matala este o plajă legendară și plină de istorie, situată în sudul Cretei. Plaja este renumită în toată lumea datorită stâncii uriașe de gresie galbenă care închide golful în partea dreaptă, stâncă plină de peșteri artificiale din perioada romană care au adăpostit o celebră comunitate hippie în anii \\'60 (inclusiv pe Bob Dylan). Plaja este formată dintr-un amestec plăcut de nisip grosier închis și pietricele fine, iar orașul din spate păstrează și azi un aer boem și plin de viață.",
-    cumAjungi: "Matala se află la aproximativ 68 km sud de orașul Heraklion. Drumul traversează insula de la nord la sud printr-o zonă montană pitorească și este complet asfaltat, dar are serpentine și pante. Autobuzele circulă destul de rar, făcând mașina cea mai bună opțiune pentru a călători confortabil. În centrul stațiunii, chiar în spatele plajei, există o parcare mare organizată pe pământ contra unei taxe mici (în jur de 3 - 5 EUR pe zi), foarte utilă pentru a lăsa mașina la un pas de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt utili la intrarea în marea Libiei, unde pot apărea câteva pietre plate și plăci stâncoase în apă." }, { titlu: "Aparatul foto/Telefonul", text: "O vizită în interiorul peșterilor hippie de pe stâncă oferă cadre panoramice superbe asupra întregului golf." }, { titlu: "Haine lejere de zi", text: "Orașul din spatele plajei este complet pietonal, plin de desene pe asfalt, magazine colorate și cafenele cochete." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Un frappe la barurile de pe faleză costă 3,50 EUR, iar un prânz complet la tavernele cocoțate pe stânci costă în jur de 12 - 15 EUR de persoană. Intrarea pentru a vizita peșterile din stâncă este de aproximativ 3 - 4 EUR.",
-    turisti: [{ titlu: "Un vibe retro deosebit", text: "Vizitatorii sunt încântați de atmosfera relaxată a orașului și de muzica veche care se aude de la terase." }, { titlu: "Apa se adâncește relativ repede", text: "Recenziile menționează că marea nu este foarte mică la mal, adâncindu-se după doar câțiva pași." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până la apus. Matala oferă un spectacol minunat când soarele coboară direct în mare, colorând stânca peșterilor în nuanțe calde de auriu și portocaliu." }],
-  },
-  "Plaja Foneas Kardamili": {
-    scurt: "Plaja Foneas este una dintre cele mai spectaculoase și sălbatice plaje ascunse din regiunea Mani (Peloponez). Situată la capătul unei chei adânci, plaja este un golfuleț mic și intim acoperit cu pietre mari și pietricele albe lucioase, flancat de stânci abrupte acoperite cu vegetație. Elementul ei central este o stâncă uriașă aflată chiar în mijlocul apei, de pe care turiștii sar direct în marea de un verde-smarald incredibil de clară.",
-    cumAjungi: "Plaja se află la aproximativ 4 km sud de satul pitoresc Kardamili. Transportul public nu are stații aproape de acest golf retras, făcând mașina închiriată absolut obligatorie. Din șoseaua principală asfaltată, pornește o coborâre scurtă pe un drum îngust de pământ prin livezile de măslini. Poți parca mașina complet gratuit în parcarea mică din spatele plajei, dar spațiul este limitat și se umple rapid în iulie și august.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Malul și întreaga intrare în marea adâncă sunt formate exclusiv din pietre mari; mersul desculț este extrem de incomod." }, { titlu: "Umbrelă de plajă proprie", text: "Foneas este o plajă preponderent sălbatică. Deși stâncile oferă puțină umbră dimineața, în restul zilei ești expus la soare." }, { titlu: "Mască de snorkeling", text: "Apa fiind extrem de limpede și adâncă chiar de la mal, relieful stâncos subacvatic este plin de pești." }],
-    preturi: "Accesul pe plajă și parcarea sunt gratuite. În plin sezon, pe plajă funcționează o mică cantină de lemn (rulotă) administrată de localnici, de unde poți cumpăra apă rece, frappe sau sucuri cu 3 - 4 EUR. Nu există alte costuri comerciale jos.",
-    turisti: [{ titlu: "O piscină de smarald ascunsă", text: "Toată lumea laudă culoarea unică a apei și forma dramatică a stâncii din mijlocul golfului." }, { titlu: "Săriturile de pe stâncă", text: "Cei curajoși menționează platforma naturală a stâncii ca fiind punctul de atracție principal al plajei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful fiind mic, plaja se aglomerează foarte repede. Este o oprire excelentă dacă vrei să combini o zi de baie cu vizitarea satului istoric din piatră Kardamili aflat în apropiere." }],
-  },
-  "Laguna Balos Kissamos": {
-    scurt: "Balos este una dintre cele mai faimoase, fotografiate și spectaculoase locații din întreaga lume. Situată în colțul de nord-vest al Cretei, Balos este o lagună exotică cu nisip fin, nuanțe unice de roz (de la milioanele de cochilii sfărâmate) și ape extrem de mici, calde și liniștite, în nuanțe care variază de la verde deschis la albastru electric. Este un adevărat paradis tropical în mijlocul Mediteranei.",
-    cumAjungi: "Accesul la Balos este o întreagă aventură. Ai două variante: cu feribotul din Kissamos (care te limitează la un program fix) sau cu mașina. Dacă vrei libertate totală, mașina este cea mai bună opțiune, dar atenție: ultimii 8 km reprezintă un drum forestier de pământ și stâncă, neasfaltat și destul de greu. De la parcarea de sus, ai de parcurs o drumeție pe jos în coborâre de vreo 20-30 de minute în soare. O mașină îți oferă confortul de a te odihni imediat ce ai urcat înapoi poteca. Parcarea este gratuită sau implică o mică taxă de mediu (în jur de 1 - 2 EUR).",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași)", text: "Îți va prinde extrem de bine pentru drumeția de la parcare până jos la plajă și mai ales la urcarea înapoi." }, { titlu: "Pălărie de soare și multă apă", text: "Pe potecă nu există deloc umbră naturală, iar soarele din Creta arde puternic încă de dimineață." }, { titlu: "Fără pantofi de apă în lagună", text: "În interiorul lagunei, fundul mării este exclusiv din nisip fin, moale și foarte plăcut la mers." }],
-    preturi: "Există o mică gheretă cu gustări lângă parcare și un bar amenajat pe plajă în sezon, dar prețurile sunt mari. O apă sau un suc costă în jur de 4 - 5 EUR. Un set de două șezlonguri cu umbrelă se închiriază cu 20 - 30 EUR, dar locurile se ocupă imediat.",
-    turisti: [{ titlu: "Peisajul de sus îți taie răsuflarea", text: "Toată lumea recomandă să faci fotografii de pe potecă, înainte de a coborî, de unde se vede cel mai bine contrastul cromatic al lagunei." }, { titlu: "Drumul auto este greu, dar merită", text: "Vizitatorii avertizează să conduci foarte încet pe porțiunea neasfaltată." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește la parcare înainte de ora 09:00 dimineața. Vei evita aglomerația și vei prinde laguna liniștită, înainte ca marile vapoare de croazieră din Kissamos să aducă sute de turiști simultan în jurul orei 11:30." }],
-  },
-  "Plaja Vlicha Lindos": {
-    scurt: "Plaja Vlicha (sau Vlycha) este situată într-un golf larg și primitor, chiar înainte de a intra în faimosul sat istoric Lindos. Este o plajă mare flancată de dealuri joase, acoperită cu un amestec de nisip fin și pietricele mărunte la buza apei. Marea este de o curățenie exemplară, caldă și are o intrare destul de lină, golful fiind foarte bine adăpostit de vânturi. Este considerată alternativa perfectă, mult mai liniștită și mai aerisită, la plaja urbană aglomerată din interiorul satului Lindos.",
-    cumAjungi: "Vlicha se află la aproximativ 47 km sud de orașul Rodos și la doar 3 km nord de Lindos. Șoseaua principală de pe insulă este complet asfaltată și modernă. Autobuzele opresc la drumul mare, lăsându-te cu o coborâre lungă pe jos spre mare. O mașină închiriată îți asigură cel mai bun confort, permițându-ți să cobori direct până în spatele plajei. Parcarea este uriașă, amenajată pe pământ direct lângă nisip și este complet gratuită.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Deși pe mal este mult nisip cald, la intrarea în mare există o bandă de pietricele fine care poate fi deranjantă la mersul desculț." }, { titlu: "Ochelari de înot", text: "Apa fiind extrem de limpede și liniștită în acest golf protejat, este o plăcere să înoți pe distanțe lungi." }, { titlu: "Umbrelă proprie (opțional)", text: "Plaja fiind mare, are porțiuni uriașe complet libere unde poți pune prosopul gratuit." }],
-    preturi: "În zonele amenajate din dreptul hotelurilor, un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. De-a lungul plajei funcționează câteva baruri și taverne excelente. Un frappe costă 3,50 EUR, iar un prânz cald cu mâncare tradițională grecească este în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "O plajă relaxantă și curată", text: "Vizitatorii apreciază că plaja este foarte lată și nu te simți niciodată înghesuit, oferind mult mai mult spațiu personal decât plaja din Lindos." }, { titlu: "Infrastructură bună", text: "Recenziile laudă prezența dușurilor, a vestiarelor și a parcării facile chiar lângă nisip." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este foarte liniștit în prima parte a zilei. Este o bază excelentă de plajă dacă vrei să te relaxezi la mare dimineața, iar după-amiaza târziu să iei mașina pentru a vizita străduțele albe pietonale din Lindos și acropola antică." }],
-  },
-  "Plaja Marmari Mani": {
-    scurt: "Plaja Marmari este o adevărată oază de nisip ascunsă în peisajul arid, stâncos și sălbatic al peninsulei Mani, în sudul Peloponezului. Situată într-un golf adânc, flancat de dealuri golașe de piatră, Marmari te va surprinde cu un nisip extrem de fin, auriu și moale (o raritate în această regiune dominată de plaje cu pietre). Apa mării Libiei este curată ca lacrima, caldă și are o nuanță superbă de turcoaz, oferind un cadru intim, liniștit și exotic.",
-    cumAjungi: "Plaja se află în sudul extrem al peninsulei Mani, la doar câteva minute de mers cu mașina înainte de a ajunge în Porto Kagio. Distanțele mari și relieful montan fac ca mașina să fie 100% obligatorie pentru a călători în această regiune izolată a Greciei. Drumul este complet asfaltat, dar plin de curbe strânse și coborâri abrupte de-a lungul coastelor muntoase. Poți parca mașina complet gratuit pe spațiile de pământ amenajate de-a lungul drumului de deasupra golfului, accesul la plajă făcându-se coborând o potecă scurtă de pământ.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul întregului golf este o masă continuă de nisip fin, curat și foarte moale, riscul de a te înțepa fiind zero." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Plaja fiind izolată în natură, facilitățile sunt minime, așa că este bine să ai apă rece și gustări la tine." }, { titlu: "Umbrelă de plajă proprie (opțional)", text: "Porțiunea amenajată comercial este mică, restul plajei oferind spațiu liber pentru prosoape direct pe nisip." }],
-    preturi: "Accesul pe plajă este gratuit. În plin sezon, funcționează o mică tavernă/hotel de familie deasupra golfului, de unde poți închiria șezlonguri cu aproximativ 10 EUR per set. Un frappe costă 3,50 EUR, iar un prânz tradițional cu preparate locale din regiunea Mani costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O surpriză de nisip în Mani", text: "Toți vizitatorii sunt încântați să găsească o plajă cu nisip atât de fin în mijlocul unui relief stâncos și arid." }, { titlu: "Liniște deplină", text: "Recenziile laudă atmosfera calmă și lipsa aglomerației comerciale sufocante." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este incredibil de liniștit în prima parte a zilei, marea fiind plată ca o oglindă. Este un loc ideal de oprire pentru o baie relaxantă dacă planifici o excursie cu mașina spre Capul Matapan (cel mai sudic punct al Greciei continentale)." }],
-  },
-  "Plaja Paleochori Milos": {
-    scurt: "Plaja Paleochori este una dintre cele mai spectaculoase, vulcanice și unice plaje de pe coasta de sud a insulei Milos. Flancată de stânci masive stratificate în nuanțe uluitoare de roșu, galben și sulf, plaja este o fâșie lată de nisip grosier amestecat cu pietricele mărunte. Ceea ce o face cu adevărat magică este activitatea vulcanică subterană: în anumite porțiuni nisipul este fierbinte la atingere, iar în mare există izvoare termale subacvatice fierbinți, tavernele locale folosind căldura naturală a nisipului pentru a găti mâncarea în oale îngropate în sol!",
-    cumAjungi: "Plaja se află la aproximativ 10 km sud-est de portul principal Adamas. Transportul public este rar și are un orar rigid, care nu îți permite să te bucuri de o zi relaxantă. O mașină închiriată este cea mai bună soluție. Drumul principal este complet asfaltat, plat și foarte rapid de parcurs. Găsirea unui loc de parcare este destul de simplă: există o parcare publică mare, pe pământ direct în spatele plajei, unde poți lăsa vehiculul complet gratuit, la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele fine de pe mal și de la intrarea în marea adâncă." }, { titlu: "Mască de snorkeling", text: "Apa mării este extrem de curată, iar de-a lungul stâncilor din larg poți vedea bule mici de gaz vulcanic care ies direct din fundul mării, peisajul subacvatic fiind fascinant." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Nisipul grosier cere o așezare mai atentă dacă alegi să stai în zonele libere." }],
-    preturi: "Plaja este foarte bine organizată, având baruri moderne și taverne cochete. Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR pe zi, în funcție de rând. Un frappe costă 4 EUR, iar o porție din celebra mâncare gătită tradițional în nisipul fierbinte (la restaurantul Sirocco) costă în jur de 14 - 18 EUR.",
-    turisti: [{ titlu: "Mâncarea vulcanică este un must-try", text: "Toate recenziile recomandă experiența unică de a gusta preparate coapte lent direct în nisipul fierbinte al plajei." }, { titlu: "Culorile stâncilor sunt superbe", text: "Vizitatorii sunt fascinați de nuanțele de roșu și galben ale munților din spatele nisipului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este foarte liniștit în prima parte a zilei. Fiind orientată spre sud, Paleochori este un adăpost strategic excelent în zilele în care vântul puternic de nord (Meltemi) face marea agitată pe plajele nordice (cum ar fi Sarakiniko), în sud marea rămânând liniștită." }],
-  },
-  "Plaja Arvanitia Nafplio": {
-    scurt: "Plaja Arvanitia este plaja urbană fermecătoare și foarte populară a orașului istoric Nafplio, situată chiar la poalele stâncii uriașe pe care se înalță celebra fortăreață venețiană Palamidi. Este un golf mic, adăpostit natural, acoperit cu pietricele albe lucioase și pietre mari șlefuite. Apa mării este remarcabil de curată, adâncă și are o culoare superbă de un albastru-azuriu transparent. Este locul preferat al localnicilor pentru o baie rapidă și revigorantă, fiind la doar câteva minute de mers pe jos de centrul vechi.",
-    cumAjungi: "Plaja se află chiar sub zidurile cetății Akronafplia din Nafplio. Dacă ești cazat în orașul vechi, ajungi pe jos imediat printr-o plimbare scurtă. Dacă vii din alte stațiuni ale Argolidei, mașina închiriată îți va asigura cel mai bun confort pe drumul complet asfaltat. Un avantaj uriaș este că deasupra plajei există o parcare publică mare, cimentată, unde poți lăsa vehiculul complet gratuit, fiind la doar un minut de mers pe jos de treptele care coboară spre mare.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în marea adâncă sunt formate exclusiv din pietre și pietricele albe; mersul desculț este incomod." }, { titlu: "Mască de snorkeling", text: "Apa fiind adâncă din primii pași și foarte limpede de-a lungul stâncilor mari ale cetății, fauna marină este destul de activă." }, { titlu: "Haine lejere de zi", text: "Orașul fiind foarte elegant, o plimbare după baie prin centrul istoric cere o ținută confortabilă." }],
-    preturi: "Accesul pe plajă este gratuit. În plin sezon, pe plajă funcționează un beach bar modern care amenajează o zonă cu șezlonguri pliabile, un set costând în jur de 10 - 12 EUR. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar pentru o masă completă cel mai simplu este să mergi în centrul vechi din Nafplio.",
-    turisti: [{ titlu: "O locație spectaculoasă", text: "Toată lumea laudă poziția plajei, strânsă între stâncile uriașe pe care se află castelele Palamidi și Akronafplia." }, { titlu: "Perfectă pentru o baie rapidă", text: "Turiștii apreciază că te poți răcori în marea curată imediat după ce ai vizitat obiectivele istorice din oraș." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Golful este foarte liniștit în prima parte a zilei. De aici pornește celebra potecă pietonală de coastă amenajată (lungă de vreo 4 km) care șerpuiește pe la baza stâncilor până la plaja mare Karathona -- un traseu ideal de parcurs pe jos dimineața pentru peisaje marine de vis." }],
-  },
-  "Plaja Preveli Rethymno": {
-    scurt: "Preveli este una dintre cele mai faimoase, sălbatice și uluitoare plaje din întreaga Cretă. Situată pe coasta de sud, plaja este locul magic unde un râu de munte (care curge prin impunătoarea cheie Kourtaliotiko) se varsă direct în marea Libiei. Elementul ei unic este a doua cea mai mare pădure naturală de palmieri (Theophrastus) din Creta, care crește de-a lungul malurilor râului, creând un peisaj exotic de oază tropicală. Plaja este formată din nisip grosier întunecat și pietricele fine albe.",
-    cumAjungi: "Plaja se află izolată în sudul regiunii Rethymno. Transportul public este rar și rigid, făcând mașina închiriată absolut obligatorie pentru a ajunge în siguranță. Conduci pe drumul asfaltat prin chei până la parcarea mare amenajată pe stâncă contra unei taxe mici (în jur de 2 - 3 EUR). De la parcare, aventura începe pe jos: ai de coborât o potecă lungă din piatră cu peste 150 de trepte abrupte (aproximativ 15-20 de minute), care oferă o panoramă de vis asupra oazei de palmiere de jos.",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași)", text: "Traseul cu trepte pe stâncă de la parcare până jos necesită atenție, fiind obositor și total nerecomandat în șlapi simpli de plajă." }, { titlu: "Umbrelă proprie de plajă și rucsac", text: "Preveli este o plajă 100% publică și protejată. Nu există șezlonguri sau baruri mari amenajate pe nisip. Pădurea de palmieri oferă umbră naturală doar de-a lungul râului dulce." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele de la intrarea în marea adâncă." }],
-    preturi: "Accesul în rezervația naturală este gratuit. La marginea pădurii de palmieri funcționează o mică cantină/chioșc din lemn în sezon, de unde poți cumpăra apă rece sau un frappe cu 3,50 - 4 EUR. Nu există alte costuri comerciale jos. Un prânz complet la tavernele de pe drumul de întoarcere te va costa în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O experiență de neegalat", text: "Toți vizitatorii sunt copleșiți de frumusețea drumeției prin pădurea de palmieri de-a lungul râului dulce și de posibilitatea de a înota alternativ în apa rece a râului și în apa caldă a mării." }, { titlu: "Urcarea finală este un test", text: "Recenziile avertizează că efortul de a urca cele 150 de trepte înapoi la mașină la orele amiezii este considerabil." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei coborî poteca pe răcoare (stânca blochează soarele în prima parte a dimineții) și te vei putea plimba prin pădurea exotică de palmieri în liniște totală, înainte ca micile bărci de excursie din Plakias să aduce grupuri mari de turiști după ora 11:00." }],
-  },
-  "Plaja Glyfada Riviera Ateniană": {
-    scurt: "Plaja Glyfada este una dintre cele mai cochete, populare și vibrante plaje urbane de pe Riviera Atenei, situată în dreptul celei mai luxoase suburbii a capitalei. Este o fâșie lungă, compusă dintr-un amestec fin de nisip auriu și pietricele mici albe, spălată de o mare curată și caldă. Golful este foarte bine adăpostit de curenți și valuri mari, oferind o mare liniștită. Este locul ideal unde localnicii și turiștii vin să combine o zi relaxantă la mare cu sesiuni de cumpărături sau cafenele premium aflate la doar un pas distanță.",
-    cumAjungi: "Plaja se află la aproximativ 15 km sud de centrul Atenei (Piața Syntagma). Deși zona este deservită de linia de tramvai de coastă, drumul cu transportul în comun în zilele toride de vară este lung, obositor și aglomerat. O mașină închiriată îți asigură un confort total, permițându-ți să transporți umbrelele, prosoapele și lada frigorifică fără efort. Drumul este complet asfaltat, plat și rapid. Parcarea este gratuită și spațioasă, fiind amenajată pe pământ direct în spatele dunelor, la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este mult nisip cald, la intrarea în marea cristalină există o bandă de pietricele rotunde care poate fi deranjantă la mersul desculț." }, { titlu: "Ochelari de soare polarizați buni", text: "Reflexia luminii pe apa curată și pe nisipul deschis este foarte puternică la orele prânzului." }, { titlu: "Haine lejere pentru faleză", text: "Zona din spatele plajei are o promenadă modernă plină de cafenele și restaurante elegante unde merită să iei o pauză la prânz." }],
-    preturi: "Plaja fiind preponderent publică și liberă, accesul este gratuit. În puținele porțiuni amenajate de barurile cochete din zonă, un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Un frappe la bar costă 4 EUR, o apă mare este 1,50 EUR, iar gustările rapide (un club sandwich sau o salată) sunt în jur de 8 - 10 EUR.",
-    turisti: [{ titlu: "Oază de relaxare lângă oraș", text: "Vizitatorii apreciază enorm proximitatea față de centrul modern din Glyfada și curățenia generală a plajei." }, { titlu: "Perfectă pentru înot liniștit", text: "Toate familiile laudă lipsa valurilor mari și faptul că marea este foarte sigură pentru cei mici." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei. După plajă, lasă mașina în parcare și mergi la o plimbare pe jos în centrul din Glyfada pentru a savura o cafea premium sau pentru a cina la unul dintre restaurantele renumite." }],
-  },
-  "Plaja Astir Vouliagmeni Riviera Ateniană": {
-    scurt: "Astir Beach (Vouliagmeni) este considerată perla coroanei și cea mai exclusivistă, luxoasă și faimoasă plajă privată de pe întreaga Rivieră Ateniană. Situată pe o peninsulă verde superbă din sudul capitalei, această plajă premium te va cuceri instantaneu prin nisipul fin de culoare deschisă, curățenia impecabilă și apa de un turcoaz strălucitor care seamănă cu o piscină tropicală. Este locul preferat al celebrităților, oferind servicii impecabile de tip resort, șezlonguri confortabile din lemn, restaurante de top mondial și vestigii arheologice (ruinele Templului lui Apollo Zoster) chiar pe nisip.",
-    cumAjungi: "Plaja se află în regiunea Vouliagmeni, la aproximativ 22 km sud de centrul Atenei. Transportul public are rute rare și implică multe schimbări, făcând călătoria extrem de nepractică pentru un astfel de loc exclusivist. O mașină închiriată este absolut obligatorie pentru a ajunge aici în confort și siguranță totală. Drumul de coastă este modern, complet asfaltat și oferă peisaje marine de vis. Complexul premium dispune de o parcare proprie securizată cu plată, iar de-a lungul peninsulei există și spații publice unde poți parca cu atenție pe marginea drumului, sub pini.",
-    echipament: [{ titlu: "Ținută elegantă de plajă", text: "Fiind o locație selectă cu restaurante fine (cum ar fi Beefbar sau Matsuhisa), codul vestimentar lejer dar elegant este foarte apreciat pe terase." }, { titlu: "Fără pantofi de apă", text: "Fundul întregului golf privat este o masă continuă de nisip fin, moale și extrem de curat, liber de pietre sau pericole." }, { titlu: "Telefonul sau camera foto", text: "Complexul este o capodoperă de design pe plajă; ruinele templului antic antic situat direct pe nisip merită o sesiune de poze." }],
-    preturi: "Fiind o plajă privată de lux, prețurile sunt foarte ridicate. Intrarea în complex se face pe bază de rezervare sau bilet (costă în jur de 30 - 50 EUR de persoană în timpul săptămânii și poate depăși 80 EUR în weekend, prețul incluzând șezlongul premium și umbrela). Un frappe sau un espresso costă în jur de 6 - 8 EUR, un cocktail este 15 - 18 EUR, iar un prânz pornește de la 35 EUR de persoană.",
-    turisti: [{ titlu: "Servicii impecabile de 5 stele", text: "Toate recenziile laudă curățenia desăvârșită a nisipului (cernut zilnic), atenția la detalii a personalului și calitatea șezlongurilor." }, { titlu: "O experiență premium obligatorie", text: "Turiștii menționează că, în ciuda costurilor mari, confortul și frumusețea golfului merită pe deplin măcar o zi de răsfăț în vacanță." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți vizita din timp și fă o rezervare online pe site-ul lor oficial, mai ales dacă vrei să mergi în weekend. Sosește la deschidere, în jurul orei 09:00 dimineața, pentru a prinde cel mai bun loc în primul rând, chiar la buza apei turcoaz, și pentru a savura liniștea peninsulei înainte ca soarele să ardă puternic." }],
-  },
-  "Plaja Kalamaki Riviera Ateniană": {
-    scurt: "Plaja Kalamaki (situată în regiunea Alimos) este una dintre cele mai accesibile, curate și populare plaje publice urbane din imediata apropiere a Atenei. Este o fâșie lungă de coastă, formată dintr-un amestec fin de nisip auriu și pietricele fine la buza apei. Marea este curată, liniștită și are o intrare destul de lină, golful fiind adăpostit de marile porturi vecine. Este destinația perfectă pentru o baie rapidă după o zi de plimbare prin oraș, oferind un confort clasic la doar un pas de faleza cosmopolită a capitalei.",
-    cumAjungi: "Plaja se află la doar 11 km sud de centrul Atenei, de-a lungul bulevardului principal de coastă Leoforos Poseidonos. Deși este deservită de tramvaiul urban, călătoria în zilele fierbinți de vară poate fi obositoare dacă ai bagaje grele. O mașină închiriată îți asigură un confort deplin pe drumul rapid complet asfaltat. Parcarea se poate face gratuit de-a lungul străzilor secundare din spatele plajei sau în spațiile amenajate ale marilor baruri de pe mal, accesul la nisip fiind extrem de facil.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "În funcție de porțiunea pe care te așezi pe nisip, la intrarea în marea liniștită pietricelele pot fi ușor incomode la mersul desculț." }, { titlu: "Ochelari de soare polarizați buni", text: "Soarele de după-amiază bate direct din față, reflectându-se puternic în mare." }, { titlu: "Haine lejere de zi", text: "Faleza fiind tivită de cafenele moderne și porturi mari de iahturi, o plimbare lungă cere o ținută lejeră de vacanță." }],
-    preturi: "Plaja având porțiuni mari libere, accesul este gratuit. În zonele organizate de beach baruri, un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz rapid de tip gyros sau club sandwich la restaurantele de peste drum este în jur de 6 - 9 EUR.",
-    turisti: [{ titlu: "Foarte confortabilă și aproape", text: "Turiștii apreciază enorm proximitatea față de centrul Atenei, fiind plaja perfectă pentru a te răcori rapid în mare fără a conduce zeci de kilometri." }, { titlu: "O mare sigură", text: "Vizitatorii laudă lipsa valurilor mari și faptul că plaja este bine întreținută și curată pentru o zonă urbană." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă. După plajă, poți merge la o plimbare pe jos prin portul turistic Alimos Marina aflat în apropiere, unul dintre cele mai mari porturi de ambarcațiuni din Grecia." }],
-  },
-  "Plaja Kavouri Riviera Ateniană": {
-    scurt: "Plaja Kavouri (împărțită local în Megalo și Mikro Kavouri) este una dintre cele mai frumoase, verzi și apreciate plaje publice de pe Riviera Ateniană. Situată într-un golf larg plin de pini, în zona rezidențială Vouliagmeni, plaja se remarcă prin fâșia lată de nisip fin, de o culoare aurie caldă, și prin apa mării extrem de mică și caldă la mal. Este o plajă aerisită, care îmbină natural zonele cu iarbă verde și baruri elegante cu spații libere imense, fiind destinația ideală din jurul Atenei pentru familii cu copii și plimbări lungi pe la buza apei.",
-    cumAjungi: "Kavouri se află la aproximativ 20 km sud de centrul Atenei. Transportul public are linii rare și stații destul de îndepărtate de mare, făcând drumul obositor sub soare. O mașină închiriată îți asigură un confort total pe drumul rapid complet asfaltat. Un mare avantaj la Kavouri este parcarea: există locuri publice mari gratuite amenajate de-a lungul drumului local care urmărește linia plajei, direct sub pini, oferind un acces auto facil la doar un minut de mers pe jos de șezlonguri.",
-    echipament: [{ titlu: "Jucării de nisip din belșug pentru cei mici", text: "Fundul mării este o masă continuă de nisip moale, iar apa rămâne mică pe o distanță uriașă în larg, fiind un adevărat paradis sigur pentru copii." }, { titlu: "Fără pantofi de apă", text: "Riscul de a te înțepa în pietre sau arici de mare în interiorul acestui golf nisipos este zero." }, { titlu: "Palete de plajă (Beach tennis)", text: "Nisipul este fin și compact la buza apei, plaja fiind faimoasă printre atenieni pentru jocurile dinamice pe mal." }],
-    preturi: "Accesul pe plajă în zonele libere este complet gratuit. În porțiunile organizate de beach barurile moderne, închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz complet la tavernele renumite de pe faleză costă în jur de 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Parcul din spatele plajei este o binecuvântare", text: "Turiștii apreciază enorm zonele verzi umbrite de pini care mărginesc nisipul, oferind un loc perfect de plimbare la umbră în orele de amiază." }, { titlu: "Excelentă pentru copii", text: "Toate familiile laudă intrarea extrem de lină în apă și lipsa totală a valurilor mari în acest golf protejat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o terasă de pe faleză până la apus. Kavouri este orientată perfect spre vest și oferă un spectacol uimitor când soarele coboară direct în marea Saroniză. O scurtă plimbare pe jos de-a lungul aleii pietonale de coastă te va duce spre mici peninsule stâncoase unde se află ruinele unor fortificații antice grecești." }],
-  },
-  "Plaja Anavyssos Riviera Ateniană": {
-    scurt: "Plaja Anavyssos este o întindere uriașă și extrem de aerisită de nisip auriu fin, situată într-un golf larg din sudul Atticii. Este renumită în întreaga regiune ca fiind paradisul pasionaților de windsurfing și kitesurfing, datorită brizei constante care bate dinspre mare în a doua parte a zilei. Apa este curată, de un albastru-azuriu strălucitor, cu o intrare destul de lină. Plaja îmbină excelent confortul beach barurilor moderne cu spațiile libere imense, fiind o destinație perfectă pentru o zi completă de relaxare și sport.",
-    cumAjungi: "Plaja se află la aproximativ 48 km sud de centrul Atenei, de-a lungul șoselei de coastă spre Sounion. Transportul public este rar, călătoria fiind lungă și obositoare sub arșița verii. O mașină închiriată îți asigură un confort total, permițându-ți să aduci bagajele grele sau echipamentul sportiv. Drumul este complet asfaltat, lat și modern. Un mare avantaj este parcarea: există un spațiu public imens pe pământ chiar în spatele plajei, unde poți lăsa mașina complet gratuit, la doar câțiva pași de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării în interiorul golfului este integral format din nisip fin și moale, fără pietre sau pericole." }, { titlu: "Umbrelă proprie și cort de plajă (opțional)", text: "Plaja fiind uriașă, peste 70% din spațiu este complet liber pentru prosoape, dar expus la soare." }, { titlu: "Ochelari de soare polarizați buni", text: "Întinderea lungă de nisip auriu reflectă puternic lumina puternică a amiezii." }],
-    preturi: "În zonele amenajate de beach baruri, un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar prânzul la tavernele din spatele plajei costă în jur de 12 - 15 EUR de persoană. Vânzătorii ambulanți oferă gogoși calde cu miere pe plajă cu 3 EUR.",
-    turisti: [{ titlu: "Spațiu personal uriaș", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, menționând că nu te simți niciodată înghesuit, chiar și în weekend." }, { titlu: "Spectacolul velelor colorate", text: "Turiștii sunt fascinați de zecile de windsurferi care fac acrobații spectaculoase pe cer după-amiaza." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți în siguranță când marea este complet liniștită ca o piscină, vino dimineața între orele 08:30 - 11:30. Dacă vrei acțiune și adrenalină, momentul tău este după ora 14:00, când vântul se activează la intensitate maximă." }],
-  },
-  "Plaja Legrena Riviera Ateniană": {
-    scurt: "Plaja Legrena este una dintre cele mai lungi, sălbatice și virgine plaje ascunse de pe Riviera Ateniană, oferind o evadare totală în mijlocul naturii pure. Este o fâșie imensă de nisip fin amestecat cu pietricele mărunte, mângâiată de o mare curată ca lacrima, de un albastru profund. Pentru că a fost ocolită complet de dezvoltarea hotelieră sau de barurile zgomotoase, Legrena păstrează o atmosferă liniștită, fiind destinația ideală pentru cei care vor să asculte doar sunetul mării și al brizelor.",
-    cumAjungi: "Plaja se află în sudul extrem al Atticii, la aproximativ 60 km de Atena, chiar înainte de a ajunge la Capul Sounion. Transportul public este aproape inexistent pe această rută secundară, făcând mașina închiriată absolut obligatorie. Drumul principal de coastă este complet asfaltat și oferă peisaje marine superbe. Parcarea este extrem de lejeră și gratuită: poți parca mașina direct în spațiile mari de pământ din spatele dunelor de nisip, la doar un minut de mers pe jos de apă.",
-    echipament: [{ titlu: "Umbrelă proprie și rogojină groasă obligatorii", text: "Legrena este 100% publică și neamenajată. Nu există șezlonguri, baruri sau umbră naturală aproape de apă." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Ia-ți rezerve mari de apă plată rece și gustări, cel mai apropiat magazin fiind la câțiva kilometri distanță." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt utili mai ales la intrarea în marea deschisă, unde pot apărea câteva benzi de pietricele." }],
-    preturi: "Fiind o plajă liberă, costul pe nisip este zero. Pentru un prânz cald după plajă, cel mai bine este să conduci 3 minute până la tavernele tradiționale din satul Legrena, unde o porție de pește proaspăt la grătar sau preparate tradiționale costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O senzație rară de libertate", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, menționând că poți sta la distanțe uriașe de următorul turist, chiar și în iulie sau august." }, { titlu: "Apa este deosebit de curată", text: "Recenziile menționează transparența impecabilă a apei adânci a mării." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața. Vei prinde o mare plată ca o oglindă și temperaturi plăcute. Capătul plajei este destul de apreciat de pasionații de nudism care caută discreție și toleranță în mijlocul naturii." }],
-  },
-  "Plaja Sounion Riviera Ateniană": {
-    scurt: "Plaja Sounion oferă un peisaj istoric de o frumusețe copleșitoare, fiind situată exact la poalele stâncii uriașe pe care se înalță celebrul Templu al lui Poseidon (construit în secolul al V-lea î.Hr.). Plaja este strânsă într-un golfuleț pitoresc acoperit cu nisip auriu fin și pietricele fine albe. Apa este extrem de curată, caldă și are o culoare turcoaz strălucitoare, oferind experiența unică de a înota în marea Egee în timp ce admiri coloanele din marmură albă ale templului antic antic direct de pe șezlong.",
-    cumAjungi: "Plaja se află în punctul cel mai sudic al Atticii, la aproximativ 65 km de Atena. Distanța mare și lipsa curselor regulate de autobuz fac ca mașina să fie absolut obligatorie pentru o călătorie relaxantă. Drumul de coastă este complet asfaltat, modern și oferă panorame spectaculoase. Parcarea este gratuită și se face pe marginea drumului secundar care coboară spre plajă sau în spațiile dedicate ale tavernelor de pe mal, fiind la doar un minut de mers pe jos de apă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării în zona centrală este curat, format exclusiv din nisip fin, intrarea fiind foarte plăcută." }, { titlu: "Aparatul foto/Telefonul încărcat", text: "Imaginea templului antic antic situat pe stâncă deasupra șezlongurilor este pur și simplu spectaculoasă și obligatorie pentru poze de vacanță." }, { titlu: "Pălărie chic de zi", text: "Golful fiind adăpostit de vânturi mari, căldura la prânz este resimțită puternic." }],
-    preturi: "Fiind o locație istorică foarte căutată, prețurile sunt medii spre mari. Un set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR pe zi, în funcție de apropierea de apă. Un frappe costă 4 EUR, iar tavernele tradiționale excelente de pe mal oferă mâncare foarte bună. Un prânz complet te va costa în jur de 15 - 20 EUR de persoană.",
-    turisti: [{ titlu: "Un decor mitologic unic", text: "Toate recenziile sunt fascinate de măreția locului și de senzația deosebită de a înota sub privirile zeului mării." }, { titlu: "Foarte sigură pentru copii", text: "Vizitatorii laudă panta lină a apei și lipsa valurilor mari." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți ziua astfel încât să faci plajă dimineața în jur de ora 09:30, când golful este liniștit. După-amiaza târziu, urcă cu mașina până la Templul lui Poseidon -- apusul de soare văzut de pe stâncile antice este considerat cel mai frumos și spectaculos din întreaga Grecie continentală." }],
-  },
-  "Plaja Kape Riviera Ateniană": {
-    scurt: "Plaja Kape (cunoscută local și sub numele de Plaja Secretă Kape) este o adevărată bijuterie ascunsă și una dintre cele mai spectaculoase plaje cu aspect insular de pe Riviera Atenei. Strânsă într-un golfuleț mic, adânc și perfect adăpostit de vânturi, plaja te va uimi prin transparența uluitoare a apei sale, care are o culoare albastru-turcoaz strălucitoare, asemănătoare unei piscine naturale de pe o insulă cicladică izolată. Plaja este formată din pietricele albe fine și nisip moale, având un aer boem și extrem de intim.",
-    cumAjungi: "Plaja se află în apropierea localității Legrena, la aproximativ 55 km sud de Atena. Nu există linii de autobuz urban care să ajungă în acest colț ascuns, făcând mașina închiriată absolut necesară. Din șoseaua principală de coastă, urmezi o ieșire discretă pe un drum scurt de pământ îngust. Poți parca mașina complet gratuit în parcarea de pământ de deasupra stâncilor. De acolo, aventura începe pe jos: ai de coborât o scară lungă din piatră cu peste 90 de trepte abrupte direct pe plajă.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și rogojină groasă obligatorii", text: "Kape este o plajă 100% publică și neamenajată. Nu există șezlonguri sau baruri jos, iar stâncile înalte oferă umbră naturală doar dimineața devreme." }, { titlu: "Încălțăminte comodă de mers", text: "Scările abrupte de acces sunt obositoare la urcare, fiind bine să eviți șlapii simpli." }, { titlu: "Mască de snorkeling obligatorie", text: "Apa fiind incredibil de transparentă și adâncă chiar de la mal, zona stâncoasă subacvatică ascunde o mulțime de pești mici de explorat." }],
-    preturi: "Accesul la monumentul natural și parcarea de sus sunt complet libere și gratuite. În plin sezon, la începutul scărilor de sus funcționează o mică rulotă mobilă (cantină), de unde poți cumpăra o apă plată rece sau un frappe cu 3,50 EUR. Jos pe nisip costurile tale vor fi zero.",
-    turisti: [{ titlu: "Te simți ca în Ciclade", text: "Toți turiștii laudă aspectul exotic de insulă ascunsă al golfului, considerând-o una dintre cele mai frumoase ape din Attica." }, { titlu: "Urcarea treptelor este grea", text: "Recenziile avertizează că efortul de a urca scările înapoi la mașină la orele amiezii este considerabil din cauza căldurii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește foarte devreme, ideal înainte de ora 08:30 dimineața. Golful fiind mic și extrem de popular printre atenieni, petecul strâmt de nisip și locurile de parcare de sus se ocupă complet până la ora 10:00, mai ales în weekend." }],
-  },
-  "Plaja Lagonisi Riviera Ateniană": {
-    scurt: "Plaja Lagonisi (cunoscută des sub numele de Grand Beach Lagonisi) este definiția luxului, a eleganței și a confortului premium pe Riviera Atenei. Situată în interiorul unui complex privat exclusivist de pe o peninsulă superbă, plaja oferă o fâșie lată de nisip fin de culoare deschisă și o apă a mării de o transparență rară, colorată în nuanțe strălucitoare de turcoaz. Complexul oferă facilități de top: o piscină spectaculoasă construită direct în mare, pontoane din lemn elegante, baruri moderne și restaurante fine.",
-    cumAjungi: "Lagonisi se află la aproximativ 40 km sud de Atena. Distanța considerabilă față de oraș face ca transportul public să fie complet nepractic pentru o zi relaxantă. O mașină închiriată îți asigură o călătorie rapidă în deplin confort pe șoseaua complet asfaltată de-a lungul coastei. Complexul dispune de o parcare interioară imensă privată bine organizată și securizată, accesul auto fiind extrem de facil direct la intrarea pe plajă.",
-    echipament: [{ titlu: "Ținută elegantă de resort", text: "Fiind o locație premium foarte selectă, haine lejere dar chic de vară sunt ideale pentru pauzele de prânz la barurile de pe pontoane." }, { titlu: "Fără pantofi de apă", text: "Fundul mării în interiorul acestui golf privat este integral acoperit de un nisip fin, moale și extrem de curat, liber de pietre." }, { titlu: "Ochelari de soare polarizați buni", text: "Nisipul deschis reflectă puternic lumina soarelui la orele prânzului." }],
-    preturi: "Fiind o locație de lux, prețurile sunt mult peste media din Grecia. Intrarea pe plaja organizată se face pe bază de bilet (costă în jur de 30 - 50 EUR de persoană în funcție de sezon și zi, prețul incluzând accesul la facilități, șezlong premium și umbrelă). Un frappe costă 5 - 6 EUR, un cocktail este în jur de 14 - 16 EUR, iar prânzul pornește de la 25 EUR de persoană.",
-    turisti: [{ titlu: "Servicii și curățenie impecabile", text: "Toate recenziile laudă calitatea desăvârșită a serviciilor, menționând că nisipul este cernut zilnic, iar apa este caldă ca într-o piscină." }, { titlu: "Piscina din mare este un vis", text: "Vizitatorii sunt fascinați de puntea lungă din lemn care duce la piscina construită direct deasupra apei marine." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:00 dimineața pentru a prinde cele mai bune locuri pe pontoanele din lemn sau în primul rând de șezlonguri de pe nisip, bucurându-te de o atmosferă incredibil de liniștită în prima parte a zilei." }],
-  },
-  "Plaja Porto Limnionas Zakynthos": {
-    scurt: "Porto Limnionas nu este o plajă clasică cu nisip, ci un fjord natural spectaculos și adânc, ascuns printre versanții muntoși abrupți ai coastei de vest. Aici vei găsi platforme de piatră terasate unde sunt așezate șezlonguri, iar accesul în marea Ionică se face direct de pe stânci sau pe scări metalice. Apa de aici este renumită pentru o claritate de acvariu și o culoare intensă de albastru-azuriu și verde-smarald. Locul este o bijuterie sălbatică, ideală pentru scufundări și pentru cei care iubesc peisajele marine dramatice.",
-    cumAjungi: "Fjordul se află în vestul sălbatic al insulei, în apropierea satului montan Agios Leon. Transportul public este complet inexistent în această regiune muntoasă, făcând mașina închiriată 100% obligatorie. Drumul de acces de la șoseaua principală este complet asfaltat, dar șerpuiește abrupt în pante și serpentine strânse. Sus, chiar deasupra stâncilor, există o parcare mare de pământ oferită gratuit de taverna locală. Mașina îți dă libertatea de a transporta toate bagajele și de a pleca târziu, după ce admiri peisajul stâncos.",
-    echipament: [{ titlu: "Mască și tub de snorkeling obligatorii", text: "Apa adâncă și pereții de stâncă sunt plini de peșteri marine subterane spectaculoase și arcade prin care poți înota, fauna marină fiind foarte bogată." }, { titlu: "Pantofi de apă (Aqua shoes) sau sandale aderente", text: "Platformele din piatră pot fi alunecoase din cauza stropilor de apă, iar stâncile naturale cer o încălțăminte sigură." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Dacă nu vrei să închiriezi șezlong, o saltea pliabilă așezată direct pe platformele netede de piatră îți va asigura confortul." }],
-    preturi: "Accesul la fjord și înotul în peșteri sunt complet gratuite. Închirierea unui set de două șezlonguri cu umbrelă pe terasele de piatră costă în jur de 15 - 20 EUR pe zi. Deasupra golfului funcționează o tavernă excelentă de familie. Un frappe costă 4 EUR, iar un prânz cald cu mâncare tradițională sau fructe de mare la tavernă costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Cea mai curată apă de pe insulă", text: "Toate recenziile laudă transparența uluitoare a mării, menționând că poți vedea perfect fundul apei chiar și acolo unde marea depășește adâncimea de 10 metri." }, { titlu: "Apa este destul de răcoroasă", text: "Turiștii notează că în acest fjord adânc există izvoare reci subacvatice, marea fiind extrem de revigorantă în arșița verii." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Golful fiind foarte popular și spațiul pe terasele de piatră limitat, șezlongurile bune și locurile de parcare se ocupă complet până la ora 10:30. În plus, dimineața marea este de o liniște deosebită, ideală pentru o sesiune lungă de snorkeling înainte de prânz." }],
-  },
-  "Plaja Xigia Zakynthos": {
-    scurt: "Xigia (cunoscută și ca Xigia Sulfur Beach) este o plajă unică în lume și un adevărat spa natural în aer liber. Strânsă într-un golfuleț mic, flancat de stânci abrupte de calcar pe coasta de nord-est, plaja este formată din pietricele albe fine. Ceea ce o face faimoasă sunt izvoarele sulfuroase și de colagen natural care izvorăsc direct din peșterile subacvatice, oferind mării o nuanță spectaculoasă de albastru-lăptos. Apa are proprietăți terapeutice recunoscute pentru piele și articulații, fiind o destinație obligatorie pentru wellness natural.",
-    cumAjungi: "Plaja se află la aproximativ 22 km nord de Zakynthos Town, de-a lungul drumului secundar de coastă. Nu există linii de autobuz eficiente care să te lase aproape de acest golf retras. O mașină închiriată este esențială pentru a ajunge aici confortabil. Drumul principal este complet asfaltat, iar deasupra plajei există o parcare publică mare de pământ unde poți lăsa vehiculul complet gratuit. De acolo, ai de coborât o cărare amenajată cu trepte destul de abrupte direct pe nisip.",
-    echipament: [{ titlu: "Pungi sau rucsac sigilat pentru accesorii", text: "Mirosul de sulf (asemănător cu cel de ouă fierte) este foarte puternic din cauza izvoarelor terapeutice; este bine ca hainele uscate și bijuteriile din argint (care se pot两大 oxida) să fie protejate." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele fine de pe mal și de la intrarea în marea adâncă." }, { titlu: "Fără parfumuri grele", text: "Lasă mineralele naturale să acționeze pe piele după baie, efectul de colagen fiind excelent." }],
-    preturi: "Plaja oferă o mică zonă organizată în sezon, unde un set de două șezlonguri costă în jur de 12 - 15 EUR. Taverna de sus de la începutul scărilor are un sistem inedit: poți comanda băuturi și mâncare printr-un coș scos pe scripeți direct jos pe plajă. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz rapid este în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "Efecte magice pentru piele", text: "Toți turiștii laudă senzația catifelată a pielii după o sesiune de înot în apa lăptoasă plină de colagen." }, { titlu: "Mirosul caracteristic", text: "Majoritatea recenziilor menționează mirosul înțepător de sulf la sosire, dar notează că te obișnuiești cu el după primele 10 minute." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino dimineața în jur de ora 09:30. Soarele luminează direct golful vestic atunci, făcând culoarea lăptoasă a apei să pară fosforescentă și ideală pentru fotografii de revistă, înainte ca micul petec de pietricele să devină foarte populat." }],
-  },
-  "Plaja Agios Sostis Zakynthos": {
-    scurt: "Plaja Agios Sostis este o fâșie mică, îngustă și deosebit de fermecătoare de nisip fin, situată în golful Laganas. Elementul ei emblematic este insulița privată stâncoasă Cameo (Insula Îndrăgostiților), aflată chiar în larg și legată de plajă printr-un pod lung din lemn deosebit de pitoresc. Apa este caldă, curată și are o adâncime foarte mică la mal. Este o plajă cu o atmosferă romantică, ideală pentru o zi relaxantă unde poți combina o baie liniștită în mare cu o plimbare pe celebrul pod din lemn.",
-    cumAjungi: "Agios Sostis se află la aproximativ 11 km sud-vest de Zakynthos Town, fiind vecina mai liniștită a stațiunii aglomerate Laganas. Mașina închiriată îți oferă un confort deplin pe drumul plat complet asfaltat. Găsirea unui loc de parcare gratuit chiar lângă plajă și pod poate fi dificilă la amiază; există însă parcări private cu plată (în jur de 4 - 5 EUR pe zi) în apropierea portului sau locuri de-a lungul străzilor care coboară spre mare.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării în interiorul golfului este integral din nisip fin, moale și curat, intrarea fiind foarte lină." }, { titlu: "Buget pentru închiriat bărci cu motor", text: "Din micul port Agios Sostis poți închiria o barcă mică cu motor (fără permis) pentru a vizita insula Marathonisi (Insula Țestoaselor) sau pentru a căuta țestoasele Caretta-Caretta." }, { titlu: "Aparatul foto/Telefonul", text: "Podul lung din lemn și stâncile insulei Cameo oferă un decor de vis, extrem de căutat pentru fotografii romantice." }],
-    preturi: "Plaja fiind îngustă, zonele organizate sunt puține, un set de șezlonguri costă în jur de 12 EUR. Dacă vrei să treci podul din lemn pentru a vizita celebra insulă Cameo, se plătește o taxă de intrare (în jur de 5 EUR, prețul incluzând de obicei o băutură sau un suvenit la barul de sus decorat cu pânze albe). Un frappe costă 4 EUR, iar un prânz la tavernele excelente de pe faleză este în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Un decor de poveste", text: "Toți vizitatorii sunt cuceriți de frumusețea podului lung din lemn și recomandă vizitarea insulei Cameo pentru o atmosferă boemă." }, { titlu: "Excelentă pentru familii", text: "Părinții apreciază în recenzii marea caldă și lipsa valurilor mari în acest colț adăpostit al golfului." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Vei prinde loc lejer în apropierea podului și te vei putea plimba pe pasarela de lemn în liniște totală, înainte ca zona să devină foarte animată de turiștii care vin pentru excursiile cu barca." }],
-  },
-  "Plaja Limni Keri Zakynthos": {
-    scurt: "Plaja Limni Keri (situată în fața satului pescăresc Keri din sud-vest) este o fâșie cochetă formată dintr-un amestec de nisip grosier și pietricele albe rotunjite, umbrită natural de un rând generos de tamariști. Golful este orientat spre est și este foarte bine protejat natural de stânci mari, marea fiind caldă, extrem de liniștită și plată ca un lac. Plaja păstrează un aer tradițional, foarte relaxat și oferă o priveliște largă superbă direct către insula nelocuită Marathonisi aflată în larg.",
-    cumAjungi: "Limni Keri se află la aproximativ 20 km sud-vest de Zakynthos Town. Autobuzele locale circulă rar pe această rută secundară, făcând mașina închiriată absolut necesară pentru o călătorie confortabilă. Drumul principal este complet asfaltat, plat și șerpuiește plăcut printre livezi de măslini. Parcarea este gratuită, spațioasă, amenajată pe pământ chiar în spatele plajei sau de-a lungul portului pescăresc din sat, oferind un acces auto extrem de facil.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați mai ales la intrarea în marea liniștită, unde pietricelele rotunde pot fi incomode la mersul desculț." }, { titlu: "Placă de stand-up paddle (SUP) sau hidrobicicletă", text: "Golful fiind plat ca o oglindă în majoritatea zilelor, este locul ideal pentru plimbări relaxante pe apă." }, { titlu: "Rogojină sau prosop mare", text: "Copacii tamariști de pe margine oferă o umbră naturală densă, ideală pentru a sta direct pe sol." }],
-    preturi: "În puținele porțiuni amenajate, un set de două șezlonguri costă în jur de 10 - 12 EUR pe zi. Satul este renumit pentru tavernele excelente cu specific pescăresc din port. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz delicious bazat pe pește proaspăt pescuit în acea dimineață costă în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Farmec autentic grecesc", text: "Vizitatorii apreciază liniștea deplină a satului și lipsa hotelurilor uriașe, apreciind restaurantele afacerilor de familie de pe faleză." }, { titlu: "Punct de plecare excelent", text: "Turiștii laudă faptul că de aici poți închiria bărci sau lua tururi rapide spre insula Marathonisi și Peșterile Keri." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți ziua astfel încât dimineața să închiriezi o mică barcă din port pentru a vizita plajele exotice din Marathonisi, iar la prânz întoarce-te pe plaja Limni Keri pentru relaxare la umbra tamariștilor și o cină caldă la tavernele de la malul mării." }],
-  },
-  "Plaja Psarou Zakynthos": {
-    scurt: "Plaja Psarou este o fâșie lungă, îngustă și extrem de liniștită, situată pe coasta de est a insulei, o zonă renumită pentru apele sale calme. Premiată des cu certificatul Blue Flag, plaja este acoperită cu un nisip fin, de o culoare deschisă. Marea Ionică este caldă, curată și are o adâncime foarte mică la mal, fiind complet ferită de valurile mari. Este o plajă cu un aer foarte intim și relaxat, complet ferită de turismul de masă agresiv, ideală pentru cei care vor să evadeze din stațiunile zgomotoase.",
-    cumAjungi: "Psarou se află la aproximativ 12 km nord-vest de Zakynthos Town, în apropierea localității Amoudi. Transportul public este rar pe această rută secundară de coastă. O mașină închiriată îți asigură o independență totală pe drumul plat complet asfaltat. Parcarea este simplă și gratuită: poți lăsa vehiculul direct pe spațiile de pământ din spatele plajei, sub măslini sau pe marginea drumului secundar, accesul fiind la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării în zona centrală este curat, format exclusiv din nisip fin, panta fiind foarte lină și plăcută pentru picioare sensibile." }, { titlu: "Umbrelă proprie de plajă (opțional)", text: "Porțiunea amenajată comercial este mică, restul plajei oferind spațiu nelimitat pentru prosoape în liniște." }, { titlu: "O carte bună sau căști", text: "Lipsa muzicii stridente de club transformă acest loc în spațiul ideal pentru relaxare totală în sunetul discret al valurilor." }],
-    preturi: "Prețurile sunt foarte prietenoase: un set de două șezlonguri cu umbrelă costă în jur de 10 EUR pe zi, sau este oferit gratuit de barurile mici în baza unei consumații minime similare. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar un prânz tradițional delicios la tavernele din apropiere este în jur de 11 - 13 EUR de persoană.",
-    turisti: [{ titlu: "Oază de liniște pe insulă", text: "Toate recenziile laudă calmul plajei, menționând că nu te simți niciodată înghesuit, oferind o relaxare profundă departe de agitație." }, { titlu: "Ideală pentru copii", text: "Părinții apreciază intrarea lină în marea mică și caldă ca într-o piscină naturală." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă, oferind condiții ideale pentru înot lung și relaxant înainte ca soarele să ardă prea puternic." }],
-  },
-  "Plaja Plakaki Zakynthos": {
-    scurt: "Plakaki este una dintre cele mai izolate, sălbatice și spectaculoase locații stâncoase ascunse din Zakynthos. Situată pe coasta de vest muntoasă, nu este o plajă în sensul clasic, ci o platformă uriașă din piatră naturală, plată și albă, care intră maiestuos direct în apele adânci ale mării Ionice. Apa are o transparență ireală și o nuanță profundă de turcoaz lăptos. Locul are un aer primitiv și dramatic, fiind destinația perfectă pentru aventurieri și pentru cei care vor să experimenteze măreția naturii în stare pură.",
-    cumAjungi: "Locația se află în apropierea satului montan Kampi. Nu există nicio linie de autobuz care să te lase aproape de acest punct izolat, făcând mașina închiriată absolut obligatorie. Drumul de la șoseaua principală este asfaltat în mare parte, dar devine un drum de pământ îngust spre final. Poți parca mașina complet gratuit în parcarea improvizată de pe platoul de deasupra stâncilor. De acolo, aventura începe pe jos: ai de parcurs o coborâre solicitantă de 15-20 de minute pe o potecă îngustă tăiată în stâncă, prevăzută parțial cu o sfoară de sprijin.",
-    echipament: [{ titlu: "Încălțăminte cu talpă aderentă (adidași) obligatorie", text: "Poteca stâncoasă este abruptă și plină de pietre libere; coborârea sau urcarea în șlapi simpli de plajă este extrem de periculoasă." }, { titlu: "Rucsac complet cu apă plată și umbrelă", text: "Plakaki este 100% virgină. Nu există magazine, baruri, șezlonguri sau umbră naturală jos pe platformă. Trebuie să vii complet echipat cu mâncare și hidratare de acasă." }, { titlu: "Mască de snorkeling obligatorie", text: "Apa fiind adâncă din primii pași și incredibil de limpede de-a lungul pereților verticali de piatră, relieful subacvatic este spectaculos." }],
-    preturi: "Accesul la monumentul natural și parcarea de deasupra stâncilor sunt complet libere și gratuite. Nu există comercianți jos pe platforma de piatră, așa că costul tău direct aici va fi nul. Pentru o masă caldă după plajă, poți urca cu mașina în satul Kampi, renumit pentru tavernele cocoțate pe stânci înalte.",
-    turisti: [{ titlu: "Un peisaj dramatic uluitor", text: "Toți turiștii sunt impresionați de măreția stâncilor albe și de culoarea ireală a apei adânci, considerând drumeția o aventură memorabilă." }, { titlu: "Urcarea înapoi este grea", text: "Recenziile avertizează că drumul de întoarcere în urcare la orele amiezii este obositor și necesită condiție fizică minimă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește la drum dimineața devreme, în jur de ora 08:30. Vei coborî poteca pe umbră (stânca blochează soarele în prima parte a dimineții) și te vei putea bucura de platforma de piatră în liniște totală. Evită cu desăvârșire locul în zilele în care prognoza anunță vânt puternic dinspre vest, deoarece valurile mari care se sparg de platforma de piatră pot face intrarea și ieșirea din apă extrem de periculoase." }],
-  },
-  "Plaja Marathias Zakynthos": {
-    scurt: "Plaja Marathias (situată în sud-vestul extrem al insulei, în apropierea peninsulei Keri) este o nestemată ascunsă și complet ferită de turismul comercial de masă. Este o plajă pitorească formată exclusiv din pietricele albe, curate și rotunjite, flancată maiestuos de dealuri muntoase abrupte îmbrăcate în măslini bătrâni. Apa mării are o transparență legendară și o culoare profundă de smarald, fiind considerat un loc ideal pentru cei care caută izolare totală, liniște profundă și o mare impecabilă într-un decor sălbatic.",
-    cumAjungi: "Plaja se află la aproximativ 24 km de Zakynthos Town, dincolo de Limni Keri. Nu există nicio linie de autobuz care să ajungă în acest colț izolat al coastei, făcând mașina închiriată absolut obligatorie. Drumul principal este asfaltat, dar în ultima porțiune devine un drum secundar forestier foarte îngust și destul de abrupt care coboară spre munte. Poți parca mașina gratuit pe micile spații de pământ din spatele plajei sau de-a lungul drumului, accesul la apă făcându-se coborând o potecă scurtă de un minut printre măslini.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Plaja și întreaga intrare în marea adâncă sunt formate exclusiv din pietricele și pietre; mersul desculț este dureros, iar pietrele albe se încing puternic." }, { titlu: "Umbrelă proprie de plajă", text: "Marathias este o plajă preponderent neamenajată. Deși măslinii oferă puțină umbră naturală în spatele plajei, aproape de apă ești expus complet la soare." }, { titlu: "Mască de snorkeling", text: "Apa fiind adâncă din primii pași și de o claritate uluitoare, relieful stâncos subacvatic atrage o mulțime de pești, fiind un loc fantastic pentru snorkeling." }],
-    preturi: "Accesul pe plajă este liber și gratuit. În plin sezon, există o mică zonă amenajată discret cu câteva rânduri de șezlonguri, unde un set costă în jur de 10 - 12 EUR. Nu există taverne mari jos pe pietriș, doar un mic chioșc cu băuturi, așa că o apă plată este 1,50 EUR. Pentru un prânz serios, poți urca cu mașina la tavernele tradiționale de pe dealul Keri.",
-    turisti: [{ titlu: "O bijuterie ascunsă neatinsă", text: "Toți vizitatorii laudă în recenzii liniștea mistică a locului și curățenia impecabilă a apei, considerând-o refugiul perfect de pe insulă." }, { titlu: "Apa se adâncește brusc", text: "Recenziile avertizează că marea nu este potrivită pentru copii mici lăsați nesupravegheați, adâncindu-se după doar doi pași de la mal." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful fiind retras, vei prinde o atmosferă incredibil de calmă, iar soarele dimineții luminează perfect pietricelele albe, creând culori fosforescente în apa mării înainte ca locul să devină animat." }],
-  },
-  "Plaja Agios Gordios Corfu": {
-    scurt: "Agios Gordios este una dintre cele mai spectaculoase și impunătoare plaje de pe coasta de vest a insulei Corfu. Situată într-un golf uriaș, plaja este încadrată de munți verzi acoperiți cu păduri de pini și plantații de măslini care par că se prăbușesc în marea Ionică. Plaja este lungă și lată, formată în cea mai mare parte din nisip fin, auriu. Punctul ei emblematic este stânca uriașă Ortholithi care răsare maiestuos direct din apa turcoaz în partea stângă a golfului, oferind un decor natural dramatic de poveste.",
-    cumAjungi: "Plaja se află la aproximativ 15 km sud-vest de capitala Corfu Town. Șoseaua care traversează insula prin satele de munte (cum ar fi Sinarades) este complet asfaltată, dar destul de îngustă, plină de curbe strânse și coborâri foarte abrupte spre coastă. Autobuzele verzi au un program rigid, făcând mașina închiriată cea mai bună opțiune. Parcarea în apropierea nisipului este o provocare în sezon; există parcări private cu plată (în jur de 5 EUR pe zi) foarte aproape de mal sau spații gratuite de-a lungul drumului de acces dacă sosești devreme.",
-    echipament: [{ titlu: "Fără pantofi de apă în zona centrală", text: "Fundul mării este acoperit cu un nisip moale și foarte fin, ideal pentru picioare sensibile, deși spre margini pot apărea câteva pietre." }, { titlu: "Aparatul foto/Telefonul", text: "Imaginea stâncii izolate din larg și apusul de soare spectaculos oferă cadre geniale pentru fotografii." }, { titlu: "Mască de snorkeling", text: "În apropierea stâncilor mari din capetele golfului, fauna subacvatică este foarte activă." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 12 - 18 EUR pe zi. De-a lungul falezei funcționează numeroase baruri și taverne excelente. Un frappe costă 4 EUR, un gyros pe faleză este 4,50 EUR, iar o cină completă pentru o familie la tavernele tradiționale costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Un peisaj care te cucerește", text: "Toți vizitatorii laudă măreția munților verzi și frumusețea stâncii Ortholithi din larg." }, { titlu: "Perfectă pentru familii și înotatori", text: "Turiștii apreciază intrarea destul de lină în marea curată și organizarea impecabilă a plajei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă până târziu. Fiind orientată direct spre vest, Agios Gordios oferă un spectacol uimitor când soarele coboară în marea liberă. Dacă vrei mai multă liniște, mergi spre capătul din stânga al plajei (spre stâncă), unde zona este mai liberă și poți pune prosopul direct pe nisip." }],
-  },
-  "Plaja Kontogialos Corfu": {
-    scurt: "Plaja Kontogialos (cunoscută oficial și sub numele de Plaja Pelekas) este o fâșie superbă de nisip extrem de fin, auriu, situată într-un golf liniștit de pe coasta de vest a insulei. Strânsă la poalele dealului pe care se află pitorescul sat muntos Pelekas, plaja este înconjurată de pini verzi și formațiuni stâncoase joase. Apa mării este de o claritate excepțională și are o nuanță turcoaz strălucitoare, intrarea în marea Ionică fiind lină și caldă, fiind considerată una dintre cele mai confortabile plaje din vest.",
-    cumAjungi: "Kontogialos se află la aproximativ 13 km vest de Corfu Town. Distanța mică o face accesibilă, dar drumul secundar care coboară din satul Pelekas spre plajă este o adevărată provocare: este extrem de abrupt, îngust și plin de curbe strânse în ac de păr. Din acest motiv, o mașină este esențială pentru a parcurge pantele fără efort. Există o parcare publică mică gratuită pe pământ chiar în spatele plajei și spații cu plată (în jur de 5 EUR) oferite de baruri.",
-    echipament: [{ titlu: "Jucării de nisip din belșug pentru cei mici", text: "Calitatea nisipului de aici este ideală, fiind fin, moale și maleabil pentru castele de nisip." }, { titlu: "Fără încălțăminte specială", text: "Fundul mării este exclusiv din nisip curat, riscul de a te înțepa în arici fiind zero." }, { titlu: "Ochelari de soare buni", text: "Nisipul deschis reflectă puternic lumina amiezii." }],
-    preturi: "În funcție de barul ales, un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi, existând și baruri care le oferă în baza unei consumații minime similare. Un frappe costă 4 EUR, un burger sau un sandwich la bar este 8 - 10 EUR, iar un prânz la tavernele tradiționale din spatele nisipului costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Nisip ca pudra de talc", text: "Toți vizitatorii laudă în recenzii calitatea excelentă a nisipului fin și lipsa totală a pietrelor." }, { titlu: "Apusuri de revistă", text: "Turiștii sunt fascinați de spectacolul soarelui care apune direct în mare, colorând golful în nuanțe calde." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața. Vei prinde loc lejer înainte ca drumul îngust de jos să devină aglomerat. Înainte de a coborî spre plajă, oprește mașina câteva minute sus în satul Pelekas, la punctul de belvedere Kaiser\\'s Throne, pentru o panoramă panoramică uluitoare de 360 de grade asupra întregii insule." }],
-  },
-  "Plaja Issos Corfu": {
-    scurt: "Plaja Issos este un loc absolut unic în Corfu, oferind un peisaj spectaculos de deșert la malul mării. Situată în sud-vestul insulei, Issos este o plajă uriașă cu nisip auriu fin, renumită pentru dunele sale masive de nisip mișcătoare (adesea numite Sahara din Corfu) și pentru pădurea unică de cedri care mărginește lacul sărat protejat Korission din spate. Apa mării este dynamică, curată și are o culoare superbă de un albastru deschis, fiind o plajă complet liberă de construcții comerciale masive, plină de sălbăticie.",
-    cumAjungi: "Plaja se află la aproximativ 32 km sud de capitala Corfu Town. Transportul public este rar și nepractic pentru o zonă atât de întinsă, făcând mașina închiriată absolut obligatorie. Șoseaua principală sudică este asfaltată, iar accesul spre plajă se face pe un drum local de pământ plat și ușor de parcurs printre dune. Parcarea este uriașă, complet gratuită și liberă direct pe spațiile mari de pământ din spatele plajei, fiind la doar un minut de mers pe jos de buza apei.",
-    echipament: [{ titlu: "Umbrelă proprie și cort de plajă rezistent", text: "Vântul bate destul de des după-amiază (fiind o plajă populară pe insulă pentru windsurfing), iar lipsa copacilor aproape de apă cere o umbră proprie sigură." }, { titlu: "Fără pantofi de apă", text: "Întreaga plajă și fundul mării sunt o masă continuă de nisip fin, moale și complet lipsit de pietre sau arici." }, { titlu: "Ochelari de soare buni", text: "Dunele mari de nisip reflectă puternic lumina soarelui la orele amiezii." }],
-    preturi: "Plaja fiind preponderent publică și liberă, costul pe nisip este zero. În sezon, funcționează o singură zonă mică amenajată cu șezlonguri și o rulotă (cantină mobilă), unde un set costă în jur de 12 EUR. Un frappe costă 3,50 EUR, o apă mare este 1,50 EUR, iar gustările rapide sunt în jur de 6 - 8 EUR.",
-    turisti: [{ titlu: "O senzație rară de spațiu infinit", text: "Turiștii sunt fascinați de dimensiunile impresionante ale plajei, menționând că poți sta la distanțe uriașe de următorul vizitator." }, { titlu: "Dunele sunt fantastice", text: "Toată lumea recomandă plimbarea și urcarea pe dunele mari de nisip pentru poze de vis." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în a seconda parte a zilei, în jurul orei 16:00. Bucură-te de o baie relaxantă, iar la apus urcă pe dunele mari de nisip. Peisajul cu soarele care coboară în mare peste deșertul de nisip oferă o atmosferă incredibil de pitorească. Respectă cu sfințenie semnele de protecție ale lacului Korission aflat în spate, unde poți zări păsări flamingo dacă sosești dimineața devreme." }],
-  },
-  "Plaja Kalami Corfu": {
-    scurt: "Plaja Kalami este o bijuterie pitorească și plină de eleganță situată într-un golf adăpostit în formă de potcoavă de pe coasta de nord-est a insulei. Format exclusiv din pietricele albe lucioase, rotunjite spectaculos de valuri, golful te va cuceri prin culoarea sa de un smarald profund și transparența uluitoare a apei. Locul are un puternic aer literar și boem, fiind stațiunea unde scriitorul Lawrence Durrell a locuit și a scris (în celebra casă White House situată chiar la marginea stâncii).",
-    cumAjungi: "Kalami se află la aproximativ 30 km nord de Corfu Town. Șoseaua principală de coastă este complet asfaltată, dar muntoasă, strâmtă și plină de curbe strânse de-a lungul versanților. Autobuzele verzi circulă destul de rar, făcând mașina închiriată cea mai confortabilă opțiune. Din șoseaua principală, cobori pe un drum secundar înclinat direct spre sat. Parcarea se poate face contra unei taxe mici (în jur de 3 - 4 EUR pe zi) în parcările private mari amenajate pe pământ la intrarea pe plajă sau gratuit de-a lungul străzilor din spatele tavernelor.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în marea curată sunt formate din pietricele albe mari; mersul desculț este incomod, iar pietrele se încing la amiază." }, { titlu: "Mască de snorkeling", text: "Apa fiind adâncă din primii pași și de o claritate de acvariu de-a lungul stâncilor care închid golful, fauna marină este bogată." }, { titlu: "Haine lejere de zi", text: "Satul fiind foarte cochet, o plimbare până la casa istorică White House cere o ținută lejeră." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 15 EUR pe zi. Golful este faimos pentru tavernele sale excelente cu specific grecesc tradițional. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz delicious bazat pe pește local sau fructe de mare la taverne costă în jur de 14 - 17 EUR de persoană.",
-    turisti: [{ titlu: "O atmosferă elegantă neschimbată", text: "Turiștii laudă vibe-ul liniștit, select și autentic al golfului, ferit de zgomotul marilor cluburi de noapte." }, { titlu: "Transparența apei este uimitoare", text: "Toată lumea menționează în recenzii că poți vedea peștii înotând clar chiar de pe faleză." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă. Este o bază excelentă de oprire dacă vrei să închiriezi ulterior o mică barcă cu motor din port pentru a descoperi micile golfulețe intime din nord-est accesibile doar de pe mare." }],
-  },
-  "Plaja Arillas Corfu": {
-    scurt: "Plaja Arillas este o fâșie lungă și lată de nisip auriu fin, situată într-un golf deschis din nord-vestul insulei Corfu. Este renumită pe insulă ca fiind o destinație dedicată relaxării profunde, meditației și turismului ecologic, fiind ocolită complet de cluburile zgomotoase. Apa mării este curată, are o nuanță turcoaz deschis strălucitoare și o intrare foarte lină și de mică adâncime, fiind perfectă pentru picioare sensibile. Fundalul este decorat de stânci din argilă și promontorii verzi superbe.",
-    cumAjungi: "Arillas se află în nord-vestul îndepărtat al insulei, la aproximativ 38 km de capitală. Distanța considerabilă și relieful muntos din interiorul insulei fac ca transportul public să fie rar și total nepractic pentru o zi relaxantă. O mașină închiriată este esențială pentru a parcurge drumul asfaltat în ritmul tău. Un mare avantaj la Arillas este parcarea: drumul local trece chiar prin spatele nisipului, existând o zonă publică mare pe pământ unde poți parca mașina complet gratuit, la doar câțiva metri de plajă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul întregului golf deschis este acoperit exclusiv cu un nisip fin și foarte moale, riscul de a te înțepa fiind zero." }, { titlu: "Jucării de nisip pentru copii", text: "Intrarea lină în marea liniștită dimineața și nisipul fin fac din acest loc o zonă extrem de sigură pentru cei mici." }, { titlu: "Umbrelă proprie (opțional)", text: "Plaja fiind lungă, oferă spații mari libere pentru cei care vor să stea pe prosop în liniște." }],
-    preturi: "Prețurile sunt foarte accesibile: un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR pe zi. De-a lungul falezei din spatele plajei funcționează mici taverne de familie și cafenele cochete. Un frappe costă 3,50 EUR, o bere locală este 4 EUR, iar un prânz complet te va costa în jur de 11 - 13 EUR de persoană.",
-    turisti: [{ titlu: "Oaza de liniște a insulei", text: "Toate recenziile laudă calmul deosebit al stațiunii, fiind un loc foarte relaxant și primitor, preferat de cei care caută yoga sau meditație." }, { titlu: "Apusuri fantastice", text: "Vizitatorii menționează ca o atracție zilnică spectacolul soarelui care apune în mare direct în fața plajei, în spatele micilor insulițe stâncoase din larg." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Golful este de o liniște deosebită în prima parte a zilei. Un mic truc local: în capătul din stânga al plajei stâncile sunt formate din argilă naturală; mulți turiști amestecă praful de argilă cu apă direct pe plajă pentru a-și face un tratament cosmetic natural pentru piele." }],
-  },
-  "Plaja Moraitika Corfu": {
-    scurt: "Plaja Moraitika este o plajă urbană lungă, plată și excelent organizată, situată pe coasta de sud-est a insulei Corfu. Este compusă dintr-un amestec plăcut de nisip fin și pietricele fine la buza apei. Fiind orientată spre golful interior adăpostit dintre insulă și continent, marea de aici este caldă, extrem de liniștită și plată ca o oglindă, fiind complet lipsită de valuri mari sau curenți periculoși. Este destinația favorită din sud pentru familii cu copii și pentru cei care vor confort complet.",
-    cumAjungi: "Moraitika se află la aproximativ 20 km sud de capitala Corfu Town. Șoseaua principală sudică este complet asfaltată, dreaptă și foarte rapid de parcurs. Deși stațiunea are conexiuni de autobuz, o mașină închiriată îți oferă un confort sporit pentru a transporta bagajele grele de familie și a explora satele tradiționale din jur. Parcarea este simplă și gratuită: există spații mari publice pe pământ amenajate de-a lungul străzilor secundare care coboară din centrul stațiunii direct spre plajă.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Sunt recomandați mai ales la intrarea în marea liniștită, unde pietricelele fine pot fi ușor deranjante la mersul desculț." }, { titlu: "Buget pentru hidrobiciclete sau bărci cu pedale", text: "Marea fiind plată ca un lac în majoritatea zilelor, este o plăcere să te plimbi pe apă în siguranță totală." }, { titlu: "Haine lejere de zi", text: "În spatele plajei funcționează numeroase cafenele moderne, taverne și magazine de suvenire animate." }],
-    preturi: "Competiția mare face ca prețurile să fie foarte prietenoase: majoritatea beach barurilor oferă un set de două șezlonguri cu umbrelă gratuit dacă comanzi băuturi de o valoare minimă (în jur de 10 - 15 EUR per set). Un frappe costă 3,50 EUR, un gyros rapid este 4 EUR, iar o cină completă pentru o familie la taverne costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură completă și confort", text: "Toți vizitatorii apreciază curățenia plajei, prezența dușurilor, a vestiarelor, a salvamarilor și numărul mare de restaurante de pe mal." }, { titlu: "O mare excelentă pentru copii", text: "Părinții laudă la unison marea caldă, mică la mal și lipsa totală a valurilor mari." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața pentru a prinde cele mai bune locuri în primul rând de șezlonguri. După o zi de plajă, ia mașina și urcă 5 minute pe deal în vechiul sat tradițional Ano Moraitika pentru a te plimba pe străduțele înguste din piatră printre case vechi pline de flori și a savura o cină liniștită." }],
-  },
-  "Plaja Agios Ioannis Lefkada": {
-    scurt: "Agios Ioannis este o plajă uriașă, spectaculoasă și plină de energie, situată în nordul extrem al insulei, la doar un pas de capitală. Este o fâșie lungă de kilometri întregi formată din nisip alb și pietricele fine, faimoasă în toată lumea pentru morile de vânt istorice din piatră de la marginea ei și pentru faptul că este raiul pasionaților de kitesurfing. Apa mării are o nuanță turcoaz-electric incredibil de intensă, dar este dynamică, fiind expusă constant brizei puternice din a doua parte a zilei.",
-    cumAjungi: "Plaja se află la doar 3 km de orașul Lefkada. Deși distanța este mică, transportul public nu are rute frecvente până pe această fâșie de coastă deschisă, făcând mașina închiriată cea mai bună opțiune. Drumul este complet asfaltat, plat și foarte rapid. Un mare avantaj la Agios Ioannis este parcarea: drumul local trece chiar prin spatele plajei, existând spațiu imens pe marginea drumului sau în spațiile dedicate ale barurilor unde poți parca mașina complet gratuit, la doar câțiva metri de nisip.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și cort de plajă rezistent", text: "Vântul suflă puternic și constant aproape în fiecare după-amiază, așa că umbra proprie trebuie fixată bine." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Deși pe mal este amestec de nisip, la intrarea în marea deschisă pot apărea plăci de stâncă și pietre mărunte șlefuite de valuri." }, { titlu: "Ochelari de soare polarizați buni", text: "Reflexia luminii în apa turcoaz și pe nisipul alb este foarte puternică." }],
-    preturi: "Plaja fiind imensă și preponderent publică, accesul este gratuit. În puținele porțiuni amenajate de baruri cochete, un set de două șezlonguri costă în jur de 12 - 15 EUR pe zi. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar tavernele excelente din spatele plajei oferă prânzuri tradiționale cu aproximativ 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Spectacolul zmeielor colorate", text: "Toți vizitatorii sunt fascinați de imaginea zecilor de kitesurferi care umplu cerul după-amiaza cu zmeiele lor multicolore." }, { titlu: "Apa are o culoare ireală", text: "Recenziile laudă nuanțele unice de albastru electric, specifice coastei de vest a insulei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți liniștit sau mergi cu copiii, vino dimineața între orele 08:30 - 11:30, când marea este complet calmă, plată ca o oglindă și fără vânt. Dacă vrei adrenalină sau vrei să admiri spectacolul surferilor, momentul tău este după ora 14:00, când briza termică se activează la intensitate maximă." }],
-  },
-  "Plaja Pefkoulia Lefkada": {
-    scurt: "Plaja Pefkoulia este o întindere imensă și impunătoare de nisip fin amestecat cu pietricele mărunte, situată pe coasta de nord-vest a insulei. Numele său provine de la pădurea densă de pini verzi („pefko\") care îmbracă munții din spate și coboară până aproape de buza plajei, oferind aerului un parfum unic de rășină. Apa mării are acea culoare turcoaz-lăptos spectaculoasă, specifică acestei laturi a insulei. Este o plajă extrem de lungă și aerisită, oferind spațiu din belșug pentru o relaxare profundă în mijlocul naturii.",
-    cumAjungi: "Pefkoulia se află la aproximativ 10 km sud-vest de orașul Lefkada, chiar înainte de a ajunge în satul Agios Nikitas. Autobuzele locale au stații doar la drumul principal de deasupra, lăsându-te cu o coborâre obositoare. O mașină închiriată îți asigură cel mai bun confort, drumul de coastă fiind complet asfaltat și modern. Parcarea este gratuită și se poate face în spațiile mari de pământ din spatele plajei sau pe marginea drumului secundar, accesul la nisip fiind extrem de facil, la doar un minut de mers pe jos.",
-    echipament: [{ titlu: "Umbrelă proprie de plajă (opțional)", text: "Plaja fiind uriașă, porțiunile organizate comerciale ocupă doar spații limitate în dreptul barului principal, restul plajei oferind spațiu nelimitat pentru prosoape." }, { titlu: "Fără pantofi de apă în zonele centrale", text: "Nisipul este foarte plăcut și fin pe cea mai mare parte a plajei, deși la buza apei pot apărea pietricele fine albe." }, { titlu: "Ochelari de soare buni", text: "Lumina reflectată pe nisipul deschis este foarte puternică la orele prânzului." }],
-    preturi: "În zonele amenajate de beach barul mare de pe plajă (Deck Beach Bar), închirierea unui set de două șezlonguri costă în jur de 15 - 20 EUR pe zi. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar gustările rapide (un club sandwich sau o porție de souvlaki) sunt în jur de 8 - 11 EUR.",
-    turisti: [{ titlu: "O plajă imensă și aerisită", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, menționând că nu te simți niciodată înghesuit, chiar și în plin sezon." }, { titlu: "Atenție la valuri", text: "Recenziile avertizează că, la fel ca pe toată coasta de vest, după-amiezia se pot forma valuri mari și curenți puternici, apa adâncindu-se destul de repede." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața pentru a prinde loc la umbră sub pini. Un mic secret local: în capătul din dreapta extrem al plajei (zona cea mai îndepărtată de bar), stâncile mari oferă o izolare totală, această porțiune fiind folosită tradițional pentru nudism de către cei care caută discreție." }],
-  },
-  "Plaja Poros Mikros Gialos Lefkada": {
-    scurt: "Plaja Mikros Gialos (situată în golful din dreptul satului Poros, în sud-estul insulei) este o adevărată nestemată ascunsă, complet ferită de valurile mari de pe coasta vestică. Strânsă într-un golf adânc, perfect închis în formă de potcoavă și înconjurată de munți verzi plini de măslini, plaja este formată din pietricele mici albe și strălucitoare. Apa mării este de o transparență rară, are o culoare verde-smarald superbă și este incredibil de calmă, fiind plată ca o oglindă în majoritatea zilelor.",
-    cumAjungi: "Plaja se află la aproximativ 30 km sud de capitala Lefkada Town și 11 km de Nidri. Transportul public este rar pe această rută secundară, făcând mașina închiriată absolut necesară pentru o călătorie confortabilă. Din șoseaua principală asfaltată care face turul insulei, pornește un drum secundar asfaltat, destul de îngust și plin de serpentine care coboară printre munți până la mare. Parcarea se poate face gratuit de-a lungul străzilor din spatele plajei sau în parcările private cu plată (în jur de 4 - 5 EUR pe zi) oferite de taverne.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în marea cristalină sunt formate din pietricele albe; mersul desculț este incomod, iar pietrele se încing la amiază." }, { titlu: "Mască și tub de snorkeling obligatorii", text: "Golful fiind adăpostit natural și apa perfect liniștită, relieful stâncos subacvatic de pe margini este plin de pești colorați, fiind un loc de top pentru snorkeling." }, { titlu: "Închiriere de caiac sau hidrobicicletă", text: "Este o plăcere să te plimbi pe marea plată ca un lac și să explorezi micile peșteri marine din apropiere." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. Golful este tivit de o faleză scurtă cu taverne de familie excelente. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz delicios bazat pe pește proaspăt sau preparate tradiționale la cuptor costă în jur de 13 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O piscină de smarald liniștită", text: "Toate recenziile laudă transparența uluitoare a mării și faptul că marea este complet liniștită, fiind considerată una dintre cele mai sigure plaje pentru înot de pe insulă." }, { titlu: "Farmec autentic grecesc", text: "Vizitatorii apreciază atmosfera calmă a golfului, ferit de agitația comercială agresivă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful fiind foarte iubit, locurile de parcare gratuite se ocupă complet până la ora 11:00. Este locul perfect de refugiu în zilele în care pe coasta de vest (Porto Katsiki sau Kathisma) sunt valuri prea mari pentru a putea intra în apă." }],
-  },
-  "Plaja Agios Nikitas Lefkada": {
-    scurt: "Plaja Agios Nikitas este plaja urbană fermecătoare a singurului sat tradițional de pescari de pe coasta de nord-vest a insulei care a păstrat arhitectura veche din piatră. Situată la capătul unei strduțe pietonale superbe pline de flori, plaja este o semilună mică de nisip fin amestecat cu pietricele fine albe, strânsă între două promontorii stâncoase verzi. Apa mării are o nuanță turcoaz deschis incredibil de curată și este de obicei mai liniștită decât marile plaje deschise din jur, oferind o atmosferă intimă și pitorească.",
-    cumAjungi: "Satul se află la aproximativ 13 km sud-vest de capitala orașului Lefkada. Mașina închiriată este absolut necesară pentru a parcurge drumul asfaltat principal. Marea provocare în Agios Nikitas este parcarea: satul fiind complet pietonal, mașinile se lasă gratuit pe marginea drumului principal de deasupra localității sau în micile spații private cu plată (în jur de 5 - 7 EUR), de unde cobori pe jos 5 minute prin centrul satului spre mare. Locurile libere se epuizează rapid după ora 09:15.",
-    echipament: [{ titlu: "Fără pantofi de apă în zona centrală", text: "Fundul mării în interiorul golfului mic este preponderent din nisip fin, curat și plăcut la mers." }, { titlu: "Mască de snorkeling", text: "În jurul stâncilor mari din partea dreaptă a golfului, apa ascunde mulți peștișori." }, { titlu: "Haine lejere de zi", text: "Strada pietonală din spatele plajei fiind plină de taverne colorate, magazine și cofetării, o plimbare lungă cere o ținută lejeră." }],
-    preturi: "Plaja fiind mică, zonele amenajate comercial sunt minime, un set de șezlonguri costând în jur de 12 - 15 EUR (majoritatea turiștilor stau direct pe prosop). Un frappe la cafenelele de pe faleză costă 3,50 EUR, un gyros pe pietonal este 4 EUR, iar o cină completă pentru două persoane la tavernele excelente din sat costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Un sat rupt din povești", text: "Toți vizitatorii sunt cuceriți de farmecul strduței pietonale și de imaginea mării turcoaz care apare brusc printre casele din piatră." }, { titlu: "Punct strategic excelent", text: "Turiștii apreciază că din micul port de aici poți lua taxiul acvatic (barca scurtă) care te trece dealul în doar 5 minute spre faimoasa plajă sălbatică Mylos." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în sat foarte devreme, ideal înainte de ora 08:45 dimineața. Vei prinde loc de parcare mult mai aproape de intrarea pietonală, marea va fi complet calmă și te vei putea bucura de golful liber înainte ca zona să devină foarte populată de turiștii care tranzitează satul." }],
-  },
-  "Plaja Megali Petra Lefkada": {
-    scurt: "Megali Petra (în traducere „Piatra Uriașă\") este una dintre cele mai spectaculoase, sălbatice și dramatice plaje ascunse din Lefkada. Situată pe coasta de vest, plaja își trage numele de la stâncile uriașe prăbușite din munte direct pe nisip și în mare, care împart plaja în mici secțiuni intime. Este o fâșie lată acoperită cu nisip grosier și pietricele fine albe, străjuită de dealuri verzi abrupte. Apa mării are acea nuanță turcoaz-lăptos electric de o intensitate ireală, oferind un peisaj de o măreție sălbatică uluitoare.",
-    cumAjungi: "Plaja se află în apropierea satului Kalamitsi, în vestul insulei. Nu există nicio linie de autobuz care să ajungă în această zonă izolată, făcând mașina închiriată 100% obligatorie. Drumul de coborâre din Kalamitsi este o adevărată aventură: este asfaltat, dar extrem de îngust, cu pante abrupte și curbe strânse în ac de păr pe marginea dealului. Parcarea de jos este pe pământ, amenajată în lungul drumului de coastă (unele spații private contra unei taxe de 5 EUR, altele gratuite pe marginea drumului). De la parcare, mai ai de mers pe jos 3 minute pe o potecă ușoară printre tufe.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și rogojină groasă obligatorii", text: "Megali Petra este o plajă 100% sălbatică și neamenajată. Nu există șezlonguri, baruri sau magazine jos pe nisip. Trebuie să vii complet echipat de acasă." }, { titlu: "O ladă frigorifică plină cu apă și gustări", text: "Cel mai apropiat magazin este sus în satul Kalamitsi, la vreo 15 minute de condus pe drumul abrupt." }, { titlu: "Pantofi de apă (Aqua shoes)", text: "Sunt recomandați pentru a păși confortabil peste pietricelele fine albe de pe mal și din apă." }],
-    preturi: "Accesul pe plajă este complet liber și gratuit. Neexistând facilități comerciale jos pe nisip, costul tău direct aici va fi nul. Pentru un prânz delicios după plajă, cel mai bine este să urci cu mașina în satul de munte Kalamitsi, unde tavernele tradiționale oferă mâncare excelentă la prețuri rezonabile (în jur de 12 EUR de persoană).",
-    turisti: [{ titlu: "Un peisaj natural copleșitor", text: "Toate recenziile laudă forma spectaculoasă a stâncilor uriașe din apă și culoarea incredibilă a mării, considerând-o mult mai frumoasă și sălbatică decât Kathisma." }, { titlu: "Drumul auto cere atenție maximă", text: "Vizitatorii avertizează în recenzii că drumul este foarte îngust și încrucișarea a două mașini necesită manevre atente." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește la drum dimineața devreme, în jur de ora 09:00. Vei parcurge drumul îngust în coborâre înainte de a se aglomera cu alte mașini care vin din sens opus și vei prinde plaja complet liberă. Reține că marea se adâncește brusc (după doar doi pași), iar după-amiaza se pot forma valuri mari și curenți, nefiind o plajă recomandată pentru copii mici lăsați nesupravegheați." }],
-  },
-  "Plaja Elafonisi Chania": {
-    scurt: "Elafonisi este o adevărată minune a naturii și una dintre cele mai spectaculoase plaje din întreaga Mediterană. Situată în colțul de sud-vest al Cretei, este o lagună exotică uriașă, renumită în toată lumea pentru nisipul său fin cu reflexii roz, culoare datorată milioanelor de cochilii de scoici sfărâmate. Apa mării Libiei are aici o nuanță turcoaz-electric de o transparență ireală și este extrem de caldă. O fâșie subțire de nisip, acoperită de o apă foarte mică, unește uscatul de o mică insulă protejată ecologic, creând peisajul unei piscine tropicale perfecte.",
-    cumAjungi: "Plaja se află la aproximativ 75 km sud-vest de orașul Chania. Distanța mare și relieful muntos fac ca transportul public să fie destul de rigid, cu doar un autobuz pe zi, care devine arhiplin. O mașină închiriată este absolut obligatorie pentru a călători confortabil și în propriul ritm. Drumul traversează insula prin trecători montane superbe și este complet asfaltat, deși are multe curbe. În spatele dunelor există o zonă uriașă de parcare (o parte amenajată cu plată de municipalitate, aproximativ 5 EUR, și zone libere pe pământ), accesul fiind la doar câteva minute de mers pe jos de apă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întreaga lagună are un fund marin acoperit exclusiv cu un nisip fin, moale și curat, panta fiind extrem de lină și plăcută la mers." }, { titlu: "Umbrelă proprie și rogojină groasă (opțional)", text: "Deși există o zonă mare amenajată cu șezlonguri, acestea se ocupă instantaneu. Restul plajei și insula oferă spațiu nelimitat pentru prosoape, dar este interzisă fixarea umbrelelor proprii pe insula protejată." }, { titlu: "Ochelari de soare polarizați buni", text: "Nisipul alb-rozaliu reflectă puternic lumina puternică a amiezii." }],
-    preturi: "În zonele amenajate, un set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. În spatele plajei funcționează câteva chioșcuri (cantine) mari de unde poți cumpăra un frappe (4 EUR), o apă mare (1,50 EUR) sau un sandwich rapid (6 - 8 EUR). Toaletele publice costă în jur de 1 EUR.",
-    turisti: [{ titlu: "Un paradis tropical în Europa", text: "Toate recenziile laudă nuanțele unice de turcoaz ale apei și sclipirile roz ale nisipului de la buza apei." }, { titlu: "Se aglomerează masiv după amiază", text: "Turiștii avertizează că, începând cu ora 11:00, sute de autocare sosesc simultan, plaja devenind extrem de zumzăitoare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare foarte devreme, ideal înainte de ora 08:45 dimineața. Vei prinde laguna complet liniștită, plată ca o oglindă, și te vei putea plimba pe jos prin apa mică până pe insulă în liniște totală. Treci neapărat dincolo de dunele insulei, spre marea deschisă, unde vei găsi mici golfulețe intime de o frumusețe rară." }],
-  },
-  "Plaja Falassarna Chania": {
-    scurt: "Falassarna este una dintre cele mai mari, curate și apreciate plaje din Creta, distinsă regulat cu prestigiosul steag albastru (Blue Flag). Situată pe coasta de vest, aceasta este o succesiune de 5 plaje imense, acoperite integral cu un nisip fin, de o culoare aurie deschisă cu reflexii rozalii. Marea este de o claritate legendară, având o culoare turcoaz profund. Datorită dimensiunilor sale masive, Falassarna oferă o senzație rară de spațiu deschis și libertate totală, fiind plaja perfectă pentru iubitorii de confort complet și spațiu generos.",
-    cumAjungi: "Plaja se află la aproximativ 52 km vest de orașul Chania și la 15 km de Kissamos. Deși există câteva autobuze regionale, mașina închiriată îți oferă un confort total, drumul de coastă fiind modern, complet asfaltat și foarte rapid. Un mare avantaj la Falassarna este parcarea: în spatele fiecărei porțiuni de plajă există spații publice imense pe pământ unde poți parca mașina complet gratuit, la doar un pas de nisip, fiind una dintre cele mai lejere zone de acces auto de pe insulă.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întreaga plajă și fundul mării sunt formate exclusiv din nisip fin și foarte plăcut, riscul de a te înțepa fiind zero." }, { titlu: "Buget pentru sporturi nautice sau volei", text: "Falassarna este foarte bine dotată, având filee de volei pe nisip și centre excelente pentru închiriat plăci de surf sau ski-jet-uri." }, { titlu: "Ochelari de soare buni", text: "Întinderea uriașă de nisip reflectă puternic lumina puternică a amiezii." }],
-    preturi: "În zonele amenajate de beach barurile moderne de pe mal, închirierea unui set de două șezlonguri costă în jur de 15 - 25 EUR pe zi, în funcție de rând. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar o cină completă la tavernele tradiționale excelente așezate pe dealurile din spatele plajei costă în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Spațiu imens și confort", text: "Toți vizitatorii laudă lățimea impresionantă a plajei, menționând că nu te simți niciodată înghesuit, chiar și în cele mai aglomerate weekenduri din august." }, { titlu: "Atenție la valuri", text: "Recenziile menționează că, fiind deschisă direct spre vest, în a doua parte a zilei vântul poate crea valuri mari și foarte distractive, ideale pentru sărituri." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o tavernă de pe deal până târziu. Falassarna oferă unul dintre cele mai spectaculoase, curate și uluitoare apusuri de soare din întreaga Cretă, soarele coborând direct în marea deschisă. Dacă vrei mai multă liniște, alege porțiunea numită Plaja Mică din nord, care este mai adăpostită de stânci." }],
-  },
-  "Plaja Seitan Limania Chania": {
-    scurt: "Seitan Limania (în traducere „Porturile Diavolului\") este probabil cea mai atipică, dramatică și spectaculoasă plajă ascunsă din Creta. Situată pe peninsula Akrotiri, nu este o plajă clasică, ci o fâșie minusculă de nisip alb și fin, ascunsă perfect la capătul unui canion stâncos îngust în formă de zigzag. Apa mării are o nuanță de un albastru-lăptos electric absolut ireală, datorată calcarului dizolvat, și este complet liniștită. Locul este de o frumusețe primitivă și sălbatică care îți va tăia răsuflarea de la prima vedere.",
-    cumAjungi: "Plaja se află la aproximativ 22 km nord-est de orașul Chania. Transportul public este complet inexistent pentru acest canion izolat, făcând mașina închiriată 100% obligatorie. Drumul auto secundar este complet asfaltat, dar reprezintă o provocare: coboară muntele în pante foarte abrupte și serpentine strânse în ac de păr deasupra prăpastiei. Poți parca mașina gratuit în parcarea de pământ de la capătul drumului. De acolo, marea aventură începe pe jos: ai de parcurs o coborâre grea de 15-20 de minute pe o potecă stâncoasă și foarte abruptă direct printre stânci.",
-    echipament: [{ titlu: "Încălțăminte comodă de sport (adidași) obligatorie", text: "Poteca este plină de pietre libere și porțiuni unde trebuie să escaladezi ușor stânca; coborârea sau urcarea în șlapi simpli de plajă este extrem de periculoasă." }, { titlu: "Rucsac complet cu apă plată și umbrelă", text: "Seitan Limania este 100% publică și virgină. Nu există magazine, baruri, șezlonguri sau umbră naturală jos în canion. Trebuie să vii complet echipat de acasă." }, { titlu: "Mască de snorkeling", text: "Apa fiind adâncă din primii pași și incredibil de limpede de-a lungul pereților verticali de piatră, relieful subacvatic este spectaculos." }],
-    preturi: "Accesul în canion și parcarea de sus sunt complet libere și gratuite. Nu există comercianți jos pe nisip, așa că costul tău direct pe plajă va fi nul. Pentru mâncare sau băuturi, cel mai simplu este să cumperi tot ce ai nevoie dintr-un magazin din satele de pe drum (cum ar fi Chordaki), înainte de a începe coborârea abruptă.",
-    turisti: [{ titlu: "Un peisaj ireal de frumos", text: "Toate recenziile laudă forma unică a canionului în zigzag și culoarea fosforescentă a apei, considerând locul o oprire obligatorie pe insulă." }, { titlu: "Atenție la caprele sălbatice", text: "Vizitatorii menționează simpaticele capre semi-sălbatice de jos, care vin foarte aproape de turiști pentru a le deschide rucsacurile și a le fura mâncarea." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește la drum dimineața foarte devreme, în jur de ora 08:15. Vei coborî poteca pe umbră (muntele blochează soarele în prima parte a dimineții), vei găsi loc de parcare lejer sus și vei prinde micul petec de nisip complet liber, înainte ca locul să devină aglomerat după ora 10:30." }],
-  },
-  "Plaja Stavros Chania": {
-    scurt: "Plaja Stavros este o destinație fermecătoare și plină de istorie, situată în nordul peninsulei Akrotiri. Este faimoasă la nivel mondial ca fiind locul unde s-au filmat scenele finale și celebrul dans al lui Anthony Quinn din filmul „Zorba Grecul\" (1964). Plaja principală este o lagună circulară perfect închisă, situată exact la poalele unui munte stâncos uriaș și abrupt. Apa este extrem de caldă, curată și plată ca o oglindă, fiind complet ferită de valuri mari și curenți, oferind aspectul unei piscine naturale sigure.",
-    cumAjungi: "Plaja se află la aproximativ 15 km nord de orașul Chania. Deși există câteva autobuze locale, programul lor este rigid, făcând mașina închiriată cea mai confortabilă opțiune. Drumul este complet asfaltat, plat și ușor de parcurs printre livezi de măslini. Un mare avantaj la Stavros este parcarea: există o zonă publică mare pe pământ chiar în spatele plajei unde poți parca mașina complet gratuit, la doar un minut de mers pe jos de nisip, accesul auto fiind extrem de facil.",
-    echipament: [{ titlu: "Fără pantofi de apă în laguna principală", text: "Fundul mării este acoperit în întregime cu un nisip fin, moale și curat, riscul de a te înțepa fiind zero." }, { titlu: "Jucării de nisip pentru copii", text: "Intrarea extrem de lină în apa liniștită și caldă face din acest loc o zonă perfectă pentru cei mici." }, { titlu: "Mască de snorkeling", text: "În zona din spatele stâncilor de pe margine, apa ascunde mici peșteri subterane și mulți peștișori." }],
-    preturi: "Plaja este foarte bine organizată. Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 12 - 15 EUR pe zi. În spatele plajei funcționează câteva taverne tradiționale excelente de familie, renumite pentru peștele proaspăt. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz complet la tavernă costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "O atmosferă cinematografică deosebită", text: "Toți vizitatorii sunt cuceriți de fundalul dramatic oferit de muntele stâncos și de aerul nostalgic legat de filmul Zorba Grecul." }, { titlu: "O mare foarte sigură", text: "Părinții apreciază în recenzii lipsa totală a valurilor, golful fiind perfect protejat chiar și în zilele cu vânt puternic pe insulă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața pentru a prinde cele mai bune locuri în primul rând de șezlonguri. Un mic secret local: dacă vrei o zonă complet publică, liberă și mult mai puțin comercială, mergi pe jos 5 minute spre vest (Plaja a doua din Stavros), care este formată din nisip și pietre plate, fiind mult mai retrasă și preferată de localnici." }],
-  },
-  "Plaja Kallithea Kassandra": {
-    scurt: "Plaja Kallithea este una dintre cele mai populare, mari și apreciate plaje de pe brațul Kassandra. Situată în dreptul uneia dintre cele mai cosmopolite stațiuni ale peninsulei, plaja este o fâșie generoasă de nisip fin, de o culoare aurie caldă, spălată de o mare de un turcoaz strălucitor. Golful este foarte bine adăpostit, apa fiind caldă și având o intrare lină. Este o destinație plină de energie, complet organizată, unde barurile moderne pe plajă se îmbină perfect cu un fundal pitoresc plin de vegetație luxuriantă și pini.",
-    cumAjungi: "Stațiunea Kallithea se află pe coasta de est a peninsulei Kassandra, la aproximativ 85 km de Salonic. Deși există câteva autobuze regionale, acestea circulă după un orar rigid care devine obositor în plină vară. O mașină închiriată îți asigură o independență totală, permițându-ți să transporți bagajele grele de familie și să explorezi și alte golfuri învecinate. Drumul este complet asfaltat și modern. Parcarea de jos, din spatele plajei, este gratuită și amenajată pe pământ, dar locurile se ocupă rapid în sezon, fiind o zonă intens vizitată.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este acoperit în întregime cu un nisip fin, moale și curat, riscul de a te înțepa în pietre sau arici fiind zero." }, { titlu: "Buget pentru sporturi nautice", text: "Kallithea este recunoscută pe braț pentru centrele sale excelente de sporturi acvatice, unde poți încerca jet-ski, hidrobiciclete sau parasailing." }, { titlu: "Ochelari de soare polarizați buni", text: "Nisipul auriu reflectă puternic lumina puternică a amiezii." }],
-    preturi: "În funcție de beach barul ales, închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi (adesea sub formă de consumație minimă la bar). Un frappe costă 4 EUR, un gyros rapid este în jur de 4,50 EUR, iar o cină completă pentru o familie la tavernele excelente din spatele plajei costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Turiștii apreciază curățenia plajei, prezența dușurilor, a vestiarelor, a salvamarilor și numărul mare de restaurante de pe mal." }, { titlu: "O mare excelentă pentru copii", text: "Părinții laudă la unison marea caldă, mică la mal și lipsa totală a valurilor mari în acest golf protejat." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața pentru a prinde cele mai bune locuri în primul rând de șezlonguri. După o zi de plajă, ia mașina și urcă 2 minute pe deal în centrul stațiunii Kallithea, un loc renumit pentru viața de noapte vibrantă și magazinele sale animate de suvenire." }],
-  },
-  "Plaja Pefkohori Kassandra": {
-    scurt: "Plaja Pefkohori este o plajă urbană lungă și vibrantă, situată în sud-estul peninsulei Kassandra. Numele său provine de la pinii bătrâni („pefko\") care flanchează întreaga zonă și oferă aerului o aromă unică de rășină combinată cu briză sărată. Plaja este compusă dintr-un amestec plăcut de nisip fin și pietricele fine la buza apei, iar marea este curată și revigorantă. În spatele plajei se află o faleză comercială imensă, lungă de kilometri întregi, plină de taverne tradiționale, hoteluri și magazine, oferind o atmosferă estivală clasică.",
-    cumAjungi: "Pefkohori este o stațiune majoră, situată la aproximativ 100 km de Salonic. Distanța considerabilă face ca o mașină închiriată să fie cea mai confortabilă și rațională opțiune de transport, oferindu-ți libertatea de a călători în propriul ritm. Drumul este complet asfaltat, plat și modern. Găsirea unui loc de parcare chiar lângă plajă poate fi o provocare la orele prânzului în plin sezon; cel mai bine este să folosești parcările publice gratuite semnalizate de-a lungul străzilor paralele cu faleza comercială sau spațiile cu plată (în jur de 5 EUR pe zi).",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Deși pe mal este mult nisip cald, la intrarea în marea cristalină pot apărea benzi de pietricele care pot fi ușor deranjante la tălpi." }, { titlu: "Haine lejere de zi", text: "Faleza fiind plină de viață și magazine de haine, o plimbare între sesiunile de înot cere o ținută lejeră de vacanță." }, { titlu: "Mască de snorkeling", text: "În zonele din jurul digurilor mici din piatră, apa este limpede și ascunde mulți peștișori." }],
-    preturi: "Sistemul este cel clasic și foarte accesibil: majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă gratuit dacă comanzi băuturi de o valoare minimă (în jur de 15 - 20 EUR total). Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz cald cu mâncare tradițională la taverne costă în jur de 12 - 15 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură completă și confort", text: "Toți vizitatorii apreciază curățenia plajei, prezența dușurilor, a vestiarelor și a magazinelor la doar câțiva pași de nisip." }, { titlu: "Foarte aglomerată în iulie și august", text: "Recenziile avertizează că în plin sezon fâșia de nisip devine destul de strâmtă și aglomerată, fiind o stațiune extrem de populară." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:15 dimineața pentru a prinde loc lejer. Dacă vrei mai mult spațiu personal și o plajă mult mai sălbatică și lată, ia mașina și condu 5 minute spre sud până la faimoasa plajă vecină Glarokavos, unde pinii oferă o umbră naturală uriașă direct pe nisip." }],
-  },
-  "Plaja Nea Fokea Kassandra": {
-    scurt: "Plaja Nea Fokea oferă un peisaj unic și plin de farmec, situat chiar la intrarea pe brațul Kassandra. Este o plajă urbană fermecătoare formată dintr-un amestec plăcut de nisip fin și pietricele fine la buza apei, spălată de o marea calmă și limpede. Elementul ei emblematic este fundalul istoric: plaja este străjuită în partea stângă de un promontoriu stâncos înalt pe care se înalță un turn bizantin din piatră de secolul al XIV-lea (Turnul Sfântului Pavel) și un mic port pescăresc superb, oferind un aer pitoresc și autentic grecesc.",
-    cumAjungi: "Satul se află la aproximativ 78 km sud de Salonic, fiind una dintre primele stațiuni ale peninsulei. Mașina închiriată este cea mai confortabilă opțiune de transport, permițându-te să parcurgi drumul rapid și să transporți umbrelele sau bagajele de familie confortabil. Drumul este complet asfaltat și foarte modern. Parcarea este extrem de simplă și gratuită: există un spațiu public mare pe pământ amenajat chiar în spatele plajei sau în zona portului pescăresc, oferind un acces auto facil la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Deși pe mal este mult nisip, la intrarea în mare pot apărea câteva pietre plate și pietricele care pot fi deranjante la mers." }, { titlu: "Sandale comode de plimbare", text: "Este păcat să vii aici și să nu urci 5 minute pe jos până la turnul bizantin de pe stâncă pentru o panoramă panoramică de vis asupra întregului golf." }, { titlu: "Mască de snorkeling", text: "În zona stâncoasă de sub promontoriul turnului, apa este limpede și ascunde viață marină activă." }],
-    preturi: "Nea Fokea păstrează prețuri foarte prietenoase, fiind o stațiune mai liniștită. Un set de două șezlonguri cu umbrelă costă în jur de 10 - 12 EUR pe zi, sau este oferit la o consumație similară la bar. Un frappe costă 3,50 EUR, un gyros rapid este 4 EUR, iar tavernele tradiționale din spatele portului sunt renumite pentru peștele proaspăt, un prânz complet fiind în jur de 12 - 14 EUR de persoană.",
-    turisti: [{ titlu: "O atmosferă calmă și autentică", text: "Vizitatorii apreciază vibe-ul tradițional al satului, lipsit de aglomerația sufocantă a stațiunilor mari din sud." }, { titlu: "Decor pitoresc deosebit", text: "Toate recenziile laudă imaginea turnului bizantin care domină plaja, fiind un loc ideal pentru fotografii superbe." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Planifică-ți vizita dimineața în jur de ora 09:30. Golful este de o liniște deosebită în prima parte a zilei, marea fiind plată ca o oglindă. După plajă, mergi la o scurtă plimbare pe jos prin portul pescăresc pentru a vedea micile bărci din lemn care trag la mal și pentru a savura prânzul la o tavernă tradițională." }],
-  },
-  "Plaja Afitos Kassandra": {
-    scurt: "Plaja Afitos (sau Athytos) este considerată una dintre cele mai frumoase și pline de caracter plaje de pe întreaga peninsulă Kassandra. Situată la poalele unui perete de stâncă abrupt pe care se află un sat istoric superb construit integral din piatră veche, plaja este o fâșie lungă acoperită cu un nisip fin, auriu. Apa mării are o culoare turcoaz-smarald de o claritate uluitoare și este foarte caldă. Îmbinarea dintre peisajul natural sălbatic și arhitectura tradițională oferă locului un aer boem și romantic deosebit.",
-    cumAjungi: "Afitos se află la aproximativ 83 km de Salonic, chiar lângă Kallithea. Mașina închiriată este absolut obligatorie pentru a ajunge aici confortabil, deoarece drumul principal este complet asfaltat, dar coborârea finală din satul de pe deal spre plajă se face pe o strduță secundară extrem de abruptă și îngustă. Parcarea de jos, de lângă plajă, este pe pământ, parțial gratuită și parțial cu plată (în jur de 5 EUR pe zi), dar locurile bune se ocupă rapid din cauza popularității sale mari.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Deși pe mal este mult nisip fin, la intrarea în mare există plăci mari de stâncă naturală subacvatică plată și destul de alunecoasă, unde s-au stabilit mici colonii de arici de mare." }, { titlu: "Mască de snorkeling obligatorie", text: "Relieful stâncos subacvatic și claritatea ireală a apei fac din acest loc o zonă de top pentru snorkeling, fiind plină de pești colorați." }, { titlu: "Rucsac în loc de genți", text: "Panta abruptă de acces spre plajă este mai ușor de parcurs dacă ai mâinile libere." }],
-    preturi: "Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 20 EUR pe zi. Pe plajă funcționează câteva beach baruri elegante și taverne excelente. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz lejer cu mâncare tradițională grecească la taverne costă în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "O piscină de smarald curată", text: "Toți vizitatorii laudă în recenzii transparența mării, menționând că poți vedea perfect fundul apei chiar și acolo unde marea este adâncă." }, { titlu: "Un sat rupt din povești", text: "Turiștii sunt cuceriți de farmecul satului de piatră de pe deal, considerat cel mai frumos din întreaga Kassandră." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde loc de parcare lejer jos și vei putea înota în liniște deplină. După-amiaza târziu, urcă cu mașina pe deal în satul istoric Afitos pentru a te plimba pe străduțele pietonale din piatră printre case vechi pline de flori și a savura cina la o tavernă cocoțată pe stâncă, cu o vedere panoramică uluitoare asupra golfului Toroneos." }],
-  },
-  "Plaja Vai Lasithi": {
-    scurt: "Plaja Vai (cunoscută oficial ca Finikodasos) este una dintre cele mai renumite și spectaculoase destinații din Creta, oferind un peisaj unic în toată Europa. Ceea ce o face faimoasă este pădurea uriașă de palmieri sălbatici cretani (Phoenix theophrasti) care crește natural chiar în spatele nisipului, întinzându-se pe mai bine de 20 de hectare. Fâșia de plajă este o semilună superbă acoperită cu un nisip fin, auriu, spălată de o mare caldă și limpede de un albastru-turcoaz strălucitor. Este un adevărat colț de paradis exotic care te va face să te simți ca pe o insulă tropicală.",
-    cumAjungi: "Vai se află în colțul de nord-est al insulei, la aproximativ 24 km de Sitia și 94 km de Agios Nikolaos. Din cauza izolării sale geografice în extremitatea insulei, transportul public este extrem de rar și nepractic. O mașină închiriată este absolut obligatorie pentru a parcurge drumul asfaltat rapid. Complexul dispune de o parcare publică imensă organizată pe pământ contra unei taxe de mediu (în jur de 3 - 5 EUR pe zi). Accesul auto este extrem de facil, parcarea fiind situată la doar un minut de mers pe jos de primii palmieri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Fundul mării este curat, acoperit în totalitate de un nisip fin și plăcut, iar intrarea este lină." }, { titlu: "Aparatul foto/Telefonul încărcat", text: "O scurtă urcare pe jos (pe treptele amenajate pe stânca din partea dreaptă a plajei) te va duce la un punct de belvedere superb, de unde poți face faimoasa poză de sus cu pădurea de palmieri și marea turcoaz." }, { titlu: "Ochelari de soare polarizați buni", text: "Nisipul auriu și frunzele palmierilor reflectă puternic lumina amiezii." }],
-    preturi: "Fiind o atracție turistică majoră de top, plaja este complet organizată. Închirierea unui set de două șezlonguri cu umbrelă costă în jur de 15 - 25 EUR pe zi, în funcție de rând. Chiar la marginea pădurii funcționează un restaurant mare și un snack-bar. Un frappe costă 4 EUR, o bere este 4,50 EUR, iar un prânz rapid sau o salată proaspătă este în jur de 10 - 14 EUR.",
-    turisti: [{ titlu: "O oază tropicală ireală", text: "Toți vizitatorii sunt copleșiți de frumusețea unică a pădurii de palmieri care ajunge până pe nisip." }, { titlu: "Se aglomerează la prânz", text: "Turiștii avertizează des în recenzii că, începând cu ora 11:00, sosesc multe mașini și autocare, plaja devenind destul de zumzăitoare." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde un loc bun la umbră sub copaci pentru mașină, șezlong în primul rând și o liniște deplină în pădure. Un mic truc local: din vârful stâncii unde se află punctul de belvedere, poteca continuă în coborâre pe cealaltă parte spre o a doua plajă (Plaja Psili Ammos), care este complet sălbatică, neamenajată și mult mai liniștită." }],
-  },
-  "Plaja Xerokampos Lasithi": {
-    scurt: "Xerokampos este una dintre cele mai izolate, sălbatice și magice destinații ascunse din întreaga Cretă, oferind o evadare totală de la civilizație. Situată în sud-estul îndepărtat al insulei, Xerokampos nu este o singură plajă, ci o succesiune de golfulețe superbe și virgine, despărțite de formațiuni stâncoase joase. Plaja principală se remarcă prin nisipul alb ca pudra, o mare a Libiei de o transparență ireală și nuanțe care variază de la turcoaz deschis la albastru electric. Este definiția liniștii absolute și a naturii pure.",
-    cumAjungi: "Locația se află în sud-estul îndepărtat al regiunii Lasithi, departe de orice oraș mare. Transportul public este complet inexistent în această zonă sălbatică, făcând mașina închiriată 100% obligatorie. Drumul auto este o adevărată capodoperă: pornește din satele de munte și coboară spre coastă într-o succesiune spectaculoasă de serpentine strânse, oferindu-ți de sus o vedere panoramică uluitoare asupra mării deschise și a insulițelor nelocuite din larg. Parcarea este extrem de simplă: poți lăsa mașina complet gratuit direct în spatele plajelor, pe pământ sub măslini, la doar câțiva pași de apă.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și rogojină groasă obligatorii", text: "Cea mai mare parte a golfulețelor din Xerokampos este 100% publică, sălbatică și neamenajată. Nu există șezlonguri sau umbră naturală aproape de apă." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Ia-ți rezerve mari de apă plată rece și gustări, micile magazine fiind rare în zonă." }, { titlu: "Fără pantofi de apă în zonele centrale", text: "Fundul mării este o masă continuă de nisip alb fin și moale, intrarea fiind extrem de lină și plăcută, asemănătoare unei piscine naturale." }],
-    preturi: "Accesul pe plaje și parcarea sunt gratuite. În puținele porțiuni cu organizare minimă din dreptul celor două taverne din zonă, un set de două șezlonguri costă în jur de 8 - 10 EUR pe zi. Un frappe costă 3 EUR, iar micile taverne tradiționale oferă mâncare cretană excelentă gătită în casă, un prânz complet fiind în jur de 10 - 13 EUR de persoană.",
-    turisti: [{ titlu: "Un colț de rai neatins", text: "Toate recenziile laudă liniștea profundă și dimensiunile uimitoare ale golfulețelor, menționând că te poți bucura de mare în liniște totală, fără aglomerație, chiar și în august." }, { titlu: "Tratament cosmetic natural pe plajă", text: "Vizitatorii sunt fascinați de golful numit Argilos Beach, unde stâncile din spate sunt formate din argilă albă naturală, pe care turiștii o folosesc pentru împachetări corporale direct pe nisip." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în jurul orei 09:30 dimineața. Marea este de o liniște deosebită în prima parte a zilei, plată ca o oglindă. Alege o zi din prognoză în care vântul este mai slab, deoarece, fiind o zonă deschisă în sud-est, vânturile puternice pot ridica nisipul fin." }],
-  },
-  "Plaja Kouremenos Lasithi": {
-    scurt: "Plaja Kouremenos este o fâșie uriașă și impunătoare de coastă, situată în apropierea localității Palekastro, în estul insulei. Întinsă pe o lungime de aproape 2 kilometri, această plajă lată este formată dintr-un amestec plăcut de nisip fin de culoare arămie și pietricele fine. Kouremenos este renumită la nivel internațional ca fiind una dintre cele mai bune locații de windsurfing și kitesurfing din întreaga Europă, datorită vântului local puternic (Meltemi) care bate constant prin deschiderea cheilor de-a lungul întregii veri.",
-    cumAjungi: "Plaja se află la aproximativ 20 km est de Sitia. Deoarece zona este dedicată pasionaților de sporturi și nu are o infrastructură hotelieră de masă agresivă, transportul public este rar și nepractic. O mașină închiriată este absolut necesară pentru a parcurge drumul asfaltat rapid și pentru a transporta echipamentul sportiv sau gențile mari. Parcarea este una dintre cele mai lejere din Creta: drumul local trece chiar prin spatele plajei, existând spațiu imens pe pământ sub tamariști unde poți parca mașina complet gratuit, chiar lângă nisip.",
-    echipament: [{ titlu: "Buget pentru sporturi nautice", text: "Chiar dacă nu ai mai încercat niciodată, școlile excelente de windsurf de pe plajă (cu instructori autorizați internațional) oferă cursuri și echipament complet pentru începători și avansați." }, { titlu: "Umbrelă proprie și cort de plajă rezistent", text: "Vântul suflă puternic și constant aproape în fiecare după-amiază, ridicând nisipul, așa că protecția este vitală." }, { titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Sunt utili mai ales la intrarea în marea curată, unde pot apărea câteva pietricele fine la tălpi." }],
-    preturi: "Prețurile sunt foarte prietenoase, plaja fiind ocolită de turismul comercial scump. În puținele porțiuni amenajate din dreptul școlilor de surf, un set de două șezlonguri costă în jur de 10 EUR pe zi. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar tavernele tradiționale din spatele copacilor oferă preparate proaspete la prețuri excelente, o masă fiind în jur de 11 - 13 EUR de persoană.",
-    turisti: [{ titlu: "Paradisul windsurferilor", text: "Toate recenziile laudă calitatea constantă a vântului și organizarea excelentă a școlilor de sport de pe mal." }, { titlu: "O atmosferă relaxată și sportivă", text: "Vizitatorii apreciază vibe-ul chill al plajei, plină de tineri și pasionați de mișcare în natură, fără cluburi cu muzică stridentă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Dacă vrei să înoți liniștit sau mergi cu copiii, vino dimineața între orele 08:30 - 11:00, când marea este calmă, plată și vântul este slab. Dacă vrei acțiune, adrenalină sau vrei să încerci windsurfing, momentul tău este după ora 14:00, când vântul atinge intensitatea maximă a zilei." }],
-  },
-  "Plaja Sarti Sithonia": {
-    scurt: "Plaja Sarti este una dintre cele mai mari și spectaculoase plaje urbane de pe brațul Sithonia. Întinsă pe o lungime impresionantă de aproape 3 kilometri, plaja este o fâșie lată acoperită integral cu un nisip fin, de o culoare aurie caldă. Elementul ei de atracție principal este priveliștea: golful este orientat direct către est, oferind o vedere panoramică uluitoare spre silueta maiestuoasă a Muntelui Athos, care se înalță din largul mării. Apa este extrem de curată, de un albastru-azuriu strălucitor, cu porțiuni animate și zone imense complet sălbatice.",
-    cumAjungi: "Sarti se află pe coasta de est a Sithoniei, la aproximativ 140 km de Salonic. Distanța mare face ca o mașină închiriată să fie indispensabilă pentru a parcurge drumul principal complet asfaltat în confort total. Cu o mașină ai și libertatea de a lăsa bagajele grele și de a explora micile golfulețe exotice din nord (cum ar fi Orange Beach). Parcarea este extrem de lejeră și gratuită: în spatele plajei imense există o zonă publică uriașă de pământ unde poți lăsa vehiculul direct sub copaci, la doar un pas de nisip.",
-    echipament: [{ titlu: "Umbrelă proprie și rogojină (opțional)", text: "Plaja fiind uriașă, peste 60% din spațiu este complet liber pentru cei care vor să stea pe prosop, neexistând umbră naturală aproape de apă." }, { titlu: "Fără pantofi de apă în zonele cu nisip", text: "Fundul mării este format din nisip curat, deși marea se adâncește relativ repede în anumite porțiuni din zona centrală." }, { titlu: "Ochelari de soare buni", text: "Plaja fiind deschisă spre est, răsăritul și soarele dimineții luminează puternic întregul golf." }],
-    preturi: "Sarti oferă prețuri foarte prietenoase: majoritatea beach barurilor îți oferă un set de două șezlonguri cu umbrelă gratuit în schimbul unei comenzi de băuturi (o consumație minimă de 10 - 15 EUR per set). Un frappe costă 3,50 EUR, un gyros pe faleză este 4 EUR, iar o cină completă pentru o familie la tavernele din spatele falezei costă în jur de 35 - 45 EUR.",
-    turisti: [{ titlu: "Nu te simți niciodată înghesuit", text: "Toți vizitatorii laudă dimensiunile impresionante ale plajei, menționând că ai mereu spațiu personal uriaș, chiar și în august." }, { titlu: "Valuri foarte distractive", text: "Mulți notează în recenzii că după-amiaza se pot forma adesea valuri mari și superbe, perfecte pentru distracție în apă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Trezește-te dimineața devreme pentru a prinde răsăritul soarelui din spatele Muntelui Athos direct de pe plajă. Este considerat unul dintre cele mai spectaculoase momente vizuale din Halkidiki. Dacă călătorești cu copii mici, mergi în capătul din sud al plajei (Sarti Nou), unde apa este considerabil mai mică la mal și mai ferită de valuri." }],
-  },
-  "Plaja Nikiti Sithonia": {
-    scurt: "Plaja Nikiti este inima și esplanada principală a celei mai dinamice și dezvoltate stațiuni de la intrarea pe brațul Sithonia. Este o plajă urbană lungă, plată și foarte elegantă, acoperită cu un nisip fin amestecat cu pietricele mărunte la buza apei. Fiind orientată spre vest, în golful interior Toroneos, marea de aici este caldă, extrem de liniștită și plată ca o oglindă, fiind complet lipsită de valuri mari. În spatele plajei se află o faleză pietonală superbă, tivită de baruri moderne, restaurante excelente și palmieri.",
-    cumAjungi: "Nikiti se află la aproximativ 100 km de Salonic, fiind poarta de intrare în Sithonia. Mașina închiriată îți asigură un confort sporit pentru a aduce gențile de plajă și a te deplasa rapid spre plajele sălbatice din sud în cursul amiezii. Drumul este complet asfaltat, plat și rapid. Găsirea unui loc de parcare chiar lângă faleză poate fi o provocare seara; în timpul zilei poți parca gratuit pe străduțele secundare din spatele plajei sau în parcările publice mari de pământ de la marginea localității, la doar două minute de mers pe jos de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) opționali", text: "Deși pe mal este mult nisip cald, la intrarea în marea cristalină pot apărea benzi de pietre plate subacvatice în anumite porțiuni." }, { titlu: "Placă de stand-up paddle (SUP) sau saltea", text: "Marea fiind plată ca un lac în majoritatea zilelor, este locul ideal pentru plimbări relaxante pe apă." }, { titlu: "Haine lejere pentru faleză", text: "Zona de promenadă este plină de viață și cofetării moderne, o plimbare lungă cerând o ținută confortabilă." }],
-    preturi: "Seturile de două șezlonguri cu umbrelă costă în jur de 12 - 20 EUR pe zi, dar pot fi găsite și baruri moderne unde sunt incluse în baza unei consumații obligatorii similare. Un frappe costă 4 EUR, o bere rece este 4,50 EUR, iar un prânz complet la tavernele de pe faleză ajunge la aproximativ 15 - 18 EUR de persoană.",
-    turisti: [{ titlu: "Infrastructură impecabilă", text: "Vizitatorii apreciază curățenia, prezența dușurilor, a vestiarelor, a salvamarilor și numărul uriaș de restaurante de pe mal." }, { titlu: "Apusuri de neuitat", text: "Toată lumea menționează în recenzii că apusul soarelui văzut de pe faleză sau de pe nisip este un spectacol zilnic obligatoriu." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața pentru a prinde cele mai bune locuri în primul rând de șezlonguri. După o zi de plajă și baie, rezervă-ți o oră seară pentru a urca cu mașina 5 minute pe deal în satul vechi istoric (Old Nikiti), un loc de o frumusețe rară cu case vechi din piatră de secol XIX și o atmosferă tradițională liniștită." }],
-  },
-  "Plaja Tsambika Archangelos": {
-    scurt: "Plaja Tsambika este considerată una dintre cele mai frumoase, mari și spectaculoase plaje cu nisip de pe întreaga insulă Rodos. Este o întindere uriașă de nisip fin, de o culoare aurie strălucitoare, încadrată dramatic de versanți muntoși golași din piatră. Apa mării este de o claritate deosebită, caldă și are o nuanță turcoaz deschis superbă. Punctul ei emblematic este mănăstirea istorică Tsambika, cocoțată pe stânca verticală uriașă care păzește plaja din partea stângă, oferind locului un fundal plin de măreție naturală.",
-    cumAjungi: "Plaja se află la aproximativ 26 km sud de orașul Rodos. Autobuzele locale te lasă doar la șoseaua principală de sus, de unde ai de parcurs pe jos o distanță mare și obositoare prin soare. O mașină închiriată este absolut obligatorie pentru a coborâ confortabil direct până pe malul mării. Drumul secundar de acces este complet asfaltat, modern și rapid. Parcarea este una dintre cele mai lejere de pe insulă: plaja fiind imensă, există un spațiu public de pământ uriaș chiar în spatele plajei unde poți parca mașina complet gratuit, la doar câțiva pași de șezlonguri.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întregul golf are un fund marin format exclusiv din nisip moale, fin și curat, riscul de a te înțepa în pietre sau arici de mare fiind zero." }, { titlu: "Jucării de nisip din belșug pentru cei mici", text: "Calitatea nisipului și panta extrem de lină a intrării în mare fac din acest loc o plajă ideală și foarte sigură pentru copii." }, { titlu: "Buget pentru sporturi nautice sau mini-parc acvatic", text: "Există centre excelente de unde poți închiria hidrobiciclete sau poți încerca platformele gonflabile mari de pe apă." }],
-    preturi: "Un set de două șezlonguri cu umbrelă costă în jur de 15 EUR pe zi. În spatele plajei funcționează câteva cantine și taverne mari din lemn administrat de localnici. Un frappe costă 3,50 EUR, o bere rece este 4 EUR, iar un prânz rapid de tip gyros sau o salată proaspătă este în jur de 7 - 10 EUR.",
-    turisti: [{ titlu: "O masă infinită de nisip auriu", text: "Toate recenziile laudă dimensiunile plajei și calitatea nisipului moale, menționând că este locul perfect pentru relaxare în familie." }, { titlu: "Priveliște unică de pe stâncă", text: "Vizitatorii recomandă să urci cu mașina și apoi pe jos cele 350 de trepte până la mănăstirea de pe deal pentru o panoramă de vis asupra întregului golf." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:30 dimineața. Golful este incredibil de liniștit în prima parte a zilei, iar soarele luminează direct nisipul auriu. Dacă vrei mai mult spațiu liber pentru a pune prosopul gratuit, mergi spre capătul din dreapta al plajei, unde zona este complet neamenajată și foarte aerisită." }],
-  },
-  "Plaja Traganou Archangelos": {
-    scurt: "Plaja Traganou este o destinație uluitoare, renumită pentru frumusețea sa sălbatică și pentru caracterul său geologic deosebit. Este o fâșie lungă de coastă formată în totalitate din pietricele albe mărunte și lucioase, spălată de o mare de o transparență ireală, colorată în nuanțe profunde de albastru și turcoaz. Elementul ei emblematic este situat în capătul din stânga al plajei: o peșteră marină spectaculoasă din stâncă care intră adânc în munte și comunică direct cu marea, oferind un decor natural misterios și fascinant.",
-    cumAjungi: "Traganou se află la aproximativ 15 km sud de orașul Rodos și la doar 4 km de stațiunea Faliraki. Transportul public este rar în această porțiune mai retrasă, făcând mașina închiriată cea mai bună opțiune. Drumul de acces de la șoseaua principală este complet asfaltat, plat și rapid. Parcarea este gratuită, spațioasă, amenajată pe pământ chiar în spatele plajei, la doar un minut de mers pe jos de apă, oferind un acces auto extrem de facil și confortabil pentru a descărca bagajele.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) obligatorii", text: "Atât plaja, cât și întreaga intrare în marea adâncă sunt formate exclusiv din pietricele; mersul desculț este incomod, iar pietrele albe se încing puternic la amiază." }, { titlu: "Mască și tub de snorkeling obligatorii", text: "Apa fiind adâncă din primii pași și curată ca lacrima de-a lungul stâncilor și în interiorul peșterii marine, vizibilitatea sub apă este legendară, fiind plină de pești." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Pietricelele de pe mal cer o saltea un pic mai groasă pentru confort dacă vrei să stai în zonele libere." }],
-    preturi: "În porțiunea mică amenajată, un set de două șezlonguri costă în jur de 12 - 15 EUR pe zi. Chiar pe plajă funcționează o tavernă tradițională de familie excelentă, renumită pentru preparatele din pește proaspăt. Un frappe costă 3,50 EUR, o bere este 4 EUR, iar un prânz la tavernă este în jur de 13 - 16 EUR de persoană.",
-    turisti: [{ titlu: "Peștera marină este un vis", text: "Toți vizitatorii laudă în recenzii posibilitatea de a înota în interiorul peșterii stâncoase, menționând că lumina creează culori fantastice sub apă." }, { titlu: "O mare de o claritate uluitoare", text: "Turiștii apreciază puritatea apei adânci, considerând-o una dintre cele mai curate plaje de pe insulă." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește pe plajă în jurul orei 09:00 dimineața. Mergi direct în capătul stâng, lângă peșteră. Vei prinde locul complet gol, marea plată ca o oglindă și vei putea înota în interiorul grotei stâncoase în liniște deplină înainte de sosirea altor turiști. Reține că marea se adâncește foarte brusc (după doar doi pași), nefiind o plajă ideală pentru copii lăsați nesupravegheați." }],
-  },
-  "Plaja Rio Patras": {
-    scurt: "Plaja Rio este o fâșie lungă de coastă situată în suburbia cu același nume a orașului Patras, chiar în punctul unde Golful Corint întâlnește Golful Patras. Plaja este formată dintr-un amestec de pietricele albe și nisip grosier, iar apa este curată și revigorantă. Ceea ce o face cu adevărat spectaculoasă și unică în lume este priveliștea de fundal: plaja este dominată maiestuos de Podul Rio-Antirrio (Charilaos Trikoupis), unul dintre cele mai lungi poduri suspendate prin cabluri din lume. Imaginea pilonilor uriași care se înalță din mare oferă un decor industrial-maritim fascinant.",
-    cumAjungi: "Rio se află la aproximativ 8 km nord de centrul orașului Patras. Deși există trenuri suburbane sau autobuze locale din oraș, o mașină închiriată îți asigură cel mai bun confort, permițându-ți să transporți bagajele fără efort și să explorezi întreaga coastă nordică a Peloponezului sau să traversezi podul spre continent. Drumul este complet asfaltat, plat și foarte rapid. Parcarea este gratuită și se poate face cu ușurință direct de-a lungul străzilor paralele cu plaja sau în spațiile mari de pământ din apropierea portului vechi de feriboturi, la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Pantofi de apă (Aqua shoes) recomandați", text: "Pietricelele de pe mal și de la intrarea în marea adâncă pot fi ușor inconfortabile la mersul desculț." }, { titlu: "Aparatul foto/Telefonul încărcat", text: "Fotografiile făcute din apă, având în fundal structura uriașă și elegantă a podului suspendat, sunt spectaculoase și obligatorii." }, { titlu: "Haine lejere de zi", text: "Faleza din spatele plajei este o zonă de promenadă lungă, plină de cafenele moderne, taverne excelente și hoteluri elegante." }],
-    preturi: "Prețurile sunt rezonabile, specifice unei plaje frecventate intens de localnici și studenți. Majoritatea beach barurilor oferă un set de două șezlonguri cu umbrelă gratuit în schimbul unei consumații la bar (un frappe sau o cafea fiind în jur de 3,50 - 4 EUR). Un gyros rapid pe faleză costă 4 EUR, iar o cină completă pentru două persoane la tavernele excelente din zonă este în jur de 30 - 35 EUR.",
-    turisti: [{ titlu: "O priveliște inginerească de vis", text: "Toate recenziile laudă imaginea impresionantă a podului, menționând că este un loc fascinant pentru înot, mai ales seara când podul este complet iluminat." }, { titlu: "Atmosferă vibrantă și plină de viață", text: "Vizitatorii apreciază numărul mare de cafenele și baruri animate de pe faleză." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Rămâi pe plajă sau la o terasă de pe faleză până la lăsarea serii. Rio are un farmec deosebit la apus, când luminile podului uriaș se aprind succesiv, reflectându-se spectaculos în marea liniștită. Atenție la curenții maritimi, care pot fi uneori simțiți în această zonă strâmtă de trecere dintre cele două golfuri." }],
-  },
-  "Plaja Kalogria Achaia Patras": {
-    scurt: "Plaja Kalogria (situată în regiunea Achaia) este una dintre cele mai spectaculoase, lungi și virgine plaje din întregul Peloponez, oferind un peisaj de o sălbatică frumusețe exotică. Este o întindere uriașă de nisip fin, auriu, de peste 9 kilometri lungime, situată în interiorul Parcului Național Kotychi-Strofylia. Plaja este faimoasă pentru dunele sale masive de nisip care seamănă cu un mic deșert și pentru pădurea antică de pini Strofilia care crește chiar în spatele dunelor. Apa mării este caldă, de un albastru-turcoaz strălucitor și are o intrare extrem de lină.",
-    cumAjungi: "Kalogria se află la aproximativ 40 km sud-vest de orașul Patras. Din cauza statutului de rezervație naturală protejată și a izolării sale, transportul public este aproape inexistent pe această rută, făcând mașina închiriată absolut obligatorie. Drumul principal este complet asfaltat, plat și șerpuiește pitoresc printre lacuri sărate și păduri de pini. Parcarea este uriașă, complet gratuită și lejeră: poți lăsa mașina pe spațiile mari de pământ amenajate la umbra pinilor de la marginea pădurii, la doar un minut de mers pe jos de nisip.",
-    echipament: [{ titlu: "Fără pantofi de apă", text: "Întreaga plajă și fundul mării sunt o masă continuă de nisip extrem de fin, moale și curat, intrarea fiind o adevărată plăcere." }, { titlu: "Umbrelă proprie și cort de plajă rezistent", text: "Peste 90% din această plajă imensă este complet publică și neamenajată, neexistând umbră naturală aproape de buza apei." }, { titlu: "O ladă frigorifică portabilă bine dotată", text: "Ia-ți rezerve mari de apă plată rece și gustări, magazinele fiind rare în interiorul rezervației protejate." }],
-    preturi: "Accesul în rezervația naturală și parcarea sunt gratuite. În puținele porțiuni amenajate din zona centrală funcționează 2-3 beach baruri ecologice din lemn de unde poți închiria un set de două șezlonguri cu umbrelă cu aproximativ 12 - 15 EUR pe zi. Un frappe costă 4 EUR, o apă mare este 1,50 EUR, iar micile taverne de la marginea pădurii oferă prânzuri tradiționale excelente cu aproximativ 12 EUR de persoană.",
-    turisti: [{ titlu: "Un peisaj natural copleșitor", text: "Toate recenziile laudă dimensiunile gigantice ale plajei și frumusețea dunelor de nisip, considerând locul un adevărat paradis neatins de turismul de masă agresiv." }, { titlu: "Ideală pentru copii", text: "Părinții apreciază în recenzii panta extrem de lină a mării, marea fiind caldă și mică pe o distanță uriașă în larg." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Sosește în parcare în jurul orei 09:00 dimineața. Vei prinde o temperatură plăcută pentru o plimbare printre dune și marea plată ca o oglindă. În capătul din dreapta extrem al plajei se înalță un perete masiv de stâncă vertical; acolo se formează o mică zonă retrasă foarte căutată de cei care vor intimitate totală în natură. Aici ai lista🚗 Riviera Ateniană & Attica" }],
-  },
-  "Plaja Gianiskari Patras": {
-    scurt: "Plaja Gianiskari (sau Gianniskari) este considerată adevărata nestemată ascunsă și secretă a regiunii Patras. În timp ce majoritatea turiștilor se înghesuie pe plaja Kalogria, Gianiskari îți oferă un decor complet sălbatic și de o frumusețe virgină copleșitoare. Strânsă într-un golf izolat și flancată de dealuri muntoase verzi, acoperite de vegetație luxuriantă, plaja este o fâșie superbă de nisip fin și auriu. Apa mării Ionică este de o claritate ireproșabilă, capătă nuanțe profunde de smarald și turcoaz, oferind o senzație unică de libertate și comuniune cu natura pură.",
-    cumAjungi: "Plaja se află în nord-vestul Peloponezului, la aproximativ 45 km de orașul Patras, dincolo de satul Araxos. Transportul public este complet inexistent în această zonă sălbatică, făcând mașina închiriată 100% obligatorie. Drumul de acces este marea provocare: după ce treci de baza militară din Araxos, șoseaua se transformă într-un drum forestier neasfaltat, din pământ și piatră, lung de aproximativ 4-5 km. Drumul este foarte prăfuit, îngust, cu denivelări pronunțate și gropi, motiv pentru care se recomandă un vehicul cu gardă înaltă (un SUV compact) sau un condus extrem de lent — alege o mașină potrivită și asigurare completă pentru drumuri neasfaltate, ca să conduci fără stres. Parcarea de jos este improvizată gratuit direct pe pământ, la umbra copacilor, chiar în spatele nisipului.",
-    echipament: [{ titlu: "Umbrelă de plajă proprie și rogojină groasă obligatorii", text: "Gianiskari este o plajă 100% publică, sălbatică și neamenajată. Nu există rânduri de șezlonguri sau baruri pe nisip, așa că trebuie să vii complet echipat de acasă." }, { titlu: "O ladă frigorifică portabilă plină cu apă și gustări", text: "Cel mai apropiat magazin este la câțiva kilometri buni distanță, în satele din interior, așa că hidratarea este vitală." }, { titlu: "Fără pantofi de apă în zona centrală", text: "Spre deosebire de alte plaje din zonă, fundul mării aici este o masă continuă de nisip fin, moale și curat, intrarea fiind foarte lină și plăcută." }],
-    preturi: "Fiind o plajă complet liberă și protejată de relief, accesul și parcarea de sub copaci sunt zero. Nu există facilități comerciale sau comercianți jos pe nisip, așa că toate cheltuielile tale la fața locului vor fi nule. Pentru un prânz cald după o zi de plajă, cel mai bine este să urci înapoi cu mașina spre micile taverne tradiționale de familie din satele Lappa sau Araxos, unde o masă te va costa în jur de 10 - 13 EUR de persoană.",
-    turisti: [{ titlu: "Un colț de rai neatins", text: "Toate recenziile laudă liniștea profundă a locului, menționând că drumul greu acționează ca un filtru natural, plaja rămânând liberă și aerisită chiar și în plină vară." }, { titlu: "Peisajul este incredibil", text: "Vizitatorii sunt fascinați de contrastul dintre munții verzi, nisipul auriu și transparența uluitoare a apei." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Pornește la drum dimineața devreme, în jur de ora 09:00. Vei parcurge drumul forestier pe o temperatură plăcută, înainte de a se ridica praful de la alte mașini, și vei prinde golful într-o liniște deplină. Deoarece este o zonă complet deschisă, verifică prognoza și evită plaja în zilele cu vânt puternic dinspre vest, deoarece se pot forma valuri mari." }],
-  },
-  "Limanakia Riviera Ateniană": {
-    scurt: "Limanakia nu este o plajă în sensul clasic, ci o succesiune de golfulețe stâncoase spectaculoase și fjorduri înguste săpate natural în rocile calcaroase ale coastei Vouliagmeni. În loc de nisip, vei găsi platforme de piatră netede și stânci abrupte de pe care localnicii și scufundătorii sar direct într-o apă de un albastru-safir profund, incredibil de curată și adâncă. Locul are un aer extrem de boem, rebel și nuanțe marine unice, găzduind un bar din lemn legendar așezat direct pe stâncă, fără lumini artificiale seară.",
-    cumAjungi: "Locația se află poziționată exact între Vouliagmeni și Varkiza, de-a lungul șoselei de coastă. Autobuzele opresc pe șoseaua principală de deasupra, dar coborârea pe jos printre stânci cere atenție. O mașină închiriată îți asigură cea mai bună flexibilitate pentru a parcurge drumul asfaltat rapid. Găsirea unui loc de parcare este provocarea principală: mașinile se lasă gratuit în alveolele de pământ înguste amenajate pe marginea șoselei de coastă de deasupra golfurilor. De acolo, cobori pe jos pe cărări de piatră abrupte direct spre mare.",
-    echipament: [{ titlu: "Pantofi cu talpă aderentă sau aqua shoes obligatorii", text: "Mersul pe stâncile abrupte și ascuțite este periculos în șlapi simpli, iar platformele din piatră pot fi alunecoase din cauza valurilor." }, { titlu: "Mască și tub de snorkeling", text: "Apa fiind extrem de adâncă chiar de la mal (depășește rapid 10-15 metri) și perfect transparentă, relieful stâncos subacvatic și peșterile ascunse atrag o mulțime de pești, fiind un rai pentru scufundări." }, { titlu: "Prosop gros sau saltea pliabilă", text: "Stâncile sunt curate, dar o saltea un pic mai groasă îți va asigura un confort sporit dacă vrei să stai la soare direct pe piatră." }],
-    preturi: "Accesul la golfulețe și înotul în fjorduri sunt complet gratuite. Nu există șezlonguri din plastic sau umbrele. În golful principal funcționează de zeci de ani un bar din lemn celebru (Lefteris Bar), care folosește doar gheață pentru răcire și lumânări seară. Un frappe sau o bere rece costă în jur de 4 - 5 EUR, iar atmosfera boemă este inclusă în preț.",
-    turisti: [{ titlu: "O atmosferă unică în Grecia", text: "Toți vizitatorii sunt fascinați de vibe-ul hippie-elegant al barului de pe stânci și de puritatea apei adânci." }, { titlu: "Nu este pentru copii sau începători", text: "Recenziile avertizează constant că, neexistând zone cu apă mică sau nisip, locul este dedicat exclusiv celor care știu să înoate foarte bine în ape adânci." }],
-    tips: [{ titlu: "Cel mai bun moment", text: "Vino în a doua parte a zilei, în jur de ora 16:00. Bucură-te de o baie lungă și revigorantă în marea adâncă, iar spre seară rămâi la o bere la barul de pe stânci. Atmosfera cu lumânări aprinse pe stâncă în sunetul valurilor izbite de calcar este incredibil de pitorească și autentic ateniană." }],
+// Date de configurare (liste de orașe, coordonate, config magazine per țară,
+// etc.) — extrase din server.js, din același motiv ca locales.js.
+
+const FR_TINY_MONUMENT_VILLAGES = ["Mont Saint-Michel", "Rocamadour", "Cheverny", "Ussé"];
+
+function mallHyperWeekly() {
+  return [
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+  ];
+}
+
+function mallShoppingWeekly() {
+  return [
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ];
+}
+
+function curierWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "09:00", close: "18:00" }, // Luni
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" },
+    { open: "09:00", close: "18:00" }, // Vineri
+    { open: "09:00", close: "13:00" }, // Sâmbătă
+  ];
+}
+
+function fastfoodWeekly() {
+  return [
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+    { open: "08:00", close: "24:00" },
+  ];
+}
+
+function postaWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "08:00", close: "19:00" }, // Luni
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, // Vineri
+    { open: "08:00", close: "12:00" }, // Sâmbătă
+  ];
+}
+
+function bankWeekly() {
+  return [
+    null, // Duminică — închis
+    { open: "09:00", close: "16:00" }, // Luni
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" },
+    { open: "09:00", close: "16:00" }, // Vineri
+    null, // Sâmbătă — închis
+  ];
+}
+
+function cinemaWeekly() {
+  return [
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+    { open: "10:00", close: "24:00" },
+  ];
+}
+
+function farmacieWeekly() {
+  return [
+    { open: "09:00", close: "16:00" }, // Duminică
+    { open: "08:00", close: "21:00" }, // Luni
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+function electroWeekly() {
+  return [
+    { open: "10:00", close: "18:00" }, // Duminică
+    { open: "09:00", close: "21:00" }, // Luni
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" },
+    { open: "09:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+function bricolajWeekly() {
+  return [
+    { open: "09:00", close: "18:00" }, // Duminică
+    { open: "08:00", close: "21:00" }, // Luni
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// Helper parametrizabil — KiK (spre deosebire de restul brandurilor) are ore
+// diferite pe oraș, dar Luni-Sâmbătă sunt mereu identice (doar Duminica
+// diferă în datele reale primite), deci un singur helper cu 4 parametri
+// acoperă toate cele 33 de orașe, fără să repetăm de mână array-uri de 7
+// elemente peste tot. sunOpen/sunClose = null => închis duminica.
+function kikWeekly(sunOpen, sunClose, weekOpen, weekClose) {
+  const weekday = { open: weekOpen, close: weekClose };
+  return [
+    sunOpen ? { open: sunOpen, close: sunClose } : null, // Duminică
+    weekday, weekday, weekday, weekday, weekday, weekday, // Luni-Sâmbătă
+  ];
+}
+
+function metroWeekly() {
+  return [
+    { open: "08:00", close: "18:00" }, // Duminică
+    { open: "06:00", close: "21:00" }, // Luni
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" },
+    { open: "06:00", close: "21:00" }, // Sâmbătă
+  ];
+}
+
+// Sărbători care chiar ÎNCHID marile magazine/supermarketuri din România —
+// NU toate cele 17 zile libere legale (vezi ROMANIAN_LEGAL_HOLIDAYS_2026,
+// mai jos în server.js, pentru lista completă, folosită doar la banner-ul
+// "azi e sărbătoare"). Verificat cu bun-simț + cunoștințe reale despre
+// piața de retail: Lidl/Kaufland/Carrefour etc. rămân deschise normal de
+// Ziua Copilului, Sf. Andrei, Ziua Unirii, Boboteaza, Ziua Muncii, Rusalii —
+// sunt zile libere legale pentru ANGAJAȚI (cu program special/spor conform
+// Codului Muncii), nu zile în care marile magazine chiar închid porțile.
+// Doar Crăciunul, Anul Nou și Paștele ortodox sunt respectate real, cu
+// închidere sau program redus, de marii retaileri.
+const SUPERMARKET_HOLIDAYS = [
+  { date: "12-25", label: "Crăciun (25 decembrie)", hours: null },
+  { date: "12-26", label: "A doua zi de Crăciun (26 decembrie)", hours: ["09:00", "14:00"] },
+  { date: "01-01", label: "Anul Nou (1 ianuarie)", hours: null },
+  // Paștele ortodox (mobil) — dată fixă DOAR pentru 2026 (12-13 aprilie);
+  // trebuie actualizată manual, anual, exact ca ROMANIAN_LEGAL_HOLIDAYS_2026.
+  { date: "04-12", label: "Paștele Ortodox (2026)", hours: null },
+  { date: "04-13", label: "A doua zi de Paște (2026)", hours: ["09:00", "14:00"] },
+];
+
+function supermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:00" }, // Duminică
+    { open: "07:00", close: "22:00" }, // Luni
+    { open: "07:00", close: "22:00" }, // Marți
+    { open: "07:00", close: "22:00" }, // Miercuri
+    { open: "07:00", close: "22:00" }, // Joi
+    { open: "07:00", close: "22:00" }, // Vineri
+    { open: "07:00", close: "22:00" }, // Sâmbătă
+  ];
+}
+
+const TR_HOLIDAYS = [
+  { date: "01-01", label: "Yılbaşı (1 Ocak)", hours: null },
+];
+
+function trSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "22:00" }, // Pazar (Duminică)
+    { open: "08:00", close: "22:00" }, // Pazartesi (Luni)
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Cumartesi (Sâmbătă)
+  ];
+}
+
+const TR_STORE_CONFIG = {
+  migros: { name: "Migros", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  bim: { name: "BİM", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  a101: { name: "A101", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  sok: { name: "ŞOK", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  carrefoursa: { name: "CarrefourSA", weekly: trSupermarketWeekly(), holidays: TR_HOLIDAYS },
+  teknosa: { name: "Teknosa", weekly: [
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ], holidays: TR_HOLIDAYS },
+  mediamarkt: { name: "MediaMarkt", weekly: [
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" }, { open: "10:00", close: "22:00" },
+    { open: "10:00", close: "22:00" },
+  ], holidays: TR_HOLIDAYS },
+};
+
+const LU_HOLIDAYS = [
+  { date: "01-01", label: "Jour de l'An (1er janvier)", hours: { open: "09:00", close: "13:00" } },
+  { date: "04-06", label: "Lundi de Pâques (6 avril 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-01", label: "Fête du Travail (1er mai)", hours: null },
+  { date: "05-09", label: "Journée de l'Europe (9 mai)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-14", label: "Ascension (14 mai 2026)", hours: null },
+  { date: "05-25", label: "Lundi de Pentecôte (25 mai 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-23", label: "Fête Nationale (23 juin)", hours: null },
+  { date: "08-15", label: "Assomption (15 août)", hours: { open: "09:00", close: "18:00" } },
+  { date: "11-01", label: "Toussaint (1er novembre)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "12-26", label: "Saint-Étienne (26 décembre)", hours: { open: "09:00", close: "18:00" } },
+];
+
+function luSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "13:00" }, // Dimanche
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "18:00" }, // Samedi
+  ];
+}
+
+const LU_STORE_CONFIG = {
+  cactus: { name: "Cactus", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  delhaize: { name: "Delhaize", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+  colruyt: { name: "Colruyt", weekly: luSupermarketWeekly(), holidays: LU_HOLIDAYS },
+};
+
+const MT_HOLIDAYS = [
+  { date: "01-01", label: "New Year's Day (1 January)", hours: { open: "09:00", close: "18:00" } },
+  { date: "02-10", label: "Feast of St Paul's Shipwreck (10 February)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-19", label: "St Joseph's Day (19 March)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-31", label: "Freedom Day (31 March)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-03", label: "Good Friday (3 April 2026)", hours: { open: "09:00", close: "15:00" } },
+  { date: "05-01", label: "Worker's Day (1 May)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-07", label: "Sette Giugno (7 June)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-29", label: "St Peter and St Paul — Imnarja (29 June)", hours: { open: "09:00", close: "18:00" } },
+  { date: "08-15", label: "Assumption Day (15 August)", hours: { open: "09:00", close: "18:00" } },
+  { date: "09-08", label: "Victory Day (8 September)", hours: { open: "09:00", close: "18:00" } },
+  { date: "09-21", label: "Independence Day (21 September)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-08", label: "Immaculate Conception (8 December)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-13", label: "Republic Day (13 December)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+];
+
+function mtSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "18:00" }, // Sunday
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" },
+    { open: "07:30", close: "21:00" }, // Saturday
+  ];
+}
+
+const MT_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  pavi: { name: "PAVI", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  pama: { name: "PAMA", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  welbees: { name: "Welbee's", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+  greens: { name: "Greens", weekly: mtSupermarketWeekly(), holidays: MT_HOLIDAYS },
+};
+
+const CY_HOLIDAYS = [
+  { date: "01-01", label: "Πρωτοχρονιά (1 Ιανουαρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "01-06", label: "Θεοφάνεια (6 Ιανουαρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "02-23", label: "Καθαρά Δευτέρα (23 Φεβρουαρίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "03-25", label: "Ελληνική Ημέρα Ανεξαρτησίας (25 Μαρτίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-01", label: "Εθνική Ημέρα Κύπρου (1 Απριλίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "04-10", label: "Μεγάλη Παρασκευή (10 Απριλίου 2026)", hours: { open: "09:00", close: "15:00" } },
+  { date: "04-12", label: "Κυριακή του Πάσχα (12 Απριλίου 2026)", hours: null },
+  { date: "04-13", label: "Δευτέρα του Πάσχα (13 Απριλίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-01", label: "Πρωτομαγιά (1 Μαΐου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "06-01", label: "Αγίου Πνεύματος (1 Ιουνίου 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "08-15", label: "Κοίμηση της Θεοτόκου (15 Αυγούστου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "10-01", label: "Ημέρα Ανεξαρτησίας της Κύπρου (1 Οκτωβρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "10-28", label: "Ημέρα του Όχι (28 Οκτωβρίου)", hours: { open: "09:00", close: "18:00" } },
+  { date: "12-25", label: "Χριστούγεννα (25 Δεκεμβρίου)", hours: null },
+  { date: "12-26", label: "Δεύτερη μέρα Χριστουγέννων (26 Δεκεμβρίου)", hours: { open: "09:00", close: "18:00" } },
+];
+
+function cySupermarketWeekly() {
+  return [
+    { open: "08:00", close: "21:00" }, // Κυριακή
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Σάββατο
+  ];
+}
+
+const CY_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  alphamega: { name: "AlphaMega", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  papantoniou: { name: "Papantoniou", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  sklavenitis: { name: "Sklavenitis", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+  metro: { name: "Metro", weekly: cySupermarketWeekly(), holidays: CY_HOLIDAYS },
+};
+
+const EE_HOLIDAYS = [
+  { date: "01-01", label: "Uusaasta (1. jaanuar)", hours: { open: "10:00", close: "20:00" } },
+  { date: "02-24", label: "Iseseisvuspäev (24. veebruar)", hours: { open: "09:00", close: "21:00" } },
+  { date: "04-03", label: "Suur Reede (2026. aasta 3. aprill)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Ülestõusmispühad (2026. aasta 5. aprill)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-01", label: "Kevadpüha (1. mai)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-24", label: "Nelipühad (2026. aasta 24. mai)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-23", label: "Võidupüha (23. juuni)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-24", label: "Jaanipäev (24. juuni)", hours: { open: "10:00", close: "18:00" } },
+  { date: "08-20", label: "Taasiseseisvumispäev (20. august)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Jõululaupäev (24. detsember) — lühem", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Esimene jõulupüha (25. detsember)", hours: null },
+  { date: "12-26", label: "Teine jõulupüha (26. detsember)", hours: { open: "09:00", close: "21:00" } },
+];
+
+function eeSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Pühapäev
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Laupäev
+  ];
+}
+
+const EE_STORE_CONFIG = {
+  selver: { name: "Selver", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  coop: { name: "Coop", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  maxima: { name: "Maxima", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  rimi: { name: "Rimi", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: eeSupermarketWeekly(), holidays: EE_HOLIDAYS },
+};
+
+const LV_HOLIDAYS = [
+  { date: "01-01", label: "Jaunais gads (1. janvāris)", hours: { open: "10:00", close: "20:00" } },
+  { date: "04-03", label: "Lielā Piektdiena (2026. gada 3. aprīlis)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Lieldienas (2026. gada 5. aprīlis)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Otrās Lieldienas (2026. gada 6. aprīlis)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-01", label: "Darba svētki (1. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-04", label: "Neatkarības atjaunošanas diena (4. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-24", label: "Vasarsvētki (2026. gada 24. maijs)", hours: { open: "09:00", close: "21:00" } },
+  { date: "06-23", label: "Līgo diena (23. jūnijs)", hours: { open: "08:00", close: "18:00" } },
+  { date: "06-24", label: "Jāņi (24. jūnijs)", hours: { open: "10:00", close: "18:00" } },
+  { date: "11-18", label: "Latvijas Republikas proklamēšanas diena (18. novembris)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Ziemassvētku vakars (24. decembris) — īsāk", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Ziemassvētki (25. decembris)", hours: null },
+  { date: "12-26", label: "Otrie Ziemassvētki (26. decembris)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-31", label: "Vecgada vakars (31. decembris) — īsāk", hours: { open: "08:00", close: "20:00" } },
+];
+
+function lvSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Svētdiena
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Sestdiena
+  ];
+}
+
+const LV_STORE_CONFIG = {
+  rimi: { name: "Rimi", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  maxima: { name: "Maxima", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+  spar: { name: "Spar", weekly: lvSupermarketWeekly(), holidays: LV_HOLIDAYS },
+};
+
+const LT_HOLIDAYS = [
+  { date: "01-01", label: "Naujieji metai (sausio 1 d.)", hours: { open: "10:00", close: "20:00" } },
+  { date: "02-16", label: "Lietuvos valstybės atkūrimo diena (vasario 16 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "03-11", label: "Nepriklausomybės atkūrimo diena (kovo 11 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "04-05", label: "Velykos (2026 m. balandžio 5 d.)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Velykų antroji diena (2026 m. balandžio 6 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "05-01", label: "Tarptautinė darbo diena (gegužės 1 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "07-06", label: "Valstybės diena (liepos 6 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "08-15", label: "Žolinė (rugpjūčio 15 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "11-01", label: "Visų šventųjų diena (lapkričio 1 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "11-02", label: "Vėlinės (lapkričio 2 d.)", hours: { open: "09:00", close: "21:00" } },
+  { date: "12-24", label: "Šv. Kūčios (gruodžio 24 d.) — trumpiau", hours: { open: "08:00", close: "18:00" } },
+  { date: "12-25", label: "Šv. Kalėdos (gruodžio 25 d.)", hours: null },
+  { date: "12-26", label: "Antroji Kalėdų diena (gruodžio 26 d.)", hours: { open: "09:00", close: "21:00" } },
+];
+
+function ltSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Sekmadienis
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Šeštadienis
+  ];
+}
+
+const LT_STORE_CONFIG = {
+  maxima: { name: "Maxima", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  iki: { name: "IKI", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  norfa: { name: "Norfa", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+  rimi: { name: "Rimi", weekly: ltSupermarketWeekly(), holidays: LT_HOLIDAYS },
+};
+
+const SI_HOLIDAYS = [
+  { date: "01-01", label: "Novo leto (1. januar)", hours: null },
+  { date: "01-02", label: "Novo leto (2. januar)", hours: null },
+  { date: "02-08", label: "Prešernov dan (8. februar)", hours: null },
+  { date: "04-05", label: "Velika noč (5. april 2026)", hours: null },
+  { date: "04-06", label: "Velikonočni ponedeljek (6. april 2026)", hours: null },
+  { date: "04-27", label: "Dan upora proti okupatorju (27. april)", hours: null },
+  { date: "05-01", label: "Praznik dela (1. maj)", hours: null },
+  { date: "05-02", label: "Praznik dela (2. maj)", hours: null },
+  { date: "05-25", label: "Binkošti (25. maj 2026)", hours: null },
+  { date: "06-25", label: "Dan državnosti (25. junij)", hours: null },
+  { date: "08-15", label: "Marijino vnebovzetje (15. avgust)", hours: null },
+  { date: "10-31", label: "Dan reformacije (31. oktober)", hours: null },
+  { date: "11-01", label: "Dan spomina na mrtve (1. november)", hours: null },
+  { date: "12-25", label: "Božič (25. december)", hours: null },
+  { date: "12-26", label: "Dan samostojnosti in enotnosti (26. december)", hours: null },
+];
+
+function siSupermarketWeekly() {
+  return [
+    null, // Nedelja — prin lege, aproape toate magazinele sunt închise
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "20:00" },
+    { open: "07:30", close: "17:00" }, // Sobota
+  ];
+}
+
+const SI_STORE_CONFIG = {
+  mercator: { name: "Mercator", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  spar: { name: "Spar", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  hofer: { name: "Hofer", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+  tus: { name: "Tuš", weekly: siSupermarketWeekly(), holidays: SI_HOLIDAYS },
+};
+
+const SK_HOLIDAYS = [
+  { date: "01-01", label: "Deň vzniku Slovenskej republiky (1. januára)", hours: null },
+  { date: "01-06", label: "Zjavenie Pána (6. januára)", hours: null },
+  { date: "04-03", label: "Veľký piatok (3. apríla 2026)", hours: null },
+  { date: "04-06", label: "Veľkonočný pondelok (6. apríla 2026)", hours: null },
+  { date: "05-01", label: "Sviatok práce (1. mája)", hours: null },
+  { date: "05-08", label: "Deň víťazstva nad fašizmom (8. mája)", hours: null },
+  { date: "07-05", label: "Sviatok svätého Cyrila a svätého Metoda (5. júla)", hours: null },
+  { date: "08-29", label: "Výročie SNP (29. augusta)", hours: null },
+  { date: "09-01", label: "Deň Ústavy SR (1. septembra)", hours: null },
+  { date: "09-15", label: "Sedembolestná Panna Mária (15. septembra)", hours: null },
+  { date: "11-01", label: "Sviatok všetkých svätých (1. novembra)", hours: null },
+  { date: "11-17", label: "Deň boja za slobodu a demokraciu (17. novembra)", hours: null },
+  { date: "12-24", label: "Štedrý deň (24. decembra)", hours: null },
+  { date: "12-25", label: "Prvý sviatok vianočný (25. decembra)", hours: null },
+  { date: "12-26", label: "Druhý sviatok vianočný (26. decembra)", hours: null },
+];
+
+function skSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:00" }, // Nedeľa
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Sobota
+  ];
+}
+
+const SK_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  billa: { name: "Billa", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+  coopjednota: { name: "COOP Jednota", slug: "coop-jednota", weekly: skSupermarketWeekly(), holidays: SK_HOLIDAYS },
+};
+
+const IE_HOLIDAYS = [
+  { date: "01-01", label: "New Year's Day (1 January)", hours: null },
+  { date: "02-02", label: "St Brigid's Day (2 February 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "03-17", label: "St Patrick's Day (17 March)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "Easter Monday (6 April 2026)", hours: { open: "09:00", close: "18:00" } },
+  { date: "05-04", label: "May Bank Holiday (4 May 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "06-01", label: "June Bank Holiday (1 June 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "08-03", label: "August Bank Holiday (3 August 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "10-26", label: "October Bank Holiday (26 October 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+  { date: "12-26", label: "St Stephen's Day (26 December)", hours: { open: "10:00", close: "18:00" } },
+];
+
+function ieSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "19:00" }, // Sunday
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" },
+    { open: "08:00", close: "22:00" }, // Saturday
+  ];
+}
+
+const IE_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  dunnesstores: { name: "Dunnes Stores", slug: "dunnes-stores", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  supervalu: { name: "SuperValu", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ieSupermarketWeekly(), holidays: IE_HOLIDAYS },
+};
+
+const HR_HOLIDAYS = [
+  { date: "01-01", label: "Nova godina (1. siječnja)", hours: null },
+  { date: "01-06", label: "Sveta tri kralja (6. siječnja)", hours: null },
+  { date: "04-05", label: "Uskrs (5. travnja 2026.)", hours: null },
+  { date: "04-06", label: "Uskrsni ponedjeljak (6. travnja 2026.)", hours: null },
+  { date: "05-01", label: "Praznik rada (1. svibnja)", hours: null },
+  { date: "05-30", label: "Dan državnosti (30. svibnja)", hours: null },
+  { date: "06-04", label: "Tijelovo (4. lipnja 2026.)", hours: null },
+  { date: "06-22", label: "Dan antifašističke borbe (22. lipnja)", hours: null },
+  { date: "08-05", label: "Dan pobjede i domovinske zahvalnosti (5. kolovoza)", hours: null },
+  { date: "08-15", label: "Velika Gospa (15. kolovoza)", hours: null },
+  { date: "11-01", label: "Dan svih svetih (1. studenoga)", hours: null },
+  { date: "11-18", label: "Dan sjećanja - Vukovar i Škabrnja (18. studenoga)", hours: null },
+  { date: "12-25", label: "Božić (25. prosinca)", hours: null },
+  { date: "12-26", label: "Sveti Stjepan (26. prosinca)", hours: null },
+];
+
+function hrSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "13:00" }, // Nedjelja — foarte redus, lege "16 Duminici pe an" limitează operarea normală
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Subota
+  ];
+}
+
+const HR_STORE_CONFIG = {
+  konzum: { name: "Konzum", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  plodine: { name: "Plodine", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  spar: { name: "Spar", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: hrSupermarketWeekly(), holidays: HR_HOLIDAYS },
+};
+
+const HU_HOLIDAYS = [
+  { date: "01-01", label: "Újév (január 1.)", hours: null },
+  { date: "01-02", label: "Pihenőnap (január 2.)", hours: null },
+  { date: "03-15", label: "Nemzeti ünnep (március 15.)", hours: null },
+  { date: "04-03", label: "Nagypéntek (2026. április 3.)", hours: null },
+  { date: "04-05", label: "Húsvétvasárnap (2026. április 5.)", hours: null },
+  { date: "04-06", label: "Húsvéthétfő (2026. április 6.)", hours: null },
+  { date: "05-01", label: "A munka ünnepe (május 1.)", hours: null },
+  { date: "05-24", label: "Pünkösdvasárnap (2026. május 24.)", hours: null },
+  { date: "05-25", label: "Pünkösdhétfő (2026. május 25.)", hours: null },
+  { date: "08-20", label: "Államalapítás ünnepe (augusztus 20.)", hours: null },
+  { date: "10-23", label: "Nemzeti ünnep (október 23.)", hours: null },
+  { date: "12-24", label: "Pihenőnap (december 24.) — rövidített nyitvatartás", hours: { open: "07:00", close: "12:00" } },
+  { date: "12-25", label: "Karácsony (december 25.)", hours: null },
+  { date: "12-26", label: "Karácsony másnapja (december 26.)", hours: null },
+];
+
+function huSupermarketWeekly() {
+  return [
+    { open: "07:00", close: "18:00" }, // Vasárnap
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Szombat
+  ];
+}
+
+const HU_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  spar: { name: "Spar", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  tesco: { name: "Tesco", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  penny: { name: "Penny", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: huSupermarketWeekly(), holidays: HU_HOLIDAYS },
+};
+
+const FI_HOLIDAYS = [
+  { date: "01-01", label: "Uudenvuodenpäivä (1. tammikuuta)", hours: { open: "10:00", close: "18:00" } },
+  { date: "01-06", label: "Loppiainen (6. tammikuuta)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-03", label: "Pitkäperjantai (3. huhtikuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-05", label: "Pääsiäispäivä (5. huhtikuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-06", label: "2. pääsiäispäivä (6. huhtikuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-01", label: "Vappu (1. toukokuuta)", hours: { open: "08:00", close: "21:00" } },
+  { date: "05-14", label: "Helatorstai (14. toukokuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-24", label: "Helluntaipäivä (24. toukokuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "06-20", label: "Juhannuspäivä (20. kesäkuuta 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "10-31", label: "Pyhäinpäivä (31. lokakuuta 2026)", hours: { open: "12:00", close: "18:00" } },
+  { date: "12-06", label: "Itsenäisyyspäivä (6. joulukuuta)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-24", label: "Jouluaatto (24. joulukuuta) — lyhennetty", hours: { open: "08:00", close: "12:00" } },
+  { date: "12-25", label: "Joulupäivä (25. joulukuuta)", hours: null },
+  { date: "12-26", label: "Tapaninpäivä (26. joulukuuta) — sunnuntai-aukiolo", hours: { open: "10:00", close: "20:00" } },
+];
+
+function fiSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "20:00" }, // Sunnuntai
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Lauantai
+  ];
+}
+
+const FI_STORE_CONFIG = {
+  prisma: { name: "Prisma", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
+  kcitymarket: { name: "K-Citymarket", slug: "k-citymarket", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: fiSupermarketWeekly(), holidays: FI_HOLIDAYS },
+};
+
+const CZ_HOLIDAYS = [
+  { date: "01-01", label: "Den obnovy samostatného českého státu (1. ledna)", hours: null },
+  { date: "04-06", label: "Velikonoční pondělí (6. dubna 2026)", hours: null },
+  { date: "05-01", label: "Svátek práce (1. května)", hours: { open: "08:00", close: "20:00" } },
+  { date: "05-08", label: "Den vítězství (8. května)", hours: null },
+  { date: "07-05", label: "Den slovanských věrozvěstů (5. července)", hours: { open: "08:00", close: "20:00" } },
+  { date: "07-06", label: "Den upálení mistra Jana Husa (6. července)", hours: { open: "08:00", close: "20:00" } },
+  { date: "09-28", label: "Den české státnosti (28. září)", hours: null },
+  { date: "10-28", label: "Den vzniku samostatného československého státu (28. října)", hours: null },
+  { date: "11-17", label: "Den boje za svobodu a demokracii (17. listopadu)", hours: { open: "08:00", close: "20:00" } },
+  { date: "12-24", label: "Štědrý den (24. prosince) — zavírací doba 12:00", hours: { open: "07:00", close: "12:00" } },
+  { date: "12-25", label: "1. svátek vánoční (25. prosince)", hours: null },
+  { date: "12-26", label: "2. svátek vánoční (26. prosince)", hours: null },
+];
+
+function czSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:00" }, // Neděle
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" },
+    { open: "07:00", close: "21:00" }, // Sobota
+  ];
+}
+
+const CZ_STORE_CONFIG = {
+  lidl: { name: "Lidl", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  albert: { name: "Albert", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  billa: { name: "Billa", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+  tesco: { name: "Tesco", weekly: czSupermarketWeekly(), holidays: CZ_HOLIDAYS },
+};
+
+const PT_HOLIDAYS = [
+  { date: "01-01", label: "Ano Novo (1 de janeiro)", hours: null },
+  { date: "04-03", label: "Sexta-feira Santa (3 de abril 2026)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-05", label: "Páscoa (5 de abril 2026)", hours: { open: "09:00", close: "20:00" } },
+  { date: "04-25", label: "Dia da Liberdade (25 de abril)", hours: { open: "08:00", close: "21:00" } },
+  { date: "05-01", label: "Dia do Trabalhador (1 de maio)", hours: { open: "09:00", close: "20:00" } },
+  { date: "06-04", label: "Corpo de Deus (4 de junho 2026)", hours: { open: "08:00", close: "21:00" } },
+  { date: "06-10", label: "Dia de Portugal (10 de junho)", hours: { open: "08:00", close: "21:00" } },
+  { date: "08-15", label: "Assunção de Nossa Senhora (15 de agosto)", hours: { open: "08:00", close: "21:00" } },
+  { date: "10-05", label: "Implantação da República (5 de outubro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "11-01", label: "Dia de Todos os Santos (1 de novembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-01", label: "Restauração da Independência (1 de dezembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-08", label: "Imaculada Conceição (8 de dezembro)", hours: { open: "08:00", close: "21:00" } },
+  { date: "12-25", label: "Natal (25 de dezembro)", hours: null },
+];
+
+function ptSupermarketWeekly() {
+  return [
+    { open: "08:30", close: "21:00" }, // Domingo — deschis, spre deosebire de Germania
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Sábado
+  ];
+}
+
+const PT_STORE_CONFIG = {
+  continente: { name: "Continente", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+  pingodoce: { name: "Pingo Doce", slug: "pingo-doce", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: ptSupermarketWeekly(), holidays: PT_HOLIDAYS },
+};
+
+const SE_HOLIDAYS = [
+  { date: "01-01", label: "Nyårsdagen (1 januari)", hours: null },
+  { date: "01-06", label: "Trettondedag jul (6 januari)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-03", label: "Långfredagen (3 april 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "04-05", label: "Påskdagen (5 april 2026)", hours: null },
+  { date: "04-06", label: "Annandag påsk (6 april 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-01", label: "Första maj (1 maj)", hours: { open: "10:00", close: "18:00" } },
+  { date: "05-14", label: "Kristi himmelsfärdsdag (14 maj 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "06-06", label: "Sveriges nationaldag (6 juni)", hours: { open: "10:00", close: "18:00" } },
+  { date: "06-19", label: "Midsommardagen (19 juni 2026)", hours: null },
+  { date: "10-31", label: "Alla helgons dag (31 oktober 2026)", hours: { open: "10:00", close: "18:00" } },
+  { date: "12-25", label: "Juldagen (25 december)", hours: null },
+  { date: "12-26", label: "Annandag jul (26 december)", hours: { open: "10:00", close: "18:00" } },
+];
+
+function seSupermarketWeekly() {
+  return [
+    { open: "09:00", close: "21:00" }, // Söndag
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" }, // Lördag
+  ];
+}
+
+const SE_STORE_CONFIG = {
+  ica: { name: "ICA", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  coop: { name: "Coop", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  willys: { name: "Willys", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: seSupermarketWeekly(), holidays: SE_HOLIDAYS },
+};
+
+const DK_HOLIDAYS = [
+  { date: "12-25", label: "Juledag (25. december)", hours: null },
+  { date: "01-01", label: "Nytårsdag (1. januar)", hours: null },
+];
+
+function dkSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "18:00" }, // Søndag
+    { open: "08:00", close: "20:00" }, // Mandag
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Lørdag
+  ];
+}
+
+const DK_STORE_CONFIG = {
+  netto: { name: "Netto", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  fotex: { name: "Føtex", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  bilka: { name: "Bilka", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  rema1000: { name: "Rema 1000", slug: "rema-1000", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+  irma: { name: "Irma", weekly: dkSupermarketWeekly(), holidays: DK_HOLIDAYS },
+};
+
+const AT_HOLIDAYS = [
+  { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
+  { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
+];
+
+function atSupermarketWeekly() {
+  return [
+    null, // Sonntag — închis, cu excepții punctuale (gări/aeroporturi/zone turistice)
+    { open: "07:30", close: "19:30" }, // Montag
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" },
+    { open: "07:30", close: "19:30" }, // Samstag
+  ];
+}
+
+const AT_STORE_CONFIG = {
+  billa: { name: "Billa", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  spar: { name: "Spar", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  hofer: { name: "Hofer", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+  penny: { name: "Penny", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
+};
+
+const NL_HOLIDAYS = [
+  { date: "12-25", label: "Kerstmis (25 december)", hours: null },
+  { date: "01-01", label: "Nieuwjaarsdag (1 januari)", hours: null },
+];
+
+function nlSupermarketWeekly() {
+  return [
+    { open: "12:00", close: "18:00" }, // Zondag — program scurt, variază mult pe lanț
+    { open: "08:00", close: "21:00" }, // Maandag
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" }, // Zaterdag
+  ];
+}
+
+const NL_STORE_CONFIG = {
+  albertheijn: { name: "Albert Heijn", slug: "albert-heijn", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  jumbo: { name: "Jumbo", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+  plus: { name: "Plus", weekly: nlSupermarketWeekly(), holidays: NL_HOLIDAYS },
+};
+
+const PL_HOLIDAYS = [
+  { date: "12-25", label: "Boże Narodzenie (25 grudnia)", hours: null },
+  { date: "01-01", label: "Nowy Rok (1 stycznia)", hours: null },
+];
+
+function plSupermarketWeekly() {
+  return [
+    null, // Niedziela — închis prin lege (cu excepția ~8 duminici comerciale/an, nemodelate)
+    { open: "06:00", close: "22:00" }, // Poniedziałek
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" },
+    { open: "06:00", close: "22:00" }, // Sobota
+  ];
+}
+
+const PL_STORE_CONFIG = {
+  biedronka: { name: "Biedronka", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: plSupermarketWeekly(), holidays: PL_HOLIDAYS },
+};
+
+function itDiyWeekly() {
+  return [
+    { open: "09:30", close: "20:00" }, // Domenica
+    { open: "09:30", close: "20:00" }, // Lunedì
+    { open: "09:30", close: "20:00" },
+    { open: "09:30", close: "20:00" },
+    { open: "09:30", close: "20:00" },
+    { open: "09:30", close: "20:00" },
+    { open: "09:30", close: "20:00" }, // Sabato
+  ];
+}
+
+const IT_HOLIDAYS = [
+  { date: "12-25", label: "Natale (25 dicembre)", hours: null },
+  { date: "01-01", label: "Capodanno (1 gennaio)", hours: null },
+];
+
+function itSupermarketWeekly() {
+  return [
+    { open: "08:00", close: "20:30" }, // Domenica — program normal, fără închidere legală
+    { open: "08:00", close: "20:30" }, // Lunedì
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" },
+    { open: "08:00", close: "20:30" }, // Sabato
+  ];
+}
+
+const IT_STORE_CONFIG = {
+  esselunga: { name: "Esselunga", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  conad: { name: "Conad", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  coop: { name: "Coop", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  // Eurospin — discount, ~1200 de magazine, cea mai densă rețea de aici,
+  // acoperire cu adevărat națională (Nord/Centru/Sud deopotrivă, spre
+  // deosebire de Esselunga) — universal, nerestricționat.
+  eurospin: { name: "Eurospin", weekly: itSupermarketWeekly(), holidays: IT_HOLIDAYS },
+  // Ikea — vezi SELECTIVE_BRAND_CITIES.it mai jos pentru orașele exacte.
+  ikea: { name: "Ikea", weekly: itDiyWeekly(), holidays: IT_HOLIDAYS },
+  // MediaWorld, Decathlon — lanțuri mari, naționale (~120, respectiv ~60 de
+  // magazine), NEVERIFICATE oraș cu oraș individual (spre deosebire de
+  // Esselunga/Ikea de mai sus) — tratate universal, risc mic totuși, pentru
+  // că toate cele 30 de orașe sunt deja orașe mari/turistice importante.
+  mediaworld: { name: "MediaWorld", slug: "media-world", weekly: itDiyWeekly(), holidays: IT_HOLIDAYS },
+  decathlon: { name: "Decathlon", weekly: itDiyWeekly(), holidays: IT_HOLIDAYS },
+};
+
+const FR_HOLIDAYS = [
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "01-01", label: "Jour de l'An (1er janvier)", hours: null },
+];
+
+function frSupermarketWeekly() {
+  return [
+    { open: "08:30", close: "13:00" }, // Dimanche — doar dimineața
+    { open: "08:30", close: "20:00" }, // Lundi
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" },
+    { open: "08:30", close: "20:00" }, // Samedi
+  ];
+}
+
+const FR_STORE_CONFIG = {
+  leclerc: { name: "E.Leclerc", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  intermarche: { name: "Intermarché", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  auchan: { name: "Auchan", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  monoprix: { name: "Monoprix", weekly: frSupermarketWeekly(), holidays: FR_HOLIDAYS },
+  // Mall real, verificat — Forum des Halles e într-o "zonă turistică" din
+  // Paris, deci deschis și duminica, spre deosebire de restul Franței.
+  forumdeshalles: {
+    name: "Westfield Forum des Halles",
+    slug: "forum-des-halles",
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Dimanche
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+      { open: "10:00", close: "20:30" },
+    ],
+    holidays: FR_HOLIDAYS,
   },
 };
+
+// Cere din locales.js (nu invers) — evită dependența circulară: locales.js
+// NU cere nimic din acest fișier.
+const { TRANSLATIONS, CATEGORY_LABELS } = require("./locales.js");
+
+function beElectroWeekly() {
+  return [
+    null, // Dimanche — închis
+    { open: "10:00", close: "19:00" }, // Lundi
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" }, // Samedi
+  ];
+}
+
+const BE_HOLIDAYS = [
+  { date: "12-25", label: "Noël (25 décembre)", hours: null },
+  { date: "01-01", label: "Nouvel An (1er janvier)", hours: null },
+];
+
+const BE_DIY_HOLIDAYS = BE_HOLIDAYS;
+
+function beDiyWeekly() {
+  return [
+    null, // Dimanche — închis, lege belgiană de închidere duminicală pentru nealimentar
+    { open: "09:00", close: "18:30" }, // Lundi
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "18:30" },
+    { open: "09:00", close: "20:00" }, // Vendredi — nocturnă, frecventă la lanțurile de bricolaj
+    { open: "09:00", close: "18:30" }, // Samedi
+  ];
+}
+
+function beProximityWeekly() {
+  return [
+    { open: "09:00", close: "13:00" }, // Dimanche — multe puncte de proximitate deschise doar dimineața
+    { open: "08:00", close: "20:00" }, // Lundi
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Samedi
+  ];
+}
+
+;
+
+function beSupermarketWeekly() {
+  return [
+    null, // Dimanche — majoritatea lanțurilor mari închise, cu excepții în schimbare (ex: Carrefour)
+    { open: "08:30", close: "19:00" }, // Lundi
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" },
+    { open: "08:30", close: "19:00" }, // Samedi
+  ];
+}
+
+function esDiyWeekly() {
+  return [
+    null, // Domingo — închis
+    { open: "10:00", close: "21:00" }, // Lunes
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" },
+    { open: "10:00", close: "21:00" }, // Sábado
+  ];
+}
+
+const ES_HOLIDAYS = [
+  { date: "12-25", label: "Navidad (25 de diciembre)", hours: null },
+  { date: "01-01", label: "Año Nuevo (1 de enero)", hours: null },
+];
+
+function esSupermarketWeekly() {
+  return [
+    null, // Domingo — închis
+    { open: "09:00", close: "21:30" }, // Lunes
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" },
+    { open: "09:00", close: "21:30" }, // Sábado
+  ];
+}
+
+const UK_HOLIDAYS = [
+  { date: "12-25", label: "Christmas Day (25 December)", hours: null },
+  { date: "01-01", label: "New Year's Day (1 January)", hours: null },
+];
+
+function ukSupermarketWeekly() {
+  return [
+    { open: "10:00", close: "16:00" }, // Sunday — limitat prin lege, nu închis
+    { open: "07:00", close: "22:00" }, // Monday
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" },
+    { open: "07:00", close: "22:00" }, // Saturday
+  ];
+}
+
+const GR_HOLIDAYS = [
+  { date: "01-01", label: "Πρωτοχρονιά (1 Ιανουαρίου)", hours: null },
+  { date: "01-06", label: "Θεοφάνεια (6 Ιανουαρίου)", hours: { open: "11:00", close: "18:00" } },
+  { date: "02-23", label: "Καθαρά Δευτέρα (23 Φεβρουαρίου 2026)", hours: { open: "07:45", close: "16:00" } },
+  { date: "03-25", label: "Εθνική Εορτή (25 Μαρτίου)", hours: null },
+  { date: "04-10", label: "Μεγάλη Παρασκευή (10 Απριλίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "04-12", label: "Πάσχα (12 Απριλίου 2026)", hours: null },
+  { date: "04-13", label: "Δευτέρα του Πάσχα (13 Απριλίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "05-01", label: "Εργατική Πρωτομαγιά (1 Μαΐου)", hours: null },
+  { date: "06-01", label: "Αγίου Πνεύματος (1 Ιουνίου 2026)", hours: { open: "11:00", close: "18:00" } },
+  { date: "08-15", label: "Κοίμηση της Θεοτόκου (15 Αυγούστου)", hours: null },
+  { date: "10-28", label: "Ημέρα του Όχι (28 Οκτωβρίου)", hours: null },
+  { date: "12-25", label: "Χριστούγεννα (25 Δεκεμβρίου)", hours: null },
+  { date: "12-26", label: "Σύναξις Θεοτόκου (26 Δεκεμβρίου)", hours: null },
+];
+
+function grSupermarketWeekly() {
+  return [
+    null, // Κυριακή — majoritatea închise, în afara zonelor turistice/Duminicilor de vânzări speciale
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "21:00" },
+    { open: "07:45", close: "20:00" }, // Σάββατο
+  ];
+}
+
+const DE_HOLIDAYS = [
+  { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
+  { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
+];
+
+function deSupermarketWeekly() {
+  return [
+    null, // Sonntag — închis prin lege
+    { open: "08:00", close: "20:00" }, // Montag
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, // Samstag
+  ];
+}
+
+exports.BEACH_TAG_GROUPS = {
+  access: ["access_car", "access_boat"],
+  sunbeds: ["sunbeds_free", "sunbeds_paid", "sunbeds_with_drink"],
+  terrain: ["terrain_family", "terrain_pebbles"],
+}
+
+exports.BEACH_STANDALONE_TAGS = ["free_parking", "food_on_beach", "taverns_nearby"]
+
+exports.BEACH_ALL_TAGS = [...Object.values(exports.BEACH_TAG_GROUPS).flat(), ...exports.BEACH_STANDALONE_TAGS]
+
+exports.DISCOVERCARS_CITY_LINKS = {
+  "București": "https://www.discovercars.com/ro/romania/bucharest?a_aid=23ea55cb",
+  "Cluj-Napoca": "https://www.discovercars.com/ro/romania/cluj-napoca?a_aid=23ea55cb",
+  "Timișoara": "https://www.discovercars.com/ro/romania/timisoara?a_aid=23ea55cb",
+  "Iași": "https://www.discovercars.com/ro/romania/iasi/ias?a_aid=23ea55cb",
+  "Brașov": "https://www.discovercars.com/ro/romania/brasov?a_aid=23ea55cb",
+  "Constanța": "https://www.discovercars.com/ro/romania/constanta?a_aid=23ea55cb",
+  "Brussels": "https://www.discovercars.com/ro/belgium/brussels?a_aid=23ea55cb",
+  "Antwerpen": "https://www.discovercars.com/ro/belgium/antwerp?a_aid=23ea55cb",
+  "Gent": "https://www.discovercars.com/ro/belgium/gent?a_aid=23ea55cb",
+  "Brugge": "https://www.discovercars.com/ro/belgium/brugge?a_aid=23ea55cb",
+  "Madrid": "https://www.discovercars.com/ro/spain/madrid?a_aid=23ea55cb",
+  "Barcelona": "https://www.discovercars.com/ro/spain/barcelona?a_aid=23ea55cb",
+  "Valencia": "https://www.discovercars.com/ro/spain/valencia?a_aid=23ea55cb",
+  "Sevilla": "https://www.discovercars.com/ro/spain/seville?a_aid=23ea55cb",
+  "Málaga": "https://www.discovercars.com/ro/spain/malaga?a_aid=23ea55cb",
+  "Roma": "https://www.discovercars.com/ro/italy-mainland/rome?a_aid=23ea55cb",
+  "Milano": "https://www.discovercars.com/ro/italy-mainland/milan?a_aid=23ea55cb",
+  "Napoli": "https://www.discovercars.com/ro/italy-mainland/naples?a_aid=23ea55cb",
+  "Venezia": "https://www.discovercars.com/ro/italy-mainland/venice?a_aid=23ea55cb",
+  "Firenze": "https://www.discovercars.com/ro/italy-mainland/fiorentina?a_aid=23ea55cb",
+  "Paris": "https://www.discovercars.com/ro/france/paris?a_aid=23ea55cb",
+  "Lyon": "https://www.discovercars.com/ro/france/lyon?a_aid=23ea55cb",
+  "Marseille": "https://www.discovercars.com/ro/france/marseille?a_aid=23ea55cb",
+  "Nice": "https://www.discovercars.com/ro/france/nice?a_aid=23ea55cb",
+  "Bordeaux": "https://www.discovercars.com/ro/france/bordeaux?a_aid=23ea55cb",
+  "London": "https://www.discovercars.com/ro/united-kingdom/london?a_aid=23ea55cb",
+  "Edinburgh": "https://www.discovercars.com/ro/united-kingdom/edinburgh?a_aid=23ea55cb",
+  "Manchester": "https://www.discovercars.com/ro/united-kingdom/manchester?a_aid=23ea55cb",
+  "Birmingham": "https://www.discovercars.com/ro/united-kingdom/birmingham?a_aid=23ea55cb",
+  "Glasgow": "https://www.discovercars.com/ro/united-kingdom/glasgow?a_aid=23ea55cb",
+  // Grecia — plaje, linkuri furnizate direct (23ea55cb). Cheile trebuie să
+  // fie IDENTICE cu câmpul `city` folosit pe fiecare plajă în date — Rodos
+  // are 7 zone diferite folosite ca `city` (nu doar "Rodos"), toate
+  // primesc același link (aceeași insulă, un singur punct de ridicare
+  // relevant). Athena foloseşte "Riviera Ateniană" ca `city`, nu "Athena".
+  "Zakynthos": "https://www.discovercars.com/greece/zakynthos?a_aid=23ea55cb",
+  "Lefkada": "https://www.discovercars.com/greece/lefkada?a_aid=23ea55cb",
+  "Corfu": "https://www.discovercars.com/greece/corfu?a_aid=23ea55cb",
+  "Chania": "https://www.discovercars.com/greece-crete/chania?a_aid=23ea55cb",
+  "Heraklion": "https://www.discovercars.com/greece-crete/heraklion?a_aid=23ea55cb",
+  "Rethymno": "https://www.discovercars.com/greece-crete/rethymno?a_aid=23ea55cb",
+  "Lindos": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Faliraki": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Archangelos": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Prasonisi": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Kallithea": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Rhodos Town": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Afandou": "https://www.discovercars.com/greece/rhodes?a_aid=23ea55cb",
+  "Milos": "https://www.discovercars.com/greece/milos?a_aid=23ea55cb",
+  "Kassandra": "https://www.discovercars.com/greece/kassandra?a_aid=23ea55cb",
+  "Sithonia": "https://www.discovercars.com/greece/sithonia?a_aid=23ea55cb",
+  "Riviera Ateniană": "https://www.discovercars.com/greece/athens?a_aid=23ea55cb",
+  "Nafplio": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Patras": "https://www.discovercars.com/greece/patra?a_aid=23ea55cb",
+  // Restul Peloponezului (Pylos, Kardamili, Mani) — nu a venit link dedicat
+  // pentru ele; folosim cel de Nafplio ca aproximare rezonabilă pentru toată
+  // regiunea, până apare un link specific.
+  "Pylos": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Kardamili": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Mani": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Monemvasia": "https://www.discovercars.com/greece/nafplio?a_aid=23ea55cb",
+  "Thassos": "https://www.discovercars.com/greece/thassos?a_aid=23ea55cb",
+}
+
+exports.GLOVO_COUNTRIES = ["ro", "es", "it", "pt", "pl", "hr"]
+
+// Obiective cu ACCES LIBER, fără program — cu restricție de CATEGORIE per
+// prefix (nu doar nume), fiindcă unele prefixe se suprapun peste categorii
+// diferite cu sens complet diferit — verificat direct în date, nu presupus:
+// 7 parcuri de AGREMENT PLĂTITE încep cu "Parc"/"Parcul" (Tibidabo, Astérix
+// etc., categoria parcuri_agrement) — de-asta "Parcul" e limitat DOAR la
+// categoria "natura", altfel le-ar fi arătat greșit ca gratuite. La fel,
+// "Piața"/"Piata"/"Bulevardul"/"Strada" trăiesc în categoria "cladiri_teatre"
+// (verificat: 146+14 intrări), amestecate cu clădiri PLĂTITE (Opera,
+// Parlamentul, Teatrul Național) — de-asta prefixul se verifică STRICT
+// per categorie, nu global pe tot numele.
+exports.FREE_ACCESS_PREFIXES_BY_CATEGORY = {
+  natura: [
+    "Podul", "Lacul", "Lacurile", "Muntele", "Munții", "Insula", "Insulele",
+    "Cheile", "Cascada", "Golful", "Parcul", "Parc", "Dealul", "Dealurile",
+    "Valea", "Râul", "Capul", "Peninsula", "Faleza", "Falezele", "Stânca",
+    "Stâncile", "Vârful", "Pădurea", "Padurea",
+  ],
+  infrastructura: [
+    "Podul", "Șoseaua", "Traseul", "Pasul", "Bulevardul", "Gara", "Portul",
+    "Drumul", "Tunelul", "Digul", "Promenada", "Aleea",
+  ],
+  cladiri_teatre: [
+    "Piața", "Piata", "Strada", "Bulevardul",
+  ],
+}
+
+exports.SEASONAL_WARNING_PREFIXES = ["Șoseaua", "Traseul", "Pasul"]
+
+exports.CATEGORY_GENERIC_SCHEDULE = {
+  // index 0=Duminică..6=Sâmbătă (Date.getDay()) — null = închis în ziua aia
+  castele_palate: [
+    { open: "09:00", close: "17:00" }, null,
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" },
+  ],
+  cetati_turnuri: [
+    { open: "09:00", close: "17:00" }, null,
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" }, { open: "09:00", close: "17:00" },
+    { open: "09:00", close: "17:00" },
+  ],
+  manastiri: [
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" }, { open: "08:00", close: "19:00" },
+    { open: "08:00", close: "19:00" },
+  ],
+  muzee: [
+    { open: "10:00", close: "18:00" }, null,
+    { open: "10:00", close: "18:00" }, { open: "10:00", close: "18:00" },
+    { open: "10:00", close: "18:00" }, { open: "10:00", close: "18:00" },
+    { open: "10:00", close: "18:00" },
+  ],
+  parcuri_agrement: [
+    { open: "10:00", close: "19:00" }, null,
+    { open: "10:00", close: "19:00" }, { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" }, { open: "10:00", close: "19:00" },
+    { open: "10:00", close: "19:00" },
+  ],
+  // Plaje organizate (cu bar de plajă) — cerut explicit, la solicitarea de
+  // extindere pentru Grecia — program tipic, fără zi de închidere (spre
+  // deosebire de muzee/castele, o plajă cu bar deschide în fiecare zi cât
+  // ține sezonul), dis-de-dimineață până seara târziu.
+  plaje_organizate: [
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" }, { open: "08:00", close: "20:00" },
+    { open: "08:00", close: "20:00" },
+  ],
+}
+
+exports.FREE_ACCESS_CATEGORIES = ["plaje_salbatice"]
+
+exports.DE_STORE_CONFIG = {
+  aldi: { name: "Aldi", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  rewe: { name: "Rewe", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  edeka: { name: "Edeka", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  kaufland: { name: "Kaufland", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  mediamarkt: { name: "Media Markt", slug: "media-markt", weekly: deSupermarketWeekly(), holidays: DE_HOLIDAYS },
+  // Mall-uri reale, verificate — program de mall (L-S 10-20), NU program de supermarket.
+  // Toate închise duminica, confirmat: normă respectată aproape universal în Germania.
+  mallofberlin: {
+    name: "Mall of Berlin",
+    slug: "mall-of-berlin",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
+  centrooberhausen: {
+    name: "Westfield CentrO Oberhausen",
+    slug: "centro-oberhausen",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
+  myzeil: {
+    name: "MyZeil Frankfurt",
+    slug: "myzeil-frankfurt",
+    weekly: [null, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }, { open: "10:00", close: "20:00" }],
+    holidays: DE_HOLIDAYS,
+  },
+}
+
+exports.GR_STORE_CONFIG = {
+  sklavenitis: { name: "Sklavenitis", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  abvassilopoulos: { name: "AB Vassilopoulos", slug: "ab-vassilopoulos", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+  masoutis: { name: "Masoutis", weekly: grSupermarketWeekly(), holidays: GR_HOLIDAYS },
+}
+
+exports.UK_STORE_CONFIG = {
+  tesco: { name: "Tesco", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  sainsburys: { name: "Sainsbury's", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  asda: { name: "Asda", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  morrisons: { name: "Morrisons", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  boots: { name: "Boots", weekly: ukSupermarketWeekly(), holidays: UK_HOLIDAYS },
+  // Mall-uri reale, verificate individual — fiecare cu programul lui real
+  // (diferă mai mult decât la supermarketuri, mai ales sâmbăta/duminica).
+  westfieldlondon: {
+    name: "Westfield London",
+    slug: "westfield-london",
+    weekly: [
+      { open: "12:00", close: "18:00" }, // Sunday
+      { open: "10:00", close: "21:00" }, // Monday
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "09:00", close: "21:00" }, // Saturday
+    ],
+    holidays: UK_HOLIDAYS,
+  },
+  traffordcentre: {
+    name: "Trafford Centre",
+    slug: "trafford-centre",
+    weekly: [
+      { open: "12:00", close: "18:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+    ],
+    holidays: UK_HOLIDAYS,
+  },
+  bluewater: {
+    name: "Bluewater",
+    weekly: [
+      { open: "11:00", close: "17:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "10:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+    ],
+    holidays: UK_HOLIDAYS,
+  },
+}
+
+exports.ES_STORE_CONFIG = {
+  mercadona: { name: "Mercadona", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  alcampo: { name: "Alcampo", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  elcorteingles: { name: "El Corte Inglés", slug: "el-corte-ingles", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  dia: { name: "Dia", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Lidl și Eroski — verificate prin căutare (localizator oficial + einforma.es):
+  // ambele confirmate cu magazine reale în toate cele 9 orașe din listă
+  // (inclusiv Eroski în Baleares — 184 de magazine acolo, cel mai dens punct
+  // al rețelei; și în Vizcaya/Bilbao — 41 de magazine).
+  lidl: { name: "Lidl", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  eroski: { name: "Eroski", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Consum — bug real, prins ÎNAINTE să ajungă live: lanțul valencian NU are
+  // acoperire națională (confirmat explicit: "Consum no tiene presencia en
+  // el conjunto de España"), prezent doar în 6 comunități autonome (Valencia,
+  // Cataluña, Andalucía, Murcia, Castilla-La Mancha, Aragón). ABSENT din
+  // Madrid — prima lor unitate acolo (Parla) e abia programată pentru 2028
+  // (confirmat prin articole din aprilie-mai 2026, foarte recente) — și din
+  // Baleares/Palma și Țara Bascilor/Bilbao, nemenționate printre cele 6
+  // regiuni. Vezi SELECTIVE_BRAND_CITIES.es mai jos pentru orașele exacte
+  // unde chiar există.
+  consum: { name: "Consum", weekly: esSupermarketWeekly(), holidays: ES_HOLIDAYS },
+  // Ikea — verificat prin căutare (ikea.com/es/es/stores + tiendas-espana.es):
+  // confirmat cu magazin propriu sau în zona metropolitană a fiecăruia din
+  // cele 9 orașe (inclusiv Palma și Barakaldo/Bilbao).
+  ikea: { name: "Ikea", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  // Bricolaj / electronice / sport — lanțuri naționale mari (Leroy Merlin
+  // ~90 magazine, MediaMarkt ~100, Decathlon ~170), NEVERIFICATE oraș cu
+  // oraș individual (spre deosebire de toate cele de mai sus) — dar risc mic
+  // aici, pentru că toate cele 9 orașe din listă sunt deja printre cele mai
+  // mari orașe din Spania; probabilitatea reală de absență e mult mai mică
+  // decât la un oraș mic românesc gen Brad.
+  leroymerlin: { name: "Leroy Merlin", slug: "leroy-merlin", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  mediamarkt: { name: "MediaMarkt", slug: "media-markt", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  decathlon: { name: "Decathlon", weekly: esDiyWeekly(), holidays: ES_HOLIDAYS },
+  // Mall-uri reale — Xanadú (Madrid) e o excepție notabilă, deschis chiar și
+  // duminica tot anul; La Maquinista (Barcelona) urmează regula generală
+  // catalană (închis duminica, cu câteva excepții sezoniere, nemodelate aici).
+  xanadumadrid: {
+    name: "Madrid Xanadú",
+    slug: "xanadu-madrid",
+    weekly: [
+      { open: "10:00", close: "22:00" }, // Domingo
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+      { open: "10:00", close: "22:00" },
+    ],
+    holidays: ES_HOLIDAYS,
+  },
+  lamaquinista: {
+    name: "Westfield La Maquinista",
+    slug: "la-maquinista",
+    weekly: [
+      null, // Domingo — închis, cu câteva excepții sezoniere/festive, nemodelate
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+      { open: "09:00", close: "21:00" },
+    ],
+    holidays: ES_HOLIDAYS,
+  },
+}
+
+exports.BE_STORE_CONFIG = {
+  // Supermarketuri și hipermarketuri
+  colruyt: { name: "Colruyt", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  delhaize: { name: "Delhaize", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  carrefour: { name: "Carrefour", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  aldi: { name: "Aldi", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  spar: { name: "Spar", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  intermarche: { name: "Intermarché", slug: "intermarche", weekly: beSupermarketWeekly(), holidays: BE_HOLIDAYS },
+  // NOTĂ: "cora" și "match" au fost eliminate deliberat — verificate prin
+  // căutare, NU mai există ca branduri active în Belgia. Cora și-a închis
+  // definitiv toate cele 7 hipermarketuri belgiene pe 31 ianuarie 2026
+  // (falimentul anunțat aprilie 2025, confirmat prin presă belgiană —
+  // rtbf.be, journalessentiel.be). Match/Smatch au fost vândute către
+  // Colruyt în 2024 și rebranduite "Comarché"/"Comarkt" (sau închise
+  // definitiv, 19 magazine fără cumpărător) — brandul "Match" nu mai
+  // există ca atare din 2024. Dacă adaugi vreodată "Comarché"/"Comarkt"
+  // ca branduri noi, verifică din nou statusul lor, e un lanț tânăr,
+  // aflat încă în tranziție spre un nume final.
+  // Magazine de proximitate — format mic, ore extinse, adesea deschise și
+  // duminica dimineața
+  okay: { name: "Okay", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  proxydelhaize: { name: "Proxy Delhaize", slug: "proxy-delhaize", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  alvo: { name: "Alvo", weekly: beProximityWeekly(), holidays: BE_HOLIDAYS },
+  // Bricolaj / amenajări
+  brico: { name: "Brico", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  gamma: { name: "Gamma", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  hubo: { name: "Hubo", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  ikea: { name: "Ikea", weekly: beDiyWeekly(), holidays: BE_DIY_HOLIDAYS },
+  // Electronice / electrocasnice
+  mediamarkt: { name: "MediaMarkt", slug: "media-markt", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
+  krefel: { name: "Krëfel", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
+  vandenborre: { name: "Vanden Borre", slug: "vanden-borre", weekly: beElectroWeekly(), holidays: BE_HOLIDAYS },
+}
+
+exports.COUNTRIES = {
+  de: {
+    config: exports.DE_STORE_CONFIG,
+    t: TRANSLATIONS.de,
+    cities: ["Berlin", "München", "Hamburg", "Frankfurt am Main", "Köln", "Stuttgart", "Düsseldorf", "Dortmund", "Leipzig", "Essen", "Aachen", "Ahrensburg", "Alpii Bavarezi", "Altena", "Aschaffenburg", "Attendorn", "Bad Doberan", "Bad Grund", "Bad Homburg", "Bad Homburg vor der Höhe", "Bad Schandau", "Bad Wildbad", "Bad Wimpfen", "Baden-Baden", "Baden-Württemberg", "Balve", "Bamberg", "Bavaria", "Bedburg-Hau", "Berchtesgaden", "Bisingen", "Blaubeuren", "Brandenburg", "Brandenburg an der Havel", "Braunfels", "Breitscheid", "Bremen", "Brühl", "Burghausen", "Chorin", "Coasta Mării Nordului", "Coburg", "Colditz", "De la Würzburg la Füssen", "De-a lungul Rinului", "Detmold", "Donaustauf", "Dresda", "Eltville", "Elveția Saxonă", "Emmerich", "Esslingen am Neckar", "Ettal", "Frankfurt", "Frankfurt pe Main", "Freiburg im Breisgau", "Fulda", "Garmisch-Partenkirchen", "Giengen", "Glücksburg", "Gutach", "Güstrow", "Heidelberg", "Hessen", "Horn-Bad Meinberg", "Höxter", "Insula Chiemsee", "Insula Helgoland", "Isselburg", "Karlsruhe", "Kassel", "Kelheim", "Kloster Lehnin", "Kriebstein", "Kromlau", "Kronach", "Kulmbach", "Königstein im Taunus", "Königswinter", "Lacul Constanța", "Lacul Constanța (Bodensee)", "Leer", "Leisnig", "Limburg an der Lahn", "Lorsch", "Ludwigsburg", "Ludwigslust", "Lübeck", "Mannheim", "Marburg", "Maulbronn", "Meißen", "Messel", "Moritzburg", "Mühltal", "Münster", "Netschkau", "Neuzelle", "Niederfinow", "Nordkirchen", "Nürnberg", "Oberstdorf", "Oberwiesenthal", "Oranienburg", "Oybin", "Potsdam", "Pottenstein", "Prenzlau", "Pădurea Neagră", "Rathen", "Regensburg", "Renania de Nord-Westfalia", "Reutlingen", "Rheinsberg", "Ronneburg", "Rosenheim", "Rothenburg", "Rust", "Rügen", "Saxonia", "Saxonia Inferioară", "Schleswig-Holstein", "Schwangau", "Schwerin", "Schwielowsee", "Sigmaringen", "Singen", "Solingen", "Sonnenbühl", "Steingaden", "Stolpen", "Sud-Estul Saxoniei", "Sylt", "Syrau", "Taunus", "Templin", "Triberg", "Tübingen", "Uckermark", "Ulm", "Waldeck", "Waren", "Wiesbaden", "Wilhelmshaven", "Wuppertal", "Würzburg", "Xanten", "Între Lübben și Lübbenau"],
+  },
+  uk: {
+    config: exports.UK_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    // Extins de la 10 la 33 de orașe/zone — turism foarte mare în UK. Vezi
+    // SELECTIVE_BRAND_CITIES.uk mai jos — cele 3 mall-uri (Westfield London,
+    // Trafford Centre, Bluewater) NU sunt în toate cele 33, bug pre-existent
+    // reparat aici (apăreau universal, deși fiecare e un singur loc real).
+    cities: [
+      "London", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Leeds",
+      "Sheffield", "Bristol", "Newcastle", "Nottingham",
+      "Edinburgh", "Belfast", "Cardiff", "York", "Bath", "Oxford",
+      "Cambridge", "Brighton", "Leicester", "Coventry", "Cornwall",
+      "Yorkshire", "Lake District", "Cumbria", "Highlands", "Fort William",
+      "Conwy", "Gwynedd", "Wrexham", "Bournville", "Derbyshire",
+      "Northumberland", "County Antrim",
+    ],
+  },
+  es: {
+    config: exports.ES_STORE_CONFIG,
+    t: TRANSLATIONS.es,
+    // Extins de la 9 la 34 de orașe — turism foarte mare în Spania, multe
+    // orașe importante (Toledo, Salamanca, Granada, Segovia etc.) lipseau
+    // complet. Vezi SELECTIVE_BRAND_CITIES.es mai jos — brandurile de format
+    // mare (El Corte Inglés, Ikea) NU sunt în toate cele 34, verificat cu
+    // liste complete reale (tiendas-espana.es, leroymerlin.es, ikea.com).
+    cities: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Ronda", "Mérida", "Cáceres", "Cuenca", "Marbella",
+    ],
+  },
+  fr: {
+    config: FR_STORE_CONFIG,
+    t: TRANSLATIONS.fr,
+    // Extins de la 10 la 28 de orașe — turism foarte mare în Franța. Include
+    // și orașe mici, dar extrem de turistice (Mont Saint-Michel, Chamonix,
+    // Carcassonne) — vezi SELECTIVE_BRAND_CITIES.fr mai jos pentru restricțiile
+    // reale de magazine la aceste locuri mici (un sit-monument ca Mont
+    // Saint-Michel, cu ~30 de locuitori permanenți, evident nu are hipermarket).
+    cities: [
+      "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
+      "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+      "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
+      "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
+      "Versailles", "Chartres", "Carcassonne", "Mont Saint-Michel",
+      "Saint-Malo", "Chamonix", "Avignon", "Annecy", "Colmar",
+      // Al doilea val — completare, la cerere explicită, ca sa acopere
+      // Franța la nivelul ei real de turism (a 3-a cea mai vizitată țară
+      // din UE): Provence, Coasta de Azur, Normandia, Pirinei, Bretania,
+      // Corsica, Valea Loarei, Champagne.
+      "Aix-en-Provence", "Arles", "Rouen", "Honfleur", "Deauville",
+      "Biarritz", "Bayonne", "Lourdes", "Sarlat", "Carnac", "Quimper",
+      "Vannes", "Ajaccio", "Bonifacio", "Cannes", "Saint-Tropez",
+      "Perpignan", "Tours", "Épernay", "Rocamadour", "Blois", "Cheverny",
+      "Ussé",
+    ],
+  },
+  it: {
+    config: IT_STORE_CONFIG,
+    t: TRANSLATIONS.it,
+    // Extins de la 10 la 30 de orașe — turism foarte mare în Italia. Vezi
+    // SELECTIVE_BRAND_CITIES.it mai jos — Esselunga și Ikea NU sunt în
+    // toate cele 30, verificate cu surse reale (esselunga.it, ikea.com).
+    cities: [
+      "Roma", "Milano", "Napoli", "Torino", "Palermo", "Bologna", "Firenze",
+      "Venezia", "Genova", "Verona",
+      "Bari", "Catania", "Cagliari", "Padova", "Pisa", "Siena", "Perugia",
+      "Assisi", "Bergamo", "Como", "Bolzano", "Trento", "Trieste", "Parma",
+      "Modena", "Rimini", "Lecce", "Taranto", "Salerno", "Brescia",
+    ],
+  },
+  pl: {
+    config: PL_STORE_CONFIG,
+    t: TRANSLATIONS.pl,
+    cities: ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Katowice", "Bochnia", "Bytów", "Cașubia", "Czersk", "Dębno", "Elbląg", "Gniew", "Golful Gdańsk", "Hel", "Jawor", "Jelenia Góra", "Kalwaria Zebrzydowska", "Kamieniec Ząbkowicki", "Karpacz", "Kletno", "Kliczków", "Kudowa-Zdrój", "Kłodzko", "Lubiąż", "Lądek-Zdrój", "Malbork", "Mechowo", "Munții Sowie", "Munții Stołowe", "Munții Tatra", "Nieborów", "Niedzica", "Niepołomice", "Nowy Dwór Mazowiecki", "Nowy Wiśnicz", "Ojców", "Oświęcim", "Paczków", "Parcul Național Ojcowski", "Pelplin", "Piaseczno", "Podzamcze", "Rudno", "Sopot", "Srebrna Góra", "Sromowce Wyżne", "Sucha", "Szczawnica", "Szczecin (Zona de Nord-Vest)", "Szklarska Poręba", "Teresin", "Wadowice", "Wałbrzych", "Wieliczka", "Zagórze Śląskie", "Zakopane", "Złotoryja", "Łeba", "Świdnica", "Żelazowa Wola"],
+  },
+  nl: {
+    config: NL_STORE_CONFIG,
+    t: TRANSLATIONS.nl,
+    cities: ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen", "Albrandswaard (Zona metropolitană)", "Amstelveen", "Amsterdam Nord", "Bunnik", "Delft", "Delftland", "Haarlem", "Haarzuilens", "Haga", "Heerlen", "Hoek van Holland", "Kerkrade", "Kinderdijk", "Leiden", "Lisse", "Maastricht", "Medemblik (Extensie Nord)", "Montfoort", "Muiden (Zona metropolitană)", "Oegstgeest", "Oud-Zuilen", "Santpoort-Zuid", "Scheveningen", "Vaals", "Valkenburg", "Wijk bij Duurstede", "Zandvoort", "Între Haarlem și Leiden"],
+  },
+  // Austria: reutilizează traducerea germană (același standard scris,
+  // nicio pierdere de acuratețe pentru textul de interfață) — nu am
+  // duplicat un dicționar întreg identic doar de dragul formei.
+  at: {
+    config: AT_STORE_CONFIG,
+    t: TRANSLATIONS.de,
+    cities: ["Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach", "Wels", "Sankt Pölten", "Dornbirn", "Achensee", "Admont", "Attersee", "Bad Ischl", "Bad Tatzmannsdorf", "Baden bei Wien", "Bildstein", "Bludenz", "Bregenz", "Burgenland", "Carintia", "Dürnstein", "Eisenstadt", "Feldkirch", "Forchtenstein", "Furth bei Göttweig", "Gaming", "Gmunden", "Gmünd", "Großgmain", "Gurk", "Hall in Tirol", "Hallstatt", "Hard", "Hartkirchen", "Heiligenkreuz", "Hinterbrühl", "Hochgurgl", "Hohe Tauern", "Hohenems", "Keutschach", "Kirchdorf", "Krems", "Krems an der Donau", "Kremsmünster", "Krimml", "Kufstein", "Launsdorf", "Laxenburg", "Lienz", "Marchfeld", "Maria Taferl", "Mariazell", "Mauterndorf", "Melk", "Nauders", "Obertraun", "Partenen", "Peggau", "Petronell-Carnuntum", "Reutte", "Riegersburg", "Riezlern", "Rosenburg", "Rust", "Sankt Florian", "Schönbühel-Aggstein", "Seefeld", "Semmering", "Sperken", "Spittal an der Drau", "St. Johann im Pongau", "St. Wolfgang", "Stams", "Stans", "Steyr", "Stiria", "Stubenberg", "Sölden", "Tirol", "Valea Wachau", "Valea Zillertal", "Wachau", "Wattens", "Werfen", "Zell am See"],
+  },
+  // Belgia: reutilizează traducerea olandeză (majoritatea populației e
+  // vorbitoare de neerlandeză/flamandă) — simplificare declarată, nu o
+  // acoperire completă a Valoniei francofone sau a minorității germanofone.
+  be: {
+    config: exports.BE_STORE_CONFIG,
+    t: TRANSLATIONS.nl,
+    cities: ["Brussels", "Antwerpen", "Gent", "Charleroi", "Liège", "Brugge", "Namur", "Leuven", "Mons", "Aalst"],
+  },
+  dk: {
+    config: DK_STORE_CONFIG,
+    t: TRANSLATIONS.da,
+    cities: ["København", "Aarhus", "Odense", "Aalborg", "Esbjerg", "Randers", "Kolding", "Horsens", "Vejle", "Roskilde"],
+  },
+  se: {
+    config: SE_STORE_CONFIG,
+    t: TRANSLATIONS.se,
+    cities: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro", "Helsingborg", "Linköping", "Norrköping", "Karlstad"],
+  },
+  pt: {
+    config: PT_STORE_CONFIG,
+    t: TRANSLATIONS.pt,
+    cities: ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Setúbal", "Coimbra", "Almada", "Faro", "Funchal", "Albufeira", "Alcobaça", "Alcochete", "Aljezur", "Almada (Peste râul Tejo)", "Angra do Heroísmo", "Arouca", "Aveiro", "Aveiro (Tranzit Nord)", "Batalha", "Bragança", "Buçaco", "Calheta", "Caniçal", "Carvoeiro", "Cascais", "Castro Marim", "Caxias", "Centrală", "Chaves", "Condeixa-a-Nova", "Covilhã", "Cámara de Lobos", "Douro", "Estuar (Tranzit)", "Ferragudo", "Fátima", "Guimarães", "Guincho", "Insula Faial (Azore)", "Insula Madeira", "Insula Pico (Azore)", "Insula São Miguel (Azore)", "Insula Terceira (Azore)", "Lagos", "Lamego", "Leiria", "Lisabona", "Loulé", "Loures", "Lousã", "Madeira", "Mafra", "Mealhada", "Minho", "Mira de Aire", "Monchique", "Monte", "Montemor-o-Velho", "Nazaré", "Nazaré (Extensie coastă)", "Nordul insulei Madeira", "Oeiras", "Peneda-Gerês", "Peniche", "Pombal", "Ponta Delgada", "Portimão", "Porto la Pocinho", "Queluz (Zona metropolitană)", "Ria Formosa", "Rute montane", "Sagres", "Santa Maria da Feira", "Santana", "Seia", "Serra da Lousã", "Silves", "Sintra", "Sintra la Praia das Maçãs", "Sudul Portugaliei", "São Miguel (Azore)", "Tavira", "Terceira (Azore)", "Tomar", "Valença do Minho", "Vila Nova da Barquinha", "Vila Nova de Foz Côa", "Vila Real", "Vila Real de Santo António", "Vila do Bispo", "Vila do Conde", "Vilamoura", "Óbidos"],
+  },
+  cz: {
+    config: CZ_STORE_CONFIG,
+    t: TRANSLATIONS.cz,
+    cities: ["Praha", "Brno", "Ostrava", "Plzeň", "Liberec", "Olomouc", "České Budějovice", "Hradec Králové", "Bečov nad Teplou", "Blansko", "Boemia de Vest", "Bouzov", "Bozkov", "Carstul Morav", "Chýnov", "Doksy", "Děčín", "Elveția Cehă", "Frýdlant", "Hejnice", "Hluboká nad Vltavou", "Holašovice", "Holubov", "Horšovský Týn", "Hrádek nad Nisou", "Hřensko", "Jablonec nad Nisou", "Jablonné v Podještědí", "Jindřichův Hradec", "Jičín", "Kamenický Šenov", "Karlovy Vary", "Kladruby", "Kroměříž", "Lednice", "Lipno nad Vltavou", "Litoměřice", "Loket", "Lomec", "Lázně Kynžvart", "Mariánské Lázně", "Mikulov", "Nedvědice", "Orlík nad Vltavou", "Parcul Național Šumava", "Ploskovice", "Písek", "Rovensko pod Troskami", "Rožmberk nad Vltavou", "Rožnov pod Radhoštěm", "Slavkov u Brna", "Sloup v Čechách", "Sobotka", "Staré Město pod Landštejnem", "Sychrov", "Teplá", "Turnov", "Tábor", "Třeboň", "Valtice", "Velehrad", "Vranov nad Viitavou", "Vyškov", "Vyšší Brod", "Zlatá Koruna", "Zvíkovské Podhradie", "de Nord-Est", "de Sud", "Červená Lhota", "Český Krumlov", "Šťáhlavy", "Žďár nad Sázavou"],
+  },
+  fi: {
+    config: FI_STORE_CONFIG,
+    t: TRANSLATIONS.fi,
+    cities: ["Helsinki", "Tampere", "Turku", "Oulu", "Jyväskylä", "Kuopio", "Lahti", "Rovaniemi", "Askainen", "Eckerö", "Enonkoski", "Espoo", "Geta", "Hammarland", "Heinävesi", "Hirvensalo", "Hollola (Tranzit)", "Hämeenlinna", "Inari", "Insula Kökar", "Insula Ruissalo", "Insulele Åland", "Isokyrö (Tranzit)", "Jomala", "Kaarina", "Kemi", "Kerimäki", "Kirkkonummi (Tranzit)", "Kittilä", "Kouvola", "Kuusamo (Zona de acces sud-laponez)", "Laitila", "Lappeenranta", "Lappeenranta (Tranzit)", "Lemland", "Lieksa", "Lohja (Tranzit)", "Mariehamn", "Mariehamn (Acces cu barca)", "Muonio", "Naantali", "Nousiainen", "Outokumpu", "Pelkosenniemi", "Petäjävesi", "Punkaharju", "Rantasalmi", "Ranua", "Ristiina", "Rovaniemi la Utsjoki", "Ruovesi", "Saariselkä", "Saimaa", "Salla", "Salo", "Saltvik", "Savitaipale", "Savonlinna", "Sirkka", "Sodankylä", "Sund", "Tikkakoski", "Utsjoki", "Vantaa", "Äkäslompolo"],
+  },
+  gr: {
+    config: exports.GR_STORE_CONFIG,
+    t: TRANSLATIONS.gr,
+    cities: ["Athens", "Thessaloniki", "Patras", "Heraklion", "Larissa", "Volos", "Ioannina", "Chania", "Agios Mattheos", "Archangelos", "Attica", "Chaidari", "Charaki", "Corfu", "Corfu Town", "Elounda", "Estul insulei", "Faliraki", "Gastouri", "Ialyssos", "Ierapetra", "Kalambaka", "Kallithea", "Kanoni", "Karditsa", "Kissamos", "Kritinia", "Larisa", "Lasithi", "Lindos", "Malia", "Massari", "Matala", "Meteora", "Monolithos", "Muntele Pantokrator", "Munții Albi", "Nordul insulei", "Orașul Vechi", "Palaiokastritsa", "Pantokrator", "Pelekas", "Pelion", "Peroulades", "Pertouli", "Phaistos", "Platoul Lassithi", "Portul Mandraki", "Profitis Ilias", "Rethymno", "Rhodos Town", "Riviera Ateniană", "Sidari", "Sudul insulei", "Sudul insulei Corfu", "Theologos", "Trikala", "Vestul insulei", "Între Olimp și Ossa"],
+  },
+  hu: {
+    config: HU_STORE_CONFIG,
+    t: TRANSLATIONS.hu,
+    cities: ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza", "Kecskemét", "Abaliget", "Badacsony", "Balaton", "Balatonfüred", "Boldogkőváralja", "Debrețin", "Dég", "Dömös", "Eger", "Esztergom", "Fertőd", "Gyula", "Gyula (Zona de Est)", "Herend", "Hortobágy", "Hévíz", "Ják", "Keszthely", "Kőszeg", "Lacul Balaton", "Lillafüred", "Martonvásár (Zona central-nordică)", "Munții Börzsöny", "Munții Mátra", "Munții Zemplén", "Nagyvázsony", "Nordică Balaton", "Nádasdladány", "Pannonhalma (Zona de Nord-Vest", "Parcul Național Aggtelek", "Parcul Național Bükk", "Peninsula Tihany", "Pilis", "Pilisszentkereszt", "Poroszló", "Pécs (Zona de trecere spre sud)", "Siklós", "Siklós-Máriagyűd", "Sopron", "Sud-Estul țării", "Szentendre", "Szigetvár", "Szigliget", "Szilvásvárad", "Szombathely", "Székesfehérvár", "Sárospatak", "Sümeg", "Tapolca", "Tiszadob", "Valea Szalajka", "Villány", "Visegrád", "Zsáka", "de Sud"],
+  },
+  hr: {
+    config: HR_STORE_CONFIG,
+    t: TRANSLATIONS.hr,
+    cities: ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar", "Pula", "Dubrovnik", "Šibenik", "Baška", "Bol", "Buzet", "Desinić", "Dugi Otok", "Dugopolje", "Fažana", "Fortul Sveti Ivan", "Gornja Stubica", "Gorski Kotar", "Gračac", "Grožnjan", "Hum", "Hvar", "Insula Brač", "Insula Hvar", "Insula Korčula", "Insula Krk", "Insula Lastovo", "Insula Lokrum", "Insula Lopud", "Insula Mljet", "Insula Vis", "Istria", "Kaštel Lukšić", "Klis", "Konavle", "Kornati", "Korčula", "Krapina", "Krk", "Kvarner", "Makarska", "Marija Bistrica", "Maruševec", "Maslenica", "Medvednica", "Motovun", "Muntele Medvednica", "Muntele Srđ", "Nova Vas", "Obrovac", "Omiš", "Opatija", "Orebić", "Pakoštane", "Palatul Rectorului", "Parcul Național Krka", "Pazin", "Peninsula Pelješac", "Plitvice", "Ploče", "Poreč", "Posavina", "Premantura", "Rovinj", "Samobor", "Slano", "Solin", "Stari Grad", "Starigrad", "Ston", "Svetvinčenat", "Trakošćan", "Traseu de coastă", "Trogir", "Trsteno", "Valtura", "Varaždin", "Între Rovinj și Poreč", "Čakovec", "Štinjan", "Ždrelac"],
+  },
+  ie: {
+    config: IE_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Dublin", "Cork", "Limerick", "Galway", "Waterford", "Drogheda", "Dundalk", "Swords", "Antrim", "Armagh", "Ballymoney", "Ballyvaughan", "Bantry", "Bantry Bay", "Beara", "Belfast", "Birr", "Blarney", "Cahersiveen", "Clifden", "Cliffs of Moher", "Cobh", "Cong", "Cong (Granița Galway", "Connemara", "Cultra", "Dalkey", "Derry", "Dingle", "Donegal", "Donegal Town", "Donore", "Doolin", "Fermanagh", "Glandore", "Glasnevin", "Golful Dublin", "Golful Galway", "Gort", "Headford", "Howth", "Insula Inishmore", "Insula Skellig", "Insulele Aran", "Irlanda de Nord", "Județul Clare", "Județul Donegal", "Județul Galway", "Județul Kerry", "Județul Meath", "Județul Wicklow", "Kanturk", "Kenmare", "Kerry", "Killarney", "Kinsale", "Kinvara", "Leenane", "Macroom", "Malahide", "Meath", "Munții MacGillycuddy's Reeks", "O'Connell Street", "Oughterard", "Parcul Național Glenveagh", "Parcul Național Killarney", "Peninsula Beara", "Peninsula Dingle", "Phoenix Park", "Rossaveal", "Rută de coastă", "Sandycove", "Shannon", "Slane", "The Burren", "Trim", "Trinity College", "Tuam", "Tubber", "Waterford (Zona de Sud-Est)"],
+  },
+  sk: {
+    config: SK_STORE_CONFIG,
+    t: TRANSLATIONS.sk,
+    cities: ["Bratislava", "Košice", "Prešov", "Žilina", "Nitra", "Banská Bystrica", "Trnava", "Trenčín", "Banská Štiavnica", "Bardejov", "Betliar", "Blatnica", "Bodružal", "Bojnice", "Bystrá", "Centrală", "Demänovská Dolina", "Devín", "Devínska Nová Ves", "Dobšiná", "Donovaly", "Gelnica", "Hanušovce nad Topľou", "Harmanec", "Herľany", "Hrabušice", "Hriňová", "Hronsek", "Hronský Beňadik", "Jasov", "Kalameny", "Kežmarok", "Kremnica", "Krupina", "Krásnohorské Podhradie", "Ladomirová", "LevisLevoča", "Levoča", "Leštiny", "Lietava", "Liptovský Hrádok", "Liptovský Mikuláš", "Martin", "Medzilaborce", "Munții Tatra", "Muráň", "Ochtiná", "Oravský Podzámok", "Podlesok", "Poprad", "Pribylina", "Rožňava", "Ružomberok", "Slovenská Ľupča", "Slovenský raj", "Snina", "Spiš", "Spišská Nová Ves", "Stará Ľubovňa", "Starý Smokovec", "Strečno", "Svätý Anton", "Svätý Kríž", "Tatranská Lomnica", "Telgárt", "Važec", "Vernár", "Veľký Šariš", "Vígľaš", "Zvolen", "de Nord", "Častá (Zona metropolitană)", "Červenica", "Červený Kláštor", "Čierny Balog", "Čičmany", "Čunovo", "Špania Dolina", "Štrbské Pleso", "Žehra"],
+  },
+  si: {
+    config: SI_STORE_CONFIG,
+    t: TRANSLATIONS.si,
+    cities: ["Ljubljana", "Maribor", "Celje", "Kranj", "Koper", "Novo Mesto", "Velenje", "Nova Gorica", "Alpii Iulieni", "Begunje na Gorenjskem", "Bled", "Bohinj", "Bovec", "Brežice", "Carstică", "Castelul Fužine", "Castelul Ptuj", "Cerklje na Gorenjskem", "Cerknica", "Divača", "Grad", "Grosuplje", "Herghelia Lipica", "Hrastovlje", "Idrija", "Idrija (Zona de trecere vest)", "Ig", "Insula Bled", "Ivančna Gorica", "Izola", "Kamnik", "Kobarid", "Kranjska Gora", "Kranjska Gora la Bovec", "Lacul Bled", "Lipica", "Litija", "Ljutomer", "Lokev", "Loška Dolina", "Medvode", "Mestni trg", "Mojstrana", "Munții Pohorje", "Murska Sobota", "Palatul Belgramoni-Tacco", "Pasul Vršič", "Piața Tartini", "Piran", "Planina", "Podčetrtek", "Pohorje", "Portorož", "Portorož la Strunjan", "Postojna", "Postojna (Zona de acces Nord)", "Ptuj", "Radovljica", "Salinele Sečovlje", "Sevnica", "Sečovlje", "Slovenska Bistrica", "Smlednik", "Strunjan", "Tolmin", "Vipava", "Vrhnika", "de Sud", "Šempeter v Savinjski Dolini", "Škofja Loka", "Štanjel", "Žalec"],
+  },
+  lt: {
+    config: LT_STORE_CONFIG,
+    t: TRANSLATIONS.lt,
+    cities: ["Vilnius", "Kaunas", "Klaipėda", "Šiauliai", "Panevėžys", "Alytus", "Marijampolė", "Mažeikiai", "Anykščiai", "Arlaviškės", "Birštonas", "Biržai", "Druskininkai", "Girionys", "Giruliai", "Ignalina", "Juodkrantė", "Kairėnai", "Kernavă", "Kernavė", "Kretinga", "Lentvaris", "Marcinkonys", "Medininkai", "Neringa", "Nida", "Palanga", "Palanga (Zona de coastă Nord)", "Palūšė", "Plungė (Zona de Vest)", "Raudondvaris", "Rumšiškės", "Smiltynė", "Smiltynė la Nida", "Trakai", "de Vest", "În interiorul Castelului Trakai", "Šilutė"],
+  },
+  lv: {
+    config: LV_STORE_CONFIG,
+    t: TRANSLATIONS.lv,
+    cities: ["Riga", "Daugavpils", "Liepāja", "Jelgava", "Jūrmala", "Ventspils", "Rēzekne", "Ogre", "Aglona", "Alūksne", "Bauska", "Bīriņi", "Cēsis", "De-a lungul golfului Riga", "Dubulti", "Dundaga", "Engure", "Gulbene la Alūksne", "Jelgava (Zona metropolitană sudică)", "Krimulda", "Krāslava", "Kuldīga", "Lapmežciems", "Latgale", "Lielupe", "Līgatne", "Majori", "Milzkalne", "Parcul Național Rāzna", "Parcul Național Slītere", "Parcul Național Ķemeri", "Pilsrundāle (Zona extinsă de circuit)", "Priedaine", "Saka", "Salaspils", "Sigulda", "Sigulda la Krimulda", "Talsi", "Tukums", "Turaida", "Tērvete", "Unguri", "Valmiera", "Vestul Letoniei", "În interiorul Noului Castel", "Ēdole", "Ķemeri"],
+  },
+  ee: {
+    config: EE_STORE_CONFIG,
+    t: TRANSLATIONS.ee,
+    cities: ["Tallinn", "Tartu", "Narva", "Pärnu", "Kohtla-Järve", "Viljandi", "Rakvere", "Maardu", "Alatskivi", "Golful Pärnu", "Haapsalu", "Haapsalu (Coasta de Vest)", "Hara", "Harju", "Hiiumaa", "Häädemeeste", "Ida-Viru", "Insula Hiiumaa", "Insula Kihnu", "Insula Muhu", "Insula Naissaar", "Jägala", "Jõhvi", "Kadrina", "Keila-Joa", "Kolkja", "Kuremäe", "Kuressaare", "Kärdla", "Käsmu", "Lahemaa", "Legătura cu continentul", "Lääne-Viru", "Lääneranna (Vest)", "Narva-Jõesuu", "Nord-Estul Estoniei", "Nord-Vestul țării", "Ontika", "Otepää", "Padise", "Paldiski", "Parcul Național Lahemaa", "Parcul Național Soomaa", "Peninsula Sõrve", "Piusa", "Râul Ahja", "Saaremaa", "Sangaste", "Sillamäe", "Tahkuna", "Toila", "Toolse", "Tõstamaa", "Valaste", "Vestul insulei Saaremaa", "Viimsi (Zona metropolitană)", "Viki", "de Coastă (Tranzit Est)", "de Est", "de Nord", "de Sud", "În interiorul Castelului Kuressaare", "În interiorul Palatului Kadriorg", "În interiorul ruinelor Catedralei gotice", "Între Muhu și Saaremaa", "Între continent și insule"],
+  },
+  cy: {
+    config: CY_STORE_CONFIG,
+    t: TRANSLATIONS.gr,
+    cities: ["Nicosia", "Limassol", "Larnaca", "Paphos", "Paralimni", "Aradippou", "Strovolos", "Lakatamia", "Akamas", "Akrotiri", "Amiantos", "Ayia Napa", "Bellapais", "Capul Greco", "Castelul Kyrenia", "Choirokoitia", "Episkopi", "Erimi", "Famagusta", "Geroskipou", "Kakopetria", "Kalopanayiotis", "Karpas", "Kato Paphos", "Kiti", "Kolossi", "Kouklia", "Kourion", "Kyrenia", "Lefka", "Lefkara", "Monagri", "Munții Kyrenia", "Munții Troodos", "Nicosia Nord", "Nikitari", "Omodos", "Orașul Vechi", "Panagia", "Paphos Forest (Tranzit Troodos)", "Peninsula Akamas", "Peninsula Akrotiri", "Peninsula Karpas", "Pentakomo", "Peyia", "Platres", "Platres (Zona de acces Troodos)", "Polis Chrysochous", "Potamos Liopetriou", "Prodromos", "Protaras", "Pyrga", "Softades", "Sotira", "Sudul Ciprului", "Tala", "Troodos", "Vestul Ciprului", "Xylofagou", "de Nord", "În interiorul Castelului Limassol"],
+  },
+  mt: {
+    config: MT_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Valletta", "Birkirkara", "Mosta", "Qormi", "Sliema", "Naxxar", "San Ġwann", "Żabbar"],
+  },
+  lu: {
+    config: LU_STORE_CONFIG,
+    t: TRANSLATIONS.fr,
+    cities: ["Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Ettelbruck", "Diekirch", "Wiltz", "Grevenmacher"],
+  },
+  // Turcia — LIMITARE ONESTĂ, de spus clar: turca NU e una din cele 21 de
+  // limbi ale site-ului (TRANSLATIONS/CATEGORY_LABELS/etc.) — implementarea
+  // completă a unei a 22-a limbi ar însemna zeci de dicționare de tradus
+  // din nou, mult peste scopul unei singure sesiuni. Cade pe engleză
+  // (TRANSLATIONS.uk) ca interfață — vizitatorii turci văd site-ul în
+  // engleză, nu în turcă. Obiectivele turistice (numele, categoriile)
+  // funcționează normal, traduse în oricare din cele 21 de limbi ale
+  // vizitatorului, la fel ca la orice altă țară.
+  tr: {
+    config: TR_STORE_CONFIG,
+    t: TRANSLATIONS.uk,
+    cities: ["Adıyaman", "Aksaray", "Alanya", "Amasya", "Anatolia Centrală", "Ankara", "Antalya", "Aydın", "Ağrı", "Batman", "Bergama", "Bodrum", "Bursa", "Capadocia", "Demre", "Denizli", "Diyarbakır", "Doğubeyazıt", "Edirne", "Efes", "Fethiye", "Gaziantep", "Göreme", "Gümüşhane", "Istanbul", "Izmir", "Kaş", "Kekova", "Kemer", "Konya", "Kuşadası", "Lacul Van", "Manavgat", "Mardin", "Maçka", "Mersin", "Midyat", "Ordu", "Rize", "Samsun", "Selçuk", "Serik", "Side", "Sivas", "Trabzon", "Van", "Çanakkale", "Çeşme", "Şanlıurfa"],
+  },
+}
+
+exports.ATTRACTION_CITY_OVERRIDES = {
+  fr: {
+    "Turnul Eiffel": "Paris",
+    "Muzeul Luvru": "Paris",
+    "Arcul de Triumf": "Paris",
+    "Sainte-Chapelle": "Paris",
+    "Muzeul Armatei / Domul Invalizilor": "Paris",
+    "Fundația Louis Vuitton": "Paris",
+    "Muzeul MUCEM": "Marseille",
+  },
+}
+
+exports.STORE_CONFIG = {
+  lidl: { name: "Lidl", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  kaufland: { name: "Kaufland", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  penny: { name: "Penny", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  megaimage: { name: "Mega Image", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  carrefour: { name: "Carrefour", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  auchan: { name: "Auchan", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  profi: { name: "Profi", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  metro: { name: "Metro", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  selgros: { name: "Selgros", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dedeman: { name: "Dedeman", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  leroymerlin: { name: "Leroy Merlin", slug: "leroy-merlin", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  bricodepot: { name: "Brico Depot", slug: "brico-depot", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  hornbach: { name: "Hornbach", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  jysk: { name: "Jysk", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ikea: { name: "Ikea", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  kik: {
+    name: "KiK",
+    type: "store",
+    // Program general "reprezentativ" pentru orașele cu un singur magazin —
+    // folosit DOAR ca fallback; toate cele 33 de orașe reale au propriul
+    // program exact în PER_CITY_WEEKLY (mai jos), care suprascrie asta.
+    weekly: kikWeekly("09:00", "18:00", "09:00", "21:00"),
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  mathaus: {
+    name: "MatHaus",
+    type: "store",
+    weekly: kikWeekly("08:00", "16:00", "08:00", "20:00"),
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  // Arabesque — program UNIFORM în toate locațiile (spre deosebire de
+  // KiK/MatHaus, care variază pe oraș), deci fără nevoie de PER_CITY_WEEKLY:
+  // Luni-Vineri 08-17, Sâmbătă program redus 08:30-12:30, Duminică închis.
+  arabesque: {
+    name: "Arabesque",
+    type: "store",
+    weekly: [
+      null, // Duminică — închis
+      { open: "08:00", close: "17:00" }, // Luni
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" },
+      { open: "08:00", close: "17:00" }, // Vineri
+      { open: "08:30", close: "12:30" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  xxxlutz: {
+    name: "XXXLutz",
+    type: "store",
+    // Program real, confirmat direct de pe xxxlutz.ro/locatii — diferit de
+    // șablonul generic bricolajWeekly() (care presupunea 08:00, greșit).
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Duminică
+      { open: "10:00", close: "20:00" }, // Luni
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" }, // Vineri
+      { open: "10:00", close: "21:00" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  // Mömax — brand SEPARAT de XXXLutz (același grup austriac, magazine
+  // diferite, orașe diferite) — confirmat direct din datele oficiale de pe
+  // moemax.ro/magazine. Program identic în toate cele 7 locații: Luni-
+  // Duminică, 10:00-20:00, fără variație de weekend (spre deosebire de
+  // XXXLutz, care are program prelungit sâmbăta).
+  momax: {
+    name: "Mömax",
+    slug: "momax",
+    type: "store",
+    weekly: [
+      { open: "10:00", close: "20:00" }, // Duminică
+      { open: "10:00", close: "20:00" }, // Luni
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" },
+      { open: "10:00", close: "20:00" }, // Vineri
+      { open: "10:00", close: "20:00" }, // Sâmbătă
+    ],
+    holidays: SUPERMARKET_HOLIDAYS,
+  },
+  altex: { name: "Altex", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  flanco: { name: "Flanco", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dm: { name: "Dm", type: "store", weekly: electroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  drmax: { name: "Dr. Max", slug: "dr-max", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  farmaciatei: { name: "Farmacia Tei", slug: "farmacia-tei", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  remedia: { name: "Remedia", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  springpharma: { name: "Spring Pharma", slug: "spring-pharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  catena: { name: "Catena", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  sensiblu: { name: "Sensiblu", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  helpnet: { name: "Help Net", slug: "help-net", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dona: { name: "Dona", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ropharma: { name: "Ropharma", type: "store", weekly: farmacieWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  // Mr. Bricolage a dispărut complet din România — proprietarul (Cezar
+  // Rapotan, prin Arabesque) a renunțat la franciza franceză și a
+  // transformat magazinele în MatHaus, brandul propriu. Confirmat direct,
+  // cu sursă (businesspedia.ro/rise-and-fall-retaileri-de-bricolaj).
+  // Intrarea veche a fost eliminată complet — nu mai există de vizitat.
+  cinemacity: { name: "Cinema City", slug: "cinema-city", type: "cinema", ticketUrl: "https://www.cinemacity.ro/", weekly: cinemaWeekly(), holidays: [] },
+  cineplexx: { name: "Cineplexx", type: "cinema", ticketUrl: "https://www.cineplexx.ro/", weekly: cinemaWeekly(), holidays: [] },
+  happycinema: { name: "Happy Cinema", slug: "happy-cinema", type: "cinema", ticketUrl: "https://www.happycinema.ro/", weekly: cinemaWeekly(), holidays: [] },
+  movieplex: { name: "Movie Plex", slug: "movie-plex", type: "cinema", ticketUrl: "https://www.movieplex.ro/", weekly: cinemaWeekly(), holidays: [] },
+  bcr: { name: "BCR", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  brd: { name: "BRD", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  ing: { name: "ING Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  raiffeisen: { name: "Raiffeisen Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  bancatransilvania: { name: "Banca Transilvania", slug: "banca-transilvania", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cec: { name: "CEC Bank", type: "store", weekly: bankWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  posta: { name: "Poșta Română", type: "store", weekly: postaWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  mcdonalds: { name: "McDonald's", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  kfc: { name: "KFC", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  burgerking: { name: "Burger King", slug: "burger-king", type: "store", weekly: fastfoodWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  fancourier: { name: "FAN Courier", slug: "fan-courier", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  cargus: { name: "Cargus", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  sameday: { name: "Sameday", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dpd: { name: "DPD", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  gls: { name: "GLS", type: "store", weekly: curierWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  mall: {
+    name: "Mall",
+    type: "mall",
+    zones: {
+      shopping: {
+        weekly: mallShoppingWeekly(),
+        holidays: [
+          { date: "12-25", label: "Crăciun (25 decembrie)", hours: ["10:00", "18:00"] },
+          { date: "01-01", label: "Anul Nou (1 ianuarie)", hours: ["10:00", "18:00"] },
+        ],
+      },
+      hypermarket: {
+        weekly: mallHyperWeekly(),
+        holidays: [
+          { date: "12-25", label: "Crăciun (25 decembrie)", hours: null },
+          { date: "01-01", label: "Anul Nou (1 ianuarie)", hours: ["09:00", "15:00"] },
+        ],
+      },
+    },
+  },
+}
+
+exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL = exports.COUNTRIES.fr.cities.filter(
+  (c) => !FR_TINY_MONUMENT_VILLAGES.includes(c)
+);
+
+// Program non-stop (24/7) — convenție identică cu cea deja folosită în
+// server.js (googlePeriodsToWeekly) pentru date live de la Google: fără
+// "close" real, deschis toată ziua -> "00:00"-"23:59" în toate cele 7 zile.
+const NONSTOP_WEEKLY = [
+  { open: "00:00", close: "23:59" }, // Duminică
+  { open: "00:00", close: "23:59" }, // Luni
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" },
+  { open: "00:00", close: "23:59" }, // Vineri
+  { open: "00:00", close: "23:59" }, // Sâmbătă
+];
+
+// Suprascriere de program PE LOCAȚIE EXACTĂ — nivel NOU, mai fin decât
+// PER_CITY_WEEKLY de mai jos. Motiv: primite 62 de filiale Mega Image/Profi
+// non-stop, cu adresă exactă — DAR nu toate filialele din orașele respective
+// sunt non-stop, doar astea specific. Aplicarea unui program non-stop la
+// nivel de ORAȘ întreg ar fi fost o minciună pentru restul filialelor din
+// același oraș care nu sunt non-stop. Verificat/aplicat DOAR pe paginile
+// hiper-locale (/oras/magazin/locatie), unde chiar există un nume de
+// filială de potrivit — pe pagina generală de oraș (fără locatie), rămâne
+// programul normal, neschimbat.
+// Structură: { <țară>: { <brand>: { <oraș>: { <nume filială, ca-n
+// coloana "Nume Filiala" din CSV, fără prefixul brandului>: weekly } } } }
+// 2 filiale REMAPATE, la cerere explicită — nu sunt tratate ca orașe
+// separate (nu sunt în lista celor 103 orașe verificate ale site-ului),
+// ci puse sub orașul mare de lângă ele: Mega Image Otopeni Central și
+// Mega Image Militari Rezidential (Chiajna) -> "București"; Profi Floresti
+// Eroilor -> "Cluj-Napoca" (același precedent ca la Mömax/XXXLutz).
+exports.PER_LOCATION_WEEKLY = {
+  ro: {
+    megaimage: {
+      "București": {
+        "Piata Amzei": NONSTOP_WEEKLY,
+        "Ion Mihalache": NONSTOP_WEEKLY,
+        "Cobalcescu": NONSTOP_WEEKLY,
+        "Lacul Tei": NONSTOP_WEEKLY,
+        "Iancului": NONSTOP_WEEKLY,
+        "Pantelimon": NONSTOP_WEEKLY,
+        "Vitan": NONSTOP_WEEKLY,
+        "Camil Ressu": NONSTOP_WEEKLY,
+        "Tineretului": NONSTOP_WEEKLY,
+        "Giurgiului": NONSTOP_WEEKLY,
+        "Rahova": NONSTOP_WEEKLY,
+        "Moghioros": NONSTOP_WEEKLY,
+        "Crangasi": NONSTOP_WEEKLY,
+        // Otopeni și Chiajna (Ilfov) — mutate aici, la cerere explicită:
+        // localități mici, lipite de București, tratate ca parte din oraș
+        // (același principiu ca la XXXLutz Militari/Domnești).
+        "Otopeni Central": NONSTOP_WEEKLY,
+        "Militari Rezidential": NONSTOP_WEEKLY,
+      },
+      "Constanța": {
+        "Tomis": NONSTOP_WEEKLY,
+        "Delfinariu": NONSTOP_WEEKLY,
+      },
+      "Brașov": {
+        "Brasov Civic": NONSTOP_WEEKLY,
+      },
+      "Ploiești": {
+        "Ploiesti Central": NONSTOP_WEEKLY,
+      },
+    },
+    profi: {
+      "Deva": {
+        "City Deva Mihai Viteazu": NONSTOP_WEEKLY,
+        "Loco Deva Gara": NONSTOP_WEEKLY,
+      },
+      "Hunedoara": {
+        "City Hunedoara": NONSTOP_WEEKLY,
+      },
+      "Timișoara": {
+        "City Timisoara Take Ionescu": NONSTOP_WEEKLY,
+        "Timisoara Circumvalatiunii": NONSTOP_WEEKLY,
+        "Timisoara Complex": NONSTOP_WEEKLY,
+        "City Sagului": NONSTOP_WEEKLY,
+      },
+      "Cluj-Napoca": {
+        "City Cluj Zorilor": NONSTOP_WEEKLY,
+        "Cluj Marasti": NONSTOP_WEEKLY,
+        "City Cluj Central": NONSTOP_WEEKLY,
+        "Floresti Eroilor": NONSTOP_WEEKLY, // remapat din "Florești", vezi nota de mai sus
+      },
+      "Oradea": {
+        "Oradea Decebal": NONSTOP_WEEKLY,
+        "Oradea Nufarului": NONSTOP_WEEKLY,
+      },
+      "Arad": {
+        "Arad Vlaicu": NONSTOP_WEEKLY,
+        "City Arad Centru": NONSTOP_WEEKLY,
+      },
+      "Iași": {
+        "City Iasi Copou": NONSTOP_WEEKLY,
+        "Iasi Nicolina": NONSTOP_WEEKLY,
+        "City Iasi Tatarasi": NONSTOP_WEEKLY,
+      },
+      "Craiova": {
+        "Craiova Calea Bucuresti": NONSTOP_WEEKLY,
+        "Craiova Rovine": NONSTOP_WEEKLY,
+      },
+      "Pitești": {
+        "Pitesti Craiovei": NONSTOP_WEEKLY,
+        "City Pitesti Centru": NONSTOP_WEEKLY,
+      },
+      "Sibiu": {
+        "Sibiu Mihai Viteazu": NONSTOP_WEEKLY,
+        "City Sibiu Rahovei": NONSTOP_WEEKLY,
+      },
+      "Târgu Mureș": {
+        "Targu Mures Pandurilor": NONSTOP_WEEKLY,
+        "City 1 Decembrie": NONSTOP_WEEKLY,
+      },
+      "Alba Iulia": {
+        "Alba Iulia Cetate": NONSTOP_WEEKLY,
+      },
+      "Reșița": {
+        "Resita Govandari": NONSTOP_WEEKLY,
+      },
+      "Târgu Jiu": {
+        "Targu Jiu Ecaterina": NONSTOP_WEEKLY,
+      },
+      "Râmnicu Vâlcea": {
+        "Ramnicu Valcea Ostroveni": NONSTOP_WEEKLY,
+      },
+      "Slatina": {
+        "Slatina Crisan": NONSTOP_WEEKLY,
+      },
+      "Drobeta-Turnu Severin": {
+        "Severin Crişan": NONSTOP_WEEKLY,
+      },
+      "Satu Mare": {
+        "Satu Mare Lucaciu": NONSTOP_WEEKLY,
+      },
+      "Baia Mare": {
+        "Baia Mare Traian": NONSTOP_WEEKLY,
+      },
+      "Zalău": {
+        "Zalau Simion Barnutiu": NONSTOP_WEEKLY,
+      },
+      "Bistrița": {
+        "Bistrita Andrei Muresanu": NONSTOP_WEEKLY,
+      },
+      "Suceava": {
+        "Suceava George Enescu": NONSTOP_WEEKLY,
+      },
+      "Botoșani": {
+        "Botosani Primaverii": NONSTOP_WEEKLY,
+      },
+      "Piatra Neamț": {
+        "Piatra Neamt Decebal": NONSTOP_WEEKLY,
+      },
+      "Bacău": {
+        "Bacau Stefan cel Mare": NONSTOP_WEEKLY,
+      },
+      "Vaslui": {
+        "Vaslui Traian": NONSTOP_WEEKLY,
+      },
+      "Focșani": {
+        "Focsani Unirii": NONSTOP_WEEKLY,
+      },
+      "Galați": {
+        "Galati Siderurgistilor": NONSTOP_WEEKLY,
+      },
+      "Brăila": {
+        "Braila Dorobantilor": NONSTOP_WEEKLY,
+      },
+      "Buzău": {
+        "Buzau Unirii": NONSTOP_WEEKLY,
+      },
+      "Târgoviște": {
+        "Targoviste Mircea": NONSTOP_WEEKLY,
+      },
+      "Alexandria": {
+        "Alexandria Dunarii": NONSTOP_WEEKLY,
+      },
+      "Giurgiu": {
+        "Giurgiu Bucuresti": NONSTOP_WEEKLY,
+      },
+      "Călărași": {
+        "Calarasi Republicii": NONSTOP_WEEKLY,
+      },
+      "Slobozia": {
+        "Slobozia Matei Basarab": NONSTOP_WEEKLY,
+      },
+      "Tulcea": {
+        "Tulcea Babadag": NONSTOP_WEEKLY,
+      },
+    },
+  },
+};
+
+// Suprascriere de program PE ORAȘ — mecanism NOU, prima dată folosit aici.
+// Toate brandurile de mai sus (STORE_CONFIG) au UN SINGUR program, aplicat
+// identic în toate orașele lor — corect pentru majoritatea, dar Brico Depot
+// chiar are ore diferite de la un oraș la altul (confirmat cu date reale,
+// de pe bricodepot.ro), deci un singur "weekly" ar fi fost greșit undeva.
+// Structură: { <țară>: { <cheie brand>: { <oraș exact, ca în SITEMAP_CITIES>: [program 7 zile, Duminică->Sâmbătă] } } }
+// Verificat manual în server.js (vezi effectiveStore) — dacă orașul cerut
+// NU are o intrare aici, brandul cade pe programul general din STORE_CONFIG.
+exports.PER_CITY_WEEKLY = {
+  ro: {
+    bricodepot: {
+      // București + Ilfov (Orhideea, Pantelimon, Băneasa, Militari, Vitan,
+      // Chiajna) — program identic în toate cele 6 locații, deci o singură
+      // intrare pentru "București" acoperă tot grupul.
+      "București": [
+        { open: "08:00", close: "20:00" }, // Duminică
+        { open: "07:00", close: "21:00" }, // Luni
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" }, // Vineri
+        { open: "08:00", close: "21:00" }, // Sâmbătă
+      ],
+      "Cluj-Napoca": [
+        { open: "09:00", close: "19:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "07:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Timișoara": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Brașov": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      // Duminica — sursa avea "09:00-7:00" (evident o greșeală, ora de
+      // închidere nu poate fi înaintea deschiderii). Am pus temporar
+      // 08:00-20:00, ca restul orașelor similare — verifică programul
+      // real și corectează dacă e nevoie.
+      "Arad": [
+        { open: "08:00", close: "20:00" }, // ⚠️ neconfirmat, vezi nota de mai sus
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Oradea": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Târgu Mureș": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Deva": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" }, // Vineri
+        { open: "08:00", close: "20:00" }, // Sâmbătă — diferit de restul (aici Sâmbăta se închide la 20:00, nu 21:00)
+      ],
+      "Iași": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Focșani": [
+        { open: "09:00", close: "19:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Craiova": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Pitești": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Drobeta-Turnu Severin": [
+        { open: "09:00", close: "18:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+      "Constanța": [
+        { open: "08:00", close: "20:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+        { open: "08:00", close: "21:00" },
+      ],
+    },
+    // KiK — program primit direct de la tine, per oraș (46 de magazine, 35
+    // localități — 2 excluse, vezi nota de la SELECTIVE_BRAND_CITIES.ro.kik).
+    // Pentru orașele cu 2 magazine cu ore DIFERITE (majoritatea) am ales
+    // programul mall-ului/celui mai generos — nu media, nici cel central —
+    // fiindcă site-ul arată un singur program pe oraș, nu pe adresă exactă.
+    // Marcat mai jos, la fiecare oraș afectat, care variantă am ales.
+    kik: {
+      // 6 magazine, ore diferite pe sector — ales varianta de mall (Sect.
+      // 1/4/6: Băneasa, Grand Arena, Militari), 10-22 în fiecare zi.
+      "București": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Deva (mall), 10-22.
+      "Deva": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Hunedoara": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Petroșani": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine — ales Vivo! Cluj (mall), 10-22.
+      "Cluj-Napoca": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Timișoara (mall), 10-22.
+      "Timișoara": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — unul închis duminica (Arad Center); ales Agora Arad,
+      // care are program și duminica.
+      "Arad": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine, ore apropiate — ales Primavera Oradea (duminică mai lungă).
+      "Oradea": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      // 2 magazine — ales Coresi Shopping Resort (mall), 10-22.
+      "Brașov": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Shopping City Sibiu (mall), 10-22.
+      "Sibiu": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine, ore identice — fără ambiguitate.
+      "Iași": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      // 2 magazine — ales Vivo! Constanța (mall), 10-22.
+      "Constanța": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — unul închis duminica (Craiova Center); ales
+      // Electroputere Parc (mall), 10-22.
+      "Craiova": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      // 2 magazine — ales Value Centre Ploiești (mall), 10-22.
+      "Ploiești": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Pitești": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Galați": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Brăila": kikWeekly("09:00", "20:00", "09:00", "21:00"),
+      "Bacău": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Suceava": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Botoșani": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Piatra Neamț": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Focșani": kikWeekly("09:00", "19:00", "09:00", "21:00"),
+      "Râmnicu Vâlcea": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Drobeta-Turnu Severin": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Alba Iulia": kikWeekly("08:00", "22:00", "08:30", "22:00"),
+      "Bistrița": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Baia Mare": kikWeekly("10:00", "21:00", "10:00", "21:00"),
+      "Satu Mare": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Zalău": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Târgu Mureș": kikWeekly("10:00", "22:00", "10:00", "22:00"),
+      "Mediaș": kikWeekly("09:00", "18:00", "09:00", "21:00"),
+      "Sighișoara": kikWeekly("09:00", "16:00", "09:00", "20:00"),
+      "Lugoj": kikWeekly("09:00", "16:00", "09:00", "20:00"),
+    },
+    // MatHaus — Luni-Sâmbătă identic peste tot (08-20); doar Duminica
+    // diferă, și doar la Suceava (17:00 în loc de 16:00 peste tot altundeva).
+    mathaus: {
+      "București": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Suceava": kikWeekly("08:00", "17:00", "08:00", "20:00"),
+      "Iași": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Galați": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Constanța": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Craiova": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Pitești": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+      "Oradea": kikWeekly("08:00", "16:00", "08:00", "20:00"),
+    },
+  },
+};
+
+exports.SELECTIVE_BRAND_CITIES = {
+  ro: {
+    metro: [
+      "București", "Brașov", "Constanța", "Timișoara", "Cluj-Napoca", "Bacău",
+      "Iași", "Craiova", "Baia Mare", "Pitești", "Galați", "Ploiești", "Oradea",
+      "Sibiu", "Suceava", "Târgu Mureș", "Arad", "Deva", "Satu Mare",
+      "Piatra Neamț", "Buzău", "Târgoviște",
+    ],
+    selgros: [
+      "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Brașov",
+      "Brăila", "București", "Cluj-Napoca", "Constanța", "Craiova", "Galați",
+      "Sibiu", "Târgu Mureș",
+    ],
+    ikea: ["București", "Timișoara"],
+    xxxlutz: ["București"],
+    momax: [
+      "București", "Ploiești", "Pitești", "Timișoara", "Arad", "Oradea",
+      "Cluj-Napoca",
+    ],
+    // KiK — 46 de magazine în 35 de localități (listă completă primită
+    // direct de la tine). 2 localități LIPSESC aici — Dumbrăvița și
+    // Jimbolia — pentru că nu sunt în lista celor 103 orașe verificate ale
+    // site-ului (localități mai mici, lângă Timișoara); adăugarea lor ca
+    // orașe noi ar afecta tot site-ul (sitemap, homepage), nu doar KiK.
+    kik: [
+      "București", "Deva", "Hunedoara", "Petroșani", "Cluj-Napoca",
+      "Timișoara", "Arad", "Oradea", "Brașov", "Sibiu", "Iași", "Constanța",
+      "Craiova", "Ploiești", "Pitești", "Galați", "Brăila", "Bacău",
+      "Suceava", "Botoșani", "Piatra Neamț", "Focșani", "Râmnicu Vâlcea",
+      "Drobeta-Turnu Severin", "Alba Iulia", "Bistrița", "Baia Mare",
+      "Satu Mare", "Zalău", "Târgu Mureș", "Mediaș", "Sighișoara", "Lugoj",
+    ],
+    mathaus: [
+      "București", "Suceava", "Iași", "Galați", "Constanța", "Craiova",
+      "Pitești", "Oradea",
+    ],
+    // Arabesque — 14 locații primite, 2 excluse (Chitila, Glina — localități
+    // mici din Ilfov, nu sunt în lista de orașe verificate a site-ului).
+    arabesque: [
+      "Timișoara", "Cluj-Napoca", "Brașov", "Deva", "Baia Mare",
+      "Târgu Mureș", "Bacău", "Buzău", "Focșani", "Piatra Neamț", "Sibiu",
+      "Arad",
+    ],
+    bricodepot: [
+      "București", "Cluj-Napoca", "Timișoara", "Brașov", "Arad", "Oradea",
+      "Târgu Mureș", "Deva", "Iași", "Focșani", "Craiova", "Pitești",
+      "Drobeta-Turnu Severin", "Constanța",
+    ],
+    cinemacity: [
+      "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+      "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+      "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+      "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+    ],
+    cineplexx: ["București", "Craiova", "Sibiu", "Satu Mare", "Târgu Mureș"],
+    happycinema: [
+      "București", "Alexandria", "Focșani", "Buzău", "Bistrița", "Bacău",
+      "Vaslui", "Botoșani", "Slobozia",
+    ],
+    movieplex: ["București"],
+    // "Mall" e o intrare generică — nu o marcă anume — folosim aceeași listă
+    // ca Cinema City, pentru că aproape toate sălile lor sunt în interiorul
+    // unui mall mare; o corelație rezonabilă, nu o presupunere oarbă
+    mall: [
+      "București", "Arad", "Bacău", "Baia Mare", "Brăila", "Brașov", "Buzău",
+      "Cluj-Napoca", "Constanța", "Deva", "Drobeta-Turnu Severin", "Galați",
+      "Iași", "Piatra Neamț", "Ploiești", "Pitești", "Suceava", "Târgu Jiu",
+      "Târgu Mureș", "Timișoara", "Râmnicu Vâlcea",
+    ],
+    // Mega Image — bug real, prins prin raportare directă (apărea în Brad,
+    // unde n-are niciun magazin). Rețeaua e extrem de concentrată pe
+    // București (~430 din ~600+ magazine, conform ZF), cu prezență
+    // secundară doar în câteva orașe mari. Listă verificată prin căutare
+    // (mega-image.ro/companie + articole retail-fmcg.ro), nu presupusă —
+    // conservatoare deliberat, ca la celelalte branduri de mai sus.
+    megaimage: [
+      "București", "Cluj-Napoca", "Iași", "Constanța", "Ploiești", "Brașov",
+      "Târgoviște", "Timișoara", "Bacău", "Focșani", "Oradea",
+    ],
+    // Auchan — cel mai concentrat dintre hipermarketuri: doar 26 de
+    // hipermarketuri clasice, în ~14-18 orașe mari (nu 41, cum eram
+    // presupuși implicit înainte). Listă verificată prin căutare
+    // (auchan.ro/magazine-auchan + wall-street.ro), oraș cu adresă exactă
+    // confirmată pentru fiecare intrare de mai jos.
+    auchan: [
+      "București", "Cluj-Napoca", "Iași", "Constanța", "Brașov", "Bacău",
+      "Oradea", "Sibiu", "Târgu Mureș", "Deva",
+    ],
+    // Carrefour — mai răspândit decât Mega Image/Auchan (formatele Market/
+    // Express ajung și în orașe medii, sub 100.000 locuitori), dar TOT nu
+    // e universal — confirmat direct ABSENT din Brad (verificat: Carrefour
+    // are magazine în Deva, Petroșani, Simeria, Hațeg, Călan — județul
+    // Hunedoara — dar nu și în Brad). Refolosim lista celor 41 de orașe deja
+    // verificate real pentru Lidl/Kaufland/Penny/Carrefour (comentariul de
+    // la SITEMAP_CITIES, secțiunea "adăugate ulterior") — cele 30 de orașe
+    // mari inițiale + cele 11 adăugate cu verificare explicită.
+    carrefour: [
+      "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+      "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+      "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+      "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+      "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+      "Tulcea", "Reșița",
+      "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+      "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+    ],
+    // Dedeman — 65 de magazine, prezent "în aproape toate județele" (site
+    // oficial dedeman.ro/compania), dar tot nu literalmente în toate cele
+    // 103 municipii — un magazin per reședință de județ, nu per oraș mic.
+    // Refolosim aceeași listă de 41 orașe mari, deja verificate pentru
+    // Lidl/Kaufland/Penny/Carrefour — cea mai bună aproximare conservatoare
+    // disponibilă fără o listă exhaustivă magazin-cu-magazin.
+    dedeman: [
+      "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+      "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+      "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+      "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+      "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+      "Tulcea", "Reșița",
+      "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+      "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+    ],
+    // Leroy Merlin — 23 de magazine în exact 16 orașe (confirmat prin
+    // retail.ro, 2025), listă completă, nu aproximare.
+    leroymerlin: [
+      "București", "Cluj-Napoca", "Craiova", "Ploiești", "Pitești", "Brașov",
+      "Constanța", "Sibiu", "Suceava", "Târgu Mureș", "Bacău", "Iași",
+      "Timișoara", "Oradea", "Târgoviște", "Arad",
+    ],
+    // Hornbach — cel mai concentrat brand de bricolaj: doar 11 magazine
+    // fizice (confirmat direct pe hornbach.ro), în doar 7 orașe.
+    hornbach: [
+      "București", "Brașov", "Timișoara", "Sibiu", "Oradea", "Cluj-Napoca",
+      "Constanța",
+    ],
+    // Farmacia Tei — bug real, prins prin verificare (hartafarmacii.ro,
+    // 27 aug. 2026): doar 13 farmacii în toată țara, concentrate în
+    // București (8) + câte una în Brașov, Aiud, Florești (Cluj), Popești-
+    // Leordeni (Ilfov) și o comună din Prahova. Rămân doar orașele din
+    // SITEMAP_CITIES — Florești/Popești-Leordeni sunt comune, nu municipii.
+    farmaciatei: ["București", "Brașov", "Aiud"],
+    // Remedia — lanț regional, NU național: doar 23 farmacii proprii,
+    // concentrate explicit "în special în județele Hunedoara, Alba și
+    // Sibiu" (corporate.remedia.ro/en/) — nu în restul țării. Aici lista
+    // e restrânsă la orașele mari din exact aceste 3 județe.
+    // Deva scoasă din listă — semnalat direct, verificat pe teren: farmacia
+    // Remedia NU mai există în Deva (cercetarea inițială, bazată pe
+    // prezența generală în județul Hunedoara, nu a fost suficient de
+    // precisă — județul ≠ fiecare oraș din el). Rămân Hunedoara, Petroșani,
+    // Alba Iulia, Sibiu, neverificate individual încă la fel de riguros.
+    remedia: ["Hunedoara", "Petroșani", "Alba Iulia", "Sibiu"],
+  },
+  be: {
+    // Alvo (grup Colruyt) — verificat prin căutare (alvo.be/winkels +
+    // geodruid.com): concentrat aproape exclusiv în Flandra (Anvers,
+    // Flandra de Est/Vest) + o singură locație în zona Bruxelles.
+    // ZERO magazine găsite în Valonia (Charleroi, Liège, Namur, Mons) sau
+    // în Leuven/Aalst, deși apărea înainte ca "universal" pe toate cele
+    // 10 orașe din listă — corectat aici, nu presupus.
+    alvo: ["Brussels", "Antwerpen", "Gent", "Brugge"],
+  },
+  es: {
+    // Consum — extins conform hărții comunităților autonome unde chiar
+    // există (vezi comentariul de la exports.ES_STORE_CONFIG mai sus): Comunidad
+    // Valenciana, Cataluña, Andalucía, Murcia, Castilla-La Mancha, Aragón.
+    consum: [
+      "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia",
+      "Alicante", "Córdoba", "Granada", "Toledo", "Cádiz", "Cartagena",
+      "Ronda", "Cuenca", "Marbella",
+    ],
+    // El Corte Inglés — bug real, prins ÎNAINTE să ajungă live, la extinderea
+    // listei de orașe (34 în loc de 9): lista OFICIALĂ completă de magazine
+    // (tiendas-espana.es, verificată direct, oraș cu oraș) NU include deloc
+    // Segovia, Ávila, Logroño, Ronda, Mérida sau Cuenca — orașe mici/turistice,
+    // fără format de magazin mare precum acesta.
+    elcorteingles: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Burgos", "Cartagena", "Cáceres", "Marbella",
+    ],
+    // Ikea — cel mai concentrat brand de aici: doar ~20 de magazine în toată
+    // Spania (listă oficială ikea.com, verificată pe regiuni). Confirmat
+    // DOAR în cele 9 orașe originale + Valladolid și A Coruña — restul celor
+    // 23 de orașe noi nu au niciun magazin Ikea propriu.
+    ikea: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao", "Valladolid", "A Coruña",
+    ],
+    // Leroy Merlin — verificat individual (leroymerlin.es/tiendas/<oraș>):
+    // confirmat CHIAR ÎN Segovia, Ávila și Cuenca (surprinzător de răspândit
+    // pentru un brand de bricolaj — 130 de magazine la nivel național).
+    // Absent confirmat doar din Ronda, Mérida, Cáceres, Marbella (fără nicio
+    // mențiune de magazin propriu găsită, spre deosebire de restul).
+    leroymerlin: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Cuenca",
+    ],
+    // MediaMarkt — NEVERIFICAT individual oraș-cu-oraș (spre deosebire de
+    // Leroy Merlin, unde am găsit confirmare directă) — folosim aceeași
+    // listă ca Leroy Merlin, ca aproximare rezonabilă (scară națională
+    // similară, ~100 de magazine), NU o certitudine la fel de solidă.
+    mediamarkt: [
+      "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga",
+      "Murcia", "Palma", "Bilbao",
+      "Alicante", "Córdoba", "Granada", "Valladolid", "Vigo", "Gijón",
+      "A Coruña", "Vitoria-Gasteiz", "San Sebastián", "Pamplona",
+      "Santander", "Toledo", "Salamanca", "Santiago de Compostela",
+      "Cádiz", "Segovia", "Ávila", "Burgos", "Logroño", "Cartagena",
+      "Cuenca",
+    ],
+    // Decathlon rămâne universal — NU e restricționat aici, deliberat: rețea
+    // mult mai densă (~170 de magazine, cea mai mare dintre toate de aici),
+    // confirmată explicit chiar și în Logroño (oraș mic). Strategia lor
+    // vizează explicit orașe mijlocii/mici, spre deosebire de El Corte
+    // Inglés/Ikea (format mare, doar orașe mari).
+    //
+    // Xanadú și La Maquinista — bug pre-existent, independent de extinderea
+    // de mai sus la 34 de orașe: sunt mall-uri SPECIFICE, unice (nu lanțuri
+    // repetate în fiecare oraș), dar nu aveau nicio restricție — apăreau
+    // greșit ca opțiune și în celelalte 8 orașe originale, nu doar în orașul
+    // lor real. Corectat aici, la câte un singur oraș fiecare.
+    xanadumadrid: ["Madrid"],
+    lamaquinista: ["Barcelona"],
+  },
+  it: {
+    // Esselunga — bug real, prins ÎNAINTE să ajungă live (verificare directă
+    // înainte de populare), independent de orice extindere de orașe: rețeaua
+    // e prezentă doar în 7 regiuni din nordul/centrul Italiei (confirmat prin
+    // Wikipedia + surse oficiale esselunga.it/esselungajob.it): Lombardia,
+    // Toscana, Emilia-Romagna, Piemonte, Veneto, Liguria, Lazio. ABSENTĂ din
+    // Napoli (Campania) și Palermo (Sicilia) — chiar dacă apărea universal
+    // pe toate cele 10 orașe originale, dinainte de verificarea de azi.
+    // Extins acum cu orașele noi din aceleași 7 regiuni confirmate.
+    esselunga: [
+      "Roma", "Milano", "Torino", "Bologna", "Firenze", "Venezia", "Genova",
+      "Verona", "Bergamo", "Como", "Brescia", "Pisa", "Siena", "Parma",
+      "Modena", "Rimini", "Padova",
+    ],
+    // Ikea — verificat prin căutare (ikea.com/it/it/stores + habitante.it):
+    // 22+ magazine, mai răspândit decât la Spania. Confirmat DIRECT în
+    // orașele de mai jos; pentru Napoli, Torino, Genova, Verona (parte din
+    // cele 10 originale) NU am găsit nicio dovadă directă — excluse aici
+    // conservator, deși fiind orașe mari e posibil să existe totuși un
+    // magazin aproape; verifică separat dacă știi sigur de unul.
+    ikea: [
+      "Roma", "Milano", "Bologna", "Firenze", "Venezia", "Palermo",
+      "Bari", "Catania", "Cagliari", "Padova", "Pisa", "Perugia",
+      "Bolzano", "Brescia", "Modena",
+    ],
+  },
+  fr: {
+    // Monoprix — verificat prin căutare (monoprix.fr/liste-magasins +
+    // pagesjaunes.fr): 200-250+ orașe, confirmat cu adresă exactă chiar și
+    // în orașe mai mici (Colmar, Annecy, Le Havre, Avignon, Dijon,
+    // Clermont-Ferrand, Grenoble). ABSENT din Mont Saint-Michel (sit-monument
+    // cu ~30 de locuitori permanenți, evident fără hipermarket) și din
+    // Chamonix (nicio adresă concretă găsită, doar pagini generice de
+    // director, spre deosebire de restul orașelor de mai sus).
+    //
+    // Al doilea val de orașe (Aix-en-Provence, Rouen, Tours etc.) — NU
+    // verificate individual, la fel de riguros ca lista de mai sus (fără
+    // căutare oraș-cu-oraș) — incluse doar orașele cu populație/turism
+    // suficient de mare încât prezența Monoprix e foarte probabilă
+    // (orașe de peste ~20.000 locuitori, plus Lourdes — excepție, datorită
+    // afluxului turistic uriaș). LĂSATE AFARĂ, deliberat conservator: Sarlat,
+    // Carnac, Bonifacio, Saint-Tropez (sate/orășele mici, sub acest prag,
+    // fără nicio verificare) — Rocamadour/Cheverny/Ussé nici nu apar aici,
+    // fiind excluse la toate brandurile (vezi FR_TINY_MONUMENT_VILLAGES).
+    monoprix: [
+      "Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes",
+      "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+      "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble",
+      "Dijon", "Angers", "Nîmes", "Clermont-Ferrand",
+      "Versailles", "Chartres", "Carcassonne", "Saint-Malo", "Avignon",
+      "Annecy", "Colmar",
+      "Aix-en-Provence", "Arles", "Rouen", "Honfleur", "Deauville",
+      "Biarritz", "Bayonne", "Lourdes", "Quimper", "Vannes", "Ajaccio",
+      "Cannes", "Perpignan", "Tours", "Épernay", "Blois",
+    ],
+    // Restul brandurilor (E.Leclerc, Carrefour, Intermarché, Auchan) au
+    // rețele mult mai mari (mii de magazine fiecare), universale peste tot
+    // — CU EXCEPȚIA celor 4 sate-monument, fără nicio infrastructură de
+    // oraș real (vezi FR_TINY_MONUMENT_VILLAGES mai sus).
+    // NOTĂ: SELECTIVE_BRAND_CITIES e o listă ALBĂ (doar orașele enumerate
+    // sunt permise) — ca să excludem doar câteva orașe dintr-o listă altfel
+    // universală, enumerăm explicit toate CELELALTE, nu doar excepțiile.
+    leclerc: exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    carrefour: exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    intermarche: exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    auchan: exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL,
+    // Forum des Halles — bug real, găsit prin verificarea diagnosticului de
+    // magazine lipsă (nu prin testare directă pe site, ca la celelalte): un
+    // SINGUR mall, în Paris, fără nicio restricție — apărea "așteptat" în
+    // toate cele 52 de orașe/zone ale Franței, inclusiv Ajaccio, Bayonne,
+    // Chamonix, Rocamadour — locuri fără nicio legătură.
+    forumdeshalles: ["Paris"],
+  },
+  uk: {
+    // Cele 3 mall-uri — bug pre-existent, prins prin verificare directă (nu
+    // legat de extinderea de mai sus la 33 de orașe/zone): fiecare e un
+    // SINGUR loc real, dar nu avea nicio restricție — apărea universal pe
+    // toate cele 10 orașe originale, dinainte de verificarea de azi.
+    westfieldlondon: ["London"],
+    traffordcentre: ["Manchester"],
+    bluewater: ["London"], // Bluewater e lângă Dartford, in zona metropolitana Londra — cel mai apropiat oraș urmărit
+  },
+}
+
+exports.SITEMAP_CITIES = [
+  "București", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova",
+  "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești",
+  "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani",
+  "Satu Mare", "Râmnicu Vâlcea", "Drobeta-Turnu Severin", "Suceava",
+  "Piatra Neamț", "Târgu Jiu", "Târgoviște", "Focșani", "Bistrița",
+  "Tulcea", "Reșița",
+  // adăugate ulterior — verificate real (Lidl/Kaufland/Penny/Carrefour
+  // confirmate prin căutare, cu adrese exacte, nu presupuse)
+  "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
+  "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+  // completare la toate cele 103 municipii din România (lista oficială,
+  // verificată prin OpenStreetMap) — cele 41 de mai sus rămân neatinse
+  "Adjud", "Aiud", "Băilești", "Bârlad", "Beiuș", "Blaj", "Brad", "Calafat", "Câmpia Turzii", "Câmpina", "Câmpulung", "Câmpulung Moldovenesc", "Caracal", "Caransebeș", "Carei", "Codlea", "Curtea de Argeș", "Dej", "Dorohoi", "Drăgășani", "Făgăraș", "Fălticeni", "Fetești", "Gheorgheni", "Gherla", "Hunedoara", "Huși", "Lugoj", "Lupeni", "Mangalia", "Marghita", "Medgidia", "Mediaș", "Moinești", "Moreni", "Motru", "Odorheiu Secuiesc", "Oltenița", "Onești", "Orăștie", "Orșova", "Pașcani", "Petroșani", "Rădăuți", "Râmnicu Sărat", "Reghin", "Roman", "Roșiorii de Vede", "Săcele", "Salonta", "Sebeș", "Sighetu Marmației", "Sighișoara", "Târgu Secuiesc", "Târnăveni", "Tecuci", "Toplița", "Turda", "Turnu Măgurele", "Urziceni", "Vatra Dornei", "Vulcan",
+]
+
+// România lipsea COMPLET din exports.COUNTRIES — bug real, sever, preexistent
+// (nu introdus de vreo modificare recentă): orice pagină de magazin din
+// România (Lidl, Catena, absolut orice brand, în orice oraș), odată ajunsă
+// pe domeniul .eu (fie direct, fie prin migrarea RO_TO_EU_MIGRATION_ACTIVE
+// din server.js, care redirecționează TOT traficul de pe .ro), dădea crash
+// la server — ruta `/:tara/:oras/:magazin` face `COUNTRIES[countryCode].config`
+// fără să verifice întâi dacă `COUNTRIES[countryCode]` există, iar
+// COUNTRIES.ro era `undefined`. Adăugat abia AICI (nu direct în blocul
+// exports.COUNTRIES de mai sus) — ordinea contează: STORE_CONFIG și
+// SITEMAP_CITIES sunt definite DUPĂ exports.COUNTRIES în acest fișier, deci
+// n-ar fi existat încă dacă le refeream direct acolo (același motiv pentru
+// care exports.FR_ALL_CITIES_EXCEPT_MONT_SAINT_MICHEL e calculat separat,
+// mai jos de COUNTRIES, nu în interiorul lui).
+exports.COUNTRIES.ro = {
+  config: exports.STORE_CONFIG,
+  t: TRANSLATIONS.ro,
+  cities: exports.SITEMAP_CITIES,
+};
+
+exports.CITY_COORDS = {
+  // Regiuni/insule/stațiuni grecești folosite ca `city` la plaje (nu sunt
+  // orașe administrative propriu-zise, deci lipseau din lista principală) —
+  // adăugate explicit, ca itinerarul AI să poată calcula distanțe REALE
+  // (Haversine) în loc să ghicească — bug real, semnalat direct: un
+  // itinerar pentru Hanioti arăta Atena la "~100 km", deși e la sute de km.
+  "Afandou": [36.317, 28.128],
+  "Archangelos": [36.2167, 28.1167],
+  "Corfu": [39.6243, 19.9217],
+  "Elafonisos": [36.4833, 22.9667],
+  "Epir": [39.6, 20.75],
+  "Faliraki": [36.34, 28.2],
+  "Finikounda": [36.8, 21.79],
+  "Gytheio": [36.7626, 22.5763],
+  "Kallithea": [40.0, 23.65],
+  "Kardamili": [36.9167, 22.2167],
+  "Kassandra": [39.95, 23.4],
+  "Kissamos": [35.4936, 23.6578],
+  "Korinos": [40.2333, 22.5667],
+  "Kyparissia": [37.25, 21.6667],
+  "Lasithi": [35.2, 25.7],
+  "Lefkada": [38.8333, 20.7167],
+  "Leptokarya": [40.0833, 22.55],
+  "Lindos": [36.0917, 28.0864],
+  "Litochoro": [40.1022, 22.5017],
+  "Mani": [36.65, 22.4],
+  "Methoni": [36.8236, 21.7056],
+  "Milos": [36.6944, 24.4287],
+  "Monemvasia": [36.6864, 23.05],
+  "Nafplio": [37.5673, 22.8072],
+  "Nei Pori": [39.9333, 22.6667],
+  "Olympiaki Akti": [40.2333, 22.5],
+  "Palaiokastritsa": [39.6717, 19.7075],
+  "Panteleimonas": [40.0667, 22.5833],
+  "Paralia Katerini": [40.25, 22.5],
+  "Parga": [39.2814, 20.3997],
+  "Platamonas": [40.0, 22.6],
+  "Prasonisi": [35.885, 27.7625],
+  "Pylos": [36.9139, 21.695],
+  "Rethymno": [35.3667, 24.4833],
+  "Rhodos Town": [36.4349, 28.2176],
+  "Riviera Ateniană": [37.8, 23.78],
+  "Sidari": [39.7833, 19.6667],
+  "Sithonia": [40.05, 23.9],
+  "Skotina": [40.0, 22.65],
+  "Syvota": [39.4167, 20.2167],
+  "Thassos": [40.7833, 24.7],
+  "Vestul insulei": [39.6, 19.85],
+  "Zakynthos": [37.7833, 20.9],
+  "Adjud": [46.1054, 27.1808],
+  "Aiud": [46.3106, 23.7211],
+  "Băilești": [44.0186, 23.3499],
+  "Bârlad": [46.2197, 27.6675],
+  "Beiuș": [46.6714, 22.3489],
+  "Blaj": [46.1747, 23.9106],
+  "Brad": [46.1367, 22.7864],
+  "Calafat": [43.9936, 22.9333],
+  "Câmpia Turzii": [46.5433, 23.8856],
+  "Câmpina": [45.1281, 25.7328],
+  "Câmpulung": [45.2686, 25.045],
+  "Câmpulung Moldovenesc": [47.5297, 25.5581],
+  "Caracal": [44.1167, 24.35],
+  "Caransebeș": [45.4167, 22.2167],
+  "Carei": [47.6833, 22.4667],
+  "Codlea": [45.6935, 25.4488],
+  "Curtea de Argeș": [45.1394, 24.6789],
+  "Dej": [47.1417, 23.8722],
+  "Dorohoi": [47.9556, 26.3986],
+  "Drăgășani": [44.6564, 24.2617],
+  "Făgăraș": [45.8417, 24.9736],
+  "Fălticeni": [47.4611, 26.3],
+  "Fetești": [44.3833, 27.8333],
+  "Gheorgheni": [46.7236, 25.5972],
+  "Gherla": [47.0333, 23.9],
+  "Hunedoara": [45.75, 22.9],
+  "Huși": [46.6742, 28.0592],
+  "Lugoj": [45.6883, 21.9031],
+  "Lupeni": [45.3597, 23.2267],
+  "Mangalia": [43.8083, 28.5875],
+  "Marghita": [47.35, 22.3333],
+  "Medgidia": [44.25, 28.2667],
+  "Mediaș": [46.1667, 24.35],
+  "Moinești": [46.4667, 26.4833],
+  "Moreni": [44.9833, 25.6667],
+  "Motru": [44.8, 22.9667],
+  "Odorheiu Secuiesc": [46.3, 25.3],
+  "Oltenița": [44.0833, 26.6333],
+  "Onești": [46.25, 26.7667],
+  "Orăștie": [45.8333, 23.2],
+  "Orșova": [44.7167, 22.4],
+  "Pașcani": [47.25, 26.7167],
+  "Petroșani": [45.4167, 23.3667],
+  "Rădăuți": [47.85, 25.9167],
+  "Râmnicu Sărat": [45.3833, 27.05],
+  "Reghin": [46.7667, 24.7167],
+  "Roman": [46.9167, 26.9167],
+  "Roșiorii de Vede": [44.1167, 24.9833],
+  "Săcele": [45.6167, 25.6833],
+  "Salonta": [46.8, 21.65],
+  "Sebeș": [45.9583, 23.5667],
+  "Sighetu Marmației": [47.9333, 23.9],
+  "Sighișoara": [46.2167, 24.7917],
+  "Târgu Secuiesc": [46.0, 26.1333],
+  "Târnăveni": [46.3333, 24.3],
+  "Tecuci": [45.8583, 27.4333],
+  "Toplița": [46.9167, 25.35],
+  "Turda": [46.5667, 23.7833],
+  "Turnu Măgurele": [43.75, 24.8667],
+  "Urziceni": [44.7167, 26.6333],
+  "Vatra Dornei": [47.35, 25.3667],
+  "Vulcan": [45.3833, 23.2667],
+  "București": [44.4268, 26.1025],
+  "Cluj-Napoca": [46.7712, 23.6236],
+  "Timișoara": [45.7489, 21.2087],
+  "Iași": [47.1585, 27.6014],
+  "Constanța": [44.1598, 28.6348],
+  "Craiova": [44.3302, 23.7949],
+  "Brașov": [45.6427, 25.5887],
+  "Galați": [45.4353, 28.008],
+  "Ploiești": [44.9414, 26.0225],
+  "Oradea": [47.0722, 21.9217],
+  "Brăila": [45.2692, 27.9575],
+  "Arad": [46.1866, 21.3123],
+  "Pitești": [44.8565, 24.8692],
+  "Sibiu": [45.7983, 24.1256],
+  "Bacău": [46.567, 26.9146],
+  "Târgu Mureș": [46.5527, 24.5575],
+  "Baia Mare": [47.6567, 23.5666],
+  "Buzău": [45.15, 26.8167],
+  "Botoșani": [47.7486, 26.6693],
+  "Satu Mare": [47.793, 22.8858],
+  "Râmnicu Vâlcea": [45.1047, 24.3762],
+  "Drobeta-Turnu Severin": [44.6367, 22.6597],
+  "Suceava": [47.6459, 26.2554],
+  "Piatra Neamț": [46.9276, 26.3707],
+  "Târgu Jiu": [45.0347, 23.2761],
+  "Târgoviște": [44.9256, 25.457],
+  "Focșani": [45.6969, 27.1842],
+  "Bistrița": [47.1362, 24.4998],
+  "Tulcea": [45.1667, 28.8],
+  "Reșița": [45.2967, 21.89],
+  "Alba Iulia": [46.0697, 23.5804],
+  "Deva": [45.8785, 22.9099],
+  "Zalău": [47.1911, 23.0574],
+  "Vaslui": [46.6383, 27.7292],
+  "Sfântu Gheorghe": [45.8636, 25.7875],
+  "Miercurea Ciuc": [46.3594, 25.8017],
+  "Slatina": [44.4323, 24.3654],
+  "Alexandria": [43.9642, 25.3336],
+  "Giurgiu": [43.9037, 25.9699],
+  "Călărași": [44.2058, 27.3306],
+  "Slobozia": [44.5638, 27.3667],
+  "Berlin": [52.52, 13.405],
+  "München": [48.1351, 11.582],
+  "Hamburg": [53.5511, 9.9937],
+  "Frankfurt am Main": [50.1109, 8.6821],
+  "Köln": [50.9375, 6.9603],
+  "Stuttgart": [48.7758, 9.1829],
+  "Düsseldorf": [51.2277, 6.7735],
+  "Dortmund": [51.5136, 7.4653],
+  "Leipzig": [51.3397, 12.3731],
+  "Essen": [51.4556, 7.0116],
+  "London": [51.5074, -0.1278],
+  "Birmingham": [52.4862, -1.8904],
+  "Manchester": [53.4808, -2.2426],
+  "Glasgow": [55.8642, -4.2518],
+  "Liverpool": [53.4084, -2.9916],
+  "Leeds": [53.8008, -1.5491],
+  "Sheffield": [53.3811, -1.4701],
+  "Bristol": [51.4545, -2.5879],
+  "Newcastle": [54.9783, -1.6178],
+  "Nottingham": [52.9548, -1.1581],
+  "Madrid": [40.4168, -3.7038],
+  "Barcelona": [41.3874, 2.1686],
+  "Valencia": [39.4699, -0.3763],
+  "Sevilla": [37.3891, -5.9845],
+  "Zaragoza": [41.6488, -0.8891],
+  "Málaga": [36.7213, -4.4214],
+  "Murcia": [37.9922, -1.1307],
+  "Palma": [39.5696, 2.6502],
+  "Bilbao": [43.263, -2.935],
+  "Paris": [48.8566, 2.3522],
+  "Marseille": [43.2965, 5.3698],
+  "Lyon": [45.764, 4.8357],
+  "Toulouse": [43.6047, 1.4442],
+  "Nice": [43.7102, 7.262],
+  "Nantes": [47.2184, -1.5536],
+  "Strasbourg": [48.5734, 7.7521],
+  "Montpellier": [43.6108, 3.8767],
+  "Bordeaux": [44.8378, -0.5792],
+  "Lille": [50.6292, 3.0573],
+  "Roma": [41.9028, 12.4964],
+  "Milano": [45.4642, 9.19],
+  "Napoli": [40.8518, 14.2681],
+  "Torino": [45.0703, 7.6869],
+  "Palermo": [38.1157, 13.3615],
+  "Bologna": [44.4949, 11.3426],
+  "Firenze": [43.7696, 11.2558],
+  "Venezia": [45.4408, 12.3155],
+  "Genova": [44.4056, 8.9463],
+  "Verona": [45.4384, 10.9916],
+  "Warszawa": [52.2297, 21.0122],
+  "Kraków": [50.0647, 19.945],
+  "Łódź": [51.7592, 19.456],
+  "Wrocław": [51.1079, 17.0385],
+  "Poznań": [52.4064, 16.9252],
+  "Gdańsk": [54.352, 18.6466],
+  "Szczecin": [53.4285, 14.5528],
+  "Bydgoszcz": [53.1235, 18.0084],
+  "Lublin": [51.2465, 22.5684],
+  "Katowice": [50.2649, 19.0238],
+  "Amsterdam": [52.3676, 4.9041],
+  "Rotterdam": [51.9244, 4.4777],
+  "Den Haag": [52.0705, 4.3007],
+  "Utrecht": [52.0907, 5.1214],
+  "Eindhoven": [51.4416, 5.4697],
+  "Groningen": [53.2194, 6.5665],
+  "Tilburg": [51.5555, 5.0913],
+  "Almere": [52.3508, 5.2647],
+  "Breda": [51.5719, 4.7683],
+  "Nijmegen": [51.8425, 5.8528],
+  "Wien": [48.2082, 16.3738],
+  "Graz": [47.0707, 15.4395],
+  "Linz": [48.3069, 14.2858],
+  "Salzburg": [47.8095, 13.055],
+  "Innsbruck": [47.2692, 11.4041],
+  "Klagenfurt": [46.6247, 14.3055],
+  "Villach": [46.6111, 13.8558],
+  "Wels": [48.1575, 14.0289],
+  "Sankt Pölten": [48.2047, 15.6256],
+  "Dornbirn": [47.4125, 9.7417],
+  "Brussels": [50.8503, 4.3517],
+  "Antwerpen": [51.2194, 4.4025],
+  "Gent": [51.0543, 3.7174],
+  "Charleroi": [50.4108, 4.4446],
+  "Liège": [50.6326, 5.5797],
+  "Brugge": [51.2093, 3.2247],
+  "Namur": [50.4669, 4.8675],
+  "Leuven": [50.8798, 4.7005],
+  "Mons": [50.4542, 3.9564],
+  "Aalst": [50.9378, 4.0397],
+  "København": [55.6761, 12.5683],
+  "Aarhus": [56.1629, 10.2039],
+  "Odense": [55.4038, 10.4024],
+  "Aalborg": [57.0488, 9.9217],
+  "Esbjerg": [55.4765, 8.4594],
+  "Randers": [56.4607, 10.0369],
+  "Kolding": [55.4904, 9.4721],
+  "Horsens": [55.8607, 9.8503],
+  "Vejle": [55.7091, 9.5357],
+  "Roskilde": [55.6415, 12.0803],
+  "Stockholm": [59.3293, 18.0686],
+  "Göteborg": [57.7089, 11.9746],
+  "Malmö": [55.6050, 13.0038],
+  "Uppsala": [59.8586, 17.6389],
+  "Västerås": [59.6099, 16.5448],
+  "Örebro": [59.2753, 15.2134],
+  "Helsingborg": [56.0465, 12.6945],
+  "Linköping": [58.4108, 15.6214],
+  "Norrköping": [58.5877, 16.1924],
+  "Karlstad": [59.3793, 13.5036],
+  "Lisboa": [38.7223, -9.1393],
+  "Porto": [41.1579, -8.6291],
+  "Vila Nova de Gaia": [41.1239, -8.6118],
+  "Amadora": [38.7536, -9.2302],
+  "Braga": [41.5454, -8.4265],
+  "Setúbal": [38.5244, -8.8882],
+  "Coimbra": [40.2033, -8.4103],
+  "Almada": [38.6800, -9.1580],
+  "Faro": [37.0194, -7.9304],
+  "Funchal": [32.6669, -16.9241],
+  "Praha": [50.0755, 14.4378],
+  "Brno": [49.1951, 16.6068],
+  "Ostrava": [49.8209, 18.2625],
+  "Plzeň": [49.7384, 13.3736],
+  "Liberec": [50.7663, 15.0543],
+  "Olomouc": [49.5938, 17.2509],
+  "České Budějovice": [48.9745, 14.4747],
+  "Hradec Králové": [50.2092, 15.8328],
+  "Helsinki": [60.1699, 24.9384],
+  "Tampere": [61.4978, 23.7610],
+  "Turku": [60.4518, 22.2666],
+  "Oulu": [65.0121, 25.4651],
+  "Jyväskylä": [62.2426, 25.7473],
+  "Kuopio": [62.8924, 27.6770],
+  "Lahti": [60.9827, 25.6612],
+  "Rovaniemi": [66.5039, 25.7294],
+  "Athens": [37.9838, 23.7275],
+  "Thessaloniki": [40.6401, 22.9444],
+  "Patras": [38.2466, 21.7346],
+  "Heraklion": [35.3387, 25.1442],
+  "Larissa": [39.6390, 22.4191],
+  "Volos": [39.3622, 22.9425],
+  "Ioannina": [39.6650, 20.8537],
+  "Chania": [35.5138, 24.0180],
+  "Budapest": [47.4979, 19.0402],
+  "Debrecen": [47.5316, 21.6273],
+  "Szeged": [46.2530, 20.1414],
+  "Miskolc": [48.1035, 20.7784],
+  "Pécs": [46.0727, 18.2323],
+  "Győr": [47.6875, 17.6504],
+  "Nyíregyháza": [47.9495, 21.7244],
+  "Kecskemét": [46.9062, 19.6913],
+  "Zagreb": [45.8150, 15.9819],
+  "Split": [43.5081, 16.4402],
+  "Rijeka": [45.3271, 14.4422],
+  "Osijek": [45.5550, 18.6955],
+  "Zadar": [44.1194, 15.2314],
+  "Pula": [44.8666, 13.8496],
+  "Dubrovnik": [42.6507, 18.0944],
+  "Šibenik": [43.7350, 15.8952],
+  "Dublin": [53.3498, -6.2603],
+  "Cork": [51.8985, -8.4756],
+  "Limerick": [52.6638, -8.6267],
+  "Galway": [53.2707, -9.0568],
+  "Waterford": [52.2593, -7.1101],
+  "Drogheda": [53.7189, -6.3478],
+  "Dundalk": [54.0011, -6.4083],
+  "Swords": [53.4597, -6.2181],
+  "Bratislava": [48.1486, 17.1077],
+  "Košice": [48.7164, 21.2611],
+  "Prešov": [49.0018, 21.2393],
+  "Žilina": [49.2231, 18.7394],
+  "Nitra": [48.3061, 18.0764],
+  "Banská Bystrica": [48.7395, 19.1531],
+  "Trnava": [48.3709, 17.5886],
+  "Trenčín": [48.8945, 18.0444],
+  "Ljubljana": [46.0569, 14.5058],
+  "Maribor": [46.5547, 15.6459],
+  "Celje": [46.2311, 15.2683],
+  "Kranj": [46.2437, 14.3557],
+  "Koper": [45.5481, 13.7302],
+  "Novo Mesto": [45.8039, 15.1697],
+  "Velenje": [46.3592, 15.1103],
+  "Nova Gorica": [45.9558, 13.6483],
+  "Vilnius": [54.6872, 25.2797],
+  "Kaunas": [54.8985, 23.9036],
+  "Klaipėda": [55.7033, 21.1443],
+  "Šiauliai": [55.9349, 23.3144],
+  "Panevėžys": [55.7333, 24.3575],
+  "Alytus": [54.3969, 24.0447],
+  "Marijampolė": [54.5599, 23.3555],
+  "Mažeikiai": [56.3097, 22.3350],
+  "Riga": [56.9496, 24.1052],
+  "Daugavpils": [55.8748, 26.5361],
+  "Liepāja": [56.5089, 21.0104],
+  "Jelgava": [56.6511, 23.7214],
+  "Jūrmala": [56.9679, 23.7796],
+  "Ventspils": [57.3894, 21.5606],
+  "Rēzekne": [56.5097, 27.3319],
+  "Ogre": [56.8181, 24.6047],
+  "Tallinn": [59.4370, 24.7536],
+  "Tartu": [58.3780, 26.7290],
+  "Narva": [59.3773, 28.1903],
+  "Pärnu": [58.3859, 24.4971],
+  "Kohtla-Järve": [59.3986, 27.2739],
+  "Viljandi": [58.3639, 25.5900],
+  "Rakvere": [59.3467, 26.3592],
+  "Maardu": [59.4761, 25.0181],
+  "Nicosia": [35.1856, 33.3823],
+  "Limassol": [34.7071, 33.0226],
+  "Larnaca": [34.9167, 33.6333],
+  "Paphos": [34.7761, 32.4247],
+  "Paralimni": [35.0392, 33.9822],
+  "Aradippou": [34.9500, 33.5833],
+  "Strovolos": [35.1333, 33.3333],
+  "Lakatamia": [35.1167, 33.3167],
+  "Valletta": [35.8989, 14.5146],
+  "Birkirkara": [35.8972, 14.4611],
+  "Mosta": [35.9089, 14.4256],
+  "Qormi": [35.8767, 14.4719],
+  "Sliema": [35.9122, 14.5017],
+  "Naxxar": [35.9106, 14.4494],
+  "San Ġwann": [35.9022, 14.4728],
+  "Żabbar": [35.8756, 14.5361],
+  "Luxembourg": [49.6116, 6.1319],
+  "Esch-sur-Alzette": [49.4958, 5.9806],
+  "Differdange": [49.5244, 5.8917],
+  "Dudelange": [49.4783, 6.0872],
+  "Ettelbruck": [49.8478, 6.1042],
+  "Diekirch": [49.8686, 6.1594],
+  "Wiltz": [49.9667, 5.9333],
+  "Grevenmacher": [49.6800, 6.4408],
+}
+
+exports.OBIECTIVE_ITINERAR = [
+  { nume: "Castelul Bran", localitate: "Bran", judet: "Brasov" },
+  { nume: "Castelul Peles", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Palatul Parlamentului", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Salina Turda", localitate: "Turda", judet: "Cluj" },
+  { nume: "Muzeul National de Istorie Naturala „Grigore Antipa”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Therme Bucuresti", localitate: "Balotesti", judet: "Ilfov" },
+  { nume: "Dino Parc Rasnov", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cetatea Alba Carolina", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Castelul Corvinilor", localitate: "Hunedoara", judet: "Hunedoara" },
+  { nume: "Muzeul National al Satului „Dimitrie Gusti”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cetatea Deva", localitate: "Deva", judet: "Hunedoara" },
+  { nume: "Cetatea Rasnov", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cetatea de Scaun a Sucevei", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Salina Praid", localitate: "Praid", judet: "Harghita" },
+  { nume: "Ansamblul Sculptural Constantin Brancusi", localitate: "Targu Jiu", judet: "Gorj" },
+  { nume: "Castelul Cantacuzino", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Turnul cu Ceas si Cetatea Sighisoara", localitate: "Sighisoara", judet: "Mures" },
+  { nume: "Cetatea Fagaras", localitate: "Fagaras", judet: "Brasov" },
+  { nume: "Muzeul National Brukenthal", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Palatul Culturii", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Aquapark Nymphaea", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Muzeul National al Taranului Roman", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cetatea Neamt", localitate: "Targu Neamt", judet: "Neamt" },
+  { nume: "Castelul Sturdza", localitate: "Miclauseni", judet: "Iasi" },
+  { nume: "Muzeul National de Istorie a Romaniei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Libearty Bear Sanctuary", localitate: "Zarnesti", judet: "Brasov" },
+  { nume: "Palatul Mogosoaia", localitate: "Mogosoaia", judet: "Ilfov" },
+  { nume: "Cetatea Poenari", localitate: "Arefu", judet: "Arges" },
+  { nume: "Catedrala Mantuirii Neamului", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Manastirea Voronet", localitate: "Gura Humorului", judet: "Suceava" },
+  { nume: "Palatul Brancovenesc", localitate: "Sambata de Sus", judet: "Brasov" },
+  { nume: "MNAR (Muzeul National de Arta al Romaniei)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Parc Aventura Brasov", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Planetariul Baia Mare", localitate: "Baia Mare", judet: "Maramures" },
+  { nume: "Complexul de Agrement Cheile Gradistei", localitate: "Moieciu", judet: "Brasov" },
+  { nume: "Salina Slanic Prahova", localitate: "Slanic", judet: "Prahova" },
+  { nume: "Cetatea Enisala", localitate: "Enisala", judet: "Tulcea" },
+  { nume: "Rosia Montana (Sit UNESCO)", localitate: "Rosia Montana", judet: "Alba" },
+  { nume: "Palatul Ghika", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Castelul de Lut Valea Zanelor", localitate: "Porumbacu de Sus", judet: "Sibiu" },
+  { nume: "Castelul Karolyi", localitate: "Carei", judet: "Satu Mare" },
+  { nume: "Castelul Banffy", localitate: "Bontida", judet: "Cluj" },
+  { nume: "Castelul Josika", localitate: "Surduc", judet: "Salaj" },
+  { nume: "Castelul Teleki", localitate: "Gornesti", judet: "Mures" },
+  { nume: "Castelul Bethlen-Haller", localitate: "Cetatea de Balta", judet: "Alba" },
+  { nume: "Palatul Roznovanu (Primaria)", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Palatul Baroc (Muzeul de Arta)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Palatul Dicasterial", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Palatul Vulturul Negru", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Palatul Episcopiei Romano-Catolice", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Palatul Apollo", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Palatul Culturii", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Palatul Administrativ", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Palatul Jean Mihail (Muzeul de Arta)", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Palatul Marincu", localitate: "Calafat", judet: "Dolj" },
+  { nume: "Palatul Domnesc de la Curtea Noua", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Cotroceni", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Regal", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Stirbey", localitate: "Buftea", judet: "Ilfov" },
+  { nume: "Palatul Snagov", localitate: "Snagov", judet: "Ilfov" },
+  { nume: "Castelul Iulia Hasdeu", localitate: "Campina", judet: "Prahova" },
+  { nume: "Castelul Marta", localitate: "Arad", judet: "Arad" },
+  { nume: "Palatul Administrativ", localitate: "Arad", judet: "Arad" },
+  { nume: "Castelul Nopcsa", localitate: "Sacel", judet: "Hunedoara" },
+  { nume: "Castelul Kendeffy", localitate: "Santamaria-Orlea", judet: "Hunedoara" },
+  { nume: "Castelul Magna Curia", localitate: "Deva", judet: "Hunedoara" },
+  { nume: "Castelul Rhedey", localitate: "Sangeorgiu de Padure", judet: "Mures" },
+  { nume: "Castelul Haller", localitate: "Ogra", judet: "Mures" },
+  { nume: "Castelul Apafi", localitate: "Malancrav", judet: "Sibiu" },
+  { nume: "Palatul Brukenthal", localitate: "Avrig", judet: "Sibiu" },
+  { nume: "Castelul Sukosd-Bethlen", localitate: "Racos", judet: "Brasov" },
+  { nume: "Castelul Beldy Ladislau", localitate: "Budila", judet: "Brasov" },
+  { nume: "Castelul Mikes", localitate: "Zabala", judet: "Covasna" },
+  { nume: "Castelul Kalnoky", localitate: "Miclosoara", judet: "Covasna" },
+  { nume: "Castelul Daniel", localitate: "Talisoara", judet: "Covasna" },
+  { nume: "Castelul Szentkereszty", localitate: "Arcus", judet: "Covasna" },
+  { nume: "Conacul Bellu", localitate: "Urlati", judet: "Prahova" },
+  { nume: "Conacul Pana Filipescu", localitate: "Filipestii de Targ", judet: "Prahova" },
+  { nume: "Conacul Octavian Goga", localitate: "Ciucea", judet: "Cluj" },
+  { nume: "Castelul Bocskai", localitate: "Aghiresu", judet: "Cluj" },
+  { nume: "Castelul Kemeny", localitate: "Brancovenesti", judet: "Mures" },
+  { nume: "Palatul Domnesc", localitate: "Cotnari", judet: "Iasi" },
+  { nume: "Palatul Cuza", localitate: "Ruginoasa", judet: "Iasi" },
+  { nume: "Palatul Comisiei Europene a Dunarii", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Palatul Episcopal", localitate: "Galati", judet: "Galati" },
+  { nume: "Hanul lui Manuc", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Hanul Gabroveni", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Palatul Cazinoului", localitate: "Vatra Dornei", judet: "Suceava" },
+  { nume: "Castelul Wesselényi", localitate: "Jibou", judet: "Salaj" },
+  { nume: "Castelul Teleki", localitate: "Pribilesti", judet: "Maramures" },
+  { nume: "Cetatea Rupea", localitate: "Rupea", judet: "Brasov" },
+  { nume: "Cetatea Sighisoara", localitate: "Sighisoara", judet: "Mures" },
+  { nume: "Cetatea Ciceu", localitate: "Ciceu-Corabia", judet: "Bistrita-Nasaud" },
+  { nume: "Cetatea Bistritei (Turnul Dogarilor)", localitate: "Bistrita", judet: "Bistrita-Nasaud" },
+  { nume: "Cetatea Medievala", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Cetatea Feldioara", localitate: "Feldioara", judet: "Brasov" },
+  { nume: "Cetatea Hoghiz", localitate: "Hoghiz", judet: "Brasov" },
+  { nume: "Cetatea Fetei", localitate: "Floresti", judet: "Cluj" },
+  { nume: "Cetatea Bologa", localitate: "Poieni", judet: "Cluj" },
+  { nume: "Cetatea Liteni", localitate: "Liteni", judet: "Cluj" },
+  { nume: "Cetatea Coltesti", localitate: "Coltesti", judet: "Alba" },
+  { nume: "Cetatea Calnic (UNESCO)", localitate: "Calnic", judet: "Alba" },
+  { nume: "Cetatea Soimos", localitate: "Lipova", judet: "Arad" },
+  { nume: "Cetatea Siria", localitate: "Siria", judet: "Arad" },
+  { nume: "Cetatea Dezna", localitate: "Dezna", judet: "Arad" },
+  { nume: "Cetatea Ineu", localitate: "Ineu", judet: "Arad" },
+  { nume: "Cetatea Aradului", localitate: "Arad", judet: "Arad" },
+  { nume: "Cetatea Timisoara (Bastionul Theresia)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Cetatea Severinului", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Cetatea Oradea", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Cetatea Porolissum", localitate: "Moigrad-Porolissum", judet: "Salaj" },
+  { nume: "Cetatea Buciumi", localitate: "Buciumi", judet: "Salaj" },
+  { nume: "Cetatea Almasului", localitate: "Almasu", judet: "Salaj" },
+  { nume: "Cetatea Chioarului", localitate: "Remetea Chioarului", judet: "Maramures" },
+  { nume: "Sarmizegetusa Regia (UNESCO)", localitate: "Gradistea de Munte", judet: "Hunedoara" },
+  { nume: "Cetatea Costesti-Blidaru (UNESCO)", localitate: "Costesti", judet: "Hunedoara" },
+  { nume: "Cetatea Costesti-Cetatuie (UNESCO)", localitate: "Costesti", judet: "Hunedoara" },
+  { nume: "Cetatea Piatra Rosie (UNESCO)", localitate: "Alun", judet: "Hunedoara" },
+  { nume: "Cetatea Banita (UNESCO)", localitate: "Banita", judet: "Hunedoara" },
+  { nume: "Ulpia Traiana Sarmizegetusa", localitate: "Sarmizegetusa", judet: "Hunedoara" },
+  { nume: "Cetatea Malaiesti", localitate: "Malaiesti", judet: "Hunedoara" },
+  { nume: "Cetatea Giurgiu", localitate: "Giurgiu", judet: "Giurgiu" },
+  { nume: "Cetatea Chilia Noua", localitate: "Chilia Veche", judet: "Tulcea" },
+  { nume: "Cetatea Argamum", localitate: "Jurilovca", judet: "Tulcea" },
+  { nume: "Cetatea Ibida", localitate: "Slava Rusa", judet: "Tulcea" },
+  { nume: "Cetatea Noviodunum", localitate: "Isaccea", judet: "Tulcea" },
+  { nume: "Cetatea Dinogetia", localitate: "Garvan", judet: "Tulcea" },
+  { nume: "Cetatea Histria", localitate: "Istria", judet: "Constanta" },
+  { nume: "Cetatea Capidava", localitate: "Topalu", judet: "Constanta" },
+  { nume: "Cetatea Carsium", localitate: "Harsova", judet: "Constanta" },
+  { nume: "Cetatea Callatis", localitate: "Mangalia", judet: "Constanta" },
+  { nume: "Cetatea Tomis", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Tropaeum Traiani", localitate: "Adamclisi", judet: "Constanta" },
+  { nume: "Cetatea Sacidava", localitate: "Alimanesti", judet: "Constanta" },
+  { nume: "Cetatea Sucidava", localitate: "Celeiu", judet: "Olt" },
+  { nume: "Cetatea Turnu", localitate: "Turnu Magurele", judet: "Teleorman" },
+  { nume: "Curtea Domneasca din Targoviste (Turnul Chindiei)", localitate: "Targoviste", judet: "Dambovita" },
+  { nume: "Curtea Domneasca din Suceava", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Curtea Domneasca din Piatra Neamt", localitate: "Piatra Neamt", judet: "Neamt" },
+  { nume: "Curtea Veche", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Turnul Sfatului", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Dulgherilor", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Olarilor", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Turnul Pompierilor", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Turnul Croitorilor", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Turnul Alb", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Turnul Negru", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Bastionul Tesatorilor", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Cetatuia de pe Straja", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Cetatuia Clujului", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Manastirea Sucevita (UNESCO)", localitate: "Sucevita", judet: "Suceava" },
+  { nume: "Manastirea Moldovita (UNESCO)", localitate: "Vatra Moldovitei", judet: "Suceava" },
+  { nume: "Manastirea Humor (UNESCO)", localitate: "Manastirea Humorului", judet: "Suceava" },
+  { nume: "Manastirea Arbore (UNESCO)", localitate: "Arbore", judet: "Suceava" },
+  { nume: "Manastirea Patrauti (UNESCO)", localitate: "Patrauti", judet: "Suceava" },
+  { nume: "Manastirea Putna", localitate: "Putna", judet: "Suceava" },
+  { nume: "Manastirea Dragomirna", localitate: "Mitocu Dragomirnei", judet: "Suceava" },
+  { nume: "Manastirea Bogdana", localitate: "Radauti", judet: "Suceava" },
+  { nume: "Manastirea Risca", localitate: "Risca", judet: "Suceava" },
+  { nume: "Manastirea Slatina", localitate: "Slatina", judet: "Suceava" },
+  { nume: "Manastirea Agapia", localitate: "Agapia", judet: "Neamt" },
+  { nume: "Manastirea Varatec", localitate: "Varatec", judet: "Neamt" },
+  { nume: "Manastirea Secu", localitate: "Vanatori-Neamt", judet: "Neamt" },
+  { nume: "Manastirea Sihastria", localitate: "Vanatori-Neamt", judet: "Neamt" },
+  { nume: "Manastirea Bistrita", localitate: "Alexandru cel Bun", judet: "Neamt" },
+  { nume: "Manastirea Durau", localitate: "Ceahlau", judet: "Neamt" },
+  { nume: "Manastirea Pangarati", localitate: "Pangarati", judet: "Neamt" },
+  { nume: "Manastirea Tazlau", localitate: "Tazlau", judet: "Neamt" },
+  { nume: "Manastirea Horezu (UNESCO)", localitate: "Horezu", judet: "Vâlcea" },
+  { nume: "Manastirea Cozia", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Dintr-un Lemn", localitate: "Francesti", judet: "Vâlcea" },
+  { nume: "Manastirea Govora", localitate: "Mihaesti", judet: "Vâlcea" },
+  { nume: "Manastirea Bistrita", localitate: "Costesti", judet: "Vâlcea" },
+  { nume: "Manastirea Arnota", localitate: "Costesti", judet: "Vâlcea" },
+  { nume: "Manastirea Turnu", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Stanisora", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Manastirea Curtea de Arges", localitate: "Curtea de Arges", judet: "Arges" },
+  { nume: "Manastirea Aninoasa", localitate: "Aninoasa", judet: "Arges" },
+  { nume: "Manastirea Slanic", localitate: "Aninoasa", judet: "Arges" },
+  { nume: "Manastirea Robaia", localitate: "Musatesti", judet: "Arges" },
+  { nume: "Manastirea Namaesti (Rupestra)", localitate: "Namaesti", judet: "Arges" },
+  { nume: "Manastirea Corbii de Piatra (Rupestra)", localitate: "Corbi", judet: "Arges" },
+  { nume: "Manastirea Cetatuia Negru Voda", localitate: "Cetateni", judet: "Arges" },
+  { nume: "Manastirea Tismana", localitate: "Tismana", judet: "Gorj" },
+  { nume: "Manastirea Polovragi", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Manastirea Lainici", localitate: "Schela", judet: "Gorj" },
+  { nume: "Manastirea Crasna", localitate: "Crasna", judet: "Gorj" },
+  { nume: "Manastirea Barsana (UNESCO)", localitate: "Barsana", judet: "Maramures" },
+  { nume: "Manastirea Peri-Sapanta", localitate: "Sapanta", judet: "Maramures" },
+  { nume: "Manastirea Rohia", localitate: "Targu Lapus", judet: "Maramures" },
+  { nume: "Manastirea Moisei", localitate: "Moisei", judet: "Maramures" },
+  { nume: "Biserica Ieud Deal (UNESCO)", localitate: "Ieud", judet: "Maramures" },
+  { nume: "Biserica Poienile Izei (UNESCO)", localitate: "Poienile Izei", judet: "Maramures" },
+  { nume: "Biserica Surdesti (UNESCO)", localitate: "Sisesti", judet: "Maramures" },
+  { nume: "Biserica Plopis (UNESCO)", localitate: "Sisesti", judet: "Maramures" },
+  { nume: "Biserica Desesti (UNESCO)", localitate: "Desesti", judet: "Maramures" },
+  { nume: "Biserica Budesti Josani (UNESCO)", localitate: "Budesti", judet: "Maramures" },
+  { nume: "Manastirea Nicula", localitate: "Nicula", judet: "Cluj" },
+  { nume: "Manastirea Ramet", localitate: "Ramet", judet: "Alba" },
+  { nume: "Manastirea Prislop", localitate: "Silvasu de Sus", judet: "Hunedoara" },
+  { nume: "Manastirea Crisan", localitate: "Crisan", judet: "Hunedoara" },
+  { nume: "Manastirea Bodrog (Hodos-Bodrog)", localitate: "Bodrogu Nou", judet: "Arad" },
+  { nume: "Manastirea Radna (Maria Radna)", localitate: "Lipova", judet: "Arad" },
+  { nume: "Manastirea Sfanta Maria", localitate: "Techirghiol", judet: "Constanta" },
+  { nume: "Manastirea Dervent", localitate: "Galita", judet: "Constanta" },
+  { nume: "Manastirea Pestera Sfantului Andrei", localitate: "Ion Corvin", judet: "Constanta" },
+  { nume: "Manastirea Celic-Dere", localitate: "Frecatei", judet: "Tulcea" },
+  { nume: "Manastirea Saon", localitate: "Frecatei", judet: "Tulcea" },
+  { nume: "Manastirea Cocos", localitate: "Niculitel", judet: "Tulcea" },
+  { nume: "Manastirea Cernica", localitate: "Pantelimon", judet: "Ilfov" },
+  { nume: "Manastirea Pasarea", localitate: "Branesti", judet: "Ilfov" },
+  { nume: "Manastirea Caldarusani", localitate: "Gruiu", judet: "Ilfov" },
+  { nume: "Manastirea Snagov", localitate: "Snagov", judet: "Ilfov" },
+  { nume: "Manastirea Caraiman", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Manastirea Ghighiu", localitate: "Barcanesti", judet: "Prahova" },
+  { nume: "Manastirea Sinaia", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Manastirea Zamfira", localitate: "Lipanesti", judet: "Prahova" },
+  { nume: "Manastirea Crasna", localitate: "Crasna", judet: "Prahova" },
+  { nume: "Manastirea Ciolanu", localitate: "Tisau", judet: "Buzau" },
+  { nume: "Manastirea Frasinei", localitate: "Muereasca", judet: "Vâlcea" },
+  { nume: "Biserica Neagra", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Biserica Sfantul Nicolae", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Catedrala Evanghelica Ciriac", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Catedrala Mitopolitana Ortodoxa", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Biserica Sfantul Mihail", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Catedrala Mitropolitana Ortodoxa", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Catedrala Romano-Catolica Sfantul Mihail", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Catedrala Incoronarii", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Catedrala Mitropolitana", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Catedrala Mitropolitana", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Biserica Fortificata Viscri (UNESCO)", localitate: "Viscri", judet: "Brasov" },
+  { nume: "Biserica Fortificata Prejmer (UNESCO)", localitate: "Prejmer", judet: "Brasov" },
+  { nume: "Biserica Fortificata Biertan (UNESCO)", localitate: "Biertan", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Saschiz (UNESCO)", localitate: "Saschiz", judet: "Mures" },
+  { nume: "Biserica Fortificata Darjiu (UNESCO)", localitate: "Darjiu", judet: "Harghita" },
+  { nume: "Biserica Fortificata Calnic (UNESCO)", localitate: "Calnic", judet: "Alba" },
+  { nume: "Biserica Fortificata Valea Viilor (UNESCO)", localitate: "Valea Viilor", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Harman", localitate: "Harman", judet: "Brasov" },
+  { nume: "Biserica Fortificata Cristian", localitate: "Cristian", judet: "Brasov" },
+  { nume: "Biserica Fortificata Codlea", localitate: "Codlea", judet: "Brasov" },
+  { nume: "Biserica Fortificata Bod", localitate: "Bod", judet: "Brasov" },
+  { nume: "Biserica Fortificata Vulcan", localitate: "Vulcan", judet: "Brasov" },
+  { nume: "Biserica Fortificata Sanpetru", localitate: "Sanpetru", judet: "Brasov" },
+  { nume: "Biserica Fortificata Cisnadioara", localitate: "Cisnadioara", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Cisnadie", localitate: "Cisnadie", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Cristian", localitate: "Cristian", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Axente Sever", localitate: "Axente Sever", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Medias (Castelul Margarete)", localitate: "Medias", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Agnita", localitate: "Agnita", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Moardas", localitate: "Moardas", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Richis", localitate: "Richis", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Alma Vii", localitate: "Alma Vii", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Bazna", localitate: "Bazna", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Hosman", localitate: "Hosman", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Dealu Frumos", localitate: "Dealu Frumos", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Stejarisu", localitate: "Stejarisu", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Iacobeni", localitate: "Iacobeni", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Carta (Abatia Cisterciana)", localitate: "Carta", judet: "Sibiu" },
+  { nume: "Biserica Fortificata Apold", localitate: "Apold", judet: "Mures" },
+  { nume: "Biserica Fortificata Archita", localitate: "Archita", judet: "Mures" },
+  { nume: "Biserica Fortificata Cloasterf", localitate: "Cloasterf", judet: "Mures" },
+  { nume: "Biserica Fortificata Danes", localitate: "Danes", judet: "Mures" },
+  { nume: "Biserica Fortificata Nades", localitate: "Nades", judet: "Mures" },
+  { nume: "Biserica Fortificata Bagaciu", localitate: "Bagaciu", judet: "Mures" },
+  { nume: "Biserica Fortificata Aiud", localitate: "Aiud", judet: "Alba" },
+  { nume: "Cimitirul Vesel", localitate: "Sapanta", judet: "Maramures" },
+  { nume: "Cimitirul Central (Hajongard)", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Cimitirul Bellu", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cimitirul Evreiesc", localitate: "Siret", judet: "Suceava" },
+  { nume: "Cimitirul International al Eroilor", localitate: "Valea Uzului", judet: "Harghita" },
+  { nume: "Sfinxul si Babele", localitate: "Muntii Bucegi", judet: "Prahova" },
+  { nume: "Pestera Scarisoara (Ghetarul)", localitate: "Garda de Sus", judet: "Alba" },
+  { nume: "Pestera Ursilor", localitate: "Chiscau", judet: "Bihor" },
+  { nume: "Pestera Muierilor", localitate: "Baia de Fier", judet: "Gorj" },
+  { nume: "Pestera Polovragi", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Pestera Dambovicioara", localitate: "Dambovicioara", judet: "Arges" },
+  { nume: "Pestera Meziad", localitate: "Meziad", judet: "Bihor" },
+  { nume: "Pestera Vantului", localitate: "Suncuius", judet: "Bihor" },
+  { nume: "Pestera Crystal din Mina Farcu", localitate: "Rosia", judet: "Bihor" },
+  { nume: "Pestera Limanu", localitate: "Limanu", judet: "Constanta" },
+  { nume: "Pestera Hodos (Gura Dobrogei)", localitate: "Targusor", judet: "Constanta" },
+  { nume: "Pestera Sfantului Ioan Casian", localitate: "Targusor", judet: "Constanta" },
+  { nume: "Pestera Ialomitei", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Pestera Bolii", localitate: "Petrosani", judet: "Hunedoara" },
+  { nume: "Pestera Comarnic", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Pestera Popovât", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Pestera Veterani", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Pestera Ponicova", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Pestera Topolnita", localitate: "Ciresu", judet: "Mehedinti" },
+  { nume: "Pestera Sugau", localitate: "Voslabeni", judet: "Harghita" },
+  { nume: "Pestera Valea Cetatii", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Vulcanii Noroiosi (Paclele Mari si Mici)", localitate: "Berca", judet: "Buzau" },
+  { nume: "Gradina Zmeilor", localitate: "Galgau Almasului", judet: "Salaj" },
+  { nume: "Detunatele (Detunata Goala si Detunata Flocoasa)", localitate: "Bucium", judet: "Alba" },
+  { nume: "Rapa Rosie", localitate: "Sebes", judet: "Alba" },
+  { nume: "Cheile Turzii", localitate: "Petrestii de Jos", judet: "Cluj" },
+  { nume: "Cheile Bicazului", localitate: "Bicaz-Chei, Judetele Neamt / Harghita", judet: "Neamt" },
+  { nume: "Cheile Nerei", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Cheile Carasului", localitate: "Carasova", judet: "Caras-Severin" },
+  { nume: "Cheile Sohodolului", localitate: "Runcu", judet: "Gorj" },
+  { nume: "Cheile Oltetului", localitate: "Polovragi", judet: "Gorj" },
+  { nume: "Cheile Tisitei", localitate: "Tulnici", judet: "Vrancea" },
+  { nume: "Cheile Zanoagei", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Cheile Rametului", localitate: "Ramet", judet: "Alba" },
+  { nume: "Cheile Gradistei", localitate: "Moieciu", judet: "Brasov" },
+  { nume: "Cheile Rasnoavei", localitate: "Rasnov", judet: "Brasov" },
+  { nume: "Cascada Bigar", localitate: "Bozovici", judet: "Caras-Severin" },
+  { nume: "Cascada Cailor", localitate: "Borsa", judet: "Maramures" },
+  { nume: "Cascada Beusnita", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Cascada Duruitoarea", localitate: "Ceahlau", judet: "Neamt" },
+  { nume: "Cascada Balea", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Cascada Valul Miresei", localitate: "Rachitele", judet: "Cluj" },
+  { nume: "Cascada Urlatoarea", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Cascada Putnei", localitate: "Tulnici", judet: "Vrancea" },
+  { nume: "Cascada Lotrisor", localitate: "Calimanesti", judet: "Vâlcea" },
+  { nume: "Cascada Scorus", localitate: "Malaia", judet: "Vâlcea" },
+  { nume: "Cascada Ciucas", localitate: "Mihai Viteazu", judet: "Cluj" },
+  { nume: "Lacul Rosu", localitate: "Lacu Rosu", judet: "Harghita" },
+  { nume: "Lacul Sfanta Ana", localitate: "Bixad", judet: "Harghita" },
+  { nume: "Lacul Bâlea", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Lacul Bucura", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Lacul Zanoaga", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Lacul Ochiul Beiului", localitate: "Sasca Montana", judet: "Caras-Severin" },
+  { nume: "Lacul Dracului", localitate: "Carbunari", judet: "Caras-Severin" },
+  { nume: "Lacul Vidraru", localitate: "Arefu", judet: "Arges" },
+  { nume: "Lacul Izvorul Muntelui (Bicaz)", localitate: "Bicaz", judet: "Neamt" },
+  { nume: "Lacul Colibita", localitate: "Colibita", judet: "Bistrita-Nasaud" },
+  { nume: "Lacul Iezer", localitate: "Muntii Rodnei", judet: "Maramures" },
+  { nume: "Lacul Albastru", localitate: "Baia Sprie", judet: "Maramures" },
+  { nume: "Lacul Siriu", localitate: "Siriu", judet: "Buzau" },
+  { nume: "Lacul Razim-Sinoe", localitate: "Jurilovca", judet: "Tulcea" },
+  { nume: "Focul Viu de la Andreiasu de Jos", localitate: "Andreiasu de Jos", judet: "Vrancea" },
+  { nume: "Focurile Vii de la Lopatari", localitate: "Lopatari", judet: "Buzau" },
+  { nume: "Cazanele Dunarii (Mari si Mici)", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Chipul lui Decebal", localitate: "Dubova", judet: "Mehedinti" },
+  { nume: "Podul lui Dumnezeu", localitate: "Ponoarele", judet: "Mehedinti" },
+  { nume: "Padurea Letea", localitate: "C.A. Rosetti", judet: "Tulcea" },
+  { nume: "Padurea Caraorman", localitate: "Crisan", judet: "Tulcea" },
+  { nume: "Gradina Botanica „Alexandru Borza”", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Gradina Botanica „Anastasie Fatu”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Gradina Botanica „Dimitrie Brândza”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Gradina Botanica Jibou", localitate: "Jibou", judet: "Salaj" },
+  { nume: "Gradina Botanica Bucov", localitate: "Bucov", judet: "Prahova" },
+  { nume: "Delta Dunarii (Rezervatie Biosfera)", localitate: "Judetul Tulcea", judet: "Tulcea" },
+  { nume: "Parcul National Retezat", localitate: "Judetul Hunedoara", judet: "Hunedoara" },
+  { nume: "Parcul National Piatra Craiului", localitate: "Zarnesti", judet: "Brasov" },
+  { nume: "Parcul National Cheile Nerei-Beusnita", localitate: "Judetul Caras-Severin", judet: "Caras-Severin" },
+  { nume: "Parcul National Ceahlau", localitate: "Izvoru Muntelui", judet: "Neamt" },
+  { nume: "Parcul National Cozia", localitate: "Brezoi", judet: "Vâlcea" },
+  { nume: "Sfinxul din Banat", localitate: "Toplet", judet: "Caras-Severin" },
+  { nume: "Transfagarasan (Soseaua DN7C)", localitate: "Judetele Arges / Sibiu", judet: "Arges" },
+  { nume: "Transalpina (Soseaua DN67C)", localitate: "Judetele Gorj / Alba", judet: "Gorj" },
+  { nume: "Transbucegi (Soseaua DJ713)", localitate: "Judetele Dambovita / Prahova", judet: "Dambovita" },
+  { nume: "Transrarau (Soseaua DJ175B)", localitate: "Pojorata / Chiril", judet: "Suceava" },
+  { nume: "Transursoaia (Soseaua DN1R)", localitate: "Albac / Huedin, Judetele Alba / Cluj", judet: "Alba" },
+  { nume: "Transsemenic (Soseaua DJ582)", localitate: "Slatina-Timis / Resita", judet: "Caras-Severin" },
+  { nume: "Pasul Tihuta", localitate: "Piatra Fantanele", judet: "Bistrita-Nasaud" },
+  { nume: "Pasul Prislop", localitate: "Borsa", judet: "Maramures" },
+  { nume: "Mocanita de pe Valea Vaserului", localitate: "Viseu de Sus", judet: "Maramures" },
+  { nume: "Mocanita Hutulca", localitate: "Moldovita", judet: "Suceava" },
+  { nume: "Mocanita Apusenilor", localitate: "Abrud", judet: "Alba" },
+  { nume: "Calea Ferata Oravita-Anina", localitate: "Oravita", judet: "Caras-Severin" },
+  { nume: "Podul Anghel Saligny", localitate: "Cernavoda", judet: "Constanta" },
+  { nume: "Canalul Dunare-Marea Neagra", localitate: "Judetul Constanta", judet: "Constanta" },
+  { nume: "Barajul Vidraru", localitate: "Arefu", judet: "Arges" },
+  { nume: "Barajul Bicaz", localitate: "Bicaz", judet: "Neamt" },
+  { nume: "Barajul Portile de Fier I", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Barajul Gura Apelor", localitate: "Muntii Retezat", judet: "Hunedoara" },
+  { nume: "Barajul Paltinu", localitate: "Valea Doftanei", judet: "Prahova" },
+  { nume: "Barajul Bolboci", localitate: "Moroeni", judet: "Dambovita" },
+  { nume: "Salina Ocnele Mari", localitate: "Ocnele Mari", judet: "Vâlcea" },
+  { nume: "Salina Cacica", localitate: "Cacica", judet: "Suceava" },
+  { nume: "Telegondola Mamaia", localitate: "Mamaia", judet: "Constanta" },
+  { nume: "Telecabina Bâlea Lac", localitate: "Cartisoara", judet: "Sibiu" },
+  { nume: "Telecabina Busteni-Babele", localitate: "Busteni", judet: "Prahova" },
+  { nume: "Telecabina Sinaia", localitate: "Sinaia", judet: "Prahova" },
+  { nume: "Funicularul din Resita", localitate: "Resita", judet: "Caras-Severin" },
+  { nume: "Portul Turistic Tomis", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Faleza Dunarii", localitate: "Galati", judet: "Galati" },
+  { nume: "Faleza Dunarii", localitate: "Braila", judet: "Braila" },
+  { nume: "Muzeul Recordurilor Romanesti", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Hartilor si Cartii Vechi", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National de Artă Contemporana (MNAC)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Literaturii Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National Filatelic", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Municipiului Bucuresti (Palatul Sutu)", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National Tehnic „Dimitrie Leonida”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National al Aviatiei Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Cailor Ferate Romane", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Kitsch-ului Romanesc", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul National „George Enescu”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Theodor Pallady", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Zambaccian", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul de Arta „Vasile Grigore”", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Casa Memoriala „Tudor Arghezi", localitate: "Martisor” – Bucuresti", judet: "Bucuresti" },
+  { nume: "Muzeul Satului Maramuresean", localitate: "Sighetu Marmatiei", judet: "Maramures" },
+  { nume: "Muzeul Satului Banatean", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Muzeul Satului Bucovinean", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Muzeul ASTRA (Civilizatiei Populare Traditionale)", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul Etnografic al Transilvaniei", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Muzeul Tarii Crisurilor", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Muzeul Regiunii Portilor de Fier", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Muzeul Olteniei", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Muzeul Ceasului „Nicolae Simache”", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Muzeul National al Petrolului", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Muzeul Judetean de Istorie si Arheologie", localitate: "Prahova", judet: "Prahova" },
+  { nume: "Muzeul Chihlimbarului", localitate: "Colti", judet: "Buzau" },
+  { nume: "Muzeul National al Carpatilor Rasariteni", localitate: "Sfântu Gheorghe", judet: "Covasna" },
+  { nume: "Muzeul Secuiesc al Ciucului", localitate: "Miercurea Ciuc", judet: "Harghita" },
+  { nume: "Muzeul de Arta Comparata", localitate: "Sângeorz-Bai", judet: "Bistrita-Nasaud" },
+  { nume: "Muzeul Memorial „Octavian Goga”", localitate: "Ciucea", judet: "Cluj" },
+  { nume: "Muzeul Memorial „Ioan Slavici si Emil Montia”", localitate: "Siria", judet: "Arad" },
+  { nume: "Muzeul Aurului", localitate: "Brad", judet: "Hunedoara" },
+  { nume: "Muzeul Mineritului", localitate: "Petrosani", judet: "Hunedoara" },
+  { nume: "Muzeul Judetean de Istorie", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul Casa Muresenilor", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul Primei Scoli Romanesti", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Muzeul National al Unirii", localitate: "Alba Iulia", judet: "Alba" },
+  { nume: "Muzeul de Istorie a Farmaciei", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul de Istorie Naturala", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Muzeul Cinegetic", localitate: "Posada", judet: "Prahova" },
+  { nume: "Muzeul Etnografic Samuil si Eugenia Ionel", localitate: "Radauti", judet: "Suceava" },
+  { nume: "Muzeul Oului", localitate: "Vama", judet: "Suceava" },
+  { nume: "Muzeul Oului Încondeiat Lucia Condrea", localitate: "Moldovita", judet: "Suceava" },
+  { nume: "Muzeul Arta Lemnului", localitate: "Câmpulung Moldovenesc", judet: "Suceava" },
+  { nume: "Muzeul Apelor „Mihai Bacescu”", localitate: "Falticeni", judet: "Suceava" },
+  { nume: "Muzeul Popa (Arta Naiva)", localitate: "Tarpesti", judet: "Neamt" },
+  { nume: "Muzeul de Istorie si Etnografie", localitate: "Targu Neamt", judet: "Neamt" },
+  { nume: "Muzeul Vasile Pârvan", localitate: "Bârlad", judet: "Vaslui" },
+  { nume: "Muzeul Municipal", localitate: "Husi", judet: "Vaslui" },
+  { nume: "Muzeul de Istorie „Paul Paltanea”", localitate: "Galati", judet: "Galati" },
+  { nume: "Muzeul de Stiinte ale Naturii", localitate: "Galati", judet: "Galati" },
+  { nume: "Muzeul Brailei „Carol I”", localitate: "Braila", judet: "Braila" },
+  { nume: "Muzeul de Istorie Nationala si Arheologie", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul de Arta Populara", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul Marinei Romane", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Edificiul Roman cu Mozaic", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Muzeul Farului", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Centrul Eco-Turism Delta Dunarii", localitate: "Tulcea", judet: "Tulcea" },
+  { nume: "Muzeul de Istorie si Arheologie", localitate: "Tulcea", judet: "Tulcea" },
+  { nume: "Ateneul Roman", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Arcul de Triumf", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cazinoul din Constanta", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Teatrul National „Vasile Alecsandri”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Teatrul National „Mihai Eminescu”", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Teatrul National Cluj-Napoca", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Teatrul National „Radu Stanca”", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Teatrul National Targu Mures", localitate: "Targu Mures", judet: "Mures" },
+  { nume: "Teatrul National „Marin Sorescu”", localitate: "Craiova", judet: "Dolj" },
+  { nume: "Teatrul Clasic „Ioan Slavici”", localitate: "Arad", judet: "Arad" },
+  { nume: "Teatrul de Stat", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Opera Nationala Bucuresti", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Opera Nationala Romana", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Opera Nationala Romana", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Opera Nationala Romana", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Piata Sfatului", localitate: "Brasov", judet: "Brasov" },
+  { nume: "Piata Mare", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Mica (Podul Minciunilor)", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Huet", localitate: "Sibiu", judet: "Sibiu" },
+  { nume: "Piata Unirii", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Piata Muzeului", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Piata Unirii", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Victoriei (Operei)", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Libertatii", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Piata Unirii", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Piata Avram Iancu", localitate: "Arad", judet: "Arad" },
+  { nume: "Piata Revolutiei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Piata Universitatii", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Piata Unirii", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Cazinoul Vatra Dornei", localitate: "Vatra Dornei", judet: "Suceava" },
+  { nume: "Palatul Prefecturii", localitate: "Suceava", judet: "Suceava" },
+  { nume: "Palatul Comunal", localitate: "Buzau", judet: "Buzau" },
+  { nume: "Cladirea Universitatii", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Cladirea Universitatii „Alexandru Ioan Cuza”", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Cladirea Universitatii Babes-Bolyai", localitate: "Cluj-Napoca", judet: "Cluj" },
+  { nume: "Palatul Culturii", localitate: "Ploiesti", judet: "Prahova" },
+  { nume: "Complexul Monumental Memorial Drobeta", localitate: "Drobeta-Turnu Severin", judet: "Mehedinti" },
+  { nume: "Monumentul Eroilor Patriei", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Crucea Eroilor de pe Vârful Caraiman", localitate: "Muntii Bucegi", judet: "Prahova" },
+  { nume: "Mausoleul de la Marasesti", localitate: "Marasesti", judet: "Vrancea" },
+  { nume: "Mausoleul de la Marasti", localitate: "Marasti", judet: "Vrancea" },
+  { nume: "Mausoleul de la Soveja", localitate: "Soveja", judet: "Vrancea" },
+  { nume: "Mausoleul Mateias", localitate: "Valea Mare-Pravat", judet: "Arges" },
+  { nume: "Memorialul Victimelor Comunismului si al Rezistentei", localitate: "Sighetu Marmatiei", judet: "Maramures" },
+  { nume: "Inchisoarea Pitesti (Memorial)", localitate: "Pitesti", judet: "Arges" },
+  { nume: "Inchisoarea Râmnicu Sărat (Memorial)", localitate: "Râmnicu Sărat", judet: "Buzău" },
+  { nume: "Monumentul Revolutiei", localitate: "Timisoara", judet: "Timis" },
+  { nume: "Farul Vechi", localitate: "Sulina", judet: "Tulcea" },
+  { nume: "Farul Genovez", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Moscheea Carol I", localitate: "Constanta", judet: "Constanta" },
+  { nume: "Sinagoga Mare", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Sinagoga din Sion", localitate: "Oradea", judet: "Bihor" },
+  { nume: "Templul Coral", localitate: "Bucuresti", judet: "Bucuresti" },
+  { nume: "Sinagoga Mare", localitate: "Iasi", judet: "Iasi" },
+  { nume: "Biserica de Piatra Sfantul Mihail", localitate: "Densus", judet: "Hunedoara" },
+  { nume: "Ansamblul Rupestru de la Murfatlar", localitate: "Murfatlar", judet: "Constanta" },
+  { nume: "Complexul Rupestru Alunis", localitate: "Colti", judet: "Buzau" },
+  { nume: "Rezervația de Zimbri „Dragos Voda”", localitate: "Vânători-Neamt", judet: "Neamt" },
+  { nume: "Rezervația de Zimbri Vama Buzaului", localitate: "Vama Buzaului", judet: "Brasov" },
+  { nume: "Rezervația de Zimbri „Neagra”", localitate: "Bucsani", judet: "Dâmbovița" },
+]
+
+exports.JUDET_NEIGHBORS = {
+  "Alba": ["Cluj", "Mures", "Harghita", "Sibiu", "Valcea", "Hunedoara", "Bihor", "Arad"],
+  "Arad": ["Bihor", "Cluj", "Alba", "Hunedoara", "Timis"],
+  "Arges": ["Valcea", "Sibiu", "Brasov", "Dambovita", "Teleorman", "Olt"],
+  "Bacau": ["Neamt", "Harghita", "Covasna", "Vrancea", "Vaslui", "Iasi"],
+  "Bihor": ["Satu Mare", "Salaj", "Cluj", "Arad"],
+  "Bistrita-Nasaud": ["Maramures", "Suceava", "Mures", "Cluj", "Salaj"],
+  "Botosani": ["Iasi", "Suceava"],
+  "Brasov": ["Covasna", "Harghita", "Mures", "Sibiu", "Arges", "Dambovita", "Prahova", "Buzau"],
+  "Braila": ["Galati", "Vrancea", "Buzau", "Ialomita", "Tulcea"],
+  "Buzau": ["Vrancea", "Braila", "Ialomita", "Prahova", "Brasov", "Covasna"],
+  "Caras-Severin": ["Timis", "Hunedoara", "Gorj", "Mehedinti"],
+  "Calarasi": ["Ialomita", "Constanta", "Giurgiu"],
+  "Cluj": ["Salaj", "Maramures", "Bistrita-Nasaud", "Mures", "Alba", "Bihor"],
+  "Constanta": ["Tulcea", "Ialomita", "Calarasi"],
+  "Covasna": ["Harghita", "Brasov", "Buzau", "Vrancea"],
+  "Dambovita": ["Arges", "Brasov", "Prahova", "Giurgiu", "Teleorman"],
+  "Dolj": ["Gorj", "Valcea", "Olt", "Mehedinti"],
+  "Galati": ["Vrancea", "Braila", "Vaslui", "Tulcea"],
+  "Giurgiu": ["Teleorman", "Dambovita", "Ilfov", "Calarasi"],
+  "Gorj": ["Valcea", "Dolj", "Mehedinti", "Hunedoara", "Caras-Severin"],
+  "Harghita": ["Mures", "Neamt", "Bacau", "Covasna", "Brasov"],
+  "Hunedoara": ["Alba", "Arad", "Timis", "Caras-Severin", "Gorj", "Valcea"],
+  "Ialomita": ["Prahova", "Buzau", "Braila", "Calarasi", "Constanta"],
+  "Iasi": ["Botosani", "Suceava", "Neamt", "Vaslui"],
+  "Ilfov": ["Bucuresti", "Prahova", "Dambovita", "Giurgiu", "Calarasi", "Ialomita"],
+  "Maramures": ["Satu Mare", "Salaj", "Bistrita-Nasaud", "Suceava"],
+  "Mehedinti": ["Gorj", "Dolj", "Caras-Severin"],
+  "Mures": ["Bistrita-Nasaud", "Cluj", "Alba", "Sibiu", "Brasov", "Harghita"],
+  "Neamt": ["Suceava", "Iasi", "Bacau", "Harghita"],
+  "Olt": ["Valcea", "Arges", "Teleorman", "Dolj"],
+  "Prahova": ["Buzau", "Brasov", "Dambovita", "Ilfov", "Ialomita"],
+  "Salaj": ["Satu Mare", "Maramures", "Cluj", "Bihor", "Bistrita-Nasaud"],
+  "Satu Mare": ["Maramures", "Salaj", "Bihor"],
+  "Sibiu": ["Alba", "Mures", "Brasov", "Valcea", "Arges"],
+  "Suceava": ["Maramures", "Bistrita-Nasaud", "Neamt", "Iasi", "Botosani"],
+  "Teleorman": ["Olt", "Arges", "Dambovita", "Giurgiu"],
+  "Timis": ["Arad", "Hunedoara", "Caras-Severin"],
+  "Tulcea": ["Constanta", "Braila", "Galati"],
+  "Valcea": ["Gorj", "Hunedoara", "Sibiu", "Arges", "Olt", "Dolj"],
+  "Vaslui": ["Iasi", "Bacau", "Vrancea", "Galati"],
+  "Vrancea": ["Bacau", "Vaslui", "Galati", "Braila", "Buzau", "Covasna"],
+  "Bucuresti": ["Ilfov"],
+}
+
+exports.CITY_ALIASES_RO = {
+  "lisabona": "Lisboa",
+  "viena": "Wien",
+  "praga": "Praha",
+  "varsovia": "Warszawa",
+  "atena": "Athens",
+  "budapesta": "Budapest",
+  "bruxelles": "Brussels",
+  "anvers": "Antwerpen",
+  "londra": "London",
+  "marsilia": "Marseille",
+  "nisa": "Nice",
+  "haga": "Den Haag",
+  "copenhaga": "København",
+  "cracovia": "Kraków",
+  "florenta": "Firenze",
+  "venetia": "Venezia",
+}
+
