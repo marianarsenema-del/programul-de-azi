@@ -3639,6 +3639,7 @@ exports.TRAVEL_GUIDES_RO = [
       <p class="trip-toolkit-subtitle">Înainte de excursii, ai nevoie de zbor, poate și de o mașină — le găsești chiar aici, fără să mai cauți în altă parte.</p>
       <div class="trip-toolkit-buttons">
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
