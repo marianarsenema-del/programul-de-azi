@@ -3643,7 +3643,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
       <div class="gyg-search-widget-wrap">
-        <div data-gyg-widget="search" data-gyg-partner-id="LM6J21N" data-gyg-locale-code="ro-RO"></div>
+        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="ro-RO" data-gyg-type="search"></div>
       </div>
     </div>
 
