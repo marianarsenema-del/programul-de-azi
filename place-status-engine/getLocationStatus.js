@@ -18,6 +18,65 @@ const { fetchPlaceDetails } = require("./googlePlacesDetails");
 const { getCachedDetails, saveCachedDetails } = require("./cache");
 const { isOpenNow, getLocalNow } = require("./timeMath");
 
+// Nume de zile, per limbă — folosite pentru a construi NOI ÎNȘINE textul
+// orarului săptămânal (nu mai preluăm weekday_text de la Google). Motiv, bug
+// real, semnalat direct: weekday_text vine de la Google într-o ORDINE care
+// diferă pe limbă (unele încep cu Luni, altele cu Duminică — confirmat în
+// documentația oficială Google), inconsecvent cu restul site-ului, care
+// arată mereu Duminică prima. Rezultatul: Duminica apărea ultima în listă,
+// ușor de citit greșit ca "lipsă". `periods` (spre deosebire de
+// weekday_text) are index GARANTAT, fix, Duminică=0 — pe acela îl folosim
+// ca sursă de adevăr, la fel cum face deja isOpenNow.
+const DAY_NAMES = {
+  ro: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
+  uk: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  de: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+  es: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+  fr: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+  it: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+  pl: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+  nl: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+  da: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
+};
+const CLOSED_WORD = {
+  ro: "Închis", uk: "Closed", de: "Geschlossen", es: "Cerrado", fr: "Fermé",
+  it: "Chiuso", pl: "Zamknięte", nl: "Gesloten", da: "Lukket",
+};
+
+// Construiește liniile de orar săptămânal NOI, din `periods` (index Sunday=0,
+// garantat de Google), Duminică -> Sâmbătă, în limba internă cerută — nu
+// mai depinde deloc de ordinea/formatul textului pre-făcut de Google.
+function buildWeeklyScheduleText(periods, internalLangCode) {
+  const names = DAY_NAMES[internalLangCode] || DAY_NAMES.uk;
+  const closedWord = CLOSED_WORD[internalLangCode] || CLOSED_WORD.uk;
+  if (!Array.isArray(periods)) return [];
+
+  // pentru fiecare zi (0=Duminică..6=Sâmbătă), găsim TOATE perioadele care
+  // încep în ziua aia — de obicei una singură, dar unele locații au 2
+  // intervale în aceeași zi (ex. pauză de prânz) — le unim cu virgulă.
+  const byDay = [[], [], [], [], [], [], []];
+  periods.forEach((p) => {
+    if (!p || !p.open || typeof p.open.day !== "number") return;
+    const day = p.open.day;
+    if (day < 0 || day > 6) return;
+    if (!p.close) {
+      // deschis non-stop — aceeași convenție ca googlePeriodsToWeekly din server.js
+      for (let d = 0; d < 7; d++) byDay[d] = ["00:00–23:59"];
+      return;
+    }
+    const openTime = `${p.open.time.slice(0, 2)}:${p.open.time.slice(2, 4)}`;
+    const closeTime = p.close.day === p.open.day
+      ? `${p.close.time.slice(0, 2)}:${p.close.time.slice(2, 4)}`
+      : "23:59"; // aproximare — perioadă ce trece peste miezul nopții
+    byDay[day].push(`${openTime}–${closeTime}`);
+  });
+
+  return byDay.map((intervals, day) => {
+    const label = names[day];
+    return intervals.length ? `${label}: ${intervals.join(", ")}` : `${label}: ${closedWord}`;
+  });
+}
+
 // codurile de limbă interne ale site-ului ("uk" = engleză, moștenit din
 // codul de țară) NU coincid mereu cu codurile IETF pe care le așteaptă
 // Google ("en" pentru engleză). Ajustează harta asta dacă adaugi limbi noi.
@@ -171,7 +230,7 @@ async function getLocationStatus({ pool, placeId, apiKey, language, cacheOnly, t
     name: raw.name || null,
     businessStatus: raw.business_status || "OPERATIONAL",
     isOpenNow: openNow,
-    weeklyScheduleText: raw.opening_hours.weekday_text || [],
+    weeklyScheduleText: buildWeeklyScheduleText(raw.opening_hours.periods, language),
     isSpecialDay: special.isSpecial,
     specialDayReason: special.reason,
     utcOffsetMinutes,
