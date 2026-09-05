@@ -3614,17 +3614,17 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Biletul de avion e de obicei cea mai mare cheltuială dintr-o vacanță — și cea mai ușor de optimizat, dacă știi unde să cauți. Diferențele de preț între companii, între zile ale săptămânii sau între aeroporturi apropiate pot ajunge la sute de euro pentru aceeași destinație.</p>
     <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
   {
     slug: "transfer-aeroport",
     title: "Cum rezervi un transfer sigur de la aeroport",
-    intro: "Rezervă un transfer privat sau shuttle de la aeroport, direct din pagină",
+    intro: "Rezervă un transfer privat sau shuttle de la aeroport, cu preț fix",
     body: `
     <p>La aterizare, într-un oraș nou, ultimul lucru pe care-l vrei e să cauți un taxi la întâmplare sau să negociezi prețul cu un șofer necunoscut. Un transfer rezervat dinainte are preț fix, șofer confirmat și te așteaptă exact la ora aterizării — fără surprize, fără stres.</p>
     <p>Rezervarea din timp e de obicei mai ieftină decât un taxi luat pe loc, și elimină complet riscul de a rămâne blocat la aeroport dacă zborul întârzie.</p>
-    <p>Caută mai jos direct — introdu aeroportul de plecare și adresa de destinație, iar prețul apare instant.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23FF7A1A&color_button=%23D11F1Fff&promo_id=4674&campaign_id=22" charset="utf-8"></script>`,
+    <p>Apasă mai jos ca să cauți și să rezervi transferul tău, direct pe platforma partenerului.</p>
+    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3681,7 +3681,7 @@ exports.TRAVEL_GUIDES_EN = [
     <p>The flight is usually the biggest expense in a trip — and the easiest one to optimise, if you know where to look. Price differences between airlines, between days of the week, or between nearby airports can add up to hundreds of euros for the same destination.</p>
     <p>A comparator that searches dozens of airlines at once (including low-cost carriers) shows you the cheapest option at a glance, no matter who operates it — much faster than checking every airline's site by hand.</p>
     <p>Search directly below, without leaving the page — enter your departure city and destination, and results appear in real time, with up-to-date prices.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3738,7 +3738,7 @@ exports.TRAVEL_GUIDES_DE = [
     <p>Der Flug ist meist die größte Ausgabe einer Reise — und die am leichtesten zu optimierende, wenn man weiß, wo man suchen muss. Preisunterschiede zwischen Airlines, Wochentagen oder nahegelegenen Flughäfen können für dasselbe Ziel Hunderte von Euro ausmachen.</p>
     <p>Ein Vergleichsportal, das gleichzeitig Dutzende Airlines durchsucht (auch Low-Cost-Anbieter), zeigt dir auf einen Blick die günstigste Option, egal wer sie betreibt — viel schneller, als jede Airline-Website einzeln zu prüfen.</p>
     <p>Suche direkt unten, ohne die Seite zu verlassen — gib Abflugort und Ziel ein, die Ergebnisse erscheinen in Echtzeit, mit aktuellen Preisen.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=de&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Flugtickets suchen</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3795,7 +3795,7 @@ exports.TRAVEL_GUIDES_FR = [
     <p>Le billet d'avion est généralement la plus grosse dépense d'un voyage — et la plus facile à optimiser, si l'on sait où chercher. Les écarts de prix entre compagnies, entre jours de la semaine ou entre aéroports proches peuvent atteindre des centaines d'euros pour la même destination.</p>
     <p>Un comparateur qui interroge simultanément des dizaines de compagnies aériennes (y compris low-cost) affiche en un coup d'œil l'option la moins chère, quel que soit l'opérateur — bien plus rapide que de vérifier manuellement le site de chaque compagnie.</p>
     <p>Recherchez directement ci-dessous, sans quitter la page — indiquez la ville de départ et la destination, les résultats apparaissent en temps réel, avec des prix à jour.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=fr&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Rechercher des billets d'avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3852,7 +3852,7 @@ exports.TRAVEL_GUIDES_ES = [
     <p>El billete de avión suele ser el gasto más grande de un viaje — y el más fácil de optimizar, si sabes dónde buscar. Las diferencias de precio entre aerolíneas, entre días de la semana o entre aeropuertos cercanos pueden llegar a cientos de euros para el mismo destino.</p>
     <p>Un comparador que busca a la vez en decenas de aerolíneas (incluidas las low-cost) te muestra de un vistazo la opción más barata, sin importar quién la opere — mucho más rápido que revisar manualmente la web de cada aerolínea.</p>
     <p>Busca aquí abajo directamente, sin salir de la página — indica la ciudad de origen y el destino, y los resultados aparecen en tiempo real, con precios actualizados.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=es&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Busca billetes de avión</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3909,7 +3909,7 @@ exports.TRAVEL_GUIDES_IT = [
     <p>Il biglietto aereo è di solito la spesa più grande di un viaggio — ed è anche la più facile da ottimizzare, se si sa dove cercare. Le differenze di prezzo tra compagnie, tra i giorni della settimana o tra aeroporti vicini possono arrivare a centinaia di euro per la stessa destinazione.</p>
     <p>Un comparatore che cerca contemporaneamente tra decine di compagnie aeree (incluse le low-cost) mostra a colpo d'occhio l'opzione più economica, chiunque la operi — molto più veloce che controllare manualmente il sito di ogni compagnia.</p>
     <p>Cerca qui sotto direttamente, senza lasciare la pagina — inserisci la città di partenza e la destinazione, e i risultati appaiono in tempo reale, con prezzi aggiornati.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=it&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Cerca biglietti aerei</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -3966,7 +3966,7 @@ exports.TRAVEL_GUIDES_PL = [
     <p>Bilet lotniczy to zwykle największy wydatek podczas podróży — i najłatwiejszy do zoptymalizowania, jeśli wiesz, gdzie szukać. Różnice cen między liniami lotniczymi, dniami tygodnia czy pobliskimi lotniskami mogą sięgać setek euro dla tego samego kierunku.</p>
     <p>Porównywarka, która przeszukuje jednocześnie dziesiątki linii lotniczych (w tym tanie linie), pokazuje od razu najtańszą opcję, niezależnie od przewoźnika — znacznie szybciej niż ręczne sprawdzanie strony każdej linii z osobna.</p>
     <p>Szukaj bezpośrednio poniżej, bez opuszczania strony — wpisz miasto wylotu i cel podróży, a wyniki pojawią się w czasie rzeczywistym, z aktualnymi cenami.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=pl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Szukaj biletów lotniczych</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
@@ -4023,7 +4023,7 @@ exports.TRAVEL_GUIDES_NL = [
     <p>Het vliegticket is meestal de grootste uitgave van een reis — en de gemakkelijkste om te optimaliseren, als je weet waar je moet zoeken. Prijsverschillen tussen luchtvaartmaatschappijen, tussen dagen van de week of tussen nabijgelegen luchthavens kunnen honderden euro's schelen voor dezelfde bestemming.</p>
     <p>Een vergelijker die tegelijk tientallen luchtvaartmaatschappijen doorzoekt (inclusief low-cost) toont je in één oogopslag de goedkoopste optie, ongeacht wie de vlucht uitvoert — veel sneller dan handmatig de site van elke maatschappij te checken.</p>
     <p>Zoek hieronder direct, zonder de pagina te verlaten — vul de vertrekstad en bestemming in, en de resultaten verschijnen in real time, met actuele prijzen.</p>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=nl&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Zoek vliegtickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
 ]
 
