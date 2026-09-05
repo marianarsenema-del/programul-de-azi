@@ -4797,7 +4797,7 @@ main{padding-top:8px;}
 .trip-toolkit-title{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
 .trip-toolkit-subtitle{font-size:14px;color:var(--muted);margin:0 0 16px;line-height:1.5;}
 .trip-toolkit-buttons{display:flex;flex-direction:column;gap:10px;}
-.trip-toolkit-buttons .affiliate-btn{margin:0;width:100%;}
+.trip-toolkit-buttons .affiliate-btn{margin:0;width:100%;border-radius:var(--radius-md);}
 .gyg-search-widget-wrap{margin-top:16px;}
 @media (min-width:640px){.trip-toolkit-buttons{flex-direction:row;}.trip-toolkit-buttons .affiliate-btn{flex:1;}}
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
