@@ -51,30 +51,45 @@ function buildWeeklyScheduleText(periods, internalLangCode) {
   const closedWord = CLOSED_WORD[internalLangCode] || CLOSED_WORD.uk;
   if (!Array.isArray(periods)) return [];
 
-  // pentru fiecare zi (0=Duminică..6=Sâmbătă), găsim TOATE perioadele care
-  // încep în ziua aia — de obicei una singură, dar unele locații au 2
-  // intervale în aceeași zi (ex. pauză de prânz) — le unim cu virgulă.
-  const byDay = [[], [], [], [], [], [], []];
-  periods.forEach((p) => {
-    if (!p || !p.open || typeof p.open.day !== "number") return;
-    const day = p.open.day;
-    if (day < 0 || day > 6) return;
-    if (!p.close) {
-      // deschis non-stop — aceeași convenție ca googlePeriodsToWeekly din server.js
-      for (let d = 0; d < 7; d++) byDay[d] = ["00:00–23:59"];
-      return;
-    }
-    const openTime = `${p.open.time.slice(0, 2)}:${p.open.time.slice(2, 4)}`;
-    const closeTime = p.close.day === p.open.day
-      ? `${p.close.time.slice(0, 2)}:${p.close.time.slice(2, 4)}`
-      : "23:59"; // aproximare — perioadă ce trece peste miezul nopții
-    byDay[day].push(`${openTime}–${closeTime}`);
-  });
+  // TOATĂ construcția e împachetată defensiv — date neașteptate/incomplete
+  // de la Google (ex. lipsă "time" pe un period) nu trebuie NICIODATĂ să
+  // oprească un request, cu atât mai puțin tot procesul Node (bug real,
+  // semnalat direct — site-ul întreg a picat din exact acest motiv, un
+  // .slice() apelat pe undefined, într-un context async necapturat).
+  try {
+    // pentru fiecare zi (0=Duminică..6=Sâmbătă), găsim TOATE perioadele care
+    // încep în ziua aia — de obicei una singură, dar unele locații au 2
+    // intervale în aceeași zi (ex. pauză de prânz) — le unim cu virgulă.
+    const byDay = [[], [], [], [], [], [], []];
+    periods.forEach((p) => {
+      if (!p || !p.open || typeof p.open.day !== "number") return;
+      const day = p.open.day;
+      if (day < 0 || day > 6) return;
+      if (!p.close) {
+        // deschis non-stop — aceeași convenție ca googlePeriodsToWeekly din server.js
+        for (let d = 0; d < 7; d++) byDay[d] = ["00:00–23:59"];
+        return;
+      }
+      // "time" lipsă/malformat pe orice period — sărim DOAR perioada asta,
+      // nu crăpăm toată funcția pentru o singură intrare proastă
+      if (typeof p.open.time !== "string" || p.open.time.length < 4) return;
+      if (typeof p.close.time !== "string" || p.close.time.length < 4) return;
+      const openTime = `${p.open.time.slice(0, 2)}:${p.open.time.slice(2, 4)}`;
+      const closeTime = p.close.day === p.open.day
+        ? `${p.close.time.slice(0, 2)}:${p.close.time.slice(2, 4)}`
+        : "23:59"; // aproximare — perioadă ce trece peste miezul nopții
+      byDay[day].push(`${openTime}–${closeTime}`);
+    });
 
-  return byDay.map((intervals, day) => {
-    const label = names[day];
-    return intervals.length ? `${label}: ${intervals.join(", ")}` : `${label}: ${closedWord}`;
-  });
+    return byDay.map((intervals, day) => {
+      const label = names[day];
+      return intervals.length ? `${label}: ${intervals.join(", ")}` : `${label}: ${closedWord}`;
+    });
+  } catch (e) {
+    // orice altceva neprevăzut — nu lăsăm NICIODATĂ să scape mai departe;
+    // afișăm listă goală (clientul deja tratează asta elegant), nu crăpăm.
+    return [];
+  }
 }
 
 // codurile de limbă interne ale site-ului ("uk" = engleză, moștenit din
