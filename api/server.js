@@ -564,6 +564,11 @@ const ATTRACTION_TICKET_URLS = {
   "Cetatea Poenari": "https://www.getyourguide.com/poenari-castle-l138468/",
   "Cetatea Alba Carolina": "https://www.getyourguide.com/alba-carolina-citadel-l127593/",
   "Disneyland Paris": "https://www.getyourguide.com/paris-l16/disneyland-paris-2-parks-ticket-1-2-3-4-5-day-t395320/",
+  "Europa-Park Rust": "https://www.getyourguide.com/rust-l2882/rust-europa-park-entrance-ticket-t393563/",
+  "Efteling Kaatsheuvel": "https://www.getyourguide.com/amsterdam-l36/amsterdam-efteling-park-roundtrip-transfer-and-entry-ticket-t501550/",
+  "Legoland Billund": "https://www.getyourguide.com/billund-l87275/legoland-billund-entry-ticket-private-transfer-t1427002/",
+  "Gardaland Resort": "https://www.getyourguide.com/garda-l145126/gardaland-park-fixed-day-entry-ticket-t225588/",
+  "Energylandia Zator": "https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/",
 };
 const GYG_PARTNER_ID = "LM6J21N";
 
