@@ -440,7 +440,7 @@ const ADSENSE_ENABLED = false;
 // ar fi apărut cele 3 butoane, arătăm un mesaj scurt "urmează în curând"
 // în loc. Pune-l pe true (o singură linie) când ai completat măcar unul
 // din linkurile de afiliere de mai jos.
-const TRAVEL_GUIDES_MONETIZATION_READY = false;
+const TRAVEL_GUIDES_MONETIZATION_READY = true;
 ;
 function comingSoonTextFor(lang) {
   return COMING_SOON_TEXTS[lang] || COMING_SOON_TEXTS.uk;
@@ -2464,8 +2464,8 @@ const STORE_AFFILIATE_LINKS = {
   ],
   catena: [
     {
-      url: "https://event.2performant.com/events/click?ad_type=banner&unique=be9a074a6&aff_code=c647d7f92&campaign_unique=938c02434",
-      banner: "https://img.2performant.com/system/paperclip/banner_pictures/pics/269655/original/269655.jpg",
+      url: "https://event.2performant.com/events/click?ad_type=banner&unique=3c965491f&aff_code=c647d7f92&campaign_unique=938c02434",
+      banner: "https://img.2performant.com/system/paperclip/banner_pictures/pics/264595/original/264595.jpg",
       alt: "catenapascupas.ro",
     },
   ],
@@ -2593,6 +2593,7 @@ const GENERIC_PARTNER_OFFERS = [
   { name: "Fără Dăunători", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=46f8cd5eb&redirect_to=https%3A%2F%2Fwww.fara-daunatori.ro" },
   { name: "Herbagetica", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=853fff54b&redirect_to=https%3A%2F%2Fherbagetica.ro%2F" },
   { name: "Încălțăminte la Modă", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=b0d815997&redirect_to=https%3A%2F%2Fwww.incaltamintelamoda.ro" },
+  { name: "Otter", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=7e537fc0d&redirect_to=https%3A%2F%2Fwww.otter.ro%2F" },
   { name: "JoJo Fashion", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9148cd6c4&redirect_to=https%3A%2F%2Fwww.jojofashion.ro" },
   { name: "Picadili", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d404a783d&redirect_to=https%3A%2F%2Fpicadili.ro" },
   { name: "Prosoape Hotel", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9dd5272cf&redirect_to=https%3A%2F%2Fwww.prosoapehotel.ro" },
@@ -2638,7 +2639,7 @@ function buildGenericPartnerCarouselScript(buttonId, offers, nonce) {
   setInterval(function(){
     idx = (idx + 1) % offers.length;
     render(offers[idx]);
-  }, 7000);
+  }, 5000);
 })();
 </script>`;
 }
@@ -4753,7 +4754,7 @@ a{color:inherit;text-decoration:none;}
 header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
 .header-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
 .header-row .brand-stack{justify-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
-.guides-link{font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;}
+.guides-link{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;}
 .guides-link:hover{opacity:0.85;}
 .header-row .live-clock{justify-self:center;}
 .theme-toggle-btn.in-header{position:static;justify-self:end;width:34px;height:34px;font-size:15px;}
@@ -7392,29 +7393,14 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
   const canonicalPath = canonical.replace(/^https?:\/\/[^/]+/, "");
   const canonicalCountryMatch = canonicalPath.match(/^\/([a-z]{2})(\/|\?|$)/);
   const pageCountryCode = canonicalCountryMatch && COUNTRY_LABELS[canonicalCountryMatch[1]] ? canonicalCountryMatch[1] : "ro";
-  // Travelpayouts Drive — Project SEPARAT per domeniu (coduri de urmărire
-  // diferite, confirmat de utilizator), determinat din domeniul din canonical
-  // (mereu URL complet, nu doar cale relativă) — fără să atingem restul
-  // apelurilor către pageShell, care sunt foarte multe.
-  const travelpayoutsScript = canonical.includes(INTL_DOMAIN)
-    ? `<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
-  (function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = 'https://tp-em.com/NTY1MjQx.js?t=565241';
-      document.head.appendChild(script);
-  })();
-</script>`
-    : `<script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2" nonce="${nonce}">
-  (function () {
-      var script = document.createElement("script");
-      script.async = 1;
-      script.setAttribute("data-cmp-ab","2");
-      script.src = 'https://tp-em.com/NTY0OTM4.js?t=564938';
-      document.head.appendChild(script);
-  })();
-</script>`;
+  // Travelpayouts Drive — ELIMINAT complet. Cauza confirmată a bug-ului de
+  // liste goale pe mobil (magazine + obiective): scriptul încerca să
+  // convertească automat TOATE linkurile de pe pagină (inclusiv linkurile
+  // interne, gen /bucuresti/lidl), eșua cu eroare CORS pe tp-em.com/
+  // link-switch, și eșecul lăsa elemente în stare ruptă. Redundant oricum
+  // cu Stay22 LinkSwap, care face exact același lucru, dar corect, doar
+  // pentru linkuri către comercianți reali.
+  const travelpayoutsScript = "";
   const alternatesHtml = (alternateLinks || [])
     .map((l) => `<link rel="alternate" hreflang="${escapeHtml(l.hreflang)}" href="${escapeHtml(l.href)}">`)
     .join("\n");
