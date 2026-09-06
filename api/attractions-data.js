@@ -1991,6 +1991,7 @@ module.exports = {
     { name: "Stadionul Allianz Arena München", url: "https://www.google.com/maps/search/?api=1&query=Stadionul+Allianz+Arena+München+Germany", category: "cladiri_teatre", city: "München" },
     { name: "Hala Eliberării Kelheim", url: "https://www.google.com/maps/search/?api=1&query=Hala+Eliberării+Kelheim+Germany", category: "cladiri_teatre", city: "Kelheim" },
     { name: "Castelul Hohenzollern Bisingen", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Hohenzollern+Bisingen+Germany", category: "castele_palate", city: "Bisingen" },
+    { name: "Castelul Eltz Wierschem", url: "https://www.google.com/maps/search/?api=1&query=Burg+Eltz+Wierschem+Germany", category: "castele_palate", city: "Wierschem" },
     { name: "Castelul Lichtenstein Reutlingen", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Lichtenstein+Reutlingen+Germany", category: "castele_palate", city: "Reutlingen" },
     { name: "Palatul Rezidențial Ludwigsburg Ludwigsburg", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Rezidențial+Ludwigsburg+Ludwigsburg+Germany", category: "castele_palate", city: "Ludwigsburg" },
     { name: "Castelul Heidelberg Heidelberg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Heidelberg+Heidelberg+Germany", category: "castele_palate", city: "Heidelberg" },
@@ -5993,5 +5994,8 @@ module.exports = {
     { name: "Arhitectura din Piatră a Centrului Vechi Mardin Mardin", url: "https://www.google.com/maps/search/?api=1&query=Arhitectura+din+Piatră+a+Centrului+Vechi+Mardin+Mardin+Turkey", category: "cladiri_teatre", city: "Mardin" },
     { name: "Podul Malabadi Diyarbakır", url: "https://www.google.com/maps/search/?api=1&query=Podul+Malabadi+Diyarbakır+Turkey", category: "cladiri_teatre", city: "Diyarbakır" },
     { name: "Bazarul Istoric Coppersmiths Gaziantep", url: "https://www.google.com/maps/search/?api=1&query=Bazarul+Istoric+Coppersmiths+Gaziantep+Turkey", category: "cladiri_teatre", city: "Gaziantep" },
+  ],
+  ch: [
+    { name: "Castelul Chillon Montreux", url: "https://www.chillon.ch/", category: "castele_palate", city: "Montreux" },
   ],
 };
