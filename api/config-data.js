@@ -1856,6 +1856,49 @@ const NONSTOP_WEEKLY = [
   { open: "00:00", close: "23:59" }, // Sâmbătă
 ];
 
+// 33 de farmacii INDEPENDENTE, fiecare cu o singură locație non-stop —
+// primite direct, cu adresă, nu au brand recunoscut de site (nu sunt
+// Catena/Dr.Max/HelpNet/Dona/Ropharma), deci fiecare devine propriul ei
+// "brand", cu o singură locație permisă (vezi SELECTIVE_BRAND_CITIES mai
+// jos). Adăugate DUPĂ NONSTOP_WEEKLY (nu direct în STORE_CONFIG, mai sus în
+// fișier) — altfel ar fi fost o referință înainte de declarare, ar fi
+// picat toată încărcarea fișierului.
+Object.assign(exports.STORE_CONFIG, {
+  farmaciaremedia: { name: "Farmacia Remedia", type: "store", address: "B-dul Revoluției 1989, Nr. 20, Bl. V6", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciasinapis: { name: "Farmacia Sinapis", type: "store", address: "Calea Aurel Vlaicu, Bl. Z28, Sc. A", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciafarmasofia: { name: "Farmacia Farmasofia", type: "store", address: "Str. Republicii, Nr. 30", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciasanatatea: { name: "Farmacia Sanatatea", type: "store", address: "B-dul Independenței, Nr. 51", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaanca: { name: "Farmacia Anca", type: "store", address: "Str. Cuza Vodă, Nr. 2, Bl. 2", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciafarmacom1: { name: "Farmacia Farmacom 1", type: "store", address: "Str. Urania, Nr. 2", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciafarmacom40: { name: "Farmacia Farmacom 40", type: "store", address: "B-dul Griviței, Nr. 67", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciafarmadex: { name: "Farmacia Farmadex", type: "store", address: "Sos. Pantelimon, Nr. 291", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciamaxipharm: { name: "Farmacia Maxipharm", type: "store", address: "B-dul Camil Ressu, Nr. 2", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaaispharma: { name: "Farmacia AIS Pharma", type: "store", address: "Calea Rahovei, Nr. 323", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciamultifarm: { name: "Farmacia MultiFarm", type: "store", address: "B-dul Iuliu Maniu, Nr. 14, Bl. 13", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaremedium1: { name: "Farmacia Remedium 1", type: "store", address: "B-dul 21 Decembrie 1989, Nr. 131", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaviafarm: { name: "Farmacia Viafarm", type: "store", address: "Piața Mihai Viteazu, Nr. 14", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciacynara: { name: "Farmacia Cynara", type: "store", address: "Calea Florești, Nr. 75", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaeuropa: { name: "Farmacia Europa", type: "store", address: "Str. Bucegi, Nr. 11 A", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaminifarmpodbutelii: { name: "Farmacia Minifarm Pod Butelii", type: "store", address: "Str. I.C. Brătianu, Nr. 96, Bl. SR5", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciabalsam: { name: "Farmacia Balsam", type: "store", address: "Str. Gării, Nr. 4", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaprimavera: { name: "Farmacia Primavera", type: "store", address: "B-dul Carol I, Nr. 3", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciahygeia: { name: "Farmacia Hygeia", type: "store", address: "Str. Brăilei, Nr. 159, Bl. A3", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciarevita: { name: "Farmacia Revita", type: "store", address: "B-dul Decebal, Bl. 11, parter", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaremedia2: { name: "Farmacia Remedia", type: "store", address: "Str. 1 Decembrie 1918, Nr. 79", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciasfparascheva: { name: "Farmacia Sf. Parascheva", type: "store", address: "Piața Unirii, Nr. 3", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciarosmarin: { name: "Farmacia Rosmarin", type: "store", address: "Sos. Națională, Nr. 43", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciapharmasa: { name: "Farmacia Pharma SA", type: "store", address: "B-dul Independenței, Bl. R1", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciagalenus: { name: "Farmacia Galenus", type: "store", address: "B-dul Republicii, Nr. 22", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaaesculap: { name: "Farmacia Aesculap", type: "store", address: "Piața Trandafirilor, Nr. 43", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciaardealul: { name: "Farmacia Ardealul", type: "store", address: "Str. Traian, Bl. A4, parter", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciasalvator: { name: "Farmacia Salvator", type: "store", address: "Str. Armatei Române, Bl. S1", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciasanmarco: { name: "Farmacia San Marco", type: "store", address: "Str. Nicolae Bălcescu, Nr. 11", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciapolisano: { name: "Farmacia Polisano", type: "store", address: "Str. Izvorului, Nr. 1A", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciadornafarm: { name: "Farmacia Dornafarm", type: "store", address: "B-dul George Enescu, Nr. 4", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciavlad: { name: "Farmacia Vlad", type: "store", address: "Str. Gheorghe Lazăr, Nr. 8", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+  farmaciavlavarmed: { name: "Farmacia Vlavarmed", type: "store", address: "Zona Piața Dacia, Bl. 3", weekly: NONSTOP_WEEKLY, holidays: SUPERMARKET_HOLIDAYS },
+});
+
 // Suprascriere de program PE LOCAȚIE EXACTĂ — nivel NOU, mai fin decât
 // PER_CITY_WEEKLY de mai jos. Motiv: primite 62 de filiale Mega Image/Profi
 // non-stop, cu adresă exactă — DAR nu toate filialele din orașele respective
@@ -2031,6 +2074,529 @@ exports.PER_LOCATION_WEEKLY = {
         "Tulcea Babadag": NONSTOP_WEEKLY,
       },
     },
+    catena: {
+      "Alba Iulia": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Alexandria": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Arad": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Bacău": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Baia Mare": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Bistrița": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Botoșani": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Brașov": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Brăila": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "București": {
+        "Catena": NONSTOP_WEEKLY,
+        "Catena 2": NONSTOP_WEEKLY,
+        "Catena 3": NONSTOP_WEEKLY,
+        "Catena 4": NONSTOP_WEEKLY,
+      },
+      "Buzău": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Constanța": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Craiova": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Călărași": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Deva": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Drobeta-Turnu Severin": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Focșani": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Galați": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Giurgiu": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Hunedoara": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Iași": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Oradea": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Piatra Neamț": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Pitești": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Ploiești": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Reșița": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Râmnicu Vâlcea": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Satu Mare": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Sfântu Gheorghe": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Sibiu": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Slatina": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Slobozia": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Suceava": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Tulcea": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Târgoviște": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Târgu Jiu": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Târgu Mureș": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+      "Vaslui": {
+        "Catena": NONSTOP_WEEKLY,
+      },
+    },
+    helpnet: {
+      "Arad": {
+        "Help Net": NONSTOP_WEEKLY,
+      },
+      "București": {
+        "Help Net 101": NONSTOP_WEEKLY,
+        "Help Net 53": NONSTOP_WEEKLY,
+        "Help Net 10": NONSTOP_WEEKLY,
+        "Help Net 155": NONSTOP_WEEKLY,
+      },
+      "Constanța": {
+        "Help Net": NONSTOP_WEEKLY,
+      },
+      "Ploiești": {
+        "Help Net": NONSTOP_WEEKLY,
+      },
+    },
+    drmax: {
+      "Bacău": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+      "Brăila": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+      "Buzău": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+      "Craiova": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+      "Oradea": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+      "Pitești": {
+        "Dr. Max": NONSTOP_WEEKLY,
+      },
+    },
+    dona: {
+      "Brașov": {
+        "Dona": NONSTOP_WEEKLY,
+      },
+      "București": {
+        "Dona": NONSTOP_WEEKLY,
+      },
+      "Pitești": {
+        "Dona": NONSTOP_WEEKLY,
+      },
+      "Ploiești": {
+        "Dona": NONSTOP_WEEKLY,
+      },
+      "Timișoara": {
+        "Dona 119": NONSTOP_WEEKLY,
+        "Dona 139": NONSTOP_WEEKLY,
+      },
+    },
+    ropharma: {
+      "Bacău": {
+        "Ropharma": NONSTOP_WEEKLY,
+      },
+    },
+  },
+};
+
+// Adrese exacte, per filială — cerut explicit, ca lista completă pe oraș
+// să arate adresa reală, nu doar un link. Aceleași chei (oraș + nume
+// filială, fără prefixul brandului) ca la PER_LOCATION_WEEKLY, ca să se
+// potrivească exact, fără ambiguitate. Otopeni/Chiajna rămân mutate sub
+// București (același precedent ca la program), dar cu adresa lor REALĂ,
+// nu una din București — ca utilizatorul să știe exact unde e, de fapt.
+exports.PER_LOCATION_ADDRESS = {
+  ro: {
+    megaimage: {
+      "București": {
+        "Piata Amzei": "Str. Piața Amzei nr. 10-22, Sector 1",
+        "Ion Mihalache": "Bd. Ion Mihalache nr. 92, Sector 1",
+        "Cobalcescu": "Str. Grigore Cobălcescu nr. 45, Sector 1",
+        "Lacul Tei": "Bd. Lacul Tei nr. 69, Sector 2",
+        "Iancului": "Șos. Iancului nr. 11-13, Sector 2",
+        "Pantelimon": "Șos. Pantelimon nr. 243, Sector 2",
+        "Vitan": "Calea Vitan nr. 13-19, Sector 3",
+        "Camil Ressu": "Bd. Camil Ressu nr. 4, Sector 3",
+        "Tineretului": "Bd. Tineretului nr. 23, Sector 4",
+        "Giurgiului": "Șos. Giurgiului nr. 119, Sector 4",
+        "Rahova": "Calea Rahovei nr. 321, Sector 5",
+        "Moghioros": "Str. Brașov nr. 21, Sector 6",
+        "Crangasi": "Calea Crângași nr. 20, Sector 6",
+        "Otopeni Central": "Calea Bucureștilor nr. 78, Otopeni (Ilfov)",
+        "Militari Rezidential": "Str. Tineretului nr. 24, Chiajna (Ilfov)",
+      },
+      "Constanța": {
+        "Tomis": "Bd. Tomis nr. 133",
+        "Delfinariu": "Bd. Mamaia nr. 273",
+      },
+      "Brașov": {
+        "Brasov Civic": "Bd. Mihail Kogălniceanu nr. 15",
+      },
+      "Ploiești": {
+        "Ploiesti Central": "Str. Republicii nr. 12",
+      },
+    },
+    profi: {
+      "Deva": {
+        "City Deva Mihai Viteazu": "Aleea Patriei, Bl. 3",
+        "Loco Deva Gara": "Bd. 1 Decembrie 1918, Nr. 4",
+      },
+      "Hunedoara": {
+        "City Hunedoara": "Str. George Enescu, Nr. 6",
+      },
+      "Timișoara": {
+        "City Timisoara Take Ionescu": "Bd. Take Ionescu nr. 46B",
+        "Timisoara Circumvalatiunii": "Str. Circumvalațiunii nr. 8-10",
+        "Timisoara Complex": "Aleea Studenților nr. 1",
+        "City Sagului": "Calea Șagului, Nr. 59",
+      },
+      "Cluj-Napoca": {
+        "City Cluj Zorilor": "Str. Pasteur nr. 60",
+        "Cluj Marasti": "Bd. 21 Decembrie 1989, Nr. 133",
+        "City Cluj Central": "Piața Mihai Viteazul nr. 14-20",
+        "Floresti Eroilor": "Str. Eroilor nr. 18, Florești (Cluj)",
+      },
+      "Oradea": {
+        "Oradea Decebal": "Bd. Decebal nr. 22",
+        "Oradea Nufarului": "Str. Nufărului nr. 50",
+      },
+      "Arad": {
+        "Arad Vlaicu": "Calea Aurel Vlaicu, Bl. Z20",
+        "City Arad Centru": "Bd. Revoluției nr. 43",
+      },
+      "Iași": {
+        "City Iasi Copou": "Bd. Carol I nr. 2A",
+        "Iasi Nicolina": "Str. Nicolina nr. 15",
+        "City Iasi Tatarasi": "Str. Vasile Lupu nr. 82",
+      },
+      "Craiova": {
+        "Craiova Calea Bucuresti": "Calea București, Bl. A12",
+        "Craiova Rovine": "Str. Nicolae Iorga, Nr. 2",
+      },
+      "Pitești": {
+        "Pitesti Craiovei": "Calea Craiovei, Bl. 40",
+        "City Pitesti Centru": "Str. Victoriei, Bl. 89",
+      },
+      "Sibiu": {
+        "Sibiu Mihai Viteazu": "Bd. Mihai Viteazu nr. 11",
+        "City Sibiu Rahovei": "Str. Rahovei nr. 45",
+      },
+      "Târgu Mureș": {
+        "Targu Mures Pandurilor": "Str. Pandurilor nr. 64",
+        "City 1 Decembrie": "Bd. 1 Decembrie 1918, Nr. 21",
+      },
+      "Alba Iulia": {
+        "Alba Iulia Cetate": "Bd. Transilvaniei, Bl. 11A",
+      },
+      "Reșița": {
+        "Resita Govandari": "Bd. Republicii, Bl. 18",
+      },
+      "Târgu Jiu": {
+        "Targu Jiu Ecaterina": "Str. Ecaterina Teodoroiu, Bl. 24",
+      },
+      "Râmnicu Vâlcea": {
+        "Ramnicu Valcea Ostroveni": "Bd. Tineretului nr. 4",
+      },
+      "Slatina": {
+        "Slatina Crisan": "Str. Crișan, Bl. GA8",
+      },
+      "Drobeta-Turnu Severin": {
+        "Severin Crişan": "Str. Crișan nr. 65",
+      },
+      "Satu Mare": {
+        "Satu Mare Lucaciu": "Str. Vasile Lucaciu nr. 12",
+      },
+      "Baia Mare": {
+        "Baia Mare Traian": "Bd. Traian nr. 14",
+      },
+      "Zalău": {
+        "Zalau Simion Barnutiu": "Str. Simion Bărnuțiu, Bl. A2",
+      },
+      "Bistrița": {
+        "Bistrita Andrei Muresanu": "Str. Andrei Mureșanu nr. 15",
+      },
+      "Suceava": {
+        "Suceava George Enescu": "Bd. George Enescu nr. 32",
+      },
+      "Botoșani": {
+        "Botosani Primaverii": "Str. Primăverii nr. 14",
+      },
+      "Piatra Neamț": {
+        "Piatra Neamt Decebal": "Bd. Decebal nr. 35",
+      },
+      "Bacău": {
+        "Bacau Stefan cel Mare": "Str. Ștefan cel Mare nr. 28",
+      },
+      "Vaslui": {
+        "Vaslui Traian": "Str. Traian, Bl. 230",
+      },
+      "Focșani": {
+        "Focsani Unirii": "Bd. Unirii nr. 12",
+      },
+      "Galați": {
+        "Galati Siderurgistilor": "Bd. Siderurgiștilor, Bl. SD1A",
+      },
+      "Brăila": {
+        "Braila Dorobantilor": "Calea Dorobanților, Bl. B3",
+      },
+      "Buzău": {
+        "Buzau Unirii": "Bd. Unirii, Bl. 12F",
+      },
+      "Târgoviște": {
+        "Targoviste Mircea": "Bd. Mircea cel Bătrân, Bl. X2",
+      },
+      "Alexandria": {
+        "Alexandria Dunarii": "Str. Dunării, Bl. BM3",
+      },
+      "Giurgiu": {
+        "Giurgiu Bucuresti": "Șos. București, Bl. 202",
+      },
+      "Călărași": {
+        "Calarasi Republicii": "Str. Republicii, Bl. A4",
+      },
+      "Slobozia": {
+        "Slobozia Matei Basarab": "Bd. Matei Basarab, Bl. MB2",
+      },
+      "Tulcea": {
+        "Tulcea Babadag": "Str. Babadag nr. 140",
+      },
+    },
+    catena: {
+      "Alba Iulia": {
+        "Catena": "B-dul Transilvaniei, Bl. 3EF, parter",
+      },
+      "Alexandria": {
+        "Catena": "Str. Dunării, Bl. BM3",
+      },
+      "Arad": {
+        "Catena": "B-dul Revoluției, Nr. 74",
+      },
+      "Bacău": {
+        "Catena": "Str. Mărășești, Nr. 96",
+      },
+      "Baia Mare": {
+        "Catena": "B-dul Traian, Nr. 1B",
+      },
+      "Bistrița": {
+        "Catena": "Calea Moldovei, Nr. 2",
+      },
+      "Botoșani": {
+        "Catena": "Calea Națională, Nr. 69",
+      },
+      "Brașov": {
+        "Catena": "B-dul Gării, Nr. 3A",
+      },
+      "Brăila": {
+        "Catena": "Calea Călărașilor, Bl. B1, parter",
+      },
+      "București": {
+        "Catena": "B-dul Ion Mihalache, Nr. 92",
+        "Catena 2": "B-dul Chișinău, Nr. 16, Bl. M7",
+        "Catena 3": "Sos. Berceni, Nr. 25, Bl. 38",
+        "Catena 4": "Calea Rahovei, Nr. 322",
+      },
+      "Buzău": {
+        "Catena": "B-dul Unirii, Bl. 13AB, parter",
+      },
+      "Constanța": {
+        "Catena": "Str. Soveja, Nr. 63, Bl. 55",
+      },
+      "Craiova": {
+        "Catena": "Calea București, Bl. 27B",
+      },
+      "Călărași": {
+        "Catena": "Str. București, Bl. L33, parter",
+      },
+      "Deva": {
+        "Catena": "Calea Zarandului, Nr. 47",
+      },
+      "Drobeta-Turnu Severin": {
+        "Catena": "Str. Crișan, Nr. 65",
+      },
+      "Focșani": {
+        "Catena": "B-dul Unirii, Nr. 20",
+      },
+      "Galați": {
+        "Catena": "Str. Siderurgiștilor, Bl. SD1C",
+      },
+      "Giurgiu": {
+        "Catena": "Sos. București, Bl. 114, parter",
+      },
+      "Hunedoara": {
+        "Catena": "B-dul Dacia, Bl. 22, parter",
+      },
+      "Iași": {
+        "Catena": "Str. Sfântul Lazăr, Nr. 4",
+      },
+      "Oradea": {
+        "Catena": "B-dul Dacia, Nr. 53, Bl. U3",
+      },
+      "Piatra Neamț": {
+        "Catena": "B-dul Decebal, Nr. 5",
+      },
+      "Pitești": {
+        "Catena": "B-dul Republicii, Bl. G1, parter",
+      },
+      "Ploiești": {
+        "Catena": "Str. Gheorghe Doja, Nr. 100",
+      },
+      "Reșița": {
+        "Catena": "B-dul Republicii, Nr. 18, Bl. 18",
+      },
+      "Râmnicu Vâlcea": {
+        "Catena": "Calea lui Traian, Bl. S3",
+      },
+      "Satu Mare": {
+        "Catena": "Piața Libertății, Nr. 9",
+      },
+      "Sfântu Gheorghe": {
+        "Catena": "Str. Grof Miko Imre, Bl. 3, parter",
+      },
+      "Sibiu": {
+        "Catena": "B-dul Mihai Viteazul, Nr. 11",
+      },
+      "Slatina": {
+        "Catena": "B-dul A.I. Cuza, Bl. CAM3",
+      },
+      "Slobozia": {
+        "Catena": "B-dul Matei Basarab, Bl. MB1",
+      },
+      "Suceava": {
+        "Catena": "Str. Ștefan cel Mare, Bl. 1A",
+      },
+      "Tulcea": {
+        "Catena": "Str. Babadag, Bl. 4, parter",
+      },
+      "Târgoviște": {
+        "Catena": "B-dul Independenței, Bl. O3, parter",
+      },
+      "Târgu Jiu": {
+        "Catena": "Str. Unirii, Bl. 1, parter",
+      },
+      "Târgu Mureș": {
+        "Catena": "Gheorghe Doja, Nr. 17",
+      },
+      "Vaslui": {
+        "Catena": "Str. Ștefan cel Mare, Bl. 72",
+      },
+    },
+    helpnet: {
+      "Arad": {
+        "Help Net": "B-dul Revoluției, Nr. 41",
+      },
+      "București": {
+        "Help Net 101": "Str. Ing. George Constantinescu, Nr. 3",
+        "Help Net 53": "B-dul Siderurgiștilor (lângă Metrou Brâncoveanu)",
+        "Help Net 10": "B-dul Iuliu Maniu, Nr. 78-92",
+        "Help Net 155": "Calea Bucureștilor, Nr. 80, Bl. B2-3",
+      },
+      "Constanța": {
+        "Help Net": "B-dul Tomis, Nr. 133",
+      },
+      "Ploiești": {
+        "Help Net": "B-dul Republicii, Bl. 14B",
+      },
+    },
+    drmax: {
+      "Bacău": {
+        "Dr. Max": "Str. Ștefan cel Mare, Nr. 2A",
+      },
+      "Brăila": {
+        "Dr. Max": "B-dul Dorobanților, Nr. 433",
+      },
+      "Buzău": {
+        "Dr. Max": "Str. Cuza Vodă, Bl. 5B",
+      },
+      "Craiova": {
+        "Dr. Max": "Str. Oltenia, Bl. 53B",
+      },
+      "Oradea": {
+        "Dr. Max": "Str. Nufărului, Nr. 50",
+      },
+      "Pitești": {
+        "Dr. Max": "Str. Exercițiu, Bl. D2, parter",
+      },
+    },
+    dona: {
+      "Brașov": {
+        "Dona": "Calea București, Nr. 82",
+      },
+      "București": {
+        "Dona": "Calea Vitan, Nr. 199",
+      },
+      "Pitești": {
+        "Dona": "B-dul I.C. Brătianu, Bl. 40",
+      },
+      "Ploiești": {
+        "Dona": "Piața Victoriei, Nr. 5",
+      },
+      "Timișoara": {
+        "Dona 119": "B-dul Dâmbovița, Nr. 51",
+        "Dona 139": "Calea Sever Bocu, Nr. 82",
+      },
+    },
+    ropharma: {
+      "Bacău": {
+        "Ropharma": "Str. Nicolae Bălcescu, Nr. 1",
+      },
+    },
   },
 };
 
@@ -2044,6 +2610,12 @@ exports.PER_LOCATION_WEEKLY = {
 // NU are o intrare aici, brandul cade pe programul general din STORE_CONFIG.
 exports.PER_CITY_WEEKLY = {
   ro: {
+    // Profi Deva — confirmat direct: doar 2 filiale în tot orașul, AMBELE
+    // non-stop (vezi PER_LOCATION_WEEKLY.ro.profi.Deva) — deci pagina
+    // generică "Profi Deva" poate arăta non-stop, fără să inducă în eroare.
+    profi: {
+      "Deva": NONSTOP_WEEKLY,
+    },
     bricodepot: {
       // București + Ilfov (Orhideea, Pantelimon, Băneasa, Militari, Vitan,
       // Chiajna) — program identic în toate cele 6 locații, deci o singură
@@ -2252,6 +2824,41 @@ exports.PER_CITY_WEEKLY = {
 
 exports.SELECTIVE_BRAND_CITIES = {
   ro: {
+    // 33 farmacii independente, non-stop, o singură locație fiecare —
+    // restricționate strict la orașul lor real, nu universal.
+    farmaciaremedia: ["Alba Iulia"],
+    farmaciasinapis: ["Arad"],
+    farmaciafarmasofia: ["Oradea"],
+    farmaciasanatatea: ["Bistrița"],
+    farmaciaanca: ["Botoșani"],
+    farmaciafarmacom1: ["Brașov"],
+    farmaciafarmacom40: ["Brașov"],
+    farmaciafarmadex: ["Sector 2"],
+    farmaciamaxipharm: ["Sector 3"],
+    farmaciaaispharma: ["Sector 5"],
+    farmaciamultifarm: ["Sector 6"],
+    farmaciaremedium1: ["Cluj-Napoca"],
+    farmaciaviafarm: ["Cluj-Napoca"],
+    farmaciacynara: ["Cluj-Napoca"],
+    farmaciaeuropa: ["Cluj-Napoca"],
+    farmaciaminifarmpodbutelii: ["Constanța"],
+    farmaciabalsam: ["Târgoviște"],
+    farmaciaprimavera: ["Craiova"],
+    farmaciahygeia: ["Galați"],
+    farmaciarevita: ["Deva"],
+    farmaciaremedia2: ["Petroșani"],
+    farmaciasfparascheva: ["Iași"],
+    farmaciarosmarin: ["Iași"],
+    farmaciapharmasa: ["Iași"],
+    farmaciagalenus: ["Baia Mare"],
+    farmaciaaesculap: ["Târgu Mureș"],
+    farmaciaardealul: ["Piatra Neamț"],
+    farmaciasalvator: ["Zalău"],
+    farmaciasanmarco: ["Sibiu"],
+    farmaciapolisano: ["Sibiu"],
+    farmaciadornafarm: ["Suceava"],
+    farmaciavlad: ["Timișoara"],
+    farmaciavlavarmed: ["Timișoara"],
     metro: [
       "București", "Brașov", "Constanța", "Timișoara", "Cluj-Napoca", "Bacău",
       "Iași", "Craiova", "Baia Mare", "Pitești", "Galați", "Ploiești", "Oradea",
