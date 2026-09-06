@@ -435,7 +435,7 @@ module.exports = {
   ],
   dk: [
     { name: "Grădinile Tivoli Copenhaga", url: "https://www.google.com/maps/search/?api=1&query=Grădinile+Tivoli+Copenhaga+Denmark", category: "parcuri_agrement", recommended: true },
-    { name: "Legoland Billund", url: "https://www.google.com/maps/search/?api=1&query=Legoland+Billund+Denmark", category: "parcuri_agrement" },
+    { name: "Legoland Billund", url: "https://www.google.com/maps/search/?api=1&query=Legoland+Billund+Denmark", category: "parcuri_agrement", city: "Billund" },
     { name: "Fårup Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Fårup+Sommerland+Denmark", category: "parcuri_agrement" },
     { name: "Djurs Sommerland", url: "https://www.google.com/maps/search/?api=1&query=Djurs+Sommerland+Denmark", category: "parcuri_agrement" },
     { name: "Castelul Rosenborg", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Rosenborg+Denmark", category: "castele_palate" },
@@ -981,7 +981,7 @@ module.exports = {
     { name: "Amfiteatrul Roman din Cagliari", url: "https://www.google.com/maps/search/?api=1&query=Amfiteatrul+Roman+din+Cagliari+Cagliari,+Sardinia+Italy", category: "cladiri_teatre", city: "Cagliari" }, // Cagliari, Sardinia
     { name: "Centrul Istoric Gallipoli (Insulă urbană)", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Istoric+Gallipoli+(Insulă+urbană)+Lecce,+Apulia+Italy", category: "cladiri_teatre", city: "Lecce" }, // Lecce, Apulia
     { name: "Torre Asinelli", url: "https://www.google.com/maps/search/?api=1&query=Torre+Asinelli+Bologna,+Emilia-Romagna+Italy", category: "cetati_turnuri", city: "Bologna" }, // Bologna, Emilia-Romagna
-    { name: "Gardaland Resort", url: "https://www.google.com/maps/search/?api=1&query=Gardaland+Resort+Italy", category: "parcuri_agrement" },
+    { name: "Gardaland Resort", url: "https://www.google.com/maps/search/?api=1&query=Gardaland+Resort+Italy", category: "parcuri_agrement", city: "Castelnuovo del Garda" },
     { name: "Mirabilandia Ravenna", url: "https://www.google.com/maps/search/?api=1&query=Mirabilandia+Ravenna+Italy", category: "parcuri_agrement" },
     { name: "Cinecittà World Roma", url: "https://www.google.com/maps/search/?api=1&query=Cinecittà+World+Roma+Italy", category: "parcuri_agrement" },
     { name: "Acvariul din Genova", url: "https://www.google.com/maps/search/?api=1&query=Acvariul+din+Genova+Italy", category: "parcuri_agrement" },
@@ -999,6 +999,7 @@ module.exports = {
     { name: "Peșterile Frasassi", url: "https://www.google.com/maps/search/?api=1&query=Peșterile+Frasassi+Italy", category: "natura" },
   ],
   pl: [
+    { name: "Energylandia Zator", url: "https://www.energylandia.pl/", category: "parcuri_agrement", city: "Zator" },
     { name: "Castelul Regal Wawel Kraków", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Regal+Wawel+Kraków+Poland", category: "castele_palate", city: "Kraków", recommended: true },
     { name: "Palatul Episcopului din Cracovia Kraków", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Episcopului+din+Cracovia+Kraków+Poland", category: "castele_palate", city: "Kraków" },
     { name: "Castelul Pieskowa Skała Parcul Național Ojcowski", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Pieskowa+Skała+Parcul+Național+Ojcowski+Poland", category: "castele_palate", city: "Parcul Național Ojcowski" },
@@ -1151,6 +1152,7 @@ module.exports = {
     { name: "Castelul Imperial din Poznań Poznań", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Imperial+din+Poznań+Poznań+Poland", category: "castele_palate", city: "Poznań" },
   ],
   nl: [
+    { name: "Efteling Kaatsheuvel", url: "https://www.efteling.com/", category: "parcuri_agrement", city: "Kaatsheuvel" },
     { name: "Palatul Regal din Amsterdam Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Amsterdam+Amsterdam+Netherlands", category: "castele_palate", city: "Amsterdam" },
     { name: "Castelul Muiderslot Muiden (Zona metropolitană)", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Muiderslot+Muiden+(Zona+metropolitană)+Netherlands", category: "castele_palate", city: "Muiden (Zona metropolitană)" },
     { name: "Huis met de Hoofden Amsterdam", url: "https://www.google.com/maps/search/?api=1&query=Huis+met+de+Hoofden+Amsterdam+Netherlands", category: "castele_palate", city: "Amsterdam" },
@@ -2033,7 +2035,7 @@ module.exports = {
     { name: "Piața Centrală din Freiburg Freiburg im Breisgau", url: "https://www.google.com/maps/search/?api=1&query=Piața+Centrală+din+Freiburg+Freiburg+im+Breisgau+Germany", category: "cladiri_teatre", city: "Freiburg im Breisgau" },
     { name: "Universitatea din Heidelberg Heidelberg", url: "https://www.google.com/maps/search/?api=1&query=Universitatea+din+Heidelberg+Heidelberg+Germany", category: "cladiri_teatre", city: "Heidelberg" },
     { name: "Cazinoul din Baden-Baden Baden-Baden", url: "https://www.google.com/maps/search/?api=1&query=Cazinoul+din+Baden-Baden+Baden-Baden+Germany", category: "cladiri_teatre", city: "Baden-Baden" },
-    { name: "Europa-Park Rust", url: "https://www.google.com/maps/search/?api=1&query=Europa-Park+Rust+Germany", category: "cladiri_teatre", city: "Rust" },
+    { name: "Europa-Park Rust", url: "https://www.google.com/maps/search/?api=1&query=Europa-Park+Rust+Germany", category: "parcuri_agrement", city: "Rust" },
     { name: "Piața Schillerplatz Stuttgart", url: "https://www.google.com/maps/search/?api=1&query=Piața+Schillerplatz+Stuttgart+Germany", category: "cladiri_teatre", city: "Stuttgart" },
     { name: "Castelul Wilhelmshöhe Kassel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Wilhelmshöhe+Kassel+Germany", category: "castele_palate", city: "Kassel" },
     { name: "Castelul Löwenburg Kassel", url: "https://www.google.com/maps/search/?api=1&query=Castelul+Löwenburg+Kassel+Germany", category: "castele_palate", city: "Kassel" },
