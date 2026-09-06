@@ -3568,6 +3568,17 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Ghid de transport urban și regional",
     body: `
     <p>Un itinerar turistic reușit depinde în mare măsură de cum te miști între obiective. Când vrei să vizitezi muzee, castele sau monumente istorice, conexiunea dintre orașe și logistica locală fac diferența dintre o zi relaxată și una pierdută prin gări și stații.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
     <p>Pentru distanțe lungi sau între regiuni istorice, trenul rămâne varianta cea mai populară — rețeaua feroviară europeană leagă majoritatea capitalelor de orașele mai mici, cu rute adesea pitorești. Autocarele completează bine acoperirea, mai ales spre localități sau zone montane unde trenul nu ajunge direct, și costă de regulă mai puțin.</p>
     <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
     <div class="plan-visit-block" style="display:block">
@@ -3583,6 +3594,17 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Ghid pentru șoferi — parcare în centrele vechi",
     body: `
     <p>Cu mașina proprie sau închiriată ai o libertate de mișcare pe care alte mijloace de transport n-o pot oferi — dar centrele istorice ale marilor orașe sunt cunoscute pentru restricțiile de trafic și lipsa cronică de locuri de parcare.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
     <p>Lăsată la întâmplare, mașina riscă amendă sau chiar ridicare. Cea mai sigură variantă rămâne o parcare securizată, subterană sau supraterană, administrată privat — multe dintre ele permit rezervarea unui loc din timp, ceea ce contează mai ales în weekend sau în plin sezon, când obiectivele sunt aglomerate.</p>
     <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
     <div class="plan-visit-block" style="display:block">
@@ -3597,6 +3619,17 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Corelarea programului de vizitare cu mesele",
     body: `
     <p>O zi de vacanță reușită înseamnă un echilibru între cultură și relaxare. Dacă îți construiești ziua în jurul programului unui muzeu sau al unei galerii, merită să incluzi din timp și pauzele de masă — altfel riști să ajungi flămând exact când toate localurile din apropiere sunt pline.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
     <p>Marile obiective atrag mii de vizitatori zilnic, iar zonele din jurul lor devin rapid aglomerate, mai ales la prânz și seara. O rezervare făcută din timp, printr-o platformă online, îți garantează o masă fără să stai la coadă sau să cauți disperat un loc liber.</p>
     <p>Cel mai eficient tipar: vizitează expozițiile dimineața devreme, când e liniște, apoi încheie ziua cu o masă la un restaurant local, rezervat din timp — o simplă zi de vacanță devine, așa, o amintire pe care chiar vrei s-o ții minte.</p>
     <div class="plan-visit-block" style="display:block">
@@ -3624,8 +3657,7 @@ exports.TRAVEL_GUIDES_RO = [
     <p>La aterizare, într-un oraș nou, ultimul lucru pe care-l vrei e să cauți un taxi la întâmplare sau să negociezi prețul cu un șofer necunoscut. Un transfer rezervat dinainte are preț fix, șofer confirmat și te așteaptă exact la ora aterizării — fără surprize, fără stres.</p>
     <p>Rezervarea din timp e de obicei mai ieftină decât un taxi luat pe loc, și elimină complet riscul de a rămâne blocat la aeroport dacă zborul întârzie.</p>
     <p>Apasă mai jos ca să cauți și să rezervi transferul tău, direct pe platforma partenerului.</p>
-    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-    <script data-cfasync="true" async src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23FF7A1A&color_button=%23942020ff&promo_id=4674&campaign_id=22" charset="utf-8"></script>`,
+    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
   {
     slug: "excursii-tururi-europa",
@@ -3809,6 +3841,54 @@ exports.TRAVEL_GUIDES_RO = [
     <h3>🇵🇱 Castelul Malbork, Polonia</h3>
     <p>Cel mai mare castel din lume, măsurat după suprafață — o fortăreață uriașă din cărămidă gotică roșie, ridicată de Ordinul Teutonic pe malul râului Nogat. Inclus pe lista UNESCO, Malbork impresionează prin pura lui scară, greu de sesizat complet decât văzându-l cu ochii tăi.</p>
     <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Castelul Malbork, din Gdańsk</a>`,
+  },
+  {
+    slug: "parcuri-distractii-europa",
+    title: "Cele mai bune parcuri de distracții din Europa",
+    intro: "6 parcuri de top, pentru toate vârstele — de la Disneyland Paris până la cele mai intense rollercoastere",
+    body: `
+    <p>De la parcurile clasice, cu personaje îndrăgite de copii, până la rollercoastere printre cele mai înalte din lume — Europa are parcuri de distracții pentru orice vârstă și orice nivel de adrenalină. Am grupat mai jos câteva dintre cele mai apreciate, pe categorii, cu bilete rezervabile din timp.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de parc, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>👑 Cele mai populare și vizitate (toate vârstele)</h2>
+
+    <h3>🇫🇷 Disneyland Paris, Franța</h3>
+    <p>Cel mai vizitat parc de distracții din Europa — două parcuri tematice complete (Disneyland Park și Walt Disney Studios), unde copiii își pot întâlni personajele preferate din desenele animate, printre castele, parăzi și spectacole zilnice. O experiență completă, ideală pentru o vacanță de 2-3 zile.</p>
+    <a href="https://www.getyourguide.com/paris-l16/disneyland-paris-2-parks-ticket-1-2-3-4-5-day-t395320/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Disneyland Paris</a>
+
+    <h3>🇩🇪 Europa-Park, Rust, Germania</h3>
+    <p>Al doilea cel mai mare parc de distracții din Europa, structurat pe 18 zone tematice, fiecare dedicată unei țări europene. Are 13 rollercoastere spectaculoase, zone blânde pentru cei mici, spectacole zilnice și un parc acvatic masiv (Rulantica) — practic o vacanță completă într-un singur loc.</p>
+    <a href="https://www.getyourguide.com/rust-l2882/rust-europa-park-entrance-ticket-t393563/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Europa-Park, Rust</a>
+
+    <h2 class="section-title"><span class="bar"></span>🧸 Cele mai bune pentru copii mici și preșcolari</h2>
+
+    <h3>🇳🇱 Efteling, Kaatsheuvel, Țările de Jos</h3>
+    <p>Un parc de poveste, faimos pentru atmosfera lui relaxantă din Pădurea Fermecată — personaje din basmele fraților Grimm, cărări pline de verdeață și un ritm mult mai blând decât parcurile axate pe adrenalină. Ideal pentru copiii mici, care se lasă cu ușurință purtați de magia locului.</p>
+    <a href="https://www.getyourguide.com/amsterdam-l36/amsterdam-efteling-park-roundtrip-transfer-and-entry-ticket-t501550/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul (cu transfer) — Efteling, din Amsterdam</a>
+
+    <h3>🇩🇰 Legoland Billund, Danemarca</h3>
+    <p>Parcul Legoland original, construit special pentru familiile cu copii mici — mini-orașe spectaculoase construite integral din piese Lego, carusele interactive și activități gândite să stimuleze creativitatea, nu doar adrenalina. Un loc unde și părinții se joacă la fel de mult ca cei mici.</p>
+    <a href="https://www.getyourguide.com/billund-l87275/legoland-billund-entry-ticket-private-transfer-t1427002/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul (cu transfer) — Legoland Billund</a>
+
+    <h2 class="section-title"><span class="bar"></span>🎢 Cele mai bune pentru aventură și adrenalină (copii mai mari)</h2>
+
+    <h3>🇮🇹 Gardaland, Castelnuovo del Garda, Italia</h3>
+    <p>Situat chiar lângă splendidul Lac Garda, Gardaland îmbină rollercoastere intense (precum Oblivion sau Raptor) cu o zonă dedicată celor mici (Peppa Pig Land) — un echilibru rar întâlnit între adrenalină pentru adolescenți și distracție pentru toată familia, în același parc.</p>
+    <a href="https://www.getyourguide.com/garda-l145126/gardaland-park-fixed-day-entry-ticket-t225588/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Gardaland</a>
+
+    <h3>🇵🇱 Energylandia, Zator, Polonia</h3>
+    <p>Cel mai mare parc de distracții din Polonia, recunoscut la nivel european pentru numărul uriaș de rollercoastere moderne — inclusiv Zadra, unul dintre cele mai înalte rollercoastere hibride din lume. Are și o zonă acvatică imensă, plus zone special gândite pentru cei mici, deci nu e doar pentru pasionații de adrenalină.</p>
+    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul (cu preluare opțională) — Energylandia, din Kraków</a>`,
   },
 ]
 
