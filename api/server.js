@@ -268,6 +268,7 @@ const {
   SELECTIVE_BRAND_CITIES,
   PER_CITY_WEEKLY,
   PER_LOCATION_WEEKLY,
+  PER_LOCATION_ADDRESS,
   SITEMAP_CITIES,
   CITY_COORDS,
   OBIECTIVE_ITINERAR,
@@ -4243,6 +4244,7 @@ function curierWeekly() {
 // PROGRAMATIC peste STORE_CONFIG (nu editat manual, 48 de linii, risc mare
 // de greșeală) — fiecare cheie capătă un câmp "categorie".
 const STORE_CATEGORY_BY_KEY = {
+  farmaciaremedia: "farmacii", farmaciasinapis: "farmacii", farmaciafarmasofia: "farmacii", farmaciasanatatea: "farmacii", farmaciaanca: "farmacii", farmaciafarmacom1: "farmacii", farmaciafarmacom40: "farmacii", farmaciafarmadex: "farmacii", farmaciamaxipharm: "farmacii", farmaciaaispharma: "farmacii", farmaciamultifarm: "farmacii", farmaciaremedium1: "farmacii", farmaciaviafarm: "farmacii", farmaciacynara: "farmacii", farmaciaeuropa: "farmacii", farmaciaminifarmpodbutelii: "farmacii", farmaciabalsam: "farmacii", farmaciaprimavera: "farmacii", farmaciahygeia: "farmacii", farmaciarevita: "farmacii", farmaciaremedia2: "farmacii", farmaciasfparascheva: "farmacii", farmaciarosmarin: "farmacii", farmaciapharmasa: "farmacii", farmaciagalenus: "farmacii", farmaciaaesculap: "farmacii", farmaciaardealul: "farmacii", farmaciasalvator: "farmacii", farmaciasanmarco: "farmacii", farmaciapolisano: "farmacii", farmaciadornafarm: "farmacii", farmaciavlad: "farmacii", farmaciavlavarmed: "farmacii",
   lidl: "magazine", kaufland: "magazine", penny: "magazine", megaimage: "magazine", kik: "magazine",
   carrefour: "magazine", auchan: "magazine", profi: "magazine", metro: "magazine", selgros: "magazine",
   dedeman: "bricolaj_electro", leroymerlin: "bricolaj_electro", bricodepot: "bricolaj_electro",
@@ -4463,6 +4465,47 @@ function applyPerCityWeeklyOverride(store, countryCode, magazinKey, orasDisplay,
   const matchKey = Object.keys(brandOverrides).find((c) => strip(c) === strip(orasDisplay));
   if (!matchKey) return store;
   return { ...store, weekly: brandOverrides[matchKey] };
+}
+
+// Listă completă, per oraș — cerut explicit, cu adresă și program pentru
+// FIECARE filială confirmată non-stop, nu doar un link simplu. Onest despre
+// limitarea reală: acoperă filialele CONFIRMATE non-stop (din lista primită
+// direct) — nu pretinde că astea sunt SINGURELE filiale ale brandului din
+// oraș, decât acolo unde chiar știm sigur asta (vezi PER_CITY_WEEKLY, ex.
+// Profi Deva, unde pagina generică arată deja non-stop direct, fără nevoie
+// de listă separată).
+function buildNonstopBranchHintHtml(countryCode, magazinKey, orasDisplay, orasSlug, magazinSlug, locatieDisplay) {
+  if (locatieDisplay) return ""; // deja pe o pagină de filială specifică, nu pe cea generică
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  const cityAlreadyNonstop = PER_CITY_WEEKLY[countryCode] && PER_CITY_WEEKLY[countryCode][magazinKey]
+    && Object.keys(PER_CITY_WEEKLY[countryCode][magazinKey]).some((c) => strip(c) === strip(orasDisplay));
+  if (cityAlreadyNonstop) return "";
+  const brandLocations = PER_LOCATION_WEEKLY[countryCode] && PER_LOCATION_WEEKLY[countryCode][magazinKey];
+  const cityKey = brandLocations && Object.keys(brandLocations).find((c) => strip(c) === strip(orasDisplay));
+  if (!cityKey) return "";
+  const branchNames = Object.keys(brandLocations[cityKey]);
+  if (!branchNames.length) return "";
+  const addressesForCity = (PER_LOCATION_ADDRESS[countryCode] && PER_LOCATION_ADDRESS[countryCode][magazinKey] && PER_LOCATION_ADDRESS[countryCode][magazinKey][cityKey]) || {};
+  const rows = branchNames.map((name) => {
+    const slug = toDbSlug(name);
+    const address = addressesForCity[name];
+    return `<div class="holiday-row"><span class="holiday-label"><a href="/${orasSlug}/${magazinSlug}/${slug}">${escapeHtml(name)}</a>${address ? `<br><span style="font-weight:400;font-size:12.5px;color:var(--muted);">${escapeHtml(address)}</span>` : ""}</span><span class="holiday-hours">Non-Stop</span></div>`;
+  }).join("");
+  const plural = branchNames.length > 1 ? "filiale confirmate non-stop" : "filială confirmată non-stop";
+  return `<h2 class="section-title"><span class="bar"></span>⚡ ${branchNames.length} ${plural} în ${escapeHtml(orasDisplay)}</h2>
+  <div class="holiday-card">${rows}</div>`;
+}
+
+// Adresa exactă a unei filiale specifice — afișată pe propria ei pagină
+// (nu pe cea generică), din PER_LOCATION_ADDRESS. Null dacă nu avem adresa.
+function branchAddressFor(countryCode, magazinKey, orasDisplay, locatieDisplay) {
+  if (!locatieDisplay) return null;
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  const brandCities = PER_LOCATION_ADDRESS[countryCode] && PER_LOCATION_ADDRESS[countryCode][magazinKey];
+  const cityKey = brandCities && Object.keys(brandCities).find((c) => strip(c) === strip(orasDisplay));
+  if (!cityKey) return null;
+  const branchKey = Object.keys(brandCities[cityKey]).find((l) => strip(l) === strip(locatieDisplay));
+  return branchKey ? brandCities[cityKey][branchKey] : null;
 }
 
 function isKnownRoCity(orasDisplay) {
@@ -7582,6 +7625,10 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
       ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels("ro").temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
       : "";
 
+    const nonstopHintHtml = buildNonstopBranchHintHtml("ro", magazinKey, orasDisplay, orasSlug, canonicalSlug, locatieDisplay);
+    const branchAddress = branchAddressFor("ro", magazinKey, orasDisplay, locatieDisplay) || store.address || null;
+    const branchAddressHtml = branchAddress ? `<p class="intro-text">📍 ${escapeHtml(branchAddress)}</p>` : "";
+
     // status live (Google), DOAR pentru magazine normale, fără hiper-local
     // (paginile de cartier nu au propriul place_id, sunt variații ale
     // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
@@ -7606,6 +7653,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
       </div>
       ${contactInfoHtml(live)}
+      ${branchAddressHtml}
+      ${nonstopHintHtml}
       ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${specialBanner}
@@ -7627,6 +7676,8 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
         <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
         <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
       </div>
+      ${branchAddressHtml}
+      ${nonstopHintHtml}
       ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
