@@ -803,6 +803,39 @@ const AT_STORE_CONFIG = {
   penny: { name: "Penny", weekly: atSupermarketWeekly(), holidays: AT_HOLIDAYS },
 };
 
+// Elveția — verificat direct: duminica aproape TOATE magazinele sunt
+// închise (tradiția "Sonntagsruhe", susținută și de lege în multe cantoane,
+// cu excepții punctuale doar la gări/aeroporturi/zone turistice mici) —
+// spre deosebire de restul țărilor de pe site, unde duminica înseamnă doar
+// program redus, nu închidere aproape totală. Program tipic: 08:00-18:30
+// în timpul săptămânii, vineri puțin mai lung, sâmbăta mai scurt.
+const CH_HOLIDAYS = [
+  { date: "01-01", label: "Neujahr (1. Januar)", hours: null },
+  { date: "08-01", label: "Bundesfeier (1. August)", hours: null },
+  { date: "12-25", label: "Weihnachten (25. Dezember)", hours: null },
+  { date: "12-26", label: "Stephanstag (26. Dezember)", hours: null },
+];
+
+function chSupermarketWeekly() {
+  return [
+    null, // Sonntag — închis aproape universal (Sonntagsruhe)
+    { open: "08:00", close: "18:30" }, // Montag
+    { open: "08:00", close: "18:30" },
+    { open: "08:00", close: "18:30" },
+    { open: "08:00", close: "18:30" },
+    { open: "08:00", close: "20:00" }, // Freitag — program prelungit, comun
+    { open: "08:00", close: "17:00" }, // Samstag
+  ];
+}
+
+const CH_STORE_CONFIG = {
+  migros: { name: "Migros", weekly: chSupermarketWeekly(), holidays: CH_HOLIDAYS },
+  coop: { name: "Coop", weekly: chSupermarketWeekly(), holidays: CH_HOLIDAYS },
+  denner: { name: "Denner", weekly: chSupermarketWeekly(), holidays: CH_HOLIDAYS },
+  aldi: { name: "Aldi Suisse", slug: "aldi-suisse", weekly: chSupermarketWeekly(), holidays: CH_HOLIDAYS },
+  lidl: { name: "Lidl", weekly: chSupermarketWeekly(), holidays: CH_HOLIDAYS },
+};
+
 const NL_HOLIDAYS = [
   { date: "12-25", label: "Kerstmis (25 december)", hours: null },
   { date: "01-01", label: "Nieuwjaarsdag (1 januari)", hours: null },
@@ -1534,6 +1567,15 @@ exports.COUNTRIES = {
     config: AT_STORE_CONFIG,
     t: TRANSLATIONS.de,
     cities: ["Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach", "Wels", "Sankt Pölten", "Dornbirn", "Achensee", "Admont", "Attersee", "Bad Ischl", "Bad Tatzmannsdorf", "Baden bei Wien", "Bildstein", "Bludenz", "Bregenz", "Burgenland", "Carintia", "Dürnstein", "Eisenstadt", "Feldkirch", "Forchtenstein", "Furth bei Göttweig", "Gaming", "Gmunden", "Gmünd", "Großgmain", "Gurk", "Hall in Tirol", "Hallstatt", "Hard", "Hartkirchen", "Heiligenkreuz", "Hinterbrühl", "Hochgurgl", "Hohe Tauern", "Hohenems", "Keutschach", "Kirchdorf", "Krems", "Krems an der Donau", "Kremsmünster", "Krimml", "Kufstein", "Launsdorf", "Laxenburg", "Lienz", "Marchfeld", "Maria Taferl", "Mariazell", "Mauterndorf", "Melk", "Nauders", "Obertraun", "Partenen", "Peggau", "Petronell-Carnuntum", "Reutte", "Riegersburg", "Riezlern", "Rosenburg", "Rust", "Sankt Florian", "Schönbühel-Aggstein", "Seefeld", "Semmering", "Sperken", "Spittal an der Drau", "St. Johann im Pongau", "St. Wolfgang", "Stams", "Stans", "Steyr", "Stiria", "Stubenberg", "Sölden", "Tirol", "Valea Wachau", "Valea Zillertal", "Wachau", "Wattens", "Werfen", "Zell am See"],
+  },
+  // Elveția — reutilizează traducerea germană (majoritatea populației,
+  // ~63%, e vorbitoare de germană, iar orașele economice principale —
+  // Zürich, Bern, Basel — sunt germanofone) — simplificare declarată,
+  // nu o acoperire completă a Romandiei francofone sau Ticino-ului italofon.
+  ch: {
+    config: CH_STORE_CONFIG,
+    t: TRANSLATIONS.de,
+    cities: ["Zürich", "Genève", "Basel", "Bern", "Lausanne", "Winterthur", "Luzern", "St. Gallen", "Lugano", "Biel", "Montreux", "Interlaken", "Zermatt", "Davos", "Sankt Moritz", "Locarno", "Gstaad", "Grindelwald"],
   },
   // Belgia: reutilizează traducerea olandeză (majoritatea populației e
   // vorbitoare de neerlandeză/flamandă) — simplificare declarată, nu o
@@ -2565,6 +2607,26 @@ exports.CITY_COORDS = {
   // adăugate explicit, ca itinerarul AI să poată calcula distanțe REALE
   // (Haversine) în loc să ghicească — bug real, semnalat direct: un
   // itinerar pentru Hanioti arăta Atena la "~100 km", deși e la sute de km.
+  // Orașe elvețiene — Elveția e țară nouă, adăugată complet (config,
+  // magazine, obiective) — vezi COUNTRIES.ch și ATTRACTIONS.ch.
+  "Zürich": [47.3769, 8.5417],
+  "Genève": [46.2044, 6.1432],
+  "Basel": [47.5596, 7.5886],
+  "Bern": [46.9480, 7.4474],
+  "Lausanne": [46.5197, 6.6323],
+  "Winterthur": [47.5000, 8.7500],
+  "Luzern": [47.0502, 8.3093],
+  "St. Gallen": [47.4245, 9.3767],
+  "Lugano": [46.0037, 8.9511],
+  "Biel": [47.1368, 7.2468],
+  "Montreux": [46.4312, 6.9107],
+  "Interlaken": [46.6863, 7.8632],
+  "Zermatt": [46.0207, 7.7491],
+  "Davos": [46.7996, 9.8318],
+  "Sankt Moritz": [46.4908, 9.8355],
+  "Locarno": [46.1712, 8.7994],
+  "Gstaad": [46.4718, 7.2856],
+  "Grindelwald": [46.6244, 8.0413],
   "Afandou": [36.317, 28.128],
   "Archangelos": [36.2167, 28.1167],
   "Corfu": [39.6243, 19.9217],
