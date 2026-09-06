@@ -545,8 +545,16 @@ function buildBeachPartnerCarouselHtml(nonce) {
 // Pentru cele care NU au o intrare aici, butonul de bilete cade automat
 // pe `linkBileteTurism` (link general), exact ca până acum.
 const ATTRACTION_TICKET_URLS = {
-  "Castelul Bran": "https://www.getyourguide.com/bran-castle-l1572/",
-  "Castelul Peleș": "https://www.getyourguide.com/peles-castle-l1571/",
+  "Castelul Bran": "https://www.getyourguide.com/bran-l188057/bran-castle-dracula-s-castle-entry-ticket-with-audio-guide-t1380614/",
+  "Castelul Peleș": "https://www.getyourguide.com/sinaia-l124688/peles-castle-and-bran-castle-entry-tickets-t1414362/",
+  "Castelul Neuschwanstein Schwangau": "https://www.getyourguide.com/munich-l26/from-munich-neuschwanstein-linderhof-castle-full-day-trip-t1753/",
+  "Castelul Eltz Wierschem": "https://www.getyourguide.com/frankfurt-l21/frankfurt-day-trip-to-eltz-castle-on-the-moselle-t40707/",
+  "Castelul Hohenzollern Bisingen": "https://www.getyourguide.com/sigmaringen-l100350/sigmaringen-hohenzollern-castle-entry-fee-audio-guide-t849245/",
+  "Palatul Național Pena Sintra": "https://www.getyourguide.com/lisbon-l42/lisbon-sintra-pena-regaleira-cabo-da-roca-cascais-tour-t881398/",
+  "Castelul Chambord": "https://www.getyourguide.com/loire-valley-chateaux-l7956/chambord-skip-the-line-chateau-de-chambord-ticket-t183794/",
+  "Castelul Bled Bled": "https://www.getyourguide.com/en-au/bled-castle-l140261/",
+  "Castelul Ordinii Teutone din Malbork Malbork": "https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/",
+  "Castelul Alcázar din Segovia": "https://www.getyourguide.com/ro-ro/segovia-spania-l1694/din-madrid-excursie-de-o-zi-la-segovia-cu-bilet-de-intrare-la-alcazar-t1402263/",
   "Palatul Parlamentului": "https://www.getyourguide.com/palace-of-the-parliament-l4247/",
   "Salina Turda": "https://www.getyourguide.com/salina-turda-l122320/",
   "Turnul cu Ceas și Cetatea Sighișoara": "https://www.getyourguide.com/clock-tower-sighisoara-l166655/",
@@ -567,6 +575,10 @@ const GYG_PARTNER_ID = "LM6J21N";
 // mai multe astfel de opțiuni.
 const ATTRACTION_EXTRA_TICKET_LINKS = {
   "Castelul Bran": [
+    {
+      label: "🎟️ Bilet combinat — Castelul Peleș + Castelul Bran",
+      url: "https://www.getyourguide.com/sinaia-l124688/peles-castle-and-bran-castle-entry-tickets-t1414362/",
+    },
     {
       label: "🚌 Excursie de o zi din București (Transilvania)",
       url: "https://www.getyourguide.com/bucharest-l111/from-bucharest-transylvania-day-trip-t151028/",
@@ -2643,7 +2655,7 @@ function buildGenericAffiliateCarouselHtml(nonce) {
    Paginile din România (RO) folosesc în continuare textele RO,
    scrise direct în funcțiile de randare — NU au fost atinse, ca să
    nu riscăm nimic din ce funcționează deja. Traducerile de mai jos
-   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/... .
+   alimentează DOAR paginile noi /:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)/... .
    "{time}" și "{label}" din stringurile de status sunt înlocuite
    dinamic, în JS-ul din telefonul vizitatorului (vezi buildClientScript).
    ============================================================ */
@@ -3777,7 +3789,7 @@ const COUNTRY_NAMES_RO = { ro: "România", de: "Germania", uk: "Regatul Unit", e
 
 // Vercel dă codul de țară ca ISO 3166-1 alpha-2 (ex: "DE", "GB") — hartă spre
 // codurile noastre interne (Marea Britanie: "GB" în ISO, dar "uk" la noi).
-const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee", CY: "cy", MT: "mt", LU: "lu" };
+const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: "pl", NL: "nl", AT: "at", BE: "be", DK: "dk", RO: "ro", SE: "se", PT: "pt", CZ: "cz", FI: "fi", GR: "gr", HU: "hu", HR: "hr", IE: "ie", SK: "sk", SI: "si", LT: "lt", LV: "lv", EE: "ee", CY: "cy", MT: "mt", LU: "lu", CH: "ch" };
 
 // Locul unde ești (țara) și limba în care citești nu sunt același lucru —
 // un englez aflat în Germania nu trebuie forțat să vadă germană. Fiecare
@@ -4794,6 +4806,13 @@ main{padding-top:8px;}
    fundal glass, bordură discretă cu accent, cele 3 butoane grupate curat,
    una lângă alta pe ecrane late, stivuite pe mobil. */
 .trip-toolkit-card{margin:20px 18px 0;padding:22px 20px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);box-shadow:0 16px 34px -14px rgba(255,122,26,.25);}
+/* Text centrat pe toate ghidurile (cerut explicit — părea neliniat pe
+   dreapta) + rând liber între descriere și butonul "Rezervă excursia..."
+   care o urmează. */
+.guide-body-content{text-align:center;}
+.guide-body-content h3{margin-top:32px;}
+.guide-body-content p{margin-bottom:20px;}
+.guide-body-content .plan-visit-option{margin-bottom:32px;}
 .trip-toolkit-title{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
 .trip-toolkit-subtitle{font-size:14px;color:var(--muted);margin:0 0 16px;line-height:1.5;}
 .trip-toolkit-buttons{display:flex;flex-direction:column;gap:10px;}
@@ -8438,7 +8457,7 @@ async function renderTravelGuidePage({ guide, baseUrl, nonce }) {
   <h1 class="page-h1">${escapeHtml(guide.title)}</h1>
   <p class="intro-text">${escapeHtml(guide.intro)}</p>
 
-  ${guide.body}
+  <div class="guide-body-content">${guide.body}</div>
 
   <h2 class="section-title"><span class="bar"></span>Alte ghiduri utile</h2>
   <ul class="mall-list">${otherGuides}</ul>
@@ -8615,7 +8634,7 @@ async function renderTravelGuidePageIntl({ guide, baseUrl, nonce, lang }) {
   <h1 class="page-h1">${escapeHtml(guide.title)}</h1>
   <p class="intro-text">${escapeHtml(guide.intro)}</p>
 
-  ${guide.body}
+  <div class="guide-body-content">${guide.body}</div>
 
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.otherGuides)}</h2>
   <ul class="mall-list">${otherGuides}</ul>
@@ -9720,7 +9739,7 @@ app.get("/manifest.json", (req, res) => {
 // TOATE țările (posibil 10.000+ obiective, la scară completă) în HTML-ul
 // inițial al fiecărei vizite. Cache lung (24h) — datele nu se schimbă des,
 // și oricum fiecare obiectiv își ia statusul live separat, pe pagina lui.
-app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr).json", (req, res) => {
+app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch).json", (req, res) => {
   const code = req.params.tara;
   const list = ATTRACTIONS[code];
   if (!list) { res.status(404).json({ error: "not_found" }); return; }
@@ -9845,7 +9864,7 @@ app.get("/", (req, res) => {
 
 // ============================================================
 // RUTE INTERNAȚIONALE (DE/UK/ES) — restricționate explicit prin regex
-// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)"), nu prin sintaxa "?" opțională, care e fragilă și
+// (":tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)"), nu prin sintaxa "?" opțională, care e fragilă și
 // se comportă inconsistent între versiunile de Express/path-to-regexp.
 // Înregistrate ÎNAINTE de rutele RO, ca "/de/berlin/lidl" să nu fie
 // interpretat greșit ca oraș="de" în sistemul românesc.
@@ -9876,7 +9895,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/obiectiv/:slug", async (req, res) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)/obiectiv/:slug", async (req, res) => {
   if (!isIntlHost(req)) {
     return res.redirect(301, `https://${INTL_DOMAIN}${req.url}`);
   }
@@ -9899,7 +9918,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
 // inserat în titlu/descriere/breadcrumb, la fel ca .ro nativ (renderStorePage),
 // ACELAȘI program (nu date noi). Relevantă practic doar pentru RO (singura
 // piață cu acest tipar de căutare construit), dar generică pentru orice țară.
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras/:magazin/:locatie", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)/:oras/:magazin/:locatie", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".") || req.params.locatie.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -9944,7 +9963,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras/:magazin", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
 
   if (!isIntlHost(req)) {
@@ -9986,7 +10005,7 @@ app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|l
   res.send(html);
 });
 
-app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr)/:oras", async (req, res, next) => {
+app.get("/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|hu|hr|ie|sk|si|lt|lv|ee|cy|mt|lu|tr|ch)/:oras", async (req, res, next) => {
   if (req.params.oras.includes(".")) return next();
 
   if (!isIntlHost(req)) {
