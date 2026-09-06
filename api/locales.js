@@ -3190,7 +3190,7 @@ exports.TRANSLATIONS = {
   },
 }
 
-exports.COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg", tr: "🇹🇷 Turkey" }
+exports.COUNTRY_LABELS = { ro: "🇷🇴 Romania", de: "🇩🇪 Germany", uk: "🇬🇧 United Kingdom", es: "🇪🇸 Spain", fr: "🇫🇷 France", it: "🇮🇹 Italy", pl: "🇵🇱 Poland", nl: "🇳🇱 Netherlands", at: "🇦🇹 Austria", be: "🇧🇪 Belgium", dk: "🇩🇰 Denmark", se: "🇸🇪 Sweden", pt: "🇵🇹 Portugal", cz: "🇨🇿 Czech Republic", fi: "🇫🇮 Finland", gr: "🇬🇷 Greece", hu: "🇭🇺 Hungary", hr: "🇭🇷 Croatia", ie: "🇮🇪 Ireland", sk: "🇸🇰 Slovakia", si: "🇸🇮 Slovenia", lt: "🇱🇹 Lithuania", lv: "🇱🇻 Latvia", ee: "🇪🇪 Estonia", cy: "🇨🇾 Cyprus", mt: "🇲🇹 Malta", lu: "🇱🇺 Luxembourg", tr: "🇹🇷 Turkey", ch: "🇨🇭 Switzerland" }
 
 exports.LANGUAGE_LABELS = { uk: "English", de: "Deutsch", es: "Español", fr: "Français", it: "Italiano", pl: "Polski", nl: "Nederlands", da: "Dansk", ro: "Română", se: "Svenska", pt: "Português", cz: "Čeština", fi: "Suomi", gr: "Ελληνικά", hu: "Magyar", hr: "Hrvatski", sk: "Slovenčina", si: "Slovenščina", lt: "Lietuvių", lv: "Latviešu", ee: "Eesti" }
 
@@ -3629,7 +3629,7 @@ exports.TRAVEL_GUIDES_RO = [
   },
   {
     slug: "excursii-tururi-europa",
-    title: "Cele mai bune excursii și tururi ghidate din Europa",
+    title: "Cele mai bune excursii și tururi cu ghid turistic din Europa",
     intro: "Excursii de o zi și tururi ghidate în marile orașe europene, rezervabile din timp",
     body: `
     <p>O excursie rezervată din timp înseamnă loc garantat, ghid confirmat și, de multe ori, acces la locuri unde altfel ai sta la coadă ore întregi. Am adunat mai jos câteva dintre cele mai apreciate tururi și excursii de o zi din marile orașe europene — de la plimbări cu barca pe Dunăre, până la trasee prin istoria antică a Romei sau Atenei.</p>
