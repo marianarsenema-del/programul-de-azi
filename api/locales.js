@@ -3742,6 +3742,74 @@ exports.TRAVEL_GUIDES_RO = [
     <p>O variantă neobișnuită și relaxantă de a explora Berlinul — pe ricșa electrică, cu un ghid local care combină istoria orașului cu povești și cultură, într-un ritm mult mai lejer decât un tur clasic pe jos. Include preluare directă de la hotel, deci nu trebuie să-ți faci griji cum ajungi la punctul de întâlnire.</p>
     <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul cu ricșa — Berlin</a>`,
   },
+  {
+    slug: "castele-europa",
+    title: "Cele mai frumoase castele din Europa",
+    intro: "12 castele de poveste, din toată Europa, cu bilete și tururi rezervabile din timp",
+    body: `
+    <p>De la turnurile care au inspirat parcurile Disney, până la fortărețe medievale ascunse în păduri sau cocoțate pe stânci deasupra unor lacuri glaciare — Europa are unele dintre cele mai spectaculoase castele din lume. Am adunat mai jos 12 dintre cele mai frumoase, cu informații practice și bilete rezervabile din timp, ca să eviți cozile la intrare.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de castele, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>Castelele</h2>
+
+    <h3>🇩🇪 Castelul Neuschwanstein, Germania</h3>
+    <p>Castelul care a inspirat direct siluetele din parcurile Disney — turnuri albe, zvelte, ridicate pe un vârf stâncos din Alpii bavarezi. Construit de regele Ludwig al II-lea al Bavariei ca o evadare romantică din realitate, Neuschwanstein rămâne cel mai fotografiat castel din Europa, mai ales toamna, când pădurile din jur se colorează.</p>
+    <a href="https://www.getyourguide.com/munich-l26/from-munich-neuschwanstein-linderhof-castle-full-day-trip-t1753/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Neuschwanstein &amp; Linderhof, din München</a>
+
+    <h3>🇩🇪 Castelul Eltz, Germania</h3>
+    <p>Ascuns adânc într-o pădure de lângă râul Mosela, Eltz e unul dintre puținele castele germane care n-a fost niciodată distrus sau cucerit — și e deținut de aceeași familie de peste 850 de ani. Silueta lui, cu turnuri de epoci diferite înghesuite pe o stâncă îngustă, pare desprinsă direct dintr-un basm.</p>
+    <a href="https://www.getyourguide.com/frankfurt-l21/frankfurt-day-trip-to-eltz-castle-on-the-moselle-t40707/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Castelul Eltz, din Frankfurt</a>
+
+    <h3>🇩🇪 Castelul Hohenzollern, Germania</h3>
+    <p>Reședința ancestrală a familiei regale prusace, ridicată impunător pe un vârf izolat, cu priveliști care se întind peste tot sudul Germaniei în zilele senine. Arhitectura neo-gotică din secolul XIX, cu turnuri și creneluri, face din Hohenzollern unul dintre cele mai dramatice castele vizitabile din Europa.</p>
+    <a href="https://www.getyourguide.com/sigmaringen-l100350/sigmaringen-hohenzollern-castle-entry-fee-audio-guide-t849245/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Castelul Hohenzollern</a>
+
+    <h3>🇷🇴 Castelul Peleș, România</h3>
+    <p>Considerat de mulți cel mai frumos castel din România, Peleș a fost reședința de vară a regelui Carol I — o bijuterie neo-renascentistă, cu interioare somptuoase, ridicată chiar la poalele Munților Bucegi, în Sinaia. Fiecare încăpere are propriul stil decorativ, de la mobilier german până la arme orientale.</p>
+    <a href="https://www.getyourguide.com/sinaia-l124688/peles-castle-and-bran-castle-entry-tickets-t1414362/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul combinat — Peleș &amp; Bran</a>
+
+    <h3>🇷🇴 Castelul Corvinilor, România</h3>
+    <p>O fortăreață gotico-renascentistă impresionantă, ridicată de Iancu de Hunedoara, cu turnuri, poduri suspendate și legende întunecate despre temnițele din interior. Una dintre cele mai bine păstrate cetăți medievale din Europa de Est, și un decor spectaculos mai ales la apus.</p>
+    <a href="https://www.getyourguide.com/corvin-castle-l127588/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Castelul Corvinilor, Hunedoara</a>
+
+    <h3>🇷🇴 Castelul Bran, România</h3>
+    <p>Cunoscut internațional drept "Castelul lui Dracula", datorită legăturii create de romanul lui Bram Stoker, Bran e o fortăreață medievală spectaculoasă, cocoțată pe o stâncă la granița Transilvaniei. Chiar dacă legătura istorică reală cu Vlad Țepeș e discutabilă, atmosfera gotică a locului nu dezamăgește pe nimeni.</p>
+    <a href="https://www.getyourguide.com/bran-l188057/bran-castle-dracula-s-castle-entry-ticket-with-audio-guide-t1380614/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Castelul Bran</a>
+
+    <h3>🇵🇹 Palatul Pena, Portugalia</h3>
+    <p>Un palat romantic, extravagant colorat (roșu, galben, violet), ridicat pe dealurile Sintrei, chiar deasupra norilor în zilele cu ceață. Un amestec eclectic de stiluri — gotic, manuelin, islamic, renascentist — care face din Pena unul dintre cele mai fotogenice palate din întreaga lume, inclus pe lista UNESCO.</p>
+    <a href="https://www.getyourguide.com/lisbon-l42/lisbon-sintra-pena-regaleira-cabo-da-roca-cascais-tour-t881398/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Sintra, Pena &amp; Cascais, din Lisabona</a>
+
+    <h3>🇪🇸 Alcázar din Segovia, Spania</h3>
+    <p>Cu silueta lui ascuțită, ca de vas de piatră plutind deasupra orașului, Alcázarul din Segovia e adesea creditat drept una dintre inspirațiile pentru castelul Cenușăresei din parcurile Disney — o rivalitate simpatică cu Neuschwanstein pentru acest titlu. O fortăreață regală medievală, folosită secole la rând de monarhii castilieni.</p>
+    <a href="https://www.getyourguide.com/ro-ro/segovia-spania-l1694/din-madrid-excursie-de-o-zi-la-segovia-cu-bilet-de-intrare-la-alcazar-t1402263/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă excursia — Segovia &amp; Alcázar, din Madrid</a>
+
+    <h3>🇫🇷 Château de Chambord, Franța</h3>
+    <p>Cel mai mare castel din Valea Loarei, o capodoperă a Renașterii franceze, cu peste 400 de camere și o celebră scară dublu-elicoidală, atribuită uneori chiar lui Leonardo da Vinci. Grădinile și pădurea din jur, întinse pe mii de hectare, fac din Chambord o experiență de-o zi întreagă, nu doar o vizită rapidă.</p>
+    <a href="https://www.getyourguide.com/loire-valley-chateaux-l7956/chambord-skip-the-line-chateau-de-chambord-ticket-t183794/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul fără coadă — Château de Chambord</a>
+
+    <h3>🇨🇭 Castelul Chillon, Elveția</h3>
+    <p>Un castel-insulă medieval, ridicat direct pe o stâncă din Lacul Geneva, cu Alpii ca fundal — cel mai vizitat monument istoric din Elveția. Poetul Lord Byron l-a făcut celebru în toată lumea prin poemul "Prizonierul din Chillon", inspirat chiar din temnițele văzute în subsolul castelului.</p>
+    <a href="https://www.chillon.ch/" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Vezi programul și biletele — Castelul Chillon (site oficial)</a>
+
+    <h3>🇸🇮 Castelul Bled, Slovenia</h3>
+    <p>Cel mai vechi castel din Slovenia, ridicat direct pe o stâncă abruptă, la 130 de metri deasupra Lacului Bled — una dintre cele mai fotografiate priveliști din Europa Centrală, cu mica biserică de pe insula din mijlocul lacului vizibilă chiar de la ziduri.</p>
+    <a href="https://www.getyourguide.com/en-au/bled-castle-l140261/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul — Castelul Bled</a>
+
+    <h3>🇵🇱 Castelul Malbork, Polonia</h3>
+    <p>Cel mai mare castel din lume, măsurat după suprafață — o fortăreață uriașă din cărămidă gotică roșie, ridicată de Ordinul Teutonic pe malul râului Nogat. Inclus pe lista UNESCO, Malbork impresionează prin pura lui scară, greu de sesizat complet decât văzându-l cu ochii tăi.</p>
+    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Castelul Malbork, din Gdańsk</a>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_EN = [
