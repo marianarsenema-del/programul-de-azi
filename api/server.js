@@ -687,6 +687,158 @@ const GEO_BTN_LABELS = {
     geoBtnTooFar: "Cel mai apropiat oraș acoperit e prea departe de tine:",
     geoBtnDenied: "Nu am acces la locația ta. Alege manual mai jos.",
   },
+  de: {
+    geoBtnDefault: "📍 In meiner Nähe",
+    geoBtnDetecting: "Wird erkannt...",
+    geoBtnAsking: "Wir bitten um deine Standortfreigabe...",
+    geoBtnNotFound: "Keine abgedeckte Stadt in deiner Nähe gefunden. Wähle unten manuell.",
+    geoBtnTooFar: "Die nächste abgedeckte Stadt ist zu weit entfernt:",
+    geoBtnDenied: "Kein Zugriff auf deinen Standort. Wähle unten manuell.",
+  },
+  es: {
+    geoBtnDefault: "📍 Cerca de mí",
+    geoBtnDetecting: "Detectando...",
+    geoBtnAsking: "Pidiendo permiso de ubicación...",
+    geoBtnNotFound: "No encontramos ninguna ciudad cubierta cerca de ti. Elige una manualmente abajo.",
+    geoBtnTooFar: "La ciudad cubierta más cercana está demasiado lejos:",
+    geoBtnDenied: "No pudimos acceder a tu ubicación. Elige una manualmente abajo.",
+  },
+  fr: {
+    geoBtnDefault: "📍 Près de moi",
+    geoBtnDetecting: "Détection en cours...",
+    geoBtnAsking: "Nous demandons l'autorisation de localisation...",
+    geoBtnNotFound: "Aucune ville couverte trouvée près de vous. Choisissez-en une manuellement ci-dessous.",
+    geoBtnTooFar: "La ville couverte la plus proche est trop loin :",
+    geoBtnDenied: "Impossible d'accéder à votre position. Choisissez-en une manuellement ci-dessous.",
+  },
+  it: {
+    geoBtnDefault: "📍 Vicino a me",
+    geoBtnDetecting: "Rilevamento in corso...",
+    geoBtnAsking: "Richiesta del permesso di posizione...",
+    geoBtnNotFound: "Nessuna città coperta trovata vicino a te. Scegline una manualmente qui sotto.",
+    geoBtnTooFar: "La città coperta più vicina è troppo distante:",
+    geoBtnDenied: "Impossibile accedere alla tua posizione. Scegli manualmente qui sotto.",
+  },
+  pl: {
+    geoBtnDefault: "📍 Blisko mnie",
+    geoBtnDetecting: "Wykrywanie...",
+    geoBtnAsking: "Prosimy o zgodę na lokalizację...",
+    geoBtnNotFound: "Nie znaleziono obsługiwanego miasta w pobliżu. Wybierz ręcznie poniżej.",
+    geoBtnTooFar: "Najbliższe obsługiwane miasto jest zbyt daleko:",
+    geoBtnDenied: "Brak dostępu do Twojej lokalizacji. Wybierz ręcznie poniżej.",
+  },
+  nl: {
+    geoBtnDefault: "📍 Bij mij in de buurt",
+    geoBtnDetecting: "Detecteren...",
+    geoBtnAsking: "We vragen toestemming voor je locatie...",
+    geoBtnNotFound: "Geen gedekte stad in de buurt gevonden. Kies er hieronder handmatig een.",
+    geoBtnTooFar: "De dichtstbijzijnde gedekte stad is te ver weg:",
+    geoBtnDenied: "Geen toegang tot je locatie. Kies hieronder handmatig.",
+  },
+  da: {
+    geoBtnDefault: "📍 I nærheden af mig",
+    geoBtnDetecting: "Registrerer...",
+    geoBtnAsking: "Vi beder om din placeringstilladelse...",
+    geoBtnNotFound: "Fandt ingen dækket by i nærheden af dig. Vælg en manuelt nedenfor.",
+    geoBtnTooFar: "Den nærmeste dækkede by er for langt væk:",
+    geoBtnDenied: "Kunne ikke tilgå din placering. Vælg en manuelt nedenfor.",
+  },
+  se: {
+    geoBtnDefault: "📍 Nära mig",
+    geoBtnDetecting: "Upptäcker...",
+    geoBtnAsking: "Vi ber om din platsbehörighet...",
+    geoBtnNotFound: "Ingen täckt stad hittades nära dig. Välj en manuellt nedan.",
+    geoBtnTooFar: "Den närmaste täckta staden är för långt bort:",
+    geoBtnDenied: "Kunde inte komma åt din plats. Välj en manuellt nedan.",
+  },
+  pt: {
+    geoBtnDefault: "📍 Perto de mim",
+    geoBtnDetecting: "A detetar...",
+    geoBtnAsking: "A pedir a sua permissão de localização...",
+    geoBtnNotFound: "Não encontrámos nenhuma cidade coberta perto de si. Escolha uma manualmente abaixo.",
+    geoBtnTooFar: "A cidade coberta mais próxima está muito longe:",
+    geoBtnDenied: "Não foi possível aceder à sua localização. Escolha uma manualmente abaixo.",
+  },
+  cz: {
+    geoBtnDefault: "📍 Blízko mě",
+    geoBtnDetecting: "Zjišťuji...",
+    geoBtnAsking: "Žádáme o svolení k poloze...",
+    geoBtnNotFound: "Nenašli jsme žádné pokryté město poblíž vás. Vyberte jedno ručně níže.",
+    geoBtnTooFar: "Nejbližší pokryté město je příliš daleko:",
+    geoBtnDenied: "Nepodařilo se získat přístup k vaší poloze. Vyberte ručně níže.",
+  },
+  fi: {
+    geoBtnDefault: "📍 Lähelläni",
+    geoBtnDetecting: "Tunnistetaan...",
+    geoBtnAsking: "Pyydämme sijaintilupaa...",
+    geoBtnNotFound: "Läheltäsi ei löytynyt katettua kaupunkia. Valitse yksi manuaalisesti alta.",
+    geoBtnTooFar: "Lähin katettu kaupunki on liian kaukana:",
+    geoBtnDenied: "Sijaintiisi ei saatu pääsyä. Valitse manuaalisesti alta.",
+  },
+  gr: {
+    geoBtnDefault: "📍 Κοντά μου",
+    geoBtnDetecting: "Εντοπισμός...",
+    geoBtnAsking: "Ζητάμε την άδεια τοποθεσίας σας...",
+    geoBtnNotFound: "Δεν βρέθηκε καλυπτόμενη πόλη κοντά σας. Επιλέξτε μία χειροκίνητα παρακάτω.",
+    geoBtnTooFar: "Η πλησιέστερη καλυπτόμενη πόλη είναι πολύ μακριά:",
+    geoBtnDenied: "Δεν ήταν δυνατή η πρόσβαση στην τοποθεσία σας. Επιλέξτε χειροκίνητα παρακάτω.",
+  },
+  hu: {
+    geoBtnDefault: "📍 A közelemben",
+    geoBtnDetecting: "Észlelés...",
+    geoBtnAsking: "Helymeghatározási engedélyt kérünk...",
+    geoBtnNotFound: "Nem található lefedett város a közeledben. Válassz egyet manuálisan lent.",
+    geoBtnTooFar: "A legközelebbi lefedett város túl messze van:",
+    geoBtnDenied: "Nem sikerült hozzáférni a helyzetedhez. Válassz manuálisan lent.",
+  },
+  hr: {
+    geoBtnDefault: "📍 U mojoj blizini",
+    geoBtnDetecting: "Otkrivanje...",
+    geoBtnAsking: "Tražimo dopuštenje za lokaciju...",
+    geoBtnNotFound: "Nije pronađen pokriveni grad u vašoj blizini. Odaberite ručno ispod.",
+    geoBtnTooFar: "Najbliži pokriveni grad je predaleko:",
+    geoBtnDenied: "Nismo mogli pristupiti vašoj lokaciji. Odaberite ručno ispod.",
+  },
+  sk: {
+    geoBtnDefault: "📍 Blízko mňa",
+    geoBtnDetecting: "Zisťujem...",
+    geoBtnAsking: "Žiadame o povolenie polohy...",
+    geoBtnNotFound: "Nenašli sme žiadne pokryté mesto vo vašej blízkosti. Vyberte jedno ručne nižšie.",
+    geoBtnTooFar: "Najbližšie pokryté mesto je príliš ďaleko:",
+    geoBtnDenied: "Nepodarilo sa získať prístup k vašej polohe. Vyberte ručne nižšie.",
+  },
+  si: {
+    geoBtnDefault: "📍 V moji bližini",
+    geoBtnDetecting: "Zaznavanje...",
+    geoBtnAsking: "Prosimo za dovoljenje za lokacijo...",
+    geoBtnNotFound: "V bližini ni bilo najdenega pokritega mesta. Spodaj izberite ročno.",
+    geoBtnTooFar: "Najbližje pokrito mesto je predaleč:",
+    geoBtnDenied: "Do vaše lokacije ni bilo mogoče dostopati. Izberite ročno spodaj.",
+  },
+  lt: {
+    geoBtnDefault: "📍 Šalia manęs",
+    geoBtnDetecting: "Aptinkama...",
+    geoBtnAsking: "Prašome vietos nustatymo leidimo...",
+    geoBtnNotFound: "Šalia jūsų nerasta jokio aptarnaujamo miesto. Pasirinkite rankiniu būdu žemiau.",
+    geoBtnTooFar: "Artimiausias aptarnaujamas miestas per toli:",
+    geoBtnDenied: "Nepavyko pasiekti jūsų vietos. Pasirinkite rankiniu būdu žemiau.",
+  },
+  lv: {
+    geoBtnDefault: "📍 Man tuvumā",
+    geoBtnDetecting: "Nosaka...",
+    geoBtnAsking: "Mēs lūdzam jūsu atrašanās vietas atļauju...",
+    geoBtnNotFound: "Tuvumā netika atrasta neviena pārklāta pilsēta. Izvēlieties manuāli zemāk.",
+    geoBtnTooFar: "Tuvākā pārklātā pilsēta ir pārāk tālu:",
+    geoBtnDenied: "Neizdevās piekļūt jūsu atrašanās vietai. Izvēlieties manuāli zemāk.",
+  },
+  ee: {
+    geoBtnDefault: "📍 Minu lähedal",
+    geoBtnDetecting: "Tuvastamine...",
+    geoBtnAsking: "Palume teie asukoha luba...",
+    geoBtnNotFound: "Teie lähedalt ei leitud ühtegi kaetud linna. Valige allpool käsitsi.",
+    geoBtnTooFar: "Lähim kaetud linn on liiga kaugel:",
+    geoBtnDenied: "Ei õnnestunud pääseda ligi teie asukohale. Valige allpool käsitsi.",
+  },
 };
 function geoBtnLabelsFor(lang) {
   return GEO_BTN_LABELS[lang] || GEO_BTN_LABELS.uk;
@@ -3856,7 +4008,7 @@ const GEO_COUNTRY_MAP = { DE: "de", GB: "uk", ES: "es", FR: "fr", IT: "it", PL: 
 const LANGUAGE_FLAGS = { uk: "🇬🇧", de: "🇩🇪", es: "🇪🇸", fr: "🇫🇷", it: "🇮🇹", pl: "🇵🇱", nl: "🇳🇱", da: "🇩🇰", ro: "🇷🇴", se: "🇸🇪", pt: "🇵🇹", cz: "🇨🇿", fi: "🇫🇮", gr: "🇬🇷", hu: "🇭🇺", hr: "🇭🇷", sk: "🇸🇰", si: "🇸🇮", lt: "🇱🇹", lv: "🇱🇻", ee: "🇪🇪" };
 function buildLanguageSwitcher(currentLang, pathWithoutQuery) {
   const options = Object.keys(LANGUAGE_LABELS)
-    .map((code) => `<option value="${escapeHtml(code)}" ${code === currentLang ? "selected" : ""}>${LANGUAGE_FLAGS[code] || ""} ${escapeHtml(LANGUAGE_LABELS[code])}</option>`)
+    .map((code) => `<option value="${escapeHtml(code)}" ${code === currentLang ? "selected" : ""}>${LANGUAGE_FLAGS[code] || ""} ${escapeHtml(code.toUpperCase())}</option>`)
     .join("");
   return `
   <div class="lang-switcher">
@@ -7481,8 +7633,18 @@ function buildBottomNavScript(nonce) {
     if (target) {
       link.addEventListener("click", function(e){
         e.preventDefault();
-        var tabBtn = document.querySelector('[data-tab="' + tabName + '"]');
-        if (tabBtn && !tabBtn.classList.contains("active")) { tabBtn.click(); }
+        // Activăm panoul DIRECT (aceleași clase pe care le-ar seta un click
+        // pe tab), nu simulăm click pe un buton de tab — bug real, semnalat
+        // direct: panoul "favorites" nu mai are buton de tab propriu (mutat
+        // în footer, apoi scos complet), deci document.querySelector
+        // găsea null, condiția eșua silențios, iar scroll-ul spre un
+        // element încă ascuns (display:none) producea saltul ciudat descris.
+        document.querySelectorAll(".sub-nav-tab").forEach(function(t){
+          t.classList.toggle("active", t.getAttribute("data-tab") === tabName);
+        });
+        document.querySelectorAll(".sub-nav-panel").forEach(function(panel){
+          panel.classList.toggle("active", panel.getAttribute("data-panel") === tabName);
+        });
         target.scrollIntoView({ behavior: "smooth", block: "center" });
       });
     } else if (window.location.pathname === "/") {
@@ -10041,6 +10203,28 @@ app.get("/sitemap.xml", (req, res) => {
 app.get("/robots.txt", (req, res) => {
   res.header("Content-Type", "text/plain");
   res.send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrlFor(req)}/sitemap.xml\n`);
+});
+
+// Pagină de TEST, izolată complet, cerută direct de suportul Travelpayouts
+// (Xenia) — widget-ul de zboruri original (promo_id=7879, campaign_id=100),
+// cel care arăta mereu card "promo" în loc de formular interactiv. Fără
+// niciun CSS/JS de-al nostru în jur, ca să elimine orice suspiciune că
+// problema vine de la restul site-ului. NU e indexată (noindex), NU
+// apare în sitemap, doar pentru diagnosticare directă.
+app.get("/test-widget-travelpayouts", (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Test widget — Travelpayouts</title>
+</head>
+<body>
+<h1>Test izolat — widget zboruri Travelpayouts</h1>
+<p>Pagină creată la cererea suportului Travelpayouts, fără alt CSS/JS pe lângă widget.</p>
+<script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+</body>
+</html>`);
 });
 
 // ads.txt — cerut de Google AdSense ca să confirme că acest domeniu are
