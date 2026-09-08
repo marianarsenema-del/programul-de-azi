@@ -4932,7 +4932,7 @@ function buildCsp(nonce) {
     `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io https://scripts.stay22.com https://*.stay22.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://tp-em.com https://tpembd.com`,
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io",
+    "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://www.googletagmanager.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io",
     "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com https://*.apistp.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
     "worker-src 'self' blob:",
@@ -7705,6 +7705,42 @@ function buildBottomNavScript(nonce) {
 // vizibilă a butonului (din text). Zero cod nou de adăugat la fiecare
 // buton individual — se prinde automat, retroactiv, peste tot.
 // EXCLUS intenționat: .go-now-btn (Waze) — e navigație, nu monetizare.
+// Buton care arată frumos (ca restul butoanelor de pe site), dar la click
+// încarcă widget-ul, în loc să navigheze în altă parte — cerut explicit.
+// Generic, reutilizabil oriunde apare perechea buton+container cu atributele
+// data-widget-target/data-widget-src (nu doar la zboruri/transfer). UN
+// SINGUR script, cu nonce corect, inclus universal — corpul ghidurilor
+// (locales.js) e text static, fără acces la nonce, de-aia n-am putea pune
+// un <script nonce> direct acolo.
+function buildWidgetRevealScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  // Delegare de evenimente pe document (nu ascultători individuali, la
+  // fiecare buton) — necesar ca să funcționeze și pentru butoane adăugate
+  // DINAMIC ulterior (ex. pagina de itinerar, unde butonul apare abia după
+  // ce utilizatorul generează un itinerar, mult după ce acest script a
+  // rulat deja o dată, la încărcarea inițială a paginii).
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest(".widget-reveal-btn");
+    if (!btn) return;
+    e.preventDefault();
+    var targetId = btn.getAttribute("data-widget-target");
+    var src = btn.getAttribute("data-widget-src");
+    var box = document.getElementById(targetId);
+    if (!box || !src) return;
+    box.style.display = "block";
+    var s = document.createElement("script");
+    s.async = true;
+    s.charset = "utf-8";
+    s.src = src;
+    box.appendChild(s);
+    btn.style.display = "none";
+  }, true);
+})();
+</script>`;
+}
+
 function buildAffiliateClickTrackingScript(nonce, pageCountryCode) {
   return `
 <script nonce="${nonce}">
@@ -7864,6 +7900,7 @@ ${buildThemeToggleScript(nonce)}
 ${smartInstallScript}
 ${canonical.includes(INTL_DOMAIN) ? buildLanguageSwitcherScript(nonce) : ""}
 ${buildAffiliateClickTrackingScript(nonce, pageCountryCode)}
+${buildWidgetRevealScript(nonce)}
 <script nonce="${nonce}">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function(){
@@ -11549,8 +11586,13 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // funcțional. Mașină: mereu funcțional, dar fără destinație
     // pre-completată (vezi comentariul de mai sus, la CAR_RENTAL_LINK).
     var flightLink = searchedCity ? flightSearchLinkFor(searchedCity) : null;
+    // Buton frumos (ca restul site-ului), care la click încarcă widget-ul
+    // Kiwi — cerut explicit. Reutilizează mecanismul GENERIC, universal
+    // (buildWidgetRevealScript, deja inclus în pageShell pe toate paginile,
+    // cu delegare de evenimente — funcționează și aici, deși butonul e
+    // adăugat dinamic, mult după încărcarea inițială a paginii).
     var flightHtml = flightLink
-      ? '<a href="' + flightLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</a>'
+      ? '<button type="button" class="plan-visit-option plan-visit-booking widget-reveal-btn" data-widget-target="kiwiWidgetContainer" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</button><div id="kiwiWidgetContainer" class="flight-widget-card" style="display:none"></div>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
