@@ -3681,7 +3681,9 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-    <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>`,
+    <div class="flight-widget-card">
+      <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23FF7A1A&color_button=%23FF7A1A&color_icons=%23FF7A1A&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23FF7A1A&color_focused=%23FF7A1A&border_radius=12&no_labels=&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+    </div>`,
   },
   {
     slug: "transfer-aeroport",
