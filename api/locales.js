@@ -3978,6 +3978,247 @@ exports.TRAVEL_GUIDES_EN = [
     <p>Search directly below, without leaving the page — enter your departure city and destination, and results appear in real time, with up-to-date prices.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
+  {
+    slug: "airport-transfer",
+    title: "How to book a safe airport transfer",
+    intro: "Book a private transfer or shuttle from the airport, at a fixed price",
+    body: `
+    <p>Landing in a new city, the last thing you want is to hunt for a random taxi or haggle over the price with a driver you don't know. A pre-booked transfer has a fixed price, a confirmed driver, and waits for you right at landing time — no surprises, no stress.</p>
+    <p>Booking ahead is usually cheaper than a taxi picked up on the spot, and it removes any risk of getting stuck at the airport if your flight is delayed.</p>
+    <p>Tap below to search and book your transfer, directly on the partner's platform.</p>
+    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book your airport transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
+  },
+  {
+    slug: "day-trips-tours-europe",
+    title: "The best day trips and guided tours in Europe",
+    intro: "13 top tours, across Europe, with tickets and slots you can book ahead",
+    body: `
+    <p>A tour booked ahead means a guaranteed spot, a confirmed guide, and often access to places where you'd otherwise queue for hours. Below are some of the most popular day trips and tours in Europe's major cities — from boat rides on the Danube, to routes through the ancient history of Rome or Athens.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+      <div class="gyg-search-widget-wrap">
+        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="en-US" data-gyg-type="search"></div>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>Recommended tours</h2>
+
+    <h3>Bucharest — Snagov Monastery, Mogoșoaia Palace and Slănic Salt Mine</h3>
+    <p>A perfect day trip for anyone who wants to see, in one single route, three completely different sides of the area around Bucharest: the quiet of Snagov Monastery's island, the elegance of Mogoșoaia Palace, and the impressive Slănic Salt Mine, carved deep into the mountain. Ideal if you only have one free day in the capital and want to escape the city's bustle.</p>
+    <a href="https://www.getyourguide.com/slanic-l91935/snagov-monastery-mogosoaia-salt-mine-day-trip-bucharest-t1221626/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Snagov, Mogoșoaia and Slănic Salt Mine</a>
+
+    <h3>Bucharest — Danube Delta day trip</h3>
+    <p>The Danube Delta is one of Europe's most spectacular nature reserves, with unique biodiversity — pelicans, cormorants and hundreds of bird species, among narrow channels and fishing villages. A day trip from Bucharest, transport included, is the simplest way to catch the Delta's atmosphere without organising your own transport.</p>
+    <a href="https://www.getyourguide.com/bucharest-l111/from-bucharest-day-trip-to-danube-delta-t662170/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Danube Delta</a>
+
+    <h3>Vienna — Danube river cruise, with optional lunch</h3>
+    <p>Vienna seen from the water tells a completely different story — historic bridges, imperial buildings and green parks, all drifting past along the Danube's banks. A relaxing cruise, with an optional lunch on board, is a welcome break after a morning of walking through the historic centre.</p>
+    <a href="https://www.getyourguide.com/vienna-l7/vienna-city-cruise-with-optional-lunch-t58823/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the cruise — Vienna</a>
+
+    <h3>Budapest — Evening Danube sightseeing cruise</h3>
+    <p>Budapest lit up at night is, for many, the most beautiful urban skyline in Central Europe — the Parliament, the Chain Bridge and Buda Castle, all glowing along the Danube's banks. An evening cruise is the classic, almost mandatory way to see the city from just the right angle.</p>
+    <a href="https://www.getyourguide.com/budapest-l29/budapest-evening-sightseeing-cruise-on-the-danube-t1117141/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the cruise — Budapest</a>
+
+    <h3>Amsterdam — Bruges day trip</h3>
+    <p>Bruges is considered one of Europe's best-preserved medieval towns — canals, stone bridges and Gothic buildings, all packed into a compact historic centre that's easy to explore on foot. A day trip from Amsterdam, with an English or Spanish-speaking guide, is the simple choice for anyone who doesn't want to complicate their own transport.</p>
+    <a href="https://www.getyourguide.com/amsterdam-l36/from-amsterdam-bruges-day-tour-in-spanish-or-english-t2633/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program&cmp=amsterdam" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Bruges, from Amsterdam</a>
+
+    <h3>The Hague — Entry ticket to the Panorama Mesdag Museum</h3>
+    <p>Panorama Mesdag is a huge circular painting from 1881, which completely surrounds the visitor with a view of the 19th-century fishing village of Scheveningen — a unique visual experience, hard to imagine until you see it with your own eyes. A small but spectacular museum, just a few steps from the centre of The Hague.</p>
+    <a href="https://www.getyourguide.com/the-hague-l1267/the-hague-entry-ticket-to-the-panorama-mesdag-museum-t391318/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Panorama Mesdag Museum, The Hague</a>
+
+    <h3>Prague — Vyšehrad Fort, the city's hidden gem</h3>
+    <p>While most tourists crowd into Prague Castle, Vyšehrad remains a much quieter choice — a historic fortress on the banks of the Vltava, with superb views and a cemetery where great Czech figures are buried. A perfect spot for anyone who wants Prague without the crowds.</p>
+    <a href="https://www.getyourguide.com/prague-l10/prague-s-best-hidden-gem-vysehrad-castle-historic-fort-t1011583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Vyšehrad Fort, Prague</a>
+
+    <h3>Rome — Colosseum with arena floor access and the Roman Forum</h3>
+    <p>Few visitors ever get to stand on the actual floor of the Colosseum's arena, right where gladiators once fought — special access, available only with dedicated tickets. Combined with a guided visit to the Roman Forum, the tour reconstructs, step by step, everyday life in Ancient Rome.</p>
+    <a href="https://www.getyourguide.com/rome-l33/rome-colosseum-gladiator-floor-access-roman-forum-tour-t633431/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Colosseum and Roman Forum</a>
+
+    <h3>Paris — Small group tour inside Notre-Dame Cathedral</h3>
+    <p>After years of restoration, a visit inside Notre-Dame carries special weight — Gothic architecture, stained glass and the cathedral's history, explained by a local guide, in small groups of up to 5 people, for a far more personal experience than an ordinary visit.</p>
+    <a href="https://www.getyourguide.com/paris-l16/paris-small-group-interior-tour-of-notre-dame-max-5-people-t607051/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Inside Notre-Dame Cathedral</a>
+
+    <h3>Madrid — Combo ticket: San Antonio de los Alemanes and the Monastery of San Placido</h3>
+    <p>Two of Madrid's lesser-known but spectacular Baroque churches — painted vaults, gilded altars and a rare stillness in the heart of the city. A combo ticket, ideal for anyone who wants to see Madrid beyond its big, crowded museums.</p>
+    <a href="https://www.getyourguide.com/madrid-l46/combo-entry-to-san-antonio-de-los-alemanes-and-the-monastery-of-san-placido-t1103055/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the combo ticket — Madrid</a>
+
+    <h3>Bratislava — Panoramic bus tour</h3>
+    <p>Bratislava reveals itself quickly and comfortably from a panoramic bus — Bratislava Castle, Michael's Gate and the historic buildings of the Slovak capital, all on one simple, effortless route, ideal especially if you're short on time during a city break.</p>
+    <a href="https://www.getyourguide.com/bratislava-l765/bratislava-sightseeing-bus-tour-t28703/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Bratislava</a>
+
+    <h3>Lisbon — Royal Treasure Museum</h3>
+    <p>Crowns, royal jewels and objects of immense historical value, displayed in one of Lisbon's least crowded museums. A short but spectacular stop, for anyone who wants to see another side of the Portuguese monarchy, away from the classic tourist trails.</p>
+    <a href="https://www.getyourguide.com/lisbon-l42/lisbon-royal-treasure-museum-entry-ticket-t425344/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Royal Treasure Museum, Lisbon</a>
+
+    <h3>Athens — Delphi day trip</h3>
+    <p>Delphi, considered in antiquity the "navel of the earth", hosted the most important oracle of the Greek world — impressive ruins, in a spectacular mountain landscape, a few hours from Athens. The tour includes a multilingual audio guide, ideal for anyone who wants ancient history without the hassle of organising it themselves.</p>
+    <a href="https://www.getyourguide.com/athens-l91/from-athens-delphi-day-trip-with-multilingual-audioguide-t748369/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Delphi, from Athens</a>
+
+    <h3>Istanbul — Golden Horn and Bosphorus dinner and show cruise</h3>
+    <p>An evening on the water, with Istanbul lit up on both sides of the Bosphorus — dinner on board, live music and traditional dance, on a cruise that combines the city's view with a full cultural experience. A memorable way to close out any visit to Istanbul.</p>
+    <a href="https://www.getyourguide.com/istanbul-l56/istanbul-golden-horn-bosphorus-dinner-and-show-t459410/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the dinner cruise — Istanbul</a>
+
+    <h3>Stockholm — Archipelago boat tour</h3>
+    <p>Stockholm's archipelago means over 30,000 islands and islets, dotted with traditional red Swedish cottages — a landscape you simply don't see from the city centre. A boat tour lasting a few hours opens up a completely different side of the Swedish capital, much quieter and more natural.</p>
+    <a href="https://www.getyourguide.com/stockholm-l50/stockholm-archipelago-boat-tour-t811343/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Stockholm Archipelago</a>
+
+    <h3>Konstanz — Entrance ticket for Mainau Island</h3>
+    <p>Mainau Island, on Lake Constance, is known as the "island of flowers" — immaculate botanical gardens, a Baroque castle and spectacular views towards the Alps, at the border between Germany, Switzerland and Austria. A perfect spot for a relaxing day, away from the usual urban trails.</p>
+    <a href="https://www.getyourguide.com/konstanz-l204/entrance-ticket-for-the-mainau-island-t561436/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Mainau Island, Konstanz</a>
+
+    <h3>Monaco — Monaco-Monte Carlo panoramic tour (Hop-on Hop-off)</h3>
+    <p>Monaco is small but packed with sights — the Prince's Palace, the famous Monte Carlo Casino and the Formula 1 circuit, all accessible with a single panoramic bus ticket, with free stops at every point of interest, at your own pace.</p>
+    <a href="https://www.getyourguide.com/monaco-l515/monaco-monte-carlo-hop-on-hop-off-bus-tour-t170400/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Monaco &amp; Monte Carlo</a>
+
+    <h3>Munich — Guided e-scooter tour, 2 hours, through the top sights</h3>
+    <p>A fast and fun way to see central Munich — Marienplatz, the Frauenkirche, the English Garden and the rest of the essential landmarks — on a guided e-scooter, in just 2 hours. Ideal for anyone with little time in the city who still wants to see as much as possible, without the fatigue of walking.</p>
+    <a href="https://www.getyourguide.com/munich-l26/munchen-top-sights-2h-guided-e-scooter-tour-t463376/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Munich e-scooter tour</a>
+
+    <h3>Barcelona — Skip-the-line ticket for Sagrada Família</h3>
+    <p>Sagrada Família is arguably the most famous unfinished work in architectural history — Gaudí's masterpiece, with towers reaching for the sky and stained glass that turns the light inside into a display of colour. A skip-the-line ticket saves you hours of waiting, especially during the busy tourist season.</p>
+    <a href="https://www.getyourguide.com/barcelona-l45/sagrada-familia-skip-the-line-ticket-t50027/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the skip-the-line ticket — Sagrada Família</a>
+
+    <h3>Venice — Skip-the-line ticket for St Mark's Basilica, with audio app</h3>
+    <p>St Mark's Basilica, with its golden mosaics and Byzantine domes, is the heart of Venice — but also one of the most visited churches in the world, with queues that can last hours in peak season. A skip-the-line ticket, with an audio app included, lets you enjoy the interior at your own pace, without wasting time waiting outside.</p>
+    <a href="https://www.getyourguide.com/venice-l35/venice-st-mark-s-basilica-skip-the-line-ticket-audio-app-t395051/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the skip-the-line ticket — St Mark's Basilica, Venice</a>
+
+    <h3>Florence — Leonardo da Vinci Interactive Museum</h3>
+    <p>An unusual museum, entirely dedicated to the genius of Leonardo da Vinci — working models, replicas of his mechanical inventions, and interactive exhibits you can touch and try, not just view from a distance. A fun and educational stop, especially suited for families with children.</p>
+    <a href="https://www.getyourguide.com/florence-l32/florence-leonardo-interactive-museum-entry-ticket-t86558/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Leonardo Interactive Museum, Florence</a>
+
+    <h3>Zürich — Lindt Home of Chocolate Museum</h3>
+    <p>The world's largest chocolate fountain, the full chocolate-making process explained step by step, and, of course, tastings — a museum entirely dedicated to the Swiss passion for chocolate. A sweet experience, suitable for any age, just a few steps from Lake Zürich.</p>
+    <a href="https://www.getyourguide.com/zurich-l55/lindt-home-of-chocolate-museum-entry-ticket-t396265/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Lindt Home of Chocolate, Zürich</a>
+
+    <h3>Berlin — Full-day rickshaw tour, with hotel pickup</h3>
+    <p>An unusual and relaxing way to explore Berlin — by electric rickshaw, with a local guide who blends the city's history with stories and culture, at a much more leisurely pace than a classic walking tour. Includes direct hotel pickup, so you don't need to worry about getting to a meeting point.</p>
+    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the rickshaw tour — Berlin</a>`,
+  },
+  {
+    slug: "castles-europe",
+    title: "The most beautiful castles in Europe",
+    intro: "12 fairytale castles, across Europe, with tickets and tours you can book ahead",
+    body: `
+    <p>From the towers that inspired the Disney parks, to medieval fortresses hidden in forests or perched on cliffs above glacial lakes — Europe has some of the most spectacular castles in the world. Below are 12 of the most beautiful, with practical information and tickets you can book ahead, so you can skip the queue at the entrance.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>The castles</h2>
+
+    <h3>🇩🇪 Neuschwanstein Castle, Germany</h3>
+    <p>The castle that directly inspired the silhouettes in the Disney parks — slender white towers, raised on a rocky peak in the Bavarian Alps. Built by King Ludwig II of Bavaria as a romantic escape from reality, Neuschwanstein remains Europe's most photographed castle, especially in autumn, when the surrounding forests turn to colour.</p>
+    <a href="https://www.getyourguide.com/munich-l26/from-munich-neuschwanstein-linderhof-castle-full-day-trip-t1753/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Neuschwanstein &amp; Linderhof, from Munich</a>
+
+    <h3>🇩🇪 Eltz Castle, Germany</h3>
+    <p>Hidden deep in a forest near the Moselle river, Eltz is one of the few German castles never destroyed or conquered — and it's been owned by the same family for over 850 years. Its silhouette, with towers from different eras crowded onto a narrow rock, looks straight out of a fairy tale.</p>
+    <a href="https://www.getyourguide.com/frankfurt-l21/frankfurt-day-trip-to-eltz-castle-on-the-moselle-t40707/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Eltz Castle, from Frankfurt</a>
+
+    <h3>🇩🇪 Hohenzollern Castle, Germany</h3>
+    <p>The ancestral seat of the Prussian royal family, standing proudly on an isolated peak, with views stretching across all of southern Germany on clear days. Its 19th-century neo-Gothic architecture, with towers and battlements, makes Hohenzollern one of the most dramatic castles you can visit in Europe.</p>
+    <a href="https://www.getyourguide.com/sigmaringen-l100350/sigmaringen-hohenzollern-castle-entry-fee-audio-guide-t849245/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Hohenzollern Castle</a>
+
+    <h3>🇷🇴 Peleș Castle, Romania</h3>
+    <p>Considered by many the most beautiful castle in Romania, Peleș was the summer residence of King Carol I — a Neo-Renaissance gem, with lavish interiors, built right at the foot of the Bucegi Mountains, in Sinaia. Each room has its own decorative style, from German furniture to Oriental weapons.</p>
+    <a href="https://www.getyourguide.com/sinaia-l124688/peles-castle-and-bran-castle-entry-tickets-t1414362/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the combo ticket — Peleș &amp; Bran</a>
+
+    <h3>🇷🇴 Corvin Castle, Romania</h3>
+    <p>An impressive Gothic-Renaissance fortress, built by John Hunyadi, with towers, suspended bridges and dark legends about the dungeons inside. One of the best-preserved medieval fortresses in Eastern Europe, and a spectacular sight especially at sunset.</p>
+    <a href="https://www.getyourguide.com/corvin-castle-l127588/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Corvin Castle, Hunedoara</a>
+
+    <h3>🇷🇴 Bran Castle, Romania</h3>
+    <p>Known internationally as "Dracula's Castle", thanks to the link created by Bram Stoker's novel, Bran is a spectacular medieval fortress, perched on a cliff at the edge of Transylvania. Even though the real historical link to Vlad the Impaler is debatable, the place's Gothic atmosphere disappoints no one.</p>
+    <a href="https://www.getyourguide.com/bran-l188057/bran-castle-dracula-s-castle-entry-ticket-with-audio-guide-t1380614/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Bran Castle</a>
+
+    <h3>🇵🇹 Pena Palace, Portugal</h3>
+    <p>A romantic palace, extravagantly coloured (red, yellow, purple), built on the hills of Sintra, right above the clouds on foggy days. An eclectic mix of styles — Gothic, Manueline, Islamic, Renaissance — that makes Pena one of the most photogenic palaces in the world, a UNESCO World Heritage Site.</p>
+    <a href="https://www.getyourguide.com/lisbon-l42/lisbon-sintra-pena-regaleira-cabo-da-roca-cascais-tour-t881398/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Sintra, Pena &amp; Cascais, from Lisbon</a>
+
+    <h3>🇪🇸 Alcázar of Segovia, Spain</h3>
+    <p>With its sharp silhouette, like a stone ship floating above the city, the Alcázar of Segovia is often credited as one of the inspirations for Cinderella's castle in the Disney parks — a friendly rivalry with Neuschwanstein for that title. A medieval royal fortress, used for centuries by Castilian monarchs.</p>
+    <a href="https://www.getyourguide.com/ro-ro/segovia-spania-l1694/din-madrid-excursie-de-o-zi-la-segovia-cu-bilet-de-intrare-la-alcazar-t1402263/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Segovia &amp; Alcázar, from Madrid</a>
+
+    <h3>🇫🇷 Château de Chambord, France</h3>
+    <p>The largest château in the Loire Valley, a masterpiece of the French Renaissance, with over 400 rooms and a famous double-helix staircase, sometimes attributed to Leonardo da Vinci himself. The surrounding gardens and forest, spanning thousands of hectares, make Chambord a full day's experience, not just a quick visit.</p>
+    <a href="https://www.getyourguide.com/loire-valley-chateaux-l7956/chambord-skip-the-line-chateau-de-chambord-ticket-t183794/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the skip-the-line ticket — Château de Chambord</a>
+
+    <h3>🇨🇭 Chillon Castle, Switzerland</h3>
+    <p>A medieval island castle, built right on a rock on Lake Geneva, with the Alps as a backdrop — Switzerland's most visited historic monument. The poet Lord Byron made it world-famous through his poem "The Prisoner of Chillon", inspired by the dungeons found in the castle's basement.</p>
+    <a href="https://www.chillon.ch/" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">See the schedule and tickets — Chillon Castle (official site)</a>
+
+    <h3>🇸🇮 Bled Castle, Slovenia</h3>
+    <p>The oldest castle in Slovenia, built right on a steep cliff, 130 metres above Lake Bled — one of the most photographed views in Central Europe, with the small church on the island in the middle of the lake visible right from its walls.</p>
+    <a href="https://www.getyourguide.com/en-au/bled-castle-l140261/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Bled Castle</a>
+
+    <h3>🇵🇱 Malbork Castle, Poland</h3>
+    <p>The largest castle in the world by surface area — a huge fortress of red Gothic brick, built by the Teutonic Order on the banks of the Nogat river. A UNESCO World Heritage Site, Malbork impresses with its sheer scale, hard to fully grasp until you see it with your own eyes.</p>
+    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Malbork Castle, from Gdańsk</a>`,
+  },
+  {
+    slug: "amusement-parks-europe",
+    title: "The best amusement parks in Europe",
+    intro: "6 top parks, for all ages \u2014 from Disneyland Paris to the most intense rollercoasters",
+    body: `
+    <p>From classic parks with characters children love, to some of the tallest rollercoasters in the world — Europe has amusement parks for every age and every level of thrill-seeking. Below are some of the most popular, grouped by category, with tickets you can book ahead.</p>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>👑 Most popular and most visited (all ages)</h2>
+
+    <h3>🇫🇷 Disneyland Paris, France</h3>
+    <p>Europe's most visited amusement park — two full theme parks (Disneyland Park and Walt Disney Studios), where children can meet their favourite cartoon characters, among castles, parades and daily shows. A complete experience, ideal for a 2-3 day holiday.</p>
+    <a href="https://www.getyourguide.com/paris-l16/disneyland-paris-2-parks-ticket-1-2-3-4-5-day-t395320/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Disneyland Paris</a>
+
+    <h3>🇩🇪 Europa-Park, Rust, Germany</h3>
+    <p>Europe's second-largest amusement park, structured across 18 themed areas, each dedicated to a European country. It has 13 spectacular rollercoasters, gentle areas for younger kids, daily shows and a massive water park (Rulantica) — essentially a complete holiday in one place.</p>
+    <a href="https://www.getyourguide.com/rust-l2882/rust-europa-park-entrance-ticket-t393563/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Europa-Park, Rust</a>
+
+    <h2 class="section-title"><span class="bar"></span>🧸 Best for toddlers and preschoolers</h2>
+
+    <h3>🇳🇱 Efteling, Kaatsheuvel, Netherlands</h3>
+    <p>A fairy-tale park, famous for the relaxing atmosphere of its Fairytale Forest — characters from the Brothers Grimm's tales, paths full of greenery and a pace far gentler than thrill-focused parks. Ideal for young children, who easily fall under the spell of the place.</p>
+    <a href="https://www.getyourguide.com/amsterdam-l36/amsterdam-efteling-park-roundtrip-transfer-and-entry-ticket-t501550/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket (with transfer) — Efteling, from Amsterdam</a>
+
+    <h3>🇩🇰 Legoland Billund, Denmark</h3>
+    <p>The original Legoland park, built specifically for families with young children — spectacular mini-cities built entirely from Lego bricks, interactive rides and activities designed to spark creativity, not just thrills. A place where parents play just as much as the little ones.</p>
+    <a href="https://www.getyourguide.com/billund-l87275/legoland-billund-entry-ticket-private-transfer-t1427002/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket (with transfer) — Legoland Billund</a>
+
+    <h2 class="section-title"><span class="bar"></span>🎢 Best for adventure and thrills (older kids)</h2>
+
+    <h3>🇮🇹 Gardaland, Castelnuovo del Garda, Italy</h3>
+    <p>Right next to the splendid Lake Garda, Gardaland combines intense rollercoasters (like Oblivion or Raptor) with an area dedicated to little ones (Peppa Pig Land) — a rare balance between thrills for teenagers and fun for the whole family, in the same park.</p>
+    <a href="https://www.getyourguide.com/garda-l145126/gardaland-park-fixed-day-entry-ticket-t225588/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket — Gardaland</a>
+
+    <h3>🇵🇱 Energylandia, Zator, Poland</h3>
+    <p>Poland's largest amusement park, recognised across Europe for its huge number of modern rollercoasters — including Zadra, one of the tallest hybrid rollercoasters in the world. It also has a massive water area, plus zones specially designed for younger kids, so it's not just for thrill-seekers.</p>
+    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket (with optional pickup) — Energylandia, from Kraków</a>`,
+  },
 ]
 
 exports.TRAVEL_GUIDES_DE = [
@@ -4035,7 +4276,7 @@ exports.TRAVEL_GUIDES_DE = [
     <p>Suche direkt unten, ohne die Seite zu verlassen — gib Abflugort und Ziel ein, die Ergebnisse erscheinen in Echtzeit, mit aktuellen Preisen.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Flugtickets suchen</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.TRAVEL_GUIDES_FR = [
   {
@@ -4092,7 +4333,7 @@ exports.TRAVEL_GUIDES_FR = [
     <p>Recherchez directement ci-dessous, sans quitter la page — indiquez la ville de départ et la destination, les résultats apparaissent en temps réel, avec des prix à jour.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Rechercher des billets d'avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.TRAVEL_GUIDES_ES = [
   {
@@ -4149,7 +4390,7 @@ exports.TRAVEL_GUIDES_ES = [
     <p>Busca aquí abajo directamente, sin salir de la página — indica la ciudad de origen y el destino, y los resultados aparecen en tiempo real, con precios actualizados.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Busca billetes de avión</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.TRAVEL_GUIDES_IT = [
   {
@@ -4206,7 +4447,7 @@ exports.TRAVEL_GUIDES_IT = [
     <p>Cerca qui sotto direttamente, senza lasciare la pagina — inserisci la città di partenza e la destinazione, e i risultati appaiono in tempo reale, con prezzi aggiornati.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Cerca biglietti aerei</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.TRAVEL_GUIDES_PL = [
   {
@@ -4263,7 +4504,7 @@ exports.TRAVEL_GUIDES_PL = [
     <p>Szukaj bezpośrednio poniżej, bez opuszczania strony — wpisz miasto wylotu i cel podróży, a wyniki pojawią się w czasie rzeczywistym, z aktualnymi cenami.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Szukaj biletów lotniczych</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.TRAVEL_GUIDES_NL = [
   {
@@ -4320,7 +4561,7 @@ exports.TRAVEL_GUIDES_NL = [
     <p>Zoek hieronder direct, zonder de pagina te verlaten — vul de vertrekstad en bestemming in, en de resultaten verschijnen in real time, met actuele prijzen.</p>
     <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Zoek vliegtickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
   },
-]
+].concat(exports.TRAVEL_GUIDES_EN.slice(4))
 
 exports.GUIDES_PAGE_LABELS = {
   uk: { home: "Home", guidesTitle: "Travel Guides", guidesDesc: "Practical tips for travellers: transport, parking, and restaurant bookings near the big tourist sights.", otherGuides: "Other guides", footer: "practical travel guides, alongside up-to-date opening hours for every sight." },
