@@ -3617,7 +3617,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
     </div>`,
   },
@@ -3642,7 +3642,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
     </div>`,
   },
@@ -3668,7 +3668,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
     </div>`,
   },
@@ -3680,10 +3680,8 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Biletul de avion e de obicei cea mai mare cheltuială dintr-o vacanță — și cea mai ușor de optimizat, dacă știi unde să cauți. Diferențele de preț între companii, între zile ale săptămânii sau între aeroporturi apropiate pot ajunge la sute de euro pentru aceeași destinație.</p>
     <p>Un comparator care caută simultan pe zeci de companii aeriene (inclusiv low-cost) îți arată dintr-o privire cea mai ieftină variantă, indiferent cine o operează — mult mai rapid decât să verifici manual site-ul fiecărei companii în parte.</p>
     <p>Caută mai jos direct, fără să părăsești pagina — introdu orașul de plecare și destinația, iar rezultatele apar în timp real, cu prețuri actualizate.</p>
-    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-    <div class="flight-widget-card">
-      <script data-cfasync="true" async src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100" charset="utf-8"></script>
-    </div>`,
+    <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesWidgetBox" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button>
+    <div class="flight-widget-card" id="aviasalesWidgetBox" style="display:none"></div>`,
   },
   {
     slug: "transfer-aeroport",
@@ -3693,7 +3691,8 @@ exports.TRAVEL_GUIDES_RO = [
     <p>La aterizare, într-un oraș nou, ultimul lucru pe care-l vrei e să cauți un taxi la întâmplare sau să negociezi prețul cu un șofer necunoscut. Un transfer rezervat dinainte are preț fix, șofer confirmat și te așteaptă exact la ora aterizării — fără surprize, fără stres.</p>
     <p>Rezervarea din timp e de obicei mai ieftină decât un taxi luat pe loc, și elimină complet riscul de a rămâne blocat la aeroport dacă zborul întârzie.</p>
     <p>Apasă mai jos ca să cauți și să rezervi transferul tău, direct pe platforma partenerului.</p>
-    <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
+    <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă transferul de la aeroport</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button>
+    <div class="flight-widget-card" id="getTransferWidgetBox" style="display:none"></div>`,
   },
   {
     slug: "excursii-tururi-europa",
@@ -3709,7 +3708,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
       <div class="gyg-search-widget-wrap">
         <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="ro-RO" data-gyg-type="search"></div>
@@ -3824,7 +3823,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
 
     <h2 class="section-title"><span class="bar"></span>Castelele</h2>
@@ -3891,7 +3890,7 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
       </div>
 
     <h2 class="section-title"><span class="bar"></span>👑 Cele mai populare și vizitate (toate vârstele)</h2>
