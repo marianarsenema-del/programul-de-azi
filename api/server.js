@@ -666,6 +666,31 @@ function bookingSearchLinkFor(place) {
 function getExtraLabels(lang) {
   return EXTRA_LABELS[lang] || EXTRA_LABELS.uk;
 }
+// Etichete pentru butonul de geolocalizare internațional — engleză ca
+// implicit universal, plus română (trafic real din România pe .eu). Restul
+// limbilor cad pe engleză deocamdată — funcțional peste tot, doar nu
+// tradus complet încă în toate cele 21.
+const GEO_BTN_LABELS = {
+  uk: {
+    geoBtnDefault: "📍 Near me",
+    geoBtnDetecting: "Detecting...",
+    geoBtnAsking: "Asking for your location permission...",
+    geoBtnNotFound: "No covered city found near you. Pick one manually below.",
+    geoBtnTooFar: "The nearest covered city is too far from you:",
+    geoBtnDenied: "Couldn't access your location. Pick one manually below.",
+  },
+  ro: {
+    geoBtnDefault: "📍 Lângă mine",
+    geoBtnDetecting: "Se detectează...",
+    geoBtnAsking: "Îți cerem acordul pentru locație...",
+    geoBtnNotFound: "Nu am găsit un oraș acoperit aproape de tine. Alege manual mai jos.",
+    geoBtnTooFar: "Cel mai apropiat oraș acoperit e prea departe de tine:",
+    geoBtnDenied: "Nu am acces la locația ta. Alege manual mai jos.",
+  },
+};
+function geoBtnLabelsFor(lang) {
+  return GEO_BTN_LABELS[lang] || GEO_BTN_LABELS.uk;
+}
 const ATTRACTION_FOOTER_TEMPLATES = {
   ro: (n) => `îți arată dacă ${n} este deschis chiar acum, plus acces rapid la bilete.`,
   uk: (n) => `shows if ${n} is open right now, plus quick access to tickets.`,
@@ -1935,6 +1960,29 @@ function buildGreeceBeachPromoCardHtml(lang) {
     <div class="itinerary-promo-text">${escapeHtml(t.text)}</div>
     <div class="itinerary-promo-cta">${escapeHtml(t.cta)}</div>
   </a>`;
+}
+
+// Card COMBINAT — cerut explicit, ca să înlocuiască cele 2 bannere mari,
+// separate (itinerar general + Beach Hopper Grecia) cu UNUL singur,
+// compact, cu 2 butoane, doar pentru Grecia. Pentru restul țărilor,
+// rămâne un singur buton (nu există al doilea CTA de plajă în afara
+// Greciei) — comportament identic cu buildItineraryPromoCardHtml de mai
+// sus, doar redenumit pentru claritate la locul de apel.
+function buildCombinedTripPromoCardHtml(countryCode, lang) {
+  const tGeneral = itineraryPromoLabelsFor(lang);
+  const href = itineraryHrefFor(countryCode, lang);
+  if (countryCode !== "gr") {
+    return buildItineraryPromoCardHtml(countryCode, lang);
+  }
+  const tBeach = greeceBeachPromoLabelsFor(lang);
+  const beachHref = itineraryHrefFor("gr", lang);
+  return `<div class="itinerary-promo-card itinerary-promo-card-combined">
+    <div class="itinerary-promo-title">🗺️ ${escapeHtml(tGeneral.title.replace(/^📍\s*/, ""))}</div>
+    <div class="itinerary-promo-buttons">
+      <a href="${escapeHtml(href)}" class="itinerary-promo-btn">${escapeHtml(tGeneral.cta)}</a>
+      <a href="${escapeHtml(beachHref)}" class="itinerary-promo-btn">${escapeHtml(tBeach.cta)}</a>
+    </div>
+  </div>`;
 }
 
 // Etichete pentru votul anonim — "vot" (buton, inainte de a vota) și
@@ -4733,7 +4781,7 @@ function buildCsp(nonce) {
 const CSS_STYLES = `
 :root{
   --bg:#0F1115; --surface:#171A21; --surface-2:#1E2330; --border:#2A303D;
-  --text:#F3F5F8; --muted:#8E96AA; --accent:#FF7A1A; --accent-dim:#4A2A16;
+  --text:#F3F5F8; --muted:#8E96AA; --accent:#F0813A; --accent-dim:#4A2A16;
   --open-bg:#16A34A; --open-glow:rgba(22,163,74,.35);
   --closed-bg:#DC2626; --closed-glow:rgba(220,38,38,.35);
   --header-bg:rgba(15,17,21,.88);
@@ -4873,15 +4921,15 @@ main{padding-top:8px;}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
 .plan-visit-panel[hidden]{display:none;}
 .plan-visit-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;}
-.plan-visit-ticket{background:linear-gradient(135deg,#FF5533,#FF8A5B);color:#fff;}
-.plan-visit-booking{background:linear-gradient(135deg,#003580,#0057B8);color:#fff;}
-.plan-visit-parking{background:#FEF3C7;color:#78350F;}
-.plan-visit-parking-alt{background:linear-gradient(135deg,#10B981,#047857);color:#fff;}
+.plan-visit-ticket{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
+.plan-visit-booking{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
+.plan-visit-parking{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
+.plan-visit-parking-alt{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
 .how-to-get-there-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .how-to-get-there-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
 .how-to-get-there-panel[hidden]{display:none;}
-.how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:linear-gradient(135deg,#0EA5E9,#0369A1);color:#fff;}
-.how-to-get-there-option-alt{background:linear-gradient(135deg,#8B5CF6,#5B21B6);}
+.how-to-get-there-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
+.how-to-get-there-option-alt{background:#3A4556;}
 .report-issue-btn{width:100%;background:none;border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;}
 .report-issue-btn:disabled{opacity:.6;cursor:default;}
 .report-issue-panel{margin-top:10px;padding:14px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);}
@@ -4927,10 +4975,10 @@ main{padding-top:8px;}
 .affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
 .affiliate-banner-link:hover img{transform:translateY(-2px);}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
-.affiliate-btn-temu{background:#FF7A1A;color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,122,26,.5);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
-.affiliate-btn-temu:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(255,122,26,.55);}
+.affiliate-btn-temu{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease,box-shadow .25s ease;}
+.affiliate-btn-temu:hover{transform:translateY(-2px);box-shadow:0 18px 34px -8px rgba(0,0,0,.45);}
 .affiliate-btn-temu svg{width:20px;height:20px;flex:0 0 auto;}
-.affiliate-btn-generic{background:linear-gradient(135deg,#FF5F1F,#FF7A1A);color:#1A1200;box-shadow:0 12px 26px -10px rgba(255,120,30,.5);}
+.affiliate-btn-generic{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);}
 .affiliate-btn-cta{display:flex;align-items:center;justify-content:center;gap:10px;}
 .affiliate-cta-arrow{font-size:22px;font-weight:900;line-height:1;flex:0 0 auto;animation:affiliateCtaNudge 1.4s ease-in-out infinite;}
 @keyframes affiliateCtaNudge{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
@@ -4944,8 +4992,21 @@ main{padding-top:8px;}
 .sub-nav-tabs{display:flex;gap:6px;margin:14px 18px 0;background:#1e1e1e;border-radius:var(--radius-md);padding:6px;}
 .sub-nav-tab{flex:1 1 0;min-width:0;background:transparent;border:none;border-radius:calc(var(--radius-md) - 4px);padding:13px 10px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--muted);cursor:pointer;transition:background .18s ease,color .18s ease;text-align:center;min-height:44px;word-break:break-word;overflow-wrap:break-word;}
 .sub-nav-tab.active{background:var(--accent);color:#1A1200;}
+/* Doar 2 taburi (Magazine/Obiective), fără Favorite — cerut explicit,
+   design mai simplu, taburi egale ca importanță vizuală, mai mari. */
+.sub-nav-tabs-2col .sub-nav-tab{padding:16px 10px;font-size:15px;min-height:54px;}
 .sub-nav-panel{display:none;}
 .sub-nav-panel.active{display:block;}
+/* Comutatorul "Deschise Acum" — restilizat ca switch mare, ușor de apăsat
+   din mers pe telefon, cerut explicit în loc de checkbox-ul mic dinainte. */
+.open-now-switch{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:100px;padding:12px 18px;font-weight:600;}
+.open-now-switch input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:42px;height:24px;border-radius:100px;background:var(--border);position:relative;cursor:pointer;transition:background .2s ease;flex-shrink:0;}
+.open-now-switch input[type="checkbox"]::before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.open-now-switch input[type="checkbox"]:checked{background:var(--accent);}
+.open-now-switch input[type="checkbox"]:checked::before{transform:translateX(18px);}
+/* Butonul de geolocalizare de pe pagina internațională — poziționat sus,
+   lângă căutare, nu ascuns într-un panou de tab, ca să fie vizibil imediat. */
+#geoBtnIntl.geo-btn{margin:10px 18px 0;}
 .attractions-country{margin:20px 18px 8px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);}
 .geo-country-highlight{margin:14px 18px 0;padding:12px 16px;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--accent);border-radius:var(--radius-md);font-size:13.5px;color:var(--muted);text-align:center;}
 .install-banner{display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,var(--accent),#FF9A4D);color:#fff;font-size:13px;cursor:pointer;}
@@ -5064,7 +5125,12 @@ main{padding-top:8px;}
 .beach-tag-vote-btn{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;color:var(--text);font-size:12px;font-weight:600;padding:8px 12px;cursor:pointer;font-family:var(--font-body);}
 .beach-tag-vote-btn:hover{border-color:var(--accent);}
 .beach-tag-vote-btn.voted{color:var(--accent);border-color:var(--accent);cursor:default;}
-.itinerary-promo-card{display:block;text-decoration:none;background:linear-gradient(135deg,var(--accent),#ff8a3d);border-radius:var(--radius-md);padding:18px 20px;margin:14px 0;box-shadow:0 4px 16px rgba(255,107,53,.25);}
+.itinerary-promo-card{display:block;text-decoration:none;background:linear-gradient(135deg,#2B6CB0,#4299E1);border-radius:var(--radius-md);padding:18px 20px;margin:14px 0;box-shadow:0 4px 16px rgba(43,108,176,.25);}
+/* Card combinat (itinerar + Beach Hopper Grecia, un singur card, 2
+   butoane) — cerut explicit, în loc de 2 bannere mari separate. */
+.itinerary-promo-buttons{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.itinerary-promo-btn{display:block;text-align:center;background:rgba(255,255,255,.15);color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:13.5px;padding:12px 14px;border-radius:calc(var(--radius-md) - 6px);border:1px solid rgba(255,255,255,.25);}
+@media (min-width:420px){.itinerary-promo-buttons{flex-direction:row;}.itinerary-promo-btn{flex:1;}}
 .itinerary-promo-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;}
 .itinerary-promo-text{font-size:13.5px;color:rgba(255,255,255,.92);line-height:1.4;margin-bottom:10px;}
 .itinerary-promo-cta{font-size:13.5px;font-weight:700;color:#fff;}
@@ -5411,6 +5477,87 @@ function buildGeoScript(nonce) {
       },
       function(){
         resetButton("Nu am acces la locația ta. Alege manual mai jos.");
+      },
+      { timeout: 8000, maximumAge: 300000 }
+    );
+  });
+})();
+</script>`;
+}
+
+// Varianta internațională a buttonului de geolocalizare — caută cel mai
+// apropiat oraș cunoscut din TOATE țările simultan (nu doar România),
+// apoi redirect la /tara/oras (nu doar /oras). Reutilizează exact aceeași
+// logică Haversine, doar harta de coordonate e mult mai mare (toate
+// orașele din COUNTRIES, nu doar SITEMAP_CITIES).
+function buildGeoScriptIntl(nonce, labels) {
+  const allCityCoords = {};
+  Object.entries(COUNTRIES).forEach(([code, country]) => {
+    country.cities.forEach((c) => {
+      if (CITY_COORDS[c]) allCityCoords[c] = { coords: CITY_COORDS[c], code };
+    });
+  });
+
+  return `
+<script nonce="${nonce}">
+(function(){
+  var btn = document.getElementById("geoBtnIntl");
+  var status = document.getElementById("geoStatusIntl");
+  if (!btn) return;
+
+  if (!("geolocation" in navigator)) {
+    btn.style.display = "none";
+    return;
+  }
+
+  var KNOWN_CITY_COORDS = ${safeJson(allCityCoords)};
+  var MAX_USEFUL_DISTANCE_KM = 80; // ceva mai mare decât la RO — densitatea de orașe cunoscute per țară e mai mică la nivel de Europa
+
+  function showStatus(msg){
+    if (status) { status.style.display = "block"; status.textContent = msg; }
+  }
+  function resetButton(msg){
+    btn.disabled = false;
+    btn.textContent = ${safeJson(labels.geoBtnDefault)};
+    if (msg) showStatus(msg);
+  }
+  function slugify(name){
+    return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().trim().replace(/\\s+/g, "-");
+  }
+  function haversineKm(lat1, lon1, lat2, lon2){
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  function findNearestKnownCity(lat, lon){
+    var best = null, bestDist = Infinity, bestCode = null;
+    for (var city in KNOWN_CITY_COORDS) {
+      var entry = KNOWN_CITY_COORDS[city];
+      var d = haversineKm(lat, lon, entry.coords[0], entry.coords[1]);
+      if (d < bestDist) { bestDist = d; best = city; bestCode = entry.code; }
+    }
+    return best ? { city: best, code: bestCode, distanceKm: Math.round(bestDist) } : null;
+  }
+
+  btn.addEventListener("click", function(){
+    btn.disabled = true;
+    btn.textContent = ${safeJson(labels.geoBtnDetecting)};
+    showStatus(${safeJson(labels.geoBtnAsking)});
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        var nearest = findNearestKnownCity(pos.coords.latitude, pos.coords.longitude);
+        if (!nearest) { resetButton(${safeJson(labels.geoBtnNotFound)}); return; }
+        if (nearest.distanceKm > MAX_USEFUL_DISTANCE_KM) {
+          resetButton(${safeJson(labels.geoBtnTooFar)} + " " + nearest.city + " (~" + nearest.distanceKm + " km).");
+          return;
+        }
+        window.location.href = "/" + nearest.code + "/" + slugify(nearest.city);
+      },
+      function(){
+        resetButton(${safeJson(labels.geoBtnDenied)});
       },
       { timeout: 8000, maximumAge: 300000 }
     );
@@ -8343,13 +8490,12 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     : escapeHtml(t.attractionsIntro || "Official ticket and information pages — always check the live hours shown there before you visit. Tap ☆ to save one to your favorites.");
   const attractionsAllBlockHtml = `
   <div class="country-filter-block active" data-country-block="all">
-    <p class="intro-text">${attractionsIntroHtml}</p>
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml((t.exploreCollections || "Explore collections") + " (" + COUNTRY_LABELS[primaryAttractionCountry] + "):")}</h2>
     ${orderedAttractionCodes
       .map((code) => {
         if (code === primaryAttractionCountry) {
           const items = buildAttractionListForCountry(ATTRACTIONS[code], code, true, activeLang);
-          const grBanner = code === "gr" ? buildGreeceBeachPromoCardHtml(activeLang) : "";
-          return `${grBanner}<h3 class="attractions-country" id="attractions-country-${code}">${COUNTRY_LABELS[code]}</h3>${items}`;
+          return `<h3 class="attractions-country" id="attractions-country-${code}">${COUNTRY_LABELS[code]}</h3>${items}`;
         }
         return `<details class="attraction-country-lazy" data-lazy-country="${code}">
           <summary class="attractions-country">${COUNTRY_LABELS[code]} <span class="attraction-category-count">(${ATTRACTIONS[code].length})</span></summary>
@@ -8395,44 +8541,46 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
 
   <h1 class="page-h1">${escapeHtml(t.homeH1 || "Is the store open right now?")}</h1>
   <p class="intro-text">${escapeHtml(t.homeIntro || "Pick a country below to filter everything — Stores and Attractions both — or search directly.")}</p>
-  ${buildLanguageSwitcher(activeLang, "/")}
-  ${filterBarHtml}
-
-  <nav class="sub-nav-tabs">
-    <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(t.tabStores)}</button>
-    <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(t.tabAttractions)}</button>
-    <button type="button" class="sub-nav-tab" data-tab="favorites">${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</button>
-  </nav>
 
   <div class="search-box-wrap">
     <input type="text" id="siteSearchInput" class="city-search-input" placeholder="${escapeHtml(t.searchPlaceholder || "Search a store or attraction...")}" autocomplete="off">
     <div id="siteSearchResults" class="search-results"></div>
+  </div>
+  <button type="button" id="geoBtnIntl" class="geo-btn">${escapeHtml(geoBtnLabelsFor(activeLang).geoBtnDefault)}</button>
+  <p id="geoStatusIntl" class="geo-status" style="display:none"></p>
+
+  ${buildLanguageSwitcher(activeLang, "/")}
+  ${filterBarHtml}
+
+  <nav class="sub-nav-tabs sub-nav-tabs-2col">
+    <button type="button" class="sub-nav-tab active" data-tab="stores">${escapeHtml(t.tabStores)}</button>
+    <button type="button" class="sub-nav-tab" data-tab="attractions">${escapeHtml(t.tabAttractions)}</button>
+  </nav>
+  <div class="sub-nav-panel favorites-hidden-panel" data-panel="favorites">
+    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</h2>
+    <p class="intro-text">${escapeHtml(FAV_INTRO_TEXTS[activeLang] || FAV_INTRO_TEXTS.uk)}</p>
+    <div id="favoritesList"></div>
   </div>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
   <div class="sub-nav-panel active" data-panel="stores">
-    <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(mapUnifiedToggleLabelFor(activeLang))}</label>
+    <label class="map-live-toggle open-now-switch"><input type="checkbox" id="storeListOpenOnlyToggle"> ${escapeHtml(mapUnifiedToggleLabelFor(activeLang))}</label>
     ${storesAllBlockHtml}
     ${storesByCountryHtml}
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
-    ${buildItineraryPromoCardHtml(validDetected, activeLang)}
-    ${validDetected !== "gr" ? `<label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>` : ""}
+    ${validDetected !== "gr" ? `<label class="map-live-toggle attraction-list-open-toggle open-now-switch"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>` : ""}
+    ${buildCombinedTripPromoCardHtml(validDetected, activeLang)}
     ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", validDetected, activeLang)}
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
   </div>
 
-  <div class="sub-nav-panel" data-panel="favorites">
-    <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</h2>
-    <p class="intro-text">${escapeHtml(FAV_INTRO_TEXTS[activeLang] || FAV_INTRO_TEXTS.uk)}</p>
-    <div id="favoritesList"></div>
-  </div>
-
   <footer>
+    <p><a href="#favorites" class="footer-favorites-link">${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</a></p>
     <p><strong>Opening Hours Today</strong> ${escapeHtml(HOMEPAGE_FOOTER_TEXTS[activeLang] || HOMEPAGE_FOOTER_TEXTS.uk)}</p>
   </footer>
 
@@ -8445,6 +8593,7 @@ ${buildAttractionLazyScript(nonce, activeLang)}
 ${buildCountryFilterScript(nonce, validDetected, detectedCity, primaryAttractionCountry)}
 ${buildAttractionListFilterScript(nonce)}
 ${buildAttractionAccordionScript(nonce)}
+${buildGeoScriptIntl(nonce, geoBtnLabelsFor(activeLang))}
 ${pushEnabled ? buildPushSubscribeScript(nonce, VAPID_PUBLIC_KEY, getExtraLabels(activeLang).pushSub, getExtraLabels(activeLang).pushUnsub) : ""}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: activeLang });
