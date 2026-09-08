@@ -5068,7 +5068,7 @@ main{padding-top:8px;}
    text) gândite pentru fundal deschis, indiferent de parametrii de culoare
    trimiși în URL — încadrarea într-un card alb face tranziția vizuală
    naturală, nu o pată bruscă pe fundalul dark al site-ului. */
-.flight-widget-card{width:100vw;max-width:700px;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;margin-top:20px;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:visible;min-height:60px;}
+.flight-widget-card{width:100vw;max-width:480px;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;margin-top:20px;padding:16px;background:#fff;border-radius:var(--radius-md);box-shadow:0 12px 26px -10px rgba(0,0,0,.4);overflow:visible;min-height:60px;}
 /* Card "trip toolkit" — designul premium cerut pentru ghidul de excursii:
    fundal glass, bordură discretă cu accent, cele 3 butoane grupate curat,
    una lângă alta pe ecrane late, stivuite pe mobil. */
@@ -11549,8 +11549,14 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // funcțional. Mașină: mereu funcțional, dar fără destinație
     // pre-completată (vezi comentariul de mai sus, la CAR_RENTAL_LINK).
     var flightLink = searchedCity ? flightSearchLinkFor(searchedCity) : null;
+    // Widget Kiwi (nu doar link simplu) — cerut explicit. IMPORTANT: un
+    // <script> inserat ca text simplu, prin innerHTML, NU se execută
+    // niciodată în browser (limitare cunoscută) — de-aia punem aici doar un
+    // container gol, cu ID unic, și creăm elementul <script> corect, cu
+    // document.createElement, ceva mai jos, DUPĂ ce results.innerHTML chiar
+    // a pus containerul în pagină (altfel elementul n-ar exista încă).
     var flightHtml = flightLink
-      ? '<a href="' + flightLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</a>'
+      ? '<div id="kiwiWidgetContainer" class="flight-widget-card"></div>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
@@ -11569,6 +11575,19 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + '</div>';
     results.innerHTML = html;
     resetBtn.style.display = "block";
+
+    // Widget-ul Kiwi — creat corect, cu document.createElement, DUPĂ ce
+    // containerul de mai sus chiar există în pagină (vezi comentariul de
+    // la flightHtml). Verificăm mai întâi dacă containerul chiar există
+    // (nu apare deloc dacă n-am găsit oraș/zbor pentru destinația asta).
+    var kiwiContainer = document.getElementById("kiwiWidgetContainer");
+    if (kiwiContainer) {
+      var kiwiScript = document.createElement("script");
+      kiwiScript.async = true;
+      kiwiScript.charset = "utf-8";
+      kiwiScript.src = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111";
+      kiwiContainer.appendChild(kiwiScript);
+    }
   }
 
   form.addEventListener("submit", function(e){
