@@ -51,7 +51,7 @@ app.use((req, res, next) => {
   // Testul cu iframe s-a încheiat — Travelpayouts a confirmat cauza reală
   // (connect-src, nu iframe/frame-ancestors) — restaurăm protecția.
   res.set("X-Frame-Options", "DENY");
-  res.set("Referrer-Policy", "strict-origin-when-cross-origin"); // nu trimitem URL-ul complet altor site-uri, la click pe linkuri externe
+  res.set("Referrer-Policy", "no-referrer-when-downgrade"); // TEST: strict-origin-when-cross-origin trimitea doar originea (fără cale) către alte site-uri — ipoteză: Travelpayouts se bazează pe URL-ul complet ca să identifice contul corect de furnizor, de-aia widget-ul mergea perfect pe pagina de test (fără nicio restricție), dar eșua ("Provider's accounts list is empty") pe pagina reală. Rămâne totuși mai sigur decât "unsafe-url" — nu trimite deloc referrer la un downgrade HTTPS→HTTP.
   res.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains"); // forțează HTTPS, chiar dacă cineva încearcă explicit http://
   res.set("Permissions-Policy", "geolocation=(self), camera=(), microphone=()"); // geolocația rămâne, restul dezactivat explicit
   next();
@@ -11549,14 +11549,8 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // funcțional. Mașină: mereu funcțional, dar fără destinație
     // pre-completată (vezi comentariul de mai sus, la CAR_RENTAL_LINK).
     var flightLink = searchedCity ? flightSearchLinkFor(searchedCity) : null;
-    // Widget Kiwi (nu doar link simplu) — cerut explicit. IMPORTANT: un
-    // <script> inserat ca text simplu, prin innerHTML, NU se execută
-    // niciodată în browser (limitare cunoscută) — de-aia punem aici doar un
-    // container gol, cu ID unic, și creăm elementul <script> corect, cu
-    // document.createElement, ceva mai jos, DUPĂ ce results.innerHTML chiar
-    // a pus containerul în pagină (altfel elementul n-ar exista încă).
     var flightHtml = flightLink
-      ? '<div id="kiwiWidgetContainer" class="flight-widget-card"></div>'
+      ? '<a href="' + flightLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</a>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
@@ -11575,19 +11569,6 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + '</div>';
     results.innerHTML = html;
     resetBtn.style.display = "block";
-
-    // Widget-ul Kiwi — creat corect, cu document.createElement, DUPĂ ce
-    // containerul de mai sus chiar există în pagină (vezi comentariul de
-    // la flightHtml). Verificăm mai întâi dacă containerul chiar există
-    // (nu apare deloc dacă n-am găsit oraș/zbor pentru destinația asta).
-    var kiwiContainer = document.getElementById("kiwiWidgetContainer");
-    if (kiwiContainer) {
-      var kiwiScript = document.createElement("script");
-      kiwiScript.async = true;
-      kiwiScript.charset = "utf-8";
-      kiwiScript.src = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111";
-      kiwiContainer.appendChild(kiwiScript);
-    }
   }
 
   form.addEventListener("submit", function(e){
