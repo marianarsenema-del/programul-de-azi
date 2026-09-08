@@ -3876,6 +3876,24 @@ function buildLanguageSwitcherScript(nonce) {
   var STORAGE_KEY = "oht_lang_pref";
   var select = document.getElementById("langSwitcherSelect");
   if (select) {
+    // mutăm selectorul de limbă lângă iconița soare/lună, în antet — cerut
+    // explicit — aceeași tehnică deja folosită pentru butonul de temă
+    // (vezi buildThemeToggleScript): relocare o singură dată, aici, nu
+    // trebuie atinsă fiecare pagină individual. Grid-ul din .header-row are
+    // 3 coloane fixe (brand / ceas / [gol]) — în loc să adăugăm încă un
+    // copil direct în grid (risc de layout stricat), grupăm limba + tema
+    // într-un mic wrapper flex, care ocupă el singur a treia coloană.
+    var headerRow = document.querySelector(".header-row");
+    var wrap = select.closest(".lang-switcher");
+    if (headerRow && wrap) {
+      var themeBtn = document.getElementById("themeToggle");
+      var group = document.createElement("div");
+      group.className = "header-actions-group";
+      headerRow.appendChild(group);
+      group.appendChild(wrap);
+      wrap.classList.add("in-header");
+      if (themeBtn) group.appendChild(themeBtn);
+    }
     select.addEventListener("change", function(){
       var lang = select.value;
       try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
@@ -5222,6 +5240,9 @@ main{padding-top:8px;}
 .fav-star.is-fav{color:var(--accent);}
 .fav-empty{margin:14px 18px 0;font-size:13.5px;color:var(--muted);}
 .lang-switcher{margin:10px 18px 0;}
+.header-actions-group{display:flex;align-items:center;gap:8px;justify-self:end;}
+.lang-switcher.in-header{margin:0;}
+.lang-switcher.in-header select{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:100px;color:var(--text);font-family:var(--font-display);font-weight:600;font-size:12px;padding:6px 10px;cursor:pointer;}
 .lang-switcher select{width:100%;background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14.5px;cursor:pointer;}
 .clear-country-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:var(--font-body);font-weight:600;font-size:13px;padding:8px 14px;border-radius:100px;cursor:pointer;}
 .country-filter-bar{margin-top:0;}
@@ -5473,7 +5494,15 @@ function buildGeoScript(nonce) {
           resetButton("Cel mai apropiat oraș acoperit e " + nearest.city + " (~" + nearest.distanceKm + " km) — prea departe pentru o sugestie automată. Alege manual mai jos.");
           return;
         }
-        window.location.href = "/" + slugify(nearest.city);
+        // Respectă tab-ul activ (Magazine/Obiective) — bug real, semnalat
+        // direct: butonul te ducea mereu spre orașul respectiv cu tab-ul
+        // de Magazine activ implicit, chiar dacă erai pe Obiective Turistice
+        // când ai apăsat. Verificăm ce tab e activ ACUM și adăugăm hash-ul
+        // corespunzător, pe care pagina destinație (buildTabsScript) știe
+        // deja să-l citească și să activeze tab-ul potrivit.
+        var activeTab = document.querySelector(".sub-nav-tab.active");
+        var tabHash = (activeTab && activeTab.getAttribute("data-tab") === "attractions") ? "#attractions" : "";
+        window.location.href = "/" + slugify(nearest.city) + tabHash;
       },
       function(){
         resetButton("Nu am acces la locația ta. Alege manual mai jos.");
@@ -5554,7 +5583,9 @@ function buildGeoScriptIntl(nonce, labels) {
           resetButton(${safeJson(labels.geoBtnTooFar)} + " " + nearest.city + " (~" + nearest.distanceKm + " km).");
           return;
         }
-        window.location.href = "/" + nearest.code + "/" + slugify(nearest.city);
+        var activeTab = document.querySelector(".sub-nav-tab.active");
+        var tabHash = (activeTab && activeTab.getAttribute("data-tab") === "attractions") ? "#attractions" : "";
+        window.location.href = "/" + nearest.code + "/" + slugify(nearest.city) + tabHash;
       },
       function(){
         resetButton(${safeJson(labels.geoBtnDenied)});
@@ -5871,19 +5902,30 @@ function buildTabsScript(nonce) {
   });
 
   // vine cineva din bara de jos (#favoritesList, #citySearchInput) —
-  // activăm tab-ul potrivit și facem scroll manual, DUPĂ activare — browserul
-  // încearcă să sară la ancoră imediat, înainte ca tab-ul să fie activat,
-  // deci elementul e încă ascuns în acel moment (bug real, prins prin
-  // testare, nu doar teoretic — semnalat direct de la utilizator).
-  var hash = (window.location.hash || "").replace("#", "");
+  // activăm tab-ul potrivit și facem scroll manual. Hash-ul original a
+  // fost deja scos din URL, cât mai devreme posibil (vezi scriptul din
+  // <head>), tocmai ca să prevenim saltul nativ al browserului spre o
+  // ancoră încă ascunsă — ținta reală vine acum din window.__poaPendingHash.
+  var hash = window.__poaPendingHash || "";
   if (hash === "favorites" || hash === "favoritesList") {
     activate("favorites");
     var favEl = document.getElementById("favoritesList");
     if (favEl) favEl.scrollIntoView({ behavior: "smooth", block: "center" });
   }
-  if (hash === "search" || hash === "citySearchInput") {
+  if (hash === "search" || hash === "citySearchInput" || hash === "siteSearchInput") {
     var input = document.getElementById("siteSearchInput") || document.getElementById("citySearchInput");
     if (input) { input.focus(); input.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  }
+  if (hash === "cityMap") {
+    var mapEl = document.getElementById("cityMap");
+    if (mapEl) mapEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  // vine de la butonul "Lângă mine", apăsat în timp ce tab-ul Obiective
+  // Turistice era activ — bug real, semnalat direct: pagina orașului se
+  // deschidea mereu cu tab-ul Magazine implicit, ignorând ce alesese
+  // utilizatorul înainte de a apăsa geolocalizarea.
+  if (hash === "attractions") {
+    activate("attractions");
   }
 })();
 </script>`;
@@ -7414,7 +7456,6 @@ function buildBottomNavHtml(langCode, countryCode) {
   return `
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span>${escapeHtml(labels.home)}</span></a>
-  <a href="/#citySearchInput" class="bottom-nav-item" id="bottomNavSearch"><span class="bottom-nav-icon">🔍</span><span>${escapeHtml(labels.search)}</span></a>
   <a href="/#favoritesList" class="bottom-nav-item" id="bottomNavFavorites"><span class="bottom-nav-icon">⭐</span><span>${escapeHtml(labels.favorites)}</span></a>
   ${itineraryBtn}
   <a href="/#cityMap" class="bottom-nav-item" id="bottomNavMap"><span class="bottom-nav-icon">🗺️</span><span>${escapeHtml(labels.map)}</span></a>
@@ -7425,51 +7466,12 @@ function buildBottomNavScript(nonce) {
   return `
 <script nonce="${nonce}">
 (function(){
-  // căutare/favorite: dacă elementul țintă există CHIAR PE PAGINA CURENTĂ,
+  // favorite/hartă: dacă elementul țintă există CHIAR PE PAGINA CURENTĂ,
   // activăm mai întâi tab-ul asociat (dacă e ascuns într-un tab, ex. pe
   // homepage — bug real, prins prin testare, semnalat direct de la
   // utilizator: scroll spre un element ascuns nu face nimic vizibil), apoi
   // derulăm până la el — altfel, navigăm spre homepage, sau ascundem
   // butonul dacă nici homepage-ul nu-l are.
-  // căutare: PRIORITAR verificăm "siteSearchInput" — caseta de căutare
-  // instant (magazin/obiectiv), prezentă pe majoritatea paginilor (oraș,
-  // magazin, obiectiv), nu doar pe homepage. Bug real, semnalat direct:
-  // pe o pagină de oraș (care ARE această casetă), butonul de căutare din
-  // bara de jos verifica doar "citySearchInput" (alt element, specific
-  // DOAR homepage-ului RO — formularul "scrie orașul tău") — negăsindu-l
-  // pe pagina curentă, naviga către homepage în loc să deschidă căutarea
-  // chiar acolo unde era utilizatorul.
-  (function(){
-    var link = document.getElementById("bottomNavSearch");
-    if (!link) return;
-    // Pe prima pagină (homepage), caseta de căutare e deja vizibilă chiar
-    // sus, la încărcare — o iconiță identică în bara de jos ar fi
-    // redundantă, cerut explicit să dispară doar acolo (nu pe restul
-    // paginilor, unde chiar ajută să găsești caseta ascunsă mai jos).
-    if (window.location.pathname === "/") {
-      link.style.display = "none";
-      return;
-    }
-    var siteSearch = document.getElementById("siteSearchInput");
-    var citySearch = document.getElementById("citySearchInput");
-    if (siteSearch) {
-      link.addEventListener("click", function(e){
-        e.preventDefault();
-        siteSearch.scrollIntoView({ behavior: "smooth", block: "center" });
-        siteSearch.focus();
-      });
-    } else if (citySearch) {
-      link.addEventListener("click", function(e){
-        e.preventDefault();
-        var tabBtn = document.querySelector('[data-tab="stores"]');
-        if (tabBtn && !tabBtn.classList.contains("active")) { tabBtn.click(); }
-        citySearch.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
-    } else if (window.location.pathname === "/") {
-      link.style.display = "none";
-    }
-    // altfel — lăsăm link-ul să navigheze normal spre "/#id"
-  })();
 
   [["bottomNavFavorites","favoritesList","favorites"]].forEach(function(triple){
     var link = document.getElementById(triple[0]);
@@ -7633,6 +7635,25 @@ ${travelpayoutsScript}
   try {
     if (localStorage.getItem("poa_selected_country_v1") || localStorage.getItem("poa_selected_city_v1")) {
       document.documentElement.classList.add("filter-restore-pending");
+    }
+  } catch(e){}
+
+  // Previne saltul brusc al browserului spre #favorites/#favoritesList/
+  // #search/#cityMap etc. — bug real, semnalat direct: chiar dacă mai jos
+  // (buildTabsScript) reactivăm tab-ul corect și facem scroll manual,
+  // browserul ÎNCEARCĂ să sară nativ spre ancoră ÎNAINTE ca acel script
+  // să apuce să ruleze (elementul e încă ascuns, display:none, în acel
+  // moment) — asta produce saltul vizibil, urmat de-o a doua corecție.
+  // Soluție: scoatem hash-ul din URL CÂT MAI DEVREME posibil (aici, chiar
+  // la începutul <head>-ului, înainte ca browserul să apuce să proceseze
+  // ancora), păstrăm ținta într-o variabilă globală, pe care
+  // buildTabsScript o citește mai jos, ca să știe totuși ce tab activează.
+  try {
+    var initialHash = (window.location.hash || "").replace("#", "");
+    var poaKnownHashes = ["favorites", "favoritesList", "search", "citySearchInput", "siteSearchInput", "cityMap", "attractions"];
+    if (poaKnownHashes.indexOf(initialHash) !== -1 && window.history && window.history.replaceState) {
+      window.__poaPendingHash = initialHash;
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
     }
   } catch(e){}
 })();
@@ -7917,6 +7938,18 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
   const description = `Alege un magazin din ${orasDisplay} și vezi instant dacă este deschis acum: Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din ${orasDisplay}.`;
   const canonical = `${baseUrl}/${orasSlug}`;
 
+  // Obiective turistice DIN ACEST ORAȘ — cerut explicit, ca proiect mai
+  // mare (pagina de oraș avea, până acum, doar magazine — obiectivele
+  // existau doar ca listă generală, pe toată țara, pe prima pagină).
+  // Reutilizează exact aceeași funcție de grupare pe categorii deja
+  // folosită pe prima pagină și pe paginile internaționale, doar cu lista
+  // filtrată la acest oraș anume.
+  const strip = (s) => normalizeSlug(s).replace(/[\s-]+/g, "");
+  const cityAttractions = ATTRACTIONS.ro.filter((a) => strip(a.city || "") === strip(orasDisplay));
+  const cityAttractionsHtml = cityAttractions.length
+    ? buildAttractionListForCountry(cityAttractions, "ro", false, "ro")
+    : `<p class="intro-text">Nu avem încă obiective turistice listate pentru ${escapeHtml(orasDisplay)}. Vezi <a href="/#attractions">toate obiectivele din România</a>.</p>`;
+
   const allowedKeys = Object.keys(STORE_CONFIG).filter((key) => isSelectiveBrandAllowedInCity("ro", key, orasDisplay));
 
   // Statusul live REAL, per locație (nu generic, pe brand) — bug real,
@@ -7990,19 +8023,39 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 </header>
 <main class="wrap">
   <p class="breadcrumb"><a href="/">Acasă</a> / ${escapeHtml(orasDisplay)}</p>
-  <h1 class="page-h1">Program magazine în ${escapeHtml(orasDisplay)}</h1>
+  <h1 class="page-h1">Program magazine și obiective în ${escapeHtml(orasDisplay)}</h1>
 
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
-  <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
+  <nav class="sub-nav-tabs sub-nav-tabs-2col">
+    <button type="button" class="sub-nav-tab active" data-tab="stores">🛒 Magazine și Servicii</button>
+    <button type="button" class="sub-nav-tab" data-tab="attractions">🏛️ Obiective Turistice</button>
+  </nav>
 
-  <label class="map-live-toggle"><input type="checkbox" id="storeListOpenOnlyToggle"> Doar magazinele deschise acum</label>
+  <div class="sub-nav-panel active" data-panel="stores">
+    <p class="intro-text">Alege mai jos magazinul din ${escapeHtml(orasDisplay)} pentru care vrei să vezi programul de azi și statusul live „deschis” sau „închis”.</p>
 
-  ${buildNoResultsItineraryPromoHtml("noResultsStoreItinPromo", "ro", "ro")}
+    <label class="map-live-toggle open-now-switch"><input type="checkbox" id="storeListOpenOnlyToggle"> Doar magazinele deschise acum</label>
 
-  ${listItemsGroupedHtml}
+    ${buildNoResultsItineraryPromoHtml("noResultsStoreItinPromo", "ro", "ro")}
 
+    ${listItemsGroupedHtml}
+  </div>
+
+  <div class="sub-nav-panel" data-panel="attractions">
+    <label class="map-live-toggle attraction-list-open-toggle open-now-switch"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
+    ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", "ro", "ro")}
+    <h2 class="section-title"><span class="bar"></span>Obiective în ${escapeHtml(orasDisplay)}:</h2>
+    <div class="attraction-accordion-wrap">${cityAttractionsHtml}</div>
+    ${buildItineraryPromoCardHtml("ro", "ro")}
+  </div>
+
+  <!-- Harta e comună — arată magazine ȘI obiective pe aceeași hartă, deci
+       stă în afara celor 2 taburi, mereu vizibilă, indiferent care tab e
+       activ. Bug real, semnalat direct: pusă înainte în interiorul
+       panoului "Magazine", devenea invizibilă complet pe tab-ul Obiective,
+       deși pinurile de-acolo chiar există pe ea. -->
   ${buildCityMapHtml(CITY_COORDS[orasDisplay], orasDisplay, nonce, "ro")}
 
   ${buildCityFaqHtml({ orasDisplay, lang: "ro" })}
@@ -8017,7 +8070,10 @@ async function renderCityPage({ orasSlug, orasDisplay, baseUrl, nonce }) {
 ${buildListStatusBadgeScript(nonce, statusDataset, "noResultsStoreItinPromo")}
 ${buildLiveMapPinsScript(orasDisplay, "ro", nonce)}
 ${buildLiveAttractionsMapPinsScript(orasDisplay, "ro", "ro", nonce)}
-${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}`;
+${buildSearchAndFavoritesScript(nonce, [], "poa_favorites_v1", "ro")}
+${buildTabsScript(nonce)}
+${buildAttractionListFilterScript(nonce)}
+${buildAttractionAccordionScript(nonce)}`;
 
   // ceas simplu, fără status (nicio entitate specifică selectată încă)
   const cityAlternateLinks = COUNTRIES.ro.cities.some((c) => normalizeSlug(c) === normalizeSlug(orasDisplay))
@@ -8516,9 +8572,9 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     .map((code) => {
       return `
   <div class="country-filter-block" data-country-block="${code}" data-lazy-country="${code}" style="display:none">
-    ${code === "gr" ? buildGreeceBeachPromoCardHtml(activeLang) : ""}
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.attractionsIn || "Attractions in")} ${escapeHtml(COUNTRY_LABELS[code])}</h2>
     <div class="lazy-attraction-target" data-loading-text="${escapeHtml(loadingTextFor(activeLang))}"></div>
+    ${code === "gr" ? buildGreeceBeachPromoCardHtml(activeLang) : buildItineraryPromoCardHtml(code, activeLang)}
   </div>`;
     })
     .join("");
@@ -8573,14 +8629,13 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
 
   <div class="sub-nav-panel" data-panel="attractions">
     ${validDetected !== "gr" ? `<label class="map-live-toggle attraction-list-open-toggle open-now-switch"><input type="checkbox" id="attractionListOpenOnlyToggle"> ${escapeHtml(openOnlyAttractionLabelFor(activeLang))}</label>` : ""}
-    ${buildCombinedTripPromoCardHtml(validDetected, activeLang)}
     ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", validDetected, activeLang)}
     ${attractionsAllBlockHtml}
     ${attractionsByCountryHtml}
+    ${buildCombinedTripPromoCardHtml(validDetected, activeLang)}
   </div>
 
   <footer>
-    <p><a href="#favorites" class="footer-favorites-link">${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</a></p>
     <p><strong>Opening Hours Today</strong> ${escapeHtml(HOMEPAGE_FOOTER_TEXTS[activeLang] || HOMEPAGE_FOOTER_TEXTS.uk)}</p>
   </footer>
 
@@ -9310,11 +9365,11 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   </div>
 
   <div class="sub-nav-panel" data-panel="attractions">
-    ${buildItineraryPromoCardHtml("ro", "ro")}
-    <label class="map-live-toggle attraction-list-open-toggle"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
+    <label class="map-live-toggle attraction-list-open-toggle open-now-switch"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
     ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", "ro", "ro")}
-    <p class="intro-text">Castele, cetăți, muzee și parcuri — link direct spre informații reale, actualizate. Apasă ☆ ca să salvezi unul la favorite.</p>
+    <h2 class="section-title"><span class="bar"></span>Explorează colecții:</h2>
     <div class="attraction-accordion-wrap">${attractionItemsHtml}</div>
+    ${buildItineraryPromoCardHtml("ro", "ro")}
   </div>
 
   <div class="sub-nav-panel" data-panel="favorites">
