@@ -5,7 +5,38 @@
 
 // Duplicat intenționat din server.js — folosit direct în textele de mai jos
 
-const TRAVEL_GUIDES_MONETIZATION_READY = false;
+const TRAVEL_GUIDES_MONETIZATION_READY = true;
+
+// Duplicate intenționate din server.js — bug real, descoperit chiar acum:
+// activarea TRAVEL_GUIDES_MONETIZATION_READY de mai sus a scos la iveală
+// că aceste funcții NU existau deloc în acest fișier (locales.js e un
+// modul SEPARAT de server.js — o funcție definită acolo nu e automat
+// vizibilă aici doar pentru că server.js face require la acest fișier).
+// Cât timp steagul era `false`, ramura care le apela nu se executa
+// NICIODATĂ, deci lipsa lor a rămas nedescoperită — ar fi picat tot
+// site-ul la prima încărcare, dacă activam steagul fără asta.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+const linkGetTransferAffiliate = "https://gettransfer.tpk.lu/XPrEGhpT";
+const linkOmioAffiliate = "";
+function getTransferLinkFor() {
+  return linkGetTransferAffiliate || "https://getransfer.com/";
+}
+function omioLinkFor() {
+  return linkOmioAffiliate || "https://www.omio.com/";
+}
+const linkParkviaAffiliate = "";
+function parkviaLinkFor(place) {
+  return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
+}
+const linkTheForkAffiliate = "";
+const linkOpenTableAffiliate = "";
 
 function comingSoonTextFor(lang) {
   return exports.COMING_SOON_TEXTS[lang] || exports.COMING_SOON_TEXTS.uk;
@@ -2225,7 +2256,7 @@ exports.TRANSLATIONS = {
   ro: {
     dayNames: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
     homeH1: "Este magazinul deschis chiar acum?",
-    homeIntro: "Alege mai jos limba în care vrei informațiile, apoi o țară ca să filtrezi tot — magazine și obiective deopotrivă — sau caută direct.",
+    homeIntro: "Caută direct sau apasă 📍 ca să găsim automat orașul tău. Mai jos poți alege și limba sau o țară, ca să filtrezi tot — magazine și obiective deopotrivă.",
     chooseCountry: "Alege o țară",
     showAllCountries: "🌍 Arată toate țările",
     storesIn: "Magazine în",
@@ -2253,6 +2284,7 @@ exports.TRANSLATIONS = {
     ticketBtn: "🎟️ Rezervă bilet online și evită coada",
     tabStores: "🛒 Magazine și Servicii",
     tabAttractions: "🏛️ Obiective Turistice",
+    exploreCollections: "Explorează colecții",
     attractionsComingSoon: "Ghidul de obiective turistice este în lucru — revino curând.",
     titleTemplate: (brand, city) => `Program ${brand} ${city} Azi – Deschis sau Închis Acum`,
     descriptionTemplate: (brand, city) => `Vezi acum dacă ${brand} din ${city} este deschis. Program pe zile ale săptămânii și program de sărbători, actualizat live.`,
@@ -2271,7 +2303,7 @@ exports.TRANSLATIONS = {
   de: {
     dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
     homeH1: "Ist der Laden gerade geöffnet?",
-    homeIntro: "Wähle unten zuerst deine Sprache, dann ein Land, um alles zu filtern — Geschäfte und Sehenswürdigkeiten — oder suche direkt.",
+    homeIntro: "Suche direkt, oder tippe auf 📍, um automatisch deine Stadt zu finden. Unten kannst du auch eine Sprache oder ein Land wählen, um alles zu filtern — Geschäfte und Sehenswürdigkeiten.",
     chooseCountry: "Länder auswählen",
     showAllCountries: "🌍 Alle Länder anzeigen",
     storesIn: "Geschäfte in",
@@ -2317,7 +2349,7 @@ exports.TRANSLATIONS = {
   uk: {
     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     homeH1: "Is the store open right now?",
-    homeIntro: "Pick your language below, then a country to filter everything — Stores and Attractions both — or search directly.",
+    homeIntro: "Search directly, or tap 📍 to find your city automatically. Below you can also pick a language or country to filter everything — Stores and Attractions both.",
     chooseCountry: "Choose a country",
     showAllCountries: "🌍 Show all countries",
     storesIn: "Stores in",
@@ -2345,6 +2377,7 @@ exports.TRANSLATIONS = {
     ticketBtn: "🎟️ Book tickets online & skip the line",
     tabStores: "🛒 Stores and Services",
     tabAttractions: "🏛️ Attractions",
+    exploreCollections: "Explore collections",
     attractionsComingSoon: "Our attractions guide is on its way — check back soon.",
     titleTemplate: (brand, city) => `${brand} ${city} Opening Hours Today – Open or Closed Now`,
     descriptionTemplate: (brand, city) => `Check now whether ${brand} in ${city} is open. Weekly opening hours and holiday hours, updated live.`,
@@ -2363,7 +2396,7 @@ exports.TRANSLATIONS = {
   es: {
     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
     homeH1: "¿Está la tienda abierta ahora mismo?",
-    homeIntro: "Elige tu idioma abajo, luego un país para filtrar todo — Tiendas y Atracciones — o busca directamente.",
+    homeIntro: "Busca directamente, o toca 📍 para encontrar tu ciudad automáticamente. Abajo también puedes elegir un idioma o país para filtrar todo — tiendas y atracciones.",
     chooseCountry: "Elige un país",
     showAllCountries: "🌍 Mostrar todos los países",
     storesIn: "Tiendas en",
@@ -2409,7 +2442,7 @@ exports.TRANSLATIONS = {
   fr: {
     dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     homeH1: "Le magasin est-il ouvert maintenant ?",
-    homeIntro: "Choisissez votre langue ci-dessous, puis un pays pour tout filtrer — Magasins et Attractions — ou recherchez directement.",
+    homeIntro: "Recherchez directement, ou appuyez sur 📍 pour trouver votre ville automatiquement. Ci-dessous, vous pouvez aussi choisir une langue ou un pays pour tout filtrer — magasins et attractions.",
     chooseCountry: "Choisir un pays",
     showAllCountries: "🌍 Afficher tous les pays",
     storesIn: "Magasins en",
@@ -2455,7 +2488,7 @@ exports.TRANSLATIONS = {
   it: {
     dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
     homeH1: "Il negozio è aperto proprio ora?",
-    homeIntro: "Scegli la tua lingua qui sotto, poi un paese per filtrare tutto — Negozi e Attrazioni — oppure cerca direttamente.",
+    homeIntro: "Cerca direttamente, oppure tocca 📍 per trovare automaticamente la tua città. Qui sotto puoi anche scegliere una lingua o un paese per filtrare tutto — negozi e attrazioni.",
     chooseCountry: "Scegli un paese",
     showAllCountries: "🌍 Mostra tutti i paesi",
     storesIn: "Negozi in",
@@ -2501,7 +2534,7 @@ exports.TRANSLATIONS = {
   pl: {
     dayNames: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
     homeH1: "Czy sklep jest teraz otwarty?",
-    homeIntro: "Wybierz swój język poniżej, a następnie kraj, aby wszystko filtrować — zarówno sklepy, jak i atrakcje — albo wyszukaj bezpośrednio.",
+    homeIntro: "Wyszukaj bezpośrednio lub dotknij 📍, aby automatycznie znaleźć swoje miasto. Poniżej możesz też wybrać język lub kraj, aby wszystko filtrować — sklepy i atrakcje.",
     chooseCountry: "Wybierz kraj",
     showAllCountries: "🌍 Pokaż wszystkie kraje",
     storesIn: "Sklepy w",
@@ -2547,7 +2580,7 @@ exports.TRANSLATIONS = {
   nl: {
     dayNames: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
     homeH1: "Is de winkel nu open?",
-    homeIntro: "Kies hieronder je taal, en daarna een land om alles te filteren — winkels en attracties — of zoek direct.",
+    homeIntro: "Zoek direct, of tik op 📍 om automatisch je stad te vinden. Hieronder kun je ook een taal of land kiezen om alles te filteren — winkels en attracties.",
     chooseCountry: "Kies een land",
     showAllCountries: "🌍 Toon alle landen",
     storesIn: "Winkels in",
@@ -2593,7 +2626,7 @@ exports.TRANSLATIONS = {
   da: {
     dayNames: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
     homeH1: "Har butikken åbent lige nu?",
-    homeIntro: "Vælg dit sprog nedenfor, og derefter et land for at filtrere alt — både butikker og seværdigheder — eller søg direkte.",
+    homeIntro: "Søg direkte, eller tryk på 📍 for automatisk at finde din by. Nedenfor kan du også vælge et sprog eller land for at filtrere alt — butikker og seværdigheder.",
     chooseCountry: "Vælg et land",
     showAllCountries: "🌍 Vis alle lande",
     storesIn: "Butikker i",
@@ -2639,7 +2672,7 @@ exports.TRANSLATIONS = {
   se: {
     dayNames: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
     homeH1: "Är butiken öppen just nu?",
-    homeIntro: "Välj ditt språk nedan, och sedan ett land för att filtrera allt — både butiker och sevärdheter — eller sök direkt.",
+    homeIntro: "Sök direkt, eller tryck på 📍 för att automatiskt hitta din stad. Nedan kan du också välja språk eller land för att filtrera allt — butiker och sevärdheter.",
     chooseCountry: "Välj ett land",
     showAllCountries: "🌍 Visa alla länder",
     storesIn: "Butiker i",
@@ -2685,7 +2718,7 @@ exports.TRANSLATIONS = {
   pt: {
     dayNames: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
     homeH1: "A loja está aberta agora mesmo?",
-    homeIntro: "Escolha o seu idioma abaixo, depois um país para filtrar tudo — lojas e pontos turísticos — ou pesquise diretamente.",
+    homeIntro: "Pesquise diretamente, ou toque em 📍 para encontrar a sua cidade automaticamente. Abaixo também pode escolher um idioma ou país para filtrar tudo — lojas e pontos turísticos.",
     chooseCountry: "Escolha um país",
     showAllCountries: "🌍 Mostrar todos os países",
     storesIn: "Lojas em",
@@ -2731,7 +2764,7 @@ exports.TRANSLATIONS = {
   cz: {
     dayNames: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
     homeH1: "Je obchod právě teď otevřený?",
-    homeIntro: "Vyberte níže svůj jazyk, poté zemi a filtrujte vše — obchody i zajímavosti — nebo hledejte přímo.",
+    homeIntro: "Hledejte přímo, nebo klepněte na 📍 a automaticky najdeme vaše město. Níže si můžete vybrat i jazyk nebo zemi a filtrovat vše — obchody i zajímavosti.",
     chooseCountry: "Vyberte zemi",
     showAllCountries: "🌍 Zobrazit všechny země",
     storesIn: "Obchody v",
@@ -2777,7 +2810,7 @@ exports.TRANSLATIONS = {
   fi: {
     dayNames: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"],
     homeH1: "Onko kauppa auki juuri nyt?",
-    homeIntro: "Valitse kielesi alta, sitten maa suodattaaksesi kaiken — sekä kaupat että nähtävyydet — tai hae suoraan.",
+    homeIntro: "Hae suoraan, tai napauta 📍 löytääksesi kaupunkisi automaattisesti. Alta voit myös valita kielen tai maan suodattaaksesi kaiken — kaupat ja nähtävyydet.",
     chooseCountry: "Valitse maa",
     showAllCountries: "🌍 Näytä kaikki maat",
     storesIn: "Kaupat maassa",
@@ -2823,7 +2856,7 @@ exports.TRANSLATIONS = {
   gr: {
     dayNames: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
     homeH1: "Είναι ανοιχτό το κατάστημα αυτή τη στιγμή;",
-    homeIntro: "Επιλέξτε τη γλώσσα σας παρακάτω, έπειτα μια χώρα για να φιλτράρετε όλα — καταστήματα και αξιοθέατα — ή αναζητήστε απευθείας.",
+    homeIntro: "Αναζητήστε απευθείας, ή πατήστε 📍 για να βρούμε αυτόματα την πόλη σας. Παρακάτω μπορείτε επίσης να επιλέξετε γλώσσα ή χώρα για να φιλτράρετε τα πάντα — καταστήματα και αξιοθέατα.",
     chooseCountry: "Επιλέξτε χώρα",
     showAllCountries: "🌍 Εμφάνιση όλων των χωρών",
     storesIn: "Καταστήματα στην",
@@ -2869,7 +2902,7 @@ exports.TRANSLATIONS = {
   hu: {
     dayNames: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"],
     homeH1: "Most éppen nyitva van az üzlet?",
-    homeIntro: "Válaszd ki a nyelvedet lent, majd egy országot, hogy mindent szűrj — üzleteket és látnivalókat egyaránt — vagy keress közvetlenül.",
+    homeIntro: "Keress közvetlenül, vagy koppints a 📍 gombra, hogy automatikusan megtaláljuk a városodat. Lent nyelvet vagy országot is választhatsz, hogy mindent szűrj — üzleteket és látnivalókat.",
     chooseCountry: "Válassz országot",
     showAllCountries: "🌍 Összes ország megjelenítése",
     storesIn: "Üzletek itt:",
@@ -2915,7 +2948,7 @@ exports.TRANSLATIONS = {
   hr: {
     dayNames: ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"],
     homeH1: "Je li trgovina sada otvorena?",
-    homeIntro: "Odaberite svoj jezik ispod, zatim državu za filtriranje svega — trgovina i znamenitosti — ili pretražite izravno.",
+    homeIntro: "Pretražite izravno ili dodirnite 📍 da automatski pronađemo vaš grad. Ispod možete odabrati i jezik ili državu za filtriranje svega — trgovine i znamenitosti.",
     chooseCountry: "Odaberite državu",
     showAllCountries: "🌍 Prikaži sve države",
     storesIn: "Trgovine u",
@@ -2961,7 +2994,7 @@ exports.TRANSLATIONS = {
   sk: {
     dayNames: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
     homeH1: "Je obchod práve teraz otvorený?",
-    homeIntro: "Vyberte nižšie svoj jazyk, potom krajinu a filtrujte všetko — obchody aj zaujímavosti — alebo hľadajte priamo.",
+    homeIntro: "Hľadajte priamo, alebo ťuknite na 📍 a automaticky nájdeme vaše mesto. Nižšie si môžete vybrať aj jazyk alebo krajinu na filtrovanie všetkého — obchody aj zaujímavosti.",
     chooseCountry: "Vyberte krajinu",
     showAllCountries: "🌍 Zobraziť všetky krajiny",
     storesIn: "Obchody v",
@@ -3007,7 +3040,7 @@ exports.TRANSLATIONS = {
   si: {
     dayNames: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"],
     homeH1: "Je trgovina zdaj odprta?",
-    homeIntro: "Spodaj izberite svoj jezik, nato državo za filtriranje vsega — trgovin in znamenitosti — ali iščite neposredno.",
+    homeIntro: "Iščite neposredno ali se dotaknite 📍, da samodejno najdemo vaše mesto. Spodaj lahko izberete tudi jezik ali državo za filtriranje vsega — trgovine in znamenitosti.",
     chooseCountry: "Izberite državo",
     showAllCountries: "🌍 Pokaži vse države",
     storesIn: "Trgovine v",
@@ -3053,7 +3086,7 @@ exports.TRANSLATIONS = {
   lt: {
     dayNames: ["Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"],
     homeH1: "Ar parduotuvė dabar atidaryta?",
-    homeIntro: "Pasirinkite savo kalbą žemiau, tada šalį, kad filtruotumėte viską — parduotuves ir lankytinas vietas — arba ieškokite tiesiogiai.",
+    homeIntro: "Ieškokite tiesiogiai arba paspauskite 📍, kad automatiškai rastume jūsų miestą. Žemiau taip pat galite pasirinkti kalbą ar šalį, kad filtruotumėte viską — parduotuves ir lankytinas vietas.",
     chooseCountry: "Pasirinkite šalį",
     showAllCountries: "🌍 Rodyti visas šalis",
     storesIn: "Parduotuvės",
@@ -3099,7 +3132,7 @@ exports.TRANSLATIONS = {
   lv: {
     dayNames: ["Svētdiena", "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena"],
     homeH1: "Vai veikals ir atvērts pašlaik?",
-    homeIntro: "Izvēlieties savu valodu zemāk, tad valsti, lai filtrētu visu — veikalus un apskates vietas — vai meklējiet tieši.",
+    homeIntro: "Meklējiet tieši vai pieskarieties 📍, lai automātiski atrastu jūsu pilsētu. Zemāk varat izvēlēties arī valodu vai valsti, lai filtrētu visu — veikalus un apskates vietas.",
     chooseCountry: "Izvēlieties valsti",
     showAllCountries: "🌍 Rādīt visas valstis",
     storesIn: "Veikali",
@@ -3145,7 +3178,7 @@ exports.TRANSLATIONS = {
   ee: {
     dayNames: ["Pühapäev", "Esmaspäev", "Teisipäev", "Kolmapäev", "Neljapäev", "Reede", "Laupäev"],
     homeH1: "Kas pood on praegu avatud?",
-    homeIntro: "Vali oma keel allpool, seejärel riik, et filtreerida kõike — nii poode kui vaatamisväärsusi — või otsi otse.",
+    homeIntro: "Otsige otse või puudutage 📍, et automaatselt leida teie linn. Allpool saate valida ka keele või riigi, et filtreerida kõike — poode ja vaatamisväärsusi.",
     chooseCountry: "Vali riik",
     showAllCountries: "🌍 Näita kõiki riike",
     storesIn: "Poed riigis",
@@ -3568,6 +3601,14 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Ghid de transport urban și regional",
     body: `
     <p>Un itinerar turistic reușit depinde în mare măsură de cum te miști între obiective. Când vrei să vizitezi muzee, castele sau monumente istorice, conexiunea dintre orașe și logistica locală fac diferența dintre o zi relaxată și una pierdută prin gări și stații.</p>
+    <p>Pentru distanțe lungi sau între regiuni istorice, trenul rămâne varianta cea mai populară — rețeaua feroviară europeană leagă majoritatea capitalelor de orașele mai mici, cu rute adesea pitorești. Autocarele completează bine acoperirea, mai ales spre localități sau zone montane unde trenul nu ajunge direct, și costă de regulă mai puțin.</p>
+    <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
+      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
+    </div>
 
     <div class="trip-toolkit-card">
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
@@ -3578,14 +3619,6 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
-    </div>
-    <p>Pentru distanțe lungi sau între regiuni istorice, trenul rămâne varianta cea mai populară — rețeaua feroviară europeană leagă majoritatea capitalelor de orașele mai mici, cu rute adesea pitorești. Autocarele completează bine acoperirea, mai ales spre localități sau zone montane unde trenul nu ajunge direct, și costă de regulă mai puțin.</p>
-    <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
-    <div class="plan-visit-block" style="display:block">
-      ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
-      <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>`
-        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
   {
@@ -3594,6 +3627,13 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Ghid pentru șoferi — parcare în centrele vechi",
     body: `
     <p>Cu mașina proprie sau închiriată ai o libertate de mișcare pe care alte mijloace de transport n-o pot oferi — dar centrele istorice ale marilor orașe sunt cunoscute pentru restricțiile de trafic și lipsa cronică de locuri de parcare.</p>
+    <p>Lăsată la întâmplare, mașina riscă amendă sau chiar ridicare. Cea mai sigură variantă rămâne o parcare securizată, subterană sau supraterană, administrată privat — multe dintre ele permit rezervarea unui loc din timp, ceea ce contează mai ales în weekend sau în plin sezon, când obiectivele sunt aglomerate.</p>
+    <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
+    </div>
 
     <div class="trip-toolkit-card">
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
@@ -3604,13 +3644,6 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
-    </div>
-    <p>Lăsată la întâmplare, mașina riscă amendă sau chiar ridicare. Cea mai sigură variantă rămâne o parcare securizată, subterană sau supraterană, administrată privat — multe dintre ele permit rezervarea unui loc din timp, ceea ce contează mai ales în weekend sau în plin sezon, când obiectivele sunt aglomerate.</p>
-    <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
-    <div class="plan-visit-block" style="display:block">
-      ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>`
-        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
   {
@@ -3619,6 +3652,14 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Corelarea programului de vizitare cu mesele",
     body: `
     <p>O zi de vacanță reușită înseamnă un echilibru între cultură și relaxare. Dacă îți construiești ziua în jurul programului unui muzeu sau al unei galerii, merită să incluzi din timp și pauzele de masă — altfel riști să ajungi flămând exact când toate localurile din apropiere sunt pline.</p>
+    <p>Marile obiective atrag mii de vizitatori zilnic, iar zonele din jurul lor devin rapid aglomerate, mai ales la prânz și seara. O rezervare făcută din timp, printr-o platformă online, îți garantează o masă fără să stai la coadă sau să cauți disperat un loc liber.</p>
+    <p>Cel mai eficient tipar: vizitează expozițiile dimineața devreme, când e liniște, apoi încheie ziua cu o masă la un restaurant local, rezervat din timp — o simplă zi de vacanță devine, așa, o amintire pe care chiar vrei s-o ții minte.</p>
+    <div class="plan-visit-block" style="display:block">
+      ${TRAVEL_GUIDES_MONETIZATION_READY
+        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Caută pe TheFork (Franța, Italia, Spania)</a>
+      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Caută pe OpenTable (UK, Germania)</a>`
+        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
+    </div>
 
     <div class="trip-toolkit-card">
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
@@ -3629,14 +3670,6 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
-    </div>
-    <p>Marile obiective atrag mii de vizitatori zilnic, iar zonele din jurul lor devin rapid aglomerate, mai ales la prânz și seara. O rezervare făcută din timp, printr-o platformă online, îți garantează o masă fără să stai la coadă sau să cauți disperat un loc liber.</p>
-    <p>Cel mai eficient tipar: vizitează expozițiile dimineața devreme, când e liniște, apoi încheie ziua cu o masă la un restaurant local, rezervat din timp — o simplă zi de vacanță devine, așa, o amintire pe care chiar vrei s-o ții minte.</p>
-    <div class="plan-visit-block" style="display:block">
-      ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(linkTheForkAffiliate || "https://www.thefork.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🍽️ Caută pe TheFork (Franța, Italia, Spania)</a>
-      <a href="${escapeHtml(linkOpenTableAffiliate || "https://www.opentable.com/")}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🍽️ Caută pe OpenTable (UK, Germania)</a>`
-        : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>`,
   },
   {
@@ -3779,7 +3812,7 @@ exports.TRAVEL_GUIDES_RO = [
     title: "Cele mai frumoase castele din Europa",
     intro: "12 castele de poveste, din toată Europa, cu bilete și tururi rezervabile din timp",
     body: `
-    <p>De la turnurile care au inspirat parcurile Disney, până la fortărețe medievale ascunse în păduri sau cocoțate pe stânci deasupra unor lacuri glaciare — Europa are unele dintre cele mai spectaculoase castele din lume. Am adunat mai jos 12 dintre cele mai frumoase, cu informații practice și bilete rezervabile din timp, ca să eviți cozile la intrare.</p>
+    <p>De la turnurile care au inspirat parcurile Disney, până la fortărețe medievale ascunse în păduri sau cocoțate pe stânci deasupra unor lacuri glaciare — Europa are unele dintre cele mai spectaculoase castele din lume. Am adunat mai jos 12 dintre cele mai frumoase, cu informații practice și bilete rezervabile din timp, ca să eviți cozile la intrare.</p>    </div>
 
     <div class="trip-toolkit-card">
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
@@ -3790,7 +3823,6 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>Castelele</h2>
 
@@ -3847,7 +3879,7 @@ exports.TRAVEL_GUIDES_RO = [
     title: "Cele mai bune parcuri de distracții din Europa",
     intro: "6 parcuri de top, pentru toate vârstele — de la Disneyland Paris până la cele mai intense rollercoastere",
     body: `
-    <p>De la parcurile clasice, cu personaje îndrăgite de copii, până la rollercoastere printre cele mai înalte din lume — Europa are parcuri de distracții pentru orice vârstă și orice nivel de adrenalină. Am grupat mai jos câteva dintre cele mai apreciate, pe categorii, cu bilete rezervabile din timp.</p>
+    <p>De la parcurile clasice, cu personaje îndrăgite de copii, până la rollercoastere printre cele mai înalte din lume — Europa are parcuri de distracții pentru orice vârstă și orice nivel de adrenalină. Am grupat mai jos câteva dintre cele mai apreciate, pe categorii, cu bilete rezervabile din timp.</p>    </div>
 
     <div class="trip-toolkit-card">
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
@@ -3858,7 +3890,6 @@ exports.TRAVEL_GUIDES_RO = [
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
       </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>👑 Cele mai populare și vizitate (toate vârstele)</h2>
 
