@@ -1090,6 +1090,128 @@ function wazeLinkFor(place) {
 // Adresă + telefon — afișate DOAR când Google chiar le are completate (nu
 // inventăm, nu punem "N/A"). Categorii deja plătite (Basic pentru adresă,
 // Contact pentru telefon) — cost zero în plus, doar cerem câmpurile.
+// Construiește HTML-ul principal al paginii de magazin (cardul de status +
+// tot ce urmează) — extrasă separat, ca funcție reutilizabilă, EXACT ca să
+// nu duplicăm aceeași logică în două locuri: o dată la randarea inițială a
+// paginii (fallback, mereu instant) și o dată la cererea separată, de pe
+// client, care aduce statusul live (dacă există) — cerut explicit, ca să
+// eliminăm întârzierea reală, de câteva secunde, cauzată de așteptarea
+// blocantă a răspunsului Google la încărcarea inițială a paginii.
+function buildStoreMainHtml({ live, magazinDisplay, locatieSuffix, orasDisplay, orasSlug, canonicalSlug, branchAddressHtml, nonstopHintHtml, temuButtonHtml, affiliateButtonHtml, store }) {
+  if (live && live.isOpenNow !== null) {
+    const specialBanner = live.isSpecialDay && isRealRomanianHolidayToday(live.utcOffsetMinutes)
+      ? `<div class="geo-country-highlight">📅 Azi e sărbătoare legală — verifică programul de mai jos, actualizat live.</div>`
+      : "";
+    const liveWeeklyHtml = live.weeklyScheduleText.length
+      ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
+      : `<div class="holiday-card"><div class="holiday-row"><span class="holiday-label">Program indisponibil momentan de la Google.</span></div></div>`;
+
+    return `
+      <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
+        <div class="status-text">${live.isOpenNow ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
+        <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
+        <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+      </div>
+      ${contactInfoHtml(live)}
+      ${branchAddressHtml}
+      ${nonstopHintHtml}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
+      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
+      ${specialBanner}
+      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
+
+      ${temuButtonHtml}
+      ${affiliateButtonHtml}
+
+      <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
+      ${liveWeeklyHtml}
+      `;
+  }
+  return `
+      <div class="status-card" id="statusCard">
+        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
+        <div class="status-text">—</div>
+        <div class="status-sub">Se calculează programul...</div>
+        <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
+        <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
+      </div>
+      ${branchAddressHtml}
+      ${nonstopHintHtml}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
+      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
+      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
+
+      ${temuButtonHtml}
+      ${affiliateButtonHtml}
+
+      <h2 class="section-title"><span class="bar"></span>Program săptămânal</h2>
+      <div class="schedule-card"><table><thead><tr><th>Zi</th><th style="text-align:right">Interval orar</th></tr></thead>
+      <tbody>${renderWeekTableRows(store.weekly)}</tbody></table></div>
+
+      <h2 class="section-title"><span class="bar"></span>Program de sărbători</h2>
+      <div class="holiday-card">${renderHolidayRows(store.holidays)}</div>
+    `;
+}
+
+// La fel ca buildStoreMainHtml, dar pentru paginile internaționale de
+// magazin — structura diferă puțin (statusCardHtml + weeklySectionHtml
+// separate, nu un singur bloc, plus verificarea de "raportat închis
+// definitiv", care le suprascrie pe amândouă) — extrasă tot ca funcție
+// reutilizabilă, din același motiv (etapa 2 a eliminării întârzierii
+// reale, de câteva secunde, la statusul live).
+function buildIntlStoreMainHtml({ live, magazinDisplay, orasDisplay, locatieDisplay, countryCode, orasSlug, magazinSlug, activeLang, store, temuButtonHtml, amazonButtonHtml, roAffiliateHtml, closedPermanentlyOverrideHtml }) {
+  if (closedPermanentlyOverrideHtml) {
+    return closedPermanentlyOverrideHtml;
+  }
+  const t = TRANSLATIONS[activeLang] || TRANSLATIONS.uk;
+  let statusCardHtml;
+  let weeklySectionHtml;
+  if (live && live.isOpenNow !== null) {
+    const specialBanner = live.isSpecialDay && countryCode === "ro" && isRealRomanianHolidayToday(live.utcOffsetMinutes)
+      ? `<div class="geo-country-highlight">📅 ${escapeHtml(t.closedHoliday ? t.closedHoliday.split(" — ")[0] : "Special hours today")}</div>`
+      : "";
+    statusCardHtml = `
+  <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
+    <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
+    <div class="status-sub">${escapeHtml(liveGoogleLabelFor(activeLang))}</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+  </div>
+  ${contactInfoHtml(live)}
+  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
+  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
+  ${specialBanner}
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
+    weeklySectionHtml = `
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
+  <div class="holiday-card">${live.weeklyScheduleText.length ? live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("") : `<div class="holiday-row"><span class="holiday-label">—</span></div>`}</div>`;
+  } else {
+    const weeklyRows = store.weekly
+      .map((w, i) => {
+        const hours = w ? `${w.open} – ${w.close}` : t.closedWord;
+        return `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${hours}</td></tr>`;
+      })
+      .join("");
+    statusCardHtml = `
+  <div class="status-card" id="statusCard">
+    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
+    <div class="status-text">—</div>
+    <div class="status-sub">${escapeHtml(t.calculating)}</div>
+    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
+    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
+  </div>
+  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
+  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
+  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
+    weeklySectionHtml = `
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
+  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
+  <tbody>${weeklyRows}</tbody></table></div>`;
+  }
+  return `${statusCardHtml}\n\n  ${temuButtonHtml}\n  ${amazonButtonHtml}\n  ${roAffiliateHtml}\n\n  ${weeklySectionHtml}`;
+}
+
 function contactInfoHtml(live) {
   if (!live.formattedAddress && !live.formattedPhoneNumber) return "";
   const addressHtml = live.formattedAddress
@@ -6416,18 +6538,30 @@ ${toggleHtml}
 ${toggleHtml}
 <div id="cityMap" class="city-map"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
 <script nonce="${nonce}">
 (function(){
-  if (typeof L === "undefined") return;
-  var el = document.getElementById("cityMap");
-  if (!el) return;
-  window.__cityMapInstance = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([${coords[0]}, ${coords[1]}], 12);
-  window.__cityMapBackend = "leaflet";
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
-    maxZoom: 18,
-  }).addTo(window.__cityMapInstance);
+  // defer (adaugat pentru viteza -- nu mai blocheaza randarea paginii cat
+  // timp se descarca harta de la unpkg.com) -- scripturile "defer" ruleaza,
+  // garantat, in ordine, INAINTE de "DOMContentLoaded", deci asteptam exact
+  // acel eveniment, ca sa fim siguri ca "L" (Leaflet) chiar exista la acel
+  // moment, nu doar presupunem asta imediat, sincron, ca inainte.
+  function initCityMap(){
+    if (typeof L === "undefined") return;
+    var el = document.getElementById("cityMap");
+    if (!el) return;
+    window.__cityMapInstance = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([${coords[0]}, ${coords[1]}], 12);
+    window.__cityMapBackend = "leaflet";
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+    }).addTo(window.__cityMapInstance);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCityMap);
+  } else {
+    initCityMap();
+  }
 })();
 </script>`;
 }
@@ -7736,6 +7870,40 @@ function buildBottomNavScript(nonce) {
 // SINGUR script, cu nonce corect, inclus universal — corpul ghidurilor
 // (locales.js) e text static, fără acces la nonce, de-aia n-am putea pune
 // un <script nonce> direct acolo.
+// Aduce statusul LIVE (Google), pe client, DUPĂ ce pagina s-a încărcat deja
+// — cerut explicit, ca să eliminăm întârzierea reală, de câteva secunde, la
+// prima vizită a unei pagini (sau după expirarea cache-ului), cauzată de
+// așteptarea blocantă a răspunsului Google la randarea pe server. Complet
+// pasiv dacă window.__liveStatusParams nu există (pagina n-are nevoie de
+// asta — a găsit deja live server-side, sau e un robot de căutare).
+function buildLiveStatusFetchScript(nonce) {
+  return `
+<script nonce="${nonce}">
+(function(){
+  var params = window.__liveStatusParams;
+  if (!params) return;
+  var mount = document.getElementById("storeMainHtmlMount") || document.getElementById("intlStoreMainHtmlMount") || document.getElementById("attractionMainHtmlMount");
+  if (!mount) return;
+  fetch("/api/live-status-html", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if (data && data.ok && data.html) {
+        mount.innerHTML = data.html;
+        // reataşăm ascultătorii care depind de elemente NOI, aduse acum —
+        // cele deja atașate la încărcarea inițială (pe elementele vechi,
+        // înlocuite) rămân "orfane", inofensiv, garbage-collectate normal.
+        if (window.__reattachAfterLiveStatus) window.__reattachAfterLiveStatus();
+      }
+    })
+    .catch(function(){ /* rămânem pe varianta cu orar fix, deja afișată — fără eroare vizibilă */ });
+})();
+</script>`;
+}
+
 function buildWidgetRevealScript(nonce) {
   return `
 <script nonce="${nonce}">
@@ -7821,6 +7989,8 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
   return `<!DOCTYPE html>
 <html lang="${meta.lang}">
 <head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/style.css">
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
 <script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
@@ -7840,7 +8010,6 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 </script>
 <!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts, cod diferit per domeniu (Project separat) -->
 ${travelpayoutsScript}
-<meta charset="UTF-8">
 <script nonce="${nonce}">
 (function(){
   try {
@@ -7907,9 +8076,12 @@ ${alternatesHtml}
 <meta name="apple-mobile-web-app-title" content="ProgramulDeAzi">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link id="googleFontsLink" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" media="print">
+<script nonce="${nonce}">document.getElementById("googleFontsLink").media="all";</script>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"></noscript>
 ${ADSENSE_ENABLED && adsensePublisherId ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}" crossorigin="anonymous"></script>` : ""}
-<style nonce="${nonce}">${CSS_STYLES}</style>
 </head>
 <body>
 ${smartInstallHtml}
@@ -7953,6 +8125,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
   let mainHtml = "";
   let dataForClient;
   let schemaHtml = "";
+  let liveStatusFetchParamsHtml = "";
   let affiliateCarouselScriptHtml = "";
 
   if (store.type === "mall") {
@@ -8025,65 +8198,31 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     // aceleiași locații de bază) — dacă nu găsim nimic, cade pe orele fixe,
     // exact ca înainte, fără nicio schimbare vizibilă.
     const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}`) : null;
-    const live = liveSlug ? await tryGetLiveStatus(liveSlug, "ro", "store", isBotRequest(userAgent), ip) : null;
+    // Pentru ROBOȚII de căutare (Google etc.) — verificarea rămâne EXACT ca
+    // înainte, pe server, blocantă: sunt rapizi (folosesc doar cache,
+    // cacheOnly=true prin isBotRequest), și au nevoie de datele live direct
+    // în HTML pentru schema.org/SEO. DOAR pentru utilizatori REALI sărim
+    // peste așteptare — cerut explicit, ca să eliminăm întârzierea reală,
+    // de câteva secunde, la prima vizită a unei pagini (sau după expirarea
+    // cache-ului), cauzată de așteptarea blocantă a răspunsului Google.
+    const isBot = isBotRequest(userAgent);
+    const live = (liveSlug && isBot) ? await tryGetLiveStatus(liveSlug, "ro", "store", true, ip) : null;
     schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, weekly: store.weekly, live });
 
+    mainHtml = `<div id="storeMainHtmlMount">${buildStoreMainHtml({ live, magazinDisplay, locatieSuffix, orasDisplay, orasSlug, canonicalSlug, branchAddressHtml, nonstopHintHtml, temuButtonHtml, affiliateButtonHtml, store })}</div>`;
     if (live && live.isOpenNow !== null) {
-      const specialBanner = live.isSpecialDay && isRealRomanianHolidayToday(live.utcOffsetMinutes)
-        ? `<div class="geo-country-highlight">📅 Azi e sărbătoare legală — verifică programul de mai jos, actualizat live.</div>`
-        : "";
-      const liveWeeklyHtml = live.weeklyScheduleText.length
-        ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
-        : `<div class="holiday-card"><div class="holiday-row"><span class="holiday-label">Program indisponibil momentan de la Google.</span></div></div>`;
-
-      mainHtml = `
-      <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
-        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
-        <div class="status-text">${live.isOpenNow ? "DESCHIS ACUM" : "ÎNCHIS ACUM"}</div>
-        <div class="status-sub">Date live, direct de la Google · actualizate la fiecare 12 ore</div>
-        <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
-      </div>
-      ${contactInfoHtml(live)}
-      ${branchAddressHtml}
-      ${nonstopHintHtml}
-      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
-      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
-      ${specialBanner}
-      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
-
-      ${temuButtonHtml}
-      ${affiliateButtonHtml}
-
-      <h2 class="section-title"><span class="bar"></span>Program săptămânal (live, de la Google)</h2>
-      ${liveWeeklyHtml}
-      `;
       dataForClient = { type: "general", weekly: [], holidays: [] }; // ceasul din header rămâne activ; statusul de mai sus e deja calculat corect, la încărcare
     } else {
-      mainHtml = `
-      <div class="status-card" id="statusCard">
-        <div class="store-name">${escapeHtml(magazinDisplay)}${escapeHtml(locatieSuffix)} ${escapeHtml(orasDisplay)}</div>
-        <div class="status-text">—</div>
-        <div class="status-sub">Se calculează programul...</div>
-        <div class="status-badge"><span class="dotw"></span><span id="statusBadge">Azi</span></div>
-        <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
-      </div>
-      ${branchAddressHtml}
-      ${nonstopHintHtml}
-      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
-      ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
-      ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
-
-      ${temuButtonHtml}
-      ${affiliateButtonHtml}
-
-      <h2 class="section-title"><span class="bar"></span>Program săptămânal</h2>
-      <div class="schedule-card"><table><thead><tr><th>Zi</th><th style="text-align:right">Interval orar</th></tr></thead>
-      <tbody>${renderWeekTableRows(store.weekly)}</tbody></table></div>
-
-      <h2 class="section-title"><span class="bar"></span>Program de sărbători</h2>
-      <div class="holiday-card">${renderHolidayRows(store.holidays)}</div>
-    `;
       dataForClient = { type: "store", weekly: store.weekly, holidays: store.holidays };
+      // Cererea separată, de pe client, pentru statusul live — DOAR când
+      // chiar are sens (nu suntem robot, avem liveSlug valid, și încă n-am
+      // primit deja un răspuns live mai sus). Parametrii sunt EXACT ce are
+      // nevoie noul capăt de API (/api/live-status-html) ca să reconstruiască,
+      // pe server, ACEEAȘI bucată de HTML pe care ar fi construit-o oricum,
+      // dacă am fi așteptat — nu inventăm o logică nouă, doar o amânăm.
+      if (liveSlug && !isBot) {
+        liveStatusFetchParamsHtml = `<script nonce="${nonce}">window.__liveStatusParams=${safeJson({ liveSlug, lang: "ro", tip: "store", magazinDisplay, locatieSuffix, orasDisplay, orasSlug, canonicalSlug, branchAddressHtml, nonstopHintHtml, temuButtonHtml, affiliateButtonHtml })}</script>`;
+      }
     }
   }
 
@@ -8137,7 +8276,9 @@ ${schemaHtml}
 ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
-${affiliateCarouselScriptHtml}`;
+${affiliateCarouselScriptHtml}
+${liveStatusFetchParamsHtml}
+${buildLiveStatusFetchScript(nonce)}`;
 
   // hreflang reciproc spre echivalentul de pe .eu — DOAR dacă acest magazin
   // chiar există acolo (magazin simplu, nu mall/cinema — vezi RO_INTL_STORE_CONFIG
@@ -8427,67 +8568,32 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   }
 
   // status live (Google) — același slug generat la popularea bazei
-  // (nume + oraș + cod țară), în limba activă a paginii (nu implicită)
+  // (nume + oraș + cod țară), în limba activă a paginii (nu implicită).
+  // Pentru ROBOȚII de căutare — verificarea rămâne EXACT ca înainte, pe
+  // server, blocantă (au nevoie de date pentru SEO, sunt rapizi, doar
+  // cache). DOAR pentru utilizatori REALI sărim peste așteptare — etapa 2
+  // a eliminării întârzierii reale (vezi renderStorePage, RO, etapa 1).
   const liveSlug = !locatieDisplay ? toDbSlug(`${magazinDisplay}-${orasDisplay}-${countryCode}`) : null;
   const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(liveSlug, googleLang, "store", isBotRequest(userAgent), ip);
+  const isBot = isBotRequest(userAgent);
+  const live = (liveSlug && isBot) ? await tryGetLiveStatus(liveSlug, googleLang, "store", true, ip) : null;
   const schemaHtml = buildLocalBusinessSchema({ name: `${magazinDisplay} ${orasDisplay}`, weekly: store.weekly, live });
-
-  let statusCardHtml;
-  let weeklySectionHtml;
-
-  if (live && live.isOpenNow !== null) {
-    const specialBanner = live.isSpecialDay && countryCode === "ro" && isRealRomanianHolidayToday(live.utcOffsetMinutes)
-      ? `<div class="geo-country-highlight">📅 ${escapeHtml(t.closedHoliday ? t.closedHoliday.split(" — ")[0] : "Special hours today")}</div>`
-      : "";
-    statusCardHtml = `
-  <div class="status-card ${live.isOpenNow ? "is-open" : "is-closed"}" id="statusCard">
-    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
-    <div class="status-text">${live.isOpenNow ? escapeHtml(t.labels.openNow) : escapeHtml(t.labels.closedNow)}</div>
-    <div class="status-sub">${escapeHtml(liveGoogleLabelFor(activeLang))}</div>
-    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
-  </div>
-  ${contactInfoHtml(live)}
-  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
-  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
-  ${specialBanner}
-  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
-    weeklySectionHtml = `
-  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
-  <div class="holiday-card">${live.weeklyScheduleText.length ? live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("") : `<div class="holiday-row"><span class="holiday-label">—</span></div>`}</div>`;
-  } else {
-    const weeklyRows = store.weekly
-      .map((w, i) => {
-        const hours = w ? `${w.open} – ${w.close}` : t.closedWord;
-        return `<tr data-day="${i}"><td class="day-cell">${t.dayNames[i]}</td><td class="hours-cell">${hours}</td></tr>`;
-      })
-      .join("");
-    statusCardHtml = `
-  <div class="status-card" id="statusCard">
-    <div class="store-name">${escapeHtml(magazinDisplay)}${locatieDisplay ? " " + escapeHtml(locatieDisplay) : ""} ${escapeHtml(orasDisplay)}</div>
-    <div class="status-text">—</div>
-    <div class="status-sub">${escapeHtml(t.calculating)}</div>
-    <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
-    <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
-  </div>
-  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
-  ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
-  ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
-    weeklySectionHtml = `
-  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)}</h2>
-  <div class="schedule-card"><table><thead><tr><th>&nbsp;</th><th style="text-align:right">&nbsp;</th></tr></thead>
-  <tbody>${weeklyRows}</tbody></table></div>`;
-  }
 
   // Agregare comunitară — vezi comentariul din renderStorePage (RO), aceeași logică
   const reportSlug = `${countryCode}/${orasSlug}/${magazinSlug}`;
   const reportCounts = await getReportCounts(reportSlug);
   let reportedWrongHtml = "";
+  let closedPermanentlyOverrideHtml = "";
   if (reportCounts.inchisDefinitiv >= REPORT_THRESHOLD) {
-    statusCardHtml = renderClosedPermanentlyHtml(`${magazinDisplay} ${orasDisplay}`, closedPermanentlyLabelsFor(activeLang));
-    weeklySectionHtml = "";
+    closedPermanentlyOverrideHtml = renderClosedPermanentlyHtml(`${magazinDisplay} ${orasDisplay}`, closedPermanentlyLabelsFor(activeLang));
   } else if (reportCounts.programGresit >= REPORT_THRESHOLD) {
     reportedWrongHtml = reportedWrongBannerHtml(reportedWrongTextFor(activeLang));
+  }
+
+  const storeMainHtml = buildIntlStoreMainHtml({ live, magazinDisplay, orasDisplay, locatieDisplay, countryCode, orasSlug, magazinSlug, activeLang, store, temuButtonHtml, amazonButtonHtml, roAffiliateHtml, closedPermanentlyOverrideHtml });
+  let liveStatusFetchParamsHtml = "";
+  if (liveSlug && !isBot && !closedPermanentlyOverrideHtml) {
+    liveStatusFetchParamsHtml = `<script nonce="${nonce}">window.__liveStatusParams=${safeJson({ liveSlug, lang: googleLang, tip: "intlStore", magazinDisplay, orasDisplay, locatieDisplay: locatieDisplay || "", countryCode, orasSlug, magazinSlug, activeLang, temuButtonHtml, amazonButtonHtml, roAffiliateHtml })}</script>`;
   }
 
   const holidayHtml =
@@ -8518,13 +8624,7 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
   </div>
 
   ${reportedWrongHtml}
-  ${statusCardHtml}
-
-  ${temuButtonHtml}
-  ${amazonButtonHtml}
-  ${roAffiliateHtml}
-
-  ${weeklySectionHtml}
+  <div id="intlStoreMainHtmlMount">${storeMainHtml}</div>
 
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.holidaysTitle)}</h2>
   <div class="holiday-card">${holidayHtml}</div>
@@ -8540,7 +8640,9 @@ ${buildContextualWidgetScript(nonce)}
 ${buildReportIssueScript(nonce, reportIssueLabelsFor(activeLang))}
 ${buildHowToGetThereScript(nonce)}
 ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}
-${roAffiliateScriptHtml}`;
+${roAffiliateScriptHtml}
+${liveStatusFetchParamsHtml}
+${buildLiveStatusFetchScript(nonce)}`;
 
   const dataForClient =
     live && live.isOpenNow !== null
@@ -10205,6 +10307,9 @@ app.post("/api/push-unsubscribe", async (req, res) => {
 
 app.get("/manifest.json", (req, res) => {
   res.set("Content-Type", "application/manifest+json");
+  // Cache moderat (1h), nu foarte lung — conținutul diferă după domeniu
+  // (RO vs internațional), mai sigur așa decât un cache foarte lung.
+  res.set("Cache-Control", "public, max-age=3600");
   res.send(JSON.stringify(isIntlHost(req) ? MANIFEST_JSON_INTL : MANIFEST_JSON));
 });
 
@@ -10224,13 +10329,84 @@ app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|
   res.send(JSON.stringify({ html }));
 });
 
+// Statusul LIVE (Google), cerut separat, de pe client, DUPĂ ce pagina s-a
+// încărcat deja — cerut explicit, ca să eliminăm întârzierea reală, de
+// câteva secunde, cauzată de așteptarea blocantă a acestui răspuns direct
+// la randarea inițială a paginii. Reconstruiește, cu buildStoreMainHtml
+// (aceeași funcție, nu o logică duplicată), exact bucata de HTML pe care
+// am fi construit-o oricum, dacă am fi așteptat — doar mai târziu, în
+// fundal. POST (nu GET) — bucățile de HTML deja construite (adresă, hint
+// non-stop, butoane de afiliere) pot depăși lungimea sigură a unui URL.
+// Trimise înapoi de pe client EXACT cum au fost construite la randarea
+// inițială — nu le recalculăm aici, ar duplica logica de căutare magazin.
+// Folosește DOAR pentru "store" acum (pilot) — restul tipurilor de pagină
+// (magazine internaționale, obiective) rămân pentru o sesiune viitoare.
+app.post("/api/live-status-html", async (req, res) => {
+  const body = req.body || {};
+  const { liveSlug, lang, tip } = body;
+  if (!liveSlug || typeof liveSlug !== "string" || (tip !== "store" && tip !== "intlStore")) {
+    res.json({ ok: false });
+    return;
+  }
+  const ip = getClientIp(req);
+  const live = await tryGetLiveStatus(liveSlug, typeof lang === "string" ? lang : "ro", "store", false, ip);
+  res.set("Cache-Control", "no-store"); // răspunsul depinde de ora exactă a cererii — nu se cachează
+  if (!live || live.isOpenNow === null) {
+    res.json({ ok: false });
+    return;
+  }
+  if (tip === "store") {
+    const { magazinDisplay, locatieSuffix, orasDisplay, orasSlug, canonicalSlug, branchAddressHtml, nonstopHintHtml, temuButtonHtml, affiliateButtonHtml } = body;
+    const html = buildStoreMainHtml({
+      live,
+      magazinDisplay: typeof magazinDisplay === "string" ? magazinDisplay : "",
+      locatieSuffix: typeof locatieSuffix === "string" ? locatieSuffix : "",
+      orasDisplay: typeof orasDisplay === "string" ? orasDisplay : "",
+      orasSlug: typeof orasSlug === "string" ? orasSlug : "",
+      canonicalSlug: typeof canonicalSlug === "string" ? canonicalSlug : "",
+      branchAddressHtml: typeof branchAddressHtml === "string" ? branchAddressHtml : "",
+      nonstopHintHtml: typeof nonstopHintHtml === "string" ? nonstopHintHtml : "",
+      temuButtonHtml: typeof temuButtonHtml === "string" ? temuButtonHtml : "",
+      affiliateButtonHtml: typeof affiliateButtonHtml === "string" ? affiliateButtonHtml : "",
+      store: null,
+    });
+    res.json({ ok: true, html });
+    return;
+  }
+  // tip === "intlStore"
+  const { magazinDisplay, orasDisplay, locatieDisplay, countryCode, orasSlug, magazinSlug, activeLang, temuButtonHtml, amazonButtonHtml, roAffiliateHtml } = body;
+  const html = buildIntlStoreMainHtml({
+    live,
+    magazinDisplay: typeof magazinDisplay === "string" ? magazinDisplay : "",
+    orasDisplay: typeof orasDisplay === "string" ? orasDisplay : "",
+    locatieDisplay: typeof locatieDisplay === "string" ? locatieDisplay : "",
+    countryCode: typeof countryCode === "string" ? countryCode : "",
+    orasSlug: typeof orasSlug === "string" ? orasSlug : "",
+    magazinSlug: typeof magazinSlug === "string" ? magazinSlug : "",
+    activeLang: typeof activeLang === "string" ? activeLang : "uk",
+    store: null,
+    temuButtonHtml: typeof temuButtonHtml === "string" ? temuButtonHtml : "",
+    amazonButtonHtml: typeof amazonButtonHtml === "string" ? amazonButtonHtml : "",
+    roAffiliateHtml: typeof roAffiliateHtml === "string" ? roAffiliateHtml : "",
+    closedPermanentlyOverrideHtml: "",
+  });
+  res.json({ ok: true, html });
+});
+
 app.get("/sw.js", (req, res) => {
   res.set("Content-Type", "application/javascript; charset=utf-8");
+  // Service worker-ele NU trebuie ținute în cache mult — browserele impun
+  // oricum un maxim de 24h, indiferent de header, tocmai ca actualizările
+  // să ajungă la utilizatori la timp. "no-cache" (nu "no-store") e recomandarea
+  // standard — browserul tot verifică din nou la fiecare vizită, dar poate
+  // refolosi conținutul dacă serverul confirmă că nu s-a schimbat.
+  res.set("Cache-Control", "no-cache");
   res.send(SW_SCRIPT);
 });
 
 app.get("/icon.svg", (req, res) => {
   res.set("Content-Type", "image/svg+xml");
+  res.set("Cache-Control", "public, max-age=604800"); // 7 zile — iconița e identică, indiferent de domeniu
   res.send(ICON_SVG);
 });
 
@@ -10245,6 +10421,7 @@ app.get("/icon-512.png", (req, res) => {
       return;
     }
     res.header("Content-Type", "image/png");
+    res.header("Cache-Control", "public, max-age=604800");
     res.send(data);
   });
 });
@@ -10257,17 +10434,34 @@ app.get("/icon-192.png", (req, res) => {
       return;
     }
     res.header("Content-Type", "image/png");
+    res.header("Cache-Control", "public, max-age=604800");
     res.send(data);
   });
 });
 
 app.get("/sitemap.xml", (req, res) => {
   res.header("Content-Type", "application/xml");
+  res.header("Cache-Control", "public, max-age=3600"); // 1h — suficient pentru crawlere, se schimbă rar în practică
   res.send(generateSitemapXml(baseUrlFor(req), isIntlHost(req)));
+});
+
+// CSS servit ca fișier extern, cacheabil — mutat din <style> inline (care
+// se retrimitea, complet, la FIECARE pagină încărcată, fără să poată fi
+// ținut în cache de browser între pagini) — impact real asupra vitezei
+// percepute, mai ales la navigare între mai multe pagini în aceeași sesiune.
+// Cache moderat (1 oră), nu foarte lung — site-ul e încă în dezvoltare
+// activă, stilurile se schimbă des; un cache de-o oră tot ajută mult în
+// cadrul unei singure sesiuni de răsfoire, fără riscul ca vizitatorii
+// care revin să rămână blocați cu stiluri vechi mult timp după un deploy.
+app.get("/style.css", (req, res) => {
+  res.set("Content-Type", "text/css; charset=utf-8");
+  res.set("Cache-Control", "public, max-age=3600");
+  res.send(CSS_STYLES);
 });
 
 app.get("/robots.txt", (req, res) => {
   res.header("Content-Type", "text/plain");
+  res.header("Cache-Control", "public, max-age=86400"); // 24h — se schimbă foarte rar
   res.send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrlFor(req)}/sitemap.xml\n`);
 });
 
@@ -10298,6 +10492,7 @@ app.get("/test-widget-travelpayouts", (req, res) => {
 // adsensePublisherId (sus, lângă codAdSense) după ce ești aprobat.
 app.get("/ads.txt", (req, res) => {
   res.set("Content-Type", "text/plain");
+  res.set("Cache-Control", "public, max-age=86400"); // 24h — se schimbă doar la aprobarea AdSense
   if (!adsensePublisherId) {
     res.send("# ads.txt va fi completat automat după aprobarea Google AdSense\n");
     return;
