@@ -3540,6 +3540,56 @@ exports.HOMEPAGE_FOOTER_TEXTS = {
   "ee": "näitab sulle reaalajas, kas suured poed ja vaatamisväärsused kogu Euroopas on praegu avatud, samuti täielikke nädala- ja pühadeaegseid lahtiolekuaegu — otsi, sirvi riigi järgi, salvesta oma lemmikud, või loo marsruut unustamatuks reisiks."
 }
 
+// Titlu/descriere SEO pentru pagina internațională — cerut explicit, tradus
+// în toate 21 de limbi, ca să se potrivească noului brief SEO (RO), nu
+// doar în engleză/română.
+exports.HOMEPAGE_SEO_TITLES = {
+  ro: "Este magazinul deschis chiar acum? Program Magazine Azi & Orar în timp real",
+  uk: "Is the Store Open Right Now? Today's Store Hours & Live Status",
+  de: "Ist der Laden gerade geöffnet? Öffnungszeiten heute & Live-Status",
+  es: "¿Está la tienda abierta ahora mismo? Horario de hoy y estado en vivo",
+  fr: "Le magasin est-il ouvert maintenant ? Horaires du jour et statut en direct",
+  it: "Il negozio è aperto adesso? Orari di oggi e stato in tempo reale",
+  pl: "Czy sklep jest teraz otwarty? Dzisiejsze godziny otwarcia na żywo",
+  nl: "Is de winkel nu open? Openingstijden van vandaag & live status",
+  da: "Har butikken åbent lige nu? Dagens åbningstider & status live",
+  se: "Har butiken öppet just nu? Dagens öppettider & status live",
+  pt: "A loja está aberta agora? Horário de hoje e estado em tempo real",
+  cz: "Má obchod teď otevřeno? Dnešní otevírací doba a stav naživo",
+  fi: "Onko kauppa auki juuri nyt? Tämän päivän aukioloajat & tila reaaliajassa",
+  gr: "Είναι ανοιχτό το κατάστημα τώρα; Ωράριο σήμερα & κατάσταση ζωντανά",
+  hu: "Nyitva van most az üzlet? Mai nyitvatartás és élő állapot",
+  hr: "Je li trgovina sada otvorena? Današnje radno vrijeme i status uživo",
+  sk: "Má obchod teraz otvorené? Dnešná otváracia doba a stav naživo",
+  si: "Je trgovina zdaj odprta? Današnji delovni čas in stanje v živo",
+  lt: "Ar parduotuvė dabar atidaryta? Šiandienos darbo laikas ir būsena tiesiogiai",
+  lv: "Vai veikals tagad ir atvērts? Šodienas darba laiks un statuss tiešraidē",
+  ee: "Kas pood on praegu avatud? Tänased lahtiolekuajad ja olek reaalajas",
+};
+exports.HOMEPAGE_SEO_DESCRIPTIONS = {
+  ro: "Află instant dacă magazinul tău este deschis acum. Verifică programul magazinelor de astăzi în orașul tău prin localizare automată. Simplu și rapid!",
+  uk: "Find out instantly if your store is open right now. Check today's opening hours in your city with automatic location detection. Simple and fast!",
+  de: "Finde sofort heraus, ob dein Geschäft gerade geöffnet ist. Prüfe die heutigen Öffnungszeiten in deiner Stadt per automatischer Standorterkennung. Einfach und schnell!",
+  es: "Descubre al instante si tu tienda está abierta ahora mismo. Consulta el horario de hoy en tu ciudad con localización automática. ¡Sencillo y rápido!",
+  fr: "Découvrez instantanément si votre magasin est ouvert maintenant. Consultez les horaires du jour dans votre ville grâce à la localisation automatique. Simple et rapide !",
+  it: "Scopri all'istante se il tuo negozio è aperto adesso. Controlla gli orari di oggi nella tua città con la localizzazione automatica. Semplice e veloce!",
+  pl: "Sprawdź od razu, czy Twój sklep jest teraz otwarty. Zobacz dzisiejsze godziny otwarcia w Twoim mieście dzięki automatycznej lokalizacji. Prosto i szybko!",
+  nl: "Ontdek direct of jouw winkel nu open is. Bekijk de openingstijden van vandaag in jouw stad met automatische locatiebepaling. Simpel en snel!",
+  da: "Find straks ud af, om din butik har åbent lige nu. Tjek dagens åbningstider i din by med automatisk placering. Enkelt og hurtigt!",
+  se: "Ta reda på direkt om din butik har öppet just nu. Se dagens öppettider i din stad med automatisk platsigenkänning. Enkelt och snabbt!",
+  pt: "Descubra instantaneamente se a sua loja está aberta agora. Consulte o horário de hoje na sua cidade com localização automática. Simples e rápido!",
+  cz: "Okamžitě zjistěte, zda má váš obchod teď otevřeno. Podívejte se na dnešní otevírací dobu ve vašem městě pomocí automatické lokalizace. Jednoduše a rychle!",
+  fi: "Selvitä heti, onko kauppasi auki juuri nyt. Tarkista tämän päivän aukioloajat kaupungissasi automaattisen paikannuksen avulla. Yksinkertaista ja nopeaa!",
+  gr: "Μάθετε αμέσως αν το κατάστημά σας είναι ανοιχτό τώρα. Δείτε το σημερινό ωράριο στην πόλη σας με αυτόματο εντοπισμό τοποθεσίας. Απλό και γρήγορο!",
+  hu: "Tudd meg azonnal, hogy nyitva van-e most az üzleted. Nézd meg a mai nyitvatartást a városodban, automatikus helymeghatározással. Egyszerű és gyors!",
+  hr: "Odmah saznajte je li vaša trgovina sada otvorena. Provjerite današnje radno vrijeme u vašem gradu uz automatsku lokaciju. Jednostavno i brzo!",
+  sk: "Okamžite zistite, či má váš obchod teraz otvorené. Pozrite si dnešnú otváraciu dobu vo vašom meste pomocou automatickej polohy. Jednoducho a rýchlo!",
+  si: "Takoj ugotovite, ali je vaša trgovina zdaj odprta. Preverite današnji delovni čas v vašem mestu s samodejno lokacijo. Preprosto in hitro!",
+  lt: "Iškart sužinokite, ar jūsų parduotuvė dabar atidaryta. Peržiūrėkite šiandienos darbo laiką savo mieste naudodami automatinį vietos nustatymą. Paprasta ir greita!",
+  lv: "Uzziniet uzreiz, vai jūsu veikals tagad ir atvērts. Skatiet šodienas darba laiku savā pilsētā ar automātisku atrašanās vietas noteikšanu. Vienkārši un ātri!",
+  ee: "Saa kohe teada, kas sinu pood on praegu avatud. Vaata tänaseid lahtiolekuaegu oma linnas automaatse asukoha tuvastamisega. Lihtne ja kiire!",
+};
+
 exports.MAP_UNIFIED_TOGGLE_LABELS = {
   ro: "⚡ Deschise Acum / Acces 24/7", uk: "⚡ Open Now / Free Access", de: "⚡ Jetzt geöffnet / Freier Zugang",
   fr: "⚡ Ouvert maintenant / Accès libre", es: "⚡ Abierto ahora / Acceso libre", it: "⚡ Aperto ora / Accesso libero",
@@ -3605,7 +3655,7 @@ exports.TRAVEL_GUIDES_RO = [
     <p>Dacă aterizezi la aeroport cu bagaje multe sau călătorești în grup, un transfer privat precomandat elimină bătaia de cap a schimbării mijloacelor de transport — te duce direct de la terminal la poarta castelului sau la hotel. Planificarea din timp a acestor conexiuni e ceea ce transformă o vacanță aglomerată într-una fără stres.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Caută bilete de tren și autocar</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Rezervă un transfer privat</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>
@@ -3936,7 +3986,7 @@ exports.TRAVEL_GUIDES_EN = [
     <p>If you land at the airport with a lot of luggage or travel as a group, a pre-booked private transfer removes the hassle of switching between modes of transport — it takes you straight from the terminal to the castle gate or the hotel. Planning these connections ahead is what turns a hectic trip into a stress-free one.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Search train and coach tickets</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Book a private transfer</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
@@ -4234,7 +4284,7 @@ exports.TRAVEL_GUIDES_DE = [
     <p>Wenn du mit viel Gepäck am Flughafen landest oder in der Gruppe reist, erspart dir ein vorgebuchter privater Transfer den Ärger des Umsteigens zwischen Verkehrsmitteln — er bringt dich direkt vom Terminal zum Schlosstor oder zum Hotel. Diese Verbindungen im Voraus zu planen, macht aus einer hektischen Reise eine stressfreie.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Zug- und Busfahrkarten suchen</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Einen privaten Transfer buchen</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
     </div>`,
@@ -4291,7 +4341,7 @@ exports.TRAVEL_GUIDES_FR = [
     <p>Si vous atterrissez à l'aéroport avec beaucoup de bagages ou voyagez en groupe, un transfert privé réservé à l'avance vous évite le tracas de changer de mode de transport — il vous emmène directement du terminal à la porte du château ou à l'hôtel. Planifier ces connexions à l'avance transforme un voyage mouvementé en une expérience sans stress.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Rechercher des billets de train et de car</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Réserver un transfert privé</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
     </div>`,
@@ -4348,7 +4398,7 @@ exports.TRAVEL_GUIDES_ES = [
     <p>Si aterrizas en el aeropuerto con mucho equipaje o viajas en grupo, un traslado privado reservado con antelación elimina el engorro de cambiar de medio de transporte — te lleva directamente desde la terminal hasta la puerta del castillo o el hotel. Planificar estas conexiones con antelación convierte un viaje ajetreado en uno sin estrés.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Buscar billetes de tren y autobús</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Reservar un traslado privado</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
     </div>`,
@@ -4405,7 +4455,7 @@ exports.TRAVEL_GUIDES_IT = [
     <p>Se atterri in aeroporto con molti bagagli o viaggi in gruppo, un trasferimento privato prenotato in anticipo elimina il fastidio di cambiare mezzo di trasporto — ti porta direttamente dal terminal al cancello del castello o all'hotel. Pianificare questi collegamenti in anticipo trasforma un viaggio caotico in uno senza stress.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Cerca biglietti di treno e pullman</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Prenota un trasferimento privato</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
     </div>`,
@@ -4462,7 +4512,7 @@ exports.TRAVEL_GUIDES_PL = [
     <p>Jeśli lądujesz na lotnisku z dużą ilością bagażu lub podróżujesz w grupie, wcześniej zarezerwowany prywatny transfer eliminuje kłopoty ze zmianą środków transportu — zawiezie cię prosto z terminalu pod bramę zamku lub do hotelu. Wcześniejsze zaplanowanie tych połączeń zamienia gorączkową podróż w taką bez stresu.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Szukaj biletów kolejowych i autokarowych</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Zarezerwuj prywatny transfer</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
     </div>`,
@@ -4519,7 +4569,7 @@ exports.TRAVEL_GUIDES_NL = [
     <p>Als je met veel bagage op de luchthaven landt of in groep reist, bespaart een vooraf geboekte privétransfer je de rompslomp van het wisselen tussen vervoermiddelen — je gaat rechtstreeks van de terminal naar de poort van het kasteel of het hotel. Deze verbindingen vooraf plannen maakt van een hectische reis een stressvrije.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">🚆 Zoek trein- en buskaartjes</a>
+        ? `
       <a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">🚕 Boek een privétransfer</a>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
     </div>`,
@@ -4655,27 +4705,75 @@ exports.CAR_RENTAL_LABELS = {
 }
 
 exports.TRIP_TYPE_LABELS = {
-  uk: { any: "Any", family: "Family (with kids)", couple: "Couple", adventure: "Adventure / nature", culture: "Culture / history", label: "Trip type:" },
-  ro: { any: "Oricare", family: "Familie (cu copii)", couple: "Cuplu", adventure: "Aventură / natură", culture: "Cultural / istoric", label: "Tip călătorie:" },
-  de: { any: "Beliebig", family: "Familie (mit Kindern)", couple: "Paar", adventure: "Abenteuer / Natur", culture: "Kultur / Geschichte", label: "Reiseart:" },
-  fr: { any: "Peu importe", family: "Famille (avec enfants)", couple: "Couple", adventure: "Aventure / nature", culture: "Culture / histoire", label: "Type de voyage :" },
-  es: { any: "Cualquiera", family: "Familia (con niños)", couple: "Pareja", adventure: "Aventura / naturaleza", culture: "Cultura / historia", label: "Tipo de viaje:" },
-  it: { any: "Qualsiasi", family: "Famiglia (con bambini)", couple: "Coppia", adventure: "Avventura / natura", culture: "Cultura / storia", label: "Tipo di viaggio:" },
-  pl: { any: "Dowolny", family: "Rodzina (z dziećmi)", couple: "Para", adventure: "Przygoda / natura", culture: "Kultura / historia", label: "Typ podróży:" },
-  nl: { any: "Willekeurig", family: "Gezin (met kinderen)", couple: "Stel", adventure: "Avontuur / natuur", culture: "Cultuur / geschiedenis", label: "Type reis:" },
-  da: { any: "Alle", family: "Familie (med børn)", couple: "Par", adventure: "Eventyr / natur", culture: "Kultur / historie", label: "Rejsetype:" },
-  cz: { any: "Jakýkoli", family: "Rodina (s dětmi)", couple: "Pár", adventure: "Dobrodružství / příroda", culture: "Kultura / historie", label: "Typ cesty:" },
-  ee: { any: "Suvaline", family: "Pere (lastega)", couple: "Paar", adventure: "Seiklus / loodus", culture: "Kultuur / ajalugu", label: "Reisi tüüp:" },
-  fi: { any: "Mikä tahansa", family: "Perhe (lapsia)", couple: "Pari", adventure: "Seikkailu / luonto", culture: "Kulttuuri / historia", label: "Matkan tyyppi:" },
-  gr: { any: "Οποιοδήποτε", family: "Οικογένεια (με παιδιά)", couple: "Ζευγάρι", adventure: "Περιπέτεια / φύση", culture: "Πολιτισμός / ιστορία", label: "Τύπος ταξιδιού:" },
-  hr: { any: "Bilo koji", family: "Obitelj (s djecom)", couple: "Par", adventure: "Avantura / priroda", culture: "Kultura / povijest", label: "Vrsta putovanja:" },
-  hu: { any: "Bármelyik", family: "Család (gyerekekkel)", couple: "Pár", adventure: "Kaland / természet", culture: "Kultúra / történelem", label: "Utazás típusa:" },
-  lt: { any: "Bet koks", family: "Šeima (su vaikais)", couple: "Pora", adventure: "Nuotykiai / gamta", culture: "Kultūra / istorija", label: "Kelionės tipas:" },
-  lv: { any: "Jebkurš", family: "Ģimene (ar bērniem)", couple: "Pāris", adventure: "Piedzīvojums / daba", culture: "Kultūra / vēsture", label: "Ceļojuma veids:" },
-  pt: { any: "Qualquer", family: "Família (com crianças)", couple: "Casal", adventure: "Aventura / natureza", culture: "Cultura / história", label: "Tipo de viagem:" },
-  se: { any: "Valfri", family: "Familj (med barn)", couple: "Par", adventure: "Äventyr / natur", culture: "Kultur / historia", label: "Resetyp:" },
-  si: { any: "Katerikoli", family: "Družina (z otroki)", couple: "Par", adventure: "Pustolovščina / narava", culture: "Kultura / zgodovina", label: "Vrsta potovanja:" },
-  sk: { any: "Akýkoľvek", family: "Rodina (s deťmi)", couple: "Pár", adventure: "Dobrodružstvo / príroda", culture: "Kultúra / história", label: "Typ cesty:" },
+  uk: { any: "Any", family: "Family (with kids)", couple: "Couple", solo: "Solo", friends: "Friends", label: "Who's going:" },
+  ro: { any: "Oricare", family: "Familie (cu copii)", couple: "Cuplu", solo: "Singur/ă", friends: "Prieteni", label: "Cine merge:" },
+  de: { any: "Beliebig", family: "Familie (mit Kindern)", couple: "Paar", solo: "Alleine", friends: "Freunde", label: "Wer reist mit:" },
+  fr: { any: "Peu importe", family: "Famille (avec enfants)", couple: "Couple", solo: "Solo", friends: "Amis", label: "Qui voyage :" },
+  es: { any: "Cualquiera", family: "Familia (con niños)", couple: "Pareja", solo: "Solo/a", friends: "Amigos", label: "Quién viaja:" },
+  it: { any: "Qualsiasi", family: "Famiglia (con bambini)", couple: "Coppia", solo: "Da solo/a", friends: "Amici", label: "Chi viaggia:" },
+  pl: { any: "Dowolny", family: "Rodzina (z dziećmi)", couple: "Para", solo: "Solo", friends: "Znajomi", label: "Kto jedzie:" },
+  nl: { any: "Willekeurig", family: "Gezin (met kinderen)", couple: "Stel", solo: "Alleen", friends: "Vrienden", label: "Wie reist mee:" },
+  da: { any: "Alle", family: "Familie (med børn)", couple: "Par", solo: "Alene", friends: "Venner", label: "Hvem rejser:" },
+  cz: { any: "Jakýkoli", family: "Rodina (s dětmi)", couple: "Pár", solo: "Sám/sama", friends: "Přátelé", label: "Kdo cestuje:" },
+  ee: { any: "Suvaline", family: "Pere (lastega)", couple: "Paar", solo: "Üksi", friends: "Sõbrad", label: "Kes reisib:" },
+  fi: { any: "Mikä tahansa", family: "Perhe (lapsia)", couple: "Pari", solo: "Yksin", friends: "Ystävät", label: "Kuka matkustaa:" },
+  gr: { any: "Οποιοδήποτε", family: "Οικογένεια (με παιδιά)", couple: "Ζευγάρι", solo: "Μόνος/η", friends: "Φίλοι", label: "Ποιος ταξιδεύει:" },
+  hr: { any: "Bilo koji", family: "Obitelj (s djecom)", couple: "Par", solo: "Sam/a", friends: "Prijatelji", label: "Tko putuje:" },
+  hu: { any: "Bármelyik", family: "Család (gyerekekkel)", couple: "Pár", solo: "Egyedül", friends: "Barátok", label: "Ki utazik:" },
+  lt: { any: "Bet koks", family: "Šeima (su vaikais)", couple: "Pora", solo: "Vienas/a", friends: "Draugai", label: "Kas keliauja:" },
+  lv: { any: "Jebkurš", family: "Ģimene (ar bērniem)", couple: "Pāris", solo: "Viens/viena", friends: "Draugi", label: "Kas ceļo:" },
+  pt: { any: "Qualquer", family: "Família (com crianças)", couple: "Casal", solo: "Sozinho/a", friends: "Amigos", label: "Quem viaja:" },
+  se: { any: "Valfri", family: "Familj (med barn)", couple: "Par", solo: "Ensam", friends: "Vänner", label: "Vem reser:" },
+  si: { any: "Katerikoli", family: "Družina (z otroki)", couple: "Par", solo: "Sam/a", friends: "Prijatelji", label: "Kdo potuje:" },
+  sk: { any: "Akýkoľvek", family: "Rodina (s deťmi)", couple: "Pár", solo: "Sám/sama", friends: "Priatelia", label: "Kto cestuje:" },
+}
+
+exports.VIBE_LABELS = {
+  uk: { any: "Any", relaxed: "Relaxed & slow-paced", adventurous: "Adventurous & active", photogenic: "Photogenic / Instagram-worthy", label: "Vibe:" },
+  ro: { any: "Oricare", relaxed: "Relaxat, în ritm lejer", adventurous: "Aventuros, plin de acțiune", photogenic: "Instagramabil / spectaculos", label: "Ritm:" },
+  de: { any: "Beliebig", relaxed: "Entspannt & gemütlich", adventurous: "Abenteuerlich & aktiv", photogenic: "Fotogen / instagram-tauglich", label: "Stimmung:" },
+  fr: { any: "Peu importe", relaxed: "Détendu, rythme tranquille", adventurous: "Aventureux et actif", photogenic: "Photogénique / Instagram", label: "Ambiance :" },
+  es: { any: "Cualquiera", relaxed: "Relajado, ritmo tranquilo", adventurous: "Aventurero y activo", photogenic: "Fotogénico / para Instagram", label: "Ambiente:" },
+  it: { any: "Qualsiasi", relaxed: "Rilassato, ritmo tranquillo", adventurous: "Avventuroso e attivo", photogenic: "Fotogenico / da Instagram", label: "Atmosfera:" },
+  pl: { any: "Dowolny", relaxed: "Zrelaksowany, spokojne tempo", adventurous: "Pełen przygód i akcji", photogenic: "Fotogeniczny / na Instagram", label: "Nastrój:" },
+  nl: { any: "Willekeurig", relaxed: "Ontspannen, rustig tempo", adventurous: "Avontuurlijk en actief", photogenic: "Fotogeniek / Instagram-waardig", label: "Sfeer:" },
+  da: { any: "Alle", relaxed: "Afslappet, roligt tempo", adventurous: "Eventyrlig og aktiv", photogenic: "Fotogent / Instagram-værdigt", label: "Stemning:" },
+  cz: { any: "Jakýkoli", relaxed: "Uvolněné, pomalé tempo", adventurous: "Dobrodružné a aktivní", photogenic: "Fotogenické / na Instagram", label: "Nálada:" },
+  ee: { any: "Suvaline", relaxed: "Lõõgastav, rahulik tempo", adventurous: "Seiklusrikas ja aktiivne", photogenic: "Fotogeeniline / Instagrami jaoks", label: "Meeleolu:" },
+  fi: { any: "Mikä tahansa", relaxed: "Rento, rauhallinen tahti", adventurous: "Seikkailullinen ja aktiivinen", photogenic: "Valokuvauksellinen / Instagramiin", label: "Tunnelma:" },
+  gr: { any: "Οποιοδήποτε", relaxed: "Χαλαρό, αργός ρυθμός", adventurous: "Περιπετειώδες και δραστήριο", photogenic: "Φωτογενές / για Instagram", label: "Διάθεση:" },
+  hr: { any: "Bilo koji", relaxed: "Opušteno, spor tempo", adventurous: "Pustolovno i aktivno", photogenic: "Fotogenično / za Instagram", label: "Raspoloženje:" },
+  hu: { any: "Bármelyik", relaxed: "Laza, nyugodt tempó", adventurous: "Kalandos és aktív", photogenic: "Fotogén / Instagramra való", label: "Hangulat:" },
+  lt: { any: "Bet koks", relaxed: "Atsipalaidavęs, lėtas tempas", adventurous: "Nuotykingas ir aktyvus", photogenic: "Fotogeniškas / Instagramui", label: "Nuotaika:" },
+  lv: { any: "Jebkurš", relaxed: "Atslābināts, lēns temps", adventurous: "Piedzīvojumiem bagāts un aktīvs", photogenic: "Fotogēnisks / Instagram cienīgs", label: "Noskaņa:" },
+  pt: { any: "Qualquer", relaxed: "Relaxado, ritmo tranquilo", adventurous: "Aventureiro e ativo", photogenic: "Fotogénico / para Instagram", label: "Ambiente:" },
+  se: { any: "Valfri", relaxed: "Avslappnat, lugnt tempo", adventurous: "Äventyrligt och aktivt", photogenic: "Fotogent / Instagram-värdigt", label: "Stämning:" },
+  si: { any: "Katerikoli", relaxed: "Sproščeno, počasen tempo", adventurous: "Pustolovsko in aktivno", photogenic: "Fotogenično / za Instagram", label: "Vzdušje:" },
+  sk: { any: "Akýkoľvek", relaxed: "Uvoľnené, pomalé tempo", adventurous: "Dobrodružné a aktívne", photogenic: "Fotogenické / na Instagram", label: "Nálada:" },
+}
+
+exports.BUDGET_LABELS = {
+  uk: { any: "Any", backpacker: "Smart backpacker", mid: "Mid-range local experiences", luxury: "Discreet luxury", label: "Budget:" },
+  ro: { any: "Oricare", backpacker: "Backpacker deștept", mid: "Experiențe locale, preț mediu", luxury: "Lux discret", label: "Buget:" },
+  de: { any: "Beliebig", backpacker: "Sparfuchs-Backpacker", mid: "Lokale Erlebnisse, mittleres Budget", luxury: "Dezenter Luxus", label: "Budget:" },
+  fr: { any: "Peu importe", backpacker: "Routard malin", mid: "Expériences locales, budget moyen", luxury: "Luxe discret", label: "Budget :" },
+  es: { any: "Cualquiera", backpacker: "Mochilero inteligente", mid: "Experiencias locales, precio medio", luxury: "Lujo discreto", label: "Presupuesto:" },
+  it: { any: "Qualsiasi", backpacker: "Backpacker intelligente", mid: "Esperienze locali, prezzo medio", luxury: "Lusso discreto", label: "Budget:" },
+  pl: { any: "Dowolny", backpacker: "Sprytny backpacker", mid: "Lokalne doświadczenia, średnia cena", luxury: "Dyskretny luksus", label: "Budżet:" },
+  nl: { any: "Willekeurig", backpacker: "Slimme backpacker", mid: "Lokale ervaringen, middenklasse", luxury: "Discrete luxe", label: "Budget:" },
+  da: { any: "Alle", backpacker: "Smart rygsækrejsende", mid: "Lokale oplevelser, mellemklasse", luxury: "Diskret luksus", label: "Budget:" },
+  cz: { any: "Jakýkoli", backpacker: "Chytrý batohář", mid: "Místní zážitky, střední cena", luxury: "Diskrétní luxus", label: "Rozpočet:" },
+  ee: { any: "Suvaline", backpacker: "Nutikas seljakotirändur", mid: "Kohalikud elamused, keskmine hind", luxury: "Diskreetne luksus", label: "Eelarve:" },
+  fi: { any: "Mikä tahansa", backpacker: "Fiksu reppureissaaja", mid: "Paikalliset elämykset, keskihinta", luxury: "Hillitty ylellisyys", label: "Budjetti:" },
+  gr: { any: "Οποιοδήποτε", backpacker: "Έξυπνος backpacker", mid: "Τοπικές εμπειρίες, μεσαία τιμή", luxury: "Διακριτική πολυτέλεια", label: "Προϋπολογισμός:" },
+  hr: { any: "Bilo koji", backpacker: "Pametan backpacker", mid: "Lokalna iskustva, srednja cijena", luxury: "Diskretan luksuz", label: "Proračun:" },
+  hu: { any: "Bármelyik", backpacker: "Okos hátizsákos", mid: "Helyi élmények, közepes ár", luxury: "Diszkrét luxus", label: "Költségvetés:" },
+  lt: { any: "Bet koks", backpacker: "Protingas kuprinę nešantis keliautojas", mid: "Vietiniai potyriai, vidutinė kaina", luxury: "Diskretiška prabanga", label: "Biudžetas:" },
+  lv: { any: "Jebkurš", backpacker: "Gudrs mugursomnieks", mid: "Vietējā pieredze, vidēja cena", luxury: "Diskrēta greznība", label: "Budžets:" },
+  pt: { any: "Qualquer", backpacker: "Mochileiro esperto", mid: "Experiências locais, preço médio", luxury: "Luxo discreto", label: "Orçamento:" },
+  se: { any: "Valfri", backpacker: "Smart ryggsäcksresenär", mid: "Lokala upplevelser, mellanpris", luxury: "Diskret lyx", label: "Budget:" },
+  si: { any: "Katerikoli", backpacker: "Pameten nahrbtnik popotnik", mid: "Lokalne izkušnje, srednja cena", luxury: "Diskreten luksuz", label: "Proračun:" },
+  sk: { any: "Akýkoľvek", backpacker: "Šikovný batohár", mid: "Miestne zážitky, stredná cena", luxury: "Diskrétny luxus", label: "Rozpočet:" },
 }
 
 exports.ITINERARY_COPY_UNIVERSAL = {
