@@ -227,6 +227,8 @@ const {
   FAV_EMPTY_TEXTS,
   FAV_INTRO_TEXTS,
   HOMEPAGE_FOOTER_TEXTS,
+  HOMEPAGE_SEO_TITLES,
+  HOMEPAGE_SEO_DESCRIPTIONS,
   MAP_UNIFIED_TOGGLE_LABELS,
   MAP_LOADING_STORES_LABELS,
   MAP_LOADING_ATTRACTIONS_LABELS,
@@ -244,6 +246,8 @@ const {
   FLIGHT_SEARCH_LABELS,
   CAR_RENTAL_LABELS,
   TRIP_TYPE_LABELS,
+  VIBE_LABELS,
+  BUDGET_LABELS,
   ITINERARY_COPY_UNIVERSAL,
 } = require("./locales.js");
 const {
@@ -3936,6 +3940,10 @@ const ATTRACTIONS = require("./attractions-data.js");
 // Conținut editorial per plajă (Grecia) — furnizat direct de proprietar,
 // DOAR în română momentan (vezi nota din beach-content-data.js).
 const BEACH_CONTENT_DATA = require("./beach-content-data.js");
+// Folosit acum și pentru itinerarul AI (vezi buildItineraryPrompt) — nu doar
+// pentru ghidurile de plajă în română. Fișier care exista deja, dar nu era
+// conectat nicăieri în cod.
+const BEACH_CONTENT_UK = require("./beach-content-uk.js");
 // Traduceri per-limbă ale conținutului de plajă — încărcate LENEȘ (doar la
 // prima cerere reală în acea limbă, nu la pornirea serverului), ca să nu
 // crească memoria/timpul de Cold Start pentru limbi rar cerute. Fișierele
@@ -5091,6 +5099,13 @@ main{padding-top:8px;}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
 .plan-visit-panel[hidden]{display:none;}
 .plan-visit-option{display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:13.5px;text-decoration:none;}
+/* .plan-visit-option se aplică și pe <button> acum (butoanele care
+   declanșează widget-uri, nu doar linkuri <a>) — <button> are stiluri
+   implicite din browser (bordură, fundal, box-sizing) care nu se resetează
+   automat doar prin .plan-visit-option — bug real, semnalat direct:
+   butonul de zboruri arăta vizibil diferit (mai mic/inegal) față de
+   restul, care erau toate <a>. */
+button.plan-visit-option{border:none;background:none;width:100%;cursor:pointer;box-sizing:border-box;font-family:inherit;line-height:normal;}
 .plan-visit-ticket{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
 .plan-visit-booking{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
 .plan-visit-parking{background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;}
@@ -5141,6 +5156,9 @@ main{padding-top:8px;}
 .secondary-badge.sb-open .sb-state{color:var(--open-bg);}
 .secondary-badge.sb-closed .sb-state{color:#F87171;}
 .affiliate-btn{display:block;text-align:center;width:calc(100% - 36px);margin:14px 18px 0;padding:15px 20px;border-radius:100px;font-family:var(--font-display);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,opacity .15s ease;}
+/* La fel ca la .plan-visit-option — reset pentru <button> (butoane care
+   declanșează widget-uri), care altfel are stiluri implicite din browser. */
+button.affiliate-btn{border:none;cursor:pointer;box-sizing:border-box;font-family:inherit;line-height:normal;}
 .affiliate-banner-link{display:block;text-align:center;margin:14px 18px 0;}
 .affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
 .affiliate-banner-link:hover img{transform:translateY(-2px);}
@@ -7674,11 +7692,17 @@ function buildBottomNavScript(nonce) {
           return;
         }
         mapLink.querySelector("span:last-child").textContent = "…";
+        // Respectă tab-ul activ (Magazine/Obiective) — același bug, de
+        // aceeași cauză, ca la butonul "Lângă mine": redirecționa mereu
+        // spre oraș cu tab-ul de Magazine implicit, ignorând ce alesese
+        // utilizatorul înainte de apăsare.
+        var activeTab = document.querySelector(".sub-nav-tab.active");
+        var tabHash = (activeTab && activeTab.getAttribute("data-tab") === "attractions") ? "#attractions" : "";
         navigator.geolocation.getCurrentPosition(function(pos){
           fetch("/api/nearest-city?lat=" + pos.coords.latitude + "&lon=" + pos.coords.longitude)
             .then(function(r){ return r.ok ? r.json() : null; })
             .then(function(data){
-              if (data && data.href) { window.location.href = data.href; }
+              if (data && data.href) { window.location.href = data.href.replace(/#.*$/, "") + tabHash; }
               else { window.location.href = "/"; }
             })
             .catch(function(){ window.location.href = "/"; });
@@ -8649,8 +8673,8 @@ ${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, count
 function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang) {
   const t = (lang && TRANSLATIONS[lang]) || TRANSLATIONS.uk;
   const activeLang = (lang && TRANSLATIONS[lang]) ? lang : "uk";
-  const title = "Opening Hours Today — Is the store open now?";
-  const description = "Check instantly whether major stores and attractions across Europe are open right now, plus full weekly and holiday opening hours.";
+  const title = HOMEPAGE_SEO_TITLES[activeLang] || HOMEPAGE_SEO_TITLES.uk;
+  const description = HOMEPAGE_SEO_DESCRIPTIONS[activeLang] || HOMEPAGE_SEO_DESCRIPTIONS.uk;
   const canonical = `${baseUrl}/`;
 
   // Sortat alfabetic după numele afișat (Austria, Belgium, Croatia...) —
@@ -8813,7 +8837,6 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
   </nav>
   <div class="sub-nav-panel favorites-hidden-panel" data-panel="favorites">
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.favoritesLabel || "⭐ Favorites")}</h2>
-    <p class="intro-text">${escapeHtml(FAV_INTRO_TEXTS[activeLang] || FAV_INTRO_TEXTS.uk)}</p>
     <div id="favoritesList"></div>
   </div>
 
@@ -8997,6 +9020,12 @@ function carRentalLabelFor(lang) {
 ;
 function tripTypeLabelsFor(lang) {
   return TRIP_TYPE_LABELS[lang] || TRIP_TYPE_LABELS.uk;
+}
+function vibeLabelsFor(lang) {
+  return VIBE_LABELS[lang] || VIBE_LABELS.uk;
+}
+function budgetLabelsFor(lang) {
+  return BUDGET_LABELS[lang] || BUDGET_LABELS.uk;
 }
 // Construiește href-ul corect către itinerar, pentru ORICE context — bug
 // real, găsit prin testare directă: România NU are o rută "/ro/itinerar"
@@ -9499,8 +9528,8 @@ function renderCityNotCoveredPage({ orasDisplay, nearest, baseUrl, nonce }) {
 }
 
 function renderHomePage(nonce, suggestedCity, baseUrl) {
-  const title = `${SITE_NAME} — Este magazinul deschis acum?`;
-  const description = "Vezi instant dacă Lidl, Kaufland, Penny, Mega Image, Carrefour, Auchan sau mall-ul din orașul tău sunt deschise chiar acum, plus programul complet pe zile și de sărbători.";
+  const title = "Este magazinul deschis chiar acum? Program Magazine Azi & Orar în timp real";
+  const description = "Află instant dacă magazinul tău este deschis acum. Verifică programul magazinelor de astăzi în orașul tău prin localizare automată. Simplu și rapid!";
   const canonical = `${baseUrl}/`;
 
   // toate cele 41 de orașe, ca listă completă, cu id pentru filtrare live
@@ -10864,8 +10893,12 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   // "couple"/"adventure"/"culture", validate dar fără efect încă asupra
   // selecției de obiective — doar "family" are logică reală acum, restul
   // rămân doar opțiuni în formular, gata de extins ulterior dacă e nevoie).
-  const TRIP_TYPES_VALIDE = ["any", "family", "couple", "adventure", "culture"];
+  const TRIP_TYPES_VALIDE = ["any", "family", "couple", "solo", "friends"];
   const tipCalatorie = TRIP_TYPES_VALIDE.includes(req.body?.tipCalatorie) ? req.body.tipCalatorie : "any";
+  const VIBES_VALIDE = ["any", "relaxed", "adventurous", "photogenic"];
+  const vibe = VIBES_VALIDE.includes(req.body?.vibe) ? req.body.vibe : "any";
+  const BUGETE_VALIDE = ["any", "backpacker", "mid", "luxury"];
+  const buget = BUGETE_VALIDE.includes(req.body?.buget) ? req.body.buget : "any";
   let zile = Number(req.body?.zile);
   if (!oras) { res.status(400).json({ error: "missing_oras" }); return; }
   if (!Number.isFinite(zile) || zile < 1) zile = 1;
@@ -10885,7 +10918,7 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   const { tara, obiective: obiectiveText } = resolved;
   const numeTara = COUNTRY_NAMES_RO[tara] || "România";
 
-  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara, tipCalatorie);
+  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara, tipCalatorie, vibe, buget);
 
   try {
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -11275,8 +11308,21 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
 // inclus în text) — la RO includem explicit "(localitate)", la restul
 // țărilor numele obiectivului conține deja orașul în multe cazuri (vezi
 // filtreazaObiectivePentruOrasIntl), deci NU mai forțăm un format anume.
-function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatorie) {
-  const listaText = obiective.map((o) => `- ${o}`).join("\n");
+function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatorie, vibe, buget) {
+  // Pentru plaje (avem deja descrieri reale, verificate, pentru 189 dintre
+  // ele) — atașăm un scurt extras din descrierea existentă, ca AI-ul să
+  // poată menționa natural tipul de nisip, intrarea în apă, aglomerația
+  // etc., fără să inventeze nimic — folosește DOAR ce chiar scrie deja la
+  // noi. Cerut explicit, ca prim pas din personalizarea pentru plaje.
+  const beachSource = lang === "ro" ? BEACH_CONTENT_DATA : BEACH_CONTENT_UK;
+  const listaText = obiective.map((o) => {
+    const beachInfo = beachSource && beachSource[o];
+    if (beachInfo && beachInfo.scurt) {
+      const extras = beachInfo.scurt.slice(0, 220).replace(/\s+\S*$/, "").trim();
+      return `- ${o} (detalii reale despre plajă: ${extras}…)`;
+    }
+    return `- ${o}`;
+  }).join("\n");
   const langName = itineraryLabelsFor(lang).aiLangName;
   const tara = numeTara || "România";
   // Instrucțiune suplimentară, DOAR pentru modul "familie" — cerut explicit:
@@ -11286,6 +11332,35 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   const familyInstruction = tipCalatorie === "family"
     ? `\nATENȚIE: acest itinerar e pentru o FAMILIE CU COPII. Dacă în lista de mai jos există parcuri de distracții/agrement, zoo-uri sau acvarii, include-le OBLIGATORIU în itinerar, cât mai devreme posibil (nu le ignora) — sunt cele mai potrivite obiective pentru copii. Preferă și restul obiectivelor mai puțin solicitante fizic/vizual pentru copii, unde ai de ales.\n`
     : "";
+  // Instrucțiuni pentru restul componenței grupului — cerut explicit,
+  // extindere a hiper-personalizării. "couple" nu are nevoie de instrucțiune
+  // separată (AI-ul deja înțelege contextul din cerere) — doar solo/friends
+  // au un ton clar diferit, care merită subliniat.
+  const soloInstruction = tipCalatorie === "solo"
+    ? `\nAcest itinerar e pentru O SINGURĂ PERSOANĂ, care călătorește singură — poți menționa pe scurt, unde are sens, alternative flexibile de ritm, fără nevoia de a coordona cu altcineva.\n`
+    : "";
+  const friendsInstruction = tipCalatorie === "friends"
+    ? `\nAcest itinerar e pentru UN GRUP DE PRIETENI — preferă, unde ai de ales între obiective similare, cele cu atmosferă mai socială, potrivite pentru un grup, nu neapărat romantice sau foarte liniștite.\n`
+    : "";
+  // "Vibe" / starea de spirit — cerut explicit, hiper-personalizare.
+  // Influențează ritmul (câte opriri pe zi) și tonul descrierilor, NU
+  // filtrează care obiective apar (baza noastră de date nu are etichete de
+  // "vibe" per obiectiv) — onest, nu promitem mai mult decât putem oferi.
+  const VIBE_INSTRUCTIONS = {
+    relaxed: `\nRitmul cerut e RELAXAT, ÎN PAS LEJER — nu înghesui prea multe obiective într-o zi (maxim 2-3 opriri principale pe zi), lasă timp de respirat între ele, preferă obiective care nu cer efort fizic mare.\n`,
+    adventurous: `\nRitmul cerut e AVENTUROS, ACTIV — poți propune mai multe opriri pe zi, un ritm mai alert, și preferă, unde ai de ales între obiective similare, pe cele cu caracter mai dinamic sau în aer liber.\n`,
+    photogenic: `\nAccentul cerut e pe locuri SPECTACULOASE VIZUAL, bune de fotografiat — unde ai de ales între obiective similare, preferă-le pe cele cu priveliști sau arhitectură deosebite, și menționează pe scurt, în descriere, ce anume le face spectaculoase vizual.\n`,
+  };
+  const vibeInstruction = VIBE_INSTRUCTIONS[vibe] || "";
+  // Buget — cerut explicit. La fel ca la "vibe", influențează TONUL
+  // descrierilor, nu selecția (nu avem prețuri per obiectiv în baza de
+  // date).
+  const BUDGET_INSTRUCTIONS = {
+    backpacker: `\nBugetul e restrâns (tip backpacker deștept) — în descrieri, ține un ton simplu, autentic, fără accent pe lux.\n`,
+    mid: `\nBugetul e mediu — descrieri echilibrate, fără accent pe lux sau pe austeritate.\n`,
+    luxury: `\nBugetul e generos (lux discret) — în descrieri, poți folosi un ton mai rafinat, cu accent pe calitate și confort, fără să fie ostentativ.\n`,
+  };
+  const budgetInstruction = BUDGET_INSTRUCTIONS[buget] || "";
   // Modul "Beach Day" — CORECTAT explicit: NU mai propunem 3 plaje diferite
   // într-o zi (varianta veche, "Beach Hopper", încuraja exact asta — greșit,
   // nimeni nu merge la plajă ca să facă cross, ci ca să se relaxeze). Acum:
@@ -11293,7 +11368,7 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   // excepție posibilă — a doua plajă DOAR seara, DOAR dacă are o priveliște
   // clar mai bună pentru apus, niciodată o a treia.
   const beachHopperInstruction = tara === "Grecia"
-    ? `\nDacă în lista de mai jos există obiective de tip plajă (numele lor conțin "Plaja" sau termeni echivalenți de plajă), o zi de plajă înseamnă RELAXARE, nu alergătură: alege O SINGURĂ plajă principală pentru toată ziua (dimineața, prânzul), pusă în "dimineata" sau "pranz" — nu împărți aceeași zi pe mai multe plaje diferite dimineața/prânzul. Poți propune o a DOUA plajă, diferită, DOAR pentru "seara", și DOAR dacă are explicit o priveliște mai bună pentru apus decât cea principală — altfel las-o tot pe cea principală și seara. NU propune niciodată 3 plaje diferite în aceeași zi. Menționează pe scurt, în descriere, de ce ai ales acel moment (ex. "loc bun pentru apus"). Dacă lista NU conține deloc plaje, ignoră complet această instrucțiune.\n`
+    ? `\nDacă în lista de mai jos există obiective de tip plajă (numele lor conțin "Plaja" sau termeni echivalenți de plajă), o zi de plajă înseamnă RELAXARE, nu alergătură: alege O SINGURĂ plajă principală pentru toată ziua (dimineața, prânzul), pusă în "dimineata" sau "pranz" — nu împărți aceeași zi pe mai multe plaje diferite dimineața/prânzul. Poți propune o a DOUA plajă, diferită, DOAR pentru "seara", și DOAR dacă are explicit o priveliște mai bună pentru apus decât cea principală — altfel las-o tot pe cea principală și seara. NU propune niciodată 3 plaje diferite în aceeași zi. Menționează pe scurt, în descriere, de ce ai ales acel moment (ex. "loc bun pentru apus"). Dacă lista NU conține deloc plaje, ignoră complet această instrucțiune. Pentru plajele care au "(detalii reale despre plajă: ...)" atașat în lista de mai jos, FOLOSEȘTE acele detalii reale (tip de nisip, intrare în apă, aglomerație) în descrierea ta — nu inventa alte detalii, doar reformulează pe scurt ce scrie deja acolo.\n`
     : "";
   // Numele obiectivelor rămân exact cum apar (nume proprii de locuri, nu se
   // traduc) — DOAR descrierile și titlurile zilelor trebuie scrise în limba
@@ -11301,7 +11376,7 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
   // limbă dacă apare o singură dată la începutul unui prompt lung.
   return `Ești un ghid turistic expert în ${tara}. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras} (${tara}). TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii, nu se traduc).
-${familyInstruction}${beachHopperInstruction}
+${familyInstruction}${soloInstruction}${friendsInstruction}${vibeInstruction}${budgetInstruction}${beachHopperInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
@@ -11414,8 +11489,26 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         <option value="any">${escapeHtml(tripTypeLabelsFor(lang).any)}</option>
         <option value="family">${escapeHtml(tripTypeLabelsFor(lang).family)}</option>
         <option value="couple">${escapeHtml(tripTypeLabelsFor(lang).couple)}</option>
-        <option value="adventure">${escapeHtml(tripTypeLabelsFor(lang).adventure)}</option>
-        <option value="culture">${escapeHtml(tripTypeLabelsFor(lang).culture)}</option>
+        <option value="solo">${escapeHtml(tripTypeLabelsFor(lang).solo)}</option>
+        <option value="friends">${escapeHtml(tripTypeLabelsFor(lang).friends)}</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label for="itinVibe" style="font-size:14px;color:var(--muted);white-space:nowrap">${escapeHtml(vibeLabelsFor(lang).label)}</label>
+      <select id="itinVibe" class="city-search-input" style="flex:1 1 auto">
+        <option value="any">${escapeHtml(vibeLabelsFor(lang).any)}</option>
+        <option value="relaxed">${escapeHtml(vibeLabelsFor(lang).relaxed)}</option>
+        <option value="adventurous">${escapeHtml(vibeLabelsFor(lang).adventurous)}</option>
+        <option value="photogenic">${escapeHtml(vibeLabelsFor(lang).photogenic)}</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label for="itinBuget" style="font-size:14px;color:var(--muted);white-space:nowrap">${escapeHtml(budgetLabelsFor(lang).label)}</label>
+      <select id="itinBuget" class="city-search-input" style="flex:1 1 auto">
+        <option value="any">${escapeHtml(budgetLabelsFor(lang).any)}</option>
+        <option value="backpacker">${escapeHtml(budgetLabelsFor(lang).backpacker)}</option>
+        <option value="mid">${escapeHtml(budgetLabelsFor(lang).mid)}</option>
+        <option value="luxury">${escapeHtml(budgetLabelsFor(lang).luxury)}</option>
       </select>
     </div>
     <button type="submit" id="itinSubmitBtn" class="geo-btn" style="margin:0">${escapeHtml(t.submitBtn)}</button>
@@ -11618,6 +11711,8 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     var oras = document.getElementById("itinOras").value.trim();
     var zile = document.getElementById("itinZile").value;
     var tipCalatorie = document.getElementById("itinTip").value;
+    var vibe = document.getElementById("itinVibe").value;
+    var buget = document.getElementById("itinBuget").value;
     if (!oras) return;
 
     errorBox.style.display = "none";
@@ -11634,7 +11729,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     fetch("/api/genereaza-itinerar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG, tara: TARA, tipCalatorie: tipCalatorie }),
+      body: JSON.stringify({ oras: oras, zile: Number(zile), lang: LANG, tara: TARA, tipCalatorie: tipCalatorie, vibe: vibe, buget: buget }),
     })
       .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
       .then(function(res){
