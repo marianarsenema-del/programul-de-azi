@@ -382,7 +382,13 @@ async function getReportCounts(slug) {
 // avem deja în cache (sau mesajul generic), fără nicio cerere nouă,
 // niciodată. Listă rezonabilă de crawlere cunoscute, nu exhaustivă 100%,
 // dar acoperă marea majoritate a traficului automatizat real.
-const BOT_USER_AGENT_PATTERN = /bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|discordbot|linkedinbot|twitterbot|slackbot|pinterest|ahrefs|semrush|mj12bot|dotbot|petalbot|bytespider/i;
+// EXTINS, cerut de o descoperire reală: "GoogleOther" și
+// "Google-InspectionTool" (folosit chiar de Search Console, la inspecția de
+// URL-uri) NU conțin cuvântul "bot" — scăpau complet de detectare, tratate
+// ca utilizatori reali, ceea ce înseamnă că Google ar fi văzut placeholder-ul
+// "Se calculează programul..." în loc de conținutul real, la unele vizite —
+// exact genul de bug care ar explica un declin treptat de indexare/trafic.
+const BOT_USER_AGENT_PATTERN = /bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|discordbot|linkedinbot|twitterbot|slackbot|pinterest|ahrefs|semrush|mj12bot|dotbot|petalbot|bytespider|googleother|google-inspectiontool|google-extended|google-agent|storebot|applebot|bingpreview|adsbot-google|mediapartners-google|duckduckbot|baiduspider|yandexbot|sogou|exabot|ia_archiver/i;
 function isBotRequest(userAgent) {
   return Boolean(userAgent) && BOT_USER_AGENT_PATTERN.test(userAgent);
 }
@@ -11754,6 +11760,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   var LANG = ${safeJson(lang)};
   var TARA = ${safeJson(cc)};
   var DAY_PREFIX = ${safeJson(t.dayPrefix)};
+  var GOOGLE_MAPS_LABEL = ${safeJson(t.googleMapsLabel)};
   var MORNING_LABEL = ${safeJson(t.morning)};
   var LUNCH_LABEL = ${safeJson(t.lunch)};
   var EVENING_LABEL = ${safeJson(t.evening)};
@@ -11873,11 +11880,29 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       var morningHtml = renderItems(zi.dimineata);
       var lunchHtml = renderItems(zi.pranz);
       var eveningHtml = renderItems(zi.seara);
+      // Buton "Deschide traseul în Google Maps" — cerut explicit. Adunăm
+      // toate opririle zilei, în ordine (dimineață → prânz → seară), ca
+      // waypoints. Nu avem coordonate GPS exacte per obiectiv în răspunsul
+      // AI-ului (doar nume + descriere + distanță aproximativă) — folosim
+      // numele, combinat cu orașul, pentru geocodare mai precisă de către
+      // Google Maps. Waze NU are un format de link cu mai multe opriri
+      // (doar destinație unică) — de-aia lipsește aici, discutat explicit.
+      var allStops = [].concat(zi.dimineata || [], zi.pranz || [], zi.seara || []);
+      var gmapsBtn = "";
+      if (allStops.length && searchedCity) {
+        var stopQueries = allStops.map(function(s){ return encodeURIComponent(s.nume + ", " + searchedCity); });
+        var origin = stopQueries[0];
+        var destination = stopQueries[stopQueries.length - 1];
+        var waypoints = stopQueries.slice(1, -1).join("|");
+        var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin + "&destination=" + destination + (waypoints ? "&waypoints=" + waypoints : "") + "&travelmode=driving";
+        gmapsBtn = '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="plan-visit-option plan-visit-booking">' + GOOGLE_MAPS_LABEL + '</a>';
+      }
       return '<div class="itin-day-card">' +
         '<div class="itin-day-title">' + DAY_PREFIX + ' ' + escapeHtmlClient(zi.ziua) + (zi.titlu ? ' — ' + escapeHtmlClient(zi.titlu) : '') + '</div>' +
         (morningHtml ? '<div class="itin-interval-label">' + MORNING_LABEL + '</div>' + morningHtml : '') +
         (lunchHtml ? '<div class="itin-interval-label">' + LUNCH_LABEL + '</div>' + lunchHtml : '') +
         (eveningHtml ? '<div class="itin-interval-label">' + EVENING_LABEL + '</div>' + eveningHtml : '') +
+        (gmapsBtn ? '<div style="margin-top:14px">' + gmapsBtn + '</div>' : '') +
         '</div>';
     }).join("");
     // Bloc de zboruri (Kiwi.com) + cazare (Booking.com) + mașină (Discover
