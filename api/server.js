@@ -2924,6 +2924,7 @@ const GENERIC_PARTNER_OFFERS = [
   { name: "JoJo Fashion", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9148cd6c4&redirect_to=https%3A%2F%2Fwww.jojofashion.ro" },
   { name: "Picadili", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=d404a783d&redirect_to=https%3A%2F%2Fpicadili.ro" },
   { name: "Prosoape Hotel", url: "https://event.2performant.com/events/click?ad_type=quicklink&aff_code=c647d7f92&unique=9dd5272cf&redirect_to=https%3A%2F%2Fwww.prosoapehotel.ro" },
+  { name: "FashionDays", url: "https://l.profitshare.ro/l/16475027" },
 ];
 // Rotația efectivă a caruselului generic — SUPORTĂ o listă MIXTĂ de oferte
 // (unele cu banner-imagine, altele doar text), fiindcă bannerele reale vin
@@ -8133,6 +8134,9 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
     const affiliateButtonHtml = linkMallAffiliate
       ? `<a href="${escapeHtml(linkMallAffiliate)}" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="affiliate-cta-text">${escapeHtml(getExtraLabels("ro").temuMallOffer).replace(/Temu/g, "<strong>Temu</strong>")}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`
       : "";
+    // FashionDays — cerut explicit, separat de caruselul generic, direct pe
+    // pagina de mall (context potrivit: multe magazine de modă în mall-uri).
+    const fashionDaysButtonHtml = `<a href="https://l.profitshare.ro/l/16475027" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">👗 Reduceri FashionDays</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`;
 
     mainHtml = `
       <div class="status-card" id="statusCard">
@@ -8149,6 +8153,7 @@ async function renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisp
       </div>
 
       ${affiliateButtonHtml}
+      ${fashionDaysButtonHtml}
 
       <h2 class="section-title"><span class="bar"></span>Orar magazine mall</h2>
       <div class="schedule-card"><table><thead><tr><th>Zi</th><th style="text-align:right">Interval orar</th></tr></thead>
@@ -10505,6 +10510,14 @@ app.get("/ads.txt", (req, res) => {
 app.get("/cad147c6a5b6cb338e880ca855c2679f.html", (req, res) => {
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send("cad147c6a5b6cb338e880ca855c2679f");
+});
+
+// Fișier de verificare a domeniului pentru Profitshare (FashionDays) —
+// numele fișierului ȘI conținutul lui trebuie să coincidă exact cu ce a
+// cerut platforma, la fel ca la verificarea de mai sus.
+app.get("/2697e31851e3c90a2ff17b8730d67b88.html", (req, res) => {
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send("2697e31851e3c90a2ff17b8730d67b88");
 });
 
 app.get("/", (req, res) => {
