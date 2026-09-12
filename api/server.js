@@ -10863,93 +10863,6 @@ app.get("/obiectiv/:slug", async (req, res) => {
   res.send(html);
 });
 
-app.get("/:oras/:magazin", async (req, res, next) => {
-  if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
-
-  if (isIntlHost(req)) {
-    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
-  }
-
-  const orasSlug = req.params.oras.toLowerCase();
-  const orasDisplay = resolveRoCityDisplay(toDisplayName(req.params.oras));
-  const magazinSlug = req.params.magazin.toLowerCase();
-  const found = findStore(req.params.magazin);
-  const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
-
-  if (!isKnownRoCity(orasDisplay)) {
-    const nonce = generateNonce();
-    res.set("Content-Security-Policy", buildCsp(nonce));
-    const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
-    const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
-    res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
-    return;
-  }
-
-  if (found && !isSelectiveBrandAllowedInCity("ro", found.key, orasDisplay)) {
-    const nonce = generateNonce();
-    res.set("Content-Security-Policy", buildCsp(nonce));
-    const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
-    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
-    return;
-  }
-
-  // dacă brand-ul nu e cunoscut, folosim tot programul standard național ca implicit,
-  // dar păstrăm numele exact așa cum a fost tastat în URL
-  const effectiveStore = applyPerCityWeeklyOverride(
-    found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-    "ro", found ? found.key : null, orasDisplay
-  );
-
-  const nonce = generateNonce();
-  res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
-  res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(html);
-});
-
-// ÎNAINTEA rutei generice "/:oras" de mai jos, deliberat — Express verifică
-// rutele în ordinea în care sunt scrise în cod, nu după cât de specifice
-// sunt. Dacă "/itinerar" ar fi rămas DUPĂ "/:oras", acea rută generică ar
-// fi interceptat-o prima, tratând "itinerar" ca pe un nume de oraș necunoscut
-// — exact bug-ul real, prins prin testare directă (pagina arăta lista de
-// magazine, nu formularul de itinerar).
-//
-// NU redirecționăm spre RO_DOMAIN — migrarea .ro -> .eu e activă și
-// redirecționează AUTOMAT (301) orice cerere de pe .ro către .eu, în afara
-// unei liste scurte de excepții (vezi RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES,
-// sus în fișier) — "/itinerar" NU e în acea listă. Un redirect explicit spre
-// .ro aici ar crea o buclă infinită (.eu -> .ro -> .eu -> ...), exact ca
-// bug-ul găsit prin testare directă. Servim pagina direct, pe orice domeniu
-// ajunge cererea — la fel ca paginile de obiective turistice, deja
-// funcționale pe ambele domenii, fără niciun redirect forțat.
-// "Propune un loc nou" — cerut explicit, disponibil pe ambele domenii (RO
-// fix pe .ro, orice limbă pe .eu) — la fel ca /itinerar, nu redirecționat.
-app.get("/propune", async (req, res) => {
-  if (isIntlHost(req)) {
-    return res.redirect(301, `https://${INTL_DOMAIN}/submit-place`);
-  }
-  const nonce = generateNonce();
-  res.set("Content-Security-Policy", buildCsp(nonce));
-  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), "ro", false);
-  res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(html);
-});
-app.get("/submit-place", async (req, res) => {
-  if (!isIntlHost(req)) {
-    return res.redirect(301, `https://${RO_DOMAIN}/propune`);
-  }
-  const nonce = generateNonce();
-  res.set("Content-Security-Policy", buildCsp(nonce));
-  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : "uk";
-  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), requestedLang, true);
-  res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(html);
-});
-
-// Pagina de administrare a propunerilor — DOAR pentru tine, română fixă
-// (nu are sens tradusă, nu e conținut public). Protejată prin
-// ADMIN_SECRET_KEY (variabilă de mediu) — fail-safe: fără cheia setată,
-// pagina refuză accesul complet, nu cade pe un mod "deschis".
 app.get("/admin/propuneri", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
     res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
@@ -11044,6 +10957,94 @@ app.post("/api/admin/propuneri/:id/:action", async (req, res) => {
   }
 });
 
+
+app.get("/:oras/:magazin", async (req, res, next) => {
+  if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
+
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}${req.url}`);
+  }
+
+  const orasSlug = req.params.oras.toLowerCase();
+  const orasDisplay = resolveRoCityDisplay(toDisplayName(req.params.oras));
+  const magazinSlug = req.params.magazin.toLowerCase();
+  const found = findStore(req.params.magazin);
+  const magazinDisplay = found ? found.displayName : toDisplayName(req.params.magazin);
+
+  if (!isKnownRoCity(orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const geo = req.query.lat && req.query.lon ? findNearestRoCity(Number(req.query.lat), Number(req.query.lon)) : null;
+    const html = renderCityNotCoveredPage({ orasDisplay, nearest: geo, baseUrl: baseUrlFor(req), nonce });
+    res.status(404).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
+  if (found && !isSelectiveBrandAllowedInCity("ro", found.key, orasDisplay)) {
+    const nonce = generateNonce();
+    res.set("Content-Security-Policy", buildCsp(nonce));
+    const html = renderBrandNotInCityPage({ magazinDisplay, orasDisplay, magazinKey: found.key, baseUrl: baseUrlFor(req), nonce });
+    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
+    return;
+  }
+
+  // dacă brand-ul nu e cunoscut, folosim tot programul standard național ca implicit,
+  // dar păstrăm numele exact așa cum a fost tastat în URL
+  const effectiveStore = applyPerCityWeeklyOverride(
+    found ? found.config : { type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+    "ro", found ? found.key : null, orasDisplay
+  );
+
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderStorePage({ orasSlug, orasDisplay, magazinSlug, magazinDisplay, store: effectiveStore, magazinKey: found ? found.key : null, baseUrl: baseUrlFor(req), nonce, userAgent: req.headers['user-agent'], ip: getClientIp(req) });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// ÎNAINTEA rutei generice "/:oras" de mai jos, deliberat — Express verifică
+// rutele în ordinea în care sunt scrise în cod, nu după cât de specifice
+// sunt. Dacă "/itinerar" ar fi rămas DUPĂ "/:oras", acea rută generică ar
+// fi interceptat-o prima, tratând "itinerar" ca pe un nume de oraș necunoscut
+// — exact bug-ul real, prins prin testare directă (pagina arăta lista de
+// magazine, nu formularul de itinerar).
+//
+// NU redirecționăm spre RO_DOMAIN — migrarea .ro -> .eu e activă și
+// redirecționează AUTOMAT (301) orice cerere de pe .ro către .eu, în afara
+// unei liste scurte de excepții (vezi RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES,
+// sus în fișier) — "/itinerar" NU e în acea listă. Un redirect explicit spre
+// .ro aici ar crea o buclă infinită (.eu -> .ro -> .eu -> ...), exact ca
+// bug-ul găsit prin testare directă. Servim pagina direct, pe orice domeniu
+// ajunge cererea — la fel ca paginile de obiective turistice, deja
+// funcționale pe ambele domenii, fără niciun redirect forțat.
+// "Propune un loc nou" — cerut explicit, disponibil pe ambele domenii (RO
+// fix pe .ro, orice limbă pe .eu) — la fel ca /itinerar, nu redirecționat.
+app.get("/propune", async (req, res) => {
+  if (isIntlHost(req)) {
+    return res.redirect(301, `https://${INTL_DOMAIN}/submit-place`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), "ro", false);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+app.get("/submit-place", async (req, res) => {
+  if (!isIntlHost(req)) {
+    return res.redirect(301, `https://${RO_DOMAIN}/propune`);
+  }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && TRANSLATIONS[req.query.lang] ? req.query.lang : "uk";
+  const html = await renderSubmitPlacePage(nonce, baseUrlFor(req), requestedLang, true);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// Pagina de administrare a propunerilor — DOAR pentru tine, română fixă
+// (nu are sens tradusă, nu e conținut public). Protejată prin
+// ADMIN_SECRET_KEY (variabilă de mediu) — fail-safe: fără cheia setată,
+// pagina refuză accesul complet, nu cade pe un mod "deschis".
 app.get("/itinerar", (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
