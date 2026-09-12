@@ -123,6 +123,23 @@ function bricolajWeekly() {
   ];
 }
 
+// Program separat, DOAR pentru Dedeman — cerut explicit, confirmat cu poză
+// reală (Google): sâmbăta se închide la 20:00, nu la 21:00 ca restul
+// brandurilor de bricolaj care folosesc bricolajWeekly() (Leroy Merlin,
+// Brico Depot, Hornbach, Jysk, Ikea — neverificate separat, rămân
+// neschimbate).
+function dedemanWeekly() {
+  return [
+    { open: "09:00", close: "18:00" }, // Duminică
+    { open: "08:00", close: "21:00" }, // Luni
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "21:00" },
+    { open: "08:00", close: "20:00" }, // Sâmbătă — 20:00, nu 21:00
+  ];
+}
+
 // Helper parametrizabil — KiK (spre deosebire de restul brandurilor) are ore
 // diferite pe oraș, dar Luni-Sâmbătă sunt mereu identice (doar Duminica
 // diferă în datele reale primite), deci un singur helper cu 4 parametri
@@ -1707,7 +1724,7 @@ exports.STORE_CONFIG = {
   profi: { name: "Profi", type: "store", weekly: supermarketWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   metro: { name: "Metro", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   selgros: { name: "Selgros", type: "store", weekly: metroWeekly(), holidays: SUPERMARKET_HOLIDAYS },
-  dedeman: { name: "Dedeman", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
+  dedeman: { name: "Dedeman", type: "store", weekly: dedemanWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   leroymerlin: { name: "Leroy Merlin", slug: "leroy-merlin", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   bricodepot: { name: "Brico Depot", slug: "brico-depot", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
   hornbach: { name: "Hornbach", type: "store", weekly: bricolajWeekly(), holidays: SUPERMARKET_HOLIDAYS },
@@ -2978,6 +2995,7 @@ exports.SELECTIVE_BRAND_CITIES = {
       "Tulcea", "Reșița",
       "Alba Iulia", "Deva", "Zalău", "Vaslui", "Sfântu Gheorghe",
       "Miercurea Ciuc", "Slatina", "Alexandria", "Giurgiu", "Călărași", "Slobozia",
+      "Hunedoara",
     ],
     // Leroy Merlin — 23 de magazine în exact 16 orașe (confirmat prin
     // retail.ro, 2025), listă completă, nu aproximare.
