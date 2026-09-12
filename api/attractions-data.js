@@ -207,6 +207,7 @@ module.exports = {
     { name: "Centrul Vechi din Feldkirch Feldkirch", url: "https://www.google.com/maps/search/?api=1&query=Centrul+Vechi+din+Feldkirch+Feldkirch+Austria", category: "cladiri_teatre", city: "Feldkirch" },
     { name: "Piața Cornului din Bregenz Bregenz", url: "https://www.google.com/maps/search/?api=1&query=Piața+Cornului+din+Bregenz+Bregenz+Austria", category: "cladiri_teatre", city: "Bregenz" },
     { name: "Teatrul Regional din Vorarlberg Bregenz", url: "https://www.google.com/maps/search/?api=1&query=Teatrul+Regional+din+Vorarlberg+Bregenz+Austria", category: "cladiri_teatre", city: "Bregenz" },
+    { name: "Rappenlochschlucht", url: "https://www.google.com/maps/search/?api=1&query=Rappenlochschlucht+Dornbirn+Austria", category: "natura", city: "Dornbirn" },
   ],
   be: [
     { name: "Palatul Regal din Bruxelles (Palais Royal)", url: "https://www.google.com/maps/search/?api=1&query=Palatul+Regal+din+Bruxelles+(Palais+Royal)+Bruxelles+Belgium", category: "castele_palate", city: "Brussels" }, // Bruxelles
