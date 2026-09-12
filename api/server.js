@@ -9266,25 +9266,14 @@ function renderTravelGuidesIndexPageIntl({ baseUrl, nonce, lang }) {
 }
 
 
-async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, ip }) {
-  const slug = toDbSlug(attraction.name);
-  // displayName — DOAR pentru text vizibil (titlu, breadcrumb, footer);
-  // attraction.name original rămâne folosit la slug, căutare Google,
-  // detectare oraș etc. — vezi dedupeTrailingCityName mai sus.
-  const displayName = dedupeTrailingCityName(attraction.name);
-  const title = `${displayName} — Program și Bilete`;
-  const description = `Vezi programul actualizat și rezervă bilete online pentru ${displayName}.`;
-  const canonical = `${baseUrl}/obiectiv/${slug}`;
-
-  const live = await tryGetLiveStatus(slug, "ro", "attraction", isBotRequest(userAgent), ip);
-  const voteCount = await getAttractionVoteCount(slug);
-  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
-  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
-  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
-
+// Construiește zona de status pentru pagina de obiectiv turistic (RO) —
+// extrasă separat, ca funcție reutilizabilă, din același motiv ca la
+// magazine: o dată la randarea inițială (fallback, mereu instant) și o
+// dată la cererea separată, de pe client, care aduce statusul live —
+// etapa 2 a eliminării întârzierii reale, acum și pentru obiective.
+function buildAttractionMainHtmlRO({ live, attraction, displayName, slug }) {
   let statusHtml;
   let widgetHtml = "";
-  let widgetScriptHtml = "";
   if (isFreeAccessAttraction(attraction.name, attraction.category)) {
     const seasonalHtml = needsSeasonalWarning(attraction.name)
       ? `<p class="plan-visit-hint" style="margin-top:8px">${escapeHtml(seasonalWarningLabelFor("ro"))}</p>`
@@ -9312,11 +9301,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
     // widget contextual DOAR când chiar știm dacă e deschis/închis (date live)
     // — fără date live, nu putem oferi alternative "inteligente", onest
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null });
-    widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else {
-    // Program GENERIC, pe categorie — DOAR dacă avem unul definit pentru
-    // categoria acestui obiectiv (vezi CATEGORY_GENERIC_SCHEDULE) — restul
-    // categoriilor rămân pe mesajul simplu, cu link.
     const genericSchedule = genericScheduleForCategory(attraction.category);
     if (genericSchedule) {
       const isOpenGeneric = computeGenericIsOpenNow(genericSchedule);
@@ -9329,14 +9314,43 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
     <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor("ro"))}</p>
     ${live ? contactInfoHtml(live) : ""}`;
     } else {
-      // Nu avem orarul (Google nu-l are postat pentru acest loc — frecvent la
-      // obiective mici, din sate) — dar dacă tot am reușit să găsim locul pe
-      // Google, adresa și telefonul sunt utile oricum. NU le mai aruncăm doar
-      // pentru că lipsește orarul, exact ca la magazine.
       statusHtml = `<div class="geo-country-highlight">ℹ️ Nu avem încă program live pentru acest obiectiv. Verifică programul actualizat pe <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</div>
     <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor("ro"))}</p>
     ${live ? contactInfoHtml(live) : ""}`;
     }
+  }
+  return { statusHtml, widgetHtml };
+}
+
+async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, ip }) {
+  const slug = toDbSlug(attraction.name);
+  // displayName — DOAR pentru text vizibil (titlu, breadcrumb, footer);
+  // attraction.name original rămâne folosit la slug, căutare Google,
+  // detectare oraș etc. — vezi dedupeTrailingCityName mai sus.
+  const displayName = dedupeTrailingCityName(attraction.name);
+  const title = `${displayName} — Program și Bilete`;
+  const description = `Vezi programul actualizat și rezervă bilete online pentru ${displayName}.`;
+  const canonical = `${baseUrl}/obiectiv/${slug}`;
+
+  // Pentru ROBOȚII de căutare — verificarea rămâne EXACT ca înainte, pe
+  // server, blocantă (au nevoie de date pentru SEO, sunt rapizi, doar
+  // cache). DOAR pentru utilizatori REALI sărim peste așteptare — etapa 2
+  // a eliminării întârzierii reale (vezi renderStorePage, deja făcută).
+  const isBot = isBotRequest(userAgent);
+  const live = isBot ? await tryGetLiveStatus(slug, "ro", "attraction", true, ip) : null;
+  const voteCount = await getAttractionVoteCount(slug);
+  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
+  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
+  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
+
+  const { statusHtml, widgetHtml } = buildAttractionMainHtmlRO({ live, attraction, displayName, slug });
+  // Scriptul widget-ului contextual e inclus MEREU (nu doar când avem live
+  // acum) — dacă statusul live sosește mai târziu, de pe client, și aduce
+  // widget-ul cu el, ascultătorii trebuie să fie deja gata, atașați.
+  const widgetScriptHtml = buildContextualWidgetScript(nonce);
+  let liveStatusFetchParamsHtml = "";
+  if (!isBot && !isFreeAccessAttraction(attraction.name, attraction.category)) {
+    liveStatusFetchParamsHtml = `<script nonce="${nonce}">window.__liveStatusParams=${safeJson({ liveSlug: slug, lang: "ro", tip: "attraction", attractionName: attraction.name, attractionCategory: attraction.category, attractionUrl: attraction.url, displayName })}</script>`;
   }
 
   // biletul e acum mereu în "Planifică vizita" (buildBookingPlanningButtonsHtml)
@@ -9356,10 +9370,12 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   <!-- LOCATIE RECLAMA ADSENSE PREMIUM -->
   ${adSlotHtml()}
 
+  <div id="attractionMainHtmlMount">
   ${statusHtml}
+  ${widgetHtml}
+  </div>
   ${buildVoteWidgetHtml(slug, voteCount, isPopular, "ro")}
   ${isBeach ? buildBeachTagsWidgetHtml(slug, beachWinningTags, "ro") : ""}
-  ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name, attraction.category), accessDifficulty: attraction.accessDifficulty })}
   ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
@@ -9379,44 +9395,22 @@ ${widgetScriptHtml}
 ${buildVoteWidgetScript(nonce)}
 ${buildBeachTagsWidgetScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
-${buildPlanVisitScript(nonce)}`;
+${buildPlanVisitScript(nonce)}
+${liveStatusFetchParamsHtml}
+${buildLiveStatusFetchScript(nonce)}`;
 
   return pageShell({ title, description, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
 }
 
 // Pagină de obiectiv turistic — INTERNAȚIONAL — aceeași logică, adaptată
 // la limbă (traduceri deja existente, TRANSLATIONS)
-async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl, nonce, userAgent, ip }) {
-  const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
-  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
-  const slug = toDbSlug(attraction.name);
-  // displayName — DOAR pentru text vizibil (titlu, H1, breadcrumb, footer).
-  // attraction.name (original) rămâne folosit la slug (URL-ul trebuie să fie
-  // identic indiferent de limbă) și la linkuri de căutare externă
-  // (Booking.com, hartă) — traducerea mecanică a prefixului ar putea strica
-  // potrivirea căutării pe alte site-uri, care așteaptă numele real.
-  const displayName = translateAttractionName(attraction.name, activeLang);
-  const title = `${displayName} — Opening Hours Today`;
-  const description = `${displayName} — check today's opening hours and book tickets online.`;
-  const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
-
-  const googleLang = toGoogleLang(activeLang);
-  const live = await tryGetLiveStatus(slug, googleLang, "attraction", isBotRequest(userAgent), ip);
-  const voteCount = await getAttractionVoteCount(slug);
-  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
-  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
-  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
-  const beachTagCounts = isBeach ? await getBeachTagCounts(slug) : {};
-  // Conținut editorial bogat — DOAR română momentan (conținutul original,
-  // scris de proprietar, există doar în RO).
-  const beachContent = isBeach ? getBeachContentForLang(attraction.name, activeLang) : null;
-
+// Ca buildAttractionMainHtmlRO, dar pentru varianta internațională —
+// tradusă, cu ramura specială pentru plaje (fără program deloc, dacă nu
+// avem date live).
+function buildAttractionMainHtmlIntl({ live, attraction, displayName, activeLang, isBeach, t }) {
   let statusHtml;
   let widgetHtml = "";
-  let widgetScriptHtml = "";
   if (live && live.isOpenNow !== null) {
-    // Date LIVE reale (Google) — le păstrăm, indiferent dacă e plajă sau nu;
-    // doar programul GENERIC (estimat) e cel eliminat la plaje, mai jos.
     const weeklyHtml = live.weeklyScheduleText.length
       ? `<div class="holiday-card">${live.weeklyScheduleText.map((line) => `<div class="holiday-row"><span class="holiday-label">${escapeHtml(line)}</span></div>`).join("")}</div>`
       : "";
@@ -9431,11 +9425,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.weeklyTitle)} (live, Google)</h2>
     ${weeklyHtml}`;
     widgetHtml = buildContextualWidgetHtml({ type: "attraction", name: attraction.name, orasDisplay: null, labels: contextualWidgetLabelsFor(activeLang) });
-    widgetScriptHtml = buildContextualWidgetScript(nonce);
   } else if (isBeach) {
-    // Cerut explicit: NU program generic la plaje — nu au program fix real,
-    // iar "estimarea" ar induce în eroare. Cardul de voturi (mai jos)
-    // înlocuiește complet zona de status/program.
     statusHtml = "";
   } else if (isFreeAccessAttraction(attraction.name, attraction.category)) {
     const seasonalHtml = needsSeasonalWarning(attraction.name)
@@ -9444,8 +9434,6 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     statusHtml = `<div class="geo-country-highlight">${escapeHtml(freeAccessLabelFor(activeLang))}</div>${seasonalHtml}
     ${live ? contactInfoHtml(live) : ""}`;
   } else {
-    // Program GENERIC, pe categorie — vezi comentariul echivalent din
-    // renderAttractionPageRO, aceeași logică, adaptată pe limbă.
     const genericSchedule = genericScheduleForCategory(attraction.category);
     if (genericSchedule) {
       const isOpenGeneric = computeGenericIsOpenNow(genericSchedule);
@@ -9462,6 +9450,43 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
     <p class="plan-visit-hint">${escapeHtml(liveComingSoonLabelFor(activeLang))}</p>
     ${live ? contactInfoHtml(live) : ""}`;
     }
+  }
+  return { statusHtml, widgetHtml };
+}
+
+async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl, nonce, userAgent, ip }) {
+  const t = (lang && TRANSLATIONS[lang]) || COUNTRIES[countryCode].t;
+  const activeLang = (lang && TRANSLATIONS[lang]) ? lang : Object.keys(TRANSLATIONS).find((k) => TRANSLATIONS[k] === COUNTRIES[countryCode].t) || "uk";
+  const slug = toDbSlug(attraction.name);
+  // displayName — DOAR pentru text vizibil (titlu, H1, breadcrumb, footer).
+  // attraction.name (original) rămâne folosit la slug (URL-ul trebuie să fie
+  // identic indiferent de limbă) și la linkuri de căutare externă
+  // (Booking.com, hartă) — traducerea mecanică a prefixului ar putea strica
+  // potrivirea căutării pe alte site-uri, care așteaptă numele real.
+  const displayName = translateAttractionName(attraction.name, activeLang);
+  const title = `${displayName} — Opening Hours Today`;
+  const description = `${displayName} — check today's opening hours and book tickets online.`;
+  const canonical = `${baseUrl}/${countryCode}/obiectiv/${slug}`;
+
+  const googleLang = toGoogleLang(activeLang);
+  // Pentru ROBOȚII de căutare — verificarea rămâne EXACT ca înainte, pe
+  // server, blocantă. DOAR pentru utilizatori REALI sărim peste așteptare.
+  const isBot = isBotRequest(userAgent);
+  const live = isBot ? await tryGetLiveStatus(slug, googleLang, "attraction", true, ip) : null;
+  const voteCount = await getAttractionVoteCount(slug);
+  const isPopular = voteCount >= VOTE_POPULAR_THRESHOLD;
+  const isBeach = attraction.category === "plaje_organizate" || attraction.category === "plaje_salbatice";
+  const beachWinningTags = isBeach ? await getBeachWinningTags(slug) : [];
+  const beachTagCounts = isBeach ? await getBeachTagCounts(slug) : {};
+  // Conținut editorial bogat — DOAR română momentan (conținutul original,
+  // scris de proprietar, există doar în RO).
+  const beachContent = isBeach ? getBeachContentForLang(attraction.name, activeLang) : null;
+
+  const { statusHtml, widgetHtml } = buildAttractionMainHtmlIntl({ live, attraction, displayName, activeLang, isBeach, t });
+  const widgetScriptHtml = buildContextualWidgetScript(nonce);
+  let liveStatusFetchParamsHtml = "";
+  if (!isBot && !isBeach && !isFreeAccessAttraction(attraction.name, attraction.category)) {
+    liveStatusFetchParamsHtml = `<script nonce="${nonce}">window.__liveStatusParams=${safeJson({ liveSlug: slug, lang: googleLang, tip: "attraction", attractionName: attraction.name, attractionCategory: attraction.category, attractionUrl: attraction.url, displayName, activeLang })}</script>`;
   }
 
   // biletul e acum mereu în "Plan your visit" (buildBookingPlanningButtonsHtml)
@@ -9492,10 +9517,12 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   </div>`}
   ${isBeach ? beachPartnerCarouselHtml : ""}
 
+  <div id="attractionMainHtmlMount">
   ${statusHtml}
+  ${widgetHtml}
+  </div>
   ${isBeach ? buildBeachVoteCentralizationHtml(slug, beachTagCounts, activeLang) : buildVoteWidgetHtml(slug, voteCount, isPopular, activeLang)}
   ${beachContent ? buildBeachContentRestHtml(beachContent, activeLang) : ""}
-  ${widgetHtml}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang, isBeach), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name, attraction.category) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
   ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name, { isBeach, accessDifficulty: attraction.accessDifficulty, city: isBeach ? attraction.city : detectAttractionCity(attraction.name, countryCode), name: attraction.name, lang: activeLang })}
@@ -9512,7 +9539,9 @@ ${buildBeachVoteCentralizationScript(nonce)}
 ${buildHowToGetThereScript(nonce)}
 ${buildPlanVisitScript(nonce)}
 ${beachPartnerCarouselScriptHtml}
-${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}`;
+${buildSearchAndFavoritesScript(nonce, [], "oht_favorites_v1", activeLang, countryCode)}
+${liveStatusFetchParamsHtml}
+${buildLiveStatusFetchScript(nonce)}`;
 
   return pageShell({
     title,
@@ -10355,15 +10384,32 @@ app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|
 app.post("/api/live-status-html", async (req, res) => {
   const body = req.body || {};
   const { liveSlug, lang, tip } = body;
-  if (!liveSlug || typeof liveSlug !== "string" || (tip !== "store" && tip !== "intlStore")) {
+  const VALID_TIPS = ["store", "intlStore", "attraction"];
+  if (!liveSlug || typeof liveSlug !== "string" || !VALID_TIPS.includes(tip)) {
     res.json({ ok: false });
     return;
   }
   const ip = getClientIp(req);
-  const live = await tryGetLiveStatus(liveSlug, typeof lang === "string" ? lang : "ro", "store", false, ip);
+  const underlyingTip = tip === "attraction" ? "attraction" : "store";
+  const live = await tryGetLiveStatus(liveSlug, typeof lang === "string" ? lang : "ro", underlyingTip, false, ip);
   res.set("Cache-Control", "no-store"); // răspunsul depinde de ora exactă a cererii — nu se cachează
   if (!live || live.isOpenNow === null) {
     res.json({ ok: false });
+    return;
+  }
+  if (tip === "attraction") {
+    const { attractionName, attractionCategory, attractionUrl, displayName, activeLang } = body;
+    const isRo = !activeLang || activeLang === "ro";
+    const attractionObj = {
+      name: typeof attractionName === "string" ? attractionName : "",
+      category: typeof attractionCategory === "string" ? attractionCategory : "",
+      url: typeof attractionUrl === "string" ? attractionUrl : "",
+    };
+    const safeDisplayName = typeof displayName === "string" ? displayName : "";
+    const { statusHtml, widgetHtml } = isRo
+      ? buildAttractionMainHtmlRO({ live, attraction: attractionObj, displayName: safeDisplayName, slug: liveSlug })
+      : buildAttractionMainHtmlIntl({ live, attraction: attractionObj, displayName: safeDisplayName, activeLang, isBeach: false, t: TRANSLATIONS[activeLang] || TRANSLATIONS.uk });
+    res.json({ ok: true, html: statusHtml + widgetHtml });
     return;
   }
   if (tip === "store") {
