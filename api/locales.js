@@ -3664,7 +3664,7 @@ exports.TRAVEL_GUIDES_RO = [
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
       <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
       <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
@@ -3681,7 +3681,8 @@ exports.TRAVEL_GUIDES_RO = [
     <p>O parcare aleasă bine, la câțiva pași de muzeu sau de zona istorică, îți lasă libertatea să explorezi în ritmul tău, fără să te mai gândești la mașină. Verifică din timp disponibilitatea și rezervă online — merită, mai ales dacă mergi într-un weekend aglomerat.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centru istoric"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Rezervă un loc de parcare securizat</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Parcare UK — rezervă un loc, în avans</a>
+      <p class="plan-visit-hint">🅿️ Parcare UE — în curând</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("ro")}</p>`}
     </div>
 
@@ -3689,7 +3690,7 @@ exports.TRAVEL_GUIDES_RO = [
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
       <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
       <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
@@ -3715,7 +3716,7 @@ exports.TRAVEL_GUIDES_RO = [
       <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
       <p class="trip-toolkit-subtitle">Ai nevoie de zbor, cazare, o mașină sau un transfer? Le găsești chiar aici.</p>
       <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
         <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
         <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
@@ -3750,20 +3751,6 @@ exports.TRAVEL_GUIDES_RO = [
     intro: "Excursii de o zi și tururi ghidate în marile orașe europene, rezervabile din timp",
     body: `
     <p>O excursie rezervată din timp înseamnă loc garantat, ghid confirmat și, de multe ori, acces la locuri unde altfel ai sta la coadă ore întregi. Am adunat mai jos câteva dintre cele mai apreciate tururi și excursii de o zi din marile orașe europene — de la plimbări cu barca pe Dunăre, până la trasee prin istoria antică a Romei sau Atenei.</p>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
-      <p class="trip-toolkit-subtitle">Înainte de excursii, ai nevoie de zbor, poate și de o mașină — le găsești chiar aici, fără să mai cauți în altă parte.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
-      </div>
-      <div class="gyg-search-widget-wrap">
-        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="ro-RO" data-gyg-type="search"></div>
-      </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>Excursii recomandate</h2>
 
@@ -3857,24 +3844,28 @@ exports.TRAVEL_GUIDES_RO = [
 
     <h3>Berlin — Tur cu ricșa, o zi întreagă, cu preluare de la hotel</h3>
     <p>O variantă neobișnuită și relaxantă de a explora Berlinul — pe ricșa electrică, cu un ghid local care combină istoria orașului cu povești și cultură, într-un ritm mult mai lejer decât un tur clasic pe jos. Include preluare directă de la hotel, deci nu trebuie să-ți faci griji cum ajungi la punctul de întâlnire.</p>
-    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul cu ricșa — Berlin</a>`,
+    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul cu ricșa — Berlin</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de excursii, ai nevoie de zbor, poate și de o mașină — le găsești chiar aici, fără să mai cauți în altă parte.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
+      </div>
+      <div class="gyg-search-widget-wrap">
+        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="ro-RO" data-gyg-type="search"></div>
+      </div>
+    </div>`,
   },
   {
     slug: "castele-europa",
     title: "Cele mai frumoase castele din Europa",
     intro: "12 castele de poveste, din toată Europa, cu bilete și tururi rezervabile din timp",
     body: `
-    <p>De la turnurile care au inspirat parcurile Disney, până la fortărețe medievale ascunse în păduri sau cocoțate pe stânci deasupra unor lacuri glaciare — Europa are unele dintre cele mai spectaculoase castele din lume. Am adunat mai jos 12 dintre cele mai frumoase, cu informații practice și bilete rezervabile din timp, ca să eviți cozile la intrare.</p>    </div>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
-      <p class="trip-toolkit-subtitle">Înainte de castele, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
-      </div>
+    <p>De la turnurile care au inspirat parcurile Disney, până la fortărețe medievale ascunse în păduri sau cocoțate pe stânci deasupra unor lacuri glaciare — Europa are unele dintre cele mai spectaculoase castele din lume. Am adunat mai jos 12 dintre cele mai frumoase, cu informații practice și bilete rezervabile din timp, ca să eviți cozile la intrare.</p>
 
     <h2 class="section-title"><span class="bar"></span>Castelele</h2>
 
@@ -3924,24 +3915,25 @@ exports.TRAVEL_GUIDES_RO = [
 
     <h3>🇵🇱 Castelul Malbork, Polonia</h3>
     <p>Cel mai mare castel din lume, măsurat după suprafață — o fortăreață uriașă din cărămidă gotică roșie, ridicată de Ordinul Teutonic pe malul râului Nogat. Inclus pe lista UNESCO, Malbork impresionează prin pura lui scară, greu de sesizat complet decât văzându-l cu ochii tăi.</p>
-    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Castelul Malbork, din Gdańsk</a>`,
+    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă tur-ul — Castelul Malbork, din Gdańsk</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de castele, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
+      </div>
+    </div>`,
   },
   {
     slug: "parcuri-distractii-europa",
     title: "Cele mai bune parcuri de distracții din Europa",
     intro: "6 parcuri de top, pentru toate vârstele — de la Disneyland Paris până la cele mai intense rollercoastere",
     body: `
-    <p>De la parcurile clasice, cu personaje îndrăgite de copii, până la rollercoastere printre cele mai înalte din lume — Europa are parcuri de distracții pentru orice vârstă și orice nivel de adrenalină. Am grupat mai jos câteva dintre cele mai apreciate, pe categorii, cu bilete rezervabile din timp.</p>    </div>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
-      <p class="trip-toolkit-subtitle">Înainte de parc, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
-      </div>
+    <p>De la parcurile clasice, cu personaje îndrăgite de copii, până la rollercoastere printre cele mai înalte din lume — Europa are parcuri de distracții pentru orice vârstă și orice nivel de adrenalină. Am grupat mai jos câteva dintre cele mai apreciate, pe categorii, cu bilete rezervabile din timp.</p>
 
     <h2 class="section-title"><span class="bar"></span>👑 Cele mai populare și vizitate (toate vârstele)</h2>
 
@@ -3971,7 +3963,18 @@ exports.TRAVEL_GUIDES_RO = [
 
     <h3>🇵🇱 Energylandia, Zator, Polonia</h3>
     <p>Cel mai mare parc de distracții din Polonia, recunoscut la nivel european pentru numărul uriaș de rollercoastere moderne — inclusiv Zadra, unul dintre cele mai înalte rollercoastere hibride din lume. Are și o zonă acvatică imensă, plus zone special gândite pentru cei mici, deci nu e doar pentru pasionații de adrenalină.</p>
-    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul (cu preluare opțională) — Energylandia, din Kraków</a>`,
+    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Rezervă biletul (cu preluare opțională) — Energylandia, din Kraków</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Planifică toată călătoria, dintr-un singur loc</h3>
+      <p class="trip-toolkit-subtitle">Înainte de parc, ai nevoie de zbor, cazare, poate și de o mașină — le găsești chiar aici.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=ron&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=ro&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Caută bilete de avion</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Caută cazare</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Închiriază o mașină</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="getTransferWidgetBox" data-widget-src="https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=12&plain=true&color_background=%23f6f6f6&color_button=%23F0813A&promo_id=4674&campaign_id=22"><span class="affiliate-cta-text">🚕 Rezervă un transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="getTransferWidgetBox" class="flight-widget-card" style="display:none"></div>
+      </div>
+    </div>`,
   },
 ]
 
@@ -4001,7 +4004,8 @@ exports.TRAVEL_GUIDES_EN = [
     <p>A well-chosen car park, a short walk from the museum or the old town, leaves you free to explore at your own pace, without worrying about the car. Check availability ahead of time and book online — it's worth it, especially on a busy weekend.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("city centre"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Book a secure parking spot</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ UK Parking — book a spot in advance</a>
+      <p class="plan-visit-hint">🅿️ EU Parking — coming soon</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("uk")}</p>`}
     </div>`,
   },
@@ -4028,7 +4032,7 @@ exports.TRAVEL_GUIDES_EN = [
     <p>The flight is usually the biggest expense in a trip — and the easiest one to optimise, if you know where to look. Price differences between airlines, between days of the week, or between nearby airports can add up to hundreds of euros for the same destination.</p>
     <p>A comparator that searches dozens of airlines at once (including low-cost carriers) shows you the cheapest option at a glance, no matter who operates it — much faster than checking every airline's site by hand.</p>
     <p>Search directly below, without leaving the page — enter your departure city and destination, and results appear in real time, with up-to-date prices.</p>
-    <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>`,
+    <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>`,
   },
   {
     slug: "airport-transfer",
@@ -4046,20 +4050,6 @@ exports.TRAVEL_GUIDES_EN = [
     intro: "13 top tours, across Europe, with tickets and slots you can book ahead",
     body: `
     <p>A tour booked ahead means a guaranteed spot, a confirmed guide, and often access to places where you'd otherwise queue for hours. Below are some of the most popular day trips and tours in Europe's major cities — from boat rides on the Danube, to routes through the ancient history of Rome or Athens.</p>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
-      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-      </div>
-      <div class="gyg-search-widget-wrap">
-        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="en-US" data-gyg-type="search"></div>
-      </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>Recommended tours</h2>
 
@@ -4153,7 +4143,21 @@ exports.TRAVEL_GUIDES_EN = [
 
     <h3>Berlin — Full-day rickshaw tour, with hotel pickup</h3>
     <p>An unusual and relaxing way to explore Berlin — by electric rickshaw, with a local guide who blends the city's history with stories and culture, at a much more leisurely pace than a classic walking tour. Includes direct hotel pickup, so you don't need to worry about getting to a meeting point.</p>
-    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the rickshaw tour — Berlin</a>`,
+    <a href="https://www.getyourguide.com/berlin-l17/full-day-rickshaw-tour-an-adventure-full-of-culture-and-delight-with-hotel-pickup-t856039/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the rickshaw tour — Berlin</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+      <div class="gyg-search-widget-wrap">
+        <div class="gyg-widget" data-gyg-partner-id="LM6J21N" data-gyg-number-of-items="3" data-gyg-locale-code="en-US" data-gyg-type="search"></div>
+      </div>
+    </div>`,
   },
   {
     slug: "castles-europe",
@@ -4161,17 +4165,6 @@ exports.TRAVEL_GUIDES_EN = [
     intro: "12 fairytale castles, across Europe, with tickets and tours you can book ahead",
     body: `
     <p>From the towers that inspired the Disney parks, to medieval fortresses hidden in forests or perched on cliffs above glacial lakes — Europe has some of the most spectacular castles in the world. Below are 12 of the most beautiful, with practical information and tickets you can book ahead, so you can skip the queue at the entrance.</p>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
-      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-      </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>The castles</h2>
 
@@ -4221,7 +4214,18 @@ exports.TRAVEL_GUIDES_EN = [
 
     <h3>🇵🇱 Malbork Castle, Poland</h3>
     <p>The largest castle in the world by surface area — a huge fortress of red Gothic brick, built by the Teutonic Order on the banks of the Nogat river. A UNESCO World Heritage Site, Malbork impresses with its sheer scale, hard to fully grasp until you see it with your own eyes.</p>
-    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Malbork Castle, from Gdańsk</a>`,
+    <a href="https://www.getyourguide.com/gdansk-l1960/gdansk-malbork-castle-regular-tour-t218583/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the tour — Malbork Castle, from Gdańsk</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>`,
   },
   {
     slug: "amusement-parks-europe",
@@ -4229,17 +4233,6 @@ exports.TRAVEL_GUIDES_EN = [
     intro: "6 top parks, for all ages \u2014 from Disneyland Paris to the most intense rollercoasters",
     body: `
     <p>From classic parks with characters children love, to some of the tallest rollercoasters in the world — Europe has amusement parks for every age and every level of thrill-seeking. Below are some of the most popular, grouped by category, with tickets you can book ahead.</p>
-
-    <div class="trip-toolkit-card">
-      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
-      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
-      <div class="trip-toolkit-buttons">
-        <a href="https://aviasales.tpk.lu/vB6Uc9BC" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
-      </div>
-    </div>
 
     <h2 class="section-title"><span class="bar"></span>👑 Most popular and most visited (all ages)</h2>
 
@@ -4269,7 +4262,18 @@ exports.TRAVEL_GUIDES_EN = [
 
     <h3>🇵🇱 Energylandia, Zator, Poland</h3>
     <p>Poland's largest amusement park, recognised across Europe for its huge number of modern rollercoasters — including Zadra, one of the tallest hybrid rollercoasters in the world. It also has a massive water area, plus zones specially designed for younger kids, so it's not just for thrill-seekers.</p>
-    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket (with optional pickup) — Energylandia, from Kraków</a>`,
+    <a href="https://www.getyourguide.com/krakow-l40/krakow-energylandia-full-day-ticket-with-optional-pickup-t114202/?partner_id=LM6J21N&utm_medium=affiliate&utm_source=partner_program" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">Book the ticket (with optional pickup) — Energylandia, from Kraków</a>
+
+    <div class="trip-toolkit-card">
+      <h3 class="trip-toolkit-title">🧳 Plan your whole trip, in one place</h3>
+      <p class="trip-toolkit-subtitle">Need flights, accommodation, a car or a transfer? Find them all right here.</p>
+      <div class="trip-toolkit-buttons">
+        <button type="button" class="affiliate-btn affiliate-btn-temu widget-reveal-btn" data-widget-target="aviasalesToolkitWidget" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100"><span class="affiliate-cta-text">✈️ Search flight tickets</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></button><div id="aviasalesToolkitWidget" class="flight-widget-card" style="display:none"></div>
+        <a href="https://www.booking.com/index.html" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🏨 Search accommodation</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚗 Rent a car</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+        <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="affiliate-btn affiliate-btn-temu"><span class="affiliate-cta-text">🚕 Book a transfer</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+      </div>
+    </div>`,
   },
 ]
 
@@ -4299,7 +4303,8 @@ exports.TRAVEL_GUIDES_DE = [
     <p>Ein gut gewähltes Parkhaus, wenige Schritte vom Museum oder der Altstadt entfernt, lässt dir die Freiheit, in deinem eigenen Tempo zu erkunden, ohne dir Sorgen um das Auto zu machen. Prüfe die Verfügbarkeit im Voraus und buche online — es lohnt sich, besonders an einem stark besuchten Wochenende.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("Stadtzentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Einen gesicherten Parkplatz buchen</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ UK-Parkplatz — im Voraus buchen</a>
+      <p class="plan-visit-hint">🅿️ EU-Parkplatz — demnächst</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("de")}</p>`}
     </div>`,
   },
@@ -4356,7 +4361,8 @@ exports.TRAVEL_GUIDES_FR = [
     <p>Un parking bien choisi, à quelques pas du musée ou de la vieille ville, vous laisse la liberté d'explorer à votre rythme, sans vous soucier de la voiture. Vérifiez la disponibilité à l'avance et réservez en ligne — cela en vaut la peine, surtout un week-end chargé.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centre-ville"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Réserver une place de parking sécurisée</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Parking UK — réservez à l'avance</a>
+      <p class="plan-visit-hint">🅿️ Parking UE — bientôt disponible</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("fr")}</p>`}
     </div>`,
   },
@@ -4413,7 +4419,8 @@ exports.TRAVEL_GUIDES_ES = [
     <p>Un aparcamiento bien elegido, a pocos pasos del museo o del casco antiguo, te da la libertad de explorar a tu ritmo, sin preocuparte por el coche. Comprueba la disponibilidad con antelación y reserva online — merece la pena, sobre todo en un fin de semana con mucha afluencia.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centro ciudad"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Reservar una plaza de aparcamiento segura</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Aparcamiento UK — reserva con antelación</a>
+      <p class="plan-visit-hint">🅿️ Aparcamiento UE — próximamente</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("es")}</p>`}
     </div>`,
   },
@@ -4470,7 +4477,8 @@ exports.TRAVEL_GUIDES_IT = [
     <p>Un parcheggio ben scelto, a pochi passi dal museo o dal centro storico, ti lascia libero di esplorare al tuo ritmo, senza pensieri per l'auto. Controlla la disponibilità in anticipo e prenota online — ne vale la pena, soprattutto in un weekend affollato.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centro città"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Prenota un posto auto sicuro</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Parcheggio UK — prenota in anticipo</a>
+      <p class="plan-visit-hint">🅿️ Parcheggio UE — prossimamente</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("it")}</p>`}
     </div>`,
   },
@@ -4527,7 +4535,8 @@ exports.TRAVEL_GUIDES_PL = [
     <p>Dobrze wybrany parking, kilka kroków od muzeum lub starówki, daje swobodę zwiedzania we własnym tempie, bez martwienia się o samochód. Sprawdź dostępność z wyprzedzeniem i zarezerwuj online — warto, zwłaszcza w ruchliwy weekend.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("centrum miasta"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Zarezerwuj bezpieczne miejsce parkingowe</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Parking UK — zarezerwuj z wyprzedzeniem</a>
+      <p class="plan-visit-hint">🅿️ Parking UE — wkrótce</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("pl")}</p>`}
     </div>`,
   },
@@ -4584,7 +4593,8 @@ exports.TRAVEL_GUIDES_NL = [
     <p>Een goed gekozen parkeerplaats, op een paar stappen van het museum of de oude binnenstad, geeft je de vrijheid om in je eigen tempo te verkennen, zonder je zorgen te maken over de auto. Controleer de beschikbaarheid vooraf en boek online — het is de moeite waard, vooral in een druk weekend.</p>
     <div class="plan-visit-block" style="display:block">
       ${TRAVEL_GUIDES_MONETIZATION_READY
-        ? `<a href="${escapeHtml(parkviaLinkFor("stadscentrum"))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ Boek een beveiligde parkeerplaats</a>`
+        ? `<a href="https://www.awin1.com/cread.php?awinmid=18633&awinaffid=3051943&campaign=Your%20Parking%20Space&ued=https%3A%2F%2Fwww.yourparkingspace.co.uk%2F" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">🅿️ UK-parkeerplaats — vooraf boeken</a>
+      <p class="plan-visit-hint">🅿️ EU-parkeerplaats — binnenkort</p>`
         : `<p class="plan-visit-hint">${comingSoonTextFor("nl")}</p>`}
     </div>`,
   },
