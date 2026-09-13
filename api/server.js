@@ -12171,7 +12171,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // interpretează automat ca oră locală a dispozitivului, cel mai simplu
     // mod de a evita complicații cu fusuri orare.
     function pad2(n) { return (n < 10 ? "0" : "") + n; }
-    function icsEscape(s) { return String(s).replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\n/g, "\\n"); }
+    function icsEscape(s) { return String(s).replace(/\\\\/g, "\\\\\\\\").replace(/,/g, "\\\\,").replace(/;/g, "\\\\;").replace(/\\n/g, "\\\\n"); }
     function icsDateTime(date, h, m) {
       return date.getFullYear() + pad2(date.getMonth() + 1) + pad2(date.getDate()) + "T" + pad2(h) + pad2(m) + "00";
     }
@@ -12203,7 +12203,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         });
       });
       lines.push("END:VCALENDAR");
-      return lines.join("\r\n");
+      return lines.join("\\r\\n");
     }
     var icsBtnHtml = '<button type="button" id="icalExportBtn" class="plan-visit-option plan-visit-parking-alt" style="margin-top:10px">' + ICAL_LABEL + '</button>';
 
