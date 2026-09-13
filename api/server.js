@@ -5594,6 +5594,18 @@ button.affiliate-btn{border:none;cursor:pointer;box-sizing:border-box;font-famil
 }
 .submit-place-thanks{text-align:center;color:var(--accent);font-weight:700;font-size:15px;margin-top:14px;}
 .submit-place-error{text-align:center;color:#e53935;font-weight:600;font-size:14px;margin-top:14px;}
+.submit-place-247{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:var(--text);}
+.submit-place-247 input{width:auto;padding:0;accent-color:var(--accent);}
+.submit-place-schedule{display:flex;flex-direction:column;gap:8px;transition:opacity .15s ease;}
+.submit-place-schedule.is-247-active{opacity:.4;pointer-events:none;}
+.submit-place-schedule-row{display:flex;align-items:center;gap:8px;}
+.submit-place-schedule-row .sp-day-name{flex:0 0 74px;font-size:13.5px;font-weight:600;color:var(--muted);}
+.submit-place-schedule-row input[type="time"]{flex:1;min-width:0;padding:10px 12px;font-size:14px;}
+.submit-place-schedule-row .sp-closed-toggle{display:flex;align-items:center;gap:4px;font-weight:600;font-size:12.5px;color:var(--muted);white-space:nowrap;flex:0 0 auto;}
+.submit-place-schedule-row .sp-closed-toggle input{width:auto;padding:0;accent-color:var(--accent);}
+.submit-place-schedule-row.is-day-closed input[type="time"]{opacity:.35;pointer-events:none;}
+.badge-platforms-list{margin:0;padding-left:20px;color:var(--text);font-size:14.5px;line-height:1.6;}
+.badge-platforms-list li{margin-bottom:8px;}
 .attraction-accordion-item{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;}
 .attraction-accordion-header{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:600;color:var(--text);}
 .attraction-accordion-header .attraction-name{flex:1 1 auto;}
@@ -7327,25 +7339,41 @@ function backButtonLabelFor(lang) { return BACK_BUTTON_LABELS[lang] || BACK_BUTT
 // Formular "Propune un loc" — cerut explicit: utilizatorii pot propune un
 // magazin, obiectiv sau plajă nou, nu doar Google are acest tip de
 // contribuție. Etichete traduse complet, 21 de limbi.
+// Zilele săptămânii pentru secțiunea "Program" din formularul de propunere,
+// în ordine Luni→Duminică (mai naturală într-un formular); idx respectă
+// convenția JS getDay() (0=Duminică...6=Sâmbătă) și indexează direct în
+// TRANSLATIONS[lang].dayNames, ca să rămână corect tradus per limbă.
+const SUBMIT_PLACE_SCHEDULE_DAYS = [1, 2, 3, 4, 5, 6, 0].map((idx) => ({ idx }));
+function submitPlaceDayName(lang, idx) {
+  const names = (TRANSLATIONS[lang] && TRANSLATIONS[lang].dayNames) || DAY_NAMES;
+  return names[idx];
+}
+
 const SUBMIT_PLACE_LABELS = {
-  ro: { title: "📍 Propune un loc nou", intro: "Ai găsit un magazin, obiectiv turistic sau plajă pe care nu-l avem încă? Spune-ne, verificăm și-l adăugăm.",
+  ro: { title: "📍 Propune un loc nou", intro: "Ai un magazin, obiectiv turistic, restaurant, cafenea și nu apare pe site-ul nostru, sau vrei doar să propui un obiectiv? Parcurge formularul de mai jos, noi îl verificăm și îl adăugăm în listă.",
     typeLabel: "Ce propui?", typeStore: "🛒 Magazin", typeAttraction: "🏛️ Obiectiv turistic", typeBeach: "🏖️ Plajă",
+    typeRestaurant: "🍽️ Restaurant", typeCafe: "☕ Cafenea", typeOther: "📍 Altceva",
+    otherTypeLabel: "Ce anume?", otherTypePlaceholder: "ex. bibliotecă, târg, atelier meșteșugăresc",
     nameLabel: "Nume", namePlaceholder: "ex. Castelul Corvinilor",
     cityLabel: "Oraș / Insulă", cityPlaceholder: "ex. Hunedoara",
+    scheduleLabel: "Program", schedule247: "Deschis non-stop (24/7)", scheduleClosedLabel: "Închis",
     countryLabel: "Țară",
     categoryLabel: "Categorie (opțional)", categoryPlaceholder: "ex. castel, muzeu, supermarket",
     mapsLabel: "Link Google Maps (opțional, dar ajută mult)", mapsPlaceholder: "https://maps.google.com/...",
-    noteLabel: "Notă (opțional)", notePlaceholder: "Orice detaliu util — program, acces, etc.",
+    noteLabel: "Notă (opțional)", notePlaceholder: "Orice detaliu util pentru vizitatorii site-ului — telefon, adresă, etc.",
     submit: "Trimite propunerea", thanks: "✓ Mulțumim! Propunerea ta a fost trimisă spre verificare.",
     errorGeneric: "Ceva n-a mers. Încearcă din nou.", errorRate: "Ai trimis prea multe propuneri recent. Mai încearcă puțin mai târziu." },
-  uk: { title: "📍 Suggest a new place", intro: "Found a store, attraction, or beach we don't have yet? Let us know, we'll check and add it.",
+  uk: { title: "📍 Suggest a new place", intro: "Have a store, tourist attraction, restaurant, or café that's not on our site yet — or just want to suggest an attraction? Go through the form below, we'll check it and add it.",
     typeLabel: "What are you suggesting?", typeStore: "🛒 Store", typeAttraction: "🏛️ Attraction", typeBeach: "🏖️ Beach",
+    typeRestaurant: "🍽️ Restaurant", typeCafe: "☕ Café", typeOther: "📍 Something else",
+    otherTypeLabel: "What kind?", otherTypePlaceholder: "e.g. library, market, craft workshop",
     nameLabel: "Name", namePlaceholder: "e.g. Corvin Castle",
     cityLabel: "City / Island", cityPlaceholder: "e.g. Hunedoara",
+    scheduleLabel: "Opening hours", schedule247: "Open 24/7", scheduleClosedLabel: "Closed",
     countryLabel: "Country",
     categoryLabel: "Category (optional)", categoryPlaceholder: "e.g. castle, museum, supermarket",
     mapsLabel: "Google Maps link (optional, but really helps)", mapsPlaceholder: "https://maps.google.com/...",
-    noteLabel: "Note (optional)", notePlaceholder: "Any useful detail — hours, access, etc.",
+    noteLabel: "Note (optional)", notePlaceholder: "Any useful detail for site visitors — phone, address, etc.",
     submit: "Send suggestion", thanks: "✓ Thanks! Your suggestion was sent for review.",
     errorGeneric: "Something went wrong. Try again.", errorRate: "You've sent too many suggestions recently. Try again a bit later." },
   de: { title: "📍 Neuen Ort vorschlagen", intro: "Ein Geschäft, eine Sehenswürdigkeit oder einen Strand gefunden, den wir noch nicht haben? Sag uns Bescheid, wir prüfen und fügen ihn hinzu.",
@@ -7592,14 +7620,34 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
         <option value="attraction">${escapeHtml(t.typeAttraction)}</option>
         <option value="store">${escapeHtml(t.typeStore)}</option>
         <option value="beach">${escapeHtml(t.typeBeach)}</option>
+        ${t.typeRestaurant ? `<option value="restaurant">${escapeHtml(t.typeRestaurant)}</option>` : ""}
+        ${t.typeCafe ? `<option value="cafe">${escapeHtml(t.typeCafe)}</option>` : ""}
+        ${t.typeOther ? `<option value="other">${escapeHtml(t.typeOther)}</option>` : ""}
       </select>
     </label>
+    ${t.otherTypeLabel ? `
+    <label class="submit-place-label" id="spOtherTypeWrap" hidden>${escapeHtml(t.otherTypeLabel)}
+      <input type="text" id="spOtherType" placeholder="${escapeHtml(t.otherTypePlaceholder)}" maxlength="100">
+    </label>` : ""}
     <label class="submit-place-label">${escapeHtml(t.nameLabel)}
       <input type="text" id="spName" placeholder="${escapeHtml(t.namePlaceholder)}" maxlength="255" required>
     </label>
     <label class="submit-place-label">${escapeHtml(t.cityLabel)}
       <input type="text" id="spCity" placeholder="${escapeHtml(t.cityPlaceholder)}" maxlength="255" required>
     </label>
+    ${t.scheduleLabel ? `
+    <div class="submit-place-label">${escapeHtml(t.scheduleLabel)}
+      <label class="submit-place-247"><input type="checkbox" id="sp247">${escapeHtml(t.schedule247)}</label>
+      <div class="submit-place-schedule" id="spSchedule">
+        ${SUBMIT_PLACE_SCHEDULE_DAYS.map((d) => `
+        <div class="submit-place-schedule-row" data-day="${d.idx}">
+          <span class="sp-day-name">${escapeHtml(submitPlaceDayName(lang, d.idx))}</span>
+          <input type="time" class="sp-open" value="09:00">
+          <input type="time" class="sp-close" value="18:00">
+          <label class="sp-closed-toggle"><input type="checkbox" class="sp-day-closed">${escapeHtml(t.scheduleClosedLabel)}</label>
+        </div>`).join("")}
+      </div>
+    </div>` : ""}
     <label class="submit-place-label">${escapeHtml(t.countryLabel)}
       <select id="spCountry" required>${countryOptionsHtml}</select>
     </label>
@@ -7625,6 +7673,44 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
   var btn = document.getElementById("spSubmitBtn");
   var thanks = document.getElementById("spThanks");
   var errorBox = document.getElementById("spError");
+  var sp247 = document.getElementById("sp247");
+  var spSchedule = document.getElementById("spSchedule");
+  var spType = document.getElementById("spType");
+  var spOtherTypeWrap = document.getElementById("spOtherTypeWrap");
+  var spOtherType = document.getElementById("spOtherType");
+  if (spType && spOtherTypeWrap && spOtherType) {
+    spType.addEventListener("change", function(){
+      var isOther = spType.value === "other";
+      spOtherTypeWrap.hidden = !isOther;
+      if (isOther) { spOtherType.setAttribute("required", "required"); }
+      else { spOtherType.removeAttribute("required"); spOtherType.value = ""; }
+    });
+  }
+  if (sp247 && spSchedule) {
+    sp247.addEventListener("change", function(){
+      spSchedule.classList.toggle("is-247-active", sp247.checked);
+    });
+    spSchedule.querySelectorAll(".submit-place-schedule-row").forEach(function(row){
+      var closedBox = row.querySelector(".sp-day-closed");
+      closedBox.addEventListener("change", function(){
+        row.classList.toggle("is-day-closed", closedBox.checked);
+      });
+    });
+  }
+  function collectSchedule(){
+    if (!spSchedule) return null;
+    if (sp247 && sp247.checked) return { is247: true, days: null };
+    var days = {};
+    spSchedule.querySelectorAll(".submit-place-schedule-row").forEach(function(row){
+      var idx = row.getAttribute("data-day");
+      var closed = row.querySelector(".sp-day-closed").checked;
+      days[idx] = closed ? { closed: true } : {
+        open: row.querySelector(".sp-open").value,
+        close: row.querySelector(".sp-close").value,
+      };
+    });
+    return { is247: false, days: days };
+  }
   form.addEventListener("submit", function(e){
     e.preventDefault();
     errorBox.hidden = true;
@@ -7634,12 +7720,14 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         type: document.getElementById("spType").value,
+        otherType: spOtherType ? spOtherType.value : "",
         name: document.getElementById("spName").value,
         city: document.getElementById("spCity").value,
         countryCode: document.getElementById("spCountry").value,
         category: document.getElementById("spCategory").value,
         mapsUrl: document.getElementById("spMapsUrl").value,
         note: document.getElementById("spNote").value,
+        schedule: collectSchedule(),
       }),
     })
       .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, status: r.status, data: data }; }); })
@@ -10230,13 +10318,13 @@ app.post("/api/tag-attraction", async (req, res) => {
 // (UPSERT, folosind indexul unic parțial pe slug, doar la status='pending'
 // — o propunere respinsă anterior poate fi repropusă, nu rămâne blocată
 // definitiv).
-const SUBMISSION_TYPES = ["store", "attraction", "beach"];
+const SUBMISSION_TYPES = ["store", "attraction", "beach", "restaurant", "cafe", "other"];
 app.post("/api/propune-loc", async (req, res) => {
   if (!dbPool) {
     res.status(503).json({ error: "not_configured" });
     return;
   }
-  const { type, name, city, countryCode, category, mapsUrl, note } = req.body || {};
+  const { type, name, city, countryCode, category, mapsUrl, note, schedule, otherType } = req.body || {};
   if (typeof name !== "string" || !name.trim() || name.length > 255) {
     res.status(400).json({ error: "invalid_name" });
     return;
@@ -10249,6 +10337,13 @@ app.post("/api/propune-loc", async (req, res) => {
     res.status(400).json({ error: "invalid_type" });
     return;
   }
+  // Când tipul e "other", cere obligatoriu precizarea "Ce anume?" — altfel
+  // propunerea rămâne fără nicio informație despre ce e efectiv locul.
+  if (type === "other" && (typeof otherType !== "string" || !otherType.trim())) {
+    res.status(400).json({ error: "invalid_other_type" });
+    return;
+  }
+  const safeOtherType = typeof otherType === "string" ? otherType.trim().slice(0, 100) : null;
   if (typeof countryCode !== "string" || !COUNTRIES[countryCode]) {
     res.status(400).json({ error: "invalid_country" });
     return;
@@ -10257,6 +10352,29 @@ app.post("/api/propune-loc", async (req, res) => {
   const safeMapsUrl = typeof mapsUrl === "string" && /^https?:\/\//.test(mapsUrl) ? mapsUrl.slice(0, 500) : null;
   const safeCategory = typeof category === "string" ? category.slice(0, 50) : null;
   const safeNote = typeof note === "string" ? note.slice(0, 500) : null;
+  // Program opțional (secțiunea nouă din formular): fie 24/7, fie un obiect
+  // pe zile (0=Duminică...6=Sâmbătă), fiecare zi fie închisă, fie cu
+  // interval HH:MM–HH:MM. Validat strict înainte de a ajunge în DB —
+  // vine direct de la utilizator, nu are voie să conțină altceva.
+  const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+  let safeSchedule = null;
+  if (schedule && typeof schedule === "object") {
+    if (schedule.is247 === true) {
+      safeSchedule = { is247: true };
+    } else if (schedule.days && typeof schedule.days === "object") {
+      const days = {};
+      for (const key of Object.keys(schedule.days)) {
+        if (!/^[0-6]$/.test(key)) continue;
+        const d = schedule.days[key];
+        if (d && d.closed === true) {
+          days[key] = { closed: true };
+        } else if (d && TIME_RE.test(d.open) && TIME_RE.test(d.close)) {
+          days[key] = { open: d.open, close: d.close };
+        }
+      }
+      if (Object.keys(days).length) safeSchedule = { is247: false, days };
+    }
+  }
 
   const ipHash = hashIp(getClientIp(req));
   const rateOk = await checkRateLimit(ipHash, "propune-loc", 10, 60);
@@ -10268,11 +10386,11 @@ app.post("/api/propune-loc", async (req, res) => {
   const slug = submissionDuplicateSlug(name, city);
   try {
     await dbPool.query(
-      `INSERT INTO pending_submissions (slug, type, name, city, country_code, category, maps_url, note, ip_hash)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO pending_submissions (slug, type, name, city, country_code, category, maps_url, note, schedule, other_type, ip_hash)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        ON CONFLICT (slug) WHERE status = 'pending'
        DO UPDATE SET submission_count = pending_submissions.submission_count + 1, actualizat_la = now()`,
-      [slug, type, name.trim(), city.trim(), countryCode, safeCategory, safeMapsUrl, safeNote, ipHash]
+      [slug, type, name.trim(), city.trim(), countryCode, safeCategory, safeMapsUrl, safeNote, safeSchedule ? JSON.stringify(safeSchedule) : null, safeOtherType, ipHash]
     );
     res.status(201).json({ ok: true });
   } catch (err) {
@@ -10632,11 +10750,28 @@ const BUSINESS_BADGE_LABELS = {
     step3Text1: "Odată ce te-ai găsit pe site-ul nostru, uită-te la adresa din browser. Exemplu: dacă pagina ta e <code>opening-hours-today.eu/obiectiv/castelul-bran</code>, slug-ul tău e <strong>castelul-bran</strong> (partea de după ultimul <code>/</code>).",
     step3Text2: "Înlocuiește <code>SLUG-UL-TAU</code> mai jos cu ce ai găsit, și <code>attraction</code> cu <code>store</code> dacă ești magazin, nu obiectiv turistic. Pune codul oriunde vrei să apară insigna, pe pagina ta.",
     copyBtn: "📋 Copiază codul", copiedText: "✓ Copiat!", demoTitle: "Cum arată insigna",
+    doneTitle: "✅ Gata — asta e tot", doneText: "De fapt, ești deja vizibil la noi pe site din Pasul 2, din momentul în care am aprobat propunerea ta — nu mai trebuie să faci nimic pentru asta. Pasul 3 de mai sus adaugă în plus insigna live și pe propriul tău site. Odată ce ai pus codul, amândouă se actualizează automat, în timp real, fără să mai fie nevoie să revii sau să repeți ceva.",
+    platformsTitle: "Nu ești sigur unde se pune un cod pe un site? Pe scurt, în funcție de ce folosești:",
+    platformsHtml: `<ul class="badge-platforms-list">
+      <li><strong>WordPress:</strong> adaugă un bloc „HTML personalizat" (Custom HTML) în pagină sau ca widget, și lipește codul acolo.</li>
+      <li><strong>Wix:</strong> din meniul „Adaugă” alege „Embed” → „Cod personalizat” (Embed Code / HTML iframe) și lipește codul.</li>
+      <li><strong>Squarespace:</strong> adaugă un „Code Block” în secțiunea unde vrei să apară insigna, și lipește codul.</li>
+      <li><strong>Site simplu, în HTML:</strong> lipește codul direct în fișierul .html, exact unde vrei să apară insigna.</li>
+      <li><strong>Nu te ocupi tu de site?</strong> trimite codul de mai sus persoanei care-ți administrează site-ul (webmaster, agenție etc.) și roag-o să-l pună unde vreți.</li>
+    </ul>`,
     kofiTitle: "☕ Te-a ajutat tot procesul?", kofiText: "Programul de Azi e întreținut de o singură persoană, în timpul liber, și rămâne gratuit pentru toată lumea. Dacă ai ajuns până aici și insigna ta funcționează, o cafea ar însemna enorm — nu e obligatoriu, dar chiar contează.",
     kofiBtn: "☕ Cumpără-ne o cafea", footerText: "insigne live, verificate, gratuite pentru orice magazin sau obiectiv listat la noi.",
     metaTitle: "Insignă \"Deschis Acum\" pentru site-ul tău — Programul de Azi", metaDescription: "Pune gratuit, pe propriul site, o insignă live care arată dacă ești deschis chiar acum.",
     guidesLabel: "Ghiduri", itineraryLabel: "Itinerar", homeLabel: "Acasă" },
-  uk: { homeCardTitle: "🏪 Do you run a store or attraction?", homeCardText: "Show visitors, right on your own website, whether you're open right now — checked automatically by us, free, nothing to install.", homeCardBtn: "See how it works", breadcrumb: "Get listed + \"Open Now\" badge", h1: "📛 Want your store or attraction listed with us?", intro: "Do you run a store, tourist attraction, or other business and want your visitors to see, live, whether you're open right now — both here on our site and on your own website? Here are 3 simple steps, in order. Each step depends on the one before it.", step1Title: "Step 1 — Suggest your store or attraction", step1Text: "If you're not already listed with us, the first step is to tell us about your business. It's free and takes 1 minute.", step1Btn: "📍 Suggest your business now", step1Hint: "Already listed with us? Skip straight to Step 2.", step2Title: "Step 2 — Wait for review, then find yourself on the site", step2Text: "We check every submission by hand — it usually takes a few days. We don't send an automatic notification yet, so after a few days, search for your business directly on our site (the search bar on the homepage). If you find your own page, you've cleared this step — move on to Step 3.", step3Title: "Step 3 — Get your badge code, for your own website", step3Text1: "Once you've found yourself on our site, look at the address bar. Example: if your page is <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, your slug is <strong>castelul-bran</strong> (the part after the last <code>/</code>).", step3Text2: "Replace <code>YOUR-SLUG</code> below with what you found, and <code>attraction</code> with <code>store</code> if you're a shop, not a tourist attraction. Paste the code anywhere you'd like the badge to appear on your page.", copyBtn: "📋 Copy the code", copiedText: "✓ Copied!", demoTitle: "What the badge looks like", kofiTitle: "☕ Did the whole process help you?", kofiText: "Opening Hours Today is maintained by one person, in their spare time, and stays free for everyone. If you made it this far and your badge is working, a coffee would mean a lot — not required, but it genuinely helps.", kofiBtn: "☕ Buy us a coffee", footerText: "live, verified badges, free for any store or attraction listed on our site.", metaTitle: "\"Open Now\" badge for your website — Opening Hours Today", metaDescription: "Add a free, live badge to your own website showing whether you're open right now.", guidesLabel: "Guides", itineraryLabel: "Itinerary", homeLabel: "Home" },
+  uk: { homeCardTitle: "🏪 Do you run a store or attraction?", homeCardText: "Show visitors, right on your own website, whether you're open right now — checked automatically by us, free, nothing to install.", homeCardBtn: "See how it works", breadcrumb: "Get listed + \"Open Now\" badge", h1: "📛 Want your store or attraction listed with us?", intro: "Do you run a store, tourist attraction, or other business and want your visitors to see, live, whether you're open right now — both here on our site and on your own website? Here are 3 simple steps, in order. Each step depends on the one before it.", step1Title: "Step 1 — Suggest your store or attraction", step1Text: "If you're not already listed with us, the first step is to tell us about your business. It's free and takes 1 minute.", step1Btn: "📍 Suggest your business now", step1Hint: "Already listed with us? Skip straight to Step 2.", step2Title: "Step 2 — Wait for review, then find yourself on the site", step2Text: "We check every submission by hand — it usually takes a few days. We don't send an automatic notification yet, so after a few days, search for your business directly on our site (the search bar on the homepage). If you find your own page, you've cleared this step — move on to Step 3.", step3Title: "Step 3 — Get your badge code, for your own website", step3Text1: "Once you've found yourself on our site, look at the address bar. Example: if your page is <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, your slug is <strong>castelul-bran</strong> (the part after the last <code>/</code>).", step3Text2: "Replace <code>YOUR-SLUG</code> below with what you found, and <code>attraction</code> with <code>store</code> if you're a shop, not a tourist attraction. Paste the code anywhere you'd like the badge to appear on your page.", copyBtn: "📋 Copy the code", copiedText: "✓ Copied!", demoTitle: "What the badge looks like", doneTitle: "✅ Done — that's it", doneText: "Actually, you're already visible on our site from Step 2, from the moment we approved your submission — nothing more needed there. Step 3 above just adds the live badge on your own website too. Once you've pasted the code, both update automatically, in real time, with nothing further to do.",
+    platformsTitle: "Not sure where to paste code on a website? Quick pointers, depending on what you use:",
+    platformsHtml: `<ul class="badge-platforms-list">
+      <li><strong>WordPress:</strong> add a "Custom HTML" block to the page, or as a widget, and paste the code there.</li>
+      <li><strong>Wix:</strong> from the "Add" menu choose "Embed" → "Custom Code" (Embed Code / HTML iframe) and paste the code.</li>
+      <li><strong>Squarespace:</strong> add a "Code Block" to the section where you want the badge, and paste the code.</li>
+      <li><strong>Plain HTML site:</strong> paste the code directly into the .html file, exactly where you want the badge to appear.</li>
+      <li><strong>Don't manage the site yourself?</strong> send the code above to whoever maintains your website (webmaster, agency, etc.) and ask them to place it wherever you'd like.</li>
+    </ul>`, kofiTitle: "☕ Did the whole process help you?", kofiText: "Opening Hours Today is maintained by one person, in their spare time, and stays free for everyone. If you made it this far and your badge is working, a coffee would mean a lot — not required, but it genuinely helps.", kofiBtn: "☕ Buy us a coffee", footerText: "live, verified badges, free for any store or attraction listed on our site.", metaTitle: "\"Open Now\" badge for your website — Opening Hours Today", metaDescription: "Add a free, live badge to your own website showing whether you're open right now.", guidesLabel: "Guides", itineraryLabel: "Itinerary", homeLabel: "Home" },
   de: { homeCardTitle: "🏪 Betreibst du ein Geschäft oder eine Attraktion?", homeCardText: "Zeige Besuchern, direkt auf deiner eigenen Website, ob du gerade geöffnet hast — automatisch von uns geprüft, kostenlos, nichts zu installieren.", homeCardBtn: "So funktioniert's", breadcrumb: "Eintrag + \"Jetzt geöffnet\"-Abzeichen", h1: "📛 Möchtest du mit deinem Geschäft oder deiner Attraktion gelistet werden?", intro: "Betreibst du ein Geschäft, eine Touristenattraktion oder ein anderes Unternehmen und möchtest, dass deine Besucher live sehen, ob du gerade geöffnet hast — sowohl hier bei uns als auch auf deiner eigenen Website? Hier sind 3 einfache Schritte, der Reihe nach. Jeder Schritt hängt vom vorherigen ab.", step1Title: "Schritt 1 — Schlage dein Geschäft oder deine Attraktion vor", step1Text: "Falls du noch nicht bei uns gelistet bist, ist der erste Schritt, uns von deinem Unternehmen zu erzählen. Es ist kostenlos und dauert 1 Minute.", step1Btn: "📍 Jetzt dein Unternehmen vorschlagen", step1Hint: "Schon bei uns gelistet? Springe direkt zu Schritt 2.", step2Title: "Schritt 2 — Warte auf die Prüfung, dann finde dich auf der Seite", step2Text: "Wir prüfen jede Einreichung manuell — das dauert normalerweise ein paar Tage. Wir senden noch keine automatische Benachrichtigung, also suche nach ein paar Tagen direkt auf unserer Seite nach deinem Unternehmen (Suchleiste auf der Startseite). Wenn du deine eigene Seite findest, hast du diesen Schritt geschafft — weiter zu Schritt 3.", step3Title: "Schritt 3 — Hole dir deinen Abzeichen-Code, für deine eigene Website", step3Text1: "Sobald du dich auf unserer Seite gefunden hast, schau in die Adressleiste. Beispiel: Wenn deine Seite <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code> ist, ist dein Slug <strong>castelul-bran</strong> (der Teil nach dem letzten <code>/</code>).", step3Text2: "Ersetze <code>YOUR-SLUG</code> unten mit dem, was du gefunden hast, und <code>attraction</code> mit <code>store</code>, wenn du ein Geschäft bist, keine Touristenattraktion. Füge den Code ein, wo immer das Abzeichen auf deiner Seite erscheinen soll.", copyBtn: "📋 Code kopieren", copiedText: "✓ Kopiert!", demoTitle: "So sieht das Abzeichen aus", kofiTitle: "☕ Hat dir der ganze Prozess geholfen?", kofiText: "Opening Hours Today wird von einer Person, in ihrer Freizeit, betrieben und bleibt für alle kostenlos. Wenn du bis hierher gekommen bist und dein Abzeichen funktioniert, würde ein Kaffee viel bedeuten — nicht erforderlich, aber es hilft wirklich.", kofiBtn: "☕ Kauf uns einen Kaffee", footerText: "live, verifizierte Abzeichen, kostenlos für jedes bei uns gelistete Geschäft oder jede Attraktion.", metaTitle: "\"Jetzt geöffnet\"-Abzeichen für deine Website — Opening Hours Today", metaDescription: "Füge deiner eigenen Website ein kostenloses Live-Abzeichen hinzu, das zeigt, ob du gerade geöffnet hast.", guidesLabel: "Ratgeber", itineraryLabel: "Reiseplan", homeLabel: "Start" },
   fr: { homeCardTitle: "🏪 Gérez-vous un commerce ou un site touristique ?", homeCardText: "Montrez à vos visiteurs, directement sur votre propre site, si vous êtes ouvert maintenant — vérifié automatiquement par nous, gratuit, rien à installer.", homeCardBtn: "Voir comment ça marche", breadcrumb: "Être référencé + badge \"Ouvert maintenant\"", h1: "📛 Vous voulez que votre commerce ou site touristique soit référencé chez nous ?", intro: "Vous gérez un commerce, un site touristique ou une autre entreprise et souhaitez que vos visiteurs voient, en direct, si vous êtes ouvert en ce moment — aussi bien chez nous que sur votre propre site ? Voici 3 étapes simples, dans l'ordre. Chaque étape dépend de la précédente.", step1Title: "Étape 1 — Proposez votre commerce ou site touristique", step1Text: "Si vous n'êtes pas encore référencé chez nous, la première étape consiste à nous parler de votre entreprise. C'est gratuit et ça prend 1 minute.", step1Btn: "📍 Proposer mon entreprise maintenant", step1Hint: "Déjà référencé chez nous ? Passez directement à l'étape 2.", step2Title: "Étape 2 — Attendez la vérification, puis retrouvez-vous sur le site", step2Text: "Nous vérifions chaque proposition manuellement — cela prend généralement quelques jours. Nous n'envoyons pas encore de notification automatique, alors après quelques jours, cherchez votre entreprise directement sur notre site (barre de recherche sur la page d'accueil). Si vous trouvez votre propre page, vous avez franchi cette étape — passez à l'étape 3.", step3Title: "Étape 3 — Récupérez le code de votre badge, pour votre propre site", step3Text1: "Une fois que vous vous êtes trouvé sur notre site, regardez la barre d'adresse. Exemple : si votre page est <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, votre slug est <strong>castelul-bran</strong> (la partie après le dernier <code>/</code>).", step3Text2: "Remplacez <code>YOUR-SLUG</code> ci-dessous par ce que vous avez trouvé, et <code>attraction</code> par <code>store</code> si vous êtes un commerce, pas un site touristique. Collez le code où vous voulez que le badge apparaisse sur votre page.", copyBtn: "📋 Copier le code", copiedText: "✓ Copié !", demoTitle: "À quoi ressemble le badge", kofiTitle: "☕ Tout ce processus vous a-t-il aidé ?", kofiText: "Opening Hours Today est maintenu par une seule personne, sur son temps libre, et reste gratuit pour tout le monde. Si vous êtes arrivé jusqu'ici et que votre badge fonctionne, un café signifierait beaucoup — ce n'est pas obligatoire, mais ça aide vraiment.", kofiBtn: "☕ Offrez-nous un café", footerText: "badges en direct, vérifiés, gratuits pour tout commerce ou site touristique référencé chez nous.", metaTitle: "Badge \"Ouvert maintenant\" pour votre site — Opening Hours Today", metaDescription: "Ajoutez un badge gratuit et en direct à votre propre site, indiquant si vous êtes ouvert en ce moment.", guidesLabel: "Guides", itineraryLabel: "Itinéraire", homeLabel: "Accueil" },
   es: { homeCardTitle: "🏪 ¿Tienes una tienda o atracción?", homeCardText: "Muestra a tus visitantes, directamente en tu propio sitio web, si estás abierto ahora mismo — verificado automáticamente por nosotros, gratis, nada que instalar.", homeCardBtn: "Ver cómo funciona", breadcrumb: "Aparecer en el sitio + insignia \"Abierto ahora\"", h1: "📛 ¿Quieres que tu tienda o atracción aparezca en nuestro sitio?", intro: "¿Tienes una tienda, atracción turística u otro negocio y quieres que tus visitantes vean, en vivo, si estás abierto ahora mismo — tanto aquí en nuestro sitio como en tu propia web? Aquí tienes 3 pasos simples, en orden. Cada paso depende del anterior.", step1Title: "Paso 1 — Sugiere tu tienda o atracción", step1Text: "Si aún no apareces en nuestro sitio, el primer paso es contarnos sobre tu negocio. Es gratis y tarda 1 minuto.", step1Btn: "📍 Sugerir mi negocio ahora", step1Hint: "¿Ya apareces en nuestro sitio? Ve directamente al Paso 2.", step2Title: "Paso 2 — Espera la revisión, luego búscate en el sitio", step2Text: "Revisamos cada propuesta manualmente — normalmente tarda unos días. Todavía no enviamos notificación automática, así que después de unos días, busca tu negocio directamente en nuestro sitio (barra de búsqueda en la página principal). Si encuentras tu propia página, has superado este paso — continúa al Paso 3.", step3Title: "Paso 3 — Obtén el código de tu insignia, para tu propia web", step3Text1: "Una vez que te hayas encontrado en nuestro sitio, mira la barra de direcciones. Ejemplo: si tu página es <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, tu slug es <strong>castelul-bran</strong> (la parte después de la última <code>/</code>).", step3Text2: "Reemplaza <code>YOUR-SLUG</code> abajo con lo que encontraste, y <code>attraction</code> con <code>store</code> si eres una tienda, no una atracción turística. Pega el código donde quieras que aparezca la insignia en tu página.", copyBtn: "📋 Copiar el código", copiedText: "✓ ¡Copiado!", demoTitle: "Así se ve la insignia", kofiTitle: "☕ ¿Te ayudó todo este proceso?", kofiText: "Opening Hours Today lo mantiene una sola persona, en su tiempo libre, y sigue siendo gratis para todos. Si llegaste hasta aquí y tu insignia funciona, un café significaría mucho — no es obligatorio, pero realmente ayuda.", kofiBtn: "☕ Invítanos un café", footerText: "insignias en vivo, verificadas, gratis para cualquier tienda o atracción listada en nuestro sitio.", metaTitle: "Insignia \"Abierto ahora\" para tu web — Opening Hours Today", metaDescription: "Añade una insignia gratuita y en vivo a tu propia web que muestre si estás abierto ahora mismo.", guidesLabel: "Guías", itineraryLabel: "Itinerario", homeLabel: "Inicio" },
@@ -10691,9 +10826,21 @@ app.get("/business-badge", (req, res) => {
     })();
   </script>
 
+  ${t.platformsTitle ? `
+  <div class="plan-visit-block" style="display:block">
+    <p class="plan-visit-hint" style="margin-bottom:8px">${escapeHtml(t.platformsTitle)}</p>
+    ${t.platformsHtml}
+  </div>` : ""}
+
   <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.demoTitle)}</h2>
   <div id="badgeDemoBoxEn"></div>
   <script src="/badge.js" data-slug="castelul-bran" data-tip="attraction" data-lang="${escapeHtml(badgeLang)}"></script>
+
+  ${t.doneTitle ? `
+  <div class="trip-toolkit-card" style="text-align:center">
+    <h3 class="trip-toolkit-title">${escapeHtml(t.doneTitle)}</h3>
+    <p class="trip-toolkit-subtitle">${escapeHtml(t.doneText)}</p>
+  </div>` : ""}
 
   <div class="trip-toolkit-card" style="text-align:center">
     <h3 class="trip-toolkit-title">${escapeHtml(t.kofiTitle)}</h3>
@@ -11278,7 +11425,7 @@ app.get("/admin/propuneri", async (req, res) => {
   let rows = [];
   try {
     const result = await dbPool.query(
-      `SELECT id, type, name, city, country_code, category, maps_url, note, submission_count, creat_la
+      `SELECT id, type, name, city, country_code, category, maps_url, note, schedule, other_type, submission_count, creat_la
        FROM pending_submissions WHERE status = 'pending' ORDER BY submission_count DESC, creat_la ASC`
     );
     rows = result.rows;
@@ -11286,17 +11433,31 @@ app.get("/admin/propuneri", async (req, res) => {
     res.status(500).send("Eroare la citirea propunerilor: " + escapeHtml(err.message));
     return;
   }
-  const typeLabels = { store: "🛒 Magazin", attraction: "🏛️ Obiectiv", beach: "🏖️ Plajă" };
+  const typeLabels = { store: "🛒 Magazin", attraction: "🏛️ Obiectiv", beach: "🏖️ Plajă", restaurant: "🍽️ Restaurant", cafe: "☕ Cafenea", other: "📍 Altceva" };
+  const scheduleHtmlFor = (raw) => {
+    if (!raw) return "";
+    let sch; try { sch = typeof raw === "string" ? JSON.parse(raw) : raw; } catch (e) { return ""; }
+    if (!sch) return "";
+    if (sch.is247) return `<p class="admin-submission-schedule">🕐 Deschis non-stop (24/7)</p>`;
+    if (!sch.days) return "";
+    const rows = SUBMIT_PLACE_SCHEDULE_DAYS.map((d) => {
+      const day = sch.days[String(d.idx)];
+      if (!day) return null;
+      return `${escapeHtml(DAY_NAMES[d.idx])}: ${day.closed ? "închis" : escapeHtml(day.open) + "–" + escapeHtml(day.close)}`;
+    }).filter(Boolean);
+    return rows.length ? `<p class="admin-submission-schedule">🕐 ${rows.join(" · ")}</p>` : "";
+  };
   const rowsHtml = rows.length
     ? rows.map((r) => `
       <div class="admin-submission-card">
         <div class="admin-submission-header">
-          <span class="admin-submission-type">${escapeHtml(typeLabels[r.type] || r.type)}</span>
+          <span class="admin-submission-type">${escapeHtml(r.type === "other" && r.other_type ? "📍 " + r.other_type : (typeLabels[r.type] || r.type))}</span>
           ${r.submission_count > 1 ? `<span class="admin-submission-count">👥 ${r.submission_count}× propus</span>` : ""}
         </div>
         <div class="admin-submission-name">${escapeHtml(r.name)}</div>
         <div class="admin-submission-meta">${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}${r.category ? " · " + escapeHtml(r.category) : ""}</div>
         ${r.maps_url ? `<a href="${escapeHtml(r.maps_url)}" target="_blank" rel="noopener">📍 Vezi pe hartă</a>` : ""}
+        ${scheduleHtmlFor(r.schedule)}
         ${r.note ? `<p class="admin-submission-note">${escapeHtml(r.note)}</p>` : ""}
         <div class="admin-submission-actions">
           <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
@@ -11317,6 +11478,7 @@ body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;back
 .admin-submission-name{font-size:17px;font-weight:700;}
 .admin-submission-meta{color:#999;margin:4px 0;}
 .admin-submission-note{color:#ccc;font-style:italic;}
+.admin-submission-schedule{color:#bbb;font-size:13px;}
 .admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
 .admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
 .admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
@@ -12405,10 +12567,15 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       var gmapsBtn = "";
       if (allStops.length && searchedCity) {
         var stopQueries = allStops.map(function(s){ return encodeURIComponent(s.nume + ", " + searchedCity); });
-        var origin = stopQueries[0];
+        // Fără "origin" explicit — Google Maps completează automat cu
+        // locația curentă a dispozitivului ca punct de plecare. Înainte,
+        // originea era fixată pe primul obiectiv din ZIUA respectivă, ceea
+        // ce dădea rute greșite din ziua 2 încolo (utilizatorul nu mai
+        // pleacă de la primul obiectiv al zilei, pleacă de unde se află
+        // efectiv în momentul respectiv).
         var destination = stopQueries[stopQueries.length - 1];
-        var waypoints = stopQueries.slice(1, -1).join("|");
-        var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin + "&destination=" + destination + (waypoints ? "&waypoints=" + waypoints : "") + "&travelmode=driving";
+        var waypoints = stopQueries.slice(0, -1).join("|");
+        var gmapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + destination + (waypoints ? "&waypoints=" + waypoints : "") + "&travelmode=driving";
         gmapsBtn = '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" style="' + BTN_STYLE + '">' + GOOGLE_MAPS_LABEL + ARROW_HTML + '</a>';
       }
       return '<div class="itin-day-card">' +
