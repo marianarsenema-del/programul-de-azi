@@ -12205,7 +12205,9 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       lines.push("END:VCALENDAR");
       return lines.join("\\r\\n");
     }
-    var icsBtnHtml = '<button type="button" id="icalExportBtn" class="plan-visit-option plan-visit-parking-alt" style="margin-top:10px">' + ICAL_LABEL + '</button>';
+    var BTN_STYLE = "display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:inherit;font-weight:700;font-size:13.5px;text-decoration:none;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;width:100%;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;";
+    var ARROW_HTML = '<span aria-hidden="true">➜</span>';
+    var icsBtnHtml = '<button type="button" id="icalExportBtn" style="' + BTN_STYLE + 'margin-top:10px">' + ICAL_LABEL + ARROW_HTML + '</button>';
 
     var rainNoteHtml = data.rainWarningDay1 ? '<div class="plan-visit-hint" style="margin-bottom:14px">' + RAIN_PLAN_NOTE + '</div>' : "";
     var html = rainNoteHtml + data.zile.map(function(zi){
@@ -12227,7 +12229,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         var destination = stopQueries[stopQueries.length - 1];
         var waypoints = stopQueries.slice(1, -1).join("|");
         var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin + "&destination=" + destination + (waypoints ? "&waypoints=" + waypoints : "") + "&travelmode=driving";
-        gmapsBtn = '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="plan-visit-option plan-visit-booking">' + GOOGLE_MAPS_LABEL + '</a>';
+        gmapsBtn = '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" style="' + BTN_STYLE + '">' + GOOGLE_MAPS_LABEL + ARROW_HTML + '</a>';
       }
       return '<div class="itin-day-card">' +
         '<div class="itin-day-title">' + DAY_PREFIX + ' ' + escapeHtmlClient(zi.ziua) + (zi.titlu ? ' — ' + escapeHtmlClient(zi.titlu) : '') + '</div>' +
@@ -12250,7 +12252,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // cu delegare de evenimente — funcționează și aici, deși butonul e
     // adăugat dinamic, mult după încărcarea inițială a paginii).
     var flightHtml = flightLink
-      ? '<button type="button" class="plan-visit-option plan-visit-booking widget-reveal-btn" data-widget-target="kiwiWidgetContainer" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + '</button><div id="kiwiWidgetContainer" class="flight-widget-card" style="display:none"></div>'
+      ? '<button type="button" style="' + BTN_STYLE + '" class="widget-reveal-btn" data-widget-target="kiwiWidgetContainer" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + ARROW_HTML + '</button><div id="kiwiWidgetContainer" class="flight-widget-card" style="display:none;position:relative"><button type="button" id="closeKiwiWidgetBtn" aria-label="Închide" style="position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border-radius:50%;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;cursor:pointer;font-size:16px;line-height:1">✕</button></div>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
@@ -12283,6 +12285,15 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      });
+    }
+    // Buton de închidere pentru widget-ul de zboruri — cerut explicit,
+    // odată deschis, utilizatorul trebuie să poată să-l ascundă la loc.
+    var closeKiwiBtn = document.getElementById("closeKiwiWidgetBtn");
+    if (closeKiwiBtn) {
+      closeKiwiBtn.addEventListener("click", function(){
+        var container = document.getElementById("kiwiWidgetContainer");
+        if (container) container.style.display = "none";
       });
     }
   }
