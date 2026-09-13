@@ -4730,7 +4730,7 @@ exports.TRIP_TYPE_LABELS = {
 
 exports.VIBE_LABELS = {
   uk: { any: "Any", relaxed: "Relaxed & slow-paced", adventurous: "Adventurous & active", photogenic: "Photogenic / Instagram-worthy", label: "Vibe:" },
-  ro: { any: "Oricare", relaxed: "Relaxat, în ritm lejer", adventurous: "Aventuros, plin de acțiune", photogenic: "Instagramabil / spectaculos", label: "Ritm:" },
+  ro: { any: "Oricare", relaxed: "Relaxat, în ritm lejer", adventurous: "Aventuros, plin de acțiune", photogenic: "Instagramabil / spectaculos", label: "Stilul călătoriei:" },
   de: { any: "Beliebig", relaxed: "Entspannt & gemütlich", adventurous: "Abenteuerlich & aktiv", photogenic: "Fotogen / instagram-tauglich", label: "Stimmung:" },
   fr: { any: "Peu importe", relaxed: "Détendu, rythme tranquille", adventurous: "Aventureux et actif", photogenic: "Photogénique / Instagram", label: "Ambiance :" },
   es: { any: "Cualquiera", relaxed: "Relajado, ritmo tranquilo", adventurous: "Aventurero y activo", photogenic: "Fotogénico / para Instagram", label: "Ambiente:" },
