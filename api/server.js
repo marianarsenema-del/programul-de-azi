@@ -1539,6 +1539,17 @@ function parkingLinkFor(lat, lng, countryCode) {
 // doar ca infrastructură pentru o eventuală extindere ulterioară, dincolo
 // de UK; nu e folosit momentan de buildBookingPlanningButtonsHtml.
 const linkParkviaAffiliate = "";
+
+// Variantă GENERICĂ a legăturii YourParkingSpace (Awin) — pentru pagina de
+// Ghid parcări, care NU are context de locație (nicio coordonată GPS
+// specifică, spre deosebire de o pagină de obiectiv/magazin anume). Duce
+// spre pagina principală UK a YourParkingSpace, tot prin Awin — comisionul
+// se plătește oricum, la orice rezervare care urmează, chiar fără o
+// căutare pre-completată.
+function genericUkParkingAffiliateLink() {
+  const destination = "https://www.yourparkingspace.co.uk/";
+  return `https://www.awin1.com/cread.php?awinmid=${encodeURIComponent(AWIN_YPS_MERCHANT_ID)}&awinaffid=${encodeURIComponent(AWIN_YPS_AFFILIATE_ID)}&campaign=${encodeURIComponent("Your Parking Space")}&ued=${encodeURIComponent(destination)}`;
+}
 function parkviaLinkFor(place) {
   return linkParkviaAffiliate || `https://www.parkvia.com/search?q=${encodeURIComponent(place)}`;
 }
@@ -5300,7 +5311,8 @@ main{padding-top:8px;}
 .trip-toolkit-buttons{display:flex;flex-direction:column;gap:10px;}
 .trip-toolkit-buttons .affiliate-btn{margin:0;width:100%;border-radius:var(--radius-md);}
 .gyg-search-widget-wrap{margin-top:16px;}
-@media (min-width:640px){.trip-toolkit-buttons{flex-direction:row;}.trip-toolkit-buttons .affiliate-btn{flex:1;}}
+/* Cerut explicit: rămâne stivuit vertical (o coloană) și pe desktop/tabletă
+   — pe rând, cardurile ieșeau din containerul principal la ecrane mari. */
 .plan-visit-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:13px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text);cursor:pointer;}
 .plan-visit-hint{margin:8px 4px 0;text-align:center;font-size:13px;color:var(--muted);}
 .plan-visit-panel{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
@@ -7999,6 +8011,15 @@ function buildWidgetRevealScript(nonce) {
   // ce utilizatorul generează un itinerar, mult după ce acest script a
   // rulat deja o dată, la încărcarea inițială a paginii).
   document.addEventListener("click", function(e){
+    var closeBtn = e.target.closest(".widget-close-btn");
+    if (closeBtn) {
+      var box = closeBtn.closest(".flight-widget-card");
+      if (!box) return;
+      box.style.display = "none";
+      var trigger = document.querySelector('.widget-reveal-btn[data-widget-target="' + box.id + '"]');
+      if (trigger) trigger.style.display = "";
+      return;
+    }
     var btn = e.target.closest(".widget-reveal-btn");
     if (!btn) return;
     e.preventDefault();
@@ -8007,12 +8028,28 @@ function buildWidgetRevealScript(nonce) {
     var box = document.getElementById(targetId);
     if (!box || !src) return;
     box.style.display = "block";
+    btn.style.display = "none";
+    // Buton de închidere — cerut explicit, o singură dată per widget, ca
+    // să nu se dubleze dacă utilizatorul deschide/închide de mai multe ori.
+    if (!box.querySelector(".widget-close-btn")) {
+      var closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "widget-close-btn";
+      closeButton.setAttribute("aria-label", "Închide");
+      closeButton.textContent = "✕";
+      closeButton.style.cssText = "position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border-radius:50%;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;cursor:pointer;font-size:16px;line-height:1";
+      box.style.position = "relative";
+      box.appendChild(closeButton);
+    }
+    // dacă widget-ul a mai fost deschis o dată (are deja scriptul încărcat),
+    // nu-l mai injectăm din nou — doar îl arătăm la loc, ca să nu se dubleze
+    if (box.querySelector("script[data-widget-loaded]")) return;
     var s = document.createElement("script");
     s.async = true;
     s.charset = "utf-8";
     s.src = src;
+    s.setAttribute("data-widget-loaded", "1");
     box.appendChild(s);
-    btn.style.display = "none";
   }, true);
 })();
 </script>`;
@@ -9048,6 +9085,12 @@ function renderIntlHomePage(nonce, baseUrl, detectedCountry, detectedCity, lang)
     ${buildCombinedTripPromoCardHtml(validDetected, activeLang)}
   </div>
 
+  <div class="trip-toolkit-card" style="text-align:center">
+    <h3 class="trip-toolkit-title">🏪 Do you run a store or attraction?</h3>
+    <p class="trip-toolkit-subtitle">Show visitors, right on your own website, whether you're open right now — checked automatically by us, free, nothing to install.</p>
+    <a href="/business-badge${activeLang !== "uk" && BUSINESS_BADGE_LABELS[activeLang] ? "?lang=" + activeLang : ""}" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0"><span class="affiliate-cta-text">See how it works</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+  </div>
+
   <footer>
     <p><strong>Opening Hours Today</strong> ${escapeHtml(HOMEPAGE_FOOTER_TEXTS[activeLang] || HOMEPAGE_FOOTER_TEXTS.uk)}</p>
   </footer>
@@ -9264,12 +9307,23 @@ function buildTravelGuidesBoxHtmlIntl(lang) {
   // ca cineva care navighează în germană să ajungă la ghidul german, nu la
   // cel englez implicit.
   const langSuffix = lang && lang !== "uk" && TRAVEL_GUIDES_BY_LANG[lang] ? `?lang=${lang}` : "";
+  // BUG REAL, găsit și reparat: slug-urile "transport"/"parking"/"restaurants"
+  // erau hardcodate în engleză, chiar și când limba curentă avea propria ei
+  // listă de ghiduri, cu slug-uri PROPRII (ex. română: "parcari", nu
+  // "parking") — link-ul ducea la un slug care nu exista în ACEA listă,
+  // "Guide not found". Folosim acum slug-ul REAL, din lista limbii curente,
+  // după POZIȚIE (transport = mereu primul, parcare = al doilea, restaurant
+  // = al treilea, în toate limbile, RO și EN incluse).
+  const guidesForThisLang = travelGuidesForLang(lang);
+  const transportSlug = guidesForThisLang[0] ? guidesForThisLang[0].slug : "transport";
+  const parkingSlug = guidesForThisLang[1] ? guidesForThisLang[1].slug : "parking";
+  const restaurantSlug = guidesForThisLang[2] ? guidesForThisLang[2].slug : "restaurants";
   return `
   <div class="plan-visit-block" style="display:block">
     <p class="intro-text"><strong>${escapeHtml(t.tgTitle)}</strong></p>
-    <a href="/guides/transport${langSuffix}" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.tgTransport)}</a>
-    <a href="/guides/parking${langSuffix}" class="plan-visit-option plan-visit-parking">${escapeHtml(t.tgParking)}</a>
-    <a href="/guides/restaurants${langSuffix}" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.tgRestaurant)}</a>
+    <a href="/guides/${transportSlug}${langSuffix}" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.tgTransport)}</a>
+    <a href="/guides/${parkingSlug}${langSuffix}" class="plan-visit-option plan-visit-parking">${escapeHtml(t.tgParking)}</a>
+    <a href="/guides/${restaurantSlug}${langSuffix}" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.tgRestaurant)}</a>
   </div>`;
 }
 
@@ -9824,6 +9878,12 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
     <h2 class="section-title"><span class="bar"></span>⭐ Favoritele mele</h2>
     <p class="intro-text">Planifici o excursie? Apasă ☆ pe orice magazin sau obiectiv — de exemplu 3 castele pe care vrei să le vizitezi — și le găsești pe toate aici, gata, fără să mai cauți din nou.</p>
     <div id="favoritesList"></div>
+  </div>
+
+  <div class="trip-toolkit-card" style="text-align:center">
+    <h3 class="trip-toolkit-title">🏪 Ai un magazin sau un obiectiv turistic?</h3>
+    <p class="trip-toolkit-subtitle">Arată-le vizitatorilor, direct pe propriul tău site, dacă ești deschis chiar acum — verificat automat de noi, gratuit, fără nimic de instalat.</p>
+    <a href="/insigna" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0"><span class="affiliate-cta-text">Vezi cum funcționează</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
   </div>
 
   <footer>
@@ -10504,28 +10564,134 @@ app.get("/insigna", (req, res) => {
   </div>
 </header>
 <main class="wrap">
-  <p class="breadcrumb"><a href="/">Acasă</a> / Insignă "Deschis Acum"</p>
-  <h1 class="page-h1">📛 Pune insigna "Deschis Acum" pe site-ul tău</h1>
-  <p class="intro-text">Ai un magazin sau un obiectiv turistic listat la noi? Pune gratuit, pe propriul tău site, o insignă live care arată vizitatorilor dacă ești deschis chiar acum — verificat automat de noi.</p>
+  <p class="breadcrumb"><a href="/">Acasă</a> / Apari pe site + insignă "Deschis Acum"</p>
+  <h1 class="page-h1">📛 Vrei ca magazinul sau obiectivul tău să apară la noi?</h1>
+  <p class="intro-text">Ai un magazin, obiectiv turistic sau o afacere și vrei ca vizitatorii tăi să vadă, live, dacă ești deschis chiar acum — atât la noi pe site, cât și pe propriul tău site? Sunt 3 pași simpli, în ordine. Fiecare pas depinde de cel dinainte.</p>
 
-  <h2 class="section-title"><span class="bar"></span>Pasul 1 — Găsește-ți slug-ul</h2>
-  <p class="intro-text">Caută-ți magazinul sau obiectivul pe site-ul nostru și uită-te la adresa din browser. Exemplu: dacă pagina ta e <code>opening-hours-today.eu/obiectiv/castelul-bran</code>, slug-ul tău e <strong>castelul-bran</strong> (partea de după ultimul <code>/</code>).</p>
+  <h2 class="section-title"><span class="bar"></span>Pasul 1 — Propune-ți magazinul sau obiectivul</h2>
+  <p class="intro-text">Dacă nu ești deja listat la noi, primul pas e să ne spui despre afacerea ta. E gratuit și durează 1 minut.</p>
+  <a href="/propune" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0 0 8px"><span class="affiliate-cta-text">📍 Propune-ți afacerea acum</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+  <p class="plan-visit-hint">Deja ești listat la noi? Sari direct la Pasul 2.</p>
 
-  <h2 class="section-title"><span class="bar"></span>Pasul 2 — Copiază codul</h2>
-  <p class="intro-text">Înlocuiește <code>SLUG-UL-TAU</code> cu ce ai găsit mai sus, și <code>attraction</code> cu <code>store</code> dacă ești magazin, nu obiectiv turistic. Pune codul oriunde vrei să apară insigna, pe pagina ta.</p>
-  <div class="schedule-card" style="padding:16px;overflow-x:auto;"><code style="white-space:pre;font-size:13px;">&lt;script src="https://opening-hours-today.eu/badge.js" data-slug="SLUG-UL-TAU" data-tip="attraction" data-lang="ro"&gt;&lt;/script&gt;</code></div>
+  <h2 class="section-title"><span class="bar"></span>Pasul 2 — Așteaptă verificarea, apoi găsește-te pe site</h2>
+  <p class="intro-text">Verificăm manual fiecare propunere — de obicei durează câteva zile. Nu trimitem notificare automată încă, așa că, după câteva zile, caută-ți afacerea direct pe site-ul nostru (bara de căutare, de pe pagina principală). Dacă îți găsești propria pagină, ai trecut de acest pas — continuă la Pasul 3.</p>
 
-  <h2 class="section-title"><span class="bar"></span>Cum arată</h2>
+  <h2 class="section-title"><span class="bar"></span>Pasul 3 — Ia-ți codul insignei, pentru propriul tău site</h2>
+  <p class="intro-text">Odată ce te-ai găsit pe site-ul nostru, uită-te la adresa din browser. Exemplu: dacă pagina ta e <code>opening-hours-today.eu/obiectiv/castelul-bran</code>, slug-ul tău e <strong>castelul-bran</strong> (partea de după ultimul <code>/</code>).</p>
+  <p class="intro-text">Înlocuiește <code>SLUG-UL-TAU</code> mai jos cu ce ai găsit, și <code>attraction</code> cu <code>store</code> dacă ești magazin, nu obiectiv turistic. Pune codul oriunde vrei să apară insigna, pe pagina ta.</p>
+  <div class="schedule-card" style="padding:16px;overflow-x:auto;"><code id="badgeCodeSnippet" style="white-space:pre;font-size:13px;">&lt;script src="https://opening-hours-today.eu/badge.js" data-slug="SLUG-UL-TAU" data-tip="attraction" data-lang="ro"&gt;&lt;/script&gt;</code></div>
+  <button type="button" id="copyBadgeCodeBtn" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:12px 0 0"><span class="affiliate-cta-text">📋 Copiază codul</span></button>
+  <script nonce="${nonce}">
+    (function(){
+      var btn = document.getElementById("copyBadgeCodeBtn");
+      var codeEl = document.getElementById("badgeCodeSnippet");
+      if (!btn || !codeEl) return;
+      var originalText = btn.querySelector(".affiliate-cta-text").textContent;
+      btn.addEventListener("click", function(){
+        navigator.clipboard.writeText(codeEl.textContent).then(function(){
+          btn.querySelector(".affiliate-cta-text").textContent = "✓ Copiat!";
+          setTimeout(function(){ btn.querySelector(".affiliate-cta-text").textContent = originalText; }, 2000);
+        });
+      });
+    })();
+  </script>
+
+  <h2 class="section-title"><span class="bar"></span>Cum arată insigna</h2>
   <div id="badgeDemoBox"></div>
   <script src="/badge.js" data-slug="castelul-bran" data-tip="attraction" data-lang="ro"></script>
 
-  <p class="disclaimer">E complet gratuit. Dacă insigna te ajută, poți <a href="https://ko-fi.com/openinghourstoday" target="_blank" rel="noopener">să ne cumperi o cafea ☕</a> — nu e obligatoriu, dar contează mult pentru un proiect întreținut de o singură persoană.</p>
+  <div class="trip-toolkit-card" style="text-align:center">
+    <h3 class="trip-toolkit-title">☕ Te-a ajutat tot procesul?</h3>
+    <p class="trip-toolkit-subtitle">Programul de Azi e întreținut de o singură persoană, în timpul liber, și rămâne gratuit pentru toată lumea. Dacă ai ajuns până aici și insigna ta funcționează, o cafea ar însemna enorm — nu e obligatoriu, dar chiar contează.</p>
+    <a href="https://ko-fi.com/openinghourstoday" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0"><span class="affiliate-cta-text">☕ Cumpără-ne o cafea</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+  </div>
 
   <footer>
     <p><strong>Programul de Azi</strong> — insigne live, verificate, gratuite pentru orice magazin sau obiectiv listat la noi.</p>
   </footer>
 </main>`;
   const html = pageShell({ title: "Insignă \"Deschis Acum\" pentru site-ul tău — Programul de Azi", description: "Pune gratuit, pe propriul site, o insignă live care arată dacă ești deschis chiar acum.", canonical: `${baseUrlFor(req)}/insigna`, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+// Variantă în engleză a paginii de mai sus — pentru domeniul internațional,
+// cerut explicit ("pe înțelesul tuturor"), nu doar traducere brută a
+// interfeței românești pentru vorbitorii de altă limbă.
+
+// Etichete pentru pagina /business-badge, toate limbile cu traducere
+// completă pe site (uk implicit + de/fr/es/it/pl/nl) — cerut explicit.
+const BUSINESS_BADGE_LABELS = {
+  uk: { breadcrumb: "Get listed + \"Open Now\" badge", h1: "📛 Want your store or attraction listed with us?", intro: "Do you run a store, tourist attraction, or other business and want your visitors to see, live, whether you're open right now — both here on our site and on your own website? Here are 3 simple steps, in order. Each step depends on the one before it.", step1Title: "Step 1 — Suggest your store or attraction", step1Text: "If you're not already listed with us, the first step is to tell us about your business. It's free and takes 1 minute.", step1Btn: "📍 Suggest your business now", step1Hint: "Already listed with us? Skip straight to Step 2.", step2Title: "Step 2 — Wait for review, then find yourself on the site", step2Text: "We check every submission by hand — it usually takes a few days. We don't send an automatic notification yet, so after a few days, search for your business directly on our site (the search bar on the homepage). If you find your own page, you've cleared this step — move on to Step 3.", step3Title: "Step 3 — Get your badge code, for your own website", step3Text1: "Once you've found yourself on our site, look at the address bar. Example: if your page is <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, your slug is <strong>castelul-bran</strong> (the part after the last <code>/</code>).", step3Text2: "Replace <code>YOUR-SLUG</code> below with what you found, and <code>attraction</code> with <code>store</code> if you're a shop, not a tourist attraction. Paste the code anywhere you'd like the badge to appear on your page.", copyBtn: "📋 Copy the code", copiedText: "✓ Copied!", demoTitle: "What the badge looks like", kofiTitle: "☕ Did the whole process help you?", kofiText: "Opening Hours Today is maintained by one person, in their spare time, and stays free for everyone. If you made it this far and your badge is working, a coffee would mean a lot — not required, but it genuinely helps.", kofiBtn: "☕ Buy us a coffee", footerText: "live, verified badges, free for any store or attraction listed on our site.", metaTitle: "\"Open Now\" badge for your website — Opening Hours Today", metaDescription: "Add a free, live badge to your own website showing whether you're open right now.", guidesLabel: "Guides", itineraryLabel: "Itinerary", homeLabel: "Home" },
+  de: { breadcrumb: "Eintrag + \"Jetzt geöffnet\"-Abzeichen", h1: "📛 Möchtest du mit deinem Geschäft oder deiner Attraktion gelistet werden?", intro: "Betreibst du ein Geschäft, eine Touristenattraktion oder ein anderes Unternehmen und möchtest, dass deine Besucher live sehen, ob du gerade geöffnet hast — sowohl hier bei uns als auch auf deiner eigenen Website? Hier sind 3 einfache Schritte, der Reihe nach. Jeder Schritt hängt vom vorherigen ab.", step1Title: "Schritt 1 — Schlage dein Geschäft oder deine Attraktion vor", step1Text: "Falls du noch nicht bei uns gelistet bist, ist der erste Schritt, uns von deinem Unternehmen zu erzählen. Es ist kostenlos und dauert 1 Minute.", step1Btn: "📍 Jetzt dein Unternehmen vorschlagen", step1Hint: "Schon bei uns gelistet? Springe direkt zu Schritt 2.", step2Title: "Schritt 2 — Warte auf die Prüfung, dann finde dich auf der Seite", step2Text: "Wir prüfen jede Einreichung manuell — das dauert normalerweise ein paar Tage. Wir senden noch keine automatische Benachrichtigung, also suche nach ein paar Tagen direkt auf unserer Seite nach deinem Unternehmen (Suchleiste auf der Startseite). Wenn du deine eigene Seite findest, hast du diesen Schritt geschafft — weiter zu Schritt 3.", step3Title: "Schritt 3 — Hole dir deinen Abzeichen-Code, für deine eigene Website", step3Text1: "Sobald du dich auf unserer Seite gefunden hast, schau in die Adressleiste. Beispiel: Wenn deine Seite <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code> ist, ist dein Slug <strong>castelul-bran</strong> (der Teil nach dem letzten <code>/</code>).", step3Text2: "Ersetze <code>YOUR-SLUG</code> unten mit dem, was du gefunden hast, und <code>attraction</code> mit <code>store</code>, wenn du ein Geschäft bist, keine Touristenattraktion. Füge den Code ein, wo immer das Abzeichen auf deiner Seite erscheinen soll.", copyBtn: "📋 Code kopieren", copiedText: "✓ Kopiert!", demoTitle: "So sieht das Abzeichen aus", kofiTitle: "☕ Hat dir der ganze Prozess geholfen?", kofiText: "Opening Hours Today wird von einer Person, in ihrer Freizeit, betrieben und bleibt für alle kostenlos. Wenn du bis hierher gekommen bist und dein Abzeichen funktioniert, würde ein Kaffee viel bedeuten — nicht erforderlich, aber es hilft wirklich.", kofiBtn: "☕ Kauf uns einen Kaffee", footerText: "live, verifizierte Abzeichen, kostenlos für jedes bei uns gelistete Geschäft oder jede Attraktion.", metaTitle: "\"Jetzt geöffnet\"-Abzeichen für deine Website — Opening Hours Today", metaDescription: "Füge deiner eigenen Website ein kostenloses Live-Abzeichen hinzu, das zeigt, ob du gerade geöffnet hast.", guidesLabel: "Ratgeber", itineraryLabel: "Reiseplan", homeLabel: "Start" },
+  fr: { breadcrumb: "Être référencé + badge \"Ouvert maintenant\"", h1: "📛 Vous voulez que votre commerce ou site touristique soit référencé chez nous ?", intro: "Vous gérez un commerce, un site touristique ou une autre entreprise et souhaitez que vos visiteurs voient, en direct, si vous êtes ouvert en ce moment — aussi bien chez nous que sur votre propre site ? Voici 3 étapes simples, dans l'ordre. Chaque étape dépend de la précédente.", step1Title: "Étape 1 — Proposez votre commerce ou site touristique", step1Text: "Si vous n'êtes pas encore référencé chez nous, la première étape consiste à nous parler de votre entreprise. C'est gratuit et ça prend 1 minute.", step1Btn: "📍 Proposer mon entreprise maintenant", step1Hint: "Déjà référencé chez nous ? Passez directement à l'étape 2.", step2Title: "Étape 2 — Attendez la vérification, puis retrouvez-vous sur le site", step2Text: "Nous vérifions chaque proposition manuellement — cela prend généralement quelques jours. Nous n'envoyons pas encore de notification automatique, alors après quelques jours, cherchez votre entreprise directement sur notre site (barre de recherche sur la page d'accueil). Si vous trouvez votre propre page, vous avez franchi cette étape — passez à l'étape 3.", step3Title: "Étape 3 — Récupérez le code de votre badge, pour votre propre site", step3Text1: "Une fois que vous vous êtes trouvé sur notre site, regardez la barre d'adresse. Exemple : si votre page est <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, votre slug est <strong>castelul-bran</strong> (la partie après le dernier <code>/</code>).", step3Text2: "Remplacez <code>YOUR-SLUG</code> ci-dessous par ce que vous avez trouvé, et <code>attraction</code> par <code>store</code> si vous êtes un commerce, pas un site touristique. Collez le code où vous voulez que le badge apparaisse sur votre page.", copyBtn: "📋 Copier le code", copiedText: "✓ Copié !", demoTitle: "À quoi ressemble le badge", kofiTitle: "☕ Tout ce processus vous a-t-il aidé ?", kofiText: "Opening Hours Today est maintenu par une seule personne, sur son temps libre, et reste gratuit pour tout le monde. Si vous êtes arrivé jusqu'ici et que votre badge fonctionne, un café signifierait beaucoup — ce n'est pas obligatoire, mais ça aide vraiment.", kofiBtn: "☕ Offrez-nous un café", footerText: "badges en direct, vérifiés, gratuits pour tout commerce ou site touristique référencé chez nous.", metaTitle: "Badge \"Ouvert maintenant\" pour votre site — Opening Hours Today", metaDescription: "Ajoutez un badge gratuit et en direct à votre propre site, indiquant si vous êtes ouvert en ce moment.", guidesLabel: "Guides", itineraryLabel: "Itinéraire", homeLabel: "Accueil" },
+  es: { breadcrumb: "Aparecer en el sitio + insignia \"Abierto ahora\"", h1: "📛 ¿Quieres que tu tienda o atracción aparezca en nuestro sitio?", intro: "¿Tienes una tienda, atracción turística u otro negocio y quieres que tus visitantes vean, en vivo, si estás abierto ahora mismo — tanto aquí en nuestro sitio como en tu propia web? Aquí tienes 3 pasos simples, en orden. Cada paso depende del anterior.", step1Title: "Paso 1 — Sugiere tu tienda o atracción", step1Text: "Si aún no apareces en nuestro sitio, el primer paso es contarnos sobre tu negocio. Es gratis y tarda 1 minuto.", step1Btn: "📍 Sugerir mi negocio ahora", step1Hint: "¿Ya apareces en nuestro sitio? Ve directamente al Paso 2.", step2Title: "Paso 2 — Espera la revisión, luego búscate en el sitio", step2Text: "Revisamos cada propuesta manualmente — normalmente tarda unos días. Todavía no enviamos notificación automática, así que después de unos días, busca tu negocio directamente en nuestro sitio (barra de búsqueda en la página principal). Si encuentras tu propia página, has superado este paso — continúa al Paso 3.", step3Title: "Paso 3 — Obtén el código de tu insignia, para tu propia web", step3Text1: "Una vez que te hayas encontrado en nuestro sitio, mira la barra de direcciones. Ejemplo: si tu página es <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, tu slug es <strong>castelul-bran</strong> (la parte después de la última <code>/</code>).", step3Text2: "Reemplaza <code>YOUR-SLUG</code> abajo con lo que encontraste, y <code>attraction</code> con <code>store</code> si eres una tienda, no una atracción turística. Pega el código donde quieras que aparezca la insignia en tu página.", copyBtn: "📋 Copiar el código", copiedText: "✓ ¡Copiado!", demoTitle: "Así se ve la insignia", kofiTitle: "☕ ¿Te ayudó todo este proceso?", kofiText: "Opening Hours Today lo mantiene una sola persona, en su tiempo libre, y sigue siendo gratis para todos. Si llegaste hasta aquí y tu insignia funciona, un café significaría mucho — no es obligatorio, pero realmente ayuda.", kofiBtn: "☕ Invítanos un café", footerText: "insignias en vivo, verificadas, gratis para cualquier tienda o atracción listada en nuestro sitio.", metaTitle: "Insignia \"Abierto ahora\" para tu web — Opening Hours Today", metaDescription: "Añade una insignia gratuita y en vivo a tu propia web que muestre si estás abierto ahora mismo.", guidesLabel: "Guías", itineraryLabel: "Itinerario", homeLabel: "Inicio" },
+  it: { breadcrumb: "Essere elencati + badge \"Aperto ora\"", h1: "📛 Vuoi che il tuo negozio o la tua attrazione siano elencati da noi?", intro: "Gestisci un negozio, un'attrazione turistica o un'altra attività e vuoi che i tuoi visitatori vedano, in tempo reale, se sei aperto in questo momento — sia qui sul nostro sito che sul tuo sito? Ecco 3 semplici passaggi, in ordine. Ogni passaggio dipende dal precedente.", step1Title: "Passo 1 — Suggerisci il tuo negozio o la tua attrazione", step1Text: "Se non sei ancora elencato da noi, il primo passo è raccontarci della tua attività. È gratis e richiede 1 minuto.", step1Btn: "📍 Suggerisci la tua attività ora", step1Hint: "Sei già elencato da noi? Passa direttamente al Passo 2.", step2Title: "Passo 2 — Attendi la verifica, poi trovati sul sito", step2Text: "Controlliamo ogni proposta manualmente — di solito richiede qualche giorno. Non inviamo ancora una notifica automatica, quindi dopo qualche giorno, cerca la tua attività direttamente sul nostro sito (barra di ricerca nella pagina principale). Se trovi la tua pagina, hai superato questo passaggio — vai al Passo 3.", step3Title: "Passo 3 — Ottieni il codice del tuo badge, per il tuo sito", step3Text1: "Una volta trovato te stesso sul nostro sito, guarda la barra degli indirizzi. Esempio: se la tua pagina è <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, il tuo slug è <strong>castelul-bran</strong> (la parte dopo l'ultimo <code>/</code>).", step3Text2: "Sostituisci <code>YOUR-SLUG</code> qui sotto con quello che hai trovato, e <code>attraction</code> con <code>store</code> se sei un negozio, non un'attrazione turistica. Incolla il codice dove vuoi che appaia il badge sulla tua pagina.", copyBtn: "📋 Copia il codice", copiedText: "✓ Copiato!", demoTitle: "Come appare il badge", kofiTitle: "☕ Tutto questo processo ti ha aiutato?", kofiText: "Opening Hours Today è gestito da una sola persona, nel tempo libero, e rimane gratuito per tutti. Se sei arrivato fin qui e il tuo badge funziona, un caffè significherebbe molto — non è obbligatorio, ma aiuta davvero.", kofiBtn: "☕ Offrici un caffè", footerText: "badge live, verificati, gratuiti per qualsiasi negozio o attrazione elencati da noi.", metaTitle: "Badge \"Aperto ora\" per il tuo sito — Opening Hours Today", metaDescription: "Aggiungi un badge gratuito e live al tuo sito che mostra se sei aperto in questo momento.", guidesLabel: "Guide", itineraryLabel: "Itinerario", homeLabel: "Home" },
+  pl: { breadcrumb: "Dodaj się do serwisu + odznaka \"Otwarte teraz\"", h1: "📛 Chcesz, aby Twój sklep lub atrakcja pojawiły się u nas?", intro: "Prowadzisz sklep, atrakcję turystyczną lub inną firmę i chcesz, aby Twoi odwiedzający widzieli na żywo, czy jesteś teraz otwarty — zarówno u nas, jak i na Twojej własnej stronie? Oto 3 proste kroki, po kolei. Każdy krok zależy od poprzedniego.", step1Title: "Krok 1 — Zaproponuj swój sklep lub atrakcję", step1Text: "Jeśli nie jesteś jeszcze u nas wpisany, pierwszym krokiem jest opowiedzenie nam o swojej firmie. Jest to bezpłatne i zajmuje 1 minutę.", step1Btn: "📍 Zaproponuj swoją firmę teraz", step1Hint: "Jesteś już u nas wpisany? Przejdź od razu do Kroku 2.", step2Title: "Krok 2 — Poczekaj na weryfikację, potem znajdź się na stronie", step2Text: "Sprawdzamy każde zgłoszenie ręcznie — zwykle trwa to kilka dni. Nie wysyłamy jeszcze automatycznego powiadomienia, więc po kilku dniach wyszukaj swoją firmę bezpośrednio na naszej stronie (pasek wyszukiwania na stronie głównej). Jeśli znajdziesz swoją stronę, przeszedłeś ten krok — przejdź do Kroku 3.", step3Title: "Krok 3 — Pobierz kod swojej odznaki, na swoją własną stronę", step3Text1: "Gdy już się znajdziesz na naszej stronie, spójrz na pasek adresu. Przykład: jeśli Twoja strona to <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code>, Twój slug to <strong>castelul-bran</strong> (część po ostatnim <code>/</code>).", step3Text2: "Zastąp <code>YOUR-SLUG</code> poniżej tym, co znalazłeś, oraz <code>attraction</code> na <code>store</code>, jeśli jesteś sklepem, a nie atrakcją turystyczną. Wklej kod tam, gdzie chcesz, aby odznaka pojawiła się na Twojej stronie.", copyBtn: "📋 Kopiuj kod", copiedText: "✓ Skopiowano!", demoTitle: "Jak wygląda odznaka", kofiTitle: "☕ Czy cały ten proces Ci pomógł?", kofiText: "Opening Hours Today jest utrzymywane przez jedną osobę, w wolnym czasie, i pozostaje bezpłatne dla wszystkich. Jeśli dotarłeś aż tutaj i Twoja odznaka działa, kawa znaczyłaby bardzo dużo — nie jest to wymagane, ale naprawdę pomaga.", kofiBtn: "☕ Postaw nam kawę", footerText: "odznaki na żywo, zweryfikowane, bezpłatne dla każdego sklepu lub atrakcji wpisanych u nas.", metaTitle: "Odznaka \"Otwarte teraz\" na Twoją stronę — Opening Hours Today", metaDescription: "Dodaj bezpłatną, żywą odznakę do swojej strony pokazującą, czy jesteś teraz otwarty.", guidesLabel: "Poradniki", itineraryLabel: "Plan podróży", homeLabel: "Strona główna" },
+  nl: { breadcrumb: "Vermeld worden + \"Nu open\"-badge", h1: "📛 Wil je dat jouw winkel of attractie bij ons vermeld wordt?", intro: "Heb je een winkel, toeristische attractie of ander bedrijf en wil je dat je bezoekers live zien of je nu open bent — zowel hier op onze site als op je eigen website? Hier zijn 3 eenvoudige stappen, in volgorde. Elke stap hangt af van de vorige.", step1Title: "Stap 1 — Stel je winkel of attractie voor", step1Text: "Als je nog niet bij ons vermeld staat, is de eerste stap ons over je bedrijf te vertellen. Het is gratis en duurt 1 minuut.", step1Btn: "📍 Stel je bedrijf nu voor", step1Hint: "Al bij ons vermeld? Ga direct naar Stap 2.", step2Title: "Stap 2 — Wacht op beoordeling, vind jezelf dan op de site", step2Text: "We controleren elke inzending handmatig — dit duurt meestal een paar dagen. We sturen nog geen automatische melding, dus zoek na een paar dagen je bedrijf rechtstreeks op onze site (zoekbalk op de startpagina). Als je je eigen pagina vindt, heb je deze stap voltooid — ga verder naar Stap 3.", step3Title: "Stap 3 — Haal je badge-code op, voor je eigen website", step3Text1: "Zodra je jezelf op onze site hebt gevonden, kijk dan naar de adresbalk. Voorbeeld: als je pagina <code>opening-hours-today.eu/de/obiectiv/castelul-bran</code> is, is je slug <strong>castelul-bran</strong> (het deel na de laatste <code>/</code>).", step3Text2: "Vervang <code>YOUR-SLUG</code> hieronder door wat je hebt gevonden, en <code>attraction</code> door <code>store</code> als je een winkel bent, geen toeristische attractie. Plak de code waar je de badge op je pagina wilt laten verschijnen.", copyBtn: "📋 Kopieer de code", copiedText: "✓ Gekopieerd!", demoTitle: "Zo ziet de badge eruit", kofiTitle: "☕ Heeft dit hele proces je geholpen?", kofiText: "Opening Hours Today wordt door één persoon onderhouden, in hun vrije tijd, en blijft gratis voor iedereen. Als je zo ver bent gekomen en je badge werkt, zou een kopje koffie veel betekenen — niet verplicht, maar het helpt echt.", kofiBtn: "☕ Trakteer ons op koffie", footerText: "live, geverifieerde badges, gratis voor elke winkel of attractie die bij ons vermeld staat.", metaTitle: "\"Nu open\"-badge voor je website — Opening Hours Today", metaDescription: "Voeg een gratis, live badge toe aan je eigen website die laat zien of je nu open bent.", guidesLabel: "Gidsen", itineraryLabel: "Reisplan", homeLabel: "Home" },
+};
+app.get("/business-badge", (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const requestedLang = req.query && BUSINESS_BADGE_LABELS[req.query.lang] ? req.query.lang : "uk";
+  const t = BUSINESS_BADGE_LABELS[requestedLang];
+  const badgeLang = requestedLang; // aceeași valoare, folosită direct în data-lang de pe insignă
+  const submitPlaceHref = requestedLang === "uk" ? "/submit-place" : `/submit-place?lang=${requestedLang}`;
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <div class="brand-stack"><a class="brand" href="/">Opening<span>HoursToday</span></a><a class="guides-link" href="/guides">${escapeHtml(t.guidesLabel)} →</a><a class="guides-link itin-nav-link" href="/itinerar">${escapeHtml(t.itineraryLabel)} →</a></div>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">${escapeHtml(t.homeLabel)}</a> / ${escapeHtml(t.breadcrumb)}</p>
+  <h1 class="page-h1">${escapeHtml(t.h1)}</h1>
+  <p class="intro-text">${escapeHtml(t.intro)}</p>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.step1Title)}</h2>
+  <p class="intro-text">${escapeHtml(t.step1Text)}</p>
+  <a href="${submitPlaceHref}" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0 0 8px"><span class="affiliate-cta-text">${escapeHtml(t.step1Btn)}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+  <p class="plan-visit-hint">${escapeHtml(t.step1Hint)}</p>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.step2Title)}</h2>
+  <p class="intro-text">${escapeHtml(t.step2Text)}</p>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.step3Title)}</h2>
+  <p class="intro-text">${t.step3Text1}</p>
+  <p class="intro-text">${t.step3Text2}</p>
+  <div class="schedule-card" style="padding:16px;overflow-x:auto;"><code id="badgeCodeSnippetEn" style="white-space:pre;font-size:13px;">&lt;script src="https://opening-hours-today.eu/badge.js" data-slug="YOUR-SLUG" data-tip="attraction" data-lang="${escapeHtml(badgeLang)}"&gt;&lt;/script&gt;</code></div>
+  <button type="button" id="copyBadgeCodeBtnEn" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:12px 0 0"><span class="affiliate-cta-text">${escapeHtml(t.copyBtn)}</span></button>
+  <script nonce="${nonce}">
+    (function(){
+      var btn = document.getElementById("copyBadgeCodeBtnEn");
+      var codeEl = document.getElementById("badgeCodeSnippetEn");
+      if (!btn || !codeEl) return;
+      var originalText = btn.querySelector(".affiliate-cta-text").textContent;
+      btn.addEventListener("click", function(){
+        navigator.clipboard.writeText(codeEl.textContent).then(function(){
+          btn.querySelector(".affiliate-cta-text").textContent = ${JSON.stringify(t.copiedText)};
+          setTimeout(function(){ btn.querySelector(".affiliate-cta-text").textContent = originalText; }, 2000);
+        });
+      });
+    })();
+  </script>
+
+  <h2 class="section-title"><span class="bar"></span>${escapeHtml(t.demoTitle)}</h2>
+  <div id="badgeDemoBoxEn"></div>
+  <script src="/badge.js" data-slug="castelul-bran" data-tip="attraction" data-lang="${escapeHtml(badgeLang)}"></script>
+
+  <div class="trip-toolkit-card" style="text-align:center">
+    <h3 class="trip-toolkit-title">${escapeHtml(t.kofiTitle)}</h3>
+    <p class="trip-toolkit-subtitle">${escapeHtml(t.kofiText)}</p>
+    <a href="https://ko-fi.com/openinghourstoday" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0"><span class="affiliate-cta-text">${escapeHtml(t.kofiBtn)}</span><span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+  </div>
+
+  <footer>
+    <p><strong>Opening Hours Today</strong> — ${escapeHtml(t.footerText)}</p>
+  </footer>
+</main>`;
+  const html = pageShell({ title: t.metaTitle, description: t.metaDescription, canonical: `${baseUrlFor(req)}/business-badge${requestedLang !== "uk" ? "?lang=" + requestedLang : ""}`, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: requestedLang });
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(html);
 });
@@ -12252,7 +12418,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     // cu delegare de evenimente — funcționează și aici, deși butonul e
     // adăugat dinamic, mult după încărcarea inițială a paginii).
     var flightHtml = flightLink
-      ? '<button type="button" style="' + BTN_STYLE + '" class="widget-reveal-btn" data-widget-target="kiwiWidgetContainer" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + ARROW_HTML + '</button><div id="kiwiWidgetContainer" class="flight-widget-card" style="display:none;position:relative"><button type="button" id="closeKiwiWidgetBtn" aria-label="Închide" style="position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border-radius:50%;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;cursor:pointer;font-size:16px;line-height:1">✕</button></div>'
+      ? '<button type="button" style="' + BTN_STYLE + '" class="widget-reveal-btn" data-widget-target="kiwiWidgetContainer" data-widget-src="https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&locale=en&stops=any&show_hotels=true&powered_by=false&border_radius=12&plain=true&color_button=%23F0813A&color_button_text=%23FFFFFF&promo_id=3414&campaign_id=111">' + FLIGHT_LABEL + ' ' + escapeHtmlClient(searchedCity) + ARROW_HTML + '</button><div id="kiwiWidgetContainer" class="flight-widget-card" style="display:none"></div>'
       : '<p class="plan-visit-hint">' + FLIGHT_COMING_SOON_TEXT + '</p>';
     var hotelHtml = searchedCity
       ? '<a href="' + hotelSearchLinkFor(searchedCity) + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">' + HOTEL_LABEL + '</a>'
@@ -12285,15 +12451,6 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-      });
-    }
-    // Buton de închidere pentru widget-ul de zboruri — cerut explicit,
-    // odată deschis, utilizatorul trebuie să poată să-l ascundă la loc.
-    var closeKiwiBtn = document.getElementById("closeKiwiWidgetBtn");
-    if (closeKiwiBtn) {
-      closeKiwiBtn.addEventListener("click", function(){
-        var container = document.getElementById("kiwiWidgetContainer");
-        if (container) container.style.display = "none";
       });
     }
   }
