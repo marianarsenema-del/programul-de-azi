@@ -72,6 +72,12 @@ const DB_CONNECTION_STRING =
 // fail-open) — mai sigur decât o parolă implicită ghicibilă.
 const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY || "";
 const GOOGLE_PLACES_API_KEY_LIVE = process.env.GOOGLE_PLACES_API_KEY || "";
+// Pentru planul de rezervă la ploaie (itinerar) — cerut explicit, cu o
+// limită de siguranță STRICTĂ, mai mică decât pragul real de 1.000
+// cereri/zi al planului gratuit OpenWeatherMap, ca să nu riscăm NICIODATĂ
+// să fim taxați, chiar dacă traficul crește neașteptat.
+const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "";
+const WEATHER_DAILY_SAFETY_LIMIT = 950;
 const dbPool = DB_CONNECTION_STRING
   ? new Pool({ connectionString: DB_CONNECTION_STRING, ssl: { rejectUnauthorized: false }, max: 3 })
   : null;
@@ -1764,6 +1770,35 @@ function buildListStatusBadgeScript(nonce, statusDataset, noResultsElId) {
       var open = isOpenNow(entity, now);
       badge.classList.toggle("status-open", open);
       badge.classList.toggle("status-closed", !open);
+      // "Se închide în X minute" — cerut explicit, parte dintr-un tablou
+      // live "ce e deschis lângă mine, chiar acum". Calculăm doar când
+      // chiar e deschis ACUM (altfel n-are sens) și mai sunt sub 2 ore
+      // până la închidere — dincolo de-atât, informația nu mai ajută pe
+      // nimeni practic, doar aglomerează lista degeaba.
+      var countdownEl = badge.parentNode && badge.parentNode.querySelector(".status-countdown");
+      if (open) {
+        var todayHours = (function(){
+          var md = (now.getMonth()+1) + "-" + now.getDate();
+          var full = now.getFullYear() + "-" + md;
+          var holiday = null;
+          for (var i=0;i<entity.holidays.length;i++){
+            var h = entity.holidays[i];
+            if (h.date === md || h.date === full) { holiday = h; break; }
+          }
+          return holiday ? holiday.hours : (function(){ var w = entity.weekly[now.getDay()]; return w ? [w.open, w.close] : null; })();
+        })();
+        var minutesLeft = todayHours ? (toMinutes(todayHours[1]) - (now.getHours()*60 + now.getMinutes())) : null;
+        if (countdownEl) {
+          if (minutesLeft !== null && minutesLeft > 0 && minutesLeft <= 120) {
+            countdownEl.textContent = "⏱️ încă " + minutesLeft + " min";
+            countdownEl.style.display = "";
+          } else {
+            countdownEl.style.display = "none";
+          }
+        }
+      } else if (countdownEl) {
+        countdownEl.style.display = "none";
+      }
       // filtrare pe listă — cerut explicit ("de ce doar pe hartă, nu și pe
       // prima pagină?") — ascunde rândul întreg din listă, nu doar insigna,
       // când comutatorul "doar deschise acum" e bifat.
@@ -4883,6 +4918,48 @@ function resolveRoCityDisplay(orasDisplay) {
 }
 
 // distanța reală (km) dintre două puncte GPS — formula Haversine, standard
+// Prognoză meteo, DOAR pentru ziua 1 a itinerarului (mâine) — cerut
+// explicit, "plan de ploaie" pentru itinerar. Verifică ÎNTÂI limita de
+// siguranță (950/zi, deși planul gratuit OpenWeatherMap permite 1.000) —
+// dacă am atins-o, sărim complet peste verificare, fără nicio eroare
+// vizibilă (itinerarul funcționează normal, doar fără avertismentul de
+// ploaie pentru acea cerere). Reutilizează exact același mecanism de
+// rate-limit deja folosit în restul site-ului (api_rate_limits), doar cu
+// un identificator FIX, global — nu per-utilizator, fiindcă limita e a
+// NOASTRĂ, față de OpenWeatherMap, nu a fiecărui vizitator în parte.
+async function checkWeatherApiQuota() {
+  return checkRateLimit("global-shared", "weather-api-calls", WEATHER_DAILY_SAFETY_LIMIT, 1440);
+}
+
+async function fetchTomorrowRainForecast(coords) {
+  if (!OPENWEATHER_API_KEY || !coords) return null;
+  const quotaOk = await checkWeatherApiQuota();
+  if (!quotaOk) return null; // limita de siguranță atinsă — sărim peste, fără eroare
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${coords[0]}&lon=${coords[1]}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    if (!Array.isArray(data.list)) return null;
+    // "mâine" — prima zi a itinerarului, la fel ca la exportul .ics și la
+    // avertismentul de program (trebuie să corespundă exact, altfel ziua
+    // verificată pentru ploaie n-ar mai fi aceeași cu ziua 1 din itinerar)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+    // media de-a lungul zilei — considerăm "zi ploioasă" dacă probabilitatea
+    // medie de precipitații (pop) din intervalele orare ale zilei respective
+    // depășește 50% — prag rezonabil, nu orice nor trecător
+    const dayEntries = data.list.filter((entry) => entry.dt_txt && entry.dt_txt.startsWith(tomorrowStr));
+    if (!dayEntries.length) return null;
+    const avgPop = dayEntries.reduce((sum, e) => sum + (e.pop || 0), 0) / dayEntries.length;
+    return { rainLikely: avgPop >= 0.5, pop: avgPop };
+  } catch (err) {
+    console.error("fetchTomorrowRainForecast a eșuat:", err.message);
+    return null;
+  }
+}
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -5035,7 +5112,8 @@ function brandBadgeHtml(name, statusKey) {
   const hue = hash < 0 ? hash + 360 : hash;
   const initial = escapeHtml(name.trim().charAt(0).toUpperCase());
   const statusAttr = statusKey ? ` data-status-key="${escapeHtml(statusKey)}"` : "";
-  return `<span class="brand-badge" style="background:linear-gradient(135deg,hsl(${hue},68%,50%),hsl(${hue},62%,36%))" aria-hidden="true"${statusAttr}>${initial}</span>`;
+  const countdownHtml = statusKey ? `<span class="status-countdown" style="display:none;font-size:11px;color:var(--muted);margin-left:4px"></span>` : "";
+  return `<span class="brand-badge" style="background:linear-gradient(135deg,hsl(${hue},68%,50%),hsl(${hue},62%,36%))" aria-hidden="true"${statusAttr}>${initial}</span>${countdownHtml}`;
 }
 
 // JSON sigur de injectat într-un <script> (evită breakout la "</script>")
@@ -10381,6 +10459,105 @@ app.get("/api/attractions/:tara(de|uk|es|fr|it|pl|nl|at|be|dk|ro|se|pt|cz|fi|gr|
 // inițială — nu le recalculăm aici, ar duplica logica de căutare magazin.
 // Folosește DOAR pentru "store" acum (pilot) — restul tipurilor de pagină
 // (magazine internaționale, obiective) rămân pentru o sesiune viitoare.
+// Insigna "Deschis Acum", pentru ALTE site-uri — cerut explicit, idee
+// unică. Endpoint minimal, dedicat: primește slug+tip, întoarce DOAR
+// status (nu HTML complex, ca la celelalte capete de API) — pagina care-l
+// consumă e /badge.js, care rulează pe site-uri STRĂINE, deci trebuie să
+// fie complet independent de CSS/JS-ul nostru.
+app.get("/api/badge-status", async (req, res) => {
+  const { slug, tip, lang } = req.query || {};
+  if (!slug || typeof slug !== "string" || (tip !== "store" && tip !== "attraction")) {
+    res.status(400).json({ ok: false });
+    return;
+  }
+  const ip = getClientIp(req);
+  const safeLang = typeof lang === "string" && lang.length <= 5 ? lang : "ro";
+  const live = await tryGetLiveStatus(slug, safeLang, tip, false, ip);
+  res.set("Cache-Control", "no-store");
+  // CORS deschis, intenționat — scriptul rulează pe domenii străine,
+  // trebuie să poată citi răspunsul de-acolo.
+  res.set("Access-Control-Allow-Origin", "*");
+  if (!live || live.isOpenNow === null) {
+    res.json({ ok: false });
+    return;
+  }
+  res.json({ ok: true, isOpenNow: live.isOpenNow });
+});
+
+// Scriptul propriu-zis al insignei — cerut explicit, ca alte site-uri
+// (afaceri mici, muzee, obiective cu site propriu) să poată arăta, pe
+// PROPRIUL lor site, un "Deschis Acum" live, verificat de noi. Complet
+// independent de CSS-ul nostru (stiluri inline, nu clase) — rulează într-un
+// context total necunoscut, pe alt domeniu.
+// Pagină de prezentare a insignei "Deschis Acum" — cerut explicit, cu
+// exemplu de cod și explicație simplă (folosind slug-ul deja vizibil în
+// URL-ul propriei pagini, de pe site-ul nostru) — nu construim o unealtă
+// de căutare separată, doar refolosim ce există deja.
+app.get("/insigna", (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  const bodyHtml = `
+<header>
+  <div class="wrap header-row">
+    <div class="brand-stack"><a class="brand" href="/">Programul<span>DeAzi</span></a><a class="guides-link" href="/ghiduri">Ghiduri →</a><a class="guides-link itin-nav-link" href="/itinerar">Itinerar →</a></div>
+    <div class="live-clock"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+</header>
+<main class="wrap">
+  <p class="breadcrumb"><a href="/">Acasă</a> / Insignă "Deschis Acum"</p>
+  <h1 class="page-h1">📛 Pune insigna "Deschis Acum" pe site-ul tău</h1>
+  <p class="intro-text">Ai un magazin sau un obiectiv turistic listat la noi? Pune gratuit, pe propriul tău site, o insignă live care arată vizitatorilor dacă ești deschis chiar acum — verificat automat de noi.</p>
+
+  <h2 class="section-title"><span class="bar"></span>Pasul 1 — Găsește-ți slug-ul</h2>
+  <p class="intro-text">Caută-ți magazinul sau obiectivul pe site-ul nostru și uită-te la adresa din browser. Exemplu: dacă pagina ta e <code>opening-hours-today.eu/obiectiv/castelul-bran</code>, slug-ul tău e <strong>castelul-bran</strong> (partea de după ultimul <code>/</code>).</p>
+
+  <h2 class="section-title"><span class="bar"></span>Pasul 2 — Copiază codul</h2>
+  <p class="intro-text">Înlocuiește <code>SLUG-UL-TAU</code> cu ce ai găsit mai sus, și <code>attraction</code> cu <code>store</code> dacă ești magazin, nu obiectiv turistic. Pune codul oriunde vrei să apară insigna, pe pagina ta.</p>
+  <div class="schedule-card" style="padding:16px;overflow-x:auto;"><code style="white-space:pre;font-size:13px;">&lt;script src="https://opening-hours-today.eu/badge.js" data-slug="SLUG-UL-TAU" data-tip="attraction" data-lang="ro"&gt;&lt;/script&gt;</code></div>
+
+  <h2 class="section-title"><span class="bar"></span>Cum arată</h2>
+  <div id="badgeDemoBox"></div>
+  <script src="/badge.js" data-slug="castelul-bran" data-tip="attraction" data-lang="ro"></script>
+
+  <p class="disclaimer">E complet gratuit. Dacă insigna te ajută, poți <a href="https://ko-fi.com/openinghourstoday" target="_blank" rel="noopener">să ne cumperi o cafea ☕</a> — nu e obligatoriu, dar contează mult pentru un proiect întreținut de o singură persoană.</p>
+
+  <footer>
+    <p><strong>Programul de Azi</strong> — insigne live, verificate, gratuite pentru orice magazin sau obiectiv listat la noi.</p>
+  </footer>
+</main>`;
+  const html = pageShell({ title: "Insignă \"Deschis Acum\" pentru site-ul tău — Programul de Azi", description: "Pune gratuit, pe propriul site, o insignă live care arată dacă ești deschis chiar acum.", canonical: `${baseUrlFor(req)}/insigna`, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: "ro" });
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(html);
+});
+
+app.get("/badge.js", (req, res) => {
+  res.set("Content-Type", "application/javascript; charset=utf-8");
+  res.set("Cache-Control", "public, max-age=3600");
+  res.send(`(function(){
+  var script = document.currentScript;
+  if (!script) return;
+  var slug = script.getAttribute("data-slug");
+  var tip = script.getAttribute("data-tip") || "attraction";
+  var lang = script.getAttribute("data-lang") || "ro";
+  if (!slug) return;
+  var box = document.createElement("div");
+  box.style.cssText = "display:inline-flex;align-items:center;gap:8px;font-family:-apple-system,sans-serif;font-size:13px;padding:8px 14px;border-radius:100px;border:1px solid #ddd;background:#fff;color:#1a1a1a;box-shadow:0 2px 8px rgba(0,0,0,.08);";
+  box.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#999;flex:0 0 auto"></span><span>...</span>';
+  script.parentNode.insertBefore(box, script);
+  fetch("https://opening-hours-today.eu/api/badge-status?slug=" + encodeURIComponent(slug) + "&tip=" + encodeURIComponent(tip) + "&lang=" + encodeURIComponent(lang))
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if (!data || !data.ok) { box.style.display = "none"; return; }
+      var dot = data.isOpenNow ? "#22c55e" : "#ef4444";
+      var text = data.isOpenNow
+        ? (lang === "ro" ? "Deschis acum" : "Open now")
+        : (lang === "ro" ? "Închis acum" : "Closed now");
+      box.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex:0 0 auto"></span><span>' + text + '</span><a href="https://opening-hours-today.eu/" target="_blank" rel="noopener" style="color:#999;text-decoration:none;font-size:11px;border-left:1px solid #ddd;padding-left:8px;margin-left:2px">verificat ☕</a>';
+    })
+    .catch(function(){ box.style.display = "none"; });
+})();`);
+});
+
 app.post("/api/live-status-html", async (req, res) => {
   const body = req.body || {};
   const { liveSlug, lang, tip } = body;
@@ -11179,7 +11356,15 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
   const { tara, obiective: obiectiveText } = resolved;
   const numeTara = COUNTRY_NAMES_RO[tara] || "România";
 
-  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara, tipCalatorie, vibe, buget);
+  // Planul de rezervă la ploaie — DOAR pentru ziua 1 (mâine), cerut
+  // explicit. Complet opțional/tăcut — dacă nu avem cheie API, dacă am
+  // atins limita de siguranță, sau dacă cererea eșuează din orice motiv,
+  // itinerarul se generează normal, fără avertisment, fără nicio eroare
+  // vizibilă către utilizator.
+  const cityCoordsForWeather = CITY_COORDS[resolved.orasCanonic];
+  const rainForecast = await fetchTomorrowRainForecast(cityCoordsForWeather);
+
+  const prompt = buildItineraryPrompt(oras, zile, obiectiveText, lang, numeTara, tipCalatorie, vibe, buget, rainForecast);
 
   try {
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -11249,7 +11434,18 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
 
     if (itinerar && Array.isArray(itinerar.zile)) {
       const intervalKeys = ["dimineata", "pranz", "seara"];
-      for (const zi of itinerar.zile) {
+      // Ora de sfârșit a fiecărui interval — TREBUIE să corespundă exact cu
+      // sloturile folosite la exportul .ics (client), altfel avertismentul
+      // n-ar avea sens (am verifica o oră, dar exportăm alta).
+      const SLOT_END_MINUTES = { dimineata: 11 * 60, pranz: 14 * 60 + 30, seara: 20 * 60 };
+      itinerar.zile.forEach((zi, ziIndex) => {
+        // Ziua 1 a itinerarului = MÂINE (nu avem o dată de start aleasă
+        // explicit în formular) — trebuie să corespundă exact cu ce
+        // presupune și exportul .ics, altfel ziua săptămânii calculată
+        // aici n-ar mai avea legătură cu programul real, afișat clientului.
+        const dayDate = new Date();
+        dayDate.setDate(dayDate.getDate() + 1 + ziIndex);
+        const weekday = dayDate.getDay(); // 0=Duminică, la fel ca la CATEGORY_GENERIC_SCHEDULE
         for (const key of intervalKeys) {
           if (!Array.isArray(zi[key])) continue;
           for (const item of zi[key]) {
@@ -11258,6 +11454,29 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
             if (!matchedName) continue; // numele din răspunsul AI nu se regăsește real — fără link, mai bine decât unul spart
             const slug = toDbSlug(matchedName);
             if (slug) item.link = tara === "ro" ? `/obiectiv/${slug}` : `/${tara}/obiectiv/${slug}`;
+
+            // Avertisment "s-ar putea să nu mai fie deschis" — cerut
+            // explicit, idee unică, posibilă DOAR pentru că avem deja
+            // datele de program (chiar dacă doar generice, pe categorie) —
+            // comparăm ora de SFÂRȘIT a intervalului asignat (dimineață/
+            // prânz/seară) cu ora de închidere tipică a acelei categorii,
+            // în ziua săptămânii calculată mai sus. Doar un avertisment
+            // discret, NU blocăm/eliminăm obiectivul — programul generic e
+            // o aproximare, nu o certitudine, exact ca restul site-ului.
+            const itemCategory = resolved.categoryByName && resolved.categoryByName[matchedName];
+            const genericSchedule = itemCategory ? genericScheduleForCategory(itemCategory) : null;
+            if (genericSchedule) {
+              const dayScheduleEntry = genericSchedule[weekday];
+              if (!dayScheduleEntry) {
+                item.avertisment = "closed_that_day";
+              } else {
+                const [closeH, closeM] = dayScheduleEntry.close.split(":").map(Number);
+                const closeMinutes = closeH * 60 + closeM;
+                if (SLOT_END_MINUTES[key] > closeMinutes) {
+                  item.avertisment = "may_close_before_" + dayScheduleEntry.close;
+                }
+              }
+            }
 
             const itemCity = resolved.cityByName && resolved.cityByName[matchedName];
             const destCoords = itemCity && CITY_COORDS[itemCity];
@@ -11278,10 +11497,10 @@ app.post("/api/genereaza-itinerar", async (req, res) => {
             }
           }
         }
-      }
+      });
     }
 
-    res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic, parcGasit: resolved.parcGasit, parcTicketLink });
+    res.status(200).json({ ...itinerar, orasCanonic: resolved.orasCanonic, parcGasit: resolved.parcGasit, parcTicketLink, rainWarningDay1: !!(rainForecast && rainForecast.rainLikely) });
   } catch (err) {
     console.error("genereaza-itinerar a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
@@ -11504,7 +11723,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       (o) => o.nume,
       familyMode
     );
-    return { tara: "ro", obiective: sortedRo.map((o) => `${o.nume} (${o.localitate})`), cityByName: buildCityByNameMap(sortedRo, (o) => o.nume, (o) => o.localitate), orasCanonic: matchedRo || toTitleCase(orasInput), parcGasit };
+    return { tara: "ro", obiective: sortedRo.map((o) => `${o.nume} (${o.localitate})`), cityByName: buildCityByNameMap(sortedRo, (o) => o.nume, (o) => o.localitate), categoryByName: buildCityByNameMap(sortedRo, (o) => o.nume, (o) => roCategoryByName.get(normalizeJudetInput(o.nume))), orasCanonic: matchedRo || toTitleCase(orasInput), parcGasit };
   }
 
   const norm = normalizeJudetInput(orasInput);
@@ -11517,7 +11736,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
       if (obiective.length) {
         const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: matched, parcGasit };
+        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), categoryByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.category), orasCanonic: matched, parcGasit };
       }
     }
   }
@@ -11535,7 +11754,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
     if (islandMatch) {
       const islandObiective = list.filter((a) => a.city && normalizeJudetInput(a.city) === norm);
       const { sorted, parcGasit } = boostParcuriAgrement(islandObiective, (a) => a.category, (a) => a.name, familyMode);
-      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: islandMatch.city, parcGasit };
+      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), categoryByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.category), orasCanonic: islandMatch.city, parcGasit };
     }
   }
 
@@ -11546,7 +11765,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
       const { obiective } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
       if (obiective.length) {
         const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: matched, parcGasit };
+        return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), categoryByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.category), orasCanonic: matched, parcGasit };
       }
     }
   }
@@ -11555,7 +11774,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
     const { obiective, gasitExactInOras } = filtreazaObiectivePentruOrasIntl(cc, orasInput);
     if (gasitExactInOras) {
       const { sorted, parcGasit } = boostParcuriAgrement(obiective, (a) => a.category, (a) => a.name, familyMode);
-      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), orasCanonic: toTitleCase(orasInput), parcGasit };
+      return { tara: cc, obiective: sorted.map((a) => a.name), cityByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.city), categoryByName: buildCityByNameMap(sorted, (a) => a.name, (a) => a.category), orasCanonic: toTitleCase(orasInput), parcGasit };
     }
   }
 
@@ -11569,7 +11788,7 @@ function resolveCityToCountry(orasInput, tipCalatorie) {
 // inclus în text) — la RO includem explicit "(localitate)", la restul
 // țărilor numele obiectivului conține deja orașul în multe cazuri (vezi
 // filtreazaObiectivePentruOrasIntl), deci NU mai forțăm un format anume.
-function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatorie, vibe, buget) {
+function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatorie, vibe, buget, rainForecast) {
   // Pentru plaje (avem deja descrieri reale, verificate, pentru 189 dintre
   // ele) — atașăm un scurt extras din descrierea existentă, ca AI-ul să
   // poată menționa natural tipul de nisip, intrarea în apă, aglomerația
@@ -11622,6 +11841,14 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
     luxury: `\nBugetul e generos (lux discret) — în descrieri, poți folosi un ton mai rafinat, cu accent pe calitate și confort, fără să fie ostentativ.\n`,
   };
   const budgetInstruction = BUDGET_INSTRUCTIONS[buget] || "";
+  // "Plan de ploaie" — cerut explicit, DOAR pentru ziua 1 (mâine), singura
+  // pentru care avem prognoză reală. Dacă ploaia e probabilă, cerem
+  // explicit AI-ului să prefere, pentru ZIUA 1 exclusiv, obiective de
+  // interior (muzee, castele cu interior, clădiri) — nu blocăm nimic,
+  // doar o preferință clară, exact cum ar face un ghid local prevăzător.
+  const rainInstruction = (rainForecast && rainForecast.rainLikely)
+    ? `\nATENȚIE: pentru ZIUA 1 (mâine) e prognozată ploaie probabilă. Pentru ACEASTĂ zi doar, preferă obiective de interior (muzee, castele cu interior, clădiri, biserici) și evită obiective predominant în aer liber (plaje, parcuri, cetăți în ruină, trasee montane), dacă ai de ales din listă. Restul zilelor nu sunt afectate.\n`
+    : "";
   // Modul "Beach Day" — CORECTAT explicit: NU mai propunem 3 plaje diferite
   // într-o zi (varianta veche, "Beach Hopper", încuraja exact asta — greșit,
   // nimeni nu merge la plajă ca să facă cross, ci ca să se relaxeze). Acum:
@@ -11637,7 +11864,7 @@ function buildItineraryPrompt(oras, zile, obiective, lang, numeTara, tipCalatori
   // la mijloc, la final) — modelele mici uneori "uită" instrucțiunea de
   // limbă dacă apare o singură dată la începutul unui prompt lung.
   return `Ești un ghid turistic expert în ${tara}. Scrie ÎN ${langName.toUpperCase()} un itinerar turistic pe ${zile} ${zile === 1 ? "zi" : "zile"}, pentru un vizitator care merge în zona ${oras} (${tara}). TOT textul (titluri, descrieri) trebuie să fie în ${langName}, DOAR numele obiectivelor rămân exact așa cum apar mai jos (sunt nume proprii, nu se traduc).
-${familyInstruction}${soloInstruction}${friendsInstruction}${vibeInstruction}${budgetInstruction}${beachHopperInstruction}
+${familyInstruction}${soloInstruction}${friendsInstruction}${vibeInstruction}${budgetInstruction}${rainInstruction}${beachHopperInstruction}
 Ai voie să folosești DOAR obiectivele din lista de mai jos — nu inventa altele, nu presupune obiective care nu apar aici. Dacă unele dintre ele nu sunt chiar în orașul ${oras}, ci în apropiere, foloseste-le pe cele mai apropiate geografic de ${oras} și organizează logic:
 ${listaText}
 
@@ -11808,6 +12035,10 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
   var TARA = ${safeJson(cc)};
   var DAY_PREFIX = ${safeJson(t.dayPrefix)};
   var GOOGLE_MAPS_LABEL = ${safeJson(t.googleMapsLabel)};
+  var ICAL_LABEL = ${safeJson(t.icalLabel)};
+  var RAIN_PLAN_NOTE = ${safeJson(t.rainPlanNote)};
+  var WARNING_CLOSED_THAT_DAY = ${safeJson(t.warningClosedThatDay)};
+  var WARNING_MAY_CLOSE_BEFORE = ${safeJson(t.warningMayCloseBefore)};
   var MORNING_LABEL = ${safeJson(t.morning)};
   var LUNCH_LABEL = ${safeJson(t.lunch)};
   var EVENING_LABEL = ${safeJson(t.evening)};
@@ -11912,7 +12143,17 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       var distanceHtml = it.distanta
         ? '<span class="itin-item-distance">📍 ' + escapeHtmlClient(it.distanta) + '</span>'
         : '';
-      return '<div class="itin-item"><div class="itin-item-name">' + nameHtml + distanceHtml + '</div><div class="itin-item-desc">' + escapeHtmlClient(it.descriere) + '</div></div>';
+      // Avertisment "s-ar putea să nu mai fie deschis" — idee unică,
+      // posibilă doar pentru că avem deja date de program (chiar dacă
+      // generice, pe categorie), calculat pe server (vezi /api/genereaza-itinerar).
+      var warningHtml = "";
+      if (it.avertisment === "closed_that_day") {
+        warningHtml = '<div class="plan-visit-hint" style="margin-top:6px">' + WARNING_CLOSED_THAT_DAY + '</div>';
+      } else if (typeof it.avertisment === "string" && it.avertisment.indexOf("may_close_before_") === 0) {
+        var closeTime = it.avertisment.replace("may_close_before_", "");
+        warningHtml = '<div class="plan-visit-hint" style="margin-top:6px">' + WARNING_MAY_CLOSE_BEFORE.replace("{time}", closeTime) + '</div>';
+      }
+      return '<div class="itin-item"><div class="itin-item-name">' + nameHtml + distanceHtml + '</div><div class="itin-item-desc">' + escapeHtmlClient(it.descriere) + '</div>' + warningHtml + '</div>';
     }).join("");
   }
 
@@ -11923,7 +12164,51 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       errorBox.style.display = "block";
       return;
     }
-    var html = data.zile.map(function(zi){
+    // Fișier .ics (calendar), cu toate zilele — cerut explicit. Ore
+    // implicite rezonabile per interval (dimineață/prânz/seară), pornind
+    // de MÂINE (nu avem o dată de start aleasă explicit în formular).
+    // Format "floating time" (fără Z, fără TZID) — calendarele îl
+    // interpretează automat ca oră locală a dispozitivului, cel mai simplu
+    // mod de a evita complicații cu fusuri orare.
+    function pad2(n) { return (n < 10 ? "0" : "") + n; }
+    function icsEscape(s) { return String(s).replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\n/g, "\\n"); }
+    function icsDateTime(date, h, m) {
+      return date.getFullYear() + pad2(date.getMonth() + 1) + pad2(date.getDate()) + "T" + pad2(h) + pad2(m) + "00";
+    }
+    function buildIcsContent(zile, cityName) {
+      var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ProgramulDeAzi//Itinerar//RO", "CALSCALE:GREGORIAN"];
+      var baseDate = new Date();
+      baseDate.setDate(baseDate.getDate() + 1); // ziua 1 = mâine
+      var SLOTS = [
+        { key: "dimineata", h1: 9, m1: 0, h2: 11, m2: 0 },
+        { key: "pranz", h1: 13, m1: 0, h2: 14, m2: 30 },
+        { key: "seara", h1: 18, m1: 0, h2: 20, m2: 0 },
+      ];
+      zile.forEach(function(zi, ziIdx){
+        var dayDate = new Date(baseDate);
+        dayDate.setDate(baseDate.getDate() + ziIdx);
+        SLOTS.forEach(function(slot){
+          var items = zi[slot.key] || [];
+          items.forEach(function(item, itemIdx){
+            lines.push("BEGIN:VEVENT");
+            lines.push("UID:" + ziIdx + "-" + slot.key + "-" + itemIdx + "-" + Date.now() + "@programul-de-azi.ro");
+            lines.push("DTSTAMP:" + icsDateTime(new Date(), 0, 0));
+            lines.push("DTSTART:" + icsDateTime(dayDate, slot.h1, slot.m1));
+            lines.push("DTEND:" + icsDateTime(dayDate, slot.h2, slot.m2));
+            lines.push("SUMMARY:" + icsEscape(item.nume));
+            if (item.descriere) lines.push("DESCRIPTION:" + icsEscape(item.descriere));
+            if (cityName) lines.push("LOCATION:" + icsEscape(item.nume + ", " + cityName));
+            lines.push("END:VEVENT");
+          });
+        });
+      });
+      lines.push("END:VCALENDAR");
+      return lines.join("\r\n");
+    }
+    var icsBtnHtml = '<button type="button" id="icalExportBtn" class="plan-visit-option plan-visit-parking-alt" style="margin-top:10px">' + ICAL_LABEL + '</button>';
+
+    var rainNoteHtml = data.rainWarningDay1 ? '<div class="plan-visit-hint" style="margin-bottom:14px">' + RAIN_PLAN_NOTE + '</div>' : "";
+    var html = rainNoteHtml + data.zile.map(function(zi){
       var morningHtml = renderItems(zi.dimineata);
       var lunchHtml = renderItems(zi.pranz);
       var eveningHtml = renderItems(zi.seara);
@@ -11982,8 +12267,24 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
       ? '<a href="' + data.parcTicketLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">' + PARK_TICKET_LABEL + ' — ' + escapeHtmlClient(data.parcGasit) + '</a>'
       : '';
     html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + '</div>';
+    html += icsBtnHtml;
     results.innerHTML = html;
     resetBtn.style.display = "block";
+    var icalBtn = document.getElementById("icalExportBtn");
+    if (icalBtn) {
+      icalBtn.addEventListener("click", function(){
+        var icsText = buildIcsContent(data.zile, searchedCity);
+        var blob = new Blob([icsText], { type: "text/calendar;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "itinerar.ics";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    }
   }
 
   form.addEventListener("submit", function(e){
