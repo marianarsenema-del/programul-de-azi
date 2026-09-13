@@ -81,7 +81,7 @@ app.use(express.json({ limit: "16kb" })); // necesar pentru rutele de abonare pu
 // SEPARATE pe .eu (/guides/*, engleză, nu /ro/ghiduri/*, care nu există)
 // — bug real, prins prin testare, înainte de activare, nu doar teoretic.
 const RO_TO_EU_MIGRATION_ACTIVE = true;
-const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png", "/itinerar", "/propune", "/admin", "/cazare", "/cont"];
+const RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES = ["/api/", "/manifest.json", "/sw.js", "/robots.txt", "/ads.txt", "/sitemap.xml", "/icon.svg", "/icon-512.png", "/icon-192.png", "/favicon.ico", "/style.css", "/badge.js", "/cad147c6a5b6cb338e880ca855c2679f.html", "/2697e31851e3c90a2ff17b8730d67b88.html", "/itinerar", "/propune", "/admin", "/cazare", "/cont"];
 const RO_TO_EU_GUIDES_MAP = { "/ghiduri": "/guides", "/ghiduri/transport": "/guides/transport", "/ghiduri/parcari": "/guides/parking", "/ghiduri/restaurante": "/guides/restaurants" };
 app.use((req, res, next) => {
   if (!RO_TO_EU_MIGRATION_ACTIVE || isIntlHost(req)) return next();
