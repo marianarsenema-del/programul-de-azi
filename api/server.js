@@ -10608,7 +10608,7 @@ app.post("/api/cazare/blob-upload-token", accommodationGate, requireAccommodatio
       onBeforeGenerateToken: async () => ({
         allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
         addRandomSuffix: true,
-        maximumSizeInBytes: 8 * 1024 * 1024, // 8MB per poză
+        maximumSizeInBytes: 20 * 1024 * 1024, // 20MB per poză — poze de telefon (mai ales iPhone) pot trece ușor de 8MB
       }),
       onUploadCompleted: async () => {},
     });
@@ -10880,11 +10880,16 @@ function renderPhotos(){
 }
 renderPhotos();
 
+var MAX_PHOTO_BYTES = 20 * 1024 * 1024;
 document.getElementById("accPhotoInput").addEventListener("change", async function(e){
   var files = Array.from(e.target.files || []).slice(0, 10 - photos.length);
   if (!files.length) return;
   photoStatus.textContent = "Se încarcă " + files.length + " poze...";
   for (var i = 0; i < files.length; i++) {
+    if (files[i].size > MAX_PHOTO_BYTES) {
+      photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB, maxim 20 MB) — comprim-o sau alege alta.";
+      continue;
+    }
     try {
       var blob = await upload("cazare/" + OWNER_ID + "/" + Date.now() + "-" + files[i].name, files[i], { access: "public", handleUploadUrl: "/api/cazare/blob-upload-token" });
       photos.push(blob.url);
