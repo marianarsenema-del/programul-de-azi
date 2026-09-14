@@ -10575,10 +10575,47 @@ app.post("/api/cazare/blob-upload-token", accommodationGate, requireAccommodatio
 });
 
 const ACCOMMODATION_TYPES = ["pensiune", "hotel_mic", "cabana", "apartament", "camping", "altceva"];
+
+// Integrare ANAF — verificare CUI, preia automat denumirea firmei, adresa
+// sediului social și statusul de plătitor de TVA. API public, gratuit, fără
+// cheie — verificat direct (interogare live) înainte de a scrie codul.
+// Limită ANAF: 1 request/secundă per client — rate-limit-ăm noi înainte,
+// ca să nu riscăm blocare de la ANAF dacă cineva apasă butonul repetat.
+app.get("/api/cazare/verifica-cui", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  const cuiRaw = String(req.query.cui || "").trim().replace(/^RO/i, "");
+  if (!/^\d{2,10}$/.test(cuiRaw)) { res.status(400).json({ error: "invalid_cui" }); return; }
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "verifica-cui", 15, 5);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const anafResp = await fetch("https://webservicesp.anaf.ro/api/PlatitorTvaRest/v9/tva", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([{ cui: parseInt(cuiRaw, 10), data: today }]),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!anafResp.ok) { res.status(502).json({ error: "anaf_unavailable" }); return; }
+    const data = await anafResp.json();
+    if (!data.found || !data.found.length) { res.status(404).json({ error: "not_found" }); return; }
+    const g = data.found[0].date_generale || {};
+    const tva = data.found[0].inregistrare_scop_Tva || {};
+    res.status(200).json({
+      denumire: g.denumire || "",
+      adresa: g.adresa || "",
+      nrRegCom: g.nrRegCom || "",
+      platitorTva: !!tva.scpTVA,
+    });
+  } catch (err) {
+    console.error("verifica-cui a eșuat:", err.message);
+    res.status(502).json({ error: "anaf_error" });
+  }
+});
 const ACCOMMODATION_TYPE_LABELS = { pensiune: "🏡 Pensiune", hotel_mic: "🏨 Hotel mic", cabana: "🌲 Cabană", apartament: "🏢 Apartament de închiriat", camping: "⛺ Camping", altceva: "📍 Altceva" };
 const ACCOMMODATION_AMENITIES = {
   parcare: "🅿️ Parcare", mic_dejun: "🍳 Mic dejun inclus", wifi: "📶 Wi-Fi",
   animale: "🐾 Acceptă animale", piscina: "🏊 Piscină", aer_conditionat: "❄️ Aer condiționat",
+  jacuzzi: "🛁 Jacuzzi/Ciubăr", loc_de_joaca: "🛝 Loc de joacă", gratar: "🍖 Grătar/Barbeqiu",
 };
 
 async function renderAccommodationListingForm(req, res, existingListing) {
@@ -10599,79 +10636,153 @@ async function renderAccommodationListingForm(req, res, existingListing) {
     .map((k) => `<label class="sp-closed-toggle" style="font-size:14px"><input type="checkbox" class="acc-amenity" value="${k}"${amenitiesSelected.has(k) ? " checked" : ""}>${escapeHtml(ACCOMMODATION_AMENITIES[k])}</label>`)
     .join("");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>${t.id ? "Editează" : "Adaugă"} cazare — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
+<title>${t.id ? "Editează" : "Adaugă"} cazare — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<style>
+.acc-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;margin-bottom:14px;overflow:hidden;}
+.acc-card summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;align-items:center;color:var(--text);}
+.acc-card summary::-webkit-details-marker{display:none;}
+.acc-card summary::after{content:"▾";transition:transform .15s ease;color:var(--muted);}
+.acc-card[open] summary::after{transform:rotate(180deg);}
+.acc-card-body{padding:0 20px 20px;display:flex;flex-direction:column;gap:14px;}
+.acc-card-hint{color:var(--muted);font-size:13px;margin:-8px 0 4px;}
+.acc-other-amenity-box{margin-top:8px;display:none;}
+.acc-other-amenity-box.is-visible{display:block;}
+</style></head>
 <body><main class="wrap" style="padding-top:40px;padding-bottom:60px">
 <h1 class="page-h1">${t.id ? "Editează cazarea" : "Adaugă o cazare nouă"}</h1>
-<form id="accForm" class="submit-place-form">
-  <input type="hidden" id="accId" value="${t.id || ""}">
-  <label class="submit-place-label">Nume cazare
-    <input type="text" id="accName" value="${escapeHtml(t.name || "")}" maxlength="255" required>
-  </label>
-  <label class="submit-place-label">Tip
-    <select id="accType" required>${typeOptionsHtml}</select>
-  </label>
-  <label class="submit-place-label" id="accOtherTypeWrap" ${t.type === "altceva" ? "" : "hidden"}>Ce anume?
-    <input type="text" id="accOtherType" value="${escapeHtml(t.other_type || "")}" maxlength="100">
-  </label>
-  <label class="submit-place-label">Oraș
-    <input type="text" id="accCity" value="${escapeHtml(t.city || "")}" maxlength="255" required>
-  </label>
-  <label class="submit-place-label">Țară
-    <select id="accCountry" required>${countryOptionsHtml}</select>
-  </label>
-  <label class="submit-place-label">Adresă (opțional)
-    <input type="text" id="accAddress" value="${escapeHtml(t.address || "")}" maxlength="255">
-  </label>
-  <label class="submit-place-label">Capacitate maximă (persoane)
-    <input type="number" id="accCapacity" min="1" max="500" value="${t.max_capacity || ""}" required>
-  </label>
-  <label class="submit-place-label">Nr. camere/unități (opțional)
-    <input type="number" id="accRooms" min="1" max="200" value="${t.rooms_count || ""}">
-  </label>
-  <label class="submit-place-label">Preț de la (per noapte)
-    <div style="display:flex;gap:8px">
-      <input type="number" id="accPrice" min="0" step="0.01" value="${t.price_from || ""}" required style="flex:2">
-      <select id="accCurrency" style="flex:1">
-        <option value="RON"${(t.price_currency || "RON") === "RON" ? " selected" : ""}>RON</option>
-        <option value="EUR"${t.price_currency === "EUR" ? " selected" : ""}>EUR</option>
-      </select>
+<form id="accForm">
+
+<details class="acc-card" open>
+  <summary>1. Date despre cazare</summary>
+  <div class="acc-card-body">
+    <input type="hidden" id="accId" value="${t.id || ""}">
+    <label class="submit-place-label">Tip
+      <select id="accType" required>${typeOptionsHtml}</select>
+    </label>
+    <label class="submit-place-label" id="accOtherTypeWrap" hidden>Ce anume?
+      <input type="text" id="accOtherType" value="${escapeHtml(t.other_type || "")}" maxlength="100">
+    </label>
+    <label class="submit-place-label">Denumire obiectiv
+      <input type="text" id="accName" value="${escapeHtml(t.name || "")}" maxlength="255" required>
+    </label>
+    <label class="submit-place-label">Oraș
+      <input type="text" id="accCity" value="${escapeHtml(t.city || "")}" maxlength="255" required>
+    </label>
+    <label class="submit-place-label">Țară
+      <select id="accCountry" required>${countryOptionsHtml}</select>
+    </label>
+    <label class="submit-place-label">Adresă
+      <input type="text" id="accAddress" value="${escapeHtml(t.address || "")}" maxlength="255" required>
+    </label>
+    <label class="submit-place-label">Capacitate maximă (persoane)
+      <input type="number" id="accCapacity" min="1" max="500" value="${t.max_capacity || ""}" required>
+    </label>
+    <label class="submit-place-label">Nr. camere/unități
+      <input type="number" id="accRooms" min="1" max="200" value="${t.rooms_count || ""}" required>
+    </label>
+    <label class="submit-place-label">Preț de la (per noapte)
+      <div style="display:flex;gap:8px">
+        <input type="number" id="accPrice" min="0" step="0.01" value="${t.price_from || ""}" required style="flex:2">
+        <select id="accCurrency" style="flex:1">
+          <option value="RON"${(t.price_currency || "RON") === "RON" ? " selected" : ""}>RON</option>
+          <option value="EUR"${t.price_currency === "EUR" ? " selected" : ""}>EUR</option>
+        </select>
+      </div>
+    </label>
+    <div class="submit-place-label">Facilități
+      <div style="display:flex;flex-wrap:wrap;gap:10px 16px">
+        ${amenitiesHtml}
+        <label class="sp-closed-toggle" style="font-size:14px"><input type="checkbox" id="accOtherAmenityToggle"${t.other_amenities_text ? " checked" : ""}>➕ Alte facilități</label>
+      </div>
+      <div class="acc-other-amenity-box${t.other_amenities_text ? " is-visible" : ""}" id="accOtherAmenityBox">
+        <input type="text" id="accOtherAmenityText" value="${escapeHtml(t.other_amenities_text || "")}" placeholder="ex. saună, șemineu, terasă privată" maxlength="255">
+      </div>
     </div>
-  </label>
-  <div class="submit-place-label">Facilități
-    <div style="display:flex;flex-wrap:wrap;gap:10px 16px">${amenitiesHtml}</div>
+    <div class="submit-place-label">Poze (minim 3, maxim 10 — interior + exterior)
+      <input type="file" id="accPhotoInput" accept="image/jpeg,image/png,image/webp" multiple>
+      <div id="accPhotoList" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      <p id="accPhotoStatus" class="plan-visit-hint"></p>
+    </div>
+    <label class="submit-place-label">Check-in
+      <input type="text" id="accCheckin" value="${escapeHtml(t.checkin_time || "")}" placeholder="ex. 14:00" maxlength="50" required>
+    </label>
+    <label class="submit-place-label">Check-out
+      <input type="text" id="accCheckout" value="${escapeHtml(t.checkout_time || "")}" placeholder="ex. 11:00" maxlength="50" required>
+    </label>
+    <label class="submit-place-label">Politică de anulare
+      <textarea id="accCancellation" maxlength="500" rows="3" required>${escapeHtml(t.cancellation_policy || "")}</textarea>
+    </label>
+    <label class="submit-place-label">Website propriu (obligatoriu dacă nu ai profil Booking/Airbnb mai jos)
+      <input type="url" id="accWebsite" value="${escapeHtml(t.website_url || "")}" placeholder="https://...">
+    </label>
+    <label class="submit-place-label">Profil Booking/Airbnb existent (obligatoriu dacă nu ai website mai sus)
+      <input type="url" id="accBookingProfile" value="${escapeHtml(t.booking_profile_url || "")}" placeholder="https://...">
+    </label>
+    <label class="submit-place-label">Telefon de contact
+      <input type="tel" id="accPhone" value="${escapeHtml(t.contact_phone || "")}" maxlength="30" required>
+    </label>
+    <label class="submit-place-label">Email de contact
+      <input type="email" id="accEmail" value="${escapeHtml(t.contact_email || req.accommodationOwner.email || "")}" maxlength="255" required>
+    </label>
   </div>
-  <div class="submit-place-label">Poze (minim 3, maxim 10 — interior + exterior)
-    <input type="file" id="accPhotoInput" accept="image/jpeg,image/png,image/webp" multiple>
-    <div id="accPhotoList" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
-    <p id="accPhotoStatus" class="plan-visit-hint"></p>
+</details>
+
+<details class="acc-card">
+  <summary>2. Facebook / Instagram / TikTok</summary>
+  <div class="acc-card-body">
+    <p class="acc-card-hint">Complet opțional — ajută vizitatorii să te găsească și pe rețele, dar nu e obligatoriu.</p>
+    <label class="submit-place-label">📘 Facebook
+      <input type="url" id="accFacebook" value="${escapeHtml(t.facebook_url || "")}" placeholder="https://facebook.com/...">
+    </label>
+    <label class="submit-place-label">📷 Instagram
+      <input type="url" id="accInstagram" value="${escapeHtml(t.instagram_url || "")}" placeholder="https://instagram.com/...">
+    </label>
+    <label class="submit-place-label">🎵 TikTok
+      <input type="url" id="accTiktok" value="${escapeHtml(t.tiktok_url || "")}" placeholder="https://tiktok.com/@...">
+    </label>
   </div>
-  <label class="submit-place-label">Check-in / check-out (opțional)
-    <input type="text" id="accCheckinout" value="${escapeHtml(t.checkin_checkout || "")}" placeholder="ex. Check-in 14:00, check-out 11:00" maxlength="255">
-  </label>
-  <label class="submit-place-label">Politică de anulare (opțional)
-    <textarea id="accCancellation" maxlength="500" rows="3">${escapeHtml(t.cancellation_policy || "")}</textarea>
-  </label>
-  <label class="submit-place-label">Website propriu (opțional dacă ai profil Booking/Airbnb)
-    <input type="url" id="accWebsite" value="${escapeHtml(t.website_url || "")}" placeholder="https://...">
-  </label>
-  <label class="submit-place-label">Profil Booking/Airbnb existent (opțional dacă ai website)
-    <input type="url" id="accBookingProfile" value="${escapeHtml(t.booking_profile_url || "")}" placeholder="https://...">
-  </label>
-  <label class="submit-place-label">Facebook/Instagram/TikTok (opțional)
-    <input type="url" id="accSocial" value="${escapeHtml(t.social_url || "")}" placeholder="https://...">
-  </label>
-  <label class="submit-place-label">CUI/CIF (opțional)
-    <input type="text" id="accCui" value="${escapeHtml(t.cui || "")}" maxlength="20">
-  </label>
-  <label class="submit-place-label">Telefon de contact
-    <input type="tel" id="accPhone" value="${escapeHtml(t.contact_phone || "")}" maxlength="30" required>
-  </label>
-  <label class="submit-place-label">Email de contact
-    <input type="email" id="accEmail" value="${escapeHtml(t.contact_email || req.accommodationOwner.email || "")}" maxlength="255" required>
-  </label>
-  <button type="submit" id="accSubmitBtn" class="submit-place-btn">${t.id ? "Salvează modificările" : "Trimite spre verificare"}</button>
-  <p id="accMsg" class="submit-place-thanks" hidden></p>
-  <p id="accErr" class="submit-place-error" hidden></p>
+</details>
+
+<details class="acc-card">
+  <summary>3. Date fiscale și de facturare</summary>
+  <div class="acc-card-body">
+    <label class="submit-place-label">CUI/CIF
+      <div style="display:flex;gap:8px">
+        <input type="text" id="accCui" value="${escapeHtml(t.company_cui || "")}" maxlength="20" required style="flex:1">
+        <button type="button" id="accVerifyCuiBtn" class="affiliate-btn affiliate-btn-temu" style="width:auto;flex:0 0 auto">Verifică CUI</button>
+      </div>
+      <p id="accCuiStatus" class="plan-visit-hint"></p>
+    </label>
+    <label class="submit-place-label">Denumirea completă a firmei
+      <input type="text" id="accCompanyName" value="${escapeHtml(t.company_name || "")}" maxlength="255" required>
+    </label>
+    <div class="submit-place-label">Plătitor de TVA?
+      <div style="display:flex;gap:16px;margin-top:6px">
+        <label class="sp-closed-toggle" style="font-size:14px"><input type="radio" name="accVatPayer" id="accVatYes" value="da"${t.company_vat_payer === true ? " checked" : ""} required> Da (CUI cu RO)</label>
+        <label class="sp-closed-toggle" style="font-size:14px"><input type="radio" name="accVatPayer" id="accVatNo" value="nu"${t.company_vat_payer === false ? " checked" : ""}> Nu</label>
+      </div>
+    </div>
+    <label class="submit-place-label">Numărul de înregistrare la Registrul Comerțului
+      <input type="text" id="accRegCom" value="${escapeHtml(t.company_reg_com || "")}" placeholder="ex. J40/12345/2026" maxlength="50" required>
+    </label>
+    <label class="submit-place-label">Adresa sediului social (exact ca în certificatul de înregistrare)
+      <textarea id="accCompanyAddress" maxlength="500" rows="2" required>${escapeHtml(t.company_address || "")}</textarea>
+    </label>
+    <label class="submit-place-label">Cont IBAN
+      <input type="text" id="accIban" value="${escapeHtml(t.company_iban || "")}" maxlength="34" required>
+    </label>
+    <label class="submit-place-label">Banca
+      <input type="text" id="accBank" value="${escapeHtml(t.company_bank || "")}" maxlength="100" required>
+    </label>
+    <label class="submit-place-label">Adresa de email pentru facturare
+      <input type="email" id="accBillingEmail" value="${escapeHtml(t.billing_email || "")}" maxlength="255" required>
+    </label>
+  </div>
+</details>
+
+<button type="submit" id="accSubmitBtn" class="submit-place-btn">${t.id ? "Salvează modificările" : "Trimite spre verificare"}</button>
+<p id="accMsg" class="submit-place-thanks" hidden></p>
+<p id="accErr" class="submit-place-error" hidden></p>
 </form>
 ${t.id && t.status === "approved" ? `
 <div class="trip-toolkit-card" style="text-align:center;margin-top:20px">
@@ -10741,13 +10852,46 @@ document.getElementById("accPhotoInput").addEventListener("change", async functi
 document.getElementById("accType").addEventListener("change", function(){
   document.getElementById("accOtherTypeWrap").hidden = this.value !== "altceva";
 });
+document.getElementById("accType").dispatchEvent(new Event("change"));
+
+var otherAmenityToggle = document.getElementById("accOtherAmenityToggle");
+var otherAmenityBox = document.getElementById("accOtherAmenityBox");
+otherAmenityToggle.addEventListener("change", function(){
+  otherAmenityBox.classList.toggle("is-visible", otherAmenityToggle.checked);
+  if (!otherAmenityToggle.checked) document.getElementById("accOtherAmenityText").value = "";
+});
+
+document.getElementById("accVerifyCuiBtn").addEventListener("click", function(){
+  var cui = document.getElementById("accCui").value.trim();
+  var status = document.getElementById("accCuiStatus");
+  if (!cui) { status.textContent = "Scrie mai întâi CUI-ul."; return; }
+  status.textContent = "Se verifică...";
+  fetch("/api/cazare/verifica-cui?cui=" + encodeURIComponent(cui))
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res){
+      if (res.ok) {
+        document.getElementById("accCompanyName").value = res.data.denumire || "";
+        document.getElementById("accCompanyAddress").value = res.data.adresa || "";
+        if (res.data.nrRegCom) document.getElementById("accRegCom").value = res.data.nrRegCom;
+        document.getElementById(res.data.platitorTva ? "accVatYes" : "accVatNo").checked = true;
+        status.textContent = "✓ Date preluate de la ANAF — verifică și completează ce lipsește.";
+      } else {
+        status.textContent = "Nu am găsit firma — completează manual câmpurile de mai jos.";
+      }
+    })
+    .catch(function(){ status.textContent = "Verificarea a eșuat — completează manual."; });
+});
 
 document.getElementById("accForm").addEventListener("submit", function(e){
   e.preventDefault();
   var err = document.getElementById("accErr");
-  var msg = document.getElementById("accMsg");
   err.hidden = true;
   if (photos.length < 3) { err.textContent = "Ai nevoie de minim 3 poze."; err.hidden = false; return; }
+  var website = document.getElementById("accWebsite").value.trim();
+  var bookingProfile = document.getElementById("accBookingProfile").value.trim();
+  if (!website && !bookingProfile) { err.textContent = "Completează cel puțin website-ul propriu SAU profilul Booking/Airbnb."; err.hidden = false; return; }
+  var vatEl = document.querySelector('input[name="accVatPayer"]:checked');
+  if (!vatEl) { err.textContent = "Spune-ne dacă firma e plătitoare de TVA."; err.hidden = false; return; }
   var btn = document.getElementById("accSubmitBtn");
   btn.disabled = true;
   var amenities = Array.from(document.querySelectorAll(".acc-amenity:checked")).map(function(el){ return el.value; });
@@ -10767,15 +10911,26 @@ document.getElementById("accForm").addEventListener("submit", function(e){
       priceFrom: document.getElementById("accPrice").value,
       priceCurrency: document.getElementById("accCurrency").value,
       amenities: amenities,
+      otherAmenitiesText: otherAmenityToggle.checked ? document.getElementById("accOtherAmenityText").value : "",
       photos: photos,
-      checkinCheckout: document.getElementById("accCheckinout").value,
+      checkinTime: document.getElementById("accCheckin").value,
+      checkoutTime: document.getElementById("accCheckout").value,
       cancellationPolicy: document.getElementById("accCancellation").value,
-      websiteUrl: document.getElementById("accWebsite").value,
-      bookingProfileUrl: document.getElementById("accBookingProfile").value,
-      socialUrl: document.getElementById("accSocial").value,
-      cui: document.getElementById("accCui").value,
+      websiteUrl: website,
+      bookingProfileUrl: bookingProfile,
+      facebookUrl: document.getElementById("accFacebook").value,
+      instagramUrl: document.getElementById("accInstagram").value,
+      tiktokUrl: document.getElementById("accTiktok").value,
       contactPhone: document.getElementById("accPhone").value,
       contactEmail: document.getElementById("accEmail").value,
+      companyCui: document.getElementById("accCui").value,
+      companyName: document.getElementById("accCompanyName").value,
+      companyVatPayer: vatEl.value === "da",
+      companyRegCom: document.getElementById("accRegCom").value,
+      companyAddress: document.getElementById("accCompanyAddress").value,
+      companyIban: document.getElementById("accIban").value,
+      companyBank: document.getElementById("accBank").value,
+      billingEmail: document.getElementById("accBillingEmail").value,
     }),
   })
     .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
@@ -10816,43 +10971,82 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
   if (b.type === "altceva" && (typeof b.otherType !== "string" || !b.otherType.trim())) { res.status(400).json({ error: "invalid_other_type" }); return; }
   if (typeof b.city !== "string" || !b.city.trim()) { res.status(400).json({ error: "invalid_city" }); return; }
   if (typeof b.countryCode !== "string" || !COUNTRIES[b.countryCode]) { res.status(400).json({ error: "invalid_country" }); return; }
+  if (typeof b.address !== "string" || !b.address.trim()) { res.status(400).json({ error: "invalid_address" }); return; }
   const maxCapacity = parseInt(b.maxCapacity, 10);
   if (!Number.isInteger(maxCapacity) || maxCapacity < 1) { res.status(400).json({ error: "invalid_capacity" }); return; }
+  const roomsCount = parseInt(b.roomsCount, 10);
+  if (!Number.isInteger(roomsCount) || roomsCount < 1) { res.status(400).json({ error: "invalid_rooms" }); return; }
   const priceFrom = parseFloat(b.priceFrom);
   if (!Number.isFinite(priceFrom) || priceFrom < 0) { res.status(400).json({ error: "invalid_price" }); return; }
   if (!Array.isArray(b.photos) || b.photos.length < 3 || b.photos.length > 10 || !b.photos.every((u) => typeof u === "string" && u.startsWith("https://") && u.includes(".public.blob.vercel-storage.com/"))) {
     res.status(400).json({ error: "invalid_photos" });
     return;
   }
-  const roomsCount = b.roomsCount ? parseInt(b.roomsCount, 10) : null;
+  if (typeof b.checkinTime !== "string" || !b.checkinTime.trim()) { res.status(400).json({ error: "invalid_checkin" }); return; }
+  if (typeof b.checkoutTime !== "string" || !b.checkoutTime.trim()) { res.status(400).json({ error: "invalid_checkout" }); return; }
+  if (typeof b.cancellationPolicy !== "string" || !b.cancellationPolicy.trim()) { res.status(400).json({ error: "invalid_cancellation" }); return; }
+  const website = typeof b.websiteUrl === "string" ? b.websiteUrl.trim() : "";
+  const bookingProfile = typeof b.bookingProfileUrl === "string" ? b.bookingProfileUrl.trim() : "";
+  if (!website && !bookingProfile) { res.status(400).json({ error: "invalid_website_or_booking" }); return; }
+  if (typeof b.contactPhone !== "string" || !b.contactPhone.trim()) { res.status(400).json({ error: "invalid_phone" }); return; }
+  if (typeof b.contactEmail !== "string" || !EMAIL_RE.test(b.contactEmail.trim())) { res.status(400).json({ error: "invalid_email" }); return; }
+  const cuiClean = typeof b.companyCui === "string" ? b.companyCui.trim().replace(/^RO/i, "") : "";
+  if (!/^\d{2,10}$/.test(cuiClean)) { res.status(400).json({ error: "invalid_cui" }); return; }
+  if (typeof b.companyName !== "string" || !b.companyName.trim()) { res.status(400).json({ error: "invalid_company_name" }); return; }
+  if (typeof b.companyVatPayer !== "boolean") { res.status(400).json({ error: "invalid_vat_payer" }); return; }
+  if (typeof b.companyRegCom !== "string" || !b.companyRegCom.trim()) { res.status(400).json({ error: "invalid_reg_com" }); return; }
+  if (typeof b.companyAddress !== "string" || !b.companyAddress.trim()) { res.status(400).json({ error: "invalid_company_address" }); return; }
+  if (typeof b.companyIban !== "string" || !b.companyIban.trim()) { res.status(400).json({ error: "invalid_iban" }); return; }
+  if (typeof b.companyBank !== "string" || !b.companyBank.trim()) { res.status(400).json({ error: "invalid_bank" }); return; }
+  if (typeof b.billingEmail !== "string" || !EMAIL_RE.test(b.billingEmail.trim())) { res.status(400).json({ error: "invalid_billing_email" }); return; }
+
   const safeAmenities = Array.isArray(b.amenities) ? b.amenities.filter((a) => ACCOMMODATION_AMENITIES[a]) : [];
+  const safeOtherAmenities = typeof b.otherAmenitiesText === "string" && b.otherAmenitiesText.trim() ? b.otherAmenitiesText.trim().slice(0, 255) : null;
   const slugBase = (b.name + "-" + b.city).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const slug = `${slugBase}-${crypto.randomBytes(3).toString("hex")}`;
+
+  // Multe coloane (date despre cazare + social + fiscal) — construim query-ul
+  // dinamic dintr-un obiect, ca să nu numărăm manual zeci de $N și să riscăm
+  // să le decalăm greșit.
+  const fields = {
+    name: b.name.trim(), type: b.type, other_type: b.otherType ? b.otherType.trim() : null,
+    city: b.city.trim(), country_code: b.countryCode, address: b.address.trim(),
+    rooms_count: roomsCount, max_capacity: maxCapacity, price_from: priceFrom,
+    price_currency: b.priceCurrency === "EUR" ? "EUR" : "RON",
+    amenities: JSON.stringify(safeAmenities), photos: JSON.stringify(b.photos),
+    other_amenities_text: safeOtherAmenities,
+    checkin_time: b.checkinTime.trim(), checkout_time: b.checkoutTime.trim(),
+    cancellation_policy: b.cancellationPolicy.trim(),
+    website_url: website || null, booking_profile_url: bookingProfile || null,
+    facebook_url: (typeof b.facebookUrl === "string" ? b.facebookUrl.trim() : "") || null,
+    instagram_url: (typeof b.instagramUrl === "string" ? b.instagramUrl.trim() : "") || null,
+    tiktok_url: (typeof b.tiktokUrl === "string" ? b.tiktokUrl.trim() : "") || null,
+    contact_phone: b.contactPhone.trim(), contact_email: b.contactEmail.trim(),
+    company_cui: cuiClean, company_name: b.companyName.trim(), company_vat_payer: b.companyVatPayer,
+    company_reg_com: b.companyRegCom.trim(), company_address: b.companyAddress.trim(),
+    company_iban: b.companyIban.trim(), company_bank: b.companyBank.trim(),
+    billing_email: b.billingEmail.trim(),
+  };
+
   try {
     if (b.id) {
+      const cols = Object.keys(fields);
+      const setClause = cols.map((c, i) => `${c}=$${i + 1}`).join(", ");
+      const values = cols.map((c) => fields[c]);
+      values.push(b.id, req.accommodationOwner.ownerId);
       const { rows } = await dbPool.query(
-        `UPDATE accommodation_listings SET name=$1, type=$2, other_type=$3, city=$4, country_code=$5, address=$6,
-           rooms_count=$7, max_capacity=$8, price_from=$9, price_currency=$10, amenities=$11, photos=$12,
-           checkin_checkout=$13, cancellation_policy=$14, website_url=$15, booking_profile_url=$16, social_url=$17,
-           cui=$18, contact_phone=$19, contact_email=$20, status='pending', actualizat_la=now()
-         WHERE id=$21 AND owner_id=$22 RETURNING id`,
-        [b.name.trim(), b.type, b.otherType || null, b.city.trim(), b.countryCode, b.address || null,
-          roomsCount, maxCapacity, priceFrom, b.priceCurrency === "EUR" ? "EUR" : "RON", JSON.stringify(safeAmenities), JSON.stringify(b.photos),
-          b.checkinCheckout || null, b.cancellationPolicy || null, b.websiteUrl || null, b.bookingProfileUrl || null, b.socialUrl || null,
-          b.cui || null, b.contactPhone || null, b.contactEmail || null, b.id, req.accommodationOwner.ownerId]
+        `UPDATE accommodation_listings SET ${setClause}, status='pending', actualizat_la=now()
+         WHERE id=$${cols.length + 1} AND owner_id=$${cols.length + 2} RETURNING id`,
+        values
       );
       if (!rows.length) { res.status(404).json({ error: "not_found" }); return; }
     } else {
-      await dbPool.query(
-        `INSERT INTO accommodation_listings (owner_id, slug, name, type, other_type, city, country_code, address,
-           rooms_count, max_capacity, price_from, price_currency, amenities, photos, checkin_checkout,
-           cancellation_policy, website_url, booking_profile_url, social_url, cui, contact_phone, contact_email)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
-        [req.accommodationOwner.ownerId, slug, b.name.trim(), b.type, b.otherType || null, b.city.trim(), b.countryCode, b.address || null,
-          roomsCount, maxCapacity, priceFrom, b.priceCurrency === "EUR" ? "EUR" : "RON", JSON.stringify(safeAmenities), JSON.stringify(b.photos),
-          b.checkinCheckout || null, b.cancellationPolicy || null, b.websiteUrl || null, b.bookingProfileUrl || null, b.socialUrl || null,
-          b.cui || null, b.contactPhone || null, b.contactEmail || null]
-      );
+      fields.owner_id = req.accommodationOwner.ownerId;
+      fields.slug = slug;
+      const cols = Object.keys(fields);
+      const placeholders = cols.map((_, i) => `$${i + 1}`).join(", ");
+      const values = cols.map((c) => fields[c]);
+      await dbPool.query(`INSERT INTO accommodation_listings (${cols.join(", ")}) VALUES (${placeholders})`, values);
     }
     res.status(200).json({ ok: true });
   } catch (err) {
@@ -12283,13 +12477,24 @@ app.get("/admin/cazari", async (req, res) => {
           <span class="admin-submission-type">${escapeHtml(r.type === "altceva" && r.other_type ? "📍 " + r.other_type : (ACCOMMODATION_TYPE_LABELS[r.type] || r.type))}</span>
         </div>
         <div class="admin-submission-name">${escapeHtml(r.name)}</div>
-        <div class="admin-submission-meta">${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} · ${r.max_capacity} pers. · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</div>
-        <div class="admin-submission-meta">Proprietar: ${escapeHtml(r.owner_email)} · Tel: ${escapeHtml(r.contact_phone || "—")} · Email: ${escapeHtml(r.contact_email || "—")}</div>
-        ${amenities.length ? `<div class="admin-submission-meta">${amenities.map((a) => escapeHtml(ACCOMMODATION_AMENITIES[a] || a)).join(" · ")}</div>` : ""}
+        <div class="admin-submission-meta">${escapeHtml(r.address || "")}, ${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} · ${r.max_capacity} pers. · ${r.rooms_count || "?"} camere · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</div>
+        <div class="admin-submission-meta">Check-in ${escapeHtml(r.checkin_time || "—")} · Check-out ${escapeHtml(r.checkout_time || "—")}</div>
+        <div class="admin-submission-meta">Proprietar cont: ${escapeHtml(r.owner_email)} · Tel: ${escapeHtml(r.contact_phone || "—")} · Email: ${escapeHtml(r.contact_email || "—")}</div>
+        ${amenities.length || r.other_amenities_text ? `<div class="admin-submission-meta">${[...amenities.map((a) => ACCOMMODATION_AMENITIES[a] || a), r.other_amenities_text].filter(Boolean).map(escapeHtml).join(" · ")}</div>` : ""}
         ${photos.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">${photos.map((p) => `<img src="${escapeHtml(p)}" style="width:70px;height:70px;object-fit:cover;border-radius:6px">`).join("")}</div>` : ""}
         ${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener">🌐 Website</a><br>` : ""}
         ${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener">🔗 Profil existent</a><br>` : ""}
-        ${r.social_url ? `<a href="${escapeHtml(r.social_url)}" target="_blank" rel="noopener">📱 Social</a>` : ""}
+        ${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener">📘 Facebook</a> ` : ""}
+        ${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener">📷 Instagram</a> ` : ""}
+        ${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener">🎵 TikTok</a>` : ""}
+        <div class="admin-submission-meta" style="margin-top:8px;border-top:1px solid #333;padding-top:8px">
+          <strong>Date fiscale (verificare):</strong><br>
+          ${escapeHtml(r.company_name || "—")} · CUI ${escapeHtml(r.company_vat_payer ? "RO" : "")}${escapeHtml(r.company_cui || "—")} (${r.company_vat_payer ? "plătitor TVA" : "neplătitor TVA"})<br>
+          Reg. Com.: ${escapeHtml(r.company_reg_com || "—")}<br>
+          Sediu: ${escapeHtml(r.company_address || "—")}<br>
+          IBAN: ${escapeHtml(r.company_iban || "—")} · ${escapeHtml(r.company_bank || "—")}<br>
+          Facturare: ${escapeHtml(r.billing_email || "—")}
+        </div>
         <div class="admin-submission-actions">
           <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
           <button type="button" class="admin-reject-btn" data-id="${r.id}">✕ Respinge</button>
@@ -12424,15 +12629,17 @@ ${photos.map((p) => `<img src="${escapeHtml(p)}" style="width:100%;height:120px;
 <div class="trip-toolkit-card">
   <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
   <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
-  ${amenities.length ? `<p><strong>Facilități:</strong> ${amenities.map((a) => escapeHtml(ACCOMMODATION_AMENITIES[a] || a)).join(" · ")}</p>` : ""}
-  ${r.checkin_checkout ? `<p><strong>Check-in/check-out:</strong> ${escapeHtml(r.checkin_checkout)}</p>` : ""}
+  ${amenities.length || r.other_amenities_text ? `<p><strong>Facilități:</strong> ${[...amenities.map((a) => ACCOMMODATION_AMENITIES[a] || a), r.other_amenities_text].filter(Boolean).map(escapeHtml).join(" · ")}</p>` : ""}
+  ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
   ${r.cancellation_policy ? `<p><strong>Politică de anulare:</strong> ${escapeHtml(r.cancellation_policy)}</p>` : ""}
 </div>
 <h2 class="section-title"><span class="bar"></span>Contact</h2>
 <p>${r.contact_phone ? `📞 ${escapeHtml(r.contact_phone)}<br>` : ""}${r.contact_email ? `✉️ ${escapeHtml(r.contact_email)}<br>` : ""}</p>
 ${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🌐 Website</span></a>` : ""}
 ${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🔗 Profil existent</span></a>` : ""}
-${r.social_url ? `<a href="${escapeHtml(r.social_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">📱 Social</span></a>` : ""}
+${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">📘 Facebook</span></a>` : ""}
+${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">📷 Instagram</span></a>` : ""}
+${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🎵 TikTok</span></a>` : ""}
 </main></body></html>`);
   } catch (err) {
     res.status(500).send("Eroare: " + escapeHtml(err.message));
