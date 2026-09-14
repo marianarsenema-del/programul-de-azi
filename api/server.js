@@ -10254,6 +10254,25 @@ function getClientIp(req) {
   if (forwarded) return forwarded.split(",")[0].trim();
   return (req.socket && req.socket.remoteAddress) || "unknown";
 }
+// Hash de parolă — scrypt, direct din `crypto` (Node), fără nicio
+// dependență nouă. Sare aleatoare per parolă, comparație în timp constant
+// la verificare, exact pattern-ul recomandat oficial de documentația Node.
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
+function verifyPassword(password, stored) {
+  if (typeof stored !== "string" || !stored.includes(":")) return false;
+  const [salt, hash] = stored.split(":");
+  try {
+    const hashBuf = Buffer.from(hash, "hex");
+    const suppliedBuf = crypto.scryptSync(password, salt, 64);
+    return hashBuf.length === suppliedBuf.length && crypto.timingSafeEqual(hashBuf, suppliedBuf);
+  } catch (e) {
+    return false;
+  }
+}
 
 // Limitare de cereri — DB-based, nu în memorie (Vercel pornește instanțe noi
 // des, un limitator doar în memorie s-ar reseta constant, fără efect real).
@@ -10355,10 +10374,10 @@ async function sendAccommodationLoginEmail(email, link) {
       method: "POST",
       headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Programul de Azi <cazare@programul-de-azi.ro>",
+        from: "Opening Hours Today <cazare@programul-de-azi.ro>",
         to: [email],
-        subject: "Linkul tău de conectare — Programul de Azi",
-        html: `<p>Apasă pe linkul de mai jos ca să te conectezi la contul tău de cazare. Linkul e valabil 15 minute și poate fi folosit o singură dată.</p><p><a href="${link}">${link}</a></p><p>Dacă nu ai cerut tu acest link, poți ignora acest email — nimeni nu poate intra în cont fără să dea click pe el.</p>`,
+        subject: "Linkul tău de conectare — Opening Hours Today",
+        html: `<p>Apasă pe linkul de mai jos ca să te conectezi la contul tău de cazare. Linkul e valabil 60 de minute și poate fi folosit o singură dată.</p><p><a href="${link}">${link}</a></p><p>Dacă nu ai cerut tu acest link, poți ignora acest email — nimeni nu poate intra în cont fără să dea click pe el.</p>`,
       }),
     });
     return resp.ok;
@@ -10381,18 +10400,18 @@ async function sendAccommodationApprovalEmail(email, listingName, listingUrl, lo
       method: "POST",
       headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Programul de Azi <cazare@programul-de-azi.ro>",
+        from: "Opening Hours Today <cazare@programul-de-azi.ro>",
         to: [email],
-        subject: `Felicitări! ${listingName} este acum live pe Programul de Azi 🎉`,
+        subject: `Felicitări! ${listingName} este acum live pe Opening Hours Today 🎉`,
         html: `
 <p>Bună,</p>
-<p>Vești bune — <strong>${listingName}</strong> a fost verificată și publicată pe Programul de Azi. De acum, oricine caută o cazare te poate găsi și te poate contacta direct, fără niciun intermediar:</p>
+<p>Vești bune — <strong>${listingName}</strong> a fost verificată și publicată pe Opening Hours Today. De acum, oricine caută o cazare te poate găsi și te poate contacta direct, fără niciun intermediar:</p>
 <p><a href="${listingUrl}">${listingUrl}</a></p>
 <h3 style="margin-top:24px">Ce urmează</h3>
 <p>Poți reveni oricând în contul tău ca să actualizezi poze, prețul sau facilitățile, sau ca să activezi opțiunea <strong>Featured</strong>, ca să apari primul în listă. Te conectezi simplu, fără parolă — introduci adresa de email cu care te-ai înregistrat, aici:</p>
 <p><a href="${loginUrl}">${loginUrl}</a></p>
-<p>Primești pe loc un link de conectare, valabil 15 minute.</p>
-<p style="margin-top:24px">Mulțumim că faci parte din Programul de Azi.<br>Echipa Programul de Azi</p>`,
+<p>Primești pe loc un link de conectare, valabil 60 de minute.</p>
+<p style="margin-top:24px">Mulțumim că faci parte din Opening Hours Today.<br>Echipa Opening Hours Today</p>`,
       }),
     });
     return resp.ok;
@@ -10440,9 +10459,79 @@ function requireAccommodationOwnerApi(req, res, next) {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Pasul 1 — proprietarul introduce emailul, primește link de conectare
+// Înregistrare clasică, cu parolă — cont creat direct, sesiune activă pe
+// loc, fără așteptare de email. Emailul cu link rămâne doar pentru
+// recuperare ("am uitat parola"), nu ca prim pas obligatoriu.
+app.post("/api/cazare/inregistreaza", accommodationGate, async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { email, password, firstName, lastName, phone } = req.body || {};
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 255) {
+    res.status(400).json({ error: "invalid_email" });
+    return;
+  }
+  if (typeof password !== "string" || password.length < 8 || password.length > 200) {
+    res.status(400).json({ error: "invalid_password" });
+    return;
+  }
+  const safeEmail = email.trim().toLowerCase();
+  const safeFirstName = typeof firstName === "string" ? firstName.trim().slice(0, 100) || null : null;
+  const safeLastName = typeof lastName === "string" ? lastName.trim().slice(0, 100) || null : null;
+  const safePhone = typeof phone === "string" ? phone.trim().slice(0, 30) || null : null;
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "cazare-inregistreaza", 8, 60);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  try {
+    const existing = await dbPool.query(`SELECT id, password_hash FROM accommodation_owners WHERE email = $1`, [safeEmail]);
+    if (existing.rows.length && existing.rows[0].password_hash) {
+      // deja există cont CU parolă pe acest email — nu suprascriem silențios
+      res.status(409).json({ error: "account_exists" });
+      return;
+    }
+    const passwordHash = hashPassword(password);
+    const ownerRes = await dbPool.query(
+      `INSERT INTO accommodation_owners (email, password_hash, first_name, last_name, phone) VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (email) DO UPDATE SET
+         password_hash = EXCLUDED.password_hash,
+         first_name = COALESCE(EXCLUDED.first_name, accommodation_owners.first_name),
+         last_name = COALESCE(EXCLUDED.last_name, accommodation_owners.last_name),
+         phone = COALESCE(EXCLUDED.phone, accommodation_owners.phone)
+       RETURNING id`,
+      [safeEmail, passwordHash, safeFirstName, safeLastName, safePhone]
+    );
+    setAccommodationOwnerSession(res, ownerRes.rows[0].id, safeEmail);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("cazare-inregistreaza a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+app.post("/api/cazare/login-parola", accommodationGate, async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { email, password } = req.body || {};
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) { res.status(400).json({ error: "invalid_email" }); return; }
+  if (typeof password !== "string" || !password) { res.status(400).json({ error: "invalid_password" }); return; }
+  const safeEmail = email.trim().toLowerCase();
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "cazare-login-parola", 10, 15);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  try {
+    const { rows } = await dbPool.query(`SELECT id, password_hash FROM accommodation_owners WHERE email = $1`, [safeEmail]);
+    if (!rows.length || !rows[0].password_hash || !verifyPassword(password, rows[0].password_hash)) {
+      res.status(401).json({ error: "invalid_credentials" });
+      return;
+    }
+    setAccommodationOwnerSession(res, rows[0].id, safeEmail);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("cazare-login-parola a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.post("/api/cazare/cere-login", accommodationGate, async (req, res) => {
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
-  const { email, firstName, lastName, phone } = req.body || {};
+  const { email, firstName, lastName, phone, mode } = req.body || {};
   if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 255) {
     res.status(400).json({ error: "invalid_email" });
     return;
@@ -10458,6 +10547,15 @@ app.post("/api/cazare/cere-login", accommodationGate, async (req, res) => {
   const rateOk = await checkRateLimit(ipHash, "cazare-cere-login", 5, 60);
   if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
   try {
+    // mode:"login" = pagina de Autentificare (utilizatori întorși) — aici,
+    // spre deosebire de restul fluxului, chiar confirmăm dacă există cont,
+    // ca să dăm un mesaj clar ("nu ai cont", nu "ceva n-a mers"). E un
+    // compromis deliberat: pierdem protecția anti-enumerare doar aici,
+    // unde beneficiul de claritate contează mai mult decât la înregistrare.
+    if (mode === "login") {
+      const ownerCheck = await dbPool.query(`SELECT id FROM accommodation_owners WHERE email = $1`, [safeEmail]);
+      if (!ownerCheck.rows.length) { res.status(404).json({ error: "no_account" }); return; }
+    }
     const { rows } = await dbPool.query(
       `SELECT COUNT(*)::int AS cnt FROM accommodation_login_tokens WHERE owner_email = $1 AND creat_la > now() - interval '1 hour'`,
       [safeEmail]
@@ -10466,14 +10564,15 @@ app.post("/api/cazare/cere-login", accommodationGate, async (req, res) => {
     const rawToken = crypto.randomBytes(32).toString("hex");
     const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
     await dbPool.query(
-      `INSERT INTO accommodation_login_tokens (owner_email, token_hash, expira_la, first_name, last_name, phone) VALUES ($1, $2, now() + interval '15 minutes', $3, $4, $5)`,
+      `INSERT INTO accommodation_login_tokens (owner_email, token_hash, expira_la, first_name, last_name, phone) VALUES ($1, $2, now() + interval '60 minutes', $3, $4, $5)`,
       [safeEmail, tokenHash, safeFirstName, safeLastName, safePhone]
     );
     const link = `${baseUrlFor(req)}/cazare/login/confirma?token=${rawToken}`;
     await sendAccommodationLoginEmail(safeEmail, link);
-    // răspuns identic indiferent dacă emailul există deja sau nu — nu
-    // confirmăm/infirmăm existența unui cont, ca să nu putem fi folosiți
-    // pentru enumerarea adreselor de email înregistrate
+    // pentru fluxul de înregistrare (mode !== "login"), răspunsul rămâne
+    // identic indiferent dacă emailul există deja sau nu — nu confirmăm/
+    // infirmăm existența unui cont, ca să nu putem fi folosiți pentru
+    // enumerarea adreselor de email înregistrate
     res.status(200).json({ ok: true });
   } catch (err) {
     console.error("cazare-cere-login a eșuat:", err.message);
@@ -10491,7 +10590,7 @@ app.get("/cazare/login/confirma", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Confirmă conectarea — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
+<title>Confirmă conectarea — Opening Hours Today</title><link rel="stylesheet" href="/style.css"></head>
 <body><main class="wrap" style="max-width:420px;text-align:center;padding-top:60px">
 <h1 class="page-h1">Confirmă conectarea</h1>
 <p class="intro-text">Apasă butonul de mai jos ca să te conectezi la contul tău de cazare.</p>
@@ -10507,7 +10606,7 @@ app.get("/cazare/login/confirma", accommodationGate, (req, res) => {
     fetch("/api/cazare/confirma-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: ${JSON.stringify(token)} }) })
       .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
       .then(function(res){
-        if (res.ok) { window.location.href = "/cont"; }
+        if (res.ok) { window.location.href = res.data.isNewSignup ? "/cont/alege-tip" : "/cont"; }
         else { msg.textContent = "Linkul nu mai e valabil — cere unul nou."; msg.hidden = false; btn.disabled = false; }
       })
       .catch(function(){ msg.textContent = "Ceva n-a mers. Încearcă din nou."; msg.hidden = false; btn.disabled = false; });
@@ -10545,7 +10644,10 @@ app.post("/api/cazare/confirma-login", accommodationGate, async (req, res) => {
     );
     const ownerId = ownerRes.rows[0].id;
     setAccommodationOwnerSession(res, ownerId, email);
-    res.status(200).json({ ok: true });
+    // dacă tokenul avea prenume atașat, înseamnă că vine din înregistrare
+    // nouă (pagina "Detalii de contact") — clientul folosește asta ca să
+    // continue direct în fluxul de listare, nu la un dashboard gol
+    res.status(200).json({ ok: true, isNewSignup: !!firstName });
   } catch (err) {
     console.error("confirma-login a eșuat:", err.message);
     res.status(500).json({ error: "server_error" });
@@ -10557,7 +10659,7 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Listează-ți cazarea — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<title>Listează-ți cazarea — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
 <style>
 .acc-login-header{display:flex;justify-content:space-between;align-items:center;padding:20px 0;flex-wrap:wrap;gap:10px;}
 .acc-login-header-right{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text);}
@@ -10584,28 +10686,28 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
 <body><main class="wrap" style="max-width:960px">
 
 <div class="acc-login-header">
-  <a class="brand" href="/">Programul<span>DeAzi</span></a>
+  <a class="brand" href="/">Opening<span>HoursToday</span></a>
   <div class="acc-login-header-right">
     <span>Sunteți deja înscris?</span>
     <a href="/cazare/creeaza-cont" class="acc-outline-btn">Autentificați-vă</a>
   </div>
 </div>
 
-<div class="acc-social-badge">🏡 Alăturați-vă celorlalte cazări deja listate pe Programul de Azi</div>
+<div class="acc-social-badge">🏡 Alăturați-vă celorlalte cazări deja listate pe Opening Hours Today</div>
 
 <div class="acc-hero">
   <div>
+    <h1 class="acc-hero-title">
+      Înregistrați-vă<br>
+      <span class="acc-brand-line">pe Opening<span>HoursToday</span></span>
+    </h1>
     <div class="acc-type-pills" id="accTypePills">
       <button type="button" class="acc-type-pill is-active" data-line="Pensiunea ta">Pensiune</button>
       <button type="button" class="acc-type-pill" data-line="Cabana ta">Cabană</button>
       <button type="button" class="acc-type-pill" data-line="Apartamentul tău">Apartament</button>
       <button type="button" class="acc-type-pill" data-line="Campingul tău">Camping</button>
     </div>
-    <h1 class="acc-hero-title">
-      Înregistrați-vă<br>
-      <span class="acc-brand-line">pe Programul<span>DeAzi</span></span><br>
-      <span class="acc-dynamic-line" id="accDynamicLine">Pensiunea ta</span>
-    </h1>
+    <p class="acc-hero-title"><span class="acc-dynamic-line" id="accDynamicLine">Pensiunea ta</span></p>
     <p class="acc-hero-sub">Listați pensiuni, cabane, apartamente sau campinguri pe un site cu vizitatori reali, ca să primiți solicitări de cazare mult mai rapid, direct de la turiști.</p>
   </div>
 
@@ -10626,13 +10728,33 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
 (function(){
   var pills = document.querySelectorAll(".acc-type-pill");
   var dynLine = document.getElementById("accDynamicLine");
-  pills.forEach(function(p){
+  var idx = 0;
+  var timer = null;
+
+  function activate(i){
+    idx = i;
+    pills.forEach(function(x){ x.classList.remove("is-active"); });
+    pills[idx].classList.add("is-active");
+    dynLine.textContent = pills[idx].getAttribute("data-line");
+  }
+  function startAuto(){
+    timer = setInterval(function(){
+      activate((idx + 1) % pills.length);
+    }, 2500);
+  }
+  function restartAuto(){
+    if (timer) clearInterval(timer);
+    startAuto();
+  }
+
+  pills.forEach(function(p, i){
     p.addEventListener("click", function(){
-      pills.forEach(function(x){ x.classList.remove("is-active"); });
-      p.classList.add("is-active");
-      dynLine.textContent = p.getAttribute("data-line");
+      activate(i);
+      restartAuto();
     });
   });
+
+  startAuto();
 })();
 </script>
 </body></html>`);
@@ -10681,7 +10803,7 @@ function accWhiteLegalHtml() {
   return `<div class="acc-white-legal">
     Prin autentificare sau prin crearea unui cont, sunteți de acord cu <a href="/termeni-conditii">Termenii și Condițiile noastre</a> și cu <a href="/confidentialitate">Declarația de confidențialitate</a>.<br>
     Toate drepturile rezervate.<br>
-    Copyright Programul de Azi™
+    Copyright Opening Hours Today™
   </div>`;
 }
 
@@ -10690,11 +10812,11 @@ app.get("/cazare/creeaza-cont", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Creați cont — Programul de Azi</title>
+<title>Creați cont — Opening Hours Today</title>
 <style>${accWhitePageStyles()}</style></head>
 <body>
 <div class="acc-white-wrap">
-  <h1 class="acc-white-h1">Creați cont pe Programul de Azi</h1>
+  <h1 class="acc-white-h1">Creați cont pe Opening Hours Today</h1>
   <p class="acc-white-sub">Creați un cont pentru a vă înscrie pe site și a putea administra proprietatea.</p>
 
   <form id="emailForm">
@@ -10728,12 +10850,12 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Detalii de contact — Programul de Azi</title>
+<title>Detalii de contact — Opening Hours Today</title>
 <style>${accWhitePageStyles()}</style></head>
 <body>
 <div class="acc-white-wrap">
   <h1 class="acc-white-h1">Detalii de contact</h1>
-  <p class="acc-white-sub">Numele complet și numărul de telefon sunt necesare pentru a asigura securitatea contului dumneavoastră pe Programul de Azi.</p>
+  <p class="acc-white-sub">Numele complet și numărul de telefon sunt necesare pentru a asigura securitatea contului dumneavoastră pe Opening Hours Today.</p>
 
   <form id="detailsForm">
     <div class="acc-white-field">
@@ -10753,10 +10875,16 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
           <input type="tel" id="phone" placeholder="744534096" required>
         </div>
       </div>
-      <p class="acc-white-helper">Când vă veți conecta, vom trimite prin e-mail un link pentru conectare.</p>
+    </div>
+    <div class="acc-white-field">
+      <label class="acc-white-label" for="password">Parolă</label>
+      <input type="password" id="password" class="acc-white-input" minlength="8" placeholder="minim 8 caractere" required>
+    </div>
+    <div class="acc-white-field">
+      <label class="acc-white-label" for="password2">Confirmă parola</label>
+      <input type="password" id="password2" class="acc-white-input" minlength="8" required>
     </div>
     <button type="submit" id="detailsBtn" class="acc-white-cta">Înainte</button>
-    <p id="detailsMsg" class="acc-white-msg" hidden></p>
     <p id="detailsErr" class="acc-white-err" hidden></p>
   </form>
 
@@ -10768,31 +10896,38 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
   if (!email) { window.location.href = "/cazare/creeaza-cont"; return; }
   var form = document.getElementById("detailsForm");
   var btn = document.getElementById("detailsBtn");
-  var msg = document.getElementById("detailsMsg");
   var err = document.getElementById("detailsErr");
+  var ERROR_MESSAGES = {
+    invalid_password: "Parola trebuie să aibă minim 8 caractere.",
+    account_exists: "Există deja un cont cu acest email — încearcă să te autentifici.",
+    too_many_requests: "Prea multe încercări recente — mai așteaptă puțin.",
+  };
   form.addEventListener("submit", function(e){
     e.preventDefault();
     err.hidden = true;
+    var pass = document.getElementById("password").value;
+    var pass2 = document.getElementById("password2").value;
+    if (pass !== pass2) { err.textContent = "Parolele nu coincid."; err.hidden = false; return; }
+    if (pass.length < 8) { err.textContent = "Parola trebuie să aibă minim 8 caractere."; err.hidden = false; return; }
     btn.disabled = true;
-    fetch("/api/cazare/cere-login", {
+    fetch("/api/cazare/inregistreaza", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: email,
+        password: pass,
         firstName: document.getElementById("firstName").value,
         lastName: document.getElementById("lastName").value,
         phone: "+40" + document.getElementById("phone").value,
       }),
     })
-      .then(function(r){ return r.ok; })
-      .then(function(ok){
-        if (ok) {
-          form.querySelectorAll("input, button").forEach(function(el){ el.disabled = true; });
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        if (res.ok) {
           sessionStorage.removeItem("accRegEmail");
-          msg.textContent = "✓ Ți-am trimis un link de conectare pe " + email + " — deschide-l ca să-ți activezi contul.";
-          msg.hidden = false;
+          window.location.href = "/cont/alege-tip";
         } else {
-          err.textContent = "Ceva n-a mers. Încercați din nou.";
+          err.textContent = ERROR_MESSAGES[res.data.error] || "Ceva n-a mers. Încercați din nou.";
           err.hidden = false;
           btn.disabled = false;
         }
@@ -10809,21 +10944,26 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Autentificare — Programul de Azi</title>
+<title>Autentificare — Opening Hours Today</title>
 <style>${accWhitePageStyles()}</style></head>
 <body>
 <div class="acc-white-wrap">
-  <h1 class="acc-white-h1">Autentificați-vă!</h1>
+  <h1 class="acc-white-h1" id="pageTitle">Autentificați-vă!</h1>
 
   <form id="loginForm">
     <label class="acc-white-label" for="loginEmail">E-mail</label>
     <input type="email" id="loginEmail" class="acc-white-input is-inactive" placeholder="tu@exemplu.ro" required>
-    <button type="submit" id="loginBtn" class="acc-white-cta">Pasul următor</button>
+    <div id="passwordField">
+      <label class="acc-white-label" for="loginPassword">Parolă</label>
+      <input type="password" id="loginPassword" class="acc-white-input is-inactive">
+    </div>
+    <button type="submit" id="loginBtn" class="acc-white-cta">Autentificare</button>
     <p id="loginMsg" class="acc-white-msg" hidden></p>
     <p id="loginErr" class="acc-white-err" hidden></p>
+    <a href="/cazare/creeaza-cont" id="registerNowBtn" class="acc-white-outline" hidden>Înscrie-te acum</a>
   </form>
 
-  <a href="/cazare/asistenta" class="acc-white-textlink">Nu reușiți să vă autentificați în cont?</a>
+  <a href="#" class="acc-white-textlink" id="forgotLink">Ai uitat parola?</a>
 
   <hr class="acc-white-divider">
 
@@ -10837,16 +10977,230 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
   var btn = document.getElementById("loginBtn");
   var msg = document.getElementById("loginMsg");
   var err = document.getElementById("loginErr");
+  var registerBtn = document.getElementById("registerNowBtn");
+  var forgotLink = document.getElementById("forgotLink");
+  var passwordField = document.getElementById("passwordField");
+  var passwordInput = document.getElementById("loginPassword");
+  var title = document.getElementById("pageTitle");
+  var isForgotMode = false;
+
+  var LOGIN_ERRORS = {
+    invalid_credentials: "Email sau parolă greșită.",
+    too_many_requests: "Prea multe încercări — mai așteaptă puțin.",
+  };
+  var FORGOT_ERRORS = {
+    no_account: "Nu am găsit niciun cont cu acest email.",
+    too_many_requests: "Ai cerut prea multe linkuri recent — mai încearcă peste puțin timp.",
+  };
+
+  forgotLink.addEventListener("click", function(e){
+    e.preventDefault();
+    isForgotMode = !isForgotMode;
+    err.hidden = true; msg.hidden = true; registerBtn.hidden = true;
+    if (isForgotMode) {
+      title.textContent = "Recuperează accesul la cont";
+      passwordField.style.display = "none";
+      passwordInput.required = false;
+      btn.textContent = "Trimite link de conectare";
+      forgotLink.textContent = "Înapoi la autentificare";
+    } else {
+      title.textContent = "Autentificați-vă!";
+      passwordField.style.display = "block";
+      passwordInput.required = true;
+      btn.textContent = "Autentificare";
+      forgotLink.textContent = "Ai uitat parola?";
+    }
+  });
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    err.hidden = true;
+    registerBtn.hidden = true;
+    btn.disabled = true;
+    var email = document.getElementById("loginEmail").value;
+
+    if (isForgotMode) {
+      fetch("/api/cazare/cere-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, mode: "login" }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+        .then(function(res){
+          if (res.ok) {
+            form.querySelectorAll("input, button").forEach(function(el){ el.disabled = true; });
+            msg.textContent = "✓ Ți-am trimis un email cu linkul de conectare, valabil 60 de minute.";
+            msg.hidden = false;
+          } else {
+            err.textContent = FORGOT_ERRORS[res.data.error] || "Ceva n-a mers. Încercați din nou.";
+            err.hidden = false; btn.disabled = false;
+            if (res.data.error === "no_account") { registerBtn.hidden = false; }
+          }
+        })
+        .catch(function(){ err.textContent = "Ceva n-a mers. Încercați din nou."; err.hidden = false; btn.disabled = false; });
+      return;
+    }
+
+    fetch("/api/cazare/login-parola", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: passwordInput.value }) })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        if (res.ok) { window.location.href = "/cont"; }
+        else {
+          err.textContent = LOGIN_ERRORS[res.data.error] || "Ceva n-a mers. Încercați din nou.";
+          err.hidden = false;
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){ err.textContent = "Ceva n-a mers. Încercați din nou."; err.hidden = false; btn.disabled = false; });
+  });
+})();
+</script>
+</body></html>`);
+});
+
+app.get("/cazare/asistenta", accommodationGate, (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
+<title>Nu reușiți să vă autentificați? — Opening Hours Today</title>
+<style>${accWhitePageStyles()}
+.acc-help-wrap{max-width:480px;margin:0 auto;padding:50px 24px 30px;text-align:left;}
+.acc-help-h1{font-size:26px;font-weight:800;color:#111;margin:0 0 8px;}
+.acc-help-sub{font-size:15px;color:#555;margin:0 0 30px;}
+.acc-help-list{border-top:1.5px solid #F0813A;}
+.acc-help-row{display:flex;align-items:center;gap:14px;padding:18px 4px;border-bottom:1.5px solid #F0813A;text-decoration:none;cursor:pointer;background:none;border-left:none;border-right:none;width:100%;text-align:left;font:inherit;}
+.acc-help-row-icon{font-size:22px;flex:0 0 auto;}
+.acc-help-row-text{flex:1;font-weight:600;font-size:15px;color:#222;}
+.acc-help-row-text.is-link{color:#1a73e8;}
+.acc-help-row-arrow{color:#F0813A;font-weight:900;font-size:18px;flex:0 0 auto;}
+</style></head>
+<body>
+<div class="acc-help-wrap">
+  <h1 class="acc-help-h1">Nu reușiți să vă autentificați?</h1>
+  <p class="acc-help-sub">Nicio problemă, mai jos sunt trei opțiuni care vă pot ajuta.</p>
+
+  <div class="acc-help-list">
+    <a href="/cazare/reseteaza-parola" class="acc-help-row">
+      <span class="acc-help-row-icon">🔒</span>
+      <span class="acc-help-row-text">Ați uitat parola?</span>
+      <span class="acc-help-row-arrow">›</span>
+    </a>
+    <a href="/cazare/contacteaza-suport" class="acc-help-row">
+      <span class="acc-help-row-icon">🔍</span>
+      <span class="acc-help-row-text">Ați uitat numele de utilizator?</span>
+      <span class="acc-help-row-arrow">›</span>
+    </a>
+    <a href="/cazare/autentificare" class="acc-help-row">
+      <span class="acc-help-row-icon">↩️</span>
+      <span class="acc-help-row-text is-link">Mergeți la autentificare</span>
+      <span class="acc-help-row-arrow">›</span>
+    </a>
+  </div>
+
+  ${accWhiteLegalHtml()}
+</div>
+</body></html>`);
+});
+
+app.get("/cazare/reseteaza-parola", accommodationGate, (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
+<title>Resetare parolă — Opening Hours Today</title>
+<style>${accWhitePageStyles()}</style></head>
+<body>
+<div class="acc-white-wrap">
+  <h1 class="acc-white-h1">Ați uitat parola?</h1>
+  <p class="acc-white-sub">Vă rugăm să confirmați numele de utilizator, iar noi vă vom trimite un link pentru a vă reseta parola.</p>
+
+  <form id="resetForm">
+    <label class="acc-white-label" for="resetEmail">Nume de utilizator *</label>
+    <input type="email" id="resetEmail" class="acc-white-input" placeholder="Cunoscut și ca „Nume de autentificare” și „ID de autentificare”" required>
+    <button type="submit" id="resetBtn" class="acc-white-cta">Trimite link resetare</button>
+    <p id="resetMsg" class="acc-white-msg" hidden></p>
+    <p id="resetErr" class="acc-white-err" hidden></p>
+  </form>
+
+  ${accWhiteLegalHtml()}
+</div>
+<script nonce="${nonce}">
+(function(){
+  var ERRORS = { no_account: "Nu am găsit niciun cont cu acest email.", too_many_requests: "Prea multe încercări recente — mai așteaptă puțin." };
+  var form = document.getElementById("resetForm");
+  var btn = document.getElementById("resetBtn");
+  var msg = document.getElementById("resetMsg");
+  var err = document.getElementById("resetErr");
   form.addEventListener("submit", function(e){
     e.preventDefault();
     err.hidden = true;
     btn.disabled = true;
-    fetch("/api/cazare/cere-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: document.getElementById("loginEmail").value }) })
+    fetch("/api/cazare/cere-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: document.getElementById("resetEmail").value, mode: "login" }) })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        if (res.ok) {
+          form.querySelectorAll("input, button").forEach(function(el){ el.disabled = true; });
+          msg.textContent = "✓ Ți-am trimis un link de conectare pe email, valabil 60 de minute — te conectează direct, fără parolă.";
+          msg.hidden = false;
+        } else {
+          err.textContent = ERRORS[res.data.error] || "Ceva n-a mers. Încercați din nou.";
+          err.hidden = false;
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){ err.textContent = "Ceva n-a mers. Încercați din nou."; err.hidden = false; btn.disabled = false; });
+  });
+})();
+</script>
+</body></html>`);
+});
+
+app.get("/cazare/contacteaza-suport", accommodationGate, (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
+<title>Contactați echipa de suport — Opening Hours Today</title>
+<style>${accWhitePageStyles()}
+.acc-support-to{background:#f7f7f7;border:1.5px solid #ddd;border-radius:10px;padding:13px 16px;color:#555;font-size:14.5px;margin-bottom:20px;}
+</style></head>
+<body>
+<div class="acc-white-wrap">
+  <h1 class="acc-white-h1">Contactați echipa de suport</h1>
+  <p class="acc-white-sub">În cel mai scurt timp vom verifica și o să vă spunem cum vă putem ajuta să vă recuperați numele de utilizator. Vă rugăm contactați echipa locală de suport.</p>
+
+  <form id="supportForm">
+    <div class="acc-support-to">Către: contact@opening-hours-today.eu</div>
+    <label class="acc-white-label" for="supportEmail">Emailul tău</label>
+    <input type="email" id="supportEmail" class="acc-white-input" placeholder="tu@exemplu.ro" required>
+    <label class="acc-white-label" for="supportMessage">Descrieți problema</label>
+    <textarea id="supportMessage" class="acc-white-input" rows="4" maxlength="1000" required></textarea>
+    <button type="submit" id="supportBtn" class="acc-white-cta">Contactați suport</button>
+    <p id="supportMsg" class="acc-white-msg" hidden></p>
+    <p id="supportErr" class="acc-white-err" hidden></p>
+  </form>
+
+  <a href="/cazare/autentificare" class="acc-white-textlink">Înapoi la autentificare</a>
+
+  ${accWhiteLegalHtml()}
+</div>
+<script nonce="${nonce}">
+(function(){
+  var form = document.getElementById("supportForm");
+  var btn = document.getElementById("supportBtn");
+  var msg = document.getElementById("supportMsg");
+  var err = document.getElementById("supportErr");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    err.hidden = true;
+    btn.disabled = true;
+    fetch("/api/cazare/contacteaza-suport", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: document.getElementById("supportEmail").value, message: document.getElementById("supportMessage").value }),
+    })
       .then(function(r){ return r.ok; })
       .then(function(ok){
         if (ok) {
-          document.getElementById("loginEmail").disabled = true;
-          msg.textContent = "✓ Dacă adresa e validă, ai primit un email cu linkul de conectare.";
+          form.querySelectorAll("input, textarea, button").forEach(function(el){ el.disabled = true; });
+          msg.textContent = "✓ Mesajul a fost trimis. Îți răspundem cât mai curând.";
           msg.hidden = false;
         } else {
           err.textContent = "Ceva n-a mers. Încercați din nou.";
@@ -10861,7 +11215,41 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
 </body></html>`);
 });
 
-// Upload de poze — trece prin server (nu direct browser→Vercel), simplu și
+app.post("/api/cazare/contacteaza-suport", accommodationGate, async (req, res) => {
+  const { email, message } = req.body || {};
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 255) {
+    res.status(400).json({ error: "invalid_email" });
+    return;
+  }
+  if (typeof message !== "string" || !message.trim() || message.length > 1000) {
+    res.status(400).json({ error: "invalid_message" });
+    return;
+  }
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "cazare-contact-suport", 5, 60);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  if (!RESEND_API_KEY) { res.status(503).json({ error: "not_configured" }); return; }
+  try {
+    const resp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Opening Hours Today <cazare@programul-de-azi.ro>",
+        to: ["contact@opening-hours-today.eu"],
+        replyTo: email.trim(),
+        subject: `Cerere de suport — recuperare cont (${email.trim()})`,
+        html: `<p><strong>De la:</strong> ${escapeHtml(email.trim())}</p><p><strong>Mesaj:</strong></p><p>${escapeHtml(message.trim()).replace(/\n/g, "<br>")}</p>`,
+      }),
+    });
+    if (!resp.ok) { res.status(502).json({ error: "email_failed" }); return; }
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("contacteaza-suport a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+
 // testat: `put()` e funcția standard server-side a @vercel/blob, fără niciun
 // adaptor peste `req`. Limită reală: ~4MB per poză (limita de request a
 // funcțiilor Vercel) — validată și pe client, cu mesaj clar, înainte de upload.
@@ -10958,7 +11346,7 @@ async function renderAccommodationListingForm(req, res, existingListing) {
     .map((k) => `<label class="sp-closed-toggle" style="font-size:14px"><input type="checkbox" class="acc-amenity" value="${k}"${amenitiesSelected.has(k) ? " checked" : ""}>${escapeHtml(ACCOMMODATION_AMENITIES[k])}</label>`)
     .join("");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>${t.id ? "Editează" : "Adaugă"} cazare — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<title>${t.id ? "Editează" : "Adaugă"} cazare — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
 <style>
 .acc-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;margin-bottom:14px;overflow:hidden;}
 .acc-card summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;align-items:center;color:var(--text);}
@@ -11288,7 +11676,7 @@ app.get("/cont/alege-tip", accommodationGate, requireAccommodationOwner, (req, r
     { tip: "alternativ", icon: "⛺", title: "Cazări alternative", desc: "Proprietăți ca campinguri, corturi etc." },
   ];
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Alege tipul de proprietate — Programul de Azi</title>
+<title>Alege tipul de proprietate — Opening Hours Today</title>
 <style>${accWhitePageStyles()}
 .acc-type-wrap{max-width:900px;margin:0 auto;padding:50px 24px 60px;text-align:left;}
 .acc-type-h1{font-size:28px;font-weight:800;color:#111;margin:0 0 10px;line-height:1.25;}
@@ -11303,7 +11691,7 @@ app.get("/cont/alege-tip", accommodationGate, requireAccommodationOwner, (req, r
 </style></head>
 <body>
 <div class="acc-type-wrap">
-  <h1 class="acc-type-h1">Introduceți pensiunea, cabana, apartamentul sau campingul pe Programul de Azi, pentru listarea proprietății pe site</h1>
+  <h1 class="acc-type-h1">Introduceți pensiunea, cabana, apartamentul sau campingul pe Opening Hours Today, pentru listarea proprietății pe site</h1>
   <p class="acc-type-sub">Pentru a începe, alegeți tipul de proprietate.</p>
   <div class="acc-type-grid">
     ${cards.map((c) => `
@@ -11331,7 +11719,7 @@ app.get("/cont/subcategorie", accommodationGate, requireAccommodationOwner, (req
     { tip: "altceva", title: "Altele", desc: "Descrie tipul de proprietate." },
   ];
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Categoria proprietății — Programul de Azi</title>
+<title>Categoria proprietății — Opening Hours Today</title>
 <style>${accWhitePageStyles()}
 .acc-sub-wrap{max-width:720px;margin:0 auto;padding:50px 24px 30px;text-align:left;}
 .acc-sub-h1{font-size:24px;font-weight:800;color:#111;margin:0 0 30px;line-height:1.3;}
@@ -11406,7 +11794,7 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     .map((k) => `<label class="acc-check-item"><input type="checkbox" class="acc-amenity" value="${k}">${escapeHtml(ACCOMMODATION_AMENITIES[k])}</label>`)
     .join("");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Detalii proprietate — Programul de Azi</title>
+<title>Detalii proprietate — Opening Hours Today</title>
 <style>${accWhitePageStyles()}
 .acc-details-wrap{max-width:560px;margin:0 auto;padding:50px 24px 30px;text-align:left;}
 .acc-details-h1{font-size:24px;font-weight:800;color:#111;margin:0 0 24px;}
@@ -11430,6 +11818,15 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
   <form id="detForm">
     <label class="acc-white-label" for="dName">Denumire obiectiv</label>
     <input type="text" id="dName" class="acc-white-input" maxlength="255" required>
+
+    <label class="acc-white-label" for="dStars">Categorie (stele)</label>
+    <select id="dStars" class="acc-white-input" required>
+      <option value="1">⭐ 1 stea</option>
+      <option value="2">⭐⭐ 2 stele</option>
+      <option value="3" selected>⭐⭐⭐ 3 stele</option>
+      <option value="4">⭐⭐⭐⭐ 4 stele</option>
+      <option value="5">⭐⭐⭐⭐⭐ 5 stele</option>
+    </select>
 
     <label class="acc-white-label" for="dDescription">Descriere</label>
     <textarea id="dDescription" class="acc-white-input" rows="3" maxlength="1500" placeholder="Câteva fraze despre cazare — atmosferă, ce o face specială."></textarea>
@@ -11569,6 +11966,7 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       type: ${JSON.stringify(type)},
       otherType: ${JSON.stringify(otherType)},
       name: document.getElementById("dName").value,
+      starRating: document.getElementById("dStars").value,
       description: document.getElementById("dDescription").value,
       city: document.getElementById("dCity").value,
       countryCode: document.getElementById("dCountry").value,
@@ -11604,7 +12002,7 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Date fiscale și contact — Programul de Azi</title>
+<title>Date fiscale și contact — Opening Hours Today</title>
 <style>${accWhitePageStyles()}
 .acc-fiscal-wrap{max-width:520px;margin:0 auto;padding:50px 24px 30px;text-align:left;}
 .acc-fiscal-h1{font-size:24px;font-weight:800;color:#111;margin:0 0 8px;}
@@ -11734,7 +12132,7 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
             '<div class="acc-thankyou">' +
             '<div class="acc-thankyou-icon">🎉</div>' +
             '<h1>Mulțumim că v-ați înscris!</h1>' +
-            '<p>Echipa noastră va verifica proprietatea și o va lista pe Programul de Azi.<br><br>La finalizare, veți primi un email de confirmare, cu linkul proprietății și instrucțiuni despre cum vă puteți conecta ulterior pentru modificări.</p>' +
+            '<p>Echipa noastră va verifica proprietatea și o va lista pe Opening Hours Today.<br><br>La finalizare, veți primi un email de confirmare, cu linkul proprietății și instrucțiuni despre cum vă puteți conecta ulterior pentru modificări.</p>' +
             '</div>';
           document.getElementById("fiscalBottombar").style.display = "none";
         } else {
@@ -11801,6 +12199,8 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
   if (typeof b.companyIban !== "string" || !b.companyIban.trim()) { res.status(400).json({ error: "invalid_iban" }); return; }
   if (typeof b.companyBank !== "string" || !b.companyBank.trim()) { res.status(400).json({ error: "invalid_bank" }); return; }
   if (typeof b.billingEmail !== "string" || !EMAIL_RE.test(b.billingEmail.trim())) { res.status(400).json({ error: "invalid_billing_email" }); return; }
+  const starRating = parseInt(b.starRating, 10);
+  if (!Number.isInteger(starRating) || starRating < 1 || starRating > 5) { res.status(400).json({ error: "invalid_star_rating" }); return; }
 
   const safeAmenities = Array.isArray(b.amenities) ? b.amenities.filter((a) => ACCOMMODATION_AMENITIES[a]) : [];
   const safeOtherAmenities = typeof b.otherAmenitiesText === "string" && b.otherAmenitiesText.trim() ? b.otherAmenitiesText.trim().slice(0, 255) : null;
@@ -11812,6 +12212,7 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
   // să le decalăm greșit.
   const fields = {
     name: b.name.trim(), description: typeof b.description === "string" ? b.description.trim().slice(0, 1500) || null : null, type: b.type, other_type: b.otherType ? b.otherType.trim() : null,
+    star_rating: starRating,
     city: b.city.trim(), country_code: b.countryCode, address: b.address.trim(),
     rooms_count: roomsCount, max_capacity: maxCapacity, price_from: priceFrom,
     price_currency: b.priceCurrency === "EUR" ? "EUR" : "RON",
@@ -11912,7 +12313,7 @@ app.get("/cont", accommodationGate, requireAccommodationOwner, async (req, res) 
     }
   }
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Contul meu — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
+<title>Contul meu — Opening Hours Today</title><link rel="stylesheet" href="/style.css"></head>
 <body><main class="wrap" style="padding-top:60px">
 <h1 class="page-h1">Contul tău</h1>
 <p class="intro-text">Conectat ca ${escapeHtml(req.accommodationOwner.email)}.</p>
@@ -13478,22 +13879,21 @@ app.get("/cazare", accommodationGate, async (req, res) => {
   res.set("Content-Type", "text/html; charset=utf-8");
   if (!dbPool) { res.status(503).send("Indisponibil momentan."); return; }
   const cityFilter = typeof req.query.oras === "string" ? req.query.oras.trim() : "";
+  const minCapacity = parseInt(req.query.persoane, 10);
+  const hasCapacityFilter = Number.isInteger(minCapacity) && minCapacity > 0;
   try {
+    const conditions = ["l.status = 'approved'"];
+    const params = [];
+    if (cityFilter) { params.push(`%${cityFilter}%`); conditions.push(`l.city ILIKE $${params.length}`); }
+    if (hasCapacityFilter) { params.push(minCapacity); conditions.push(`l.max_capacity >= $${params.length}`); }
     const { rows } = await dbPool.query(
-      cityFilter
-        ? `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
-           FROM accommodation_listings l
-           LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
-           WHERE l.status = 'approved' AND l.city ILIKE $1
-           GROUP BY l.id
-           ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`
-        : `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
-           FROM accommodation_listings l
-           LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
-           WHERE l.status = 'approved'
-           GROUP BY l.id
-           ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`,
-      cityFilter ? [`%${cityFilter}%`] : []
+      `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
+       FROM accommodation_listings l
+       LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
+       WHERE ${conditions.join(" AND ")}
+       GROUP BY l.id
+       ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`,
+      params
     );
     const cardsHtml = rows.length
       ? rows.map((r) => {
@@ -13510,7 +13910,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
         }).join("")
       : `<p class="plan-visit-hint">Nicio cazare găsită${cityFilter ? " pentru „" + escapeHtml(cityFilter) + "”" : ""} momentan.</p>`;
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
-<title>Cazare — pensiuni și cazări mici — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<title>Cazare — pensiuni și cazări mici — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
 <style>.acc-rating-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border-radius:8px;padding:2px 8px;font-weight:800;}</style></head>
 <body><main class="wrap" style="padding-top:40px">
 <h1 class="page-h1">Cazare — pensiuni și cazări mici</h1>
@@ -13540,6 +13940,7 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
     );
     const reviews = reviewsResult.rows;
     const avgRating = reviews.length ? (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length) : null;
+    const ownerSession = getAccommodationOwnerSession(req);
 
     const nonce = generateNonce();
     res.set("Content-Security-Policy", buildCsp(nonce));
@@ -13564,8 +13965,9 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
       </div>
     </div>` : "";
 
-    const amenityChipsHtml = amenities.map((a) => `<div class="acc-chip">${escapeHtml(ACCOMMODATION_AMENITIES[a] || a)}</div>`).join("")
-      + (r.other_amenities_text ? `<div class="acc-chip">${escapeHtml(r.other_amenities_text)}</div>` : "");
+    const amenitiesFull = amenities.map((a) => ACCOMMODATION_AMENITIES[a] || a)
+      .concat(r.other_amenities_text ? [r.other_amenities_text] : []);
+    const amenityIconRowHtml = amenitiesFull.map((a) => `<div class="acc-fac-item"><span class="acc-fac-dot">●</span>${escapeHtml(a)}</div>`).join("");
 
     const reviewsHtml = reviews.length
       ? reviews.map((rv) => `
@@ -13574,10 +13976,56 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
         ${rv.comment ? `<p>${escapeHtml(rv.comment)}</p>` : ""}
       </div>`).join("")
       : `<p class="plan-visit-hint">Nicio recenzie încă — fii primul care lasă una.</p>`;
+    const latestQuote = reviews.find((rv) => rv.comment);
+
+    const citySlug = slugifyCityName(r.city);
+    const starsHtml = "⭐".repeat(r.star_rating || 0);
+    const phoneDigits = (r.contact_phone || "").replace(/[^\d+]/g, "").replace(/^00/, "+");
+    const waBase = phoneDigits ? `https://wa.me/${phoneDigits.replace(/^\+/, "")}` : null;
+    const fullAddress = `${r.address ? r.address + ", " : ""}${r.city}, ${COUNTRY_LABELS[r.country_code] || r.country_code}`;
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+
+    const AVIASALES_SRC = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100";
 
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
-<title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
 <style>
+.acc-nav-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.acc-nav-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
+.acc-nav-header .brand span{color:var(--accent);}
+.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
+.acc-nav-right a{color:#fff;text-decoration:none;}
+.acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;}
+.acc-nav-user-name{line-height:1.2;}
+.acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
+.acc-subnav{background:#161b22;padding:0 20px 16px;display:flex;gap:10px;flex-wrap:wrap;}
+.acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.acc-subnav-btn.is-active{background:#232a35;border-color:var(--accent);color:#fff;}
+.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;margin:-16px 20px 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;}
+.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:1px solid #eee;}
+.acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
+.acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
+.acc-search-guests{position:relative;}
+.acc-guests-value{cursor:pointer;font-size:14.5px;color:#111;}
+.acc-guests-panel{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px;width:260px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:10;}
+.acc-guests-panel.is-open{display:block;}
+.acc-stepper-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;}
+.acc-stepper-row span:first-child{color:#111;font-size:14px;}
+.acc-stepper-ctrl{display:flex;align-items:center;gap:10px;}
+.acc-stepper-ctrl button{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font-weight:900;cursor:pointer;}
+.acc-stepper-ctrl button:disabled{border-color:#ddd;color:#ddd;cursor:not-allowed;}
+.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
+.acc-tabs{display:flex;gap:22px;border-bottom:1px solid var(--glass-border);margin:26px 0 20px;flex-wrap:wrap;}
+.acc-tabs a{color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;padding-bottom:10px;border-bottom:2px solid transparent;}
+.acc-tabs a.is-active{color:var(--text);border-color:var(--accent);}
+.acc-prop-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+.acc-prop-stars{color:#f5a623;font-size:15px;margin-bottom:6px;}
+.acc-verified-badge{display:inline-flex;align-items:center;gap:4px;background:#1c3a5e;color:#fff;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;margin-left:8px;}
+.acc-prop-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
+.acc-icon-btn{width:40px;height:40px;border-radius:50%;background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--text);}
+.acc-icon-btn.is-fav{border-color:var(--accent);color:var(--accent);}
+.acc-msg-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:10px;padding:11px 20px;cursor:pointer;font-size:14px;}
 .acc-gallery{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin:16px 0;}
 .acc-gallery-main{width:100%;height:340px;object-fit:cover;border-radius:14px;}
 .acc-gallery-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
@@ -13585,38 +14033,133 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
 .acc-gallery-thumb-wrap img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
 .acc-gallery-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:800;}
 @media (max-width:640px){.acc-gallery{grid-template-columns:1fr;}.acc-gallery-main{height:220px;}}
-.acc-chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
-.acc-chip{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;padding:8px 14px;font-size:13.5px;color:var(--text);}
 .acc-layout{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;}
 @media (max-width:800px){.acc-layout{grid-template-columns:1fr;}}
 .acc-sidebar{position:sticky;top:16px;}
-.acc-fav-btn{width:100%;text-align:center;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;font-weight:700;cursor:pointer;color:var(--text);margin-top:10px;}
-.acc-fav-btn.is-fav{border-color:var(--accent);color:var(--accent);}
-.acc-review{border-bottom:1px solid var(--glass-border);padding:12px 0;}
-.acc-review-head{display:flex;justify-content:space-between;}
-.acc-review-score{color:var(--accent);font-weight:800;}
-.acc-rating-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border-radius:8px;padding:6px 10px;font-weight:800;}
+.acc-review-widget{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;margin-bottom:16px;}
+.acc-review-score-box{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.acc-review-score-num{background:var(--accent);color:#fff;font-weight:900;font-size:20px;border-radius:10px;padding:8px 12px;}
+.acc-review-quote{font-style:italic;color:var(--muted);font-size:13.5px;margin-top:10px;}
+.acc-desc-more{background:none;border:1px solid #4da3ff;color:#4da3ff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
+.acc-desc-text{max-height:120px;overflow:hidden;position:relative;}
+.acc-desc-text.is-expanded{max-height:none;}
+.acc-fac-grid{display:flex;flex-wrap:wrap;gap:10px 24px;margin:14px 0;}
+.acc-fac-item{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text);}
+.acc-fac-dot{color:#2fb344;font-size:10px;}
+.acc-highlights-card{background:var(--glass-bg);border:1px solid var(--accent);border-radius:14px;padding:18px;}
+.acc-highlights-card h3{margin:0 0 4px;}
+.acc-highlights-sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+.acc-highlight-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:13.5px;}
+.acc-save-btn{width:100%;background:var(--glass-bg);border:1px solid var(--accent);color:var(--accent);font-weight:700;border-radius:10px;padding:12px;cursor:pointer;margin-top:10px;}
+.acc-save-btn.is-fav{background:var(--accent);color:#fff;}
+.acc-avail-bar{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-top:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.acc-msg-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:center;justify-content:center;}
+.acc-msg-modal-backdrop.is-open{display:flex;}
+.acc-msg-modal{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:92%;}
+.acc-msg-modal h3{color:#111;margin:0 0 10px;}
+.acc-msg-modal textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:12px;font-size:14.5px;box-sizing:border-box;min-height:90px;margin-bottom:12px;}
+.acc-msg-fixed-header{background:#f7f9fc;border:1px solid #e0e6ef;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#555;margin:0 0 10px;line-height:1.5;}
+.acc-msg-modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+.acc-msg-modal-actions button{border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;border:none;}
+.acc-msg-cancel{background:#eee;color:#333;}
+.acc-msg-send{background:#25D366;color:#fff;}
 </style></head>
-<body><main class="wrap" style="padding-top:40px;padding-bottom:60px">
-<p class="breadcrumb"><a href="/cazare">Cazare</a> / ${escapeHtml(r.name)}</p>
-<h1 class="page-h1">${escapeHtml(r.name)}</h1>
-<p class="intro-text">📍 ${escapeHtml(r.address ? r.address + ", " : "")}${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}${avgRating ? ` &nbsp; <span class="acc-rating-badge">${avgRating.toFixed(1)}/10</span> (${reviews.length} recenzii)` : ""}</p>
+<body>
 
+<div class="acc-nav-header">
+  <a class="brand" href="/">Opening<span>HoursToday</span></a>
+  <div class="acc-nav-right">
+    <span>RON</span>
+    <span>🇷🇴 ▾</span>
+    <a href="/cazare/login">List your property</a>
+    ${ownerSession ? `
+    <div class="acc-nav-user">
+      <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
+      <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+    </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
+  </div>
+</div>
+<div class="acc-subnav">
+  <a href="/cazare" class="acc-subnav-btn is-active">🛏️ Cazări</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
+  <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
+  <a href="/${escapeHtml(citySlug)}" class="acc-subnav-btn">🎡 Atracții în ${escapeHtml(r.city)}</a>
+  <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚕 Transferuri</a>
+</div>
+<div id="accFlightWidget" class="flight-widget-card" style="display:none;margin:0 20px"></div>
+
+<div class="acc-search-widget">
+  <div class="acc-search-field">
+    <label>Destinație</label>
+    <input type="text" id="searchDest" value="${escapeHtml(r.city)}" placeholder="Introduceți destinația">
+  </div>
+  <div class="acc-search-field acc-search-guests">
+    <label>Oaspeți</label>
+    <div class="acc-guests-value" id="guestsValue">2 adulți · 0 copii · 1 cameră</div>
+    <div class="acc-guests-panel" id="guestsPanel">
+      <div class="acc-stepper-row"><span>Adulți</span><div class="acc-stepper-ctrl"><button type="button" data-step="adults" data-dir="-1">−</button><span id="adultsVal">2</span><button type="button" data-step="adults" data-dir="1">+</button></div></div>
+      <div class="acc-stepper-row"><span>Copii</span><div class="acc-stepper-ctrl"><button type="button" data-step="children" data-dir="-1">−</button><span id="childrenVal">0</span><button type="button" data-step="children" data-dir="1">+</button></div></div>
+      <div class="acc-stepper-row"><span>Nr. camere</span><div class="acc-stepper-ctrl"><button type="button" data-step="rooms" data-dir="-1">−</button><span id="roomsVal">1</span><button type="button" data-step="rooms" data-dir="1">+</button></div></div>
+    </div>
+  </div>
+  <button type="button" class="acc-search-btn" id="searchBtn">Caută</button>
+</div>
+
+<main class="wrap" style="padding-top:20px;padding-bottom:60px">
+<p class="breadcrumb"><a href="/cazare">Cazări</a> / ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} / ${escapeHtml(r.city)} / ${escapeHtml(r.name)}</p>
+
+<div class="acc-tabs">
+  <a href="#descriere" class="is-active">Descriere</a>
+  <a href="#info-preturi">Informații &amp; prețuri</a>
+  <a href="#facilitati">Facilități</a>
+  <a href="#reguli">Reguli cazare</a>
+  <a href="#reviews">Reviews (${reviews.length})</a>
+</div>
+
+<div class="acc-prop-head">
+  <div>
+    <div class="acc-prop-stars">${starsHtml || "—"} <span class="acc-verified-badge">✓ Verificat de noi</span></div>
+    <h1 class="page-h1" style="margin-bottom:6px">${escapeHtml(r.name)}</h1>
+    <p class="intro-text" style="margin:0">📍 ${escapeHtml(fullAddress)} — <strong>Excellent location</strong> · <a href="${mapsUrl}" target="_blank" rel="noopener" style="color:var(--accent)">Arată pe hartă</a></p>
+  </div>
+  <div class="acc-prop-actions">
+    <button type="button" class="acc-icon-btn" id="favBtn" title="Favorite">☆</button>
+    <button type="button" class="acc-icon-btn" id="shareBtn" title="Distribuie">🔗</button>
+    ${waBase ? `<button type="button" class="acc-msg-btn" id="msgBtn">Trimite mesaj</button>` : ""}
+  </div>
+</div>
+
+<div id="descriere"></div>
 ${galleryHtml}
-<div class="acc-chips">${amenityChipsHtml}</div>
 
 <div class="acc-layout">
   <div>
     <h2 class="section-title"><span class="bar"></span>Despre această cazare</h2>
-    <p>${r.description ? escapeHtml(r.description) : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
+    <div class="acc-desc-text" id="descText">
+      <p>${r.description ? escapeHtml(r.description).replace(/\n/g, "</p><p>") : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
+    </div>
+    <button type="button" class="acc-desc-more" id="descMoreBtn">Show me more</button>
+
+    <div id="facilitati"></div>
+    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Cele mai importante facilități</h2>
+    <div class="acc-fac-grid">${amenityIconRowHtml || `<p class="plan-visit-hint">Nicio facilitate listată.</p>`}</div>
+
+    <div id="info-preturi"></div>
+    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Informații &amp; prețuri</h2>
     <div class="trip-toolkit-card">
       <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
       <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
+    </div>
+
+    <div id="reguli"></div>
+    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Reguli cazare</h2>
+    <div class="trip-toolkit-card">
       ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
       ${r.cancellation_policy ? `<p><strong>Politică de anulare:</strong> ${escapeHtml(r.cancellation_policy)}</p>` : ""}
     </div>
 
-    <h2 class="section-title"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
+    <div id="reviews"></div>
+    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
     ${reviewsHtml}
     <details class="acc-card" style="margin-top:14px">
       <summary>✍️ Lasă o recenzie</summary>
@@ -13640,38 +14183,162 @@ ${galleryHtml}
   </div>
 
   <div class="acc-sidebar">
-    <div class="trip-toolkit-card">
+    ${avgRating ? `
+    <div class="acc-review-widget">
+      <div class="acc-review-score-box">
+        <div class="acc-review-score-num">${avgRating.toFixed(1)}</div>
+        <div><strong>${avgRating >= 9 ? "Exceptional" : avgRating >= 8 ? "Excellent" : avgRating >= 7 ? "Foarte bine" : "Bine"}</strong><br><span style="color:var(--muted);font-size:12.5px">${reviews.length} recenzii</span></div>
+      </div>
+      ${latestQuote ? `<div class="acc-review-quote">„${escapeHtml(latestQuote.comment.length > 140 ? latestQuote.comment.slice(0, 140) + "…" : latestQuote.comment)}"<br>— ${escapeHtml(latestQuote.author_name)}</div>` : ""}
+    </div>` : ""}
+
+    <div class="acc-highlights-card">
+      <h3>Avantaje</h3>
+      <div class="acc-highlight-row">📍 <span>${escapeHtml(fullAddress)}</span></div>
+      ${amenities.includes("mic_dejun") ? `<div class="acc-highlight-row">🍳 <span><strong>Mic dejun:</strong> Inclus</span></div>` : ""}
+      <button type="button" class="acc-save-btn" id="favBtn2">⭐ Salvează în favorite</button>
+    </div>
+
+    <div class="trip-toolkit-card" style="margin-top:16px">
       <p>${r.contact_phone ? `📞 ${escapeHtml(r.contact_phone)}<br>` : ""}${r.contact_email ? `✉️ ${escapeHtml(r.contact_email)}<br>` : ""}</p>
       ${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🌐 Website</span></a>` : ""}
       ${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🔗 Profil existent</span></a>` : ""}
       ${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📘 Facebook</span></a>` : ""}
       ${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📷 Instagram</span></a>` : ""}
       ${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🎵 TikTok</span></a>` : ""}
-      <button type="button" id="favBtn" class="acc-fav-btn">☆ Adaugă la favorite</button>
     </div>
   </div>
 </div>
+
+<div class="acc-avail-bar">
+  <h2 class="section-title" style="margin:0"><span class="bar"></span>Disponibilitate</h2>
+  ${waBase ? `<button type="button" class="acc-msg-btn" id="msgBtn2">Întreabă de disponibilitate</button>` : `<span class="plan-visit-hint">Proprietarul nu a listat un telefon de contact.</span>`}
+</div>
 </main>
+
+${waBase ? `
+<div class="acc-msg-modal-backdrop" id="msgModalBackdrop">
+  <div class="acc-msg-modal">
+    <h3>Trimite un mesaj către ${escapeHtml(r.name)}</h3>
+    <p class="acc-msg-fixed-header">📩 Mesaj trimis prin Opening Hours Today, din partea unui vizitator interesat de „${escapeHtml(r.name)}”:</p>
+    <textarea id="msgText" placeholder="Bună, sunt interesat/ă de cazare pentru...">Bună, sunt interesat/ă de cazare. Aveți disponibilitate?</textarea>
+    <div class="acc-msg-modal-actions">
+      <button type="button" class="acc-msg-cancel" id="msgCancelBtn">Anulează</button>
+      <button type="button" class="acc-msg-send" id="msgSendBtn">💬 Trimite pe WhatsApp</button>
+    </div>
+  </div>
+</div>` : ""}
+
 <script nonce="${nonce}">
 (function(){
-  var favBtn = document.getElementById("favBtn");
+  // --- widget zboruri (Aviasales), reveal la click ---
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest(".widget-reveal-btn");
+    if (!btn) return;
+    e.preventDefault();
+    var targetId = btn.getAttribute("data-widget-target");
+    var src = btn.getAttribute("data-widget-src");
+    var box = document.getElementById(targetId);
+    if (!box || !src) return;
+    box.style.display = "block";
+    btn.style.display = "none";
+    if (box.querySelector("script[data-widget-loaded]")) return;
+    var s = document.createElement("script");
+    s.async = true; s.charset = "utf-8"; s.src = src;
+    s.setAttribute("data-widget-loaded", "1");
+    box.appendChild(s);
+  });
+
+  // --- favorite (localStorage, ca la director) ---
   var slug = ${JSON.stringify(r.slug)};
   function getFavs(){ try { return JSON.parse(localStorage.getItem("cazareFavorite") || "[]"); } catch(e) { return []; } }
   function setFavs(list){ localStorage.setItem("cazareFavorite", JSON.stringify(list)); }
-  function refreshBtn(){
+  function refreshFavBtns(){
     var isFav = getFavs().indexOf(slug) !== -1;
-    favBtn.textContent = isFav ? "★ La favorite" : "☆ Adaugă la favorite";
-    favBtn.classList.toggle("is-fav", isFav);
+    var b1 = document.getElementById("favBtn"), b2 = document.getElementById("favBtn2");
+    if (b1) { b1.textContent = isFav ? "★" : "☆"; b1.classList.toggle("is-fav", isFav); }
+    if (b2) { b2.textContent = isFav ? "★ Salvat la favorite" : "⭐ Salvează în favorite"; b2.classList.toggle("is-fav", isFav); }
   }
-  favBtn.addEventListener("click", function(){
+  function toggleFav(){
     var favs = getFavs();
     var idx = favs.indexOf(slug);
     if (idx === -1) { favs.push(slug); } else { favs.splice(idx, 1); }
     setFavs(favs);
-    refreshBtn();
-  });
-  refreshBtn();
+    refreshFavBtns();
+  }
+  var favBtn = document.getElementById("favBtn"); if (favBtn) favBtn.addEventListener("click", toggleFav);
+  var favBtn2 = document.getElementById("favBtn2"); if (favBtn2) favBtn2.addEventListener("click", toggleFav);
+  refreshFavBtns();
 
+  // --- distribuie ---
+  var shareBtn = document.getElementById("shareBtn");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", function(){
+      var url = window.location.href;
+      if (navigator.share) { navigator.share({ title: ${JSON.stringify(r.name)}, url: url }).catch(function(){}); }
+      else { navigator.clipboard.writeText(url); shareBtn.textContent = "✓"; setTimeout(function(){ shareBtn.textContent = "🔗"; }, 1500); }
+    });
+  }
+
+  // --- Show me more descriere ---
+  var descBtn = document.getElementById("descMoreBtn");
+  var descText = document.getElementById("descText");
+  if (descBtn && descText) {
+    if (descText.scrollHeight <= 130) { descBtn.style.display = "none"; }
+    descBtn.addEventListener("click", function(){
+      descText.classList.toggle("is-expanded");
+      descBtn.textContent = descText.classList.contains("is-expanded") ? "Show less" : "Show me more";
+    });
+  }
+
+  // --- search widget: oaspeți (stepper) + submit ---
+  var guestsValue = document.getElementById("guestsValue");
+  var guestsPanel = document.getElementById("guestsPanel");
+  guestsValue.addEventListener("click", function(){ guestsPanel.classList.toggle("is-open"); });
+  document.addEventListener("click", function(e){
+    if (!guestsPanel.contains(e.target) && e.target !== guestsValue) guestsPanel.classList.remove("is-open");
+  });
+  var counts = { adults: 2, children: 0, rooms: 1 };
+  var mins = { adults: 1, children: 0, rooms: 1 };
+  function refreshGuestsText(){
+    guestsValue.textContent = counts.adults + " adulți · " + counts.children + " copii · " + counts.rooms + " camer" + (counts.rooms === 1 ? "ă" : "e");
+    Object.keys(counts).forEach(function(k){
+      document.getElementById(k + "Val").textContent = counts[k];
+      document.querySelectorAll('[data-step="' + k + '"][data-dir="-1"]').forEach(function(b){ b.disabled = counts[k] <= mins[k]; });
+    });
+  }
+  document.querySelectorAll(".acc-stepper-ctrl button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-step"), dir = parseInt(b.getAttribute("data-dir"), 10);
+      counts[k] = Math.max(mins[k], Math.min(20, counts[k] + dir));
+      refreshGuestsText();
+    });
+  });
+  refreshGuestsText();
+  document.getElementById("searchBtn").addEventListener("click", function(){
+    var dest = document.getElementById("searchDest").value.trim();
+    window.location.href = "/cazare?oras=" + encodeURIComponent(dest) + "&persoane=" + (counts.adults + counts.children);
+  });
+
+  // --- mesaj / WhatsApp ---
+  ${waBase ? `
+  var waLink = ${JSON.stringify(waBase)};
+  var modal = document.getElementById("msgModalBackdrop");
+  function openModal(){ modal.classList.add("is-open"); }
+  function closeModal(){ modal.classList.remove("is-open"); }
+  var mb1 = document.getElementById("msgBtn"); if (mb1) mb1.addEventListener("click", openModal);
+  var mb2 = document.getElementById("msgBtn2"); if (mb2) mb2.addEventListener("click", openModal);
+  document.getElementById("msgCancelBtn").addEventListener("click", closeModal);
+  document.getElementById("msgSendBtn").addEventListener("click", function(){
+    var header = document.querySelector(".acc-msg-fixed-header").textContent;
+    var userText = document.getElementById("msgText").value.trim();
+    var fullText = header + "\\n\\n" + userText;
+    window.open(waLink + "?text=" + encodeURIComponent(fullText), "_blank");
+    closeModal();
+  });
+  ` : ""}
+
+  // --- recenzie ---
   var reviewForm = document.getElementById("reviewForm");
   reviewForm.addEventListener("submit", function(e){
     e.preventDefault();
