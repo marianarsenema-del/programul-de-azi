@@ -11,25 +11,22 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { Pool } = require("pg");
-// handleUpload rulează server-side (Node) — generează tokenuri de upload
-// pentru Vercel Blob, semnate cu BLOB_READ_WRITE_TOKEN, fără ca fișierele
-// să treacă vreodată prin funcția noastră (evită limita de 4.5MB per request
-// a funcțiilor Vercel). @vercel/blob/client e construit pentru medii cu
-// bundler și poate fi publicat doar ca modul ES — require() pe un pachet
-// exclusiv ESM aruncă mereu eroare în Node, indiferent dacă pachetul e
-// instalat corect. Folosim import() dinamic (funcționează cu ambele tipuri
-// de pachete), încărcat o singură dată, lene, la prima cerere reală.
-let handleBlobUploadPromise = null;
-function getHandleBlobUpload() {
-  if (!handleBlobUploadPromise) {
-    handleBlobUploadPromise = import("@vercel/blob/client")
-      .then((m) => m.handleUpload)
+// put() e funcția standard, server-side, a @vercel/blob — trimite bytes-ii
+// prin funcția noastră Express (limitată la ~4MB per poză, ca orice request
+// pe Vercel), dar fără adaptorul fragil peste `req` pe care-l necesita
+// varianta anterioară (handleUpload, gândită pentru Next.js). import()
+// dinamic, la fel ca înainte, ca să meargă indiferent de tipul de pachet.
+let blobPutPromise = null;
+function getBlobPut() {
+  if (!blobPutPromise) {
+    blobPutPromise = import("@vercel/blob")
+      .then((m) => m.put)
       .catch((err) => {
-        console.warn("Nu am putut încărca @vercel/blob/client:", err.message);
+        console.warn("Nu am putut încărca @vercel/blob:", err.message);
         return null;
       });
   }
-  return handleBlobUploadPromise;
+  return blobPutPromise;
 }
 const app = express();
 
@@ -10583,41 +10580,40 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
 </body></html>`);
 });
 
-// Generează tokenul de upload direct-la-Blob pentru browser — fișierele NU
-// trec deloc prin funcția noastră, doar acest token mic (vezi comentariul
-// de la `handleBlobUpload` mai sus, lângă require-uri).
-// NOTĂ TEHNICĂ: handleUpload e documentat/testat de Vercel în contextul
-// Next.js Route Handlers (Request/Response tip Fetch API nativ). Aici
-// rulează pe Express, deci construim un adaptor minimal peste `req`, cu
-// `.headers.get()`, ca să semene suficient cu ce așteaptă biblioteca. Dacă
-// apare o eroare AICI specific, cel mai probabil e o discrepanță de formă
-// între obiectul Express și ce așteaptă intern @vercel/blob — nu ceva ce
-// pot verifica fără un mediu live, cu BLOB_READ_WRITE_TOKEN real.
-app.post("/api/cazare/blob-upload-token", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
-  const handleBlobUpload = await getHandleBlobUpload();
-  if (!handleBlobUpload) { res.status(503).json({ error: "not_configured" }); return; }
-  const requestAdapter = {
-    headers: { get: (name) => req.headers[String(name).toLowerCase()] || null },
-    url: `${baseUrlFor(req)}${req.originalUrl}`,
-  };
-  try {
-    const jsonResponse = await handleBlobUpload({
-      body: req.body,
-      request: requestAdapter,
-      token: BLOB_READ_WRITE_TOKEN,
-      onBeforeGenerateToken: async () => ({
-        allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+// Upload de poze — trece prin server (nu direct browser→Vercel), simplu și
+// testat: `put()` e funcția standard server-side a @vercel/blob, fără niciun
+// adaptor peste `req`. Limită reală: ~4MB per poză (limita de request a
+// funcțiilor Vercel) — validată și pe client, cu mesaj clar, înainte de upload.
+const ACCOMMODATION_PHOTO_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+app.post(
+  "/api/cazare/upload-poza",
+  accommodationGate,
+  requireAccommodationOwnerApi,
+  express.raw({ type: Object.keys(ACCOMMODATION_PHOTO_TYPES), limit: "4mb" }),
+  async (req, res) => {
+    const put = await getBlobPut();
+    if (!put) { res.status(503).json({ error: "not_configured" }); return; }
+    const contentType = String(req.headers["content-type"] || "").split(";")[0].trim();
+    const ext = ACCOMMODATION_PHOTO_TYPES[contentType];
+    if (!ext || !Buffer.isBuffer(req.body) || !req.body.length) {
+      res.status(400).json({ error: "invalid_image" });
+      return;
+    }
+    try {
+      const pathname = `cazare/${req.accommodationOwner.ownerId}/${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
+      const blob = await put(pathname, req.body, {
+        access: "public",
+        token: BLOB_READ_WRITE_TOKEN,
         addRandomSuffix: true,
-        maximumSizeInBytes: 20 * 1024 * 1024, // 20MB per poză — poze de telefon (mai ales iPhone) pot trece ușor de 8MB
-      }),
-      onUploadCompleted: async () => {},
-    });
-    res.status(200).json(jsonResponse);
-  } catch (err) {
-    console.error("blob-upload-token a eșuat:", err.message);
-    res.status(400).json({ error: err.message });
+        contentType,
+      });
+      res.status(200).json({ url: blob.url });
+    } catch (err) {
+      console.error("upload-poza a eșuat:", err.message);
+      res.status(500).json({ error: err.message });
+    }
   }
-});
+);
 
 const ACCOMMODATION_TYPES = ["pensiune", "hotel_mic", "cabana", "apartament", "camping", "altceva"];
 
@@ -10841,7 +10837,7 @@ ${t.id && t.status === "approved" ? `
        <p id="featuredErr" class="submit-place-error" hidden></p>`}
 </div>` : ""}
 </main>
-<script type="module" nonce="${nonce}">
+<script nonce="${nonce}">
 ${t.id && t.status === "approved" && !(t.featured_until && new Date(t.featured_until) > new Date()) ? `
 var featuredBtn = document.getElementById("featuredBtn");
 if (featuredBtn) {
@@ -10857,9 +10853,6 @@ if (featuredBtn) {
   });
 }
 ` : ""}
-import { upload } from "https://esm.sh/@vercel/blob@2/client";
-
-var OWNER_ID = ${JSON.stringify(req.accommodationOwner.ownerId)};
 var photos = ${photosJson};
 var photoList = document.getElementById("accPhotoList");
 var photoStatus = document.getElementById("accPhotoStatus");
@@ -10880,19 +10873,25 @@ function renderPhotos(){
 }
 renderPhotos();
 
-var MAX_PHOTO_BYTES = 20 * 1024 * 1024;
+var MAX_PHOTO_BYTES = 4 * 1024 * 1024;
 document.getElementById("accPhotoInput").addEventListener("change", async function(e){
   var files = Array.from(e.target.files || []).slice(0, 10 - photos.length);
   if (!files.length) return;
   photoStatus.textContent = "Se încarcă " + files.length + " poze...";
   for (var i = 0; i < files.length; i++) {
     if (files[i].size > MAX_PHOTO_BYTES) {
-      photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB, maxim 20 MB) — comprim-o sau alege alta.";
+      photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB, maxim 4 MB) — comprim-o sau alege alta.";
       continue;
     }
     try {
-      var blob = await upload("cazare/" + OWNER_ID + "/" + Date.now() + "-" + files[i].name, files[i], { access: "public", handleUploadUrl: "/api/cazare/blob-upload-token" });
-      photos.push(blob.url);
+      var resp = await fetch("/api/cazare/upload-poza", {
+        method: "POST",
+        headers: { "Content-Type": files[i].type || "image/jpeg" },
+        body: files[i],
+      });
+      var data = await resp.json();
+      if (!resp.ok || !data.url) { throw new Error(data.error || ("HTTP " + resp.status)); }
+      photos.push(data.url);
       renderPhotos();
     } catch (err) {
       photoStatus.textContent = "O poză n-a putut fi încărcată: " + err.message;
