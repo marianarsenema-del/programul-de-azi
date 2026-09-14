@@ -14,13 +14,22 @@ const { Pool } = require("pg");
 // handleUpload rulează server-side (Node) — generează tokenuri de upload
 // pentru Vercel Blob, semnate cu BLOB_READ_WRITE_TOKEN, fără ca fișierele
 // să treacă vreodată prin funcția noastră (evită limita de 4.5MB per request
-// a funcțiilor Vercel). Import opțional — dacă pachetul nu e instalat încă,
-// site-ul tot pornește, doar upload-ul de poze nu va funcționa (fail-safe).
-let handleBlobUpload = null;
-try {
-  handleBlobUpload = require("@vercel/blob/client").handleUpload;
-} catch (e) {
-  console.warn("@vercel/blob nu e instalat — upload de poze indisponibil până la `npm install`.");
+// a funcțiilor Vercel). @vercel/blob/client e construit pentru medii cu
+// bundler și poate fi publicat doar ca modul ES — require() pe un pachet
+// exclusiv ESM aruncă mereu eroare în Node, indiferent dacă pachetul e
+// instalat corect. Folosim import() dinamic (funcționează cu ambele tipuri
+// de pachete), încărcat o singură dată, lene, la prima cerere reală.
+let handleBlobUploadPromise = null;
+function getHandleBlobUpload() {
+  if (!handleBlobUploadPromise) {
+    handleBlobUploadPromise = import("@vercel/blob/client")
+      .then((m) => m.handleUpload)
+      .catch((err) => {
+        console.warn("Nu am putut încărca @vercel/blob/client:", err.message);
+        return null;
+      });
+  }
+  return handleBlobUploadPromise;
 }
 const app = express();
 
@@ -5239,7 +5248,7 @@ function buildCsp(nonce) {
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://tp-em.com https://tpembd.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://www.googletagmanager.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io https://*.public.blob.vercel-storage.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com https://*.apistp.com https://*.public.blob.vercel-storage.com",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com https://*.apistp.com https://*.public.blob.vercel-storage.com https://vercel.com https://blob.vercel-storage.com",
     "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
@@ -10506,17 +10515,52 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Conectare — Cazare — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
-<body><main class="wrap" style="max-width:420px;padding-top:60px">
-<h1 class="page-h1" style="text-align:center">Contul tău de cazare</h1>
-<p class="intro-text" style="text-align:center">Scrie emailul — îți trimitem un link de conectare, fără parolă.</p>
-<form id="loginForm" class="submit-place-form">
-  <label class="submit-place-label">Email
-    <input type="email" id="loginEmail" placeholder="tu@exemplu.ro" required>
-  </label>
-  <button type="submit" id="loginBtn" class="submit-place-btn">Trimite linkul de conectare</button>
-  <p id="loginMsg" class="submit-place-thanks" hidden></p>
-</form>
+<title>Listează-ți cazarea — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<style>
+.acc-hero{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:start;padding:50px 0 30px;}
+@media (max-width:800px){.acc-hero{grid-template-columns:1fr;padding-top:30px;}}
+.acc-hero-title{font-size:38px;font-weight:900;line-height:1.15;color:var(--text);margin:0 0 6px;}
+.acc-hero-title span{color:var(--accent);}
+.acc-hero-sub{color:var(--muted);font-size:16.5px;margin:14px 0 26px;max-width:480px;}
+.acc-hero-benefits{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;}
+.acc-hero-benefits li{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--text);}
+.acc-hero-benefits li::before{content:"✓";color:var(--accent);font-weight:900;flex:0 0 auto;}
+.acc-signup-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:18px;padding:26px;}
+.acc-signup-card h2{margin:0 0 16px;font-size:21px;}
+.acc-signup-check{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);margin-bottom:10px;}
+.acc-signup-check::before{content:"✓";color:var(--accent);font-weight:900;}
+.acc-signup-divider{border:none;border-top:1px solid var(--glass-border);margin:18px 0;}
+</style></head>
+<body><main class="wrap" style="max-width:920px">
+
+<div class="acc-hero">
+  <div>
+    <h1 class="acc-hero-title">Listează-ți <span>orice tip de cazare</span> pe Programul de Azi</h1>
+    <p class="acc-hero-sub">Pensiune, cabană, apartament sau camping — apari gratuit în directorul nostru, fără niciun comision la rezervări.</p>
+    <ul class="acc-hero-benefits">
+      <li>Zero comision — tu vorbești direct cu turistul, tu încasezi</li>
+      <li>Verificare manuală, rapidă — nu stai zile în așteptare</li>
+      <li>Vrei să apari primul în listă? Opțional, cu o taxă fixă mică</li>
+    </ul>
+  </div>
+
+  <div class="acc-signup-card">
+    <h2>Înregistrare gratuită</h2>
+    <div class="acc-signup-check">Fără costuri pentru listarea de bază</div>
+    <div class="acc-signup-check">Contactul rămâne mereu al tău, direct</div>
+    <div class="acc-signup-check">Poze, prețuri, facilități — le administrezi tu</div>
+    <hr class="acc-signup-divider">
+    <form id="loginForm" class="submit-place-form">
+      <label class="submit-place-label">Email
+        <input type="email" id="loginEmail" placeholder="tu@exemplu.ro" required>
+      </label>
+      <button type="submit" id="loginBtn" class="submit-place-btn">Începe acum →</button>
+      <p id="loginMsg" class="submit-place-thanks" hidden></p>
+    </form>
+    <p class="plan-visit-hint" style="margin-top:12px">Ai deja cont? Scrie același email — te conectăm direct, fără parolă.</p>
+  </div>
+</div>
+
 </main>
 <script nonce="${nonce}">
 (function(){
@@ -10550,6 +10594,7 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
 // între obiectul Express și ce așteaptă intern @vercel/blob — nu ceva ce
 // pot verifica fără un mediu live, cu BLOB_READ_WRITE_TOKEN real.
 app.post("/api/cazare/blob-upload-token", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  const handleBlobUpload = await getHandleBlobUpload();
   if (!handleBlobUpload) { res.status(503).json({ error: "not_configured" }); return; }
   const requestAdapter = {
     headers: { get: (name) => req.headers[String(name).toLowerCase()] || null },
