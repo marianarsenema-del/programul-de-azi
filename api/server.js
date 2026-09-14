@@ -10665,6 +10665,9 @@ async function renderAccommodationListingForm(req, res, existingListing) {
     <label class="submit-place-label">Denumire obiectiv
       <input type="text" id="accName" value="${escapeHtml(t.name || "")}" maxlength="255" required>
     </label>
+    <label class="submit-place-label">Descriere (apare pe pagina publică, în secțiunea "Despre această cazare")
+      <textarea id="accDescription" maxlength="1500" rows="4" placeholder="Câteva fraze despre cazare — atmosferă, ce o face specială, ce e prin apropiere.">${escapeHtml(t.description || "")}</textarea>
+    </label>
     <label class="submit-place-label">Oraș
       <input type="text" id="accCity" value="${escapeHtml(t.city || "")}" maxlength="255" required>
     </label>
@@ -10901,6 +10904,7 @@ document.getElementById("accForm").addEventListener("submit", function(e){
     body: JSON.stringify({
       id: document.getElementById("accId").value || null,
       name: document.getElementById("accName").value,
+      description: document.getElementById("accDescription").value,
       type: document.getElementById("accType").value,
       otherType: document.getElementById("accOtherType").value,
       city: document.getElementById("accCity").value,
@@ -11009,7 +11013,7 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
   // dinamic dintr-un obiect, ca să nu numărăm manual zeci de $N și să riscăm
   // să le decalăm greșit.
   const fields = {
-    name: b.name.trim(), type: b.type, other_type: b.otherType ? b.otherType.trim() : null,
+    name: b.name.trim(), description: typeof b.description === "string" ? b.description.trim().slice(0, 1500) || null : null, type: b.type, other_type: b.otherType ? b.otherType.trim() : null,
     city: b.city.trim(), country_code: b.countryCode, address: b.address.trim(),
     rooms_count: roomsCount, max_capacity: maxCapacity, price_from: priceFrom,
     price_currency: b.priceCurrency === "EUR" ? "EUR" : "RON",
@@ -12561,6 +12565,101 @@ app.post("/api/admin/cazari/:id/:action", async (req, res) => {
 // Cazare — director public (listă + pagina individuală). Ascuns cât timp
 // ACCOMMODATION_LIVE nu e "true" — vezi accommodationGate.
 // ============================================================
+app.post("/api/cazare/recenzie", accommodationGate, async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { listingId, authorName, rating, comment } = req.body || {};
+  if (!listingId || !/^\d+$/.test(String(listingId))) { res.status(400).json({ error: "invalid_listing" }); return; }
+  if (typeof authorName !== "string" || !authorName.trim() || authorName.length > 100) { res.status(400).json({ error: "invalid_name" }); return; }
+  const ratingNum = parseInt(rating, 10);
+  if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 10) { res.status(400).json({ error: "invalid_rating" }); return; }
+  const safeComment = typeof comment === "string" ? comment.trim().slice(0, 1000) : null;
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "cazare-recenzie", 5, 60);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  try {
+    const { rows } = await dbPool.query(`SELECT id FROM accommodation_listings WHERE id = $1 AND status = 'approved'`, [listingId]);
+    if (!rows.length) { res.status(404).json({ error: "not_found" }); return; }
+    await dbPool.query(
+      `INSERT INTO accommodation_reviews (listing_id, author_name, rating, comment, ip_hash) VALUES ($1, $2, $3, $4, $5)`,
+      [listingId, authorName.trim(), ratingNum, safeComment, ipHash]
+    );
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error("cazare/recenzie a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+app.get("/admin/recenzii", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
+    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
+    return;
+  }
+  if (!dbPool) { res.status(503).send("Baza de date nu e configurată."); return; }
+  let rows = [];
+  try {
+    const result = await dbPool.query(
+      `SELECT r.*, l.name AS listing_name FROM accommodation_reviews r
+       JOIN accommodation_listings l ON l.id = r.listing_id
+       WHERE r.status = 'pending' ORDER BY r.creat_la ASC`
+    );
+    rows = result.rows;
+  } catch (err) {
+    res.status(500).send("Eroare: " + escapeHtml(err.message));
+    return;
+  }
+  const rowsHtml = rows.length
+    ? rows.map((r) => `
+      <div class="admin-submission-card">
+        <div class="admin-submission-name">${escapeHtml(r.listing_name)} — ${r.rating}/10</div>
+        <div class="admin-submission-meta">${escapeHtml(r.author_name)}</div>
+        ${r.comment ? `<p>${escapeHtml(r.comment)}</p>` : ""}
+        <div class="admin-submission-actions">
+          <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
+          <button type="button" class="admin-reject-btn" data-id="${r.id}">✕ Respinge</button>
+        </div>
+      </div>`).join("")
+    : `<p>Nicio recenzie în așteptare.</p>`;
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Recenzii în verificare</title>
+<style>
+body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;background:#111;color:#eee;}
+.admin-submission-card{background:#1c1c1c;border-radius:10px;padding:16px;margin-bottom:12px;}
+.admin-submission-name{font-size:17px;font-weight:700;}
+.admin-submission-meta{color:#999;margin:4px 0;font-size:13.5px;}
+.admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
+.admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+.admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+</style></head>
+<body>
+<h1>💬 Recenzii în verificare (${rows.length})</h1>
+${rowsHtml}
+<script>
+var KEY = ${safeJson(req.query.key)};
+document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
+    fetch("/api/admin/recenzii/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
+      .then(function(){ btn.closest(".admin-submission-card").remove(); });
+  });
+});
+</script>
+</body></html>`);
+});
+
+app.post("/api/admin/recenzii/:id/:action", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(403).json({ error: "forbidden" }); return; }
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { id, action } = req.params;
+  if (!["aproba", "respinge"].includes(action) || !/^\d+$/.test(id)) { res.status(400).json({ error: "invalid_input" }); return; }
+  try {
+    await dbPool.query(`UPDATE accommodation_reviews SET status = $1 WHERE id = $2`, [action === "aproba" ? "approved" : "rejected", id]);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.get("/cazare", accommodationGate, async (req, res) => {
   const nonce = generateNonce();
   res.set("Content-Security-Policy", buildCsp(nonce));
@@ -12570,10 +12669,18 @@ app.get("/cazare", accommodationGate, async (req, res) => {
   try {
     const { rows } = await dbPool.query(
       cityFilter
-        ? `SELECT * FROM accommodation_listings WHERE status = 'approved' AND city ILIKE $1
-           ORDER BY (featured_until IS NOT NULL AND featured_until > now()) DESC, creat_la DESC`
-        : `SELECT * FROM accommodation_listings WHERE status = 'approved'
-           ORDER BY (featured_until IS NOT NULL AND featured_until > now()) DESC, creat_la DESC`,
+        ? `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
+           FROM accommodation_listings l
+           LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
+           WHERE l.status = 'approved' AND l.city ILIKE $1
+           GROUP BY l.id
+           ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`
+        : `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
+           FROM accommodation_listings l
+           LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
+           WHERE l.status = 'approved'
+           GROUP BY l.id
+           ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`,
       cityFilter ? [`%${cityFilter}%`] : []
     );
     const cardsHtml = rows.length
@@ -12584,14 +12691,15 @@ app.get("/cazare", accommodationGate, async (req, res) => {
       <a href="/cazare/${escapeHtml(r.slug)}" class="attraction-accordion-item" style="display:block;text-decoration:none;color:inherit;margin-bottom:12px;overflow:hidden">
         ${photos[0] ? `<img src="${escapeHtml(photos[0])}" style="width:100%;height:160px;object-fit:cover">` : ""}
         <div style="padding:14px">
-          <div style="font-weight:800;font-size:16px">${featured ? "⭐ " : ""}${escapeHtml(r.name)}</div>
-          <div style="color:var(--muted);font-size:14px;margin-top:4px">${escapeHtml(r.city)} · ${r.max_capacity} pers. · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</div>
+          <div style="font-weight:800;font-size:16px">${featured ? "⭐ " : ""}${escapeHtml(r.name)}${r.avg_rating ? ` <span class="acc-rating-badge" style="font-size:12px;vertical-align:middle">${r.avg_rating}/10</span>` : ""}</div>
+          <div style="color:var(--muted);font-size:14px;margin-top:4px">${escapeHtml(r.city)} · ${r.max_capacity} pers. · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte${r.review_count ? ` · ${r.review_count} recenzii` : ""}</div>
         </div>
       </a>`;
         }).join("")
       : `<p class="plan-visit-hint">Nicio cazare găsită${cityFilter ? " pentru „" + escapeHtml(cityFilter) + "”" : ""} momentan.</p>`;
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
-<title>Cazare — pensiuni și cazări mici — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
+<title>Cazare — pensiuni și cazări mici — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<style>.acc-rating-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border-radius:8px;padding:2px 8px;font-weight:800;}</style></head>
 <body><main class="wrap" style="padding-top:40px">
 <h1 class="page-h1">Cazare — pensiuni și cazări mici</h1>
 <p class="intro-text">Cazări verificate manual, fără comision — contactezi direct proprietarul.</p>
@@ -12614,33 +12722,176 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
     const r = rows[0];
     const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
     const amenities = Array.isArray(r.amenities) ? r.amenities : (typeof r.amenities === "string" ? JSON.parse(r.amenities) : []);
+    const reviewsResult = await dbPool.query(
+      `SELECT author_name, rating, comment, creat_la FROM accommodation_reviews WHERE listing_id = $1 AND status = 'approved' ORDER BY creat_la DESC`,
+      [r.id]
+    );
+    const reviews = reviewsResult.rows;
+    const avgRating = reviews.length ? (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length) : null;
+
     const nonce = generateNonce();
     res.set("Content-Security-Policy", buildCsp(nonce));
     res.set("Content-Type", "text/html; charset=utf-8");
+
+    // Galerie stil Booking: poza mare + grilă de thumbnail-uri, cu "+N poze"
+    // pe ultimul thumbnail vizibil dacă sunt mai multe decât încap.
+    const maxThumbs = 4;
+    const shown = photos.slice(0, 1 + maxThumbs);
+    const extraCount = photos.length - shown.length;
+    const galleryHtml = photos.length ? `
+    <div class="acc-gallery">
+      <img class="acc-gallery-main" src="${escapeHtml(photos[0])}" alt="${escapeHtml(r.name)}">
+      <div class="acc-gallery-thumbs">
+        ${shown.slice(1).map((p, i) => {
+          const isLast = i === shown.slice(1).length - 1 && extraCount > 0;
+          return `<div class="acc-gallery-thumb-wrap">
+            <img src="${escapeHtml(p)}" alt="">
+            ${isLast ? `<div class="acc-gallery-more">+${extraCount} poze</div>` : ""}
+          </div>`;
+        }).join("")}
+      </div>
+    </div>` : "";
+
+    const amenityChipsHtml = amenities.map((a) => `<div class="acc-chip">${escapeHtml(ACCOMMODATION_AMENITIES[a] || a)}</div>`).join("")
+      + (r.other_amenities_text ? `<div class="acc-chip">${escapeHtml(r.other_amenities_text)}</div>` : "");
+
+    const reviewsHtml = reviews.length
+      ? reviews.map((rv) => `
+      <div class="acc-review">
+        <div class="acc-review-head"><strong>${escapeHtml(rv.author_name)}</strong><span class="acc-review-score">${rv.rating}/10</span></div>
+        ${rv.comment ? `<p>${escapeHtml(rv.comment)}</p>` : ""}
+      </div>`).join("")
+      : `<p class="plan-visit-hint">Nicio recenzie încă — fii primul care lasă una.</p>`;
+
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
-<title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Programul de Azi</title><link rel="stylesheet" href="/style.css"></head>
+<title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Programul de Azi</title><link rel="stylesheet" href="/style.css">
+<style>
+.acc-gallery{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin:16px 0;}
+.acc-gallery-main{width:100%;height:340px;object-fit:cover;border-radius:14px;}
+.acc-gallery-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.acc-gallery-thumb-wrap{position:relative;height:164px;}
+.acc-gallery-thumb-wrap img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.acc-gallery-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:800;}
+@media (max-width:640px){.acc-gallery{grid-template-columns:1fr;}.acc-gallery-main{height:220px;}}
+.acc-chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+.acc-chip{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;padding:8px 14px;font-size:13.5px;color:var(--text);}
+.acc-layout{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;}
+@media (max-width:800px){.acc-layout{grid-template-columns:1fr;}}
+.acc-sidebar{position:sticky;top:16px;}
+.acc-fav-btn{width:100%;text-align:center;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;font-weight:700;cursor:pointer;color:var(--text);margin-top:10px;}
+.acc-fav-btn.is-fav{border-color:var(--accent);color:var(--accent);}
+.acc-review{border-bottom:1px solid var(--glass-border);padding:12px 0;}
+.acc-review-head{display:flex;justify-content:space-between;}
+.acc-review-score{color:var(--accent);font-weight:800;}
+.acc-rating-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border-radius:8px;padding:6px 10px;font-weight:800;}
+</style></head>
 <body><main class="wrap" style="padding-top:40px;padding-bottom:60px">
 <p class="breadcrumb"><a href="/cazare">Cazare</a> / ${escapeHtml(r.name)}</p>
 <h1 class="page-h1">${escapeHtml(r.name)}</h1>
-<p class="intro-text">${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}${r.address ? " — " + escapeHtml(r.address) : ""}</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:16px 0">
-${photos.map((p) => `<img src="${escapeHtml(p)}" style="width:100%;height:120px;object-fit:cover;border-radius:10px">`).join("")}
+<p class="intro-text">📍 ${escapeHtml(r.address ? r.address + ", " : "")}${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}${avgRating ? ` &nbsp; <span class="acc-rating-badge">${avgRating.toFixed(1)}/10</span> (${reviews.length} recenzii)` : ""}</p>
+
+${galleryHtml}
+<div class="acc-chips">${amenityChipsHtml}</div>
+
+<div class="acc-layout">
+  <div>
+    <h2 class="section-title"><span class="bar"></span>Despre această cazare</h2>
+    <p>${r.description ? escapeHtml(r.description) : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
+    <div class="trip-toolkit-card">
+      <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
+      <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
+      ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
+      ${r.cancellation_policy ? `<p><strong>Politică de anulare:</strong> ${escapeHtml(r.cancellation_policy)}</p>` : ""}
+    </div>
+
+    <h2 class="section-title"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
+    ${reviewsHtml}
+    <details class="acc-card" style="margin-top:14px">
+      <summary>✍️ Lasă o recenzie</summary>
+      <div class="acc-card-body">
+        <form id="reviewForm">
+          <label class="submit-place-label">Numele tău
+            <input type="text" id="rvName" maxlength="100" required>
+          </label>
+          <label class="submit-place-label">Notă (1-10)
+            <select id="rvRating" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+          </label>
+          <label class="submit-place-label">Comentariu (opțional)
+            <textarea id="rvComment" maxlength="1000" rows="3"></textarea>
+          </label>
+          <button type="submit" id="rvSubmitBtn" class="submit-place-btn">Trimite recenzia</button>
+          <p id="rvMsg" class="submit-place-thanks" hidden></p>
+          <p id="rvErr" class="submit-place-error" hidden></p>
+        </form>
+      </div>
+    </details>
+  </div>
+
+  <div class="acc-sidebar">
+    <div class="trip-toolkit-card">
+      <p>${r.contact_phone ? `📞 ${escapeHtml(r.contact_phone)}<br>` : ""}${r.contact_email ? `✉️ ${escapeHtml(r.contact_email)}<br>` : ""}</p>
+      ${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🌐 Website</span></a>` : ""}
+      ${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🔗 Profil existent</span></a>` : ""}
+      ${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📘 Facebook</span></a>` : ""}
+      ${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📷 Instagram</span></a>` : ""}
+      ${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🎵 TikTok</span></a>` : ""}
+      <button type="button" id="favBtn" class="acc-fav-btn">☆ Adaugă la favorite</button>
+    </div>
+  </div>
 </div>
-<div class="trip-toolkit-card">
-  <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
-  <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
-  ${amenities.length || r.other_amenities_text ? `<p><strong>Facilități:</strong> ${[...amenities.map((a) => ACCOMMODATION_AMENITIES[a] || a), r.other_amenities_text].filter(Boolean).map(escapeHtml).join(" · ")}</p>` : ""}
-  ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
-  ${r.cancellation_policy ? `<p><strong>Politică de anulare:</strong> ${escapeHtml(r.cancellation_policy)}</p>` : ""}
-</div>
-<h2 class="section-title"><span class="bar"></span>Contact</h2>
-<p>${r.contact_phone ? `📞 ${escapeHtml(r.contact_phone)}<br>` : ""}${r.contact_email ? `✉️ ${escapeHtml(r.contact_email)}<br>` : ""}</p>
-${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🌐 Website</span></a>` : ""}
-${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🔗 Profil existent</span></a>` : ""}
-${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">📘 Facebook</span></a>` : ""}
-${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">📷 Instagram</span></a>` : ""}
-${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:4px 8px 4px 0"><span class="affiliate-cta-text">🎵 TikTok</span></a>` : ""}
-</main></body></html>`);
+</main>
+<script nonce="${nonce}">
+(function(){
+  var favBtn = document.getElementById("favBtn");
+  var slug = ${JSON.stringify(r.slug)};
+  function getFavs(){ try { return JSON.parse(localStorage.getItem("cazareFavorite") || "[]"); } catch(e) { return []; } }
+  function setFavs(list){ localStorage.setItem("cazareFavorite", JSON.stringify(list)); }
+  function refreshBtn(){
+    var isFav = getFavs().indexOf(slug) !== -1;
+    favBtn.textContent = isFav ? "★ La favorite" : "☆ Adaugă la favorite";
+    favBtn.classList.toggle("is-fav", isFav);
+  }
+  favBtn.addEventListener("click", function(){
+    var favs = getFavs();
+    var idx = favs.indexOf(slug);
+    if (idx === -1) { favs.push(slug); } else { favs.splice(idx, 1); }
+    setFavs(favs);
+    refreshBtn();
+  });
+  refreshBtn();
+
+  var reviewForm = document.getElementById("reviewForm");
+  reviewForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = document.getElementById("rvErr");
+    var msg = document.getElementById("rvMsg");
+    err.hidden = true;
+    var btn = document.getElementById("rvSubmitBtn");
+    btn.disabled = true;
+    fetch("/api/cazare/recenzie", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        listingId: ${r.id},
+        authorName: document.getElementById("rvName").value,
+        rating: document.getElementById("rvRating").value,
+        comment: document.getElementById("rvComment").value,
+      }),
+    })
+      .then(function(res){
+        if (res.ok) {
+          reviewForm.querySelectorAll("input, textarea, select, button").forEach(function(el){ el.disabled = true; });
+          msg.textContent = "✓ Mulțumim! Recenzia ta a fost trimisă spre verificare.";
+          msg.hidden = false;
+        } else {
+          err.textContent = "Ceva n-a mers. Încearcă din nou."; err.hidden = false; btn.disabled = false;
+        }
+      })
+      .catch(function(){ err.textContent = "Ceva n-a mers. Încearcă din nou."; err.hidden = false; btn.disabled = false; });
+  });
+})();
+</script>
+</body></html>`);
   } catch (err) {
     res.status(500).send("Eroare: " + escapeHtml(err.message));
   }
