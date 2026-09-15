@@ -11059,7 +11059,7 @@ function accCurrencyScript() {
       if (!amount || !rates.rates[from] || !rates.rates[target]) return;
       var inEur = amount / rates.rates[from];
       var converted = inEur * rates.rates[target];
-      var rounded = converted >= 100 ? Math.round(converted) : Math.round(converted * 100) / 100;
+      var rounded = Math.round(converted);
       el.textContent = rounded.toLocaleString("ro-RO") + " " + target;
     });
   }
@@ -11598,6 +11598,48 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
   });
 })();
 </script>
+</body></html>`);
+});
+
+app.get("/cazare/adauga-afacere", accommodationGate, (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
+<title>Ai un magazin sau obiectiv turistic? — Opening Hours Today</title>
+<style>${accWhitePageStyles()}
+.acc-badge-wrap{max-width:640px;margin:0 auto;padding:50px 24px 40px;text-align:left;}
+.acc-badge-h1{font-size:26px;font-weight:900;color:#111;margin:0 0 14px;}
+.acc-badge-intro{color:#555;font-size:15px;line-height:1.6;margin-bottom:34px;}
+.acc-badge-step{margin-bottom:30px;}
+.acc-badge-step h2{font-size:17px;font-weight:800;color:#111;margin:0 0 8px;}
+.acc-badge-step p{color:#555;font-size:14.5px;line-height:1.6;margin:0 0 12px;}
+.acc-badge-code{background:#f7f7f7;border:1px solid #ddd;border-radius:10px;padding:16px;font-size:12.5px;white-space:pre-wrap;word-break:break-all;color:#333;}
+</style></head>
+<body>
+<div class="acc-badge-wrap">
+  <h1 class="acc-badge-h1">📛 Ai un magazin sau un obiectiv turistic?</h1>
+  <p class="acc-badge-intro">Nu doar cazări — pe Opening Hours Today poți apărea și dacă ai un magazin, un obiectiv turistic sau orice altă afacere, cu program live, verificat automat, vizibil atât la noi pe site cât și pe propriul tău site. Sunt 3 pași simpli.</p>
+
+  <div class="acc-badge-step">
+    <h2>Pasul 1 — Propune-ți afacerea</h2>
+    <p>Dacă nu ești deja listat la noi, primul pas e să ne spui despre afacerea ta. E gratuit și durează 1 minut.</p>
+    <a href="/propune" class="acc-white-cta" style="display:inline-block;text-decoration:none;width:auto;padding:13px 26px">📍 Propune-ți afacerea acum</a>
+  </div>
+
+  <div class="acc-badge-step">
+    <h2>Pasul 2 — Așteaptă verificarea, apoi găsește-te pe site</h2>
+    <p>Verificăm manual fiecare propunere — de obicei durează câteva zile. Caută-ți afacerea direct pe site (bara de căutare de pe pagina principală). Dacă îți găsești propria pagină, treci la Pasul 3.</p>
+  </div>
+
+  <div class="acc-badge-step">
+    <h2>Pasul 3 — Ia-ți codul insignei, pentru propriul tău site</h2>
+    <p>Odată găsit pe site-ul nostru, uită-te la adresa din browser — partea de după ultimul <code>/</code> e slug-ul tău. Înlocuiește <code>SLUG-UL-TAU</code> mai jos și pune codul oriunde vrei să apară insigna, pe pagina ta.</p>
+    <div class="acc-badge-code">&lt;script src="https://opening-hours-today.eu/badge.js" data-slug="SLUG-UL-TAU" data-tip="attraction" data-lang="ro"&gt;&lt;/script&gt;</div>
+  </div>
+
+  ${accWhiteLegalHtml()}
+</div>
 </body></html>`);
 });
 
@@ -12669,6 +12711,15 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       <select id="dCurrency" style="flex:1"><option value="RON" selected>RON</option><option value="EUR">EUR</option></select>
     </div>
 
+    <label class="acc-white-label" for="dPricePerRoom">Preț/noapte/cameră (opțional, dacă vinzi și pe cameră)</label>
+    <input type="number" id="dPricePerRoom" class="acc-white-input" min="0" step="0.01">
+
+    <label class="acc-white-label" for="dPricePerProperty">Preț/noapte/toată proprietatea (opțional, dacă închiriezi și în întregime)</label>
+    <input type="number" id="dPricePerProperty" class="acc-white-input" min="0" step="0.01">
+
+    <label class="acc-white-label" for="dSpecialOffers">Oferte speciale (opțional — o ofertă pe linie, ex. „3+1 gratis în august” sau „Ofertă de Crăciun”)</label>
+    <textarea id="dSpecialOffers" class="acc-white-input" rows="3" maxlength="500"></textarea>
+
     <label class="acc-white-label">Facilități</label>
     <div class="acc-check-grid">
       ${amenitiesHtml}
@@ -12678,7 +12729,12 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       <input type="text" id="dOtherAmenityText" class="acc-white-input" placeholder="ex. saună, șemineu, terasă privată" maxlength="255">
     </div>
 
-    <label class="acc-white-label">Poze (minim 3, maxim 10 — interior + exterior)</label>
+    <label class="acc-white-label">Poză principală (aceasta va apărea mare, în galerie)</label>
+    <input type="file" id="dMainPhotoInput" class="acc-photo-input" accept="image/jpeg,image/png,image/webp">
+    <div class="acc-photo-grid" id="dMainPhotoList"></div>
+    <p id="dMainPhotoStatus" class="acc-white-helper"></p>
+
+    <label class="acc-white-label">Poze camere / locație / facilități (minim 2, maxim 9 — apar mai mici)</label>
     <input type="file" id="dPhotoInput" class="acc-photo-input" accept="image/jpeg,image/png,image/webp" multiple>
     <div class="acc-photo-grid" id="dPhotoList"></div>
     <p id="dPhotoStatus" class="acc-white-helper"></p>
@@ -12720,6 +12776,45 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
 </div>
 <script nonce="${nonce}">
 (function(){
+  var mainPhoto = null;
+  var mainPhotoList = document.getElementById("dMainPhotoList");
+  var mainPhotoStatus = document.getElementById("dMainPhotoStatus");
+  function renderMainPhoto(){
+    mainPhotoList.innerHTML = "";
+    if (!mainPhoto) return;
+    var wrap = document.createElement("div");
+    wrap.className = "acc-photo-thumb";
+    var img = document.createElement("img");
+    img.src = mainPhoto;
+    var rm = document.createElement("button");
+    rm.type = "button"; rm.textContent = "✕";
+    rm.addEventListener("click", function(){ mainPhoto = null; renderMainPhoto(); });
+    wrap.appendChild(img); wrap.appendChild(rm);
+    mainPhotoList.appendChild(wrap);
+  }
+  var MAX_PHOTO_BYTES = 4 * 1024 * 1024;
+  document.getElementById("dMainPhotoInput").addEventListener("change", async function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > MAX_PHOTO_BYTES) {
+      mainPhotoStatus.textContent = "„" + file.name + "” e prea mare (" + (file.size / 1024 / 1024).toFixed(1) + " MB, maxim 4 MB).";
+      e.target.value = "";
+      return;
+    }
+    mainPhotoStatus.textContent = "Se încarcă...";
+    try {
+      var resp = await fetch("/api/cazare/upload-poza", { method: "POST", headers: { "Content-Type": file.type || "image/jpeg" }, body: file });
+      var data = await resp.json();
+      if (!resp.ok || !data.url) throw new Error(data.error || ("HTTP " + resp.status));
+      mainPhoto = data.url;
+      renderMainPhoto();
+      mainPhotoStatus.textContent = "✓ Poză principală încărcată.";
+    } catch (err) {
+      mainPhotoStatus.textContent = "Poza n-a putut fi încărcată: " + err.message;
+    }
+    e.target.value = "";
+  });
+
   var photos = [];
   var photoList = document.getElementById("dPhotoList");
   var photoStatus = document.getElementById("dPhotoStatus");
@@ -12737,9 +12832,8 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       photoList.appendChild(wrap);
     });
   }
-  var MAX_PHOTO_BYTES = 4 * 1024 * 1024;
   document.getElementById("dPhotoInput").addEventListener("change", async function(e){
-    var files = Array.from(e.target.files || []).slice(0, 10 - photos.length);
+    var files = Array.from(e.target.files || []).slice(0, 9 - photos.length);
     if (!files.length) return;
     photoStatus.textContent = "Se încarcă " + files.length + " poze...";
     for (var i = 0; i < files.length; i++) {
@@ -12774,7 +12868,8 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     e.preventDefault();
     var err = document.getElementById("dErr");
     err.hidden = true;
-    if (photos.length < 3) { err.textContent = "Ai nevoie de minim 3 poze."; err.hidden = false; return; }
+    if (!mainPhoto) { err.textContent = "Adaugă o poză principală."; err.hidden = false; return; }
+    if (photos.length < 2) { err.textContent = "Ai nevoie de minim 2 poze de cameră/locație/facilități, pe lângă poza principală."; err.hidden = false; return; }
     var website = document.getElementById("dWebsite").value.trim();
     var booking = document.getElementById("dBooking").value.trim();
     var amenities = Array.from(document.querySelectorAll(".acc-amenity:checked")).map(function(el){ return el.value; });
@@ -12791,9 +12886,12 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       roomsCount: document.getElementById("dRooms").value,
       priceFrom: document.getElementById("dPrice").value,
       priceCurrency: document.getElementById("dCurrency").value,
+      pricePerRoom: document.getElementById("dPricePerRoom").value,
+      pricePerProperty: document.getElementById("dPricePerProperty").value,
+      specialOffers: document.getElementById("dSpecialOffers").value,
       amenities: amenities,
       otherAmenitiesText: otherToggle.checked ? document.getElementById("dOtherAmenityText").value : "",
-      photos: photos,
+      photos: [mainPhoto].concat(photos),
       checkinTime: document.getElementById("dCheckin").value,
       checkoutTime: document.getElementById("dCheckout").value,
       websiteUrl: website,
@@ -13055,6 +13153,9 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
     city: b.city.trim(), country_code: b.countryCode, address: b.address.trim(),
     rooms_count: roomsCount, max_capacity: maxCapacity, price_from: priceFrom,
     price_currency: b.priceCurrency === "EUR" ? "EUR" : "RON",
+    price_per_room: (() => { const n = parseFloat(b.pricePerRoom); return Number.isFinite(n) && n >= 0 ? n : null; })(),
+    price_per_property: (() => { const n = parseFloat(b.pricePerProperty); return Number.isFinite(n) && n >= 0 ? n : null; })(),
+    special_offers: typeof b.specialOffers === "string" && b.specialOffers.trim() ? b.specialOffers.trim().slice(0, 500) : null,
     amenities: JSON.stringify(safeAmenities), photos: JSON.stringify(b.photos),
     other_amenities_text: safeOtherAmenities,
     checkin_time: b.checkinTime.trim(), checkout_time: b.checkoutTime.trim(),
@@ -15142,7 +15243,7 @@ ${accCurrencyModalHtml()}
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="carRentalWidget">🚗 Mașini de închiriat</button>
   ${cityFilter && attractionsLink ? `<a href="${attractionsLink.href}" class="acc-subnav-btn">🎡 Atracții${attractionsLink.isNearby ? ` lângă ${escapeHtml(cityFilter)}` : ` în ${escapeHtml(attractionsLink.label)}`}</a>` : ""}
-  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget">🚕 Transferuri</button>
 </div>
 </div>
 <div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
@@ -15157,7 +15258,7 @@ ${accCurrencyModalHtml()}
       <h3 class="acc-widget-modal-title">Informații transferuri</h3>
       <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
     </div>
-    <div id="accTransferWidget"></div>
+    <div id="accTransferWidget"><script nonce="${nonce}" async src="${TRANSFER_WIDGET_SRC}"></script></div>
     <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
       <hr class="acc-widget-divider">
       <div class="acc-widget-perks-grid">
@@ -15277,6 +15378,10 @@ ${accCurrencyModalHtml()}
       <span class="icon">🗺️</span>
       <div><div class="title">Creează un itinerar cu AI</div><div class="sub">Planificare automată, personalizată</div></div>
     </a>
+    <a href="/cazare/adauga-afacere" class="acc-explore-card">
+      <span class="icon">📛</span>
+      <div><div class="title">Ai un magazin sau obiectiv turistic?</div><div class="sub">Apari și tu, gratuit, pe site</div></div>
+    </a>
   </div>
 </div>
 <hr class="acc-explore-divider">
@@ -15345,6 +15450,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
         id: 0, slug: "preview", name: d.name, description: d.description, type: d.type, other_type: d.otherType,
         city: d.city, country_code: d.countryCode, address: d.address, rooms_count: d.roomsCount, max_capacity: d.maxCapacity,
         price_from: d.priceFrom, price_currency: d.priceCurrency, amenities: d.amenities || [], other_amenities_text: d.otherAmenitiesText,
+        price_per_room: d.pricePerRoom || null, price_per_property: d.pricePerProperty || null, special_offers: d.specialOffers || null,
         photos: d.photos || [], checkin_time: d.checkinTime, checkout_time: d.checkoutTime,
         website_url: d.websiteUrl, booking_profile_url: d.bookingProfileUrl, facebook_url: d.facebookUrl, instagram_url: d.instagramUrl, tiktok_url: d.tiktokUrl,
         contact_phone: d.contactPhone, contact_email: d.contactEmail, star_rating: d.starRating,
@@ -15396,12 +15502,12 @@ async function handleAccommodationPropertyPage(req, res, mode) {
     const extraCount = photos.length - shown.length;
     const galleryHtml = photos.length ? `
     <div class="acc-gallery">
-      <img class="acc-gallery-main" src="${escapeHtml(photos[0])}" alt="${escapeHtml(r.name)}">
+      <img class="acc-gallery-main acc-gallery-photo" src="${escapeHtml(photos[0])}" alt="${escapeHtml(r.name)}" data-lightbox-index="0">
       <div class="acc-gallery-thumbs">
         ${shown.slice(1).map((p, i) => {
           const isLast = i === shown.slice(1).length - 1 && extraCount > 0;
           return `<div class="acc-gallery-thumb-wrap">
-            <img src="${escapeHtml(p)}" alt="">
+            <img class="acc-gallery-photo" src="${escapeHtml(p)}" alt="" data-lightbox-index="${i + 1}">
             ${isLast ? `<div class="acc-gallery-more">+${extraCount} poze</div>` : ""}
           </div>`;
         }).join("")}
@@ -15444,6 +15550,8 @@ async function handleAccommodationPropertyPage(req, res, mode) {
     const waBase = phoneDigits.length > 6 ? `https://wa.me/${phoneDigits.replace(/^\+/, "")}` : null;
     const fullAddress = `${r.address ? r.address + ", " : ""}${r.city}, ${COUNTRY_LABELS[r.country_code] || r.country_code}`;
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+    const mapsEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`;
+    const wazeUrl = `https://waze.com/ul?q=${encodeURIComponent(fullAddress)}&navigate=yes`;
 
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
 <title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
@@ -15525,6 +15633,19 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-gallery-thumb-wrap img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
 .acc-page-wrap{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;}
 .acc-gallery-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:800;}
+.acc-gallery-photo{cursor:pointer;}
+.acc-lightbox-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:90;align-items:center;justify-content:center;}
+.acc-lightbox-backdrop.is-open{display:flex;}
+.acc-lightbox-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:6px;}
+.acc-lightbox-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;}
+.acc-lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;cursor:pointer;}
+.acc-lightbox-prev{left:16px;}
+.acc-lightbox-next{right:16px;}
+.acc-lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;background:rgba(255,255,255,.15);padding:5px 14px;border-radius:999px;}
+.acc-map-link-btn{background:none;border:none;color:var(--accent);font-size:inherit;font-family:inherit;cursor:pointer;padding:0;text-decoration:none;}
+.acc-map-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;align-items:center;justify-content:center;padding:20px;}
+.acc-map-modal-backdrop.is-open{display:flex;}
+.acc-map-modal{position:relative;background:#fff;border-radius:14px;overflow:hidden;width:100%;max-width:800px;height:70vh;}
 .acc-quickfacts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0;}
 .acc-quickfact-card{display:flex;align-items:center;gap:8px;border:1px solid var(--glass-border);border-radius:12px;padding:12px 16px;font-size:13.5px;color:var(--text);background:var(--glass-bg);}
 .acc-quickfact-card .icon{font-size:17px;}
@@ -15543,8 +15664,10 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-category-label{display:flex;justify-content:space-between;font-size:13.5px;color:var(--text);margin-bottom:5px;}
 .acc-category-bar{background:var(--glass-border);border-radius:999px;height:6px;overflow:hidden;}
 .acc-category-bar-fill{background:var(--accent);height:100%;border-radius:999px;}
+.acc-offers-list{margin:8px 0 0;padding-left:20px;}
+.acc-offers-list li{margin-bottom:6px;color:var(--text);}
 .acc-desc-more{background:none;border:1px solid #4da3ff;color:#4da3ff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
-.acc-desc-text{max-height:120px;overflow:hidden;position:relative;}
+.acc-desc-text{max-height:120px;overflow:hidden;position:relative;text-align:justify;}
 .acc-desc-text.is-expanded{max-height:none;}
 .acc-fac-grid{display:flex;flex-wrap:wrap;gap:10px 24px;margin:14px 0;}
 .acc-fac-item{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text);}
@@ -15614,7 +15737,7 @@ ${accCurrencyModalHtml()}
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="carRentalWidget">🚗 Mașini de închiriat</button>
   ${attractionsLink ? `<a href="${attractionsLink.href}" class="acc-subnav-btn">🎡 Atracții${attractionsLink.isNearby ? ` lângă ${escapeHtml(r.city)}` : ` în ${escapeHtml(attractionsLink.label)}`}</a>` : ""}
-  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget">🚕 Transferuri</button>
 </div>
 </div>
 <div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
@@ -15629,7 +15752,7 @@ ${accCurrencyModalHtml()}
       <h3 class="acc-widget-modal-title">Informații transferuri</h3>
       <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
     </div>
-    <div id="accTransferWidget"></div>
+    <div id="accTransferWidget"><script nonce="${nonce}" async src="${TRANSFER_WIDGET_SRC}"></script></div>
     <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
       <hr class="acc-widget-divider">
       <div class="acc-widget-perks-grid">
@@ -15695,7 +15818,7 @@ ${accCurrencyModalHtml()}
   <div>
     <div class="acc-prop-stars">${starsHtml || "—"} <span class="acc-verified-badge">✓ Verificat de noi</span></div>
     <h1 class="page-h1" style="margin-bottom:6px">${escapeHtml(r.name)}</h1>
-    <p class="intro-text" style="margin:0">📍 ${escapeHtml(fullAddress)} — <strong>Locație excelentă</strong> · <a href="${mapsUrl}" target="_blank" rel="noopener" style="color:var(--accent)">Arată pe hartă</a></p>
+    <p class="intro-text" style="margin:0">📍 ${escapeHtml(fullAddress)} — <strong>Locație excelentă</strong> · <button type="button" id="showMapBtn" class="acc-map-link-btn">Arată pe hartă</button> · <a href="${wazeUrl}" target="_blank" rel="noopener" class="acc-map-link-btn">Traseu</a></p>
   </div>
   <div class="acc-prop-actions">
     <button type="button" class="acc-icon-btn" id="favBtn" title="Favorite">☆</button>
@@ -15706,6 +15829,20 @@ ${accCurrencyModalHtml()}
 
 <div id="descriere"></div>
 ${galleryHtml}
+${photos.length ? `
+<div class="acc-lightbox-backdrop" id="lightboxBackdrop">
+  <button type="button" class="acc-lightbox-close" id="lightboxClose">✕</button>
+  <button type="button" class="acc-lightbox-nav acc-lightbox-prev" id="lightboxPrev">‹</button>
+  <img class="acc-lightbox-img" id="lightboxImg" src="" alt="">
+  <button type="button" class="acc-lightbox-nav acc-lightbox-next" id="lightboxNext">›</button>
+  <div class="acc-lightbox-counter" id="lightboxCounter"></div>
+</div>` : ""}
+<div class="acc-map-modal-backdrop" id="mapModalBackdrop">
+  <div class="acc-map-modal">
+    <button type="button" class="acc-widget-modal-close" id="mapModalClose">✕</button>
+    <iframe src="" id="mapModalFrame" style="border:0;width:100%;height:100%" loading="lazy"></iframe>
+  </div>
+</div>
 <div class="acc-quickfacts">${quickFactsHtml}</div>
 
 <div class="acc-layout">
@@ -15722,8 +15859,17 @@ ${galleryHtml}
       <h2 class="section-title"><span class="bar"></span>Informații &amp; Prețuri</h2>
       <div class="trip-toolkit-card">
         <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
-        <p><strong>Preț:</strong> de la <span data-price="${r.price_from}" data-currency="${escapeHtml(r.price_currency)}">${r.price_from} ${escapeHtml(r.price_currency)}</span>/noapte</p>
+        ${r.price_per_room ? `<p><strong>Preț/noapte/cameră:</strong> <span data-price="${r.price_per_room}" data-currency="${escapeHtml(r.price_currency)}">${r.price_per_room} ${escapeHtml(r.price_currency)}</span></p>` : ""}
+        ${r.price_per_property ? `<p><strong>Preț/noapte/toată proprietatea:</strong> <span data-price="${r.price_per_property}" data-currency="${escapeHtml(r.price_currency)}">${r.price_per_property} ${escapeHtml(r.price_currency)}</span></p>` : ""}
+        ${!r.price_per_room && !r.price_per_property ? `<p><strong>Preț:</strong> de la <span data-price="${r.price_from}" data-currency="${escapeHtml(r.price_currency)}">${r.price_from} ${escapeHtml(r.price_currency)}</span>/noapte</p>` : ""}
       </div>
+      ${r.special_offers ? `
+      <div class="trip-toolkit-card" style="margin-top:12px;border-color:var(--accent)">
+        <h3 class="trip-toolkit-title">🎁 Oferte speciale</h3>
+        <ul class="acc-offers-list">
+          ${r.special_offers.split("\n").filter((l) => l.trim()).map((line) => `<li>${escapeHtml(line.trim())}</li>`).join("")}
+        </ul>
+      </div>` : ""}
     </div>
 
     <div class="acc-tab-panel" id="panel-facilitati" hidden>
@@ -15832,6 +15978,57 @@ ${waBase ? `
 <script nonce="${nonce}">
 (function(){
   ${accCurrencyScript()}
+  // --- harta, ca modal, ca să nu mai pleci de pe site ---
+  var showMapBtn = document.getElementById("showMapBtn");
+  var mapModalBackdrop = document.getElementById("mapModalBackdrop");
+  var mapModalFrame = document.getElementById("mapModalFrame");
+  var mapModalClose = document.getElementById("mapModalClose");
+  if (showMapBtn) {
+    showMapBtn.addEventListener("click", function(){
+      if (!mapModalFrame.src) mapModalFrame.src = ${JSON.stringify(mapsEmbedUrl)};
+      mapModalBackdrop.classList.add("is-open");
+    });
+  }
+  if (mapModalClose) mapModalClose.addEventListener("click", function(){ mapModalBackdrop.classList.remove("is-open"); });
+  if (mapModalBackdrop) mapModalBackdrop.addEventListener("click", function(e){ if (e.target === mapModalBackdrop) mapModalBackdrop.classList.remove("is-open"); });
+
+  // --- lightbox galerie (click pe orice poză deschide toate pozele) ---
+  var allPhotos = ${JSON.stringify(photos)};
+  var lightboxIdx = 0;
+  var lightboxBackdrop = document.getElementById("lightboxBackdrop");
+  var lightboxImg = document.getElementById("lightboxImg");
+  var lightboxCounter = document.getElementById("lightboxCounter");
+  function openLightbox(i){
+    if (!allPhotos.length) return;
+    lightboxIdx = i;
+    lightboxImg.src = allPhotos[lightboxIdx];
+    lightboxCounter.textContent = (lightboxIdx + 1) + " / " + allPhotos.length;
+    lightboxBackdrop.classList.add("is-open");
+  }
+  function closeLightbox(){ lightboxBackdrop.classList.remove("is-open"); }
+  function showLightboxDelta(delta){
+    lightboxIdx = (lightboxIdx + delta + allPhotos.length) % allPhotos.length;
+    openLightbox(lightboxIdx);
+  }
+  document.querySelectorAll(".acc-gallery-photo").forEach(function(img){
+    img.addEventListener("click", function(){ openLightbox(parseInt(img.getAttribute("data-lightbox-index"), 10) || 0); });
+  });
+  var lightboxCloseBtn = document.getElementById("lightboxClose");
+  var lightboxPrevBtn = document.getElementById("lightboxPrev");
+  var lightboxNextBtn = document.getElementById("lightboxNext");
+  if (lightboxCloseBtn) lightboxCloseBtn.addEventListener("click", closeLightbox);
+  if (lightboxPrevBtn) lightboxPrevBtn.addEventListener("click", function(){ showLightboxDelta(-1); });
+  if (lightboxNextBtn) lightboxNextBtn.addEventListener("click", function(){ showLightboxDelta(1); });
+  if (lightboxBackdrop) {
+    lightboxBackdrop.addEventListener("click", function(e){ if (e.target === lightboxBackdrop) closeLightbox(); });
+  }
+  document.addEventListener("keydown", function(e){
+    if (!lightboxBackdrop || !lightboxBackdrop.classList.contains("is-open")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") showLightboxDelta(-1);
+    if (e.key === "ArrowRight") showLightboxDelta(1);
+  });
+
   // --- comutare tab-uri (un singur panou vizibil o dată) ---
   var tabLinks = document.querySelectorAll("#accTabs a");
   tabLinks.forEach(function(link){
