@@ -181,6 +181,11 @@ const ACCOMMODATION_FEATURED_DURATION_DAYS = 90; // ~3 luni
 // /admin/setari, fără redeploy. 0 = neconfigurat încă, tratat ca "gratuit"
 // (nu forțăm nimic la plată până admin pune un preț real).
 const ACCOMMODATION_TRIAL_MONTHS = 3;
+// Link-ul de widget Aviasales, folosit de butonul "✈️ Zboruri" din
+// sub-navigare — comun pe pagina de director și pe cea a proprietății.
+const AVIASALES_SRC = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100";
+// Widget transferuri (aeroport etc.) — TravelPayouts, temă "biletik".
+const TRANSFER_WIDGET_SRC = "https://tpembd.com/content?trs=565241&powered_by=false&shmarker=767825&language=ro&display_currency=EUR&transfer_type=any&theme=biletik&hide_form_extras=false&hide_external_links=false&disable_currency_selector=false&campaign_id=1&promo_id=691";
 async function getAccommodationMonthlyPriceCents() {
   if (!dbPool) return 0;
   try {
@@ -1797,9 +1802,11 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
   // evităm). Decuplat, la fel cum s-a făcut deja pentru parcare (vezi mai
   // sus în fișier) — fiecare buton pornește individual, imediat ce are link
   // real, fără să aștepte restul.
-  const getTransferHtml = linkGetTransferAffiliate
-    ? `<a href="${escapeHtml(getTransferLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option">${escapeHtml(t.optionA)}</a>`
-    : "";
+  // Taxi/Transfer — widget TravelPayouts (modal-reveal), nu mai e link simplu
+  // GetTransfer (confirmat mort/greșit de utilizator) — reutilizează exact
+  // mecanismul universal de widget-reveal, deja folosit la zboruri peste tot
+  // pe site (vezi buildWidgetRevealScript mai sus).
+  const getTransferHtml = `<button type="button" class="how-to-get-there-option widget-reveal-btn" data-widget-target="transferWidgetCard" data-widget-src="${escapeHtml(TRANSFER_WIDGET_SRC)}">${escapeHtml(t.optionA)}</button>`;
   const omioHtml = linkOmioAffiliate
     ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>`
     : "";
@@ -1811,6 +1818,7 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
       ${wazeHtml}
       ${affiliateOptionsHtml}
     </div>
+    <div id="transferWidgetCard" class="flight-widget-card" style="display:none"></div>
   </div>`;
 }
 
@@ -5292,7 +5300,7 @@ function buildCsp(nonce) {
     "worker-src 'self' blob:",
     "manifest-src 'self'",
     "base-uri 'self'",
-    "form-action 'self' https://tpembd.com https://tp-em.com",
+    "form-action 'self' https://tpembd.com https://tp-em.com https://aviasales.com https://www.aviasales.com https://search.aviasales.com",
     "frame-ancestors 'none'",
     "object-src 'none'",
     "upgrade-insecure-requests",
@@ -10452,7 +10460,7 @@ async function sendAccommodationApprovalEmail(email, listingName, listingUrl, lo
 <h3 style="margin-top:24px">Primele ${ACCOMMODATION_TRIAL_MONTHS} luni sunt gratuite</h3>
 <p>Nu plătești nimic acum. Când vrei, poți adăuga un card din contul tău (${billingUrl ? `<a href="${billingUrl}">Facturi și abonamente</a>` : "secțiunea Facturi și abonamente"}) — cardul nu e debitat decât după ce trece perioada gratuită, iar dacă nu adaugi un card, te anunțăm din timp înainte să expire.</p>
 <h3 style="margin-top:24px">Ce urmează</h3>
-<p>Poți reveni oricând în contul tău ca să actualizezi poze, prețul sau facilitățile, sau ca să activezi opțiunea <strong>Featured</strong>, ca să apari primul în listă. Te conectezi cu emailul și parola alese la înregistrare:</p>
+<p>Poți reveni oricând în contul tău ca să actualizezi poze, prețul sau facilitățile, sau ca să activezi opțiunea <strong>Promovare</strong>, ca să apari primul în listă. Te conectezi cu emailul și parola alese la înregistrare:</p>
 <p><a href="${loginUrl}">${loginUrl}</a></p>
 <p style="margin-top:24px">Mulțumim că faci parte din Opening Hours Today.<br>Echipa Opening Hours Today</p>`,
       }),
@@ -10903,6 +10911,19 @@ function accWhiteLegalHtml() {
     Toate drepturile rezervate.<br>
     Copyright Opening Hours Today™
   </div>`;
+}
+// Footer temă închisă — pentru paginile dark (director cazări, pagina unei
+// proprietăți) — conținut identic cu footer-ul de pe paginile albe, doar
+// stilizat pentru fundal întunecat, ca să fie unitar peste tot.
+function accDarkFooterHtml() {
+  return `
+<footer class="acc-dark-footer">
+  <div class="acc-dark-footer-inner">
+    Prin autentificare sau prin crearea unui cont, sunteți de acord cu <a href="/termeni-conditii">Termenii și Condițiile noastre</a> și cu <a href="/confidentialitate">Declarația de confidențialitate</a>.<br>
+    Toate drepturile rezervate.<br>
+    Copyright Opening Hours Today™
+  </div>
+</footer>`;
 }
 
 // ============================================================
@@ -11852,9 +11873,9 @@ async function renderAccommodationListingForm(req, res, existingListing) {
 ${t.id && t.status === "approved" ? `
 <div class="trip-toolkit-card" style="text-align:center;margin-top:20px">
   ${t.featured_until && new Date(t.featured_until) > new Date()
-    ? `<h3 class="trip-toolkit-title">⭐ Featured activ</h3><p class="trip-toolkit-subtitle">Până pe ${new Date(t.featured_until).toLocaleDateString("ro-RO")}.</p>`
-    : `<h3 class="trip-toolkit-title">⭐ Devino Featured</h3><p class="trip-toolkit-subtitle">Apari primul în listă, ${ACCOMMODATION_FEATURED_DURATION_DAYS} zile, pentru ${(ACCOMMODATION_FEATURED_PRICE_CENTS / 100).toFixed(2)}€.</p>
-       <button type="button" id="featuredBtn" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0">Cumpără Featured</button>
+    ? `<h3 class="trip-toolkit-title">⭐ Promovare activă</h3><p class="trip-toolkit-subtitle">Până pe ${new Date(t.featured_until).toLocaleDateString("ro-RO")}.</p>`
+    : `<h3 class="trip-toolkit-title">⭐ Devino Promovată</h3><p class="trip-toolkit-subtitle">Apari primul în listă, ${ACCOMMODATION_FEATURED_DURATION_DAYS} zile, pentru ${(ACCOMMODATION_FEATURED_PRICE_CENTS / 100).toFixed(2)}€.</p>
+       <button type="button" id="featuredBtn" class="affiliate-btn affiliate-btn-temu" style="display:inline-block;width:auto;margin:0">Cumpără Promovare</button>
        <p id="featuredErr" class="submit-place-error" hidden></p>`}
 </div>` : ""}
 </main>
@@ -12220,14 +12241,14 @@ app.get("/cont/facturi-abonamente", accommodationGate, requireAccommodationOwner
           ${subSectionHtml}
           <hr class="acc-drawer-divider">
           ${featIsActive
-            ? `<div class="acc-prop-card-meta">⭐ Featured activ până pe ${featuredUntil.toLocaleDateString("ro-RO")} (${featDaysLeft} zile rămase)</div>`
-            : `<div class="acc-prop-card-meta">Fără Featured — opțional, ca să apari primul în listă.</div>`}
+            ? `<div class="acc-prop-card-meta">⭐ Promovare activă până pe ${featuredUntil.toLocaleDateString("ro-RO")} (${featDaysLeft} zile rămase)</div>`
+            : `<div class="acc-prop-card-meta">Fără Promovare — opțional, ca să apari primul în listă.</div>`}
           ${featExpiringSoon ? `
           <div class="acc-warning-banner" style="margin-top:10px">
             <span>⚠️</span>
-            <span>Mai aveți <strong>${featDaysLeft} zile</strong> până la expirarea Featured. Listarea de bază rămâne neafectată.</span>
+            <span>Mai aveți <strong>${featDaysLeft} zile</strong> până la expirarea Promovării. Listarea de bază rămâne neafectată.</span>
           </div>` : ""}
-          ${r.status === "approved" ? `<button type="button" class="acc-edit-btn acc-buy-featured-btn" data-id="${r.id}" style="border:none;cursor:pointer;margin-top:10px">${featIsActive ? "Reînnoiește Featured" : "⭐ Cumpără Featured"}</button>` : ""}
+          ${r.status === "approved" ? `<button type="button" class="acc-edit-btn acc-buy-featured-btn" data-id="${r.id}" style="border:none;cursor:pointer;margin-top:10px">${featIsActive ? "Reînnoiește Promovarea" : "⭐ Cumpără Promovare"}</button>` : ""}
         </div>
       </div>`;
       }).join("")
@@ -12240,7 +12261,7 @@ ${accShellHeader(req.accommodationOwner.email)}
 ${accDrawerHtml("facturi", req.accommodationOwner.email)}
 <main class="acc-shell-main">
 <h1 class="acc-shell-h1">Facturi și abonamente</h1>
-<p class="intro-text" style="margin-bottom:20px">Primele ${ACCOMMODATION_TRIAL_MONTHS} luni de la aprobare sunt gratuite pentru fiecare proprietate. După, listarea continuă la ${escapeHtml(priceLabel)}, cu plată automată. "Featured" e separat, opțional, ca să apari primul în listă.</p>
+<p class="intro-text" style="margin-bottom:20px">Primele ${ACCOMMODATION_TRIAL_MONTHS} luni de la aprobare sunt gratuite pentru fiecare proprietate. După, listarea continuă la ${escapeHtml(priceLabel)}, cu plată automată. Promovarea e separată, opțională, ca să apari primul în listă.</p>
 ${rowsHtml}
 </main>
 <script nonce="${nonce}">
@@ -14705,46 +14726,268 @@ app.get("/cazare", accommodationGate, async (req, res) => {
   res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
   if (!dbPool) { res.status(503).send("Indisponibil momentan."); return; }
+  const ownerSession = getAccommodationOwnerSession(req);
+
   const cityFilter = typeof req.query.oras === "string" ? req.query.oras.trim() : "";
   const minCapacity = parseInt(req.query.persoane, 10);
   const hasCapacityFilter = Number.isInteger(minCapacity) && minCapacity > 0;
+  const selectedTypes = (Array.isArray(req.query.tip) ? req.query.tip : req.query.tip ? [req.query.tip] : []).filter((t) => ACCOMMODATION_TYPES.includes(t));
+  const selectedAmenities = (Array.isArray(req.query.facilitate) ? req.query.facilitate : req.query.facilitate ? [req.query.facilitate] : []).filter((a) => ACCOMMODATION_AMENITIES[a]);
+  const pretMin = parseFloat(req.query.pretMin);
+  const pretMax = parseFloat(req.query.pretMax);
+  const sort = ["recomandate", "pret_asc", "pret_desc", "rating"].includes(req.query.sort) ? req.query.sort : "recomandate";
+
+  const conditions = ["l.status = 'approved'", "l.subscription_status IN ('trial', 'active')"];
+  const params = [];
+  if (cityFilter) { params.push(`%${cityFilter}%`); conditions.push(`l.city ILIKE $${params.length}`); }
+  if (hasCapacityFilter) { params.push(minCapacity); conditions.push(`l.max_capacity >= $${params.length}`); }
+  if (selectedTypes.length) { params.push(selectedTypes); conditions.push(`l.type = ANY($${params.length})`); }
+  if (selectedAmenities.length) { params.push(JSON.stringify(selectedAmenities)); conditions.push(`l.amenities @> $${params.length}::jsonb`); }
+  if (Number.isFinite(pretMin)) { params.push(pretMin); conditions.push(`l.price_from >= $${params.length}`); }
+  if (Number.isFinite(pretMax)) { params.push(pretMax); conditions.push(`l.price_from <= $${params.length}`); }
+
+  const orderBy = {
+    recomandate: "(l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC",
+    pret_asc: "l.price_from ASC",
+    pret_desc: "l.price_from DESC",
+    rating: "avg_rating DESC NULLS LAST, l.creat_la DESC",
+  }[sort];
+
   try {
-    const conditions = ["l.status = 'approved'", "l.subscription_status IN ('trial', 'active')"];
-    const params = [];
-    if (cityFilter) { params.push(`%${cityFilter}%`); conditions.push(`l.city ILIKE $${params.length}`); }
-    if (hasCapacityFilter) { params.push(minCapacity); conditions.push(`l.max_capacity >= $${params.length}`); }
     const { rows } = await dbPool.query(
       `SELECT l.*, AVG(rv.rating)::numeric(3,1) AS avg_rating, COUNT(rv.id)::int AS review_count
        FROM accommodation_listings l
        LEFT JOIN accommodation_reviews rv ON rv.listing_id = l.id AND rv.status = 'approved'
        WHERE ${conditions.join(" AND ")}
        GROUP BY l.id
-       ORDER BY (l.featured_until IS NOT NULL AND l.featured_until > now()) DESC, l.creat_la DESC`,
+       ORDER BY ${orderBy}`,
       params
     );
+
+    const qs = (overrides) => {
+      const p = new URLSearchParams();
+      if (cityFilter) p.set("oras", cityFilter);
+      if (hasCapacityFilter) p.set("persoane", String(minCapacity));
+      selectedTypes.forEach((t) => p.append("tip", t));
+      selectedAmenities.forEach((a) => p.append("facilitate", a));
+      if (Number.isFinite(pretMin)) p.set("pretMin", String(pretMin));
+      if (Number.isFinite(pretMax)) p.set("pretMax", String(pretMax));
+      p.set("sort", sort);
+      Object.keys(overrides || {}).forEach((k) => { if (overrides[k] === null) p.delete(k); else p.set(k, overrides[k]); });
+      return p.toString();
+    };
+
     const cardsHtml = rows.length
       ? rows.map((r) => {
           const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
+          const amenities = Array.isArray(r.amenities) ? r.amenities : (typeof r.amenities === "string" ? JSON.parse(r.amenities) : []);
           const featured = r.featured_until && new Date(r.featured_until) > new Date();
+          const stars = "⭐".repeat(r.star_rating || 0);
+          const amenityPreview = amenities.slice(0, 3).map((a) => ACCOMMODATION_AMENITIES[a] || a).join(" · ");
           return `
-      <a href="/cazare/${escapeHtml(r.slug)}" class="attraction-accordion-item" style="display:block;text-decoration:none;color:inherit;margin-bottom:12px;overflow:hidden">
-        ${photos[0] ? `<img src="${escapeHtml(photos[0])}" style="width:100%;height:160px;object-fit:cover">` : ""}
-        <div style="padding:14px">
-          <div style="font-weight:800;font-size:16px">${featured ? "⭐ " : ""}${escapeHtml(r.name)}${r.avg_rating ? ` <span class="acc-rating-badge" style="font-size:12px;vertical-align:middle">${r.avg_rating}/10</span>` : ""}</div>
-          <div style="color:var(--muted);font-size:14px;margin-top:4px">${escapeHtml(r.city)} · ${r.max_capacity} pers. · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte${r.review_count ? ` · ${r.review_count} recenzii` : ""}</div>
+      <a href="/cazare/${escapeHtml(r.slug)}" class="acc-result-card${featured ? " is-featured" : ""}">
+        <div class="acc-result-photo">${photos[0] ? `<img src="${escapeHtml(photos[0])}" alt="">` : `<div class="acc-result-photo-placeholder">🏡</div>`}${featured ? `<span class="acc-result-featured-badge">⭐ Promovată</span>` : ""}</div>
+        <div class="acc-result-info">
+          <div class="acc-result-name">${escapeHtml(r.name)}</div>
+          <div class="acc-result-stars">${stars}</div>
+          <div class="acc-result-meta">${escapeHtml(ACCOMMODATION_TYPE_LABELS[r.type] || r.type)} · ${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)}</div>
+          ${amenityPreview ? `<div class="acc-result-amenities">${escapeHtml(amenityPreview)}</div>` : ""}
+        </div>
+        <div class="acc-result-side">
+          ${r.avg_rating ? `<div class="acc-result-score"><span class="acc-result-score-num">${r.avg_rating}</span><span class="acc-result-score-label">${r.review_count} recenzii</span></div>` : ""}
+          <div class="acc-result-price">de la <strong>${r.price_from} ${escapeHtml(r.price_currency)}</strong>/noapte</div>
         </div>
       </a>`;
         }).join("")
-      : `<p class="plan-visit-hint">Nicio cazare găsită${cityFilter ? " pentru „" + escapeHtml(cityFilter) + "”" : ""} momentan.</p>`;
+      : `<div class="acc-empty-state">Nicio cazare găsită${cityFilter ? " pentru „" + escapeHtml(cityFilter) + "”" : ""} cu aceste filtre.<br><a href="/cazare" style="color:var(--accent)">Resetează filtrele</a></div>`;
+
+    const typeCheckboxesHtml = ACCOMMODATION_TYPES.filter((t) => t !== "altceva").map((t) => `
+      <label class="acc-filter-check"><input type="checkbox" name="tip" value="${t}"${selectedTypes.includes(t) ? " checked" : ""}>${escapeHtml(ACCOMMODATION_TYPE_LABELS[t])}</label>`).join("");
+    const amenityCheckboxesHtml = Object.keys(ACCOMMODATION_AMENITIES).map((a) => `
+      <label class="acc-filter-check"><input type="checkbox" name="facilitate" value="${a}"${selectedAmenities.includes(a) ? " checked" : ""}>${escapeHtml(ACCOMMODATION_AMENITIES[a])}</label>`).join("");
+
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
 <title>Cazare — pensiuni și cazări mici — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
-<style>.acc-rating-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border-radius:8px;padding:2px 8px;font-weight:800;}</style></head>
-<body><main class="wrap" style="padding-top:40px">
-<h1 class="page-h1">Cazare — pensiuni și cazări mici</h1>
-<p class="intro-text">Cazări verificate manual, fără comision — contactezi direct proprietarul.</p>
-<form method="get" style="margin-bottom:20px"><input type="text" name="oras" placeholder="Caută după oraș..." value="${escapeHtml(cityFilter)}" style="padding:12px 16px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text);width:100%;box-sizing:border-box;font-size:16px"></form>
-${cardsHtml}
-</main></body></html>`);
+<style>
+.acc-nav-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.acc-nav-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
+.acc-nav-header .brand span{color:var(--accent);}
+.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
+.acc-nav-right a{color:#fff;text-decoration:none;}
+.acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;}
+.acc-nav-user-name{line-height:1.2;}
+.acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
+.acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
+.acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
+.acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.acc-subnav-btn.is-active{background:#232a35;border-color:var(--accent);color:#fff;}
+.acc-widget-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,20,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:60;align-items:flex-start;justify-content:center;padding:50px 16px;overflow-y:auto;}
+.acc-widget-modal-backdrop.is-open{display:flex;}
+.acc-widget-modal{background:#fff;border-radius:16px;padding:22px;max-width:900px;width:100%;position:relative;box-sizing:border-box;}
+.acc-widget-modal-close{position:absolute;top:12px;right:12px;background:#f0f0f0;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;z-index:2;}
+.acc-page-wrap{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;}
+.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;max-width:1180px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+@media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
+.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:1px solid #eee;}
+.acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
+.acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
+.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
+.acc-results-layout{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start;margin-top:24px;}
+@media (max-width:800px){.acc-results-layout{grid-template-columns:1fr;}}
+.acc-filters{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:18px;position:sticky;top:16px;}
+.acc-filters h3{margin:0 0 10px;font-size:14px;}
+.acc-filters-group{margin-bottom:20px;}
+.acc-filter-check{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);margin-bottom:8px;}
+.acc-filter-price{display:flex;gap:8px;align-items:center;}
+.acc-filter-price input{width:100%;padding:8px;border-radius:8px;border:1px solid var(--glass-border);background:var(--bg,#111);color:var(--text);}
+.acc-filters-apply{width:100%;background:var(--accent);color:#fff;font-weight:700;border:none;border-radius:10px;padding:11px;cursor:pointer;margin-top:6px;}
+.acc-results-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.acc-results-count{font-weight:700;color:var(--text);}
+.acc-sort-select{padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text);font-size:13.5px;}
+.acc-result-card{display:flex;gap:0;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;margin-bottom:14px;text-decoration:none;color:inherit;}
+.acc-result-card.is-featured{border-color:var(--accent);border-width:2px;}
+@media (max-width:640px){.acc-result-card{flex-direction:column;}}
+.acc-result-photo{position:relative;width:200px;flex:0 0 200px;}
+@media (max-width:640px){.acc-result-photo{width:100%;flex:0 0 auto;height:160px;}}
+.acc-result-photo img{width:100%;height:100%;object-fit:cover;}
+.acc-result-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;background:var(--glass-border);}
+.acc-result-featured-badge{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;}
+.acc-result-info{flex:1;padding:16px;min-width:0;}
+.acc-result-name{font-weight:800;font-size:17px;color:var(--text);}
+.acc-result-stars{color:#f5a623;font-size:13px;margin-top:2px;}
+.acc-result-meta{color:var(--muted);font-size:13px;margin-top:4px;}
+.acc-result-amenities{color:var(--muted);font-size:12.5px;margin-top:8px;}
+.acc-result-side{flex:0 0 160px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;text-align:right;border-left:1px solid var(--glass-border);}
+@media (max-width:640px){.acc-result-side{border-left:none;border-top:1px solid var(--glass-border);flex-direction:row;justify-content:space-between;align-items:center;width:100%;box-sizing:border-box;}}
+.acc-result-score{background:var(--accent);color:#fff;border-radius:8px;padding:6px 10px;text-align:center;}
+.acc-result-score-num{display:block;font-weight:900;font-size:16px;}
+.acc-result-score-label{display:block;font-size:9.5px;}
+.acc-result-price{margin-top:10px;font-size:13px;color:var(--text);}
+.acc-empty-state{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1;}
+.acc-dark-footer{margin-top:40px;border-top:1px solid var(--glass-border);}
+.acc-dark-footer-inner{max-width:1180px;margin:0 auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
+.acc-dark-footer-inner a{color:var(--muted);text-decoration:underline;}
+</style></head>
+<body>
+<div class="acc-nav-header">
+  <a class="brand" href="/">Opening<span>HoursToday</span></a>
+  <div class="acc-nav-right">
+    <span>RON</span>
+    <span>🇷🇴 ▾</span>
+    <a href="/cazare/login">Listează-ți proprietatea</a>
+    ${ownerSession ? `
+    <div class="acc-nav-user">
+      <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
+      <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+    </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
+  </div>
+</div>
+<div class="acc-subnav">
+<div class="acc-subnav-inner">
+  <a href="/cazare" class="acc-subnav-btn is-active">🛏️ Cazări</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
+  <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
+  <a href="${cityFilter ? `/${escapeHtml(slugifyCityName(cityFilter))}` : "/"}" class="acc-subnav-btn">🎡 Atracții${cityFilter ? ` în ${escapeHtml(cityFilter)}` : ""}</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
+</div>
+</div>
+<div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
+  <div class="acc-widget-modal">
+    <button type="button" class="acc-widget-modal-close" id="widgetModalClose">✕</button>
+    <div id="accFlightWidget"></div>
+    <div id="accTransferWidget"></div>
+  </div>
+</div>
+
+<form method="get" class="acc-search-widget">
+  <div class="acc-search-field">
+    <label>Destinație</label>
+    <input type="text" name="oras" value="${escapeHtml(cityFilter)}" placeholder="Introduceți destinația">
+  </div>
+  <div class="acc-search-field">
+    <label>Persoane (minim)</label>
+    <input type="number" name="persoane" min="1" value="${hasCapacityFilter ? minCapacity : ""}" placeholder="oricâte">
+  </div>
+  <button type="submit" class="acc-search-btn">Caută</button>
+</form>
+
+<main class="acc-page-wrap" style="padding-bottom:60px">
+<div class="acc-results-layout">
+
+<form method="get" class="acc-filters">
+  <input type="hidden" name="oras" value="${escapeHtml(cityFilter)}">
+  <input type="hidden" name="persoane" value="${hasCapacityFilter ? minCapacity : ""}">
+  <input type="hidden" name="sort" value="${escapeHtml(sort)}">
+  <div class="acc-filters-group">
+    <h3>Preț pe noapte</h3>
+    <div class="acc-filter-price">
+      <input type="number" name="pretMin" min="0" placeholder="Min" value="${Number.isFinite(pretMin) ? pretMin : ""}">
+      <span>—</span>
+      <input type="number" name="pretMax" min="0" placeholder="Max" value="${Number.isFinite(pretMax) ? pretMax : ""}">
+    </div>
+  </div>
+  <div class="acc-filters-group">
+    <h3>Tip proprietate</h3>
+    ${typeCheckboxesHtml}
+  </div>
+  <div class="acc-filters-group">
+    <h3>Facilități</h3>
+    ${amenityCheckboxesHtml}
+  </div>
+  <button type="submit" class="acc-filters-apply">Aplică filtrele</button>
+</form>
+
+<div>
+  <div class="acc-results-header">
+    <div class="acc-results-count">${rows.length} cazăr${rows.length === 1 ? "e găsită" : "i găsite"}${cityFilter ? ` în „${escapeHtml(cityFilter)}”` : ""}</div>
+    <select class="acc-sort-select" id="sortSelect">
+      <option value="recomandate"${sort === "recomandate" ? " selected" : ""}>Recomandate</option>
+      <option value="pret_asc"${sort === "pret_asc" ? " selected" : ""}>Preț crescător</option>
+      <option value="pret_desc"${sort === "pret_desc" ? " selected" : ""}>Preț descrescător</option>
+      <option value="rating"${sort === "rating" ? " selected" : ""}>Cele mai bine notate</option>
+    </select>
+  </div>
+  ${cardsHtml}
+</div>
+
+</div>
+${accDarkFooterHtml()}
+</main>
+<script nonce="${nonce}">
+document.getElementById("sortSelect").addEventListener("change", function(){
+  window.location.href = "?${qs({ sort: null })}&sort=" + encodeURIComponent(this.value);
+});
+document.addEventListener("click", function(e){
+  var btn = e.target.closest(".widget-reveal-btn");
+  if (!btn) return;
+  e.preventDefault();
+  var targetId = btn.getAttribute("data-widget-target");
+  var src = btn.getAttribute("data-widget-src");
+  var box = document.getElementById(targetId);
+  var backdrop = document.getElementById("widgetModalBackdrop");
+  if (!box || !src || !backdrop) return;
+  document.querySelectorAll(".acc-widget-modal > div[id]").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+  backdrop.classList.add("is-open");
+  document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
+  if (!box.querySelector("script[data-widget-loaded]")) {
+    var s = document.createElement("script");
+    s.async = true; s.charset = "utf-8"; s.src = src;
+    s.setAttribute("data-widget-loaded", "1");
+    box.appendChild(s);
+  }
+});
+function closeAccWidgetModal(){
+  var backdrop = document.getElementById("widgetModalBackdrop");
+  if (backdrop) backdrop.classList.remove("is-open");
+  document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.remove("is-active"); });
+}
+var widgetModalCloseBtn = document.getElementById("widgetModalClose");
+if (widgetModalCloseBtn) widgetModalCloseBtn.addEventListener("click", closeAccWidgetModal);
+var widgetModalBackdropEl = document.getElementById("widgetModalBackdrop");
+if (widgetModalBackdropEl) widgetModalBackdropEl.addEventListener("click", function(e){ if (e.target === this) closeAccWidgetModal(); });
+</script>
+</body></html>`);
   } catch (err) {
     res.status(500).send("Eroare: " + escapeHtml(err.message));
   }
@@ -14844,8 +15087,6 @@ async function handleAccommodationPropertyPage(req, res, mode) {
     const fullAddress = `${r.address ? r.address + ", " : ""}${r.city}, ${COUNTRY_LABELS[r.country_code] || r.country_code}`;
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
 
-    const AVIASALES_SRC = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100";
-
     res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8">
 <title>${escapeHtml(r.name)} — ${escapeHtml(r.city)} — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
 <style>
@@ -14920,6 +15161,10 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-save-btn.is-fav{background:var(--accent);color:#fff;}
 .acc-avail-bar{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-top:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
 .acc-msg-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:center;justify-content:center;}
+.acc-widget-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,20,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:60;align-items:flex-start;justify-content:center;padding:50px 16px;overflow-y:auto;}
+.acc-widget-modal-backdrop.is-open{display:flex;}
+.acc-widget-modal{background:#fff;border-radius:16px;padding:22px;max-width:900px;width:100%;position:relative;box-sizing:border-box;}
+.acc-widget-modal-close{position:absolute;top:12px;right:12px;background:#f0f0f0;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;z-index:2;}
 .acc-msg-modal-backdrop.is-open{display:flex;}
 .acc-msg-modal{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:92%;}
 .acc-msg-modal h3{color:#111;margin:0 0 10px;}
@@ -14929,6 +15174,9 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-msg-modal-actions button{border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;border:none;}
 .acc-msg-cancel{background:#eee;color:#333;}
 .acc-msg-send{background:#25D366;color:#fff;}
+.acc-dark-footer{margin-top:40px;border-top:1px solid var(--glass-border);}
+.acc-dark-footer-inner{max-width:1180px;margin:0 auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
+.acc-dark-footer-inner a{color:var(--muted);text-decoration:underline;}
 </style></head>
 <body>
 ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:center;padding:10px;font-weight:700;font-size:13.5px">🔍 Previzualizare — această pagină nu e încă publicată</div>` : ""}
@@ -14938,7 +15186,7 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   <div class="acc-nav-right">
     <span>RON</span>
     <span>🇷🇴 ▾</span>
-    <a href="/cazare/login">List your property</a>
+    <a href="/cazare/login">Listează-ți proprietatea</a>
     ${ownerSession ? `
     <div class="acc-nav-user">
       <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
@@ -14952,10 +15200,16 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
   <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
   <a href="/${escapeHtml(citySlug)}" class="acc-subnav-btn">🎡 Atracții în ${escapeHtml(r.city)}</a>
-  <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚕 Transferuri</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
 </div>
 </div>
-<div id="accFlightWidget" class="flight-widget-card" style="display:none;max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box"></div>
+<div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
+  <div class="acc-widget-modal">
+    <button type="button" class="acc-widget-modal-close" id="widgetModalClose">✕</button>
+    <div id="accFlightWidget"></div>
+    <div id="accTransferWidget"></div>
+  </div>
+</div>
 
 <div class="acc-search-widget">
   <div class="acc-search-field">
@@ -14979,7 +15233,7 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
 
 <div class="acc-tabs" id="accTabs">
   <a href="#" data-panel="descriere" class="is-active">Prezentare generală</a>
-  <a href="#" data-panel="info-preturi">Informații despre apartament și preț</a>
+  <a href="#" data-panel="info-preturi">Informații &amp; Prețuri</a>
   <a href="#" data-panel="facilitati">Facilități</a>
   <a href="#" data-panel="important">Informații importante</a>
   <a href="#" data-panel="reviews">Evaluările oaspeților (${reviews.length})</a>
@@ -14989,7 +15243,7 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   <div>
     <div class="acc-prop-stars">${starsHtml || "—"} <span class="acc-verified-badge">✓ Verificat de noi</span></div>
     <h1 class="page-h1" style="margin-bottom:6px">${escapeHtml(r.name)}</h1>
-    <p class="intro-text" style="margin:0">📍 ${escapeHtml(fullAddress)} — <strong>Excellent location</strong> · <a href="${mapsUrl}" target="_blank" rel="noopener" style="color:var(--accent)">Arată pe hartă</a></p>
+    <p class="intro-text" style="margin:0">📍 ${escapeHtml(fullAddress)} — <strong>Locație excelentă</strong> · <a href="${mapsUrl}" target="_blank" rel="noopener" style="color:var(--accent)">Arată pe hartă</a></p>
   </div>
   <div class="acc-prop-actions">
     <button type="button" class="acc-icon-btn" id="favBtn" title="Favorite">☆</button>
@@ -15005,15 +15259,15 @@ ${galleryHtml}
 <div class="acc-layout">
   <div>
     <div class="acc-tab-panel" id="panel-descriere">
-      <h2 class="section-title"><span class="bar"></span>Despre această cazare</h2>
+      <h2 class="section-title"><span class="bar"></span>Prezentare generală</h2>
       <div class="acc-desc-text" id="descText">
         <p>${r.description ? escapeHtml(r.description).replace(/\n/g, "</p><p>") : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
       </div>
-      <button type="button" class="acc-desc-more" id="descMoreBtn">Show me more</button>
+      <button type="button" class="acc-desc-more" id="descMoreBtn">Vezi mai mult</button>
     </div>
 
     <div class="acc-tab-panel" id="panel-info-preturi" hidden>
-      <h2 class="section-title"><span class="bar"></span>Informații &amp; prețuri</h2>
+      <h2 class="section-title"><span class="bar"></span>Informații &amp; Prețuri</h2>
       <div class="trip-toolkit-card">
         <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
         <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
@@ -15021,7 +15275,7 @@ ${galleryHtml}
     </div>
 
     <div class="acc-tab-panel" id="panel-facilitati" hidden>
-      <h2 class="section-title"><span class="bar"></span>Cele mai importante facilități</h2>
+      <h2 class="section-title"><span class="bar"></span>Facilități</h2>
       <div class="acc-fac-grid">${amenityIconRowHtml || `<p class="plan-visit-hint">Nicio facilitate listată.</p>`}</div>
     </div>
 
@@ -15033,7 +15287,7 @@ ${galleryHtml}
     </div>
 
     <div class="acc-tab-panel" id="panel-reviews" hidden>
-      <h2 class="section-title"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
+      <h2 class="section-title"><span class="bar"></span>Evaluările oaspeților${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
       ${reviewsHtml}
       <details class="acc-card" style="margin-top:14px">
         <summary>✍️ Lasă o recenzie</summary>
@@ -15069,9 +15323,9 @@ ${galleryHtml}
 
     <div class="acc-highlights-card">
       <h3>Avantaje</h3>
-      <p class="acc-highlights-sub">Perfect for a 4-night stay!</p>
+      <p class="acc-highlights-sub">Perfect pentru o ședere de câteva nopți!</p>
       <div class="acc-highlight-row">📍 <span>${escapeHtml(fullAddress)}</span></div>
-      ${amenities.includes("mic_dejun") ? `<div class="acc-highlight-row">🍳 <strong>Breakfast Info</strong>: Buffet</div>` : ""}
+      ${amenities.includes("mic_dejun") ? `<div class="acc-highlight-row">🍳 <strong>Info mic dejun</strong>: Bufet</div>` : ""}
       <button type="button" class="acc-save-btn" id="favBtn2">⭐ Salvează în favorite</button>
     </div>
   </div>
@@ -15081,6 +15335,7 @@ ${galleryHtml}
   <h2 class="section-title" style="margin:0"><span class="bar"></span>Disponibilitate</h2>
   ${waBase ? `<button type="button" class="acc-msg-btn" id="msgBtn2">Întreabă de disponibilitate</button>` : `<span class="plan-visit-hint">Proprietarul nu a listat un telefon de contact.</span>`}
 </div>
+${accDarkFooterHtml()}
 </main>
 
 ${waBase ? `
@@ -15112,7 +15367,7 @@ ${waBase ? `
     });
   });
 
-  // --- widget zboruri (Aviasales), reveal la click ---
+  // --- widget zboruri (Aviasales), deschis ca modal (nu intercalat) ---
   document.addEventListener("click", function(e){
     var btn = e.target.closest(".widget-reveal-btn");
     if (!btn) return;
@@ -15120,15 +15375,27 @@ ${waBase ? `
     var targetId = btn.getAttribute("data-widget-target");
     var src = btn.getAttribute("data-widget-src");
     var box = document.getElementById(targetId);
-    if (!box || !src) return;
-    box.style.display = "block";
-    btn.style.display = "none";
-    if (box.querySelector("script[data-widget-loaded]")) return;
-    var s = document.createElement("script");
-    s.async = true; s.charset = "utf-8"; s.src = src;
-    s.setAttribute("data-widget-loaded", "1");
-    box.appendChild(s);
+    var backdrop = document.getElementById("widgetModalBackdrop");
+    if (!box || !src || !backdrop) return;
+    document.querySelectorAll(".acc-widget-modal > div[id]").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+    backdrop.classList.add("is-open");
+    document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
+    if (!box.querySelector("script[data-widget-loaded]")) {
+      var s = document.createElement("script");
+      s.async = true; s.charset = "utf-8"; s.src = src;
+      s.setAttribute("data-widget-loaded", "1");
+      box.appendChild(s);
+    }
   });
+  function closeAccWidgetModal(){
+    var backdrop = document.getElementById("widgetModalBackdrop");
+    if (backdrop) backdrop.classList.remove("is-open");
+    document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.remove("is-active"); });
+  }
+  var widgetModalCloseBtn = document.getElementById("widgetModalClose");
+  if (widgetModalCloseBtn) widgetModalCloseBtn.addEventListener("click", closeAccWidgetModal);
+  var widgetModalBackdropEl = document.getElementById("widgetModalBackdrop");
+  if (widgetModalBackdropEl) widgetModalBackdropEl.addEventListener("click", function(e){ if (e.target === this) closeAccWidgetModal(); });
 
   // --- favorite (localStorage, ca la director) ---
   var slug = ${JSON.stringify(r.slug)};
@@ -15168,7 +15435,7 @@ ${waBase ? `
     if (descText.scrollHeight <= 130) { descBtn.style.display = "none"; }
     descBtn.addEventListener("click", function(){
       descText.classList.toggle("is-expanded");
-      descBtn.textContent = descText.classList.contains("is-expanded") ? "Show less" : "Show me more";
+      descBtn.textContent = descText.classList.contains("is-expanded") ? "Vezi mai puțin" : "Vezi mai mult";
     });
   }
 
