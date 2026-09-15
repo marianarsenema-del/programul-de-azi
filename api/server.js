@@ -195,6 +195,38 @@ async function getAccommodationMonthlyPriceCents() {
     return 0;
   }
 }
+// Selector de monedă real (buton în header) — cursuri reale, sursă gratuită
+// (Frankfurter.app, date BCE, fără cheie API), cache 12 ore în DB, ca să nu
+// batem API-ul extern la fiecare vizualizare de pagină.
+const ACC_SUPPORTED_CURRENCIES = ["EUR", "RON", "USD", "GBP", "HUF", "CZK", "PLN", "BGN", "TRY", "CHF", "SEK", "NOK", "DKK"];
+async function getExchangeRates() {
+  const fallback = { base: "EUR", rates: { EUR: 1 }, updated: null };
+  if (!dbPool) return fallback;
+  try {
+    const cached = await dbPool.query(`SELECT value FROM accommodation_settings WHERE key = 'exchange_rates'`);
+    if (cached.rows.length) {
+      const data = JSON.parse(cached.rows[0].value);
+      if (data.updated && Date.now() - new Date(data.updated).getTime() < 12 * 60 * 60 * 1000) {
+        return data;
+      }
+    }
+  } catch (e) { /* mergem mai departe, încercăm să aducem date noi */ }
+  try {
+    const resp = await fetch(`https://api.frankfurter.app/latest?from=EUR&to=${ACC_SUPPORTED_CURRENCIES.filter((c) => c !== "EUR").join(",")}`);
+    const data = await resp.json();
+    if (!data.rates) return fallback;
+    const result = { base: "EUR", rates: { EUR: 1, ...data.rates }, updated: new Date().toISOString() };
+    if (dbPool) {
+      dbPool.query(
+        `INSERT INTO accommodation_settings (key, value) VALUES ('exchange_rates', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+        [JSON.stringify(result)]
+      ).catch(() => {});
+    }
+    return result;
+  } catch (e) {
+    return fallback;
+  }
+}
 // Numele variabilei de mediu a fost schimbat manual în Vercel (prefix "ACC"),
 // din cauza unui conflict cu alt proiect care folosea deja BLOB_READ_WRITE_TOKEN
 // — NU e numele standard, de-aia îl transmitem explicit mai jos la handleUpload
@@ -5134,6 +5166,49 @@ function findNearestRoCity(lat, lon) {
     }
   }
   return best ? { city: best, distanceKm: Math.round(bestDist) } : null;
+}
+
+// Pentru butonul "Atracții" de la o cazare al cărei oraș NU e printre cele
+// ~30 acoperite (ex. Deva) — geocodăm aproximativ orașul (Google Places,
+// cache în DB ca să nu plătim același apel de mai multe ori) și găsim cel
+// mai apropiat oraș acoperit, real, nu doar unul ales la întâmplare.
+async function geocodeCityApprox(cityName) {
+  if (!GOOGLE_PLACES_API_KEY_LIVE) return null;
+  const key = cityName.trim().toLowerCase();
+  if (dbPool) {
+    try {
+      const cached = await dbPool.query(`SELECT lat, lon FROM geocode_cache WHERE city_key = $1`, [key]);
+      if (cached.rows.length) return { lat: Number(cached.rows[0].lat), lon: Number(cached.rows[0].lon) };
+    } catch (e) { /* tabela poate lipsi încă — mergem mai departe fără cache */ }
+  }
+  try {
+    const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(cityName + ", Romania")}&inputtype=textquery&fields=geometry&key=${GOOGLE_PLACES_API_KEY_LIVE}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const loc = data.candidates && data.candidates[0] && data.candidates[0].geometry && data.candidates[0].geometry.location;
+    if (!loc) return null;
+    if (dbPool) {
+      dbPool.query(
+        `INSERT INTO geocode_cache (city_key, lat, lon) VALUES ($1, $2, $3) ON CONFLICT (city_key) DO NOTHING`,
+        [key, loc.lat, loc.lng]
+      ).catch(() => {});
+    }
+    return { lat: loc.lat, lon: loc.lng };
+  } catch (e) {
+    return null;
+  }
+}
+// Returnează link-ul "Atracții" cel mai potrivit pentru orașul unei cazări —
+// direct, dacă orașul e acoperit; altfel, cel mai apropiat oraș acoperit
+// (real, calculat geografic); null dacă nu găsim nimic (buton ascuns).
+async function resolveAttractionsLinkForCity(cityName) {
+  if (!cityName) return null;
+  if (isKnownRoCity(cityName)) return { href: `/${slugifyCityName(cityName)}`, label: cityName, isNearby: false };
+  const coords = await geocodeCityApprox(cityName);
+  if (!coords) return null;
+  const nearest = findNearestRoCity(coords.lat, coords.lon);
+  if (!nearest) return null;
+  return { href: `/${slugifyCityName(nearest.city)}`, label: nearest.city, isNearby: true };
 }
 
 // La fel, dar peste TOATE orașele acoperite, din toate țările (RO + cele 17
@@ -10818,13 +10893,13 @@ app.get("/cazare/login", accommodationGate, (req, res) => {
   </div>
 
   <div class="acc-signup-card" id="acc-signup-card">
-    <h2>Înregistrați-vă gratuit</h2>
+    <h2>Alăturați-vă platformei – Înregistrare gratuită</h2>
     <hr class="acc-signup-divider">
-    <div class="acc-signup-check">Vizibilitate pe site-ul nostru, printre vizitatori reali</div>
-    <div class="acc-signup-check">Alegeți rezervare directă cu turistul, fără intermediari</div>
-    <div class="acc-signup-check">Noi ne ocupăm de promovare, voi de oaspeți</div>
+    <div class="acc-signup-check">Vizibilitate sporită pentru proprietatea dumneavoastră pe o platformă la nivel european</div>
+    <div class="acc-signup-check">Comunicare și rezervări directe cu oaspeții, fără comisioane ascunse</div>
+    <div class="acc-signup-check">Marketingul este responsabilitatea noastră; dumneavoastră asigurați confortul oaspeților</div>
     <hr class="acc-signup-divider">
-    <a href="/cazare/creeaza-cont" class="acc-cta-btn" style="text-decoration:none">Înregistrează o proprietate <span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
+    <a href="/cazare/creeaza-cont" class="acc-cta-btn" style="text-decoration:none">Înregistrează proprietatea acum <span class="affiliate-cta-arrow" aria-hidden="true">➜</span></a>
     <p class="acc-signup-footer">Ați început deja o înregistrare? <a href="/cazare/creeaza-cont">Continuați înregistrarea</a></p>
   </div>
 </div>
@@ -10924,6 +10999,104 @@ function accDarkFooterHtml() {
     Copyright Opening Hours Today™
   </div>
 </footer>`;
+}
+
+const ACC_CURRENCY_LABELS = {
+  EUR: "Euro", RON: "Leu românesc", USD: "Dolar american", GBP: "Liră sterlină",
+  HUF: "Forint maghiar", CZK: "Coroană cehă", PLN: "Zlot polonez", BGN: "Leva bulgărească",
+  TRY: "Liră turcească", CHF: "Franc elvețian", SEK: "Coroană suedeză", NOK: "Coroană norvegiană", DKK: "Coroană daneză",
+};
+// Dropdown de limbă — momentan doar RO e funcțional (tot conținutul e scris
+// în română); restul apar vizibil, cu steag, dar marcate "în curând" —
+// pregătite pentru extindere, nu ascunse.
+const ACC_LANGUAGES = [
+  { code: "ro", flag: "🇷🇴", name: "Română" },
+  { code: "en", flag: "🇬🇧", name: "English" },
+  { code: "fr", flag: "🇫🇷", name: "Français" },
+  { code: "de", flag: "🇩🇪", name: "Deutsch" },
+  { code: "es", flag: "🇪🇸", name: "Español" },
+  { code: "it", flag: "🇮🇹", name: "Italiano" },
+  { code: "pl", flag: "🇵🇱", name: "Polski" },
+  { code: "nl", flag: "🇳🇱", name: "Nederlands" },
+];
+// Modal de selecție a monedei — buton din header, oriunde apare pe paginile
+// de cazare. Conversia reală (curs BCE, prin Frankfurter.app) se face în
+// JS, client-side, pe elementele marcate cu data-price/data-currency.
+function accCurrencyModalHtml() {
+  return `
+<div class="acc-currency-modal-backdrop" id="accCurrencyModalBackdrop">
+  <div class="acc-currency-modal">
+    <div class="acc-currency-modal-header">
+      <h2>Selectați moneda</h2>
+      <button type="button" class="acc-currency-modal-close" id="accCurrencyModalClose">✕</button>
+    </div>
+    <p class="acc-currency-modal-sub">Prețurile vor fi transformate și afișate în moneda pe care o alegeți, pe baza cursului valutar curent.</p>
+    <div class="acc-currency-grid">
+      ${ACC_SUPPORTED_CURRENCIES.map((c) => `<button type="button" class="acc-currency-option" data-currency="${c}"><span class="name">${ACC_CURRENCY_LABELS[c]}</span><span class="code">${c}</span></button>`).join("")}
+    </div>
+  </div>
+</div>`;
+}
+function accCurrencyScript() {
+  return `
+(function(){
+  var STORAGE_KEY = "accCurrency";
+  var rates = null;
+  function getCurrency(){ return localStorage.getItem(STORAGE_KEY) || "RON"; }
+  function setCurrency(c){ localStorage.setItem(STORAGE_KEY, c); }
+
+  function applyConversion(){
+    var target = getCurrency();
+    var btn = document.getElementById("accCurrencyBtn");
+    if (btn) btn.textContent = target;
+    document.querySelectorAll(".acc-currency-option").forEach(function(o){
+      o.classList.toggle("is-selected", o.getAttribute("data-currency") === target);
+    });
+    if (!rates) return;
+    document.querySelectorAll("[data-price][data-currency]").forEach(function(el){
+      var amount = parseFloat(el.getAttribute("data-price"));
+      var from = el.getAttribute("data-currency");
+      if (!amount || !rates.rates[from] || !rates.rates[target]) return;
+      var inEur = amount / rates.rates[from];
+      var converted = inEur * rates.rates[target];
+      var rounded = converted >= 100 ? Math.round(converted) : Math.round(converted * 100) / 100;
+      el.textContent = rounded.toLocaleString("ro-RO") + " " + target;
+    });
+  }
+
+  fetch("/api/cazare/exchange-rates").then(function(r){ return r.json(); }).then(function(data){
+    rates = data;
+    applyConversion();
+  }).catch(function(){});
+
+  applyConversion();
+
+  var openBtn = document.getElementById("accCurrencyBtn");
+  var backdrop = document.getElementById("accCurrencyModalBackdrop");
+  var closeBtn = document.getElementById("accCurrencyModalClose");
+  if (openBtn && backdrop) openBtn.addEventListener("click", function(){ backdrop.classList.add("is-open"); });
+  if (closeBtn && backdrop) closeBtn.addEventListener("click", function(){ backdrop.classList.remove("is-open"); });
+  if (backdrop) backdrop.addEventListener("click", function(e){ if (e.target === backdrop) backdrop.classList.remove("is-open"); });
+  document.querySelectorAll(".acc-currency-option").forEach(function(o){
+    o.addEventListener("click", function(){
+      setCurrency(o.getAttribute("data-currency"));
+      applyConversion();
+      backdrop.classList.remove("is-open");
+    });
+  });
+
+  var langBtn = document.getElementById("accLangBtn");
+  var langDropdown = document.getElementById("accLangDropdown");
+  if (langBtn && langDropdown) {
+    langBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      langDropdown.classList.toggle("is-open");
+    });
+    document.addEventListener("click", function(e){
+      if (!langDropdown.contains(e.target) && e.target !== langBtn) langDropdown.classList.remove("is-open");
+    });
+  }
+})();`;
 }
 
 // ============================================================
@@ -11186,7 +11359,7 @@ app.get("/cazare/creeaza-cont", accommodationGate, (req, res) => {
 <style>${accWhitePageStyles()}</style></head>
 <body>
 <div class="acc-white-wrap">
-  <h1 class="acc-white-h1">Creați cont pe Opening Hours Today</h1>
+  <h1 class="acc-white-h1">Creați cont pe Opening<span style="color:#F0813A">HoursToday</span></h1>
   <p class="acc-white-sub">Creați un cont pentru a vă înscrie pe site și a putea administra proprietatea.</p>
 
   <form id="emailForm">
@@ -14594,6 +14767,12 @@ app.post("/api/cazare/recenzie", accommodationGate, async (req, res) => {
   }
 });
 
+app.get("/api/cazare/exchange-rates", accommodationGate, async (req, res) => {
+  const data = await getExchangeRates();
+  res.set("Cache-Control", "public, max-age=3600");
+  res.status(200).json(data);
+});
+
 app.get("/admin/setari", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
     res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
@@ -14764,6 +14943,8 @@ app.get("/cazare", accommodationGate, async (req, res) => {
       params
     );
 
+    const attractionsLink = cityFilter ? await resolveAttractionsLinkForCity(cityFilter) : null;
+
     const qs = (overrides) => {
       const p = new URLSearchParams();
       if (cityFilter) p.set("oras", cityFilter);
@@ -14795,7 +14976,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
         </div>
         <div class="acc-result-side">
           ${r.avg_rating ? `<div class="acc-result-score"><span class="acc-result-score-num">${r.avg_rating}</span><span class="acc-result-score-label">${r.review_count} recenzii</span></div>` : ""}
-          <div class="acc-result-price">de la <strong>${r.price_from} ${escapeHtml(r.price_currency)}</strong>/noapte</div>
+          <div class="acc-result-price">de la <strong><span data-price="${r.price_from}" data-currency="${escapeHtml(r.price_currency)}">${r.price_from} ${escapeHtml(r.price_currency)}</span></strong>/noapte</div>
         </div>
       </a>`;
         }).join("")
@@ -14814,6 +14995,35 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-nav-header .brand span{color:var(--accent);}
 .acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
 .acc-nav-right a{color:#fff;text-decoration:none;}
+.acc-currency-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.acc-currency-btn:hover{border-color:#fff;}
+.acc-currency-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,20,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;align-items:flex-start;justify-content:center;padding:50px 16px;overflow-y:auto;}
+.acc-currency-modal-backdrop.is-open{display:flex;}
+.acc-currency-modal{background:#fff;border-radius:16px;padding:26px;max-width:640px;width:100%;box-sizing:border-box;color:#111;}
+.acc-currency-modal-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.acc-currency-modal-header h2{margin:0;font-size:22px;font-weight:900;}
+.acc-currency-modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#111;}
+.acc-currency-modal-sub{color:#666;font-size:13.5px;margin:10px 0 20px;}
+.acc-currency-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+@media (max-width:480px){.acc-currency-grid{grid-template-columns:1fr;}}
+.acc-currency-option{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:none;border:1.5px solid transparent;border-radius:10px;padding:8px 10px;text-align:left;cursor:pointer;}
+.acc-currency-option .name{font-size:14.5px;color:#111;}
+.acc-currency-option .code{font-size:12.5px;color:#888;}
+.acc-currency-option.is-selected{background:#fff6ef;border-color:#F0813A;}
+.acc-currency-option.is-selected .name{color:#F0813A;font-weight:700;}
+.acc-lang-wrap{position:relative;}
+.acc-lang-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
+.acc-lang-dropdown.is-open{display:block;}
+.acc-lang-option{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;border-radius:8px;padding:9px 10px;text-align:left;font-size:14px;color:#111;cursor:not-allowed;}
+.acc-lang-option .flag{font-size:17px;}
+.acc-lang-option .name{flex:1;}
+.acc-lang-option .check{color:#F0813A;font-weight:900;}
+.acc-lang-option .soon{font-size:10.5px;color:#aaa;background:#f2f2f2;border-radius:999px;padding:2px 8px;}
+.acc-lang-option.is-selected{background:#fff6ef;cursor:default;}
+.acc-lang-option.is-selected .name{color:#F0813A;font-weight:700;}
+.acc-lang-option.is-disabled .name{color:#999;}
+
+
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
 .acc-nav-user{display:flex;align-items:center;gap:8px;}
 .acc-nav-user-name{line-height:1.2;}
@@ -14826,10 +15036,20 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-widget-modal-backdrop.is-open{display:flex;}
 .acc-widget-modal{background:#fff;border-radius:16px;padding:22px;max-width:900px;width:100%;position:relative;box-sizing:border-box;}
 .acc-widget-modal-close{position:absolute;top:12px;right:12px;background:#f0f0f0;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;z-index:2;}
+.acc-widget-modal-title{margin:6px 0 2px;font-size:19px;font-weight:900;color:#111;}
+.acc-widget-modal-subtitle{margin:0 0 16px;font-size:14px;color:#666;}
+.acc-widget-divider{border:none;border-top:2px solid #F0813A;margin:20px 0;}
+.acc-widget-perks-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:560px){.acc-widget-perks-grid{grid-template-columns:1fr;}}
+.acc-widget-perk{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#333;}
+.acc-widget-perk .icon{font-size:22px;flex:0 0 auto;}
+.acc-widget-cta-btn{display:inline-block;background:#F0813A;color:#fff;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:10px;margin-bottom:6px;}
+
 .acc-page-wrap{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;}
-.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;max-width:1180px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:16px;max-width:680px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
 @media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
-.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:1px solid #eee;}
+.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:2px solid var(--accent);}
+.acc-search-field:last-of-type{border-right:none;}
 .acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
 .acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
 .acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
@@ -14865,7 +15085,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-result-score-label{display:block;font-size:9.5px;}
 .acc-result-price{margin-top:10px;font-size:13px;color:var(--text);}
 .acc-empty-state{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1;}
-.acc-dark-footer{margin-top:40px;border-top:1px solid var(--glass-border);}
+.acc-dark-footer{margin-top:20px;border-top:1px solid var(--glass-border);}
 .acc-dark-footer-inner{max-width:1180px;margin:0 auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
 .acc-dark-footer-inner a{color:var(--muted);text-decoration:underline;}
 </style></head>
@@ -14873,8 +15093,16 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 <div class="acc-nav-header">
   <a class="brand" href="/">Opening<span>HoursToday</span></a>
   <div class="acc-nav-right">
-    <span>RON</span>
-    <span>🇷🇴 ▾</span>
+    <button type="button" id="accCurrencyBtn" class="acc-currency-btn">RON</button>
+    <div class="acc-lang-wrap">
+      <button type="button" id="accLangBtn" class="acc-currency-btn">🇷🇴 RO ▾</button>
+      <div class="acc-lang-dropdown" id="accLangDropdown">
+        ${ACC_LANGUAGES.map((l) => l.code === "ro"
+          ? `<button type="button" class="acc-lang-option is-selected" disabled><span class="flag">${l.flag}</span><span class="name">${l.name}</span><span class="check">✓</span></button>`
+          : `<button type="button" class="acc-lang-option is-disabled" disabled><span class="flag">${l.flag}</span><span class="name">${l.name}</span><span class="soon">în curând</span></button>`
+        ).join("")}
+      </div>
+    </div>
     <a href="/cazare/login">Listează-ți proprietatea</a>
     ${ownerSession ? `
     <div class="acc-nav-user">
@@ -14883,20 +15111,59 @@ app.get("/cazare", accommodationGate, async (req, res) => {
     </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
   </div>
 </div>
+${accCurrencyModalHtml()}
 <div class="acc-subnav">
 <div class="acc-subnav-inner">
   <a href="/cazare" class="acc-subnav-btn is-active">🛏️ Cazări</a>
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
-  <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
-  <a href="${cityFilter ? `/${escapeHtml(slugifyCityName(cityFilter))}` : "/"}" class="acc-subnav-btn">🎡 Atracții${cityFilter ? ` în ${escapeHtml(cityFilter)}` : ""}</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="carRentalWidget">🚗 Mașini de închiriat</button>
+  ${cityFilter && attractionsLink ? `<a href="${attractionsLink.href}" class="acc-subnav-btn">🎡 Atracții${attractionsLink.isNearby ? ` lângă ${escapeHtml(cityFilter)}` : ` în ${escapeHtml(attractionsLink.label)}`}</a>` : ""}
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
 </div>
 </div>
 <div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
   <div class="acc-widget-modal">
     <button type="button" class="acc-widget-modal-close" id="widgetModalClose">✕</button>
+    <div id="flightWidgetExtraTop" class="acc-widget-extra" hidden>
+      <h3 class="acc-widget-modal-title">Informații zboruri</h3>
+      <p class="acc-widget-modal-subtitle">Cauți bilete de avion?</p>
+    </div>
     <div id="accFlightWidget"></div>
+    <div id="transferWidgetExtraTop" class="acc-widget-extra" hidden>
+      <h3 class="acc-widget-modal-title">Informații transferuri</h3>
+      <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
+    </div>
     <div id="accTransferWidget"></div>
+    <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🚕</span><div>Transfer direct, de la aeroport până la ușa ta</div></div>
+        <div class="acc-widget-perk"><span class="icon">🧑‍✈️</span><div>Șoferi verificați, în mii de destinații din toată lumea</div></div>
+        <div class="acc-widget-perk"><span class="icon">💶</span><div>Preț fix, confirmat înainte de rezervare — fără costuri ascunse</div></div>
+        <div class="acc-widget-perk"><span class="icon">🔄</span><div>Anulare gratuită, dacă planurile ți se schimbă</div></div>
+      </div>
+    </div>
+    <div id="carRentalWidget" hidden>
+      <h3 class="acc-widget-modal-title">Informații închirieri</h3>
+      <p class="acc-widget-modal-subtitle">Închirieri auto prin partenerii Opening Hours Today</p>
+      <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-widget-cta-btn">Vezi ofertele DiscoverCars →</a>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🚗</span><div>Închirieri auto și alte servicii</div></div>
+        <div class="acc-widget-perk"><span class="icon">🌍</span><div>Asistență globală rapidă în peste 30 de limbi vorbite</div></div>
+        <div class="acc-widget-perk"><span class="icon">📅</span><div>Rezervă fără riscuri, cu opțiuni de anulare gratuită</div></div>
+        <div class="acc-widget-perk"><span class="icon">⭐</span><div>Alegi în siguranță pe baza a milioane de evaluări autentice</div></div>
+      </div>
+    </div>
+    <div id="flightWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🎁</span><div>Reduceri speciale la companii aeriene partenere</div></div>
+        <div class="acc-widget-perk"><span class="icon">🔍</span><div>Zbori oriunde, cu sute de operatori aerieni</div></div>
+        <div class="acc-widget-perk"><span class="icon">💰</span><div>Prețuri clare și corecte, fără costuri ascunse</div></div>
+        <div class="acc-widget-perk"><span class="icon">🎫</span><div>Rezervă relaxat: ai opțiuni de zbor flexibile</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -14912,7 +15179,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
   <button type="submit" class="acc-search-btn">Caută</button>
 </form>
 
-<main class="acc-page-wrap" style="padding-bottom:60px">
+<main class="acc-page-wrap" style="padding-bottom:30px">
 <div class="acc-results-layout">
 
 <form method="get" class="acc-filters">
@@ -14955,6 +15222,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 ${accDarkFooterHtml()}
 </main>
 <script nonce="${nonce}">
+${accCurrencyScript()}
 document.getElementById("sortSelect").addEventListener("change", function(){
   window.location.href = "?${qs({ sort: null })}&sort=" + encodeURIComponent(this.value);
 });
@@ -14966,11 +15234,21 @@ document.addEventListener("click", function(e){
   var src = btn.getAttribute("data-widget-src");
   var box = document.getElementById(targetId);
   var backdrop = document.getElementById("widgetModalBackdrop");
-  if (!box || !src || !backdrop) return;
-  document.querySelectorAll(".acc-widget-modal > div[id]").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+  if (!box || !backdrop) return;
+  document.querySelectorAll("#accFlightWidget, #accTransferWidget, #carRentalWidget").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+  var isFlight = targetId === "accFlightWidget";
+  var isTransfer = targetId === "accTransferWidget";
+  var flightExtraTop = document.getElementById("flightWidgetExtraTop");
+  var flightExtraBottom = document.getElementById("flightWidgetExtraBottom");
+  if (flightExtraTop) flightExtraTop.hidden = !isFlight;
+  if (flightExtraBottom) flightExtraBottom.hidden = !isFlight;
+  var transferExtraTop = document.getElementById("transferWidgetExtraTop");
+  var transferExtraBottom = document.getElementById("transferWidgetExtraBottom");
+  if (transferExtraTop) transferExtraTop.hidden = !isTransfer;
+  if (transferExtraBottom) transferExtraBottom.hidden = !isTransfer;
   backdrop.classList.add("is-open");
   document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
-  if (!box.querySelector("script[data-widget-loaded]")) {
+  if (src && !box.querySelector("script[data-widget-loaded]")) {
     var s = document.createElement("script");
     s.async = true; s.charset = "utf-8"; s.src = src;
     s.setAttribute("data-widget-loaded", "1");
@@ -15073,6 +15351,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
     const latestQuote = reviews.find((rv) => rv.comment);
 
     const citySlug = slugifyCityName(r.city);
+    const attractionsLink = await resolveAttractionsLinkForCity(r.city);
     const starsHtml = "⭐".repeat(r.star_rating || 0);
     // Normalizare telefon pentru WhatsApp — wa.me are nevoie de format
     // internațional STRICT (fără 0 în față, fără +), altfel deschide
@@ -15095,6 +15374,35 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-nav-header .brand span{color:var(--accent);}
 .acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
 .acc-nav-right a{color:#fff;text-decoration:none;}
+.acc-currency-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:13.5px;font-weight:700;cursor:pointer;}
+.acc-currency-btn:hover{border-color:#fff;}
+.acc-currency-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,20,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;align-items:flex-start;justify-content:center;padding:50px 16px;overflow-y:auto;}
+.acc-currency-modal-backdrop.is-open{display:flex;}
+.acc-currency-modal{background:#fff;border-radius:16px;padding:26px;max-width:640px;width:100%;box-sizing:border-box;color:#111;}
+.acc-currency-modal-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.acc-currency-modal-header h2{margin:0;font-size:22px;font-weight:900;}
+.acc-currency-modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#111;}
+.acc-currency-modal-sub{color:#666;font-size:13.5px;margin:10px 0 20px;}
+.acc-currency-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+@media (max-width:480px){.acc-currency-grid{grid-template-columns:1fr;}}
+.acc-currency-option{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:none;border:1.5px solid transparent;border-radius:10px;padding:8px 10px;text-align:left;cursor:pointer;}
+.acc-currency-option .name{font-size:14.5px;color:#111;}
+.acc-currency-option .code{font-size:12.5px;color:#888;}
+.acc-currency-option.is-selected{background:#fff6ef;border-color:#F0813A;}
+.acc-currency-option.is-selected .name{color:#F0813A;font-weight:700;}
+.acc-lang-wrap{position:relative;}
+.acc-lang-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
+.acc-lang-dropdown.is-open{display:block;}
+.acc-lang-option{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;border-radius:8px;padding:9px 10px;text-align:left;font-size:14px;color:#111;cursor:not-allowed;}
+.acc-lang-option .flag{font-size:17px;}
+.acc-lang-option .name{flex:1;}
+.acc-lang-option .check{color:#F0813A;font-weight:900;}
+.acc-lang-option .soon{font-size:10.5px;color:#aaa;background:#f2f2f2;border-radius:999px;padding:2px 8px;}
+.acc-lang-option.is-selected{background:#fff6ef;cursor:default;}
+.acc-lang-option.is-selected .name{color:#F0813A;font-weight:700;}
+.acc-lang-option.is-disabled .name{color:#999;}
+
+
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
 .acc-nav-user{display:flex;align-items:center;gap:8px;}
 .acc-nav-user-name{line-height:1.2;}
@@ -15103,10 +15411,11 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
 .acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .acc-subnav-btn.is-active{background:#232a35;border-color:var(--accent);color:#fff;}
-.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;max-width:1180px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:16px;max-width:680px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
 @media (min-width:1228px){.acc-search-widget{margin-left:auto;margin-right:auto;}}
 @media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
-.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:1px solid #eee;}
+.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:2px solid var(--accent);}
+.acc-search-field:last-of-type{border-right:none;}
 .acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
 .acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
 .acc-search-guests{position:relative;}
@@ -15165,6 +15474,15 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-widget-modal-backdrop.is-open{display:flex;}
 .acc-widget-modal{background:#fff;border-radius:16px;padding:22px;max-width:900px;width:100%;position:relative;box-sizing:border-box;}
 .acc-widget-modal-close{position:absolute;top:12px;right:12px;background:#f0f0f0;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;z-index:2;}
+.acc-widget-modal-title{margin:6px 0 2px;font-size:19px;font-weight:900;color:#111;}
+.acc-widget-modal-subtitle{margin:0 0 16px;font-size:14px;color:#666;}
+.acc-widget-divider{border:none;border-top:2px solid #F0813A;margin:20px 0;}
+.acc-widget-perks-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:560px){.acc-widget-perks-grid{grid-template-columns:1fr;}}
+.acc-widget-perk{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#333;}
+.acc-widget-perk .icon{font-size:22px;flex:0 0 auto;}
+.acc-widget-cta-btn{display:inline-block;background:#F0813A;color:#fff;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:10px;margin-bottom:6px;}
+
 .acc-msg-modal-backdrop.is-open{display:flex;}
 .acc-msg-modal{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:92%;}
 .acc-msg-modal h3{color:#111;margin:0 0 10px;}
@@ -15174,7 +15492,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-msg-modal-actions button{border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;border:none;}
 .acc-msg-cancel{background:#eee;color:#333;}
 .acc-msg-send{background:#25D366;color:#fff;}
-.acc-dark-footer{margin-top:40px;border-top:1px solid var(--glass-border);}
+.acc-dark-footer{margin-top:20px;border-top:1px solid var(--glass-border);}
 .acc-dark-footer-inner{max-width:1180px;margin:0 auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
 .acc-dark-footer-inner a{color:var(--muted);text-decoration:underline;}
 </style></head>
@@ -15184,8 +15502,16 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
 <div class="acc-nav-header">
   <a class="brand" href="/">Opening<span>HoursToday</span></a>
   <div class="acc-nav-right">
-    <span>RON</span>
-    <span>🇷🇴 ▾</span>
+    <button type="button" id="accCurrencyBtn" class="acc-currency-btn">RON</button>
+    <div class="acc-lang-wrap">
+      <button type="button" id="accLangBtn" class="acc-currency-btn">🇷🇴 RO ▾</button>
+      <div class="acc-lang-dropdown" id="accLangDropdown">
+        ${ACC_LANGUAGES.map((l) => l.code === "ro"
+          ? `<button type="button" class="acc-lang-option is-selected" disabled><span class="flag">${l.flag}</span><span class="name">${l.name}</span><span class="check">✓</span></button>`
+          : `<button type="button" class="acc-lang-option is-disabled" disabled><span class="flag">${l.flag}</span><span class="name">${l.name}</span><span class="soon">în curând</span></button>`
+        ).join("")}
+      </div>
+    </div>
     <a href="/cazare/login">Listează-ți proprietatea</a>
     ${ownerSession ? `
     <div class="acc-nav-user">
@@ -15194,20 +15520,59 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
     </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
   </div>
 </div>
+${accCurrencyModalHtml()}
 <div class="acc-subnav">
 <div class="acc-subnav-inner">
   <a href="/cazare" class="acc-subnav-btn is-active">🛏️ Cazări</a>
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
-  <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
-  <a href="/${escapeHtml(citySlug)}" class="acc-subnav-btn">🎡 Atracții în ${escapeHtml(r.city)}</a>
+  <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="carRentalWidget">🚗 Mașini de închiriat</button>
+  ${attractionsLink ? `<a href="${attractionsLink.href}" class="acc-subnav-btn">🎡 Atracții${attractionsLink.isNearby ? ` lângă ${escapeHtml(r.city)}` : ` în ${escapeHtml(attractionsLink.label)}`}</a>` : ""}
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">🚕 Transferuri</button>
 </div>
 </div>
 <div class="acc-widget-modal-backdrop" id="widgetModalBackdrop">
   <div class="acc-widget-modal">
     <button type="button" class="acc-widget-modal-close" id="widgetModalClose">✕</button>
+    <div id="flightWidgetExtraTop" class="acc-widget-extra" hidden>
+      <h3 class="acc-widget-modal-title">Informații zboruri</h3>
+      <p class="acc-widget-modal-subtitle">Cauți bilete de avion?</p>
+    </div>
     <div id="accFlightWidget"></div>
+    <div id="transferWidgetExtraTop" class="acc-widget-extra" hidden>
+      <h3 class="acc-widget-modal-title">Informații transferuri</h3>
+      <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
+    </div>
     <div id="accTransferWidget"></div>
+    <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🚕</span><div>Transfer direct, de la aeroport până la ușa ta</div></div>
+        <div class="acc-widget-perk"><span class="icon">🧑‍✈️</span><div>Șoferi verificați, în mii de destinații din toată lumea</div></div>
+        <div class="acc-widget-perk"><span class="icon">💶</span><div>Preț fix, confirmat înainte de rezervare — fără costuri ascunse</div></div>
+        <div class="acc-widget-perk"><span class="icon">🔄</span><div>Anulare gratuită, dacă planurile ți se schimbă</div></div>
+      </div>
+    </div>
+    <div id="carRentalWidget" hidden>
+      <h3 class="acc-widget-modal-title">Informații închirieri</h3>
+      <p class="acc-widget-modal-subtitle">Închirieri auto prin partenerii Opening Hours Today</p>
+      <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-widget-cta-btn">Vezi ofertele DiscoverCars →</a>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🚗</span><div>Închirieri auto și alte servicii</div></div>
+        <div class="acc-widget-perk"><span class="icon">🌍</span><div>Asistență globală rapidă în peste 30 de limbi vorbite</div></div>
+        <div class="acc-widget-perk"><span class="icon">📅</span><div>Rezervă fără riscuri, cu opțiuni de anulare gratuită</div></div>
+        <div class="acc-widget-perk"><span class="icon">⭐</span><div>Alegi în siguranță pe baza a milioane de evaluări autentice</div></div>
+      </div>
+    </div>
+    <div id="flightWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
+      <hr class="acc-widget-divider">
+      <div class="acc-widget-perks-grid">
+        <div class="acc-widget-perk"><span class="icon">🎁</span><div>Reduceri speciale la companii aeriene partenere</div></div>
+        <div class="acc-widget-perk"><span class="icon">🔍</span><div>Zbori oriunde, cu sute de operatori aerieni</div></div>
+        <div class="acc-widget-perk"><span class="icon">💰</span><div>Prețuri clare și corecte, fără costuri ascunse</div></div>
+        <div class="acc-widget-perk"><span class="icon">🎫</span><div>Rezervă relaxat: ai opțiuni de zbor flexibile</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -15228,7 +15593,7 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   <button type="button" class="acc-search-btn" id="searchBtn">Caută</button>
 </div>
 
-<main class="acc-page-wrap" style="padding-top:20px;padding-bottom:60px">
+<main class="acc-page-wrap" style="padding-top:20px;padding-bottom:30px">
 <p class="breadcrumb"><a href="/cazare">Cazări</a> / ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} / ${escapeHtml(r.city)} / ${escapeHtml(r.name)}</p>
 
 <div class="acc-tabs" id="accTabs">
@@ -15270,7 +15635,7 @@ ${galleryHtml}
       <h2 class="section-title"><span class="bar"></span>Informații &amp; Prețuri</h2>
       <div class="trip-toolkit-card">
         <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
-        <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
+        <p><strong>Preț:</strong> de la <span data-price="${r.price_from}" data-currency="${escapeHtml(r.price_currency)}">${r.price_from} ${escapeHtml(r.price_currency)}</span>/noapte</p>
       </div>
     </div>
 
@@ -15353,6 +15718,7 @@ ${waBase ? `
 
 <script nonce="${nonce}">
 (function(){
+  ${accCurrencyScript()}
   // --- comutare tab-uri (un singur panou vizibil o dată) ---
   var tabLinks = document.querySelectorAll("#accTabs a");
   tabLinks.forEach(function(link){
@@ -15363,7 +15729,10 @@ ${waBase ? `
       link.classList.add("is-active");
       document.querySelectorAll(".acc-tab-panel").forEach(function(p){ p.hidden = true; });
       var panel = document.getElementById("panel-" + target);
-      if (panel) panel.hidden = false;
+      if (panel) {
+        panel.hidden = false;
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 
@@ -15376,11 +15745,21 @@ ${waBase ? `
     var src = btn.getAttribute("data-widget-src");
     var box = document.getElementById(targetId);
     var backdrop = document.getElementById("widgetModalBackdrop");
-    if (!box || !src || !backdrop) return;
-    document.querySelectorAll(".acc-widget-modal > div[id]").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+    if (!box || !backdrop) return;
+    document.querySelectorAll("#accFlightWidget, #accTransferWidget, #carRentalWidget").forEach(function(d){ d.style.display = d === box ? "block" : "none"; });
+  var isFlight = targetId === "accFlightWidget";
+  var isTransfer = targetId === "accTransferWidget";
+  var flightExtraTop = document.getElementById("flightWidgetExtraTop");
+  var flightExtraBottom = document.getElementById("flightWidgetExtraBottom");
+  if (flightExtraTop) flightExtraTop.hidden = !isFlight;
+  if (flightExtraBottom) flightExtraBottom.hidden = !isFlight;
+  var transferExtraTop = document.getElementById("transferWidgetExtraTop");
+  var transferExtraBottom = document.getElementById("transferWidgetExtraBottom");
+  if (transferExtraTop) transferExtraTop.hidden = !isTransfer;
+  if (transferExtraBottom) transferExtraBottom.hidden = !isTransfer;
     backdrop.classList.add("is-open");
     document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
-    if (!box.querySelector("script[data-widget-loaded]")) {
+    if (src && !box.querySelector("script[data-widget-loaded]")) {
       var s = document.createElement("script");
       s.async = true; s.charset = "utf-8"; s.src = src;
       s.setAttribute("data-widget-loaded", "1");
