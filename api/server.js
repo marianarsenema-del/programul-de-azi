@@ -55,14 +55,42 @@ app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), asyn
     const listingId = session.metadata && session.metadata.listingId;
     if (listingId && dbPool) {
       try {
-        await dbPool.query(
-          `UPDATE accommodation_listings
-           SET featured_until = GREATEST(COALESCE(featured_until, now()), now()) + interval '1 day' * $2
-           WHERE id = $1`,
-          [listingId, ACCOMMODATION_FEATURED_DURATION_DAYS]
-        );
+        if (session.mode === "subscription") {
+          // Abonament nou activat — reținem ID-urile Stripe, ca să putem
+          // sincroniza starea ulterior (webhook-urile de mai jos) și ca
+          // să putem deschide Portalul de facturare pentru acest client.
+          await dbPool.query(
+            `UPDATE accommodation_listings SET stripe_subscription_id = $1, stripe_customer_id = $2, subscription_status = 'trial'
+             WHERE id = $3`,
+            [session.subscription, session.customer, listingId]
+          );
+        } else {
+          // Featured — plată unică, neschimbat față de înainte.
+          await dbPool.query(
+            `UPDATE accommodation_listings
+             SET featured_until = GREATEST(COALESCE(featured_until, now()), now()) + interval '1 day' * $2
+             WHERE id = $1`,
+            [listingId, ACCOMMODATION_FEATURED_DURATION_DAYS]
+          );
+        }
       } catch (err) {
-        console.error("Actualizare featured_until eșuată:", err.message);
+        console.error("checkout.session.completed a eșuat:", err.message);
+      }
+    }
+  }
+  // Sincronizare status abonament — Stripe e sursa de adevăr; noi doar
+  // oglindim starea, ca site-ul public să știe cine rămâne vizibil.
+  // Mapare: trialing->trial, active->active, past_due->past_due,
+  // canceled/unpaid->canceled (delistat de pe site, dar nu șters).
+  if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+    const sub = event.data.object;
+    const statusMap = { trialing: "trial", active: "active", past_due: "past_due", canceled: "canceled", unpaid: "canceled", incomplete_expired: "canceled" };
+    const newStatus = statusMap[sub.status] || "canceled";
+    if (dbPool) {
+      try {
+        await dbPool.query(`UPDATE accommodation_listings SET subscription_status = $1 WHERE stripe_subscription_id = $2`, [newStatus, sub.id]);
+      } catch (err) {
+        console.error("sincronizare abonament a eșuat:", err.message);
       }
     }
   }
@@ -148,6 +176,20 @@ try {
 // într-un singur loc.
 const ACCOMMODATION_FEATURED_PRICE_CENTS = 4500; // 45,00 EUR
 const ACCOMMODATION_FEATURED_DURATION_DAYS = 90; // ~3 luni
+// Abonament lunar de bază — DIFERIT de Featured (de mai sus). Prețul NU e
+// hardcodat aici — se citește din DB (accommodation_settings), editabil din
+// /admin/setari, fără redeploy. 0 = neconfigurat încă, tratat ca "gratuit"
+// (nu forțăm nimic la plată până admin pune un preț real).
+const ACCOMMODATION_TRIAL_MONTHS = 3;
+async function getAccommodationMonthlyPriceCents() {
+  if (!dbPool) return 0;
+  try {
+    const { rows } = await dbPool.query(`SELECT value FROM accommodation_settings WHERE key = 'monthly_price_cents'`);
+    return rows.length ? parseInt(rows[0].value, 10) || 0 : 0;
+  } catch (e) {
+    return 0;
+  }
+}
 // Numele variabilei de mediu a fost schimbat manual în Vercel (prefix "ACC"),
 // din cauza unui conflict cu alt proiect care folosea deja BLOB_READ_WRITE_TOKEN
 // — NU e numele standard, de-aia îl transmitem explicit mai jos la handleUpload
@@ -10390,7 +10432,7 @@ async function sendAccommodationLoginEmail(email, link) {
 // Trimis automat când admin aprobă o cazare din /admin/cazari — anunță
 // proprietarul că e live, cu link direct și instrucțiuni de reconectare
 // (fără parolă, la fel ca la login).
-async function sendAccommodationApprovalEmail(email, listingName, listingUrl, loginUrl) {
+async function sendAccommodationApprovalEmail(email, listingName, listingUrl, loginUrl, billingUrl) {
   if (!RESEND_API_KEY) {
     console.error("sendAccommodationApprovalEmail: RESEND_API_KEY lipsă, nu pot trimite email");
     return false;
@@ -10407,10 +10449,11 @@ async function sendAccommodationApprovalEmail(email, listingName, listingUrl, lo
 <p>Bună,</p>
 <p>Vești bune — <strong>${listingName}</strong> a fost verificată și publicată pe Opening Hours Today. De acum, oricine caută o cazare te poate găsi și te poate contacta direct, fără niciun intermediar:</p>
 <p><a href="${listingUrl}">${listingUrl}</a></p>
+<h3 style="margin-top:24px">Primele ${ACCOMMODATION_TRIAL_MONTHS} luni sunt gratuite</h3>
+<p>Nu plătești nimic acum. Când vrei, poți adăuga un card din contul tău (${billingUrl ? `<a href="${billingUrl}">Facturi și abonamente</a>` : "secțiunea Facturi și abonamente"}) — cardul nu e debitat decât după ce trece perioada gratuită, iar dacă nu adaugi un card, te anunțăm din timp înainte să expire.</p>
 <h3 style="margin-top:24px">Ce urmează</h3>
-<p>Poți reveni oricând în contul tău ca să actualizezi poze, prețul sau facilitățile, sau ca să activezi opțiunea <strong>Featured</strong>, ca să apari primul în listă. Te conectezi simplu, fără parolă — introduci adresa de email cu care te-ai înregistrat, aici:</p>
+<p>Poți reveni oricând în contul tău ca să actualizezi poze, prețul sau facilitățile, sau ca să activezi opțiunea <strong>Featured</strong>, ca să apari primul în listă. Te conectezi cu emailul și parola alese la înregistrare:</p>
 <p><a href="${loginUrl}">${loginUrl}</a></p>
-<p>Primești pe loc un link de conectare, valabil 60 de minute.</p>
 <p style="margin-top:24px">Mulțumim că faci parte din Opening Hours Today.<br>Echipa Opening Hours Today</p>`,
       }),
     });
@@ -10456,7 +10499,62 @@ function requireAccommodationOwnerApi(req, res, next) {
   next();
 }
 
+app.post("/api/cazare/logout", accommodationGate, (req, res) => {
+  appendSetCookie(res, "accSession=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; Secure");
+  res.status(200).json({ ok: true });
+});
+
+// Previzualizare — proprietarul vede exact pagina publică, cu datele din
+// formular, ÎNAINTE de a trimite spre aprobare. Nu se salvează nimic
+// permanent — doar un rând efemer (expiră după 2 ore), citit de aceeași
+// funcție care randează pagina reală (handleAccommodationPropertyPage).
+app.post("/api/cazare/previzualizare", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  try {
+    const token = crypto.randomBytes(16).toString("hex");
+    await dbPool.query(`INSERT INTO accommodation_previews (token, data) VALUES ($1, $2)`, [token, JSON.stringify(req.body || {})]);
+    res.status(200).json({ token });
+  } catch (err) {
+    console.error("previzualizare a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+app.post("/api/cazare/actualizeaza-date-fiscale", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const b = req.body || {};
+  const cuiClean = typeof b.companyCui === "string" ? b.companyCui.trim().replace(/^RO/i, "") : "";
+  if (cuiClean && !/^\d{2,10}$/.test(cuiClean)) { res.status(400).json({ error: "invalid_cui" }); return; }
+  if (b.billingEmail && (typeof b.billingEmail !== "string" || !EMAIL_RE.test(b.billingEmail.trim()))) {
+    res.status(400).json({ error: "invalid_billing_email" });
+    return;
+  }
+  try {
+    await dbPool.query(
+      `UPDATE accommodation_owners SET
+         company_cui = $1, company_name = $2, company_vat_payer = $3, company_reg_com = $4,
+         company_address = $5, company_iban = $6, company_bank = $7, billing_email = $8
+       WHERE id = $9`,
+      [
+        cuiClean || null,
+        typeof b.companyName === "string" ? b.companyName.trim().slice(0, 255) || null : null,
+        typeof b.companyVatPayer === "boolean" ? b.companyVatPayer : null,
+        typeof b.companyRegCom === "string" ? b.companyRegCom.trim().slice(0, 50) || null : null,
+        typeof b.companyAddress === "string" ? b.companyAddress.trim().slice(0, 500) || null : null,
+        typeof b.companyIban === "string" ? b.companyIban.trim().replace(/\s+/g, "").toUpperCase().slice(0, 34) || null : null,
+        typeof b.companyBank === "string" ? b.companyBank.trim().slice(0, 100) || null : null,
+        typeof b.billingEmail === "string" ? b.billingEmail.trim().slice(0, 255) || null : null,
+        req.accommodationOwner.ownerId,
+      ]
+    );
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("actualizeaza-date-fiscale a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
 
 // Pasul 1 — proprietarul introduce emailul, primește link de conectare
 // Înregistrare clasică, cu parolă — cont creat direct, sesiune activă pe
@@ -10792,8 +10890,8 @@ body{background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Se
 .acc-white-textlink{display:block;text-align:center;color:#F0813A;font-weight:700;font-size:14px;text-decoration:none;margin-top:16px;cursor:pointer;}
 .acc-white-legal{margin-top:40px;font-size:12px;color:#888;text-align:center;line-height:1.7;}
 .acc-white-legal a{color:#888;text-decoration:underline;}
-.acc-sub-back{flex:0 0 56px;background:#fff;border:1.5px solid #F0813A;color:#F0813A;font-weight:900;font-size:18px;border-radius:10px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;}
-.acc-sub-continue{flex:1;background:#F0813A;color:#fff;font-weight:800;font-size:15px;border:none;border-radius:10px;padding:0 15px;cursor:pointer;}
+.acc-sub-back{flex:0 0 56px;width:56px;background:#fff;border:1.5px solid #F0813A;color:#F0813A;font-weight:900;font-size:18px;border-radius:10px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;}
+.acc-sub-continue{flex:1;min-width:0;min-height:48px;background:#F0813A;color:#fff;font-weight:800;font-size:15px;border:none;border-radius:10px;padding:0 15px;cursor:pointer;}
 .acc-sub-continue:disabled{opacity:.5;cursor:not-allowed;}
 .acc-sub-other-box{display:none;margin:-4px 0 20px;}
 .acc-sub-other-box.is-visible{display:block;}
@@ -10806,6 +10904,257 @@ function accWhiteLegalHtml() {
     Copyright Opening Hours Today™
   </div>`;
 }
+
+// ============================================================
+// Shell comun pentru zona de cont (/cont, /cont/date-fiscale,
+// /cont/facturi-abonamente) — header cu meniu hamburger, temă închisă
+// (spre deosebire de fluxul de înregistrare, care e intenționat alb).
+// ============================================================
+function accShellStyles() {
+  return `
+.acc-shell-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;}
+.acc-shell-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
+.acc-shell-header .brand span{color:var(--accent);}
+.acc-hamburger-btn{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;padding:4px 8px;}
+.acc-shell-user{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;}
+.acc-shell-avatar{width:32px;height:32px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;}
+.acc-drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:29;}
+.acc-drawer-backdrop.is-open{display:block;}
+.acc-drawer{position:fixed;top:0;left:0;bottom:0;width:280px;max-width:82vw;background:#161b22;z-index:30;transform:translateX(-100%);transition:transform .2s ease;padding:20px;box-sizing:border-box;}
+.acc-drawer.is-open{transform:translateX(0);}
+.acc-drawer-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;margin-bottom:18px;}
+.acc-drawer-user{color:#fff;font-weight:700;margin-bottom:4px;}
+.acc-drawer-user-email{color:var(--muted);font-size:12.5px;margin-bottom:20px;}
+.acc-drawer-item{display:flex;align-items:center;gap:12px;padding:13px 10px;color:#e8ebf0;text-decoration:none;border-radius:10px;font-size:14.5px;font-weight:600;background:none;border:none;width:100%;text-align:left;cursor:pointer;}
+.acc-drawer-item:hover, .acc-drawer-item.is-active{background:#232a35;color:#fff;}
+.acc-drawer-item .icon{font-size:18px;flex:0 0 auto;}
+.acc-drawer-divider{border:none;border-top:1px solid #2a3140;margin:12px 0;}
+.acc-drawer-item.acc-logout{color:#ff8a8a;}
+.acc-shell-main{max-width:900px;margin:0 auto;padding:30px 20px 60px;}
+.acc-shell-h1{font-size:26px;font-weight:900;color:var(--text);margin:0 0 6px;}
+.acc-prop-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;overflow:hidden;margin-bottom:16px;display:flex;gap:0;}
+@media (max-width:560px){.acc-prop-card{flex-direction:column;}}
+.acc-prop-card-img{width:180px;flex:0 0 180px;object-fit:cover;}
+@media (max-width:560px){.acc-prop-card-img{width:100%;height:160px;}}
+.acc-prop-card-body{padding:16px;flex:1;display:flex;flex-direction:column;}
+.acc-prop-card-name{font-size:17px;font-weight:800;color:var(--text);}
+.acc-prop-card-meta{color:var(--muted);font-size:13.5px;margin:4px 0 10px;}
+.acc-prop-card-actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.acc-prop-card-actions a{text-decoration:none;font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;}
+.acc-edit-btn{background:var(--accent);color:#fff;}
+.acc-view-btn{background:none;border:1px solid var(--glass-border);color:var(--text);}
+.acc-empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
+.acc-warning-banner{background:#3a2a12;border:1px solid #a56a1a;color:#ffcf7a;border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;}
+`;
+}
+function accDrawerHtml(activeItem, ownerEmail) {
+  const items = [
+    { key: "proprietati", href: "/cont", icon: "🏠", label: "Proprietățile mele" },
+    { key: "fiscale", href: "/cont/date-fiscale", icon: "🧾", label: "Date fiscale" },
+    { key: "adauga", href: "/cont/alege-tip", icon: "➕", label: "Adaugă o proprietate" },
+    { key: "facturi", href: "/cont/facturi-abonamente", icon: "💳", label: "Facturi și abonamente" },
+  ];
+  return `
+<div class="acc-drawer-backdrop" id="accDrawerBackdrop"></div>
+<div class="acc-drawer" id="accDrawer">
+  <button type="button" class="acc-drawer-close" id="accDrawerClose">✕</button>
+  <div class="acc-drawer-user">Contul tău</div>
+  <div class="acc-drawer-user-email">${escapeHtml(ownerEmail)}</div>
+  ${items.map((it) => `<a href="${it.href}" class="acc-drawer-item${activeItem === it.key ? " is-active" : ""}"><span class="icon">${it.icon}</span>${it.label}</a>`).join("")}
+  <hr class="acc-drawer-divider">
+  <button type="button" class="acc-drawer-item acc-logout" id="accLogoutBtn"><span class="icon">↪️</span>Deconectare</button>
+</div>`;
+}
+function accDrawerScript() {
+  return `
+var hamBtn = document.getElementById("accHamburgerBtn");
+var drawer = document.getElementById("accDrawer");
+var backdrop = document.getElementById("accDrawerBackdrop");
+var closeBtn = document.getElementById("accDrawerClose");
+function openDrawer(){ drawer.classList.add("is-open"); backdrop.classList.add("is-open"); }
+function closeDrawer(){ drawer.classList.remove("is-open"); backdrop.classList.remove("is-open"); }
+if (hamBtn) hamBtn.addEventListener("click", openDrawer);
+if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
+if (backdrop) backdrop.addEventListener("click", closeDrawer);
+var logoutBtn = document.getElementById("accLogoutBtn");
+if (logoutBtn) logoutBtn.addEventListener("click", function(){
+  fetch("/api/cazare/logout", { method: "POST" }).then(function(){ window.location.href = "/cazare/autentificare"; });
+});
+`;
+}
+function accShellHeader(ownerEmail) {
+  return `
+<div class="acc-shell-header">
+  <button type="button" class="acc-hamburger-btn" id="accHamburgerBtn">☰</button>
+  <a class="brand" href="/">Opening<span>HoursToday</span></a>
+  <div class="acc-shell-user">
+    <div class="acc-shell-avatar">${escapeHtml((ownerEmail || "?")[0].toUpperCase())}</div>
+  </div>
+</div>`;
+}
+
+// ============================================================
+// Shell de ADMIN — sidebar comun, pe toate paginile /admin/* legate de
+// cazare (Cazări, Recenzii, Setări, Dashboard). /admin/propuneri (secțiunea
+// generală, mai veche, nu doar de cazare) rămâne cu stilul ei propriu, dar
+// primește un link din sidebar, pentru navigare dintr-un singur loc.
+// ============================================================
+function adminShellStyles() {
+  return `
+*{box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0d1117;color:#e6edf3;margin:0;}
+.admin-shell{display:flex;min-height:100vh;}
+.admin-sidebar{width:230px;flex:0 0 230px;background:#161b22;padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+@media (max-width:760px){.admin-sidebar{position:fixed;left:0;top:0;bottom:0;z-index:40;transform:translateX(-100%);transition:transform .2s ease;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+  .admin-sidebar.is-open{transform:translateX(0);}
+  .admin-shell{display:block;}
+}
+.admin-sidebar-brand{color:#fff;font-weight:900;font-size:17px;padding:8px 10px 20px;}
+.admin-sidebar-brand span{color:#ff8a3d;}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:11px 10px;color:#c9d1d9;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600;margin-bottom:2px;}
+.admin-nav-item:hover, .admin-nav-item.is-active{background:#21262d;color:#fff;}
+.admin-nav-item .badge{margin-left:auto;background:#ff8a3d;color:#111;font-size:11px;font-weight:800;border-radius:999px;padding:1px 7px;}
+.admin-nav-divider{border:none;border-top:1px solid #21262d;margin:14px 0;}
+.admin-main{flex:1;padding:26px 30px;max-width:1100px;}
+.admin-mobile-bar{display:none;background:#161b22;padding:12px 16px;align-items:center;gap:12px;}
+@media (max-width:760px){.admin-mobile-bar{display:flex;}}
+.admin-mobile-bar button{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.admin-h1{font-size:24px;font-weight:900;margin:0 0 20px;}
+.admin-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.admin-stat-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:18px;}
+.admin-stat-card .num{font-size:28px;font-weight:900;color:#ff8a3d;}
+.admin-stat-card .label{color:#8b949e;font-size:12.5px;margin-top:4px;}
+.admin-stat-card.is-warning .num{color:#ffcf7a;}
+.admin-section-title{font-size:16px;font-weight:800;margin:26px 0 12px;color:#e6edf3;}
+.admin-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.admin-tab{color:#999;text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid #333;font-size:13.5px;}
+.admin-tab.is-active{background:#ff8a3d;color:#111;border-color:#ff8a3d;font-weight:700;}
+.admin-submission-card{background:#1c1c1c;border-radius:10px;padding:16px;margin-bottom:12px;}
+.admin-submission-header{display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;}
+.admin-submission-type{font-weight:700;}
+.admin-status-tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.admin-status-pending{background:#4a3a1a;color:#ffcf7a;}
+.admin-status-approved{background:#1a3a1f;color:#7affA0;}
+.admin-status-rejected{background:#3a1a1a;color:#ff9d9d;}
+.admin-submission-name{font-size:17px;font-weight:700;}
+.admin-submission-name a{color:#ff8a3d;font-size:13px;font-weight:600;}
+.admin-submission-meta{color:#999;margin:4px 0;font-size:13.5px;}
+.admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
+.admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+.admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+.admin-repending-btn{background:#555;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
+a{color:#ff8a3d;}
+label{display:block;font-weight:700;margin-bottom:6px;}
+input[type="number"], input[type="text"]{width:100%;box-sizing:border-box;padding:12px;border-radius:8px;border:1px solid #444;background:#1c1c1c;color:#eee;font-size:16px;margin-bottom:16px;}
+button.admin-btn{background:#ff8a3d;color:#111;font-weight:700;border:none;border-radius:8px;padding:12px 20px;cursor:pointer;}
+`;
+}
+function adminSidebarHtml(activeItem, key, counts) {
+  counts = counts || {};
+  const items = [
+    { key: "dashboard", href: "/admin", icon: "📊", label: "Dashboard" },
+    { key: "cazari", href: "/admin/cazari", icon: "🏡", label: "Cazări", badge: counts.pendingCazari },
+    { key: "recenzii", href: "/admin/recenzii", icon: "💬", label: "Recenzii", badge: counts.pendingRecenzii },
+    { key: "propuneri", href: "/admin/propuneri", icon: "📍", label: "Propuneri locuri", badge: counts.pendingPropuneri },
+    { key: "setari", href: "/admin/setari", icon: "⚙️", label: "Setări" },
+  ];
+  return `
+<div class="admin-sidebar" id="adminSidebar">
+  <div class="admin-sidebar-brand">Opening<span>HoursToday</span> · Admin</div>
+  ${items.map((it) => `<a href="${it.href}?key=${encodeURIComponent(key)}" class="admin-nav-item${activeItem === it.key ? " is-active" : ""}"><span>${it.icon}</span>${it.label}${it.badge ? `<span class="badge">${it.badge}</span>` : ""}</a>`).join("")}
+</div>`;
+}
+function adminMobileBarHtml() {
+  return `<div class="admin-mobile-bar"><button type="button" id="adminSidebarToggle">☰</button><strong>Admin</strong></div>`;
+}
+function adminSidebarScript() {
+  return `
+var toggleBtn = document.getElementById("adminSidebarToggle");
+var sidebar = document.getElementById("adminSidebar");
+if (toggleBtn) toggleBtn.addEventListener("click", function(){ sidebar.classList.toggle("is-open"); });
+`;
+}
+
+async function getAdminCounts() {
+  const empty = { pendingCazari: 0, pendingRecenzii: 0, pendingPropuneri: 0 };
+  if (!dbPool) return empty;
+  try {
+    const [cazariRes, recenziiRes, propuneriRes] = await Promise.all([
+      dbPool.query(`SELECT COUNT(*)::int AS cnt FROM accommodation_listings WHERE status = 'pending'`),
+      dbPool.query(`SELECT COUNT(*)::int AS cnt FROM accommodation_reviews WHERE status = 'pending'`),
+      dbPool.query(`SELECT COUNT(*)::int AS cnt FROM pending_submissions WHERE status = 'pending'`),
+    ]);
+    return {
+      pendingCazari: cazariRes.rows[0].cnt,
+      pendingRecenzii: recenziiRes.rows[0].cnt,
+      pendingPropuneri: propuneriRes.rows[0].cnt,
+    };
+  } catch (e) {
+    return empty;
+  }
+}
+
+app.get("/admin", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
+    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
+    return;
+  }
+  const counts = await getAdminCounts();
+  let stats = { approvedListings: 0, trial: 0, active: 0, pastDue: 0, canceled: 0 };
+  if (dbPool) {
+    try {
+      const r1 = await dbPool.query(`SELECT COUNT(*)::int AS cnt FROM accommodation_listings WHERE status = 'approved'`);
+      stats.approvedListings = r1.rows[0].cnt;
+      const r2 = await dbPool.query(`SELECT subscription_status, COUNT(*)::int AS cnt FROM accommodation_listings WHERE status = 'approved' GROUP BY subscription_status`);
+      r2.rows.forEach((row) => {
+        if (row.subscription_status === "trial") stats.trial = row.cnt;
+        if (row.subscription_status === "active") stats.active = row.cnt;
+        if (row.subscription_status === "past_due") stats.pastDue = row.cnt;
+        if (row.subscription_status === "canceled") stats.canceled = row.cnt;
+      });
+    } catch (e) { /* rămân 0 */ }
+  }
+  const monthlyPriceCents = await getAccommodationMonthlyPriceCents();
+  const estimatedMonthlyRevenue = ((stats.active * monthlyPriceCents) / 100).toFixed(2);
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Dashboard — Admin</title>
+<style>${adminShellStyles()}</style></head>
+<body>
+<div class="admin-shell">
+${adminSidebarHtml("dashboard", req.query.key, counts)}
+<div style="flex:1">
+${adminMobileBarHtml()}
+<div class="admin-main">
+<h1 class="admin-h1">📊 Dashboard</h1>
+
+<div class="admin-section-title">În așteptare, acum</div>
+<div class="admin-stat-grid">
+  <a href="/admin/cazari?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingCazari ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingCazari}</div><div class="label">Cazări de verificat</div></a>
+  <a href="/admin/recenzii?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingRecenzii ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingRecenzii}</div><div class="label">Recenzii de verificat</div></a>
+  <a href="/admin/propuneri?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingPropuneri ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingPropuneri}</div><div class="label">Propuneri de locuri</div></a>
+</div>
+
+<div class="admin-section-title">Cazări active pe site</div>
+<div class="admin-stat-grid">
+  <div class="admin-stat-card"><div class="num">${stats.approvedListings}</div><div class="label">Total aprobate</div></div>
+  <div class="admin-stat-card"><div class="num">${stats.trial}</div><div class="label">⏳ În perioadă gratuită</div></div>
+  <div class="admin-stat-card"><div class="num">${stats.active}</div><div class="label">✓ Abonament activ</div></div>
+  <div class="admin-stat-card${stats.pastDue ? " is-warning" : ""}"><div class="num">${stats.pastDue}</div><div class="label">⚠️ Plată eșuată</div></div>
+  <div class="admin-stat-card"><div class="num">${stats.canceled}</div><div class="label">✕ Anulate</div></div>
+</div>
+
+<div class="admin-section-title">Venit lunar estimat</div>
+<div class="admin-stat-grid">
+  <div class="admin-stat-card"><div class="num">${estimatedMonthlyRevenue}€</div><div class="label">${stats.active} abonamente active × ${(monthlyPriceCents / 100).toFixed(2)}€</div></div>
+</div>
+${monthlyPriceCents === 0 ? `<p style="color:#ffcf7a">⚠️ Prețul abonamentului nu e configurat — <a href="/admin/setari?key=${encodeURIComponent(req.query.key)}">setează-l aici</a>.</p>` : ""}
+
+</div>
+</div>
+</div>
+<script>(function(){${adminSidebarScript()}})();</script>
+</body></html>`);
+});
 
 app.get("/cazare/creeaza-cont", accommodationGate, (req, res) => {
   const nonce = generateNonce();
@@ -10835,7 +11184,9 @@ app.get("/cazare/creeaza-cont", accommodationGate, (req, res) => {
 </div>
 <script nonce="${nonce}">
 (function(){
-  document.getElementById("emailForm").addEventListener("submit", function(e){
+  var emailFormEl = document.getElementById("emailForm");
+  emailFormEl.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
+  emailFormEl.addEventListener("submit", function(e){
     e.preventDefault();
     sessionStorage.setItem("accRegEmail", document.getElementById("regEmail").value);
     window.location.href = "/cazare/detalii-contact";
@@ -10895,6 +11246,7 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
   var email = sessionStorage.getItem("accRegEmail");
   if (!email) { window.location.href = "/cazare/creeaza-cont"; return; }
   var form = document.getElementById("detailsForm");
+  form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   var btn = document.getElementById("detailsBtn");
   var err = document.getElementById("detailsErr");
   var ERROR_MESSAGES = {
@@ -10974,6 +11326,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
 <script nonce="${nonce}">
 (function(){
   var form = document.getElementById("loginForm");
+  form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   var btn = document.getElementById("loginBtn");
   var msg = document.getElementById("loginMsg");
   var err = document.getElementById("loginErr");
@@ -11125,6 +11478,7 @@ app.get("/cazare/reseteaza-parola", accommodationGate, (req, res) => {
 (function(){
   var ERRORS = { no_account: "Nu am găsit niciun cont cu acest email.", too_many_requests: "Prea multe încercări recente — mai așteaptă puțin." };
   var form = document.getElementById("resetForm");
+  form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   var btn = document.getElementById("resetBtn");
   var msg = document.getElementById("resetMsg");
   var err = document.getElementById("resetErr");
@@ -11184,6 +11538,7 @@ app.get("/cazare/contacteaza-suport", accommodationGate, (req, res) => {
 <script nonce="${nonce}">
 (function(){
   var form = document.getElementById("supportForm");
+  form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   var btn = document.getElementById("supportBtn");
   var msg = document.getElementById("supportMsg");
   var err = document.getElementById("supportErr");
@@ -11422,13 +11777,10 @@ async function renderAccommodationListingForm(req, res, existingListing) {
     <label class="submit-place-label">Check-out
       <input type="text" id="accCheckout" value="${escapeHtml(t.checkout_time || "")}" placeholder="ex. 11:00" maxlength="50" required>
     </label>
-    <label class="submit-place-label">Politică de anulare
-      <textarea id="accCancellation" maxlength="500" rows="3" required>${escapeHtml(t.cancellation_policy || "")}</textarea>
-    </label>
-    <label class="submit-place-label">Website propriu (obligatoriu dacă nu ai profil Booking/Airbnb mai jos)
+    <label class="submit-place-label">Website propriu (opțional, dar recomandat)
       <input type="url" id="accWebsite" value="${escapeHtml(t.website_url || "")}" placeholder="https://...">
     </label>
-    <label class="submit-place-label">Profil Booking/Airbnb existent (obligatoriu dacă nu ai website mai sus)
+    <label class="submit-place-label">Profil Booking/Airbnb existent (opțional, dar recomandat)
       <input type="url" id="accBookingProfile" value="${escapeHtml(t.booking_profile_url || "")}" placeholder="https://...">
     </label>
     <label class="submit-place-label">Telefon de contact
@@ -11482,7 +11834,7 @@ async function renderAccommodationListingForm(req, res, existingListing) {
       <textarea id="accCompanyAddress" maxlength="500" rows="2" required>${escapeHtml(t.company_address || "")}</textarea>
     </label>
     <label class="submit-place-label">Cont IBAN
-      <input type="text" id="accIban" value="${escapeHtml(t.company_iban || "")}" maxlength="34" required>
+      <input type="text" id="accIban" value="${escapeHtml(t.company_iban || "")}" maxlength="42" placeholder="RO25 BTRL 0000 0000 0000 00" required>
     </label>
     <label class="submit-place-label">Banca
       <input type="text" id="accBank" value="${escapeHtml(t.company_bank || "")}" maxlength="100" required>
@@ -11582,6 +11934,11 @@ otherAmenityToggle.addEventListener("change", function(){
   if (!otherAmenityToggle.checked) document.getElementById("accOtherAmenityText").value = "";
 });
 
+document.getElementById("accIban").addEventListener("input", function(e){
+  var raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 34);
+  e.target.value = raw.replace(/(.{4})/g, "$1 ").trim();
+});
+
 document.getElementById("accVerifyCuiBtn").addEventListener("click", function(){
   var cui = document.getElementById("accCui").value.trim();
   var status = document.getElementById("accCuiStatus");
@@ -11603,14 +11960,15 @@ document.getElementById("accVerifyCuiBtn").addEventListener("click", function(){
     .catch(function(){ status.textContent = "Verificarea a eșuat — completează manual."; });
 });
 
-document.getElementById("accForm").addEventListener("submit", function(e){
+var accFormEl = document.getElementById("accForm");
+accFormEl.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
+accFormEl.addEventListener("submit", function(e){
   e.preventDefault();
   var err = document.getElementById("accErr");
   err.hidden = true;
   if (photos.length < 3) { err.textContent = "Ai nevoie de minim 3 poze."; err.hidden = false; return; }
   var website = document.getElementById("accWebsite").value.trim();
   var bookingProfile = document.getElementById("accBookingProfile").value.trim();
-  if (!website && !bookingProfile) { err.textContent = "Completează cel puțin website-ul propriu SAU profilul Booking/Airbnb."; err.hidden = false; return; }
   var vatEl = document.querySelector('input[name="accVatPayer"]:checked');
   if (!vatEl) { err.textContent = "Spune-ne dacă firma e plătitoare de TVA."; err.hidden = false; return; }
   var btn = document.getElementById("accSubmitBtn");
@@ -11637,7 +11995,6 @@ document.getElementById("accForm").addEventListener("submit", function(e){
       photos: photos,
       checkinTime: document.getElementById("accCheckin").value,
       checkoutTime: document.getElementById("accCheckout").value,
-      cancellationPolicy: document.getElementById("accCancellation").value,
       websiteUrl: website,
       bookingProfileUrl: bookingProfile,
       facebookUrl: document.getElementById("accFacebook").value,
@@ -11665,6 +12022,271 @@ document.getElementById("accForm").addEventListener("submit", function(e){
 </script>
 </body></html>`);
 }
+
+app.get("/cont/date-fiscale", accommodationGate, requireAccommodationOwner, async (req, res) => {
+  if (!dbPool) { res.status(503).send("Indisponibil momentan."); return; }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  let owner = {};
+  try {
+    const { rows } = await dbPool.query(`SELECT * FROM accommodation_owners WHERE id = $1`, [req.accommodationOwner.ownerId]);
+    owner = rows[0] || {};
+  } catch (err) {
+    res.status(500).send("Eroare: " + escapeHtml(err.message));
+    return;
+  }
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
+<title>Date fiscale — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
+<style>${accShellStyles()}
+.acc-fiscal-form-wrap{max-width:520px;}
+.acc-fiscal-form-wrap .submit-place-label{color:var(--text);}
+.acc-fiscal-form-wrap input, .acc-fiscal-form-wrap textarea{background:var(--glass-bg);color:var(--text);border:2px solid var(--accent);}
+</style></head>
+<body>
+${accShellHeader(req.accommodationOwner.email)}
+${accDrawerHtml("fiscale", req.accommodationOwner.email)}
+<main class="acc-shell-main">
+<div class="acc-fiscal-form-wrap">
+<h1 class="acc-shell-h1">Date fiscale</h1>
+<p class="intro-text" style="margin-bottom:20px">Datele astea rămân central în cont — nu mai trebuie să le retastezi la fiecare proprietate nouă.</p>
+
+<form id="fiscalAccForm" class="submit-place-form">
+  <label class="submit-place-label">CUI/CIF
+    <div style="display:flex;gap:8px">
+      <input type="text" id="ownCui" value="${escapeHtml(owner.company_cui || "")}" maxlength="20" style="flex:1">
+      <button type="button" id="ownVerifyCuiBtn" class="affiliate-btn affiliate-btn-temu" style="width:auto;flex:0 0 auto">Verifică CUI</button>
+    </div>
+    <p id="ownCuiStatus" class="plan-visit-hint"></p>
+  </label>
+  <label class="submit-place-label">Denumirea completă a firmei
+    <input type="text" id="ownCompanyName" value="${escapeHtml(owner.company_name || "")}" maxlength="255">
+  </label>
+  <div class="submit-place-label">Plătitor de TVA?
+    <div style="display:flex;gap:16px;margin-top:6px">
+      <label class="sp-closed-toggle" style="font-size:14px"><input type="radio" name="ownVat" id="ownVatYes" value="da"${owner.company_vat_payer === true ? " checked" : ""}> Da (CUI cu RO)</label>
+      <label class="sp-closed-toggle" style="font-size:14px"><input type="radio" name="ownVat" id="ownVatNo" value="nu"${owner.company_vat_payer === false ? " checked" : ""}> Nu</label>
+    </div>
+  </div>
+  <label class="submit-place-label">Numărul de înregistrare la Registrul Comerțului
+    <input type="text" id="ownRegCom" value="${escapeHtml(owner.company_reg_com || "")}" placeholder="ex. J40/12345/2026" maxlength="50">
+  </label>
+  <label class="submit-place-label">Adresa sediului social
+    <textarea id="ownCompanyAddress" rows="2" maxlength="500">${escapeHtml(owner.company_address || "")}</textarea>
+  </label>
+  <label class="submit-place-label">Cont IBAN
+    <input type="text" id="ownIban" value="${escapeHtml(owner.company_iban || "")}" maxlength="42" placeholder="RO25 BTRL 0000 0000 0000 00">
+  </label>
+  <label class="submit-place-label">Banca
+    <input type="text" id="ownBank" value="${escapeHtml(owner.company_bank || "")}" maxlength="100">
+  </label>
+  <label class="submit-place-label">Adresa de email pentru facturare
+    <input type="email" id="ownBillingEmail" value="${escapeHtml(owner.billing_email || "")}" maxlength="255">
+  </label>
+  <button type="submit" id="fiscalAccBtn" class="submit-place-btn">Salvează</button>
+  <p id="fiscalAccMsg" class="submit-place-thanks" hidden></p>
+  <p id="fiscalAccErr" class="submit-place-error" hidden></p>
+</form>
+</div>
+</main>
+<script nonce="${nonce}">
+(function(){
+  ${accDrawerScript()}
+
+  document.getElementById("ownIban").addEventListener("input", function(e){
+    var raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 34);
+    e.target.value = raw.replace(/(.{4})/g, "$1 ").trim();
+  });
+
+  document.getElementById("ownVerifyCuiBtn").addEventListener("click", function(){
+    var cui = document.getElementById("ownCui").value.trim();
+    var status = document.getElementById("ownCuiStatus");
+    if (!cui) { status.textContent = "Scrie mai întâi CUI-ul."; return; }
+    status.textContent = "Se verifică...";
+    fetch("/api/cazare/verifica-cui?cui=" + encodeURIComponent(cui))
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        if (res.ok) {
+          document.getElementById("ownCompanyName").value = res.data.denumire || "";
+          document.getElementById("ownCompanyAddress").value = res.data.adresa || "";
+          if (res.data.nrRegCom) document.getElementById("ownRegCom").value = res.data.nrRegCom;
+          document.getElementById(res.data.platitorTva ? "ownVatYes" : "ownVatNo").checked = true;
+          status.textContent = "✓ Date preluate de la ANAF.";
+        } else { status.textContent = "Nu am găsit firma — completează manual."; }
+      })
+      .catch(function(){ status.textContent = "Verificarea a eșuat — completează manual."; });
+  });
+
+  var form = document.getElementById("fiscalAccForm");
+  form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = document.getElementById("fiscalAccErr");
+    var msg = document.getElementById("fiscalAccMsg");
+    err.hidden = true;
+    var vatEl = document.querySelector('input[name="ownVat"]:checked');
+    var btn = document.getElementById("fiscalAccBtn");
+    btn.disabled = true;
+    fetch("/api/cazare/actualizeaza-date-fiscale", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        companyCui: document.getElementById("ownCui").value,
+        companyName: document.getElementById("ownCompanyName").value,
+        companyVatPayer: vatEl ? vatEl.value === "da" : null,
+        companyRegCom: document.getElementById("ownRegCom").value,
+        companyAddress: document.getElementById("ownCompanyAddress").value,
+        companyIban: document.getElementById("ownIban").value,
+        companyBank: document.getElementById("ownBank").value,
+        billingEmail: document.getElementById("ownBillingEmail").value,
+      }),
+    })
+      .then(function(r){ return r.ok; })
+      .then(function(ok){
+        btn.disabled = false;
+        if (ok) { msg.textContent = "✓ Salvat."; msg.hidden = false; setTimeout(function(){ msg.hidden = true; }, 3000); }
+        else { err.textContent = "Ceva n-a mers. Încearcă din nou."; err.hidden = false; }
+      })
+      .catch(function(){ btn.disabled = false; err.textContent = "Ceva n-a mers. Încearcă din nou."; err.hidden = false; });
+  });
+})();
+</script>
+</body></html>`);
+});
+
+
+app.get("/cont/facturi-abonamente", accommodationGate, requireAccommodationOwner, async (req, res) => {
+  if (!dbPool) { res.status(503).send("Indisponibil momentan."); return; }
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
+  res.set("Content-Type", "text/html; charset=utf-8");
+  let rows = [];
+  try {
+    const result = await dbPool.query(
+      `SELECT id, name, status, featured_until, subscription_status, trial_ends_at, stripe_subscription_id FROM accommodation_listings WHERE owner_id = $1 ORDER BY creat_la DESC`,
+      [req.accommodationOwner.ownerId]
+    );
+    rows = result.rows;
+  } catch (err) {
+    res.status(500).send("Eroare: " + escapeHtml(err.message));
+    return;
+  }
+  const monthlyPriceCents = await getAccommodationMonthlyPriceCents();
+  const priceLabel = monthlyPriceCents > 0 ? `${(monthlyPriceCents / 100).toFixed(2)}€/lună` : "gratuit (preț neconfigurat încă)";
+  const now = new Date();
+  const subStatusLabel = { trial: "⏳ Perioadă de probă", active: "✓ Activ", past_due: "⚠️ Plată eșuată", canceled: "✕ Anulat" };
+  const rowsHtml = rows.length
+    ? rows.map((r) => {
+        const featuredUntil = r.featured_until ? new Date(r.featured_until) : null;
+        const featIsActive = featuredUntil && featuredUntil > now;
+        const featDaysLeft = featIsActive ? Math.ceil((featuredUntil - now) / (1000 * 60 * 60 * 24)) : 0;
+        const featExpiringSoon = featIsActive && featDaysLeft <= 5;
+
+        const trialEnd = r.trial_ends_at ? new Date(r.trial_ends_at) : null;
+        const trialDaysLeft = trialEnd ? Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24)) : null;
+        const trialExpiringSoon = r.subscription_status === "trial" && trialDaysLeft !== null && trialDaysLeft <= 5 && trialDaysLeft > 0;
+        const hasStripeSub = !!r.stripe_subscription_id;
+
+        let subSectionHtml;
+        if (r.status !== "approved") {
+          subSectionHtml = `<p class="plan-visit-hint">Abonamentul devine activ după aprobarea proprietății.</p>`;
+        } else if (r.subscription_status === "canceled") {
+          subSectionHtml = `
+          <div class="acc-warning-banner"><span>✕</span><span><strong>Abonament anulat</strong> — proprietatea NU mai e vizibilă public. Reactivează ca să reapară pe site.</span></div>
+          <button type="button" class="acc-edit-btn acc-sub-activate-btn" data-id="${r.id}" style="border:none;cursor:pointer;margin-top:10px">Reactivează abonamentul (${escapeHtml(priceLabel)})</button>`;
+        } else if (r.subscription_status === "past_due") {
+          subSectionHtml = `
+          <div class="acc-warning-banner"><span>⚠️</span><span>Ultima plată a eșuat. Actualizează metoda de plată, altfel proprietatea va fi delistată automat.</span></div>
+          <button type="button" class="acc-view-btn acc-sub-portal-btn" data-id="${r.id}" style="margin-top:10px">Actualizează plata</button>`;
+        } else if (r.subscription_status === "trial" && !hasStripeSub) {
+          subSectionHtml = `
+          <div class="acc-prop-card-meta">⏳ Perioadă de probă — ${trialDaysLeft !== null ? `${trialDaysLeft} zile rămase` : ""} (gratuit până pe ${trialEnd ? trialEnd.toLocaleDateString("ro-RO") : "—"}). Cardul nu e debitat până la final.</div>
+          ${trialExpiringSoon ? `<div class="acc-warning-banner" style="margin-top:8px"><span>⚠️</span><span>Trial-ul expiră în curând — adaugă un card acum, ca proprietatea să rămână listată fără întrerupere.</span></div>` : ""}
+          <button type="button" class="acc-edit-btn acc-sub-activate-btn" data-id="${r.id}" style="border:none;cursor:pointer;margin-top:10px">Adaugă card (${escapeHtml(priceLabel)}, după trial)</button>`;
+        } else if (r.subscription_status === "trial" && hasStripeSub) {
+          subSectionHtml = `
+          <div class="acc-prop-card-meta">✓ Card înregistrat — perioadă de probă activă, ${trialDaysLeft !== null ? `${trialDaysLeft} zile rămase` : ""}. Plata automată începe pe ${trialEnd ? trialEnd.toLocaleDateString("ro-RO") : "—"}.</div>
+          <button type="button" class="acc-view-btn acc-sub-portal-btn" data-id="${r.id}" style="margin-top:8px">Gestionează abonamentul</button>`;
+        } else {
+          subSectionHtml = `
+          <div class="acc-prop-card-meta">✓ Abonament activ — ${escapeHtml(priceLabel)}</div>
+          <button type="button" class="acc-view-btn acc-sub-portal-btn" data-id="${r.id}" style="margin-top:8px">Gestionează abonamentul (facturi, card, anulare)</button>`;
+        }
+
+        return `
+      <div class="acc-prop-card" style="flex-direction:column">
+        <div class="acc-prop-card-body" style="padding:16px">
+          <div class="acc-prop-card-name">${escapeHtml(r.name)} <span style="font-size:12px;font-weight:600;color:var(--muted)">${subStatusLabel[r.subscription_status] || ""}</span></div>
+          ${subSectionHtml}
+          <hr class="acc-drawer-divider">
+          ${featIsActive
+            ? `<div class="acc-prop-card-meta">⭐ Featured activ până pe ${featuredUntil.toLocaleDateString("ro-RO")} (${featDaysLeft} zile rămase)</div>`
+            : `<div class="acc-prop-card-meta">Fără Featured — opțional, ca să apari primul în listă.</div>`}
+          ${featExpiringSoon ? `
+          <div class="acc-warning-banner" style="margin-top:10px">
+            <span>⚠️</span>
+            <span>Mai aveți <strong>${featDaysLeft} zile</strong> până la expirarea Featured. Listarea de bază rămâne neafectată.</span>
+          </div>` : ""}
+          ${r.status === "approved" ? `<button type="button" class="acc-edit-btn acc-buy-featured-btn" data-id="${r.id}" style="border:none;cursor:pointer;margin-top:10px">${featIsActive ? "Reînnoiește Featured" : "⭐ Cumpără Featured"}</button>` : ""}
+        </div>
+      </div>`;
+      }).join("")
+    : `<div class="acc-empty-state">Nu ai nicio proprietate încă.</div>`;
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
+<title>Facturi și abonamente — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
+<style>${accShellStyles()}</style></head>
+<body>
+${accShellHeader(req.accommodationOwner.email)}
+${accDrawerHtml("facturi", req.accommodationOwner.email)}
+<main class="acc-shell-main">
+<h1 class="acc-shell-h1">Facturi și abonamente</h1>
+<p class="intro-text" style="margin-bottom:20px">Primele ${ACCOMMODATION_TRIAL_MONTHS} luni de la aprobare sunt gratuite pentru fiecare proprietate. După, listarea continuă la ${escapeHtml(priceLabel)}, cu plată automată. "Featured" e separat, opțional, ca să apari primul în listă.</p>
+${rowsHtml}
+</main>
+<script nonce="${nonce}">
+(function(){
+  ${accDrawerScript()}
+  document.querySelectorAll(".acc-buy-featured-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      btn.disabled = true;
+      fetch("/api/cazare/featured/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: btn.getAttribute("data-id") }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+        .then(function(res){
+          if (res.ok && res.data.url) { window.location.href = res.data.url; }
+          else { btn.disabled = false; alert("Ceva n-a mers. Încearcă din nou."); }
+        })
+        .catch(function(){ btn.disabled = false; });
+    });
+  });
+  document.querySelectorAll(".acc-sub-activate-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      btn.disabled = true;
+      fetch("/api/cazare/abonament/activeaza", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: btn.getAttribute("data-id") }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+        .then(function(res){
+          if (res.ok && res.data.url) { window.location.href = res.data.url; }
+          else { btn.disabled = false; alert(res.data && res.data.error === "no_price_set" ? "Prețul abonamentului nu e configurat încă." : "Ceva n-a mers. Încearcă din nou."); }
+        })
+        .catch(function(){ btn.disabled = false; });
+    });
+  });
+  document.querySelectorAll(".acc-sub-portal-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      btn.disabled = true;
+      fetch("/api/cazare/abonament/portal", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: btn.getAttribute("data-id") }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+        .then(function(res){
+          if (res.ok && res.data.url) { window.location.href = res.data.url; }
+          else { btn.disabled = false; alert("Ceva n-a mers. Încearcă din nou."); }
+        })
+        .catch(function(){ btn.disabled = false; });
+    });
+  });
+})();
+</script>
+</body></html>`);
+});
+
 
 app.get("/cont/alege-tip", accommodationGate, requireAccommodationOwner, (req, res) => {
   const nonce = generateNonce();
@@ -11729,7 +12351,7 @@ app.get("/cont/subcategorie", accommodationGate, requireAccommodationOwner, (req
 .acc-sub-card.is-selected{border-color:#F0813A;border-width:2px;background:#fff6f0;}
 .acc-sub-card h3{margin:0 0 6px;font-size:15.5px;font-weight:800;color:#111;}
 .acc-sub-card p{margin:0;font-size:13px;color:#555;}
-.acc-sub-bottombar{display:flex;gap:12px;max-width:720px;margin:10px auto 40px;padding:0 24px;}
+.acc-sub-bottombar{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;max-width:720px;margin:10px auto 40px;padding:0 24px;}
 </style></head>
 <body>
 <div class="acc-sub-wrap">
@@ -11806,9 +12428,10 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
 .acc-photo-thumb{position:relative;width:76px;height:76px;}
 .acc-photo-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
 .acc-photo-thumb button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#e53935;color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;}
-.acc-price-row{display:flex;gap:8px;}
-.acc-price-row select{border:1.5px solid #ddd;border-radius:10px;padding:0 10px;font-size:15px;}
-.acc-details-bottombar{display:flex;gap:12px;max-width:560px;margin:16px auto 40px;padding:0 24px;}
+.acc-price-row{display:flex;gap:8px;align-items:stretch;}
+.acc-price-row input{margin-bottom:0;}
+.acc-price-row select{border:2px solid #F0813A;border-radius:10px;padding:14px 10px;font-size:15px;background:#fff;box-sizing:border-box;}
+.acc-details-bottombar{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;max-width:560px;margin:16px auto 40px;padding:0 24px;}
 </style></head>
 <body>
 <div class="acc-details-wrap">
@@ -11872,13 +12495,11 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     <label class="acc-white-label" for="dCheckout">Check-out</label>
     <input type="text" id="dCheckout" class="acc-white-input" placeholder="ex. 11:00" maxlength="50" required>
 
-    <label class="acc-white-label" for="dCancellation">Politică de anulare</label>
-    <textarea id="dCancellation" class="acc-white-input" rows="3" maxlength="500" required></textarea>
 
-    <label class="acc-white-label" for="dWebsite">Website propriu (obligatoriu dacă nu ai profil Booking/Airbnb mai jos)</label>
+    <label class="acc-white-label" for="dWebsite">Website propriu (opțional, dar recomandat)</label>
     <input type="url" id="dWebsite" class="acc-white-input" placeholder="https://...">
 
-    <label class="acc-white-label" for="dBooking">Profil Booking/Airbnb existent (obligatoriu dacă nu ai website mai sus)</label>
+    <label class="acc-white-label" for="dBooking">Profil Booking/Airbnb existent (opțional, dar recomandat)</label>
     <input type="url" id="dBooking" class="acc-white-input" placeholder="https://...">
 
     <label class="acc-white-label" for="dFacebook">📘 Facebook (opțional)</label>
@@ -11953,14 +12574,15 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     if (!otherToggle.checked) document.getElementById("dOtherAmenityText").value = "";
   });
 
-  document.getElementById("detForm").addEventListener("submit", function(e){
+  var detFormEl = document.getElementById("detForm");
+  detFormEl.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
+  detFormEl.addEventListener("submit", function(e){
     e.preventDefault();
     var err = document.getElementById("dErr");
     err.hidden = true;
     if (photos.length < 3) { err.textContent = "Ai nevoie de minim 3 poze."; err.hidden = false; return; }
     var website = document.getElementById("dWebsite").value.trim();
     var booking = document.getElementById("dBooking").value.trim();
-    if (!website && !booking) { err.textContent = "Completează cel puțin website-ul propriu SAU profilul Booking/Airbnb."; err.hidden = false; return; }
     var amenities = Array.from(document.querySelectorAll(".acc-amenity:checked")).map(function(el){ return el.value; });
     var draft = {
       type: ${JSON.stringify(type)},
@@ -11980,7 +12602,6 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       photos: photos,
       checkinTime: document.getElementById("dCheckin").value,
       checkoutTime: document.getElementById("dCheckout").value,
-      cancellationPolicy: document.getElementById("dCancellation").value,
       websiteUrl: website,
       bookingProfileUrl: booking,
       facebookUrl: document.getElementById("dFacebook").value,
@@ -12010,8 +12631,9 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
 .acc-howworks-btn{background:none;border:none;color:#1a73e8;font-weight:700;font-size:13.5px;cursor:pointer;padding:0;margin:-10px 0 18px;text-align:left;}
 .acc-howworks-box{display:none;background:#f7f9fc;border:1px solid #e0e6ef;border-radius:10px;padding:14px 16px;font-size:13.5px;color:#444;line-height:1.6;margin:-10px 0 20px;}
 .acc-howworks-box.is-visible{display:block;}
-.acc-cui-row{display:flex;gap:8px;}
-.acc-cui-row button{flex:0 0 auto;background:#fff;border:1.5px solid #F0813A;color:#F0813A;font-weight:700;font-size:13.5px;border-radius:10px;padding:0 14px;cursor:pointer;}
+.acc-cui-row{display:flex;gap:8px;align-items:stretch;}
+.acc-cui-row input{margin-bottom:0;}
+.acc-cui-row button{flex:0 0 auto;background:#fff;border:2px solid #F0813A;color:#F0813A;font-weight:700;font-size:13.5px;border-radius:10px;padding:0 18px;cursor:pointer;}
 .acc-radio-row{display:flex;gap:16px;margin:6px 0 20px;}
 .acc-radio-row label{display:flex;align-items:center;gap:6px;font-size:14px;color:#333;}
 .acc-thankyou{text-align:center;padding:40px 10px;}
@@ -12053,7 +12675,7 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
     <textarea id="fCompanyAddress" class="acc-white-input" rows="2" maxlength="500" required></textarea>
 
     <label class="acc-white-label" for="fIban">Cont IBAN</label>
-    <input type="text" id="fIban" class="acc-white-input" maxlength="34" required>
+    <input type="text" id="fIban" class="acc-white-input" maxlength="42" placeholder="RO25 BTRL 0000 0000 0000 00" required>
 
     <label class="acc-white-label" for="fBank">Banca</label>
     <input type="text" id="fBank" class="acc-white-input" maxlength="100" required>
@@ -12063,6 +12685,8 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
 
     <p id="fErr" class="acc-white-err" hidden></p>
   </form>
+  <button type="button" id="previewBtn" class="acc-white-outline">👁 Previzualizează pagina</button>
+  <p id="previewErr" class="acc-white-err" hidden></p>
 </div>
 <div class="acc-details-bottombar" id="fiscalBottombar" style="max-width:520px">
   <a href="/cont/cazare/noua" class="acc-sub-back">‹</a>
@@ -12074,8 +12698,29 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
   if (!draftRaw) { window.location.href = "/cont/cazare/noua"; return; }
   var draft = JSON.parse(draftRaw);
 
+  document.getElementById("previewBtn").addEventListener("click", function(){
+    var err = document.getElementById("previewErr");
+    err.hidden = true;
+    fetch("/api/cazare/previzualizare", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(draft),
+    })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        if (res.ok && res.data.token) { window.open("/cazare/previzualizare/" + res.data.token, "_blank"); }
+        else { err.textContent = "Nu am putut genera previzualizarea."; err.hidden = false; }
+      })
+      .catch(function(){ err.textContent = "Nu am putut genera previzualizarea."; err.hidden = false; });
+  });
+
   document.getElementById("howWorksBtn").addEventListener("click", function(){
     document.getElementById("howWorksBox").classList.toggle("is-visible");
+  });
+
+  document.getElementById("fIban").addEventListener("input", function(e){
+    var raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 34);
+    e.target.value = raw.replace(/(.{4})/g, "$1 ").trim();
   });
 
   document.getElementById("verifyCuiBtn").addEventListener("click", function(){
@@ -12099,7 +12744,9 @@ app.get("/cont/cazare/date-fiscale", accommodationGate, requireAccommodationOwne
       .catch(function(){ status.textContent = "Verificarea a eșuat — completează manual."; });
   });
 
-  document.getElementById("fiscalForm").addEventListener("submit", function(e){
+  var fiscalFormEl = document.getElementById("fiscalForm");
+  fiscalFormEl.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
+  fiscalFormEl.addEventListener("submit", function(e){
     e.preventDefault();
     var err = document.getElementById("fErr");
     err.hidden = true;
@@ -12184,10 +12831,8 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
   }
   if (typeof b.checkinTime !== "string" || !b.checkinTime.trim()) { res.status(400).json({ error: "invalid_checkin" }); return; }
   if (typeof b.checkoutTime !== "string" || !b.checkoutTime.trim()) { res.status(400).json({ error: "invalid_checkout" }); return; }
-  if (typeof b.cancellationPolicy !== "string" || !b.cancellationPolicy.trim()) { res.status(400).json({ error: "invalid_cancellation" }); return; }
   const website = typeof b.websiteUrl === "string" ? b.websiteUrl.trim() : "";
   const bookingProfile = typeof b.bookingProfileUrl === "string" ? b.bookingProfileUrl.trim() : "";
-  if (!website && !bookingProfile) { res.status(400).json({ error: "invalid_website_or_booking" }); return; }
   if (typeof b.contactPhone !== "string" || !b.contactPhone.trim()) { res.status(400).json({ error: "invalid_phone" }); return; }
   if (typeof b.contactEmail !== "string" || !EMAIL_RE.test(b.contactEmail.trim())) { res.status(400).json({ error: "invalid_email" }); return; }
   const cuiClean = typeof b.companyCui === "string" ? b.companyCui.trim().replace(/^RO/i, "") : "";
@@ -12219,7 +12864,6 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
     amenities: JSON.stringify(safeAmenities), photos: JSON.stringify(b.photos),
     other_amenities_text: safeOtherAmenities,
     checkin_time: b.checkinTime.trim(), checkout_time: b.checkoutTime.trim(),
-    cancellation_policy: b.cancellationPolicy.trim(),
     website_url: website || null, booking_profile_url: bookingProfile || null,
     facebook_url: (typeof b.facebookUrl === "string" ? b.facebookUrl.trim() : "") || null,
     instagram_url: (typeof b.instagramUrl === "string" ? b.instagramUrl.trim() : "") || null,
@@ -12227,7 +12871,7 @@ app.post("/api/cazare/listare", accommodationGate, requireAccommodationOwnerApi,
     contact_phone: b.contactPhone.trim(), contact_email: b.contactEmail.trim(),
     company_cui: cuiClean, company_name: b.companyName.trim(), company_vat_payer: b.companyVatPayer,
     company_reg_com: b.companyRegCom.trim(), company_address: b.companyAddress.trim(),
-    company_iban: b.companyIban.trim(), company_bank: b.companyBank.trim(),
+    company_iban: b.companyIban.trim().replace(/\s+/g, "").toUpperCase(), company_bank: b.companyBank.trim(),
     billing_email: b.billingEmail.trim(),
   };
 
@@ -12292,34 +12936,124 @@ app.post("/api/cazare/featured/checkout", accommodationGate, requireAccommodatio
   }
 });
 
+// Activare abonament lunar — Stripe Subscription, cu trial calculat din
+// trial_ends_at (setat la aprobare, vezi ruta de admin). Dacă owner-ul
+// activează abonamentul mai devreme sau mai târziu decât momentul
+// aprobării, perioada de probă rămasă se recalculează corect, nu
+// pornește mereu de la 90 de zile fixe.
+app.post("/api/cazare/abonament/activeaza", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  if (!stripeClient) { res.status(503).json({ error: "not_configured" }); return; }
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { listingId } = req.body || {};
+  if (!listingId || !/^\d+$/.test(String(listingId))) { res.status(400).json({ error: "invalid_listing" }); return; }
+  try {
+    const { rows } = await dbPool.query(
+      `SELECT id, name, trial_ends_at, stripe_subscription_id, subscription_status FROM accommodation_listings WHERE id = $1 AND owner_id = $2 AND status = 'approved'`,
+      [listingId, req.accommodationOwner.ownerId]
+    );
+    if (!rows.length) { res.status(404).json({ error: "not_found" }); return; }
+    if (rows[0].stripe_subscription_id && rows[0].subscription_status !== "canceled") { res.status(409).json({ error: "already_subscribed" }); return; }
+    const priceCents = await getAccommodationMonthlyPriceCents();
+    if (priceCents <= 0) { res.status(409).json({ error: "no_price_set" }); return; }
+    const trialEnd = rows[0].trial_ends_at ? new Date(rows[0].trial_ends_at) : null;
+    const daysLeft = trialEnd ? Math.max(1, Math.ceil((trialEnd - new Date()) / (1000 * 60 * 60 * 24))) : ACCOMMODATION_TRIAL_MONTHS * 30;
+    const baseUrl = baseUrlFor(req);
+    const session = await stripeClient.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{
+        price_data: {
+          currency: "eur",
+          product_data: { name: `Abonament lunar — ${rows[0].name}` },
+          unit_amount: priceCents,
+          recurring: { interval: "month" },
+        },
+        quantity: 1,
+      }],
+      subscription_data: { trial_period_days: daysLeft, metadata: { listingId: String(rows[0].id) } },
+      metadata: { listingId: String(rows[0].id) },
+      success_url: `${baseUrl}/cont/facturi-abonamente?abonament=success`,
+      cancel_url: `${baseUrl}/cont/facturi-abonamente?abonament=cancelled`,
+    });
+    res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error("abonament/activeaza a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Portal de gestiune Stripe — facturi, schimbare card, anulare. Nu
+// reconstruim nimic din astea manual, Stripe are deja tot, conform legii.
+app.post("/api/cazare/abonament/portal", accommodationGate, requireAccommodationOwnerApi, async (req, res) => {
+  if (!stripeClient) { res.status(503).json({ error: "not_configured" }); return; }
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { listingId } = req.body || {};
+  if (!listingId || !/^\d+$/.test(String(listingId))) { res.status(400).json({ error: "invalid_listing" }); return; }
+  try {
+    const { rows } = await dbPool.query(
+      `SELECT stripe_customer_id FROM accommodation_listings WHERE id = $1 AND owner_id = $2`,
+      [listingId, req.accommodationOwner.ownerId]
+    );
+    if (!rows.length || !rows[0].stripe_customer_id) { res.status(404).json({ error: "not_found" }); return; }
+    const session = await stripeClient.billingPortal.sessions.create({
+      customer: rows[0].stripe_customer_id,
+      return_url: `${baseUrlFor(req)}/cont/facturi-abonamente`,
+    });
+    res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error("abonament/portal a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+
 app.get("/cont", accommodationGate, requireAccommodationOwner, async (req, res) => {
+  const nonce = generateNonce();
+  res.set("Content-Security-Policy", buildCsp(nonce));
   res.set("Content-Type", "text/html; charset=utf-8");
-  let listingsHtml = "<p class=\"plan-visit-hint\">Nu ai nicio cazare adăugată încă.</p>";
+  let cardsHtml = `<div class="acc-empty-state">Nu ai nicio proprietate adăugată încă.<br><br><a href="/cont/alege-tip" class="affiliate-btn affiliate-btn-temu" style="width:fit-content;padding:14px 24px;margin:0 auto">+ Adaugă o proprietate</a></div>`;
   if (dbPool) {
     try {
       const { rows } = await dbPool.query(
-        `SELECT id, name, city, status, featured_until FROM accommodation_listings WHERE owner_id = $1 ORDER BY creat_la DESC`,
+        `SELECT id, slug, name, city, status, price_from, price_currency, photos, featured_until FROM accommodation_listings WHERE owner_id = $1 ORDER BY creat_la DESC`,
         [req.accommodationOwner.ownerId]
       );
       if (rows.length) {
         const statusLabel = { pending: "⏳ În verificare", approved: "✓ Aprobat", rejected: "✕ Respins" };
-        listingsHtml = `<ul class="mall-list">${rows.map((r) => {
+        cardsHtml = rows.map((r) => {
+          const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
           const featured = r.featured_until && new Date(r.featured_until) > new Date();
-          return `<li><a href="/cont/cazare/${r.id}">${escapeHtml(r.name)}</a> — ${escapeHtml(r.city)} — ${statusLabel[r.status] || r.status}${featured ? " — ⭐ Featured" : ""}</li>`;
-        }).join("")}</ul>`;
+          return `
+      <div class="acc-prop-card">
+        ${photos[0] ? `<img class="acc-prop-card-img" src="${escapeHtml(photos[0])}" alt="">` : `<div class="acc-prop-card-img" style="background:var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:32px">🏡</div>`}
+        <div class="acc-prop-card-body">
+          <div class="acc-prop-card-name">${featured ? "⭐ " : ""}${escapeHtml(r.name)}</div>
+          <div class="acc-prop-card-meta">${escapeHtml(r.city)} · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte · ${statusLabel[r.status] || r.status}</div>
+          <div class="acc-prop-card-actions">
+            <a href="/cont/cazare/${r.id}" class="acc-edit-btn">✎ Editează</a>
+            ${r.status === "approved" ? `<a href="/cazare/${escapeHtml(r.slug)}" target="_blank" class="acc-view-btn">👁 Vezi pe site</a>` : ""}
+          </div>
+        </div>
+      </div>`;
+        }).join("");
       }
     } catch (err) {
-      listingsHtml = `<p class="submit-place-error">Eroare la încărcarea listărilor: ${escapeHtml(err.message)}</p>`;
+      cardsHtml = `<p class="submit-place-error">Eroare la încărcarea proprietăților: ${escapeHtml(err.message)}</p>`;
     }
   }
   res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow">
-<title>Contul meu — Opening Hours Today</title><link rel="stylesheet" href="/style.css"></head>
-<body><main class="wrap" style="padding-top:60px">
-<h1 class="page-h1">Contul tău</h1>
-<p class="intro-text">Conectat ca ${escapeHtml(req.accommodationOwner.email)}.</p>
-<a href="/cont/alege-tip" class="affiliate-btn affiliate-btn-temu" style="width:fit-content;padding:14px 24px;margin-bottom:20px">+ Adaugă o cazare</a>
-${listingsHtml}
-</main></body></html>`);
+<title>Proprietățile mele — Opening Hours Today</title><link rel="stylesheet" href="/style.css">
+<style>${accShellStyles()}</style></head>
+<body>
+${accShellHeader(req.accommodationOwner.email)}
+${accDrawerHtml("proprietati", req.accommodationOwner.email)}
+<main class="acc-shell-main">
+<h1 class="acc-shell-h1">Proprietățile mele</h1>
+<p class="intro-text" style="margin-bottom:24px">Dă click pe "Editează" ca să modifici o proprietate — poze, preț, facilități, orice.</p>
+${cardsHtml}
+</main>
+<script nonce="${nonce}">(function(){${accDrawerScript()}})();</script>
+</body></html>`);
 });
 
 app.post("/api/report-issue", async (req, res) => {
@@ -13658,18 +14392,28 @@ app.get("/admin/cazari", async (req, res) => {
     res.status(503).send("Baza de date nu e configurată.");
     return;
   }
+  const validStatuses = ["pending", "approved", "rejected", "all"];
+  const activeStatus = validStatuses.includes(req.query.status) ? req.query.status : "pending";
   let rows = [];
+  let counts = { pending: 0, approved: 0, rejected: 0 };
   try {
     const result = await dbPool.query(
       `SELECT l.*, o.email AS owner_email FROM accommodation_listings l
        JOIN accommodation_owners o ON o.id = l.owner_id
-       WHERE l.status = 'pending' ORDER BY l.creat_la ASC`
+       ${activeStatus === "all" ? "" : "WHERE l.status = $1"}
+       ORDER BY l.actualizat_la DESC`,
+      activeStatus === "all" ? [] : [activeStatus]
     );
     rows = result.rows;
+    const countsResult = await dbPool.query(
+      `SELECT status, COUNT(*)::int AS cnt FROM accommodation_listings GROUP BY status`
+    );
+    countsResult.rows.forEach((r) => { counts[r.status] = r.cnt; });
   } catch (err) {
     res.status(500).send("Eroare la citirea listărilor: " + escapeHtml(err.message));
     return;
   }
+  const statusLabel = { pending: "⏳ În verificare", approved: "✓ Aprobat", rejected: "✕ Respins" };
   const rowsHtml = rows.length
     ? rows.map((r) => {
         const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
@@ -13678,8 +14422,9 @@ app.get("/admin/cazari", async (req, res) => {
       <div class="admin-submission-card">
         <div class="admin-submission-header">
           <span class="admin-submission-type">${escapeHtml(r.type === "altceva" && r.other_type ? "📍 " + r.other_type : (ACCOMMODATION_TYPE_LABELS[r.type] || r.type))}</span>
+          <span class="admin-status-tag admin-status-${escapeHtml(r.status)}">${escapeHtml(statusLabel[r.status] || r.status)}</span>
         </div>
-        <div class="admin-submission-name">${escapeHtml(r.name)}</div>
+        <div class="admin-submission-name">${escapeHtml(r.name)}${r.status === "approved" ? ` — <a href="/cazare/${escapeHtml(r.slug)}" target="_blank">vezi pagina live ↗</a>` : ""}</div>
         <div class="admin-submission-meta">${escapeHtml(r.address || "")}, ${escapeHtml(r.city)}, ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} · ${r.max_capacity} pers. · ${r.rooms_count || "?"} camere · de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</div>
         <div class="admin-submission-meta">Check-in ${escapeHtml(r.checkin_time || "—")} · Check-out ${escapeHtml(r.checkout_time || "—")}</div>
         <div class="admin-submission-meta">Proprietar cont: ${escapeHtml(r.owner_email)} · Tel: ${escapeHtml(r.contact_phone || "—")} · Email: ${escapeHtml(r.contact_email || "—")}</div>
@@ -13698,39 +14443,59 @@ app.get("/admin/cazari", async (req, res) => {
           IBAN: ${escapeHtml(r.company_iban || "—")} · ${escapeHtml(r.company_bank || "—")}<br>
           Facturare: ${escapeHtml(r.billing_email || "—")}
         </div>
+        ${r.status === "pending" ? `
         <div class="admin-submission-actions">
           <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
           <button type="button" class="admin-reject-btn" data-id="${r.id}">✕ Respinge</button>
-        </div>
+        </div>` : `
+        <div class="admin-submission-actions">
+          <button type="button" class="admin-repending-btn" data-id="${r.id}">↺ Repune în verificare</button>
+        </div>`}
       </div>`;
       }).join("")
-    : `<p>Nicio listare în așteptare momentan.</p>`;
+    : `<p>Nicio cazare în această categorie momentan.</p>`;
+
+  const tabHtml = (status, label) => {
+    const count = status === "all" ? (counts.pending + counts.approved + counts.rejected) : (counts[status] || 0);
+    return `<a href="/admin/cazari?key=${encodeURIComponent(req.query.key)}&status=${status}" class="admin-tab${activeStatus === status ? " is-active" : ""}">${label} (${count})</a>`;
+  };
+  const sidebarCounts = await getAdminCounts();
 
   res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(`<!DOCTYPE html>
-<html lang="ro"><head><meta charset="UTF-8"><title>Cazări în verificare</title>
-<style>
-body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;background:#111;color:#eee;}
-.admin-submission-card{background:#1c1c1c;border-radius:10px;padding:16px;margin-bottom:12px;}
-.admin-submission-header{display:flex;justify-content:space-between;margin-bottom:6px;}
-.admin-submission-type{font-weight:700;}
-.admin-submission-name{font-size:17px;font-weight:700;}
-.admin-submission-meta{color:#999;margin:4px 0;font-size:13.5px;}
-.admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
-.admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
-.admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
-a{color:#ff8a3d;}
-</style></head>
+  res.send(`<!DOCTYPE HTML>
+<html lang="ro"><head><meta charset="UTF-8"><title>Cazări — Admin</title>
+<style>${adminShellStyles()}</style></head>
 <body>
-<h1>🏡 Cazări în verificare (${rows.length})</h1>
+<div class="admin-shell">
+${adminSidebarHtml("cazari", req.query.key, sidebarCounts)}
+<div style="flex:1">
+${adminMobileBarHtml()}
+<div class="admin-main">
+<h1 class="admin-h1">🏡 Cazări</h1>
+<div class="admin-tabs">
+  ${tabHtml("pending", "⏳ În verificare")}
+  ${tabHtml("approved", "✓ Aprobate")}
+  ${tabHtml("rejected", "✕ Respinse")}
+  ${tabHtml("all", "Toate")}
+</div>
 ${rowsHtml}
+</div>
+</div>
+</div>
 <script>
+(function(){${adminSidebarScript()}})();
 var KEY = ${safeJson(req.query.key)};
 document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
     var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
     fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
-      .then(function(){ btn.closest(".admin-submission-card").remove(); });
+      .then(function(){ location.reload(); });
+  });
+});
+document.querySelectorAll(".admin-repending-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/repending?key=" + encodeURIComponent(KEY), { method: "POST" })
+      .then(function(){ location.reload(); });
   });
 });
 </script>
@@ -13747,15 +14512,19 @@ app.post("/api/admin/cazari/:id/:action", async (req, res) => {
     return;
   }
   const { id, action } = req.params;
-  if (!["aproba", "respinge"].includes(action) || !/^\d+$/.test(id)) {
+  if (!["aproba", "respinge", "repending"].includes(action) || !/^\d+$/.test(id)) {
     res.status(400).json({ error: "invalid_input" });
     return;
   }
-  const newStatus = action === "aproba" ? "approved" : "rejected";
+  const newStatus = action === "aproba" ? "approved" : action === "respinge" ? "rejected" : "pending";
   try {
     const { rows } = await dbPool.query(
-      `UPDATE accommodation_listings SET status = $1, actualizat_la = now() WHERE id = $2
-       RETURNING slug, name, owner_id`,
+      action === "aproba"
+        ? `UPDATE accommodation_listings SET status = $1, actualizat_la = now(),
+             trial_ends_at = COALESCE(trial_ends_at, now() + interval '1 month' * ${ACCOMMODATION_TRIAL_MONTHS})
+           WHERE id = $2 RETURNING slug, name, owner_id`
+        : `UPDATE accommodation_listings SET status = $1, actualizat_la = now() WHERE id = $2
+           RETURNING slug, name, owner_id`,
       [newStatus, id]
     );
     if (action === "aproba" && rows.length) {
@@ -13763,7 +14532,8 @@ app.post("/api/admin/cazari/:id/:action", async (req, res) => {
       if (ownerRes.rows.length) {
         const listingUrl = `${baseUrlFor(req)}/cazare/${rows[0].slug}`;
         const loginUrl = `${baseUrlFor(req)}/cazare/autentificare`;
-        sendAccommodationApprovalEmail(ownerRes.rows[0].email, rows[0].name, listingUrl, loginUrl).catch((err) => {
+        const billingUrl = `${baseUrlFor(req)}/cont/facturi-abonamente`;
+        sendAccommodationApprovalEmail(ownerRes.rows[0].email, rows[0].name, listingUrl, loginUrl, billingUrl).catch((err) => {
           console.error("email de aprobare a eșuat:", err.message);
         });
       }
@@ -13803,6 +14573,61 @@ app.post("/api/cazare/recenzie", accommodationGate, async (req, res) => {
   }
 });
 
+app.get("/admin/setari", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
+    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
+    return;
+  }
+  const currentCents = await getAccommodationMonthlyPriceCents();
+  const sidebarCounts = await getAdminCounts();
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Setări — Admin</title>
+<style>${adminShellStyles()}
+.hint{color:#999;font-size:13px;margin:-10px 0 20px;}
+</style></head>
+<body>
+<div class="admin-shell">
+${adminSidebarHtml("setari", req.query.key, sidebarCounts)}
+<div style="flex:1">
+${adminMobileBarHtml()}
+<div class="admin-main" style="max-width:480px">
+<h1 class="admin-h1">⚙️ Setări cazare</h1>
+<label for="price">Preț abonament lunar (EUR)</label>
+<input type="number" id="price" min="0" step="0.5" value="${(currentCents / 100).toFixed(2)}">
+<p class="hint">0 = fără taxă momentan (toate proprietățile rămân gratuite, indiferent de trial). Se aplică imediat, pentru abonamentele activate de-acum înainte — nu schimbă retroactiv abonamente deja pornite la Stripe.</p>
+<button type="button" id="saveBtn" class="admin-btn">Salvează</button>
+<p id="msg" style="color:#7affA0;font-weight:700"></p>
+</div>
+</div>
+</div>
+<script>
+(function(){${adminSidebarScript()}})();
+var KEY = ${safeJson(req.query.key)};
+document.getElementById("saveBtn").addEventListener("click", function(){
+  var cents = Math.round(parseFloat(document.getElementById("price").value) * 100);
+  fetch("/api/admin/setari/pret-abonament?key=" + encodeURIComponent(KEY), {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cents: cents }),
+  }).then(function(r){ return r.ok; }).then(function(ok){
+    document.getElementById("msg").textContent = ok ? "✓ Salvat." : "Eroare.";
+  });
+});
+</script>
+</body></html>`);
+});
+
+app.post("/api/admin/setari/pret-abonament", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(403).json({ error: "forbidden" }); return; }
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const cents = parseInt(req.body && req.body.cents, 10);
+  if (!Number.isInteger(cents) || cents < 0) { res.status(400).json({ error: "invalid_price" }); return; }
+  try {
+    await dbPool.query(`INSERT INTO accommodation_settings (key, value) VALUES ('monthly_price_cents', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [String(cents)]);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 app.get("/admin/recenzii", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
     res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
@@ -13833,21 +14658,23 @@ app.get("/admin/recenzii", async (req, res) => {
         </div>
       </div>`).join("")
     : `<p>Nicio recenzie în așteptare.</p>`;
+  const sidebarCounts = await getAdminCounts();
   res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Recenzii în verificare</title>
-<style>
-body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;background:#111;color:#eee;}
-.admin-submission-card{background:#1c1c1c;border-radius:10px;padding:16px;margin-bottom:12px;}
-.admin-submission-name{font-size:17px;font-weight:700;}
-.admin-submission-meta{color:#999;margin:4px 0;font-size:13.5px;}
-.admin-submission-actions{margin-top:10px;display:flex;gap:8px;}
-.admin-approve-btn{background:#2e7d32;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
-.admin-reject-btn{background:#c62828;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;}
-</style></head>
+  res.send(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Recenzii — Admin</title>
+<style>${adminShellStyles()}</style></head>
 <body>
-<h1>💬 Recenzii în verificare (${rows.length})</h1>
+<div class="admin-shell">
+${adminSidebarHtml("recenzii", req.query.key, sidebarCounts)}
+<div style="flex:1">
+${adminMobileBarHtml()}
+<div class="admin-main">
+<h1 class="admin-h1">💬 Recenzii în verificare (${rows.length})</h1>
 ${rowsHtml}
+</div>
+</div>
+</div>
 <script>
+(function(){${adminSidebarScript()}})();
 var KEY = ${safeJson(req.query.key)};
 document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
@@ -13882,7 +14709,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
   const minCapacity = parseInt(req.query.persoane, 10);
   const hasCapacityFilter = Number.isInteger(minCapacity) && minCapacity > 0;
   try {
-    const conditions = ["l.status = 'approved'"];
+    const conditions = ["l.status = 'approved'", "l.subscription_status IN ('trial', 'active')"];
     const params = [];
     if (cityFilter) { params.push(`%${cityFilter}%`); conditions.push(`l.city ILIKE $${params.length}`); }
     if (hasCapacityFilter) { params.push(minCapacity); conditions.push(`l.max_capacity >= $${params.length}`); }
@@ -13923,22 +14750,38 @@ ${cardsHtml}
   }
 });
 
-app.get("/cazare/:slug", accommodationGate, async (req, res) => {
+async function handleAccommodationPropertyPage(req, res, mode) {
   if (!dbPool) { res.status(503).send("Indisponibil momentan."); return; }
   try {
-    const { rows } = await dbPool.query(
-      `SELECT * FROM accommodation_listings WHERE slug = $1 AND status = 'approved'`,
-      [req.params.slug]
-    );
-    if (!rows.length) { res.status(404).send("Cazarea nu a fost găsită."); return; }
-    const r = rows[0];
+    let r, reviews;
+    if (mode.isPreview) {
+      const { rows } = await dbPool.query(`SELECT data FROM accommodation_previews WHERE token = $1 AND creat_la > now() - interval '2 hours'`, [req.params.token]);
+      if (!rows.length) { res.status(404).send("Previzualizarea a expirat — generează una nouă din formular."); return; }
+      const d = rows[0].data;
+      r = {
+        id: 0, slug: "preview", name: d.name, description: d.description, type: d.type, other_type: d.otherType,
+        city: d.city, country_code: d.countryCode, address: d.address, rooms_count: d.roomsCount, max_capacity: d.maxCapacity,
+        price_from: d.priceFrom, price_currency: d.priceCurrency, amenities: d.amenities || [], other_amenities_text: d.otherAmenitiesText,
+        photos: d.photos || [], checkin_time: d.checkinTime, checkout_time: d.checkoutTime,
+        website_url: d.websiteUrl, booking_profile_url: d.bookingProfileUrl, facebook_url: d.facebookUrl, instagram_url: d.instagramUrl, tiktok_url: d.tiktokUrl,
+        contact_phone: d.contactPhone, contact_email: d.contactEmail, star_rating: d.starRating,
+      };
+      reviews = [];
+    } else {
+      const { rows } = await dbPool.query(
+        `SELECT * FROM accommodation_listings WHERE slug = $1 AND status = 'approved' AND subscription_status IN ('trial', 'active')`,
+        [req.params.slug]
+      );
+      if (!rows.length) { res.status(404).send("Cazarea nu a fost găsită."); return; }
+      r = rows[0];
+      const reviewsResult = await dbPool.query(
+        `SELECT author_name, rating, comment, creat_la FROM accommodation_reviews WHERE listing_id = $1 AND status = 'approved' ORDER BY creat_la DESC`,
+        [r.id]
+      );
+      reviews = reviewsResult.rows;
+    }
     const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
     const amenities = Array.isArray(r.amenities) ? r.amenities : (typeof r.amenities === "string" ? JSON.parse(r.amenities) : []);
-    const reviewsResult = await dbPool.query(
-      `SELECT author_name, rating, comment, creat_la FROM accommodation_reviews WHERE listing_id = $1 AND status = 'approved' ORDER BY creat_la DESC`,
-      [r.id]
-    );
-    const reviews = reviewsResult.rows;
     const avgRating = reviews.length ? (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length) : null;
     const ownerSession = getAccommodationOwnerSession(req);
 
@@ -14065,6 +14908,7 @@ app.get("/cazare/:slug", accommodationGate, async (req, res) => {
 .acc-msg-send{background:#25D366;color:#fff;}
 </style></head>
 <body>
+${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:center;padding:10px;font-weight:700;font-size:13.5px">🔍 Previzualizare — această pagină nu e încă publicată</div>` : ""}
 
 <div class="acc-nav-header">
   <a class="brand" href="/">Opening<span>HoursToday</span></a>
@@ -14155,7 +14999,6 @@ ${galleryHtml}
     <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Reguli cazare</h2>
     <div class="trip-toolkit-card">
       ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
-      ${r.cancellation_policy ? `<p><strong>Politică de anulare:</strong> ${escapeHtml(r.cancellation_policy)}</p>` : ""}
     </div>
 
     <div id="reviews"></div>
@@ -14340,6 +15183,7 @@ ${waBase ? `
 
   // --- recenzie ---
   var reviewForm = document.getElementById("reviewForm");
+  reviewForm.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   reviewForm.addEventListener("submit", function(e){
     e.preventDefault();
     var err = document.getElementById("rvErr");
@@ -14374,7 +15218,9 @@ ${waBase ? `
   } catch (err) {
     res.status(500).send("Eroare: " + escapeHtml(err.message));
   }
-});
+}
+app.get("/cazare/:slug", accommodationGate, (req, res) => handleAccommodationPropertyPage(req, res, { isPreview: false }));
+app.get("/cazare/previzualizare/:token", accommodationGate, requireAccommodationOwner, (req, res) => handleAccommodationPropertyPage(req, res, { isPreview: true }));
 
 app.get("/:oras/:magazin", async (req, res, next) => {
   if (req.params.oras.includes(".") || req.params.magazin.includes(".")) return next();
