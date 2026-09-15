@@ -14744,11 +14744,17 @@ app.post("/api/admin/cazari/:id/:action", async (req, res) => {
 // ============================================================
 app.post("/api/cazare/recenzie", accommodationGate, async (req, res) => {
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
-  const { listingId, authorName, rating, comment } = req.body || {};
+  const { listingId, authorName, comment } = req.body || {};
   if (!listingId || !/^\d+$/.test(String(listingId))) { res.status(400).json({ error: "invalid_listing" }); return; }
   if (typeof authorName !== "string" || !authorName.trim() || authorName.length > 100) { res.status(400).json({ error: "invalid_name" }); return; }
-  const ratingNum = parseInt(rating, 10);
-  if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 10) { res.status(400).json({ error: "invalid_rating" }); return; }
+  const CATEGORY_KEYS = ["personal", "facilitati", "curatenie", "confort", "calitatePret", "locatie"];
+  const categoryValues = {};
+  for (const key of CATEGORY_KEYS) {
+    const n = parseInt((req.body || {})[key], 10);
+    if (!Number.isInteger(n) || n < 1 || n > 10) { res.status(400).json({ error: "invalid_rating" }); return; }
+    categoryValues[key] = n;
+  }
+  const overallRating = Math.round((CATEGORY_KEYS.reduce((s, k) => s + categoryValues[k], 0) / CATEGORY_KEYS.length) * 10) / 10;
   const safeComment = typeof comment === "string" ? comment.trim().slice(0, 1000) : null;
   const ipHash = hashIp(getClientIp(req));
   const rateOk = await checkRateLimit(ipHash, "cazare-recenzie", 5, 60);
@@ -14757,8 +14763,15 @@ app.post("/api/cazare/recenzie", accommodationGate, async (req, res) => {
     const { rows } = await dbPool.query(`SELECT id FROM accommodation_listings WHERE id = $1 AND status = 'approved'`, [listingId]);
     if (!rows.length) { res.status(404).json({ error: "not_found" }); return; }
     await dbPool.query(
-      `INSERT INTO accommodation_reviews (listing_id, author_name, rating, comment, ip_hash) VALUES ($1, $2, $3, $4, $5)`,
-      [listingId, authorName.trim(), ratingNum, safeComment, ipHash]
+      `INSERT INTO accommodation_reviews
+         (listing_id, author_name, rating, comment, ip_hash,
+          rating_personal, rating_facilitati, rating_curatenie, rating_confort, rating_calitate_pret, rating_locatie)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        listingId, authorName.trim(), overallRating, safeComment, ipHash,
+        categoryValues.personal, categoryValues.facilitati, categoryValues.curatenie,
+        categoryValues.confort, categoryValues.calitatePret, categoryValues.locatie,
+      ]
     );
     res.status(201).json({ ok: true });
   } catch (err) {
@@ -14851,6 +14864,7 @@ app.get("/admin/recenzii", async (req, res) => {
       <div class="admin-submission-card">
         <div class="admin-submission-name">${escapeHtml(r.listing_name)} — ${r.rating}/10</div>
         <div class="admin-submission-meta">${escapeHtml(r.author_name)}</div>
+        ${r.rating_personal ? `<div class="admin-submission-meta">Personal ${r.rating_personal} · Facilități ${r.rating_facilitati} · Curățenie ${r.rating_curatenie} · Confort ${r.rating_confort} · Calitate/preț ${r.rating_calitate_pret} · Locație ${r.rating_locatie}</div>` : ""}
         ${r.comment ? `<p>${escapeHtml(r.comment)}</p>` : ""}
         <div class="admin-submission-actions">
           <button type="button" class="admin-approve-btn" data-id="${r.id}">✓ Aprobă</button>
@@ -15027,6 +15041,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
 .acc-nav-user{display:flex;align-items:center;gap:8px;}
 .acc-nav-user-name{line-height:1.2;}
+@media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
 .acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
@@ -15046,13 +15061,13 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-widget-cta-btn{display:inline-block;background:#F0813A;color:#fff;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:10px;margin-bottom:6px;}
 
 .acc-page-wrap{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;}
-.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:16px;max-width:680px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:14px;max-width:1180px;margin:-16px auto 0;padding:6px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
 @media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
-.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:2px solid var(--accent);}
+.acc-search-field{flex:1;min-width:160px;padding:4px 12px;border-right:2px solid var(--accent);}
 .acc-search-field:last-of-type{border-right:none;}
 .acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
 .acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
-.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
+.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;align-self:stretch;min-height:48px;}
 .acc-results-layout{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start;margin-top:24px;}
 @media (max-width:800px){.acc-results-layout{grid-template-columns:1fr;}}
 .acc-filters{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:18px;position:sticky;top:16px;}
@@ -15085,7 +15100,16 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-result-score-label{display:block;font-size:9.5px;}
 .acc-result-price{margin-top:10px;font-size:13px;color:var(--text);}
 .acc-empty-state{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1;}
-.acc-dark-footer{margin-top:20px;border-top:1px solid var(--glass-border);}
+.acc-explore-divider{border:none;border-top:2px solid var(--accent);margin:36px 0 0;}
+.acc-explore-section{max-width:1180px;margin:0 auto;padding:26px 0;}
+.acc-explore-title{font-size:19px;font-weight:900;margin:0 0 16px;color:var(--text);}
+.acc-explore-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.acc-explore-card{display:flex;align-items:center;gap:12px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;text-decoration:none;color:inherit;cursor:pointer;font:inherit;text-align:left;width:100%;box-sizing:border-box;}
+.acc-explore-card:hover{border-color:var(--accent);}
+.acc-explore-card .icon{font-size:26px;flex:0 0 auto;}
+.acc-explore-card .title{font-weight:700;font-size:14.5px;color:var(--text);}
+.acc-explore-card .sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.acc-dark-footer{margin-top:0;border-top:none;}
 .acc-dark-footer-inner{max-width:1180px;margin:0 auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
 .acc-dark-footer-inner a{color:var(--muted);text-decoration:underline;}
 </style></head>
@@ -15219,6 +15243,44 @@ ${accCurrencyModalHtml()}
 </div>
 
 </div>
+
+<hr class="acc-explore-divider">
+<div class="acc-explore-section">
+  <h2 class="acc-explore-title">Descoperă mai mult</h2>
+  <div class="acc-explore-grid">
+    ${cityFilter && attractionsLink ? `
+    <a href="${attractionsLink.href}" class="acc-explore-card">
+      <span class="icon">🏪</span>
+      <div><div class="title">Magazine ${attractionsLink.isNearby ? `lângă ${escapeHtml(cityFilter)}` : `în ${escapeHtml(attractionsLink.label)}`}</div><div class="sub">Program, adresă, hartă</div></div>
+    </a>
+    <a href="${attractionsLink.href}" class="acc-explore-card">
+      <span class="icon">🎡</span>
+      <div><div class="title">Atracții ${attractionsLink.isNearby ? `lângă ${escapeHtml(cityFilter)}` : `în ${escapeHtml(attractionsLink.label)}`}</div><div class="sub">Ce să vezi și să vizitezi</div></div>
+    </a>` : `
+    <a href="/" class="acc-explore-card">
+      <span class="icon">🏪</span>
+      <div><div class="title">Magazine și atracții</div><div class="sub">Caută orice oraș acoperit de noi</div></div>
+    </a>`}
+    <button type="button" class="acc-explore-card widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">
+      <span class="icon">✈️</span>
+      <div><div class="title">Zboruri</div><div class="sub">Caută bilete de avion</div></div>
+    </button>
+    <button type="button" class="acc-explore-card widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">
+      <span class="icon">🚕</span>
+      <div><div class="title">Transferuri</div><div class="sub">De la aeroport sau oriunde</div></div>
+    </button>
+    <button type="button" class="acc-explore-card widget-reveal-btn" data-widget-target="carRentalWidget">
+      <span class="icon">🚗</span>
+      <div><div class="title">Mașini de închiriat</div><div class="sub">Prin partenerul nostru</div></div>
+    </button>
+    <a href="/itinerar" class="acc-explore-card">
+      <span class="icon">🗺️</span>
+      <div><div class="title">Creează un itinerar cu AI</div><div class="sub">Planificare automată, personalizată</div></div>
+    </a>
+  </div>
+</div>
+<hr class="acc-explore-divider">
+
 ${accDarkFooterHtml()}
 </main>
 <script nonce="${nonce}">
@@ -15296,7 +15358,8 @@ async function handleAccommodationPropertyPage(req, res, mode) {
       if (!rows.length) { res.status(404).send("Cazarea nu a fost găsită."); return; }
       r = rows[0];
       const reviewsResult = await dbPool.query(
-        `SELECT author_name, rating, comment, creat_la FROM accommodation_reviews WHERE listing_id = $1 AND status = 'approved' ORDER BY creat_la DESC`,
+        `SELECT author_name, rating, comment, creat_la, rating_personal, rating_facilitati, rating_curatenie, rating_confort, rating_calitate_pret, rating_locatie
+         FROM accommodation_reviews WHERE listing_id = $1 AND status = 'approved' ORDER BY creat_la DESC`,
         [r.id]
       );
       reviews = reviewsResult.rows;
@@ -15304,6 +15367,22 @@ async function handleAccommodationPropertyPage(req, res, mode) {
     const photos = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? JSON.parse(r.photos) : []);
     const amenities = Array.isArray(r.amenities) ? r.amenities : (typeof r.amenities === "string" ? JSON.parse(r.amenities) : []);
     const avgRating = reviews.length ? (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length) : null;
+    // Medii per categorie (stil Booking) — doar din recenziile care chiar
+    // au valori pe categorii (recenziile vechi, de dinainte de schimbare,
+    // nu au aceste coloane completate — excluse automat din medie, nu
+    // afișate ca zero).
+    const CATEGORY_DEFS = [
+      { key: "rating_personal", label: "Personal" },
+      { key: "rating_facilitati", label: "Facilități" },
+      { key: "rating_curatenie", label: "Curățenie" },
+      { key: "rating_confort", label: "Confort" },
+      { key: "rating_calitate_pret", label: "Raport calitate/preț" },
+      { key: "rating_locatie", label: "Locație" },
+    ];
+    const categoryAverages = CATEGORY_DEFS.map((c) => {
+      const vals = reviews.map((rv) => rv[c.key]).filter((v) => v !== null && v !== undefined);
+      return { label: c.label, avg: vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : null };
+    }).filter((c) => c.avg !== null);
     const ownerSession = getAccommodationOwnerSession(req);
 
     const nonce = generateNonce();
@@ -15406,15 +15485,16 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
 .acc-nav-user{display:flex;align-items:center;gap:8px;}
 .acc-nav-user-name{line-height:1.2;}
+@media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
 .acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
 .acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .acc-subnav-btn.is-active{background:#232a35;border-color:var(--accent);color:#fff;}
-.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:16px;max-width:680px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+.acc-search-widget{background:#fff;border:3px solid var(--accent);border-radius:14px;max-width:1180px;margin:-16px auto 0;padding:6px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
 @media (min-width:1228px){.acc-search-widget{margin-left:auto;margin-right:auto;}}
 @media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
-.acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:2px solid var(--accent);}
+.acc-search-field{flex:1;min-width:160px;padding:4px 12px;border-right:2px solid var(--accent);}
 .acc-search-field:last-of-type{border-right:none;}
 .acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
 .acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
@@ -15427,7 +15507,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-stepper-ctrl{display:flex;align-items:center;gap:10px;}
 .acc-stepper-ctrl button{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font-weight:900;cursor:pointer;}
 .acc-stepper-ctrl button:disabled{border-color:#ddd;color:#ddd;cursor:not-allowed;}
-.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
+.acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;align-self:stretch;min-height:48px;}
 .acc-tabs{display:flex;gap:22px;border-bottom:1px solid var(--glass-border);margin:26px 0 20px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;}
 .acc-tabs a{color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;padding-bottom:10px;border-bottom:2px solid transparent;}
 .acc-tabs a.is-active{color:var(--text);border-color:var(--accent);}
@@ -15456,6 +15536,13 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-review-score-box{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 .acc-review-score-num{background:var(--accent);color:#fff;font-weight:900;font-size:20px;border-radius:10px;padding:8px 12px;}
 .acc-review-quote{font-style:italic;color:var(--muted);font-size:13.5px;margin-top:10px;}
+.acc-category-breakdown{margin:16px 0 24px;}
+.acc-category-breakdown h3{font-size:15px;margin:0 0 14px;}
+.acc-category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 24px;}
+@media (max-width:640px){.acc-category-grid{grid-template-columns:1fr;}}
+.acc-category-label{display:flex;justify-content:space-between;font-size:13.5px;color:var(--text);margin-bottom:5px;}
+.acc-category-bar{background:var(--glass-border);border-radius:999px;height:6px;overflow:hidden;}
+.acc-category-bar-fill{background:var(--accent);height:100%;border-radius:999px;}
 .acc-desc-more{background:none;border:1px solid #4da3ff;color:#4da3ff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
 .acc-desc-text{max-height:120px;overflow:hidden;position:relative;}
 .acc-desc-text.is-expanded{max-height:none;}
@@ -15653,6 +15740,17 @@ ${galleryHtml}
 
     <div class="acc-tab-panel" id="panel-reviews" hidden>
       <h2 class="section-title"><span class="bar"></span>Evaluările oaspeților${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
+      ${categoryAverages.length ? `
+      <div class="acc-category-breakdown">
+        <h3>Categorii:</h3>
+        <div class="acc-category-grid">
+          ${categoryAverages.map((c) => `
+          <div class="acc-category-item">
+            <div class="acc-category-label"><span>${escapeHtml(c.label)}</span><span>${c.avg.toFixed(1).replace(".0", "")}</span></div>
+            <div class="acc-category-bar"><div class="acc-category-bar-fill" style="width:${(c.avg / 10) * 100}%"></div></div>
+          </div>`).join("")}
+        </div>
+      </div>` : ""}
       ${reviewsHtml}
       <details class="acc-card" style="margin-top:14px">
         <summary>✍️ Lasă o recenzie</summary>
@@ -15661,8 +15759,23 @@ ${galleryHtml}
             <label class="submit-place-label">Numele tău
               <input type="text" id="rvName" maxlength="100" required>
             </label>
-            <label class="submit-place-label">Notă (1-10)
-              <select id="rvRating" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            <label class="submit-place-label">Personal
+              <select id="rvPersonal" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Facilități
+              <select id="rvFacilitati" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Curățenie
+              <select id="rvCuratenie" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Confort
+              <select id="rvConfort" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Raport calitate/preț
+              <select id="rvCalitatePret" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Locație
+              <select id="rvLocatie" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
             </label>
             <label class="submit-place-label">Comentariu (opțional)
               <textarea id="rvComment" maxlength="1000" rows="3"></textarea>
@@ -15881,7 +15994,12 @@ ${waBase ? `
       body: JSON.stringify({
         listingId: ${r.id},
         authorName: document.getElementById("rvName").value,
-        rating: document.getElementById("rvRating").value,
+        personal: document.getElementById("rvPersonal").value,
+        facilitati: document.getElementById("rvFacilitati").value,
+        curatenie: document.getElementById("rvCuratenie").value,
+        confort: document.getElementById("rvConfort").value,
+        calitatePret: document.getElementById("rvCalitatePret").value,
+        locatie: document.getElementById("rvLocatie").value,
         comment: document.getElementById("rvComment").value,
       }),
     })
