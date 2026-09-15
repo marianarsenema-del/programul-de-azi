@@ -12512,7 +12512,7 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     <input type="url" id="dTiktok" class="acc-white-input" placeholder="https://tiktok.com/@...">
 
     <label class="acc-white-label" for="dPhone">Telefon de contact</label>
-    <input type="tel" id="dPhone" class="acc-white-input" maxlength="30" required>
+    <input type="tel" id="dPhone" class="acc-white-input" maxlength="30" placeholder="+40 744 534 096" required>
 
     <label class="acc-white-label" for="dEmail">Email de contact</label>
     <input type="email" id="dEmail" class="acc-white-input" maxlength="255" required>
@@ -14812,6 +14812,14 @@ async function handleAccommodationPropertyPage(req, res, mode) {
       .concat(r.other_amenities_text ? [r.other_amenities_text] : []);
     const amenityIconRowHtml = amenitiesFull.map((a) => `<div class="acc-fac-item"><span class="acc-fac-dot">●</span>${escapeHtml(a)}</div>`).join("");
 
+    // Rând de "fapte rapide" (cutii cu chenar), chiar sub galerie — capacitate
+    // + camere + primele câteva facilități, ca la Booking.
+    const quickFacts = [];
+    quickFacts.push({ icon: "👥", label: `${r.max_capacity} persoane` });
+    if (r.rooms_count) quickFacts.push({ icon: "🚪", label: `${r.rooms_count} camere/unități` });
+    amenitiesFull.slice(0, 6).forEach((a) => quickFacts.push({ icon: "✓", label: a }));
+    const quickFactsHtml = quickFacts.map((f) => `<div class="acc-quickfact-card"><span class="icon">${f.icon}</span>${escapeHtml(f.label)}</div>`).join("");
+
     const reviewsHtml = reviews.length
       ? reviews.map((rv) => `
       <div class="acc-review">
@@ -14823,8 +14831,16 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 
     const citySlug = slugifyCityName(r.city);
     const starsHtml = "⭐".repeat(r.star_rating || 0);
-    const phoneDigits = (r.contact_phone || "").replace(/[^\d+]/g, "").replace(/^00/, "+");
-    const waBase = phoneDigits ? `https://wa.me/${phoneDigits.replace(/^\+/, "")}` : null;
+    // Normalizare telefon pentru WhatsApp — wa.me are nevoie de format
+    // internațional STRICT (fără 0 în față, fără +), altfel deschide
+    // WhatsApp gol, fără conversația/mesajul precompletat. Formularul nu
+    // impune un prefix de țară la completare, deci îl presupunem (România)
+    // dacă lipsește.
+    let phoneDigits = (r.contact_phone || "").replace(/[^\d+]/g, "");
+    if (phoneDigits.startsWith("00")) phoneDigits = "+" + phoneDigits.slice(2);
+    else if (phoneDigits.startsWith("0")) phoneDigits = "+40" + phoneDigits.slice(1);
+    else if (phoneDigits && !phoneDigits.startsWith("+")) phoneDigits = "+" + phoneDigits;
+    const waBase = phoneDigits.length > 6 ? `https://wa.me/${phoneDigits.replace(/^\+/, "")}` : null;
     const fullAddress = `${r.address ? r.address + ", " : ""}${r.city}, ${COUNTRY_LABELS[r.country_code] || r.country_code}`;
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
 
@@ -14842,10 +14858,13 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-nav-user{display:flex;align-items:center;gap:8px;}
 .acc-nav-user-name{line-height:1.2;}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
-.acc-subnav{background:#161b22;padding:0 20px 16px;display:flex;gap:10px;flex-wrap:wrap;}
+.acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
+.acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
 .acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .acc-subnav-btn.is-active{background:#232a35;border-color:var(--accent);color:#fff;}
-.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;margin:-16px 20px 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;}
+.acc-search-widget{background:#fff;border:2px solid var(--accent);border-radius:16px;max-width:1180px;margin:-16px auto 0;padding:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;box-sizing:border-box;}
+@media (min-width:1228px){.acc-search-widget{margin-left:auto;margin-right:auto;}}
+@media (max-width:1228px){.acc-search-widget{margin-left:24px;margin-right:24px;}}
 .acc-search-field{flex:1;min-width:160px;padding:8px 10px;border-right:1px solid #eee;}
 .acc-search-field label{display:block;font-size:11px;color:#888;font-weight:700;}
 .acc-search-field input{border:none;outline:none;font-size:14.5px;width:100%;color:#111;}
@@ -14859,7 +14878,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-stepper-ctrl button{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font-weight:900;cursor:pointer;}
 .acc-stepper-ctrl button:disabled{border-color:#ddd;color:#ddd;cursor:not-allowed;}
 .acc-search-btn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:12px;padding:0 26px;cursor:pointer;font-size:14.5px;}
-.acc-tabs{display:flex;gap:22px;border-bottom:1px solid var(--glass-border);margin:26px 0 20px;flex-wrap:wrap;}
+.acc-tabs{display:flex;gap:22px;border-bottom:1px solid var(--glass-border);margin:26px 0 20px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;}
 .acc-tabs a{color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;padding-bottom:10px;border-bottom:2px solid transparent;}
 .acc-tabs a.is-active{color:var(--text);border-color:var(--accent);}
 .acc-prop-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
@@ -14874,7 +14893,11 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-gallery-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .acc-gallery-thumb-wrap{position:relative;height:164px;}
 .acc-gallery-thumb-wrap img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.acc-page-wrap{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;}
 .acc-gallery-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:800;}
+.acc-quickfacts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0;}
+.acc-quickfact-card{display:flex;align-items:center;gap:8px;border:1px solid var(--glass-border);border-radius:12px;padding:12px 16px;font-size:13.5px;color:var(--text);background:var(--glass-bg);}
+.acc-quickfact-card .icon{font-size:17px;}
 @media (max-width:640px){.acc-gallery{grid-template-columns:1fr;}.acc-gallery-main{height:220px;}}
 .acc-layout{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;}
 @media (max-width:800px){.acc-layout{grid-template-columns:1fr;}}
@@ -14924,13 +14947,15 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   </div>
 </div>
 <div class="acc-subnav">
+<div class="acc-subnav-inner">
   <a href="/cazare" class="acc-subnav-btn is-active">🛏️ Cazări</a>
   <button type="button" class="acc-subnav-btn widget-reveal-btn" data-widget-target="accFlightWidget" data-widget-src="${AVIASALES_SRC}">✈️ Zboruri</button>
   <a href="https://www.discovercars.com/?a_aid=23ea55cb" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚗 Mașini de închiriat</a>
   <a href="/${escapeHtml(citySlug)}" class="acc-subnav-btn">🎡 Atracții în ${escapeHtml(r.city)}</a>
   <a href="https://intui.tpk.lu/xynzx1LU" target="_blank" rel="noopener sponsored" class="acc-subnav-btn">🚕 Transferuri</a>
 </div>
-<div id="accFlightWidget" class="flight-widget-card" style="display:none;margin:0 20px"></div>
+</div>
+<div id="accFlightWidget" class="flight-widget-card" style="display:none;max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box"></div>
 
 <div class="acc-search-widget">
   <div class="acc-search-field">
@@ -14949,15 +14974,15 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
   <button type="button" class="acc-search-btn" id="searchBtn">Caută</button>
 </div>
 
-<main class="wrap" style="padding-top:20px;padding-bottom:60px">
+<main class="acc-page-wrap" style="padding-top:20px;padding-bottom:60px">
 <p class="breadcrumb"><a href="/cazare">Cazări</a> / ${escapeHtml(COUNTRY_LABELS[r.country_code] || r.country_code)} / ${escapeHtml(r.city)} / ${escapeHtml(r.name)}</p>
 
-<div class="acc-tabs">
-  <a href="#descriere" class="is-active">Descriere</a>
-  <a href="#info-preturi">Informații &amp; prețuri</a>
-  <a href="#facilitati">Facilități</a>
-  <a href="#reguli">Reguli cazare</a>
-  <a href="#reviews">Reviews (${reviews.length})</a>
+<div class="acc-tabs" id="accTabs">
+  <a href="#" data-panel="descriere" class="is-active">Prezentare generală</a>
+  <a href="#" data-panel="info-preturi">Informații despre apartament și preț</a>
+  <a href="#" data-panel="facilitati">Facilități</a>
+  <a href="#" data-panel="important">Informații importante</a>
+  <a href="#" data-panel="reviews">Evaluările oaspeților (${reviews.length})</a>
 </div>
 
 <div class="acc-prop-head">
@@ -14975,54 +15000,61 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
 
 <div id="descriere"></div>
 ${galleryHtml}
+<div class="acc-quickfacts">${quickFactsHtml}</div>
 
 <div class="acc-layout">
   <div>
-    <h2 class="section-title"><span class="bar"></span>Despre această cazare</h2>
-    <div class="acc-desc-text" id="descText">
-      <p>${r.description ? escapeHtml(r.description).replace(/\n/g, "</p><p>") : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
-    </div>
-    <button type="button" class="acc-desc-more" id="descMoreBtn">Show me more</button>
-
-    <div id="facilitati"></div>
-    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Cele mai importante facilități</h2>
-    <div class="acc-fac-grid">${amenityIconRowHtml || `<p class="plan-visit-hint">Nicio facilitate listată.</p>`}</div>
-
-    <div id="info-preturi"></div>
-    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Informații &amp; prețuri</h2>
-    <div class="trip-toolkit-card">
-      <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
-      <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
-    </div>
-
-    <div id="reguli"></div>
-    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Reguli cazare</h2>
-    <div class="trip-toolkit-card">
-      ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : ""}
-    </div>
-
-    <div id="reviews"></div>
-    <h2 class="section-title" style="margin-top:28px"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
-    ${reviewsHtml}
-    <details class="acc-card" style="margin-top:14px">
-      <summary>✍️ Lasă o recenzie</summary>
-      <div class="acc-card-body">
-        <form id="reviewForm">
-          <label class="submit-place-label">Numele tău
-            <input type="text" id="rvName" maxlength="100" required>
-          </label>
-          <label class="submit-place-label">Notă (1-10)
-            <select id="rvRating" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
-          </label>
-          <label class="submit-place-label">Comentariu (opțional)
-            <textarea id="rvComment" maxlength="1000" rows="3"></textarea>
-          </label>
-          <button type="submit" id="rvSubmitBtn" class="submit-place-btn">Trimite recenzia</button>
-          <p id="rvMsg" class="submit-place-thanks" hidden></p>
-          <p id="rvErr" class="submit-place-error" hidden></p>
-        </form>
+    <div class="acc-tab-panel" id="panel-descriere">
+      <h2 class="section-title"><span class="bar"></span>Despre această cazare</h2>
+      <div class="acc-desc-text" id="descText">
+        <p>${r.description ? escapeHtml(r.description).replace(/\n/g, "</p><p>") : `${escapeHtml(r.name)} este o cazare pentru până la ${r.max_capacity} persoane, în ${escapeHtml(r.city)}.`}</p>
       </div>
-    </details>
+      <button type="button" class="acc-desc-more" id="descMoreBtn">Show me more</button>
+    </div>
+
+    <div class="acc-tab-panel" id="panel-info-preturi" hidden>
+      <h2 class="section-title"><span class="bar"></span>Informații &amp; prețuri</h2>
+      <div class="trip-toolkit-card">
+        <p><strong>Capacitate:</strong> ${r.max_capacity} persoane${r.rooms_count ? ` · ${r.rooms_count} camere/unități` : ""}</p>
+        <p><strong>Preț:</strong> de la ${r.price_from} ${escapeHtml(r.price_currency)}/noapte</p>
+      </div>
+    </div>
+
+    <div class="acc-tab-panel" id="panel-facilitati" hidden>
+      <h2 class="section-title"><span class="bar"></span>Cele mai importante facilități</h2>
+      <div class="acc-fac-grid">${amenityIconRowHtml || `<p class="plan-visit-hint">Nicio facilitate listată.</p>`}</div>
+    </div>
+
+    <div class="acc-tab-panel" id="panel-important" hidden>
+      <h2 class="section-title"><span class="bar"></span>Informații importante</h2>
+      <div class="trip-toolkit-card">
+        ${r.checkin_time || r.checkout_time ? `<p><strong>Check-in/check-out:</strong> ${r.checkin_time ? "check-in " + escapeHtml(r.checkin_time) : ""}${r.checkin_time && r.checkout_time ? ", " : ""}${r.checkout_time ? "check-out " + escapeHtml(r.checkout_time) : ""}</p>` : `<p class="plan-visit-hint">Proprietarul nu a specificat reguli suplimentare.</p>`}
+      </div>
+    </div>
+
+    <div class="acc-tab-panel" id="panel-reviews" hidden>
+      <h2 class="section-title"><span class="bar"></span>Recenzii${avgRating ? ` — ${avgRating.toFixed(1)}/10` : ""}</h2>
+      ${reviewsHtml}
+      <details class="acc-card" style="margin-top:14px">
+        <summary>✍️ Lasă o recenzie</summary>
+        <div class="acc-card-body">
+          <form id="reviewForm">
+            <label class="submit-place-label">Numele tău
+              <input type="text" id="rvName" maxlength="100" required>
+            </label>
+            <label class="submit-place-label">Notă (1-10)
+              <select id="rvRating" required>${Array.from({ length: 10 }, (_, i) => 10 - i).map((n) => `<option value="${n}">${n}</option>`).join("")}</select>
+            </label>
+            <label class="submit-place-label">Comentariu (opțional)
+              <textarea id="rvComment" maxlength="1000" rows="3"></textarea>
+            </label>
+            <button type="submit" id="rvSubmitBtn" class="submit-place-btn">Trimite recenzia</button>
+            <p id="rvMsg" class="submit-place-thanks" hidden></p>
+            <p id="rvErr" class="submit-place-error" hidden></p>
+          </form>
+        </div>
+      </details>
+    </div>
   </div>
 
   <div class="acc-sidebar">
@@ -15037,18 +15069,10 @@ ${galleryHtml}
 
     <div class="acc-highlights-card">
       <h3>Avantaje</h3>
+      <p class="acc-highlights-sub">Perfect for a 4-night stay!</p>
       <div class="acc-highlight-row">📍 <span>${escapeHtml(fullAddress)}</span></div>
-      ${amenities.includes("mic_dejun") ? `<div class="acc-highlight-row">🍳 <span><strong>Mic dejun:</strong> Inclus</span></div>` : ""}
+      ${amenities.includes("mic_dejun") ? `<div class="acc-highlight-row">🍳 <strong>Breakfast Info</strong>: Buffet</div>` : ""}
       <button type="button" class="acc-save-btn" id="favBtn2">⭐ Salvează în favorite</button>
-    </div>
-
-    <div class="trip-toolkit-card" style="margin-top:16px">
-      <p>${r.contact_phone ? `📞 ${escapeHtml(r.contact_phone)}<br>` : ""}${r.contact_email ? `✉️ ${escapeHtml(r.contact_email)}<br>` : ""}</p>
-      ${r.website_url ? `<a href="${escapeHtml(r.website_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🌐 Website</span></a>` : ""}
-      ${r.booking_profile_url ? `<a href="${escapeHtml(r.booking_profile_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🔗 Profil existent</span></a>` : ""}
-      ${r.facebook_url ? `<a href="${escapeHtml(r.facebook_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📘 Facebook</span></a>` : ""}
-      ${r.instagram_url ? `<a href="${escapeHtml(r.instagram_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">📷 Instagram</span></a>` : ""}
-      ${r.tiktok_url ? `<a href="${escapeHtml(r.tiktok_url)}" target="_blank" rel="noopener" class="affiliate-btn affiliate-btn-temu" style="display:block;width:auto;margin:6px 0"><span class="affiliate-cta-text">🎵 TikTok</span></a>` : ""}
     </div>
   </div>
 </div>
@@ -15074,6 +15098,20 @@ ${waBase ? `
 
 <script nonce="${nonce}">
 (function(){
+  // --- comutare tab-uri (un singur panou vizibil o dată) ---
+  var tabLinks = document.querySelectorAll("#accTabs a");
+  tabLinks.forEach(function(link){
+    link.addEventListener("click", function(e){
+      e.preventDefault();
+      var target = link.getAttribute("data-panel");
+      tabLinks.forEach(function(l){ l.classList.remove("is-active"); });
+      link.classList.add("is-active");
+      document.querySelectorAll(".acc-tab-panel").forEach(function(p){ p.hidden = true; });
+      var panel = document.getElementById("panel-" + target);
+      if (panel) panel.hidden = false;
+    });
+  });
+
   // --- widget zboruri (Aviasales), reveal la click ---
   document.addEventListener("click", function(e){
     var btn = e.target.closest(".widget-reveal-btn");
