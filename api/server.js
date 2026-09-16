@@ -10665,25 +10665,6 @@ function requireAdminApi(req, res) {
   return session;
 }
 
-// TEMPORAR — diagnostic pentru problema cu /admin/creeaza-cont care dă 404.
-// NU expune cheia, doar lungimi și un hash scurt, ca să vedem UNDE nu se
-// potrivește (env var lipsă, valoare diferită, spații/newline la copiere).
-// DE ȘTERS după ce găsim problema — nu rămâne în producție.
-app.get("/api/admin/debug-cheie", (req, res) => {
-  const provided = typeof req.query.key === "string" ? req.query.key : "";
-  const envKey = ADMIN_SECRET_KEY || "";
-  res.status(200).json({
-    envKeyConfigured: !!envKey,
-    envKeyLength: envKey.length,
-    envKeyFirst3: envKey.slice(0, 3),
-    envKeyLast3: envKey.slice(-3),
-    providedLength: provided.length,
-    providedFirst3: provided.slice(0, 3),
-    providedLast3: provided.slice(-3),
-    matches: provided === envKey,
-  });
-});
-
 app.get("/admin/creeaza-cont", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(404).send("Not found"); return; }
   if (!dbPool) { res.status(503).send("Baza de date nu e configurată."); return; }
@@ -10712,13 +10693,23 @@ button:disabled{opacity:.6;cursor:default}
 <p style="font-size:14px;color:#555">Această pagină funcționează o singură dată. După ce contul e creat, dispare.</p>
 <form id="f">
   <label>Email<input type="email" id="email" required autocomplete="username"></label>
-  <label>Parolă (minim 8 caractere)<input type="password" id="password" required minlength="8" autocomplete="new-password"></label>
+  <label>Parolă (minim 8 caractere)</label>
+  <div style="position:relative">
+    <input type="password" id="password" required minlength="8" autocomplete="new-password" style="padding-right:44px">
+    <button type="button" id="togglePw" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;margin:0;padding:4px 6px;width:auto;cursor:pointer;font-size:17px">👁️</button>
+  </div>
   <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
   <button type="submit">Creează cont</button>
   <div id="msg"></div>
 </form>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
+document.getElementById("togglePw").addEventListener("click", function(){
+  var inp = document.getElementById("password");
+  var show = inp.type === "password";
+  inp.type = show ? "text" : "password";
+  this.textContent = show ? "🙈" : "👁️";
+});
 document.getElementById("f").addEventListener("submit", async function(e){
   e.preventDefault();
   var btn = e.target.querySelector("button");
@@ -10740,7 +10731,7 @@ document.getElementById("f").addEventListener("submit", async function(e){
     if (resp.ok) {
       window.location.href = "/admin";
     } else {
-      document.getElementById("msg").textContent = data.error === "account_exists" ? "Există deja un cont de admin." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : "Eroare — încearcă din nou.";
+      document.getElementById("msg").textContent = data.error === "account_exists" ? "Există deja un cont de admin." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : data.error === "session_secret_missing" ? "Lipsește ADMIN_SESSION_SECRET din variabilele de mediu (Vercel) — adaugă-l și fă redeploy." : "Eroare — încearcă din nou.";
       btn.disabled = false;
       try { if (window.turnstile) turnstile.reset(); } catch (e3) {}
     }
@@ -10756,6 +10747,7 @@ document.getElementById("f").addEventListener("submit", async function(e){
 app.post("/api/admin/creeaza-cont", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(404).json({ error: "not_found" }); return; }
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  if (!ADMIN_SESSION_SECRET) { res.status(500).json({ error: "session_secret_missing" }); return; }
   const { email, password } = req.body || {};
   if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 255) {
     res.status(400).json({ error: "invalid_email" });
@@ -10801,13 +10793,23 @@ button:disabled{opacity:.6;cursor:default}
 <h1>Autentificare admin</h1>
 <form id="f">
   <label>Email<input type="email" id="email" required autocomplete="username"></label>
-  <label>Parolă<input type="password" id="password" required autocomplete="current-password"></label>
+  <label>Parolă</label>
+  <div style="position:relative">
+    <input type="password" id="password" required autocomplete="current-password" style="padding-right:44px">
+    <button type="button" id="togglePw" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;margin:0;padding:4px 6px;width:auto;cursor:pointer;font-size:17px">👁️</button>
+  </div>
   <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
   <button type="submit">Conectează-te</button>
   <div id="msg"></div>
 </form>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
+document.getElementById("togglePw").addEventListener("click", function(){
+  var inp = document.getElementById("password");
+  var show = inp.type === "password";
+  inp.type = show ? "text" : "password";
+  this.textContent = show ? "🙈" : "👁️";
+});
 document.getElementById("f").addEventListener("submit", async function(e){
   e.preventDefault();
   var btn = e.target.querySelector("button");
@@ -10829,7 +10831,7 @@ document.getElementById("f").addEventListener("submit", async function(e){
     if (resp.ok) {
       window.location.href = "/admin";
     } else {
-      document.getElementById("msg").textContent = data.error === "too_many_requests" ? "Prea multe încercări — mai încearcă puțin mai târziu." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : "Email sau parolă greșite.";
+      document.getElementById("msg").textContent = data.error === "too_many_requests" ? "Prea multe încercări — mai încearcă puțin mai târziu." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : data.error === "session_secret_missing" ? "Lipsește ADMIN_SESSION_SECRET din variabilele de mediu (Vercel) — adaugă-l și fă redeploy." : "Email sau parolă greșite.";
       btn.disabled = false;
       try { if (window.turnstile) turnstile.reset(); } catch (e3) {}
     }
@@ -10844,6 +10846,7 @@ document.getElementById("f").addEventListener("submit", async function(e){
 
 app.post("/api/admin/autentificare", async (req, res) => {
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  if (!ADMIN_SESSION_SECRET) { res.status(500).json({ error: "session_secret_missing" }); return; }
   const { email, password } = req.body || {};
   if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) { res.status(400).json({ error: "invalid_email" }); return; }
   if (typeof password !== "string" || !password) { res.status(400).json({ error: "invalid_password" }); return; }
@@ -11720,11 +11723,17 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
     </div>
     <div class="acc-white-field">
       <label class="acc-white-label" for="password">Parolă</label>
-      <input type="password" id="password" class="acc-white-input" minlength="8" placeholder="minim 8 caractere" required>
+      <div style="position:relative">
+        <input type="password" id="password" class="acc-white-input" minlength="8" placeholder="minim 8 caractere" required style="padding-right:46px">
+        <button type="button" id="togglePw1" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1">👁️</button>
+      </div>
     </div>
     <div class="acc-white-field">
       <label class="acc-white-label" for="password2">Confirmă parola</label>
-      <input type="password" id="password2" class="acc-white-input" minlength="8" required>
+      <div style="position:relative">
+        <input type="password" id="password2" class="acc-white-input" minlength="8" required style="padding-right:46px">
+        <button type="button" id="togglePw2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1">👁️</button>
+      </div>
     </div>
     <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-bottom:16px"></div>
     <button type="submit" id="detailsBtn" class="acc-white-cta">Înainte</button>
@@ -11738,6 +11747,15 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
 (function(){
   var email = sessionStorage.getItem("accRegEmail");
   if (!email) { window.location.href = "/cazare/creeaza-cont"; return; }
+  ["1", "2"].forEach(function(n){
+    var toggleBtn = document.getElementById("togglePw" + n);
+    var inp = document.getElementById(n === "1" ? "password" : "password2");
+    toggleBtn.addEventListener("click", function(){
+      var show = inp.type === "password";
+      inp.type = show ? "text" : "password";
+      toggleBtn.textContent = show ? "🙈" : "👁️";
+    });
+  });
   var form = document.getElementById("detailsForm");
   form.querySelectorAll("[required]").forEach(function(el){el.addEventListener("invalid",function(){el.setCustomValidity(el.validity.valueMissing?"Completează acest câmp.":el.validity.typeMismatch?"Formatul nu e corect.":"Verifică ce ai completat aici.");});el.addEventListener("input",function(){el.setCustomValidity("");});});
   var btn = document.getElementById("detailsBtn");
@@ -11805,7 +11823,10 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
     <input type="email" id="loginEmail" class="acc-white-input is-inactive" placeholder="tu@exemplu.ro" required>
     <div id="passwordField">
       <label class="acc-white-label" for="loginPassword">Parolă</label>
-      <input type="password" id="loginPassword" class="acc-white-input is-inactive">
+      <div style="position:relative">
+        <input type="password" id="loginPassword" class="acc-white-input is-inactive" style="padding-right:46px">
+        <button type="button" id="toggleLoginPw" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1">👁️</button>
+      </div>
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
     </div>
     <button type="submit" id="loginBtn" class="acc-white-cta">Autentificare</button>
@@ -11836,6 +11857,12 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
   var passwordInput = document.getElementById("loginPassword");
   var title = document.getElementById("pageTitle");
   var isForgotMode = false;
+
+  document.getElementById("toggleLoginPw").addEventListener("click", function(){
+    var show = passwordInput.type === "password";
+    passwordInput.type = show ? "text" : "password";
+    this.textContent = show ? "🙈" : "👁️";
+  });
 
   var LOGIN_ERRORS = {
     invalid_credentials: "Email sau parolă greșită.",
