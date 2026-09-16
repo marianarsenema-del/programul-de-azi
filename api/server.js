@@ -11388,6 +11388,24 @@ function accCurrencyScript() {
       if (!langDropdown.contains(e.target) && e.target !== langBtn) langDropdown.classList.remove("is-open");
     });
   }
+
+  var userBtn = document.getElementById("accNavUserBtn");
+  var userDropdown = document.getElementById("accNavUserDropdown");
+  if (userBtn && userDropdown) {
+    userBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      userDropdown.classList.toggle("is-open");
+    });
+    document.addEventListener("click", function(e){
+      if (!userDropdown.contains(e.target) && e.target !== userBtn) userDropdown.classList.remove("is-open");
+    });
+    var logoutBtn = document.getElementById("accNavLogoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function(){
+        fetch("/api/cazare/logout", { method: "POST" }).then(function(){ window.location.href = "/cazare"; });
+      });
+    }
+  }
 })();`;
 }
 
@@ -15453,10 +15471,17 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 
 
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
-.acc-nav-user{display:flex;align-items:center;gap:8px;}
-.acc-nav-user-name{line-height:1.2;}
+.acc-nav-user-wrap{position:relative;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;}
+.acc-nav-user:hover{background:rgba(255,255,255,.06);}
+.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;}
 @media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
+.acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
+.acc-nav-user-dropdown.is-open{display:block;}
+.acc-nav-user-dropdown a, .acc-nav-user-dropdown button{display:block;width:100%;background:none;border:none;border-radius:8px;padding:10px 12px;text-align:left;font-size:14px;color:#111;cursor:pointer;text-decoration:none;font-family:inherit;}
+.acc-nav-user-dropdown a:hover, .acc-nav-user-dropdown button:hover{background:#f2f2f2;}
+.acc-nav-user-dropdown .acc-nav-logout{color:#c62828;}
 .acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
 .acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
 .acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
@@ -15543,9 +15568,15 @@ app.get("/cazare", accommodationGate, async (req, res) => {
     </div>
     <a href="/cazare/login">Listează-ți proprietatea</a>
     ${ownerSession ? `
-    <div class="acc-nav-user">
-      <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
-      <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+    <div class="acc-nav-user-wrap">
+      <button type="button" class="acc-nav-user" id="accNavUserBtn">
+        <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
+        <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+      </button>
+      <div class="acc-nav-user-dropdown" id="accNavUserDropdown">
+        <a href="/cont">📊 Panoul meu</a>
+        <button type="button" id="accNavLogoutBtn" class="acc-nav-logout">🚪 Delogare</button>
+      </div>
     </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
   </div>
 </div>
@@ -15904,10 +15935,17 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 
 
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
-.acc-nav-user{display:flex;align-items:center;gap:8px;}
-.acc-nav-user-name{line-height:1.2;}
+.acc-nav-user-wrap{position:relative;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;}
+.acc-nav-user:hover{background:rgba(255,255,255,.06);}
+.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;}
 @media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
+.acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
+.acc-nav-user-dropdown.is-open{display:block;}
+.acc-nav-user-dropdown a, .acc-nav-user-dropdown button{display:block;width:100%;background:none;border:none;border-radius:8px;padding:10px 12px;text-align:left;font-size:14px;color:#111;cursor:pointer;text-decoration:none;font-family:inherit;}
+.acc-nav-user-dropdown a:hover, .acc-nav-user-dropdown button:hover{background:#f2f2f2;}
+.acc-nav-user-dropdown .acc-nav-logout{color:#c62828;}
 .acc-subnav{background:#161b22;padding:0 0 16px;display:flex;flex-wrap:wrap;}
 .acc-subnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;box-sizing:border-box;width:100%;}
 .acc-subnav-btn{background:none;border:1px solid #333c48;color:#cfd6e2;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
@@ -16037,9 +16075,15 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
     </div>
     <a href="/cazare/login">Listează-ți proprietatea</a>
     ${ownerSession ? `
-    <div class="acc-nav-user">
-      <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
-      <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+    <div class="acc-nav-user-wrap">
+      <button type="button" class="acc-nav-user" id="accNavUserBtn">
+        <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
+        <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+      </button>
+      <div class="acc-nav-user-dropdown" id="accNavUserDropdown">
+        <a href="/cont">📊 Panoul meu</a>
+        <button type="button" id="accNavLogoutBtn" class="acc-nav-logout">🚪 Delogare</button>
+      </div>
     </div>` : `<a href="/cazare/autentificare">Autentificare</a>`}
   </div>
 </div>
