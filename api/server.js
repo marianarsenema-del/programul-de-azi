@@ -10665,6 +10665,25 @@ function requireAdminApi(req, res) {
   return session;
 }
 
+// TEMPORAR — diagnostic pentru problema cu /admin/creeaza-cont care dă 404.
+// NU expune cheia, doar lungimi și un hash scurt, ca să vedem UNDE nu se
+// potrivește (env var lipsă, valoare diferită, spații/newline la copiere).
+// DE ȘTERS după ce găsim problema — nu rămâne în producție.
+app.get("/api/admin/debug-cheie", (req, res) => {
+  const provided = typeof req.query.key === "string" ? req.query.key : "";
+  const envKey = ADMIN_SECRET_KEY || "";
+  res.status(200).json({
+    envKeyConfigured: !!envKey,
+    envKeyLength: envKey.length,
+    envKeyFirst3: envKey.slice(0, 3),
+    envKeyLast3: envKey.slice(-3),
+    providedLength: provided.length,
+    providedFirst3: provided.slice(0, 3),
+    providedLast3: provided.slice(-3),
+    matches: provided === envKey,
+  });
+});
+
 app.get("/admin/creeaza-cont", async (req, res) => {
   if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(404).send("Not found"); return; }
   if (!dbPool) { res.status(503).send("Baza de date nu e configurată."); return; }
