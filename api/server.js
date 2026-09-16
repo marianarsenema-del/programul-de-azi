@@ -236,6 +236,19 @@ const BLOB_READ_WRITE_TOKEN = process.env.ACC_READ_WRITE_TOKEN || "";
 // existentă pe site. Cheia de semnare e obligatorie separat de ADMIN_SECRET_KEY
 // (nu refolosim aceeași cheie pentru două scopuri diferite).
 const ACCOMMODATION_SESSION_SECRET = process.env.ACCOMMODATION_SESSION_SECRET || "";
+// Sesiune admin — cookie semnat, complet separat de sesiunea de proprietar
+// de cazare de mai sus. ADMIN_SECRET_KEY (mai jos) rămâne doar pentru
+// bootstrap-ul contului (o singură dată) — după aceea, accesul e prin
+// sesiune (email+parolă), nu prin cheia din query string.
+const ADMIN_SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || "";
+// Cloudflare Turnstile — protecție anti-bot pe toate formularele cu parolă
+// (cont admin + cont proprietar cazare). SITE_KEY e publică (merge în HTML),
+// SECRET_KEY rămâne doar server-side, pentru verificarea la /siteverify.
+// Dacă SECRET_KEY nu e setată, verificarea e sărită (nu blocăm site-ul
+// înainte să fie configurată) — dar odată setată, o verificare eșuată sau
+// lipsă blochează cererea (fail-closed, corect pentru un formular cu parolă).
+const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY || "";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
 const GOOGLE_PLACES_API_KEY_LIVE = process.env.GOOGLE_PLACES_API_KEY || "";
 // Pentru planul de rezervă la ploaie (itinerar) — cerut explicit, cu o
 // limită de siguranță STRICTĂ, mai mică decât pragul real de 1.000
@@ -5366,12 +5379,12 @@ function withNonce(rawHtml, nonce) {
 function buildCsp(nonce) {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io https://scripts.stay22.com https://*.stay22.com`,
+    `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widget.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://*.avs.io https://scripts.stay22.com https://*.stay22.com https://challenges.cloudflare.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://tp-em.com https://tpembd.com`,
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://www.gstatic.com https://www.google-analytics.com https://www.googletagmanager.com https://widget.getyourguide.com https://*.tile.openstreetmap.org https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.ggpht.com https://img.2performant.com https://*.avs.io https://tpembd.com https://tp-em.com https://*.wway.io https://*.public.blob.vercel-storage.com",
-    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com https://*.apistp.com https://*.public.blob.vercel-storage.com https://vercel.com https://blob.vercel-storage.com",
-    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io",
+    "connect-src 'self' https://api.bigdatacloud.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net https://static.doubleclick.net https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://widget.getyourguide.com https://*.getyourguide.com https://unpkg.com https://esm.sh https://maps.googleapis.com https://tp-em.com https://tpembd.com https://www.travelpayouts.com https://*.avs.io https://avsplow.com https://*.avsplow.com https://*.stay22.com https://*.apistp.com https://*.public.blob.vercel-storage.com https://vercel.com https://blob.vercel-storage.com https://challenges.cloudflare.com",
+    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://tpembd.com https://*.avs.io https://challenges.cloudflare.com",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
     "base-uri 'self'",
@@ -10426,6 +10439,25 @@ async function checkRateLimit(ipHash, endpoint, maxRequests, windowMinutes) {
   }
 }
 
+// Cloudflare Turnstile — verificare server-side a token-ului trimis de
+// widget-ul din formular. Vezi TURNSTILE_SITE_KEY/SECRET_KEY mai sus.
+async function verifyTurnstile(token, ip) {
+  if (!TURNSTILE_SECRET_KEY) return true; // nu e configurată încă — nu blocăm
+  if (typeof token !== "string" || !token) return false;
+  try {
+    const resp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret: TURNSTILE_SECRET_KEY, response: token, remoteip: ip || "" }),
+    });
+    const data = await resp.json();
+    return !!data.success;
+  } catch (err) {
+    console.error("verifyTurnstile a eșuat:", err.message);
+    return false; // eroare de rețea → fail-closed, e un formular cu parolă
+  }
+}
+
 // ============================================================
 // Cookie-uri semnate — utilitare minimale, fără dependență nouă (folosim
 // doar `crypto`, deja disponibil). Folosite atât pentru gate-ul de preview
@@ -10587,6 +10619,240 @@ app.post("/api/cazare/logout", accommodationGate, (req, res) => {
   res.status(200).json({ ok: true });
 });
 
+// ============================================================
+// Cont de admin real — email + parolă, sesiune proprie (adminSession),
+// complet separată de accSession (proprietar cazare). Aceleași utilitare
+// de mai sus (hashPassword/verifyPassword, signCookiePayload etc.) —
+// nicio dependență nouă.
+//
+// Bootstrap: /admin/creeaza-cont funcționează DOAR cât timp nu există încă
+// niciun rând în admin_users — după primul cont creat, ruta se comportă
+// ca 404 pentru oricine, indiferent de cheie (nu poate fi refolosită ca
+// să se creeze un al doilea cont pe furiș). Dacă e nevoie de un admin în
+// plus, se adaugă direct din baza de date, nu prin această rută.
+// ============================================================
+function getAdminSession(req) {
+  if (!ADMIN_SESSION_SECRET) return null;
+  const cookies = parseCookies(req);
+  const raw = cookies.adminSession;
+  if (!raw) return null;
+  const payload = verifyCookiePayload(raw, ADMIN_SESSION_SECRET);
+  if (!payload) return null;
+  try {
+    const data = JSON.parse(payload);
+    if (!data.adminId || !data.exp || Date.now() > data.exp) return null;
+    return data;
+  } catch (e) {
+    return null;
+  }
+}
+function setAdminSession(res, adminId, email) {
+  const exp = Date.now() + 12 * 60 * 60 * 1000; // 12 ore — sesiune de admin, expirare mai scurtă decât la proprietari
+  const payload = JSON.stringify({ adminId, email, exp });
+  const signed = signCookiePayload(payload, ADMIN_SESSION_SECRET);
+  appendSetCookie(res, `adminSession=${encodeURIComponent(signed)}; Path=/; Max-Age=${12 * 60 * 60}; HttpOnly; SameSite=Lax; Secure`);
+}
+// Pentru rute de pagină (HTML) — redirecționează la login dacă nu ești conectat
+function requireAdminPage(req, res) {
+  const session = getAdminSession(req);
+  if (!session) { res.redirect("/admin/autentificare"); return null; }
+  return session;
+}
+// Pentru rute API (JSON) — 401, fără redirect
+function requireAdminApi(req, res) {
+  const session = getAdminSession(req);
+  if (!session) { res.status(401).json({ error: "not_logged_in" }); return null; }
+  return session;
+}
+
+app.get("/admin/creeaza-cont", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(404).send("Not found"); return; }
+  if (!dbPool) { res.status(503).send("Baza de date nu e configurată."); return; }
+  try {
+    const { rows } = await dbPool.query(`SELECT COUNT(*)::int AS cnt FROM admin_users`);
+    if (rows[0].cnt > 0) { res.status(404).send("Not found"); return; }
+  } catch (err) {
+    console.error("admin/creeaza-cont a eșuat:", err.message);
+    res.status(500).send("Eroare server.");
+    return;
+  }
+  res.status(200).send(`<!DOCTYPE html>
+<html lang="ro"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Creează cont admin</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;max-width:420px;margin:60px auto;padding:0 20px;background:#f7f7f8}
+h1{font-size:20px}
+label{display:block;margin-top:16px;font-size:14px;font-weight:600}
+input{width:100%;box-sizing:border-box;padding:10px 12px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+button{margin-top:24px;width:100%;padding:12px;border:none;border-radius:8px;background:#111;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+#msg{margin-top:14px;font-size:14px;color:#c00}
+</style></head>
+<body>
+<h1>Creează contul de admin</h1>
+<p style="font-size:14px;color:#555">Această pagină funcționează o singură dată. După ce contul e creat, dispare.</p>
+<form id="f">
+  <label>Email<input type="email" id="email" required autocomplete="username"></label>
+  <label>Parolă (minim 8 caractere)<input type="password" id="password" required minlength="8" autocomplete="new-password"></label>
+  <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
+  <button type="submit">Creează cont</button>
+  <div id="msg"></div>
+</form>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+document.getElementById("f").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var btn = e.target.querySelector("button");
+  btn.disabled = true;
+  document.getElementById("msg").textContent = "";
+  var turnstileToken = "";
+  try { turnstileToken = window.turnstile ? (turnstile.getResponse() || "") : ""; } catch (e2) {}
+  try {
+    var resp = await fetch("/api/admin/creeaza-cont?key=${encodeURIComponent(req.query.key)}", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        turnstileToken: turnstileToken
+      })
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      window.location.href = "/admin";
+    } else {
+      document.getElementById("msg").textContent = data.error === "account_exists" ? "Există deja un cont de admin." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : "Eroare — încearcă din nou.";
+      btn.disabled = false;
+      try { if (window.turnstile) turnstile.reset(); } catch (e3) {}
+    }
+  } catch (err) {
+    document.getElementById("msg").textContent = "Eroare de rețea — încearcă din nou.";
+    btn.disabled = false;
+  }
+});
+</script>
+</body></html>`);
+});
+
+app.post("/api/admin/creeaza-cont", async (req, res) => {
+  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(404).json({ error: "not_found" }); return; }
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { email, password } = req.body || {};
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 255) {
+    res.status(400).json({ error: "invalid_email" });
+    return;
+  }
+  if (typeof password !== "string" || password.length < 8 || password.length > 200) {
+    res.status(400).json({ error: "invalid_password" });
+    return;
+  }
+  const turnstileOk = await verifyTurnstile(req.body && req.body.turnstileToken, getClientIp(req));
+  if (!turnstileOk) { res.status(400).json({ error: "captcha_failed" }); return; }
+  try {
+    const existing = await dbPool.query(`SELECT COUNT(*)::int AS cnt FROM admin_users`);
+    if (existing.rows[0].cnt > 0) { res.status(404).json({ error: "not_found" }); return; }
+    const passwordHash = hashPassword(password);
+    const safeEmail = email.trim().toLowerCase();
+    const adminRes = await dbPool.query(
+      `INSERT INTO admin_users (email, password_hash) VALUES ($1, $2) RETURNING id`,
+      [safeEmail, passwordHash]
+    );
+    setAdminSession(res, adminRes.rows[0].id, safeEmail);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("api/admin/creeaza-cont a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+app.get("/admin/autentificare", (req, res) => {
+  res.status(200).send(`<!DOCTYPE html>
+<html lang="ro"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Autentificare admin</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;max-width:420px;margin:60px auto;padding:0 20px;background:#f7f7f8}
+h1{font-size:20px}
+label{display:block;margin-top:16px;font-size:14px;font-weight:600}
+input{width:100%;box-sizing:border-box;padding:10px 12px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+button{margin-top:24px;width:100%;padding:12px;border:none;border-radius:8px;background:#111;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+#msg{margin-top:14px;font-size:14px;color:#c00}
+</style></head>
+<body>
+<h1>Autentificare admin</h1>
+<form id="f">
+  <label>Email<input type="email" id="email" required autocomplete="username"></label>
+  <label>Parolă<input type="password" id="password" required autocomplete="current-password"></label>
+  <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
+  <button type="submit">Conectează-te</button>
+  <div id="msg"></div>
+</form>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+document.getElementById("f").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var btn = e.target.querySelector("button");
+  btn.disabled = true;
+  document.getElementById("msg").textContent = "";
+  var turnstileToken = "";
+  try { turnstileToken = window.turnstile ? (turnstile.getResponse() || "") : ""; } catch (e2) {}
+  try {
+    var resp = await fetch("/api/admin/autentificare", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        turnstileToken: turnstileToken
+      })
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      window.location.href = "/admin";
+    } else {
+      document.getElementById("msg").textContent = data.error === "too_many_requests" ? "Prea multe încercări — mai încearcă puțin mai târziu." : data.error === "captcha_failed" ? "Verificarea anti-bot a eșuat — reîncearcă." : "Email sau parolă greșite.";
+      btn.disabled = false;
+      try { if (window.turnstile) turnstile.reset(); } catch (e3) {}
+    }
+  } catch (err) {
+    document.getElementById("msg").textContent = "Eroare de rețea — încearcă din nou.";
+    btn.disabled = false;
+  }
+});
+</script>
+</body></html>`);
+});
+
+app.post("/api/admin/autentificare", async (req, res) => {
+  if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
+  const { email, password } = req.body || {};
+  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) { res.status(400).json({ error: "invalid_email" }); return; }
+  if (typeof password !== "string" || !password) { res.status(400).json({ error: "invalid_password" }); return; }
+  const safeEmail = email.trim().toLowerCase();
+  const ipHash = hashIp(getClientIp(req));
+  const rateOk = await checkRateLimit(ipHash, "admin-autentificare", 10, 15);
+  if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  const turnstileOk = await verifyTurnstile(req.body && req.body.turnstileToken, getClientIp(req));
+  if (!turnstileOk) { res.status(400).json({ error: "captcha_failed" }); return; }
+  try {
+    const { rows } = await dbPool.query(`SELECT id, password_hash FROM admin_users WHERE email = $1`, [safeEmail]);
+    if (!rows.length || !verifyPassword(password, rows[0].password_hash)) {
+      res.status(401).json({ error: "invalid_credentials" });
+      return;
+    }
+    setAdminSession(res, rows[0].id, safeEmail);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("api/admin/autentificare a eșuat:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  appendSetCookie(res, "adminSession=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; Secure");
+  res.status(200).json({ ok: true });
+});
+
 // Previzualizare — proprietarul vede exact pagina publică, cu datele din
 // formular, ÎNAINTE de a trimite spre aprobare. Nu se salvează nimic
 // permanent — doar un rând efemer (expiră după 2 ore), citit de aceeași
@@ -10661,6 +10927,8 @@ app.post("/api/cazare/inregistreaza", accommodationGate, async (req, res) => {
   const ipHash = hashIp(getClientIp(req));
   const rateOk = await checkRateLimit(ipHash, "cazare-inregistreaza", 8, 60);
   if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  const turnstileOk = await verifyTurnstile(req.body && req.body.turnstileToken, getClientIp(req));
+  if (!turnstileOk) { res.status(400).json({ error: "captcha_failed" }); return; }
   try {
     const existing = await dbPool.query(`SELECT id, password_hash FROM accommodation_owners WHERE email = $1`, [safeEmail]);
     if (existing.rows.length && existing.rows[0].password_hash) {
@@ -10696,6 +10964,8 @@ app.post("/api/cazare/login-parola", accommodationGate, async (req, res) => {
   const ipHash = hashIp(getClientIp(req));
   const rateOk = await checkRateLimit(ipHash, "cazare-login-parola", 10, 15);
   if (!rateOk) { res.status(429).json({ error: "too_many_requests" }); return; }
+  const turnstileOk = await verifyTurnstile(req.body && req.body.turnstileToken, getClientIp(req));
+  if (!turnstileOk) { res.status(400).json({ error: "captcha_failed" }); return; }
   try {
     const { rows } = await dbPool.query(`SELECT id, password_hash FROM accommodation_owners WHERE email = $1`, [safeEmail]);
     if (!rows.length || !rows[0].password_hash || !verifyPassword(password, rows[0].password_hash)) {
@@ -11243,7 +11513,7 @@ input[type="number"], input[type="text"]{width:100%;box-sizing:border-box;paddin
 button.admin-btn{background:#ff8a3d;color:#111;font-weight:700;border:none;border-radius:8px;padding:12px 20px;cursor:pointer;}
 `;
 }
-function adminSidebarHtml(activeItem, key, counts) {
+function adminSidebarHtml(activeItem, counts) {
   counts = counts || {};
   const items = [
     { key: "dashboard", href: "/admin", icon: "📊", label: "Dashboard" },
@@ -11255,8 +11525,19 @@ function adminSidebarHtml(activeItem, key, counts) {
   return `
 <div class="admin-sidebar" id="adminSidebar">
   <div class="admin-sidebar-brand">Opening<span>HoursToday</span> · Admin</div>
-  ${items.map((it) => `<a href="${it.href}?key=${encodeURIComponent(key)}" class="admin-nav-item${activeItem === it.key ? " is-active" : ""}"><span>${it.icon}</span>${it.label}${it.badge ? `<span class="badge">${it.badge}</span>` : ""}</a>`).join("")}
-</div>`;
+  ${items.map((it) => `<a href="${it.href}" class="admin-nav-item${activeItem === it.key ? " is-active" : ""}"><span>${it.icon}</span>${it.label}${it.badge ? `<span class="badge">${it.badge}</span>` : ""}</a>`).join("")}
+  <a href="#" id="adminLogoutLink" class="admin-nav-item" style="margin-top:12px;opacity:.75"><span>🚪</span>Delogare</a>
+</div>
+<script>
+(function(){
+  var l = document.getElementById("adminLogoutLink");
+  if (!l) return;
+  l.addEventListener("click", function(e){
+    e.preventDefault();
+    fetch("/api/admin/logout", { method: "POST" }).then(function(){ window.location.href = "/admin/autentificare"; });
+  });
+})();
+</script>`;
 }
 function adminMobileBarHtml() {
   return `<div class="admin-mobile-bar"><button type="button" id="adminSidebarToggle">☰</button><strong>Admin</strong></div>`;
@@ -11289,10 +11570,7 @@ async function getAdminCounts() {
 }
 
 app.get("/admin", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
-    return;
-  }
+  if (!requireAdminPage(req, res)) return;
   const counts = await getAdminCounts();
   let stats = { approvedListings: 0, trial: 0, active: 0, pastDue: 0, canceled: 0 };
   if (dbPool) {
@@ -11315,7 +11593,7 @@ app.get("/admin", async (req, res) => {
 <style>${adminShellStyles()}</style></head>
 <body>
 <div class="admin-shell">
-${adminSidebarHtml("dashboard", req.query.key, counts)}
+${adminSidebarHtml("dashboard", counts)}
 <div style="flex:1">
 ${adminMobileBarHtml()}
 <div class="admin-main">
@@ -11323,9 +11601,9 @@ ${adminMobileBarHtml()}
 
 <div class="admin-section-title">În așteptare, acum</div>
 <div class="admin-stat-grid">
-  <a href="/admin/cazari?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingCazari ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingCazari}</div><div class="label">Cazări de verificat</div></a>
-  <a href="/admin/recenzii?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingRecenzii ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingRecenzii}</div><div class="label">Recenzii de verificat</div></a>
-  <a href="/admin/propuneri?key=${encodeURIComponent(req.query.key)}" class="admin-stat-card${counts.pendingPropuneri ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingPropuneri}</div><div class="label">Propuneri de locuri</div></a>
+  <a href="/admin/cazari" class="admin-stat-card${counts.pendingCazari ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingCazari}</div><div class="label">Cazări de verificat</div></a>
+  <a href="/admin/recenzii" class="admin-stat-card${counts.pendingRecenzii ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingRecenzii}</div><div class="label">Recenzii de verificat</div></a>
+  <a href="/admin/propuneri" class="admin-stat-card${counts.pendingPropuneri ? " is-warning" : ""}" style="text-decoration:none;color:inherit"><div class="num">${counts.pendingPropuneri}</div><div class="label">Propuneri de locuri</div></a>
 </div>
 
 <div class="admin-section-title">Cazări active pe site</div>
@@ -11341,7 +11619,7 @@ ${adminMobileBarHtml()}
 <div class="admin-stat-grid">
   <div class="admin-stat-card"><div class="num">${estimatedMonthlyRevenue}€</div><div class="label">${stats.active} abonamente active × ${(monthlyPriceCents / 100).toFixed(2)}€</div></div>
 </div>
-${monthlyPriceCents === 0 ? `<p style="color:#ffcf7a">⚠️ Prețul abonamentului nu e configurat — <a href="/admin/setari?key=${encodeURIComponent(req.query.key)}">setează-l aici</a>.</p>` : ""}
+${monthlyPriceCents === 0 ? `<p style="color:#ffcf7a">⚠️ Prețul abonamentului nu e configurat — <a href="/admin/setari">setează-l aici</a>.</p>` : ""}
 
 </div>
 </div>
@@ -11429,12 +11707,14 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
       <label class="acc-white-label" for="password2">Confirmă parola</label>
       <input type="password" id="password2" class="acc-white-input" minlength="8" required>
     </div>
+    <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-bottom:16px"></div>
     <button type="submit" id="detailsBtn" class="acc-white-cta">Înainte</button>
     <p id="detailsErr" class="acc-white-err" hidden></p>
   </form>
 
   ${accWhiteLegalHtml()}
 </div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script nonce="${nonce}">
 (function(){
   var email = sessionStorage.getItem("accRegEmail");
@@ -11447,6 +11727,7 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
     invalid_password: "Parola trebuie să aibă minim 8 caractere.",
     account_exists: "Există deja un cont cu acest email — încearcă să te autentifici.",
     too_many_requests: "Prea multe încercări recente — mai așteaptă puțin.",
+    captcha_failed: "Verificarea anti-bot a eșuat — reîncearcă.",
   };
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -11456,6 +11737,8 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
     if (pass !== pass2) { err.textContent = "Parolele nu coincid."; err.hidden = false; return; }
     if (pass.length < 8) { err.textContent = "Parola trebuie să aibă minim 8 caractere."; err.hidden = false; return; }
     btn.disabled = true;
+    var turnstileToken = "";
+    try { turnstileToken = window.turnstile ? (turnstile.getResponse() || "") : ""; } catch (e2) {}
     fetch("/api/cazare/inregistreaza", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -11465,6 +11748,7 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
         firstName: document.getElementById("firstName").value,
         lastName: document.getElementById("lastName").value,
         phone: "+40" + document.getElementById("phone").value,
+        turnstileToken: turnstileToken,
       }),
     })
       .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
@@ -11476,6 +11760,7 @@ app.get("/cazare/detalii-contact", accommodationGate, (req, res) => {
           err.textContent = ERROR_MESSAGES[res.data.error] || "Ceva n-a mers. Încercați din nou.";
           err.hidden = false;
           btn.disabled = false;
+          try { if (window.turnstile) turnstile.reset(); } catch (e3) {}
         }
       })
       .catch(function(){ err.textContent = "Ceva n-a mers. Încercați din nou."; err.hidden = false; btn.disabled = false; });
@@ -11502,6 +11787,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
     <div id="passwordField">
       <label class="acc-white-label" for="loginPassword">Parolă</label>
       <input type="password" id="loginPassword" class="acc-white-input is-inactive">
+      <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" style="margin-top:16px"></div>
     </div>
     <button type="submit" id="loginBtn" class="acc-white-cta">Autentificare</button>
     <p id="loginMsg" class="acc-white-msg" hidden></p>
@@ -11517,6 +11803,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
 
   ${accWhiteLegalHtml()}
 </div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script nonce="${nonce}">
 (function(){
   var form = document.getElementById("loginForm");
@@ -11534,6 +11821,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
   var LOGIN_ERRORS = {
     invalid_credentials: "Email sau parolă greșită.",
     too_many_requests: "Prea multe încercări — mai așteaptă puțin.",
+    captcha_failed: "Verificarea anti-bot a eșuat — reîncearcă.",
   };
   var FORGOT_ERRORS = {
     no_account: "Nu am găsit niciun cont cu acest email.",
@@ -11584,7 +11872,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
       return;
     }
 
-    fetch("/api/cazare/login-parola", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: passwordInput.value }) })
+    fetch("/api/cazare/login-parola", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: passwordInput.value, turnstileToken: (window.turnstile ? (turnstile.getResponse() || "") : "") }) })
       .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
       .then(function(res){
         if (res.ok) { window.location.href = "/cont"; }
@@ -11592,6 +11880,7 @@ app.get("/cazare/autentificare", accommodationGate, (req, res) => {
           err.textContent = LOGIN_ERRORS[res.data.error] || "Ceva n-a mers. Încercați din nou.";
           err.hidden = false;
           btn.disabled = false;
+          try { if (window.turnstile) turnstile.reset(); } catch (e2) {}
         }
       })
       .catch(function(){ err.textContent = "Ceva n-a mers. Încercați din nou."; err.hidden = false; btn.disabled = false; });
@@ -14569,10 +14858,7 @@ app.get("/obiectiv/:slug", async (req, res) => {
 });
 
 app.get("/admin/propuneri", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
-    return;
-  }
+  if (!requireAdminPage(req, res)) return;
   if (!dbPool) {
     res.status(503).send("Baza de date nu e configurată.");
     return;
@@ -14642,11 +14928,10 @@ body{font-family:sans-serif;max-width:700px;margin:20px auto;padding:0 16px;back
 <h1>📋 Propuneri utilizatori (${rows.length})</h1>
 ${rowsHtml}
 <script>
-var KEY = ${safeJson(req.query.key)};
 document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
     var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
-    fetch("/api/admin/propuneri/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
+    fetch("/api/admin/propuneri/" + btn.getAttribute("data-id") + "/" + action, { method: "POST" })
       .then(function(){ btn.closest(".admin-submission-card").remove(); });
   });
 });
@@ -14655,10 +14940,7 @@ document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(funct
 });
 
 app.post("/api/admin/propuneri/:id/:action", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).json({ error: "forbidden" });
-    return;
-  }
+  if (!requireAdminApi(req, res)) return;
   if (!dbPool) {
     res.status(503).json({ error: "not_configured" });
     return;
@@ -14679,10 +14961,7 @@ app.post("/api/admin/propuneri/:id/:action", async (req, res) => {
 
 
 app.get("/admin/cazari", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
-    return;
-  }
+  if (!requireAdminPage(req, res)) return;
   if (!dbPool) {
     res.status(503).send("Baza de date nu e configurată.");
     return;
@@ -14752,7 +15031,7 @@ app.get("/admin/cazari", async (req, res) => {
 
   const tabHtml = (status, label) => {
     const count = status === "all" ? (counts.pending + counts.approved + counts.rejected) : (counts[status] || 0);
-    return `<a href="/admin/cazari?key=${encodeURIComponent(req.query.key)}&status=${status}" class="admin-tab${activeStatus === status ? " is-active" : ""}">${label} (${count})</a>`;
+    return `<a href="/admin/cazari?status=${status}" class="admin-tab${activeStatus === status ? " is-active" : ""}">${label} (${count})</a>`;
   };
   const sidebarCounts = await getAdminCounts();
 
@@ -14762,7 +15041,7 @@ app.get("/admin/cazari", async (req, res) => {
 <style>${adminShellStyles()}</style></head>
 <body>
 <div class="admin-shell">
-${adminSidebarHtml("cazari", req.query.key, sidebarCounts)}
+${adminSidebarHtml("cazari", sidebarCounts)}
 <div style="flex:1">
 ${adminMobileBarHtml()}
 <div class="admin-main">
@@ -14779,17 +15058,16 @@ ${rowsHtml}
 </div>
 <script>
 (function(){${adminSidebarScript()}})();
-var KEY = ${safeJson(req.query.key)};
 document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
     var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
-    fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
+    fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/" + action, { method: "POST" })
       .then(function(){ location.reload(); });
   });
 });
 document.querySelectorAll(".admin-repending-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
-    fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/repending?key=" + encodeURIComponent(KEY), { method: "POST" })
+    fetch("/api/admin/cazari/" + btn.getAttribute("data-id") + "/repending", { method: "POST" })
       .then(function(){ location.reload(); });
   });
 });
@@ -14798,10 +15076,7 @@ document.querySelectorAll(".admin-repending-btn").forEach(function(btn){
 });
 
 app.post("/api/admin/cazari/:id/:action", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).json({ error: "forbidden" });
-    return;
-  }
+  if (!requireAdminApi(req, res)) return;
   if (!dbPool) {
     res.status(503).json({ error: "not_configured" });
     return;
@@ -14888,10 +15163,7 @@ app.get("/api/cazare/exchange-rates", accommodationGate, async (req, res) => {
 });
 
 app.get("/admin/setari", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
-    return;
-  }
+  if (!requireAdminPage(req, res)) return;
   const currentCents = await getAccommodationMonthlyPriceCents();
   const sidebarCounts = await getAdminCounts();
   res.set("Content-Type", "text/html; charset=utf-8");
@@ -14901,7 +15173,7 @@ app.get("/admin/setari", async (req, res) => {
 </style></head>
 <body>
 <div class="admin-shell">
-${adminSidebarHtml("setari", req.query.key, sidebarCounts)}
+${adminSidebarHtml("setari", sidebarCounts)}
 <div style="flex:1">
 ${adminMobileBarHtml()}
 <div class="admin-main" style="max-width:480px">
@@ -14916,10 +15188,9 @@ ${adminMobileBarHtml()}
 </div>
 <script>
 (function(){${adminSidebarScript()}})();
-var KEY = ${safeJson(req.query.key)};
 document.getElementById("saveBtn").addEventListener("click", function(){
   var cents = Math.round(parseFloat(document.getElementById("price").value) * 100);
-  fetch("/api/admin/setari/pret-abonament?key=" + encodeURIComponent(KEY), {
+  fetch("/api/admin/setari/pret-abonament", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cents: cents }),
   }).then(function(r){ return r.ok; }).then(function(ok){
     document.getElementById("msg").textContent = ok ? "✓ Salvat." : "Eroare.";
@@ -14930,7 +15201,7 @@ document.getElementById("saveBtn").addEventListener("click", function(){
 });
 
 app.post("/api/admin/setari/pret-abonament", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(403).json({ error: "forbidden" }); return; }
+  if (!requireAdminApi(req, res)) return;
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
   const cents = parseInt(req.body && req.body.cents, 10);
   if (!Number.isInteger(cents) || cents < 0) { res.status(400).json({ error: "invalid_price" }); return; }
@@ -14943,10 +15214,7 @@ app.post("/api/admin/setari/pret-abonament", async (req, res) => {
 });
 
 app.get("/admin/recenzii", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) {
-    res.status(403).send("Acces interzis. Adaugă ?key=CHEIA_TA în URL.");
-    return;
-  }
+  if (!requireAdminPage(req, res)) return;
   if (!dbPool) { res.status(503).send("Baza de date nu e configurată."); return; }
   let rows = [];
   try {
@@ -14979,7 +15247,7 @@ app.get("/admin/recenzii", async (req, res) => {
 <style>${adminShellStyles()}</style></head>
 <body>
 <div class="admin-shell">
-${adminSidebarHtml("recenzii", req.query.key, sidebarCounts)}
+${adminSidebarHtml("recenzii", sidebarCounts)}
 <div style="flex:1">
 ${adminMobileBarHtml()}
 <div class="admin-main">
@@ -14990,11 +15258,10 @@ ${rowsHtml}
 </div>
 <script>
 (function(){${adminSidebarScript()}})();
-var KEY = ${safeJson(req.query.key)};
 document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(function(btn){
   btn.addEventListener("click", function(){
     var action = btn.classList.contains("admin-approve-btn") ? "aproba" : "respinge";
-    fetch("/api/admin/recenzii/" + btn.getAttribute("data-id") + "/" + action + "?key=" + encodeURIComponent(KEY), { method: "POST" })
+    fetch("/api/admin/recenzii/" + btn.getAttribute("data-id") + "/" + action, { method: "POST" })
       .then(function(){ btn.closest(".admin-submission-card").remove(); });
   });
 });
@@ -15003,7 +15270,7 @@ document.querySelectorAll(".admin-approve-btn, .admin-reject-btn").forEach(funct
 });
 
 app.post("/api/admin/recenzii/:id/:action", async (req, res) => {
-  if (!ADMIN_SECRET_KEY || req.query.key !== ADMIN_SECRET_KEY) { res.status(403).json({ error: "forbidden" }); return; }
+  if (!requireAdminApi(req, res)) return;
   if (!dbPool) { res.status(503).json({ error: "not_configured" }); return; }
   const { id, action } = req.params;
   if (!["aproba", "respinge"].includes(action) || !/^\d+$/.test(id)) { res.status(400).json({ error: "invalid_input" }); return; }
