@@ -184,8 +184,29 @@ const ACCOMMODATION_TRIAL_MONTHS = 3;
 // Link-ul de widget Aviasales, folosit de butonul "✈️ Zboruri" din
 // sub-navigare — comun pe pagina de director și pe cea a proprietății.
 const AVIASALES_SRC = "https://tpembd.com/content?currency=eur&trs=565241&shmarker=767825&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%23F0813A&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=12&no_labels=&plain=true&promo_id=7879&campaign_id=100";
-// Widget transferuri (aeroport etc.) — TravelPayouts, temă "biletik".
-const TRANSFER_WIDGET_SRC = "https://tpembd.com/content?trs=565241&powered_by=false&shmarker=767825&language=ro&display_currency=EUR&transfer_type=any&theme=biletik&hide_form_extras=false&hide_external_links=false&disable_currency_selector=false&campaign_id=1&promo_id=691";
+// Widget transferuri (aeroport etc.) — TravelPayouts, program intui.travel.
+// promo_id=4674/campaign_id=22 — același widget deja folosit și pe paginile
+// de Ghiduri ("🚕 Rezervă un transfer"), unde se randează corect ca
+// <script> simplu — spre deosebire de tema "biletik" (promo_id=691/
+// campaign_id=1, folosită înainte aici), care rămânea goală la injectare
+// dinamică. ATENȚIE: același widget a produs deja, confirmat, bug-ul cu
+// come_datetime=NaN la căutare — asta ține de afișare, nu de căutare
+// (raportat separat la TravelPayouts).
+//
+// CAUZA REALĂ a widget-ului complet gol pe programul-de-azi.ro (confirmată
+// direct de utilizator, din dashboard-ul TravelPayouts): "trs" nu e doar
+// un ID de cont — fiecare domeniu/proiect are propriul cod de embed, cu
+// propriul "trs", generat separat pentru acel proiect anume. Codul cu
+// trs=565241 a fost generat pentru opening-hours-today.eu; pe
+// programul-de-azi.ro, intui.travel nici nu apărea ca program conectat —
+// de-aia widget-ul rămânea gol acolo, indiferent de restul codului.
+// Alegem varianta corectă la runtime, cu isIntlHost(req) (exact ca la
+// restul integrărilor domain-specific de pe site — vezi GetTransfer/Omio).
+const TRANSFER_WIDGET_SRC_EU = "https://tpembd.com/content?trs=565241&shmarker=767825&locale=en&powered_by=false&border_radius=13&plain=true&color_background=%23f6f6f6&color_button=%23FF4F1Dc7&promo_id=4674&campaign_id=22";
+const TRANSFER_WIDGET_SRC_RO = "https://tpembd.com/content?trs=564938&shmarker=767825&locale=en&powered_by=true&border_radius=14&plain=true&color_background=%23f6f6f6&color_button=%23E4692Cff&promo_id=4674&campaign_id=22";
+function transferWidgetSrcFor(isIntl) {
+  return isIntl ? TRANSFER_WIDGET_SRC_EU : TRANSFER_WIDGET_SRC_RO;
+}
 async function getAccommodationMonthlyPriceCents() {
   if (!dbPool) return 0;
   try {
@@ -196,23 +217,32 @@ async function getAccommodationMonthlyPriceCents() {
   }
 }
 // Selector de monedă real (buton în header) — cursuri reale, sursă gratuită
-// (Frankfurter.app, date BCE, fără cheie API), cache 12 ore în DB, ca să nu
+// (Frankfurter, date BCE, fără cheie API), cache 12 ore în DB, ca să nu
 // batem API-ul extern la fiecare vizualizare de pagină.
+// NOTĂ: domeniul/parametrii Frankfurter s-au schimbat — varianta veche
+// (api.frankfurter.app/latest?from=..&to=..) nu se mai poate baza pe ea;
+// endpoint-ul curent, documentat, e api.frankfurter.dev/v1/latest cu
+// base/symbols. Păstrăm și un set de cursuri aproximative, fixe, ca
+// rezervă — dacă API-ul extern pică din orice motiv, conversia tot
+// funcționează (aproximativ), în loc să rămână blocată pe RON/EUR:1.
 const ACC_SUPPORTED_CURRENCIES = ["EUR", "RON", "USD", "GBP", "HUF", "CZK", "PLN", "BGN", "TRY", "CHF", "SEK", "NOK", "DKK"];
+const ACC_FALLBACK_RATES = { EUR: 1, RON: 5.08, USD: 1.08, GBP: 0.84, HUF: 398, CZK: 24.9, PLN: 4.25, BGN: 1.96, TRY: 38.5, CHF: 0.93, SEK: 11.2, NOK: 11.7, DKK: 7.46 };
 async function getExchangeRates() {
-  const fallback = { base: "EUR", rates: { EUR: 1 }, updated: null };
+  const fallback = { base: "EUR", rates: ACC_FALLBACK_RATES, updated: null };
   if (!dbPool) return fallback;
   try {
     const cached = await dbPool.query(`SELECT value FROM accommodation_settings WHERE key = 'exchange_rates'`);
     if (cached.rows.length) {
       const data = JSON.parse(cached.rows[0].value);
-      if (data.updated && Date.now() - new Date(data.updated).getTime() < 12 * 60 * 60 * 1000) {
+      const looksComplete = data.rates && ACC_SUPPORTED_CURRENCIES.every((c) => typeof data.rates[c] === "number");
+      if (looksComplete && data.updated && Date.now() - new Date(data.updated).getTime() < 12 * 60 * 60 * 1000) {
         return data;
       }
     }
   } catch (e) { /* mergem mai departe, încercăm să aducem date noi */ }
   try {
-    const resp = await fetch(`https://api.frankfurter.app/latest?from=EUR&to=${ACC_SUPPORTED_CURRENCIES.filter((c) => c !== "EUR").join(",")}`);
+    const symbols = ACC_SUPPORTED_CURRENCIES.filter((c) => c !== "EUR").join(",");
+    const resp = await fetch(`https://api.frankfurter.dev/v1/latest?base=EUR&symbols=${symbols}`);
     const data = await resp.json();
     if (!data.rates) return fallback;
     const result = { base: "EUR", rates: { EUR: 1, ...data.rates }, updated: new Date().toISOString() };
@@ -1306,7 +1336,7 @@ function buildStoreMainHtml({ live, magazinDisplay, locatieSuffix, orasDisplay, 
       ${contactInfoHtml(live)}
       ${branchAddressHtml}
       ${nonstopHintHtml}
-      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, undefined, false)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${specialBanner}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
@@ -1328,7 +1358,7 @@ function buildStoreMainHtml({ live, magazinDisplay, locatieSuffix, orasDisplay, 
       </div>
       ${branchAddressHtml}
       ${nonstopHintHtml}
-      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`)}
+      ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, `${magazinDisplay}${locatieSuffix} ${orasDisplay}`, undefined, false)}
       ${buildReportIssueHtml({ slug: `${orasSlug}/${canonicalSlug}`, name: `${magazinDisplay}${locatieSuffix}`, oras: orasDisplay })}
       ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay })}
 
@@ -1369,7 +1399,7 @@ function buildIntlStoreMainHtml({ live, magazinDisplay, orasDisplay, locatieDisp
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
   </div>
   ${contactInfoHtml(live)}
-  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
+  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`, undefined, true)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
   ${specialBanner}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
@@ -1391,7 +1421,7 @@ function buildIntlStoreMainHtml({ live, magazinDisplay, orasDisplay, locatieDisp
     <div class="status-badge"><span class="dotw"></span><span id="statusBadge">${escapeHtml(t.todayLabel)}</span></div>
     <div class="closing-soon-bar" id="closingSoonBar" style="display:none"><div class="closing-soon-fill" id="closingSoonFill"></div></div>
   </div>
-  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`)}
+  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), `${magazinDisplay} ${orasDisplay}`, undefined, true)}
   ${buildReportIssueHtml({ slug: `${countryCode}/${orasSlug}/${magazinSlug}`, name: `${magazinDisplay} ${orasDisplay}`, oras: orasDisplay, labels: reportIssueLabelsFor(activeLang) })}
   ${buildContextualWidgetHtml({ type: "store", name: magazinDisplay, orasDisplay, labels: contextualWidgetLabelsFor(activeLang), countryCode })}`;
     weeklySectionHtml = `
@@ -1805,7 +1835,7 @@ function carRentalLinkFor(destinationCity) {
 // Buton + panou cu 2 opțiuni — sub programul zilei, pe pagina de magazin
 // SAU obiectiv. Nu redirectăm direct (ar alege unul pentru utilizator) —
 // arătăm ambele opțiuni, îl lăsăm pe el să aleagă.
-function buildHowToGetThereHtml(labels, place, beachOptions) {
+function buildHowToGetThereHtml(labels, place, beachOptions, isIntl) {
   const t = labels || HOW_TO_GET_THERE_LABELS_RO;
   // Waze e primul, dar ascuns implicit — apare doar când statusul (deschis/
   // închis) e cunoscut cu adevărat (vezi sync() din buildContextualWidgetScript,
@@ -1851,7 +1881,7 @@ function buildHowToGetThereHtml(labels, place, beachOptions) {
   // GetTransfer (confirmat mort/greșit de utilizator) — reutilizează exact
   // mecanismul universal de widget-reveal, deja folosit la zboruri peste tot
   // pe site (vezi buildWidgetRevealScript mai sus).
-  const getTransferHtml = `<button type="button" class="how-to-get-there-option widget-reveal-btn" data-widget-target="transferWidgetCard" data-widget-src="${escapeHtml(TRANSFER_WIDGET_SRC)}">${escapeHtml(t.optionA)}</button>`;
+  const getTransferHtml = `<button type="button" class="how-to-get-there-option widget-reveal-btn" data-widget-target="transferWidgetCard" data-widget-src="${escapeHtml(transferWidgetSrcFor(isIntl))}">${escapeHtml(t.optionA)}</button>`;
   const omioHtml = linkOmioAffiliate
     ? `<a href="${escapeHtml(omioLinkFor())}" target="_blank" rel="noopener sponsored" class="how-to-get-there-option how-to-get-there-option-alt">${escapeHtml(t.optionB)}</a>`
     : "";
@@ -5166,10 +5196,40 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 // folosit când detectarea automată găsește o localitate mică, necunoscută
 // nouă, ca să sugerăm ceva onest ("cel mai apropiat oraș pe care-l avem"),
 // nu să pretindem că avem date pentru localitatea exactă
+// Set cu orașele RO care au cel puțin o atracție listată — folosit pentru
+// linkul "Atracții" de mai jos. Normalizare identică cu cea din
+// renderCityPage (fără diacritice, fără spații/cratimă), ca să se
+// potrivească exact aceleași orașe pe care le-ar găsi acea pagină.
+const CITIES_WITH_ATTRACTIONS_RO = new Set(
+  ATTRACTIONS.ro.map((a) => normalizeSlug(a.city || "").replace(/[\s-]+/g, ""))
+);
+function cityHasAttractions(cityName) {
+  return CITIES_WITH_ATTRACTIONS_RO.has(normalizeSlug(cityName || "").replace(/[\s-]+/g, ""));
+}
 function findNearestRoCity(lat, lon) {
   let best = null;
   let bestDist = Infinity;
   for (const city of SITEMAP_CITIES) {
+    const coords = CITY_COORDS[city];
+    if (!coords) continue;
+    const dist = haversineKm(lat, lon, coords[0], coords[1]);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = city;
+    }
+  }
+  return best ? { city: best, distanceKm: Math.round(bestDist) } : null;
+}
+// La fel, dar limitat la orașele care chiar au atracții listate — folosit
+// pentru linkul "Atracții", ca să nu trimitem niciodată spre un oraș "cel
+// mai apropiat" care, la rândul lui, are zero atracții (bug real, prins
+// direct: la Hunedoara — are magazine, dar zero atracții — linkul trimitea
+// spre /hunedoara, care arăta gol la secțiunea de atracții).
+function findNearestRoCityWithAttractions(lat, lon) {
+  let best = null;
+  let bestDist = Infinity;
+  for (const city of SITEMAP_CITIES) {
+    if (!cityHasAttractions(city)) continue;
     const coords = CITY_COORDS[city];
     if (!coords) continue;
     const dist = haversineKm(lat, lon, coords[0], coords[1]);
@@ -5216,12 +5276,29 @@ async function geocodeCityApprox(cityName) {
 // (real, calculat geografic); null dacă nu găsim nimic (buton ascuns).
 async function resolveAttractionsLinkForCity(cityName) {
   if (!cityName) return null;
-  if (isKnownRoCity(cityName)) return { href: `/${slugifyCityName(cityName)}`, label: cityName, isNearby: false };
+  // Oraș cunoscut ȘI cu atracții reale listate — link direct, ca înainte.
+  if (isKnownRoCity(cityName) && cityHasAttractions(cityName)) {
+    return { href: `/${slugifyCityName(cityName)}#attractions`, label: cityName, isNearby: false };
+  }
+  // Oraș cunoscut (are magazine), dar zero atracții — folosim coordonatele
+  // lui directe (nu geocodare) ca să găsim cel mai apropiat oraș care CHIAR
+  // are atracții listate.
+  if (isKnownRoCity(cityName)) {
+    const realName = resolveRoCityDisplay(cityName);
+    const coords = CITY_COORDS[realName];
+    if (coords) {
+      const nearest = findNearestRoCityWithAttractions(coords[0], coords[1]);
+      if (nearest) return { href: `/${slugifyCityName(nearest.city)}#attractions`, label: nearest.city, isNearby: true };
+    }
+    return null;
+  }
+  // Oraș complet necunoscut — geocodare aproximativă, apoi cel mai apropiat
+  // oraș cu atracții reale (nu doar "acoperit" de site, ca înainte).
   const coords = await geocodeCityApprox(cityName);
   if (!coords) return null;
-  const nearest = findNearestRoCity(coords.lat, coords.lon);
+  const nearest = findNearestRoCityWithAttractions(coords.lat, coords.lon);
   if (!nearest) return null;
-  return { href: `/${slugifyCityName(nearest.city)}`, label: nearest.city, isNearby: true };
+  return { href: `/${slugifyCityName(nearest.city)}#attractions`, label: nearest.city, isNearby: true };
 }
 
 // La fel, dar peste TOATE orașele acoperite, din toate țările (RO + cele 17
@@ -8338,7 +8415,7 @@ function buildWidgetRevealScript(nonce) {
     var targetId = btn.getAttribute("data-widget-target");
     var src = btn.getAttribute("data-widget-src");
     var box = document.getElementById(targetId);
-    if (!box || !src) return;
+    if (!box) return;
     box.style.display = "block";
     btn.style.display = "none";
     // Buton de închidere — cerut explicit, o singură dată per widget, ca
@@ -8353,9 +8430,24 @@ function buildWidgetRevealScript(nonce) {
       box.style.position = "relative";
       box.appendChild(closeButton);
     }
-    // dacă widget-ul a mai fost deschis o dată (are deja scriptul încărcat),
-    // nu-l mai injectăm din nou — doar îl arătăm la loc, ca să nu se dubleze
-    if (box.querySelector("script[data-widget-loaded]")) return;
+    // dacă widget-ul a mai fost deschis o dată (are deja scriptul/iframe-ul
+    // încărcat), nu-l mai injectăm din nou — doar îl arătăm la loc, ca să
+    // nu se dubleze
+    if (!src || box.querySelector("script[data-widget-loaded], iframe[data-widget-loaded]")) return;
+    // Widget-ul de transfer (TravelPayouts, temă "biletik") foloseşte intern
+    // document.write — silenţios ignorat de browser când scriptul e injectat
+    // dinamic, DUPĂ ce parser-ul paginii s-a închis deja (bug real, semnalat
+    // direct: caseta se deschidea goală, complet, de fiecare dată). Soluţie:
+    // iframe, care are propriul document, imun la problema asta — marcat
+    // explicit prin data-widget-mode="iframe" pe buton.
+    if (btn.getAttribute("data-widget-mode") === "iframe") {
+      var f = document.createElement("iframe");
+      f.src = src;
+      f.setAttribute("data-widget-loaded", "1");
+      f.style.cssText = "width:100%;min-height:480px;border:none;display:block";
+      box.appendChild(f);
+      return;
+    }
     var s = document.createElement("script");
     s.async = true;
     s.charset = "utf-8";
@@ -9822,7 +9914,7 @@ async function renderAttractionPageRO({ attraction, baseUrl, nonce, userAgent, i
   ${isBeach ? buildBeachTagsWidgetHtml(slug, beachWinningTags, "ro") : ""}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, "ro"), countryCode: "ro", lang: "ro", hideTicket: isFreeAccessAttraction(attraction.name, attraction.category), accessDifficulty: attraction.accessDifficulty })}
-  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name)}
+  ${buildHowToGetThereHtml(HOW_TO_GET_THERE_LABELS_RO, attraction.name, undefined, false)}
   ${buildTravelGuidesBoxHtml()}
 
   <p class="disclaimer">Informațiile despre ${escapeHtml(displayName)} sunt orientative. Pentru detalii complete, verifică <a href="${escapeHtml(attraction.url)}" target="_blank" rel="noopener">site-ul oficial</a>.</p>
@@ -9969,7 +10061,7 @@ async function renderAttractionPageIntl({ attraction, countryCode, lang, baseUrl
   ${beachContent ? buildBeachContentRestHtml(beachContent, activeLang) : ""}
 
   ${buildBookingPlanningButtonsHtml({ name: attraction.name, city: detectAttractionCity(attraction.name, countryCode), labels: bookingPlanningLabelsFor(activeLang, isBeach), countryCode, lang: activeLang, lat: live && live.lat, lng: live && live.lng, hideTicket: isFreeAccessAttraction(attraction.name, attraction.category) || isBeach, accessDifficulty: attraction.accessDifficulty, isBeach })}
-  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name, { isBeach, accessDifficulty: attraction.accessDifficulty, city: isBeach ? attraction.city : detectAttractionCity(attraction.name, countryCode), name: attraction.name, lang: activeLang })}
+  ${buildHowToGetThereHtml(howToGetThereLabelsFor(activeLang), attraction.name, { isBeach, accessDifficulty: attraction.accessDifficulty, city: isBeach ? attraction.city : detectAttractionCity(attraction.name, countryCode), name: attraction.name, lang: activeLang }, true)}
   ${buildTravelGuidesBoxHtmlIntl(activeLang)}
 
   <footer>
@@ -10181,6 +10273,8 @@ function renderHomePage(nonce, suggestedCity, baseUrl) {
   <div class="sub-nav-panel" data-panel="attractions">
     <label class="map-live-toggle attraction-list-open-toggle open-now-switch"><input type="checkbox" id="attractionListOpenOnlyToggle"> Doar obiectivele deschise acum</label>
     ${buildNoResultsItineraryPromoHtml("noResultsAttractionItinPromo", "ro", "ro")}
+    <h2 class="section-title"><span class="bar"></span>Alege orașul</h2>
+    ${buildCitySelectorHtml({ popularCities: SITEMAP_CITIES.filter((c) => cityHasAttractions(c)), hrefPrefix: "/" })}
     <h2 class="section-title"><span class="bar"></span>Explorează colecții:</h2>
     <div class="attraction-accordion-wrap">${attractionItemsHtml}</div>
     ${buildItineraryPromoCardHtml("ro", "ro")}
@@ -12483,21 +12577,50 @@ function renderPhotos(){
 }
 renderPhotos();
 
-var MAX_PHOTO_BYTES = 4 * 1024 * 1024;
+// Redimensionăm + comprimăm în browser înainte de upload — proprietarii
+// încarcă poze direct de pe telefon, des 8-15MB la rezoluție maximă; fără
+// asta fie erau respinse (limita de 4MB), fie umpleau storage-ul cu poze
+// mult mai mari decât au vreodată nevoie (afișate mereu la 80-340px,
+// oricât de mare ar fi originalul). 1920px pe latura lungă + JPEG 82% —
+// suficient pentru orice ecran, de zeci de ori mai mic ca fișier.
+function resizeImageForUpload(file, maxDim, quality){
+  return new Promise(function(resolve, reject){
+    if (!file.type || file.type.indexOf("image/") !== 0) { reject(new Error("Fișierul nu e o imagine.")); return; }
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function(){
+      URL.revokeObjectURL(url);
+      var w = img.naturalWidth, h = img.naturalHeight;
+      var scale = Math.min(1, maxDim / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = cw; canvas.height = ch;
+      canvas.getContext("2d").drawImage(img, 0, 0, cw, ch);
+      canvas.toBlob(function(blob){
+        if (!blob) { reject(new Error("Nu am putut procesa poza.")); return; }
+        resolve(blob);
+      }, "image/jpeg", quality);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("Fișierul nu pare o imagine validă.")); };
+    img.src = url;
+  });
+}
+var MAX_ORIGINAL_PHOTO_BYTES = 30 * 1024 * 1024; // doar ca să nu blocăm browserul pe un fișier absurd de mare
 document.getElementById("accPhotoInput").addEventListener("change", async function(e){
   var files = Array.from(e.target.files || []).slice(0, 10 - photos.length);
   if (!files.length) return;
-  photoStatus.textContent = "Se încarcă " + files.length + " poze...";
+  photoStatus.textContent = "Se procesează și încarcă " + files.length + " poze...";
   for (var i = 0; i < files.length; i++) {
-    if (files[i].size > MAX_PHOTO_BYTES) {
-      photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB, maxim 4 MB) — comprim-o sau alege alta.";
+    if (files[i].size > MAX_ORIGINAL_PHOTO_BYTES) {
+      photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB) — alege alta.";
       continue;
     }
     try {
+      var resized = await resizeImageForUpload(files[i], 1920, 0.82);
       var resp = await fetch("/api/cazare/upload-poza", {
         method: "POST",
-        headers: { "Content-Type": files[i].type || "image/jpeg" },
-        body: files[i],
+        headers: { "Content-Type": "image/jpeg" },
+        body: resized,
       });
       var data = await resp.json();
       if (!resp.ok || !data.url) { throw new Error(data.error || ("HTTP " + resp.status)); }
@@ -13145,18 +13268,41 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     wrap.appendChild(img); wrap.appendChild(rm);
     mainPhotoList.appendChild(wrap);
   }
-  var MAX_PHOTO_BYTES = 4 * 1024 * 1024;
+  function resizeImageForUpload(file, maxDim, quality){
+    return new Promise(function(resolve, reject){
+      if (!file.type || file.type.indexOf("image/") !== 0) { reject(new Error("Fișierul nu e o imagine.")); return; }
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = cw; canvas.height = ch;
+        canvas.getContext("2d").drawImage(img, 0, 0, cw, ch);
+        canvas.toBlob(function(blob){
+          if (!blob) { reject(new Error("Nu am putut procesa poza.")); return; }
+          resolve(blob);
+        }, "image/jpeg", quality);
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("Fișierul nu pare o imagine validă.")); };
+      img.src = url;
+    });
+  }
+  var MAX_ORIGINAL_PHOTO_BYTES = 30 * 1024 * 1024;
   document.getElementById("dMainPhotoInput").addEventListener("change", async function(e){
     var file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (file.size > MAX_PHOTO_BYTES) {
-      mainPhotoStatus.textContent = "„" + file.name + "” e prea mare (" + (file.size / 1024 / 1024).toFixed(1) + " MB, maxim 4 MB).";
+    if (file.size > MAX_ORIGINAL_PHOTO_BYTES) {
+      mainPhotoStatus.textContent = "„" + file.name + "” e prea mare (" + (file.size / 1024 / 1024).toFixed(1) + " MB).";
       e.target.value = "";
       return;
     }
-    mainPhotoStatus.textContent = "Se încarcă...";
+    mainPhotoStatus.textContent = "Se procesează și încarcă...";
     try {
-      var resp = await fetch("/api/cazare/upload-poza", { method: "POST", headers: { "Content-Type": file.type || "image/jpeg" }, body: file });
+      var resized = await resizeImageForUpload(file, 1920, 0.82);
+      var resp = await fetch("/api/cazare/upload-poza", { method: "POST", headers: { "Content-Type": "image/jpeg" }, body: resized });
       var data = await resp.json();
       if (!resp.ok || !data.url) throw new Error(data.error || ("HTTP " + resp.status));
       mainPhoto = data.url;
@@ -13188,14 +13334,15 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
   document.getElementById("dPhotoInput").addEventListener("change", async function(e){
     var files = Array.from(e.target.files || []).slice(0, 9 - photos.length);
     if (!files.length) return;
-    photoStatus.textContent = "Se încarcă " + files.length + " poze...";
+    photoStatus.textContent = "Se procesează și încarcă " + files.length + " poze...";
     for (var i = 0; i < files.length; i++) {
-      if (files[i].size > MAX_PHOTO_BYTES) {
-        photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB, maxim 4 MB).";
+      if (files[i].size > MAX_ORIGINAL_PHOTO_BYTES) {
+        photoStatus.textContent = "„" + files[i].name + "” e prea mare (" + (files[i].size / 1024 / 1024).toFixed(1) + " MB).";
         continue;
       }
       try {
-        var resp = await fetch("/api/cazare/upload-poza", { method: "POST", headers: { "Content-Type": files[i].type || "image/jpeg" }, body: files[i] });
+        var resized = await resizeImageForUpload(files[i], 1920, 0.82);
+        var resp = await fetch("/api/cazare/upload-poza", { method: "POST", headers: { "Content-Type": "image/jpeg" }, body: resized });
         var data = await resp.json();
         if (!resp.ok || !data.url) throw new Error(data.error || ("HTTP " + resp.status));
         photos.push(data.url);
@@ -15439,7 +15586,8 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-nav-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
 .acc-nav-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
 .acc-nav-header .brand span{color:var(--accent);}
-.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
+.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;min-width:0;}
+@media (max-width:1024px){.acc-nav-right{gap:10px;font-size:12.5px;justify-content:flex-end;}.acc-nav-user-name{margin-left:2px;}}
 .acc-nav-right a{color:#fff;text-decoration:none;}
 .acc-currency-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:13.5px;font-weight:700;cursor:pointer;}
 .acc-currency-btn:hover{border-color:#fff;}
@@ -15471,10 +15619,12 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 
 
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
-.acc-nav-user-wrap{position:relative;}
-.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;}
+.acc-nav-user-wrap{position:relative;min-width:0;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;min-width:0;}
 .acc-nav-user:hover{background:rgba(255,255,255,.06);}
-.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;}
+.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;min-width:0;overflow:hidden;}
+.acc-nav-user-email{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media (max-width:1024px){.acc-nav-user-email{max-width:120px;}}
 @media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
@@ -15566,14 +15716,15 @@ app.get("/cazare", accommodationGate, async (req, res) => {
         ).join("")}
       </div>
     </div>
-    <a href="/cazare/login">Listează-ți proprietatea</a>
+    ${!ownerSession ? `<a href="/cazare/login">Listează-ți proprietatea</a>` : ``}
     ${ownerSession ? `
     <div class="acc-nav-user-wrap">
       <button type="button" class="acc-nav-user" id="accNavUserBtn">
         <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
-        <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+        <span class="acc-nav-user-name"><span class="acc-nav-user-email">${escapeHtml(ownerSession.email)}</span><span class="acc-nav-user-status">Conectat</span></span>
       </button>
       <div class="acc-nav-user-dropdown" id="accNavUserDropdown">
+        <a href="/cont/alege-tip">➕ Adaugă o proprietate</a>
         <a href="/cont">📊 Panoul meu</a>
         <button type="button" id="accNavLogoutBtn" class="acc-nav-logout">🚪 Delogare</button>
       </div>
@@ -15602,7 +15753,7 @@ ${accCurrencyModalHtml()}
       <h3 class="acc-widget-modal-title">Informații transferuri</h3>
       <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
     </div>
-    <div id="accTransferWidget"><script nonce="${nonce}" async src="${TRANSFER_WIDGET_SRC}"></script></div>
+    <div id="accTransferWidget"><script nonce="${nonce}" async src="${transferWidgetSrcFor(isIntlHost(req))}"></script></div>
     <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
       <hr class="acc-widget-divider">
       <div class="acc-widget-perks-grid">
@@ -15694,7 +15845,7 @@ ${accCurrencyModalHtml()}
   <h2 class="acc-explore-title">Descoperă mai mult</h2>
   <div class="acc-explore-grid">
     ${cityFilter && attractionsLink ? `
-    <a href="${attractionsLink.href}" class="acc-explore-card">
+    <a href="${attractionsLink.href.split("#")[0]}" class="acc-explore-card">
       <span class="icon">🏪</span>
       <div><div class="title">Magazine ${attractionsLink.isNearby ? `lângă ${escapeHtml(cityFilter)}` : `în ${escapeHtml(attractionsLink.label)}`}</div><div class="sub">Program, adresă, hartă</div></div>
     </a>
@@ -15710,7 +15861,7 @@ ${accCurrencyModalHtml()}
       <span class="icon">✈️</span>
       <div><div class="title">Zboruri</div><div class="sub">Caută bilete de avion</div></div>
     </button>
-    <button type="button" class="acc-explore-card widget-reveal-btn" data-widget-target="accTransferWidget" data-widget-src="${TRANSFER_WIDGET_SRC}">
+    <button type="button" class="acc-explore-card widget-reveal-btn" data-widget-target="accTransferWidget">
       <span class="icon">🚕</span>
       <div><div class="title">Transferuri</div><div class="sub">De la aeroport sau oriunde</div></div>
     </button>
@@ -15759,7 +15910,7 @@ document.addEventListener("click", function(e){
   if (transferExtraBottom) transferExtraBottom.hidden = !isTransfer;
   backdrop.classList.add("is-open");
   document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
-  if (src && !box.querySelector("script[data-widget-loaded]")) {
+  if (src && !box.querySelector("script[data-widget-loaded], iframe[data-widget-loaded]")) {
     var s = document.createElement("script");
     s.async = true; s.charset = "utf-8"; s.src = src;
     s.setAttribute("data-widget-loaded", "1");
@@ -15903,7 +16054,8 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-nav-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
 .acc-nav-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
 .acc-nav-header .brand span{color:var(--accent);}
-.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;}
+.acc-nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13.5px;color:#fff;min-width:0;}
+@media (max-width:1024px){.acc-nav-right{gap:10px;font-size:12.5px;justify-content:flex-end;}.acc-nav-user-name{margin-left:2px;}}
 .acc-nav-right a{color:#fff;text-decoration:none;}
 .acc-currency-btn{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:13.5px;font-weight:700;cursor:pointer;}
 .acc-currency-btn:hover{border-color:#fff;}
@@ -15935,10 +16087,12 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 
 
 .acc-nav-avatar{width:30px;height:30px;border-radius:50%;background:#232a35;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
-.acc-nav-user-wrap{position:relative;}
-.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;}
+.acc-nav-user-wrap{position:relative;min-width:0;}
+.acc-nav-user{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;font-family:inherit;min-width:0;}
 .acc-nav-user:hover{background:rgba(255,255,255,.06);}
-.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;}
+.acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;min-width:0;overflow:hidden;}
+.acc-nav-user-email{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media (max-width:1024px){.acc-nav-user-email{max-width:120px;}}
 @media (max-width:640px){.acc-nav-user-name{display:none;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
@@ -16073,14 +16227,15 @@ ${mode.isPreview ? `<div style="background:#3a2a12;color:#ffcf7a;text-align:cent
         ).join("")}
       </div>
     </div>
-    <a href="/cazare/login">Listează-ți proprietatea</a>
+    ${!ownerSession ? `<a href="/cazare/login">Listează-ți proprietatea</a>` : ``}
     ${ownerSession ? `
     <div class="acc-nav-user-wrap">
       <button type="button" class="acc-nav-user" id="accNavUserBtn">
         <div class="acc-nav-avatar">${escapeHtml((ownerSession.email || "?")[0].toUpperCase())}</div>
-        <span class="acc-nav-user-name">${escapeHtml(ownerSession.email)}<span class="acc-nav-user-status">Conectat</span></span>
+        <span class="acc-nav-user-name"><span class="acc-nav-user-email">${escapeHtml(ownerSession.email)}</span><span class="acc-nav-user-status">Conectat</span></span>
       </button>
       <div class="acc-nav-user-dropdown" id="accNavUserDropdown">
+        <a href="/cont/alege-tip">➕ Adaugă o proprietate</a>
         <a href="/cont">📊 Panoul meu</a>
         <button type="button" id="accNavLogoutBtn" class="acc-nav-logout">🚪 Delogare</button>
       </div>
@@ -16109,7 +16264,7 @@ ${accCurrencyModalHtml()}
       <h3 class="acc-widget-modal-title">Informații transferuri</h3>
       <p class="acc-widget-modal-subtitle">Cauți un transfer sigur, din aeroport sau oriunde ai nevoie?</p>
     </div>
-    <div id="accTransferWidget"><script nonce="${nonce}" async src="${TRANSFER_WIDGET_SRC}"></script></div>
+    <div id="accTransferWidget"><script nonce="${nonce}" async src="${transferWidgetSrcFor(isIntlHost(req))}"></script></div>
     <div id="transferWidgetExtraBottom" class="acc-widget-perks-wrap" hidden>
       <hr class="acc-widget-divider">
       <div class="acc-widget-perks-grid">
@@ -16426,7 +16581,7 @@ ${waBase ? `
   if (transferExtraBottom) transferExtraBottom.hidden = !isTransfer;
     backdrop.classList.add("is-open");
     document.querySelectorAll(".widget-reveal-btn").forEach(function(b){ b.classList.toggle("is-active", b === btn); });
-    if (src && !box.querySelector("script[data-widget-loaded]")) {
+    if (src && !box.querySelector("script[data-widget-loaded], iframe[data-widget-loaded]")) {
       var s = document.createElement("script");
       s.async = true; s.charset = "utf-8"; s.src = src;
       s.setAttribute("data-widget-loaded", "1");
