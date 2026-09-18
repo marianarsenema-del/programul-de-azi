@@ -13141,6 +13141,7 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
 .acc-photo-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
 .acc-photo-thumb button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#e53935;color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;}
 .acc-price-row{display:flex;gap:8px;align-items:stretch;}
+.acc-lined-textarea{line-height:28px;resize:vertical;background-image:repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(240,129,58,.4) 27px, rgba(240,129,58,.4) 28px);background-attachment:local;}
 .acc-price-row input{margin-bottom:0;}
 .acc-price-row select{border:2px solid #F0813A;border-radius:10px;padding:14px 10px;font-size:15px;background:#fff;box-sizing:border-box;}
 .acc-details-bottombar{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;max-width:560px;margin:16px auto 40px;padding:0 24px;}
@@ -13181,20 +13182,20 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     <label class="acc-white-label" for="dRooms">Nr. camere/unități</label>
     <input type="number" id="dRooms" class="acc-white-input" min="1" max="200" required>
 
-    <label class="acc-white-label">Preț de la (per noapte)</label>
+    <label class="acc-white-label" for="dPrice">Preț/noapte/cameră</label>
     <div class="acc-price-row">
       <input type="number" id="dPrice" class="acc-white-input" min="0" step="0.01" required style="flex:2">
       <select id="dCurrency" style="flex:1"><option value="RON" selected>RON</option><option value="EUR">EUR</option></select>
     </div>
 
-    <label class="acc-white-label" for="dPricePerRoom">Preț/noapte/cameră (opțional, dacă vinzi și pe cameră)</label>
-    <input type="number" id="dPricePerRoom" class="acc-white-input" min="0" step="0.01">
-
     <label class="acc-white-label" for="dPricePerProperty">Preț/noapte/toată proprietatea (opțional, dacă închiriezi și în întregime)</label>
-    <input type="number" id="dPricePerProperty" class="acc-white-input" min="0" step="0.01">
+    <div class="acc-price-row">
+      <input type="number" id="dPricePerProperty" class="acc-white-input" min="0" step="0.01" style="flex:2">
+      <select id="dCurrency2" style="flex:1"><option value="RON" selected>RON</option><option value="EUR">EUR</option></select>
+    </div>
 
     <label class="acc-white-label" for="dSpecialOffers">Oferte speciale (opțional — o ofertă pe linie, ex. „3+1 gratis în august” sau „Ofertă de Crăciun”)</label>
-    <textarea id="dSpecialOffers" class="acc-white-input" rows="3" maxlength="500"></textarea>
+    <textarea id="dSpecialOffers" class="acc-white-input acc-lined-textarea" rows="6" maxlength="500"></textarea>
 
     <label class="acc-white-label">Facilități</label>
     <div class="acc-check-grid">
@@ -13291,6 +13292,15 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
     });
   }
   var MAX_ORIGINAL_PHOTO_BYTES = 30 * 1024 * 1024;
+  // Un singur preț/monedă reală per anunț — cele două selectoare (cameră +
+  // proprietate întreagă) rămân sincronizate, ca să nu poată exista
+  // confuzia "am ales EUR aici, dar celălalt preț e tot în RON".
+  (function(){
+    var c1 = document.getElementById("dCurrency");
+    var c2 = document.getElementById("dCurrency2");
+    c1.addEventListener("change", function(){ c2.value = c1.value; });
+    c2.addEventListener("change", function(){ c1.value = c2.value; });
+  })();
   document.getElementById("dMainPhotoInput").addEventListener("change", async function(e){
     var file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -13386,7 +13396,7 @@ app.get("/cont/cazare/noua", accommodationGate, requireAccommodationOwner, (req,
       roomsCount: document.getElementById("dRooms").value,
       priceFrom: document.getElementById("dPrice").value,
       priceCurrency: document.getElementById("dCurrency").value,
-      pricePerRoom: document.getElementById("dPricePerRoom").value,
+      pricePerRoom: document.getElementById("dPrice").value,
       pricePerProperty: document.getElementById("dPricePerProperty").value,
       specialOffers: document.getElementById("dSpecialOffers").value,
       amenities: amenities,
@@ -15625,7 +15635,7 @@ app.get("/cazare", accommodationGate, async (req, res) => {
 .acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;min-width:0;overflow:hidden;}
 .acc-nav-user-email{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 @media (max-width:1024px){.acc-nav-user-email{max-width:120px;}}
-@media (max-width:640px){.acc-nav-user-name{display:none;}}
+@media (max-width:480px){.acc-nav-user-email{max-width:80px;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
 .acc-nav-user-dropdown.is-open{display:block;}
@@ -16093,7 +16103,7 @@ async function handleAccommodationPropertyPage(req, res, mode) {
 .acc-nav-user-name{line-height:1.2;text-align:left;color:inherit;min-width:0;overflow:hidden;}
 .acc-nav-user-email{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 @media (max-width:1024px){.acc-nav-user-email{max-width:120px;}}
-@media (max-width:640px){.acc-nav-user-name{display:none;}}
+@media (max-width:480px){.acc-nav-user-email{max-width:80px;}}
 .acc-nav-user-status{color:var(--accent);font-size:11px;display:block;}
 .acc-nav-user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;min-width:190px;z-index:80;}
 .acc-nav-user-dropdown.is-open{display:block;}
@@ -17563,7 +17573,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
 
   <div id="itinResults"></div>
 
-  <button type="button" id="itinResetBtn" class="clear-country-btn" style="display:none;margin:20px 18px 0">${escapeHtml(t.resetBtn)}</button>
+  <button type="button" id="itinResetBtn" class="clear-country-btn" style="display:none;width:calc(100% - 36px);box-sizing:border-box;margin:20px 18px 0;padding:13px 18px;font-size:13.5px;">${escapeHtml(t.resetBtn)}</button>
 
   <footer>
     <p><strong>${isIntlDomain ? "Opening Hours Today" : "Programul de Azi"}</strong> — ${escapeHtml(t.footer)}</p>
@@ -17759,7 +17769,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     }
     var BTN_STYLE = "display:block;text-align:center;padding:13px 18px;border-radius:100px;font-family:inherit;font-weight:700;font-size:13.5px;text-decoration:none;background:#3A4556;color:#E8EBF0;border:1px solid #4A5568;width:100%;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;";
     var ARROW_HTML = '<span aria-hidden="true">➜</span>';
-    var icsBtnHtml = '<button type="button" id="icalExportBtn" style="' + BTN_STYLE + 'margin-top:10px">' + ICAL_LABEL + ARROW_HTML + '</button>';
+    var icsBtnHtml = '<button type="button" id="icalExportBtn" style="' + BTN_STYLE + '">' + ICAL_LABEL + ARROW_HTML + '</button>';
 
     var rainNoteHtml = data.rainWarningDay1 ? '<div class="plan-visit-hint" style="margin-bottom:14px">' + RAIN_PLAN_NOTE + '</div>' : "";
     var html = rainNoteHtml + data.zile.map(function(zi){
@@ -17825,8 +17835,7 @@ function renderItineraryPage(nonce, baseUrl, lang, countryCode) {
     var parkTicketHtml = (data && data.parcTicketLink && data.parcGasit)
       ? '<a href="' + data.parcTicketLink + '" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-ticket">' + PARK_TICKET_LABEL + ' — ' + escapeHtmlClient(data.parcGasit) + '</a>'
       : '';
-    html += '<div class="plan-visit-block" style="display:block; margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + '</div>';
-    html += icsBtnHtml;
+    html += '<div class="plan-visit-block" style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">' + parkTicketHtml + flightHtml + hotelHtml + carHtml + icsBtnHtml + '</div>';
     results.innerHTML = html;
     resetBtn.style.display = "block";
     var icalBtn = document.getElementById("icalExportBtn");
