@@ -1,7 +1,13 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/server" },
-    { "source": "/(.*)", "destination": "/api/server" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/server"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/server"
+    }
   ],
   "headers": [
     {
@@ -24,6 +30,12 @@
           "value": "geolocation=(self), camera=(), microphone=(), bluetooth=(), usb=(), payment=(), magnetometer=(), gyroscope=(), accelerometer=(), midi=()"
         }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/push-zilnic",
+      "schedule": "0 15 * * *"
     }
   ]
 }
