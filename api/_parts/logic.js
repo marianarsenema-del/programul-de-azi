@@ -108,7 +108,7 @@ const {
 const ATTRACTIONS = require("../attractions-data.js");
 const BEACH_CONTENT_DATA = require("../beach-content-data.js");
 const BEACH_CONTENT_UK = require("../beach-content-uk.js");
-const { ACCOMMODATION_AMENITIES, ACCOMMODATION_LIVE, ACCOMMODATION_PREVIEW_KEY, ACCOMMODATION_SESSION_SECRET, ACC_CURRENCY_LABELS, ACC_CURRENCY_LABELS_EN, ACC_FALLBACK_RATES, ACC_SUPPORTED_CURRENCIES, ADMIN_SESSION_SECRET, ADSENSE_ENABLED, ALL_JUDETE_NORMALIZED, ARRIVAL_PLANNER_LABELS, ATTRACTION_AMENITIES, ATTRACTION_FOOTER_TEMPLATES, ATTRACTION_TICKET_URLS, ATTRACTION_VENUE_TYPES, AWIN_YPS_AFFILIATE_ID, AWIN_YPS_MERCHANT_ID, BACK_BUTTON_LABELS, BATH_AMENITIES, BEACH_CONTENT_LABELS_RO, BEACH_CONTENT_LABELS_UK, BEACH_PARTNER_OFFERS, BEDROOM_AMENITIES, BED_TYPES, BOOKING_AFFILIATE_ID, BOOKING_HINT_TEMPLATES, BOOKING_HINT_TEMPLATES_BEACH, BOT_USER_AGENT_PATTERN, CAMP_FACILITIES, CAMP_GROUPS, CAMP_UNITS, CAMP_VEHICLES, COUNTRY_NAMES_EN, COUNTRY_NAMES_RO, DAISY_TYPES, DAY_NAMES, DESC_AI_CLICHEE, DISCOVERCARS_AFFILIATE_ID, EXTERIOR_ACCESS, EXTERIOR_AMENITIES, FIREPLACE_TYPES, FREE_ACCESS_DAM_RE, FREE_ACCESS_EXCLUDE_RE, FREE_ACCESS_KEYWORDS_RE, FREE_ACCESS_SKIP_CATEGORIES, GENERIC_PARTNER_OFFERS, GEO_BTN_LABELS, GOOGLE_PLACES_API_KEY_LIVE, GYG_PARTNER_ID, HOTEL_BEDS, HOTEL_FACILITIES, HOTEL_MEAL_PLANS, HOTEL_MENUS, HOTEL_PETS, HOTEL_QUIET, HOTEL_RECEPTION, HOTEL_ROOM_AMENITIES, HOTEL_SUBTYPES, I18N_MAPS_EN, INTERNAL_TO_GOOGLE_LANG, INTL_DOMAIN, KITCHEN_APPLIANCES, KITCHEN_TYPES, LANGUAGE_FLAGS, LANG_META, LIVING_AMENITIES, LIVING_GROUPS, LOCALITATE_TO_JUDET, LOCAL_SEARCH_HITS, MAX_OBIECTIVE_PROMPT, MIN_OBIECTIVE_UTILE, MIN_OBIECTIVE_UTILE_INTL, MOUNTAIN_ROAD_LABELS, MOUNTAIN_ROAD_RE, NO_MATCHES_LABELS, OPENWEATHER_API_KEY, OWNER_EXISTS_CACHE, PA_ICON_MAP, PA_ICON_PATHS, PENSION_BATH_TYPES, PENSION_BED_KEYS, PENSION_EXTRA_BEDS, PENSION_MAIN_BEDS, PENSION_TYPES, PROSPECT_DEFAULT_TEMPLATES, PROSPECT_STATUSES, RENTAL_MODES, REPORT_IP_SALT, RESEND_API_KEY, RESTAURANT_AMENITIES, RESTAURANT_DIETARY_OPTIONS, RESTAURANT_LIVE, RESTAURANT_PLATFORM_BY_COUNTRY, RESTAURANT_PREVIEW_KEY, RESTAURANT_VENUE_TYPES, REVIEWS_CLIENT_JS, REVIEW_CRITERIA, ROAD_WORD_RE, ROMANIAN_LEGAL_HOLIDAYS_2026, RO_DOMAIN, RO_TO_EU_GUIDES_MAP, RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES, SCHEMA_DAY_NAMES, SEO_TYPE_WORDS, SITEMAP_BRANDS, SITEMAP_MALLS, SOCIAL_ICONS, STAR_PATH, STORE_AFFILIATE_LINKS, STRUCT_FACILITY_KEYS, SUBMIT_PLACE_LABELS, SUBMIT_PLACE_SCHEDULE_DAYS, TRANSFER_WIDGET_SRC_EU, TRANSFER_WIDGET_SRC_RO, TRAVEL_GUIDES_BY_LANG, TRAVEL_GUIDES_MONETIZATION_READY, TURNSTILE_SECRET_KEY, UNIT_TYPES, VIEW_TYPES, WAITLIST_BUSINESS_TYPES, WEATHER_DAILY_SAFETY_LIMIT, adsensePublisherId, codAdSense, codAnalytics, dbPool, googleMapsApiKey, linkBileteTurism, linkBringoAffiliate, linkGlovoAffiliate, linkOmioAffiliate, linkOpenTableAffiliate, linkTheForkAffiliate } = require("./static");
+const { ACCOMMODATION_AMENITIES, ACCOMMODATION_LIVE, ACCOMMODATION_PREVIEW_KEY, ACCOMMODATION_SESSION_SECRET, ACC_CURRENCY_LABELS, ACC_CURRENCY_LABELS_EN, ACC_FALLBACK_RATES, ACC_SUPPORTED_CURRENCIES, ADMIN_SESSION_SECRET, ADSENSE_ENABLED, ALL_JUDETE_NORMALIZED, APT_BATHS_MAX, APT_BEDROOMS_MAX, APT_GROUPS, APT_INDEX, APT_OPTS, ARRIVAL_PLANNER_LABELS, ATTRACTION_AMENITIES, ATTRACTION_FOOTER_TEMPLATES, ATTRACTION_TICKET_URLS, ATTRACTION_VENUE_TYPES, AWIN_YPS_AFFILIATE_ID, AWIN_YPS_MERCHANT_ID, BACK_BUTTON_LABELS, BATH_AMENITIES, BEACH_CONTENT_LABELS_RO, BEACH_CONTENT_LABELS_UK, BEACH_PARTNER_OFFERS, BEDROOM_AMENITIES, BED_TYPES, BOOKING_AFFILIATE_ID, BOOKING_HINT_TEMPLATES, BOOKING_HINT_TEMPLATES_BEACH, BOT_USER_AGENT_PATTERN, CAMP_FACILITIES, CAMP_GROUPS, CAMP_PHOTO_MAX, CAMP_SHADE, CAMP_UNITS, CAMP_UNIT_AMENITIES, CAMP_UNIT_BEDS, CAMP_VEHICLES, COUNTRY_NAMES_EN, COUNTRY_NAMES_RO, DAISY_TYPES, DAY_NAMES, DESC_AI_CLICHEE, DISCOVERCARS_AFFILIATE_ID, EXTERIOR_ACCESS, EXTERIOR_AMENITIES, FIREPLACE_TYPES, FREE_ACCESS_DAM_RE, FREE_ACCESS_EXCLUDE_RE, FREE_ACCESS_KEYWORDS_RE, FREE_ACCESS_SKIP_CATEGORIES, GENERIC_PARTNER_OFFERS, GEO_BTN_LABELS, GOOGLE_PLACES_API_KEY_LIVE, GYG_PARTNER_ID, HOTEL_BEDS, HOTEL_FACILITIES, HOTEL_MEAL_PLANS, HOTEL_MENUS, HOTEL_PETS, HOTEL_PHOTO_MAX, HOTEL_QUIET, HOTEL_RECEPTION, HOTEL_ROOM_AMENITIES, HOTEL_ROOM_PHOTO_MAX, HOTEL_SUBTYPES, I18N_MAPS_EN, INTERNAL_TO_GOOGLE_LANG, INTL_DOMAIN, KITCHEN_APPLIANCES, KITCHEN_TYPES, LANGUAGE_FLAGS, LANG_META, LIVING_AMENITIES, LIVING_GROUPS, LOCALITATE_TO_JUDET, LOCAL_SEARCH_HITS, MAX_OBIECTIVE_PROMPT, MIN_OBIECTIVE_UTILE, MIN_OBIECTIVE_UTILE_INTL, MOUNTAIN_ROAD_LABELS, MOUNTAIN_ROAD_RE, NO_MATCHES_LABELS, OPENWEATHER_API_KEY, OWNER_EXISTS_CACHE, PA_ICON_MAP, PA_ICON_PATHS, PENSION_BATH_TYPES, PENSION_BED_KEYS, PENSION_EXTRA_BEDS, PENSION_MAIN_BEDS, PENSION_TYPES, PROSPECT_DEFAULT_TEMPLATES, PROSPECT_STATUSES, RENTAL_MODES, REPORT_IP_SALT, RESEND_API_KEY, RESTAURANT_AMENITIES, RESTAURANT_DIETARY_OPTIONS, RESTAURANT_LIVE, RESTAURANT_PLATFORM_BY_COUNTRY, RESTAURANT_PREVIEW_KEY, RESTAURANT_VENUE_TYPES, REVIEWS_CLIENT_JS, REVIEW_CRITERIA, ROAD_WORD_RE, ROMANIAN_LEGAL_HOLIDAYS_2026, RO_DOMAIN, RO_TO_EU_GUIDES_MAP, RO_TO_EU_MIGRATION_EXCLUDED_PREFIXES, SCHEMA_DAY_NAMES, SEO_TYPE_WORDS, SITEMAP_BRANDS, SITEMAP_MALLS, SOCIAL_ICONS, STAR_PATH, STORE_AFFILIATE_LINKS, STRUCT_FACILITY_KEYS, SUBMIT_PLACE_LABELS, SUBMIT_PLACE_SCHEDULE_DAYS, TRANSFER_WIDGET_SRC_EU, TRANSFER_WIDGET_SRC_RO, TRAVEL_GUIDES_BY_LANG, TRAVEL_GUIDES_MONETIZATION_READY, TURNSTILE_SECRET_KEY, UNIT_TYPES, VIEW_TYPES, WAITLIST_BUSINESS_TYPES, WEATHER_DAILY_SAFETY_LIMIT, adsensePublisherId, codAdSense, codAnalytics, dbPool, googleMapsApiKey, linkBileteTurism, linkBringoAffiliate, linkGlovoAffiliate, linkOmioAffiliate, linkOpenTableAffiliate, linkTheForkAffiliate } = require("./static");
 
 
 
@@ -4831,6 +4831,22 @@ input[type=time]::-webkit-date-and-time-value{text-align:left;}
 .pn-fac .acc-check-item{margin:0;padding:14px;border-radius:14px;border-color:#d6deea;}
 .pn-other-toggle{display:inline-flex;margin:0 0 12px;padding:14px 16px;border-color:#d6deea;border-radius:14px;font-weight:800;}
 .pn-other-ta{min-height:96px;}
+.pn-bigopt{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid #d6deea;border-radius:16px;background:#fff;cursor:pointer;margin:0;}
+.pn-bigopt input{width:22px;height:22px;margin:2px 0 0;flex:0 0 auto;accent-color:#1a1f35;}
+.pn-bo-t{display:block;font-weight:900;font-size:16px;}.pn-bo-d{display:block;font-size:13.5px;color:#6b7280;margin-top:2px;line-height:1.45;}
+.pn-opts{display:flex;flex-direction:column;gap:12px;}
+.pn-subcard{margin-top:2px;padding:16px;border:1.5px solid #d6deea;border-radius:16px;background:#fafcff;display:flex;flex-direction:column;gap:14px;}
+.pn-subcard-in{background:#fff;margin:8px 0 4px;}
+.pn-subcard-t{font-weight:900;font-size:15.5px;display:flex;align-items:center;gap:9px;}
+.pn-field{display:flex;flex-direction:column;gap:6px;}.pn-lbl{font-weight:700;font-size:14px;margin:0;}
+.pn-col{display:flex;flex-direction:column;gap:8px;}.pn-cur{font-weight:800;}
+.pn-cert{margin:0 0 16px;}.pn-cert .pn-lbl{margin-bottom:6px;font-weight:800;font-size:15px;}
+.pn-opt-inline{flex-wrap:wrap;}.pn-opt-inline .pn-count{width:84px;height:42px;margin:0;}
+.pn-bldg{margin-top:18px;display:flex;flex-direction:column;gap:14px;}.pn-span{grid-column:1/-1;}.pn-num{max-width:220px;}
+.pn-roomlist{display:flex;flex-direction:column;gap:14px;}.pn-roomhead{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.pn-two2{display:flex;gap:12px;flex-wrap:wrap;}.pn-two2>.pn-field{flex:1 1 150px;min-width:0;}
+.pn-rm{width:44px;height:44px;border:1.5px solid #d6deea;border-radius:12px;background:#fff;color:#6b7280;font-size:16px;cursor:pointer;}
+.pn-add{margin-top:14px;width:100%;height:52px;border:1.5px dashed #b9c7dd;border-radius:14px;background:#fff;color:#1a1f35;font-weight:800;font-size:15.5px;cursor:pointer;}
 .pn-other-toggle .pa-icon{display:none;}
 #detForm select{background-color:#ffffff;}
 #detForm .pn-count{background-color:#ffffff;}
@@ -6800,10 +6816,13 @@ function typeDetailsClientDef(lang) {
   const en = lang === "en";
   const lab = (o) => (en ? o.en : o.ro);
   const mk = (map) => Object.keys(map).map((k) => ({ k, l: lab(map[k]), icon: map[k].icon ? paIcon(map[k].icon, 16) : "", group: map[k].group || "", minPhotos: map[k].minPhotos || 0 }));
+  const aptGroups = Object.fromEntries(Object.keys(APT_GROUPS).map((sec) => [sec, APT_GROUPS[sec].map((g) => ({ id: g.id, title: lab(g), items: g.items.map((x) => ({ k: x.k, l: lab(x), icon: paIcon(x.icon, 18) })) }))]));
+  const aptOpts = Object.fromEntries(Object.keys(APT_OPTS).map((n) => [n, APT_OPTS[n].map((o) => ({ k: o[0], l: en ? o[2] : o[1] }))]));
   return {
     hotel: {
       subtypes: mk(HOTEL_SUBTYPES), reception: mk(HOTEL_RECEPTION), beds: mk(HOTEL_BEDS), roomAmenities: mk(HOTEL_ROOM_AMENITIES),
       menus: mk(HOTEL_MENUS), mealPlans: mk(HOTEL_MEAL_PLANS), facilities: mk(HOTEL_FACILITIES), pets: mk(HOTEL_PETS), quiet: mk(HOTEL_QUIET),
+      roomPhotoMax: HOTEL_ROOM_PHOTO_MAX, restPhotoMax: HOTEL_PHOTO_MAX, icons: { fork: paIcon("kitchen", 18) },
     },
     pensionTypes: PENSION_TYPES,
     pension: {
@@ -6824,6 +6843,15 @@ function typeDetailsClientDef(lang) {
     camp: {
       units: mk(CAMP_UNITS), facilities: mk(CAMP_FACILITIES), groups: Object.fromEntries(Object.keys(CAMP_GROUPS).map((g) => [g, lab(CAMP_GROUPS[g])])),
       pets: mk(HOTEL_PETS), quiet: mk(HOTEL_QUIET), vehicles: mk(CAMP_VEHICLES),
+      shade: mk(CAMP_SHADE),
+      unitBeds: Object.keys(CAMP_UNIT_BEDS).map((k) => ({ k, l: lab(CAMP_UNIT_BEDS[k]), icon: paIcon(CAMP_UNIT_BEDS[k].icon, 20) })),
+      unitAmenities: Object.keys(CAMP_UNIT_AMENITIES).map((k) => ({ k, l: lab(CAMP_UNIT_AMENITIES[k]), icon: paIcon(CAMP_UNIT_AMENITIES[k].icon, 20) })),
+      photoMax: CAMP_PHOTO_MAX,
+      icons: { tent: paIcon("tent", 26), car: paIcon("car", 26), home: paIcon("home", 26), bolt: paIcon("bolt", 20), drop: paIcon("drop", 20), sewer: paIcon("sewer", 20), tentS: paIcon("tent", 20), carS: paIcon("car", 20), homeS: paIcon("home", 20), family: paIcon("family", 20), tree: paIcon("tree", 20) },
+    },
+    apt: {
+      groups: aptGroups, opts: aptOpts, bedroomsMax: APT_BEDROOMS_MAX, bathsMax: APT_BATHS_MAX,
+      icons: { bed: paIcon("bed", 20), bath: paIcon("bath", 20), sofa: paIcon("sofa", 20), lift: paIcon("lift", 20), door: paIcon("door", 20), home: paIcon("home", 20), key: paIcon("check", 20) },
     },
   };
 }
@@ -6834,7 +6862,7 @@ function sanitizeHotelDetails(raw) {
   const pick = (map, v) => (typeof v === "string" && map[v] ? v : "");
   const filt = (map, arr, max) => (Array.isArray(arr) ? arr.filter((k) => map[k]).slice(0, max || 30) : []);
   const num = (v, lo, hi) => { const n = parseFloat(v); return Number.isFinite(n) && n >= lo && n <= hi ? n : null; };
-  const urls = (arr) => (Array.isArray(arr) ? arr.filter((u) => typeof u === "string" && isOwnBlobUrl(u)).slice(0, 20) : []);
+  const urls = (arr, max) => (Array.isArray(arr) ? arr.filter((u) => typeof u === "string" && isOwnBlobUrl(u)).slice(0, max || 20) : []);
   const roomTypes = (Array.isArray(raw.roomTypes) ? raw.roomTypes : []).map((rt) => {
     if (!rt || typeof rt !== "object") return null;
     const name = typeof rt.name === "string" ? rt.name.trim().slice(0, 80) : "";
@@ -6847,9 +6875,9 @@ function sanitizeHotelDetails(raw) {
       beds: filt(HOTEL_BEDS, rt.beds, 5),
       amenities: filt(HOTEL_ROOM_AMENITIES, rt.amenities, 10),
       price: num(rt.price, 0, 1000000),
-      photos: urls(rt.photos),
+      photos: urls(rt.photos, HOTEL_ROOM_PHOTO_MAX),
     };
-  }).filter(Boolean).slice(0, 15);
+  }).filter(Boolean).slice(0, 40);
   const r = raw.restaurant && typeof raw.restaurant === "object" ? raw.restaurant : {};
   const restaurant = {
     has: r.has === true,
@@ -6858,7 +6886,7 @@ function sanitizeHotelDetails(raw) {
     mealPlan: pick(HOTEL_MEAL_PLANS, r.mealPlan),
     breakfastPolicy: r.breakfastPolicy === "included" || r.breakfastPolicy === "paid" ? r.breakfastPolicy : "",
     breakfastPrice: num(r.breakfastPrice, 0, 10000),
-    photos: urls(r.photos),
+    photos: urls(r.photos, HOTEL_PHOTO_MAX),
   };
   if (!restaurant.has) { restaurant.name = ""; restaurant.menus = []; restaurant.mealPlan = ""; restaurant.breakfastPolicy = ""; restaurant.breakfastPrice = null; restaurant.photos = []; }
   return {
@@ -6926,27 +6954,69 @@ function sanitizePensionDetails(raw) {
   };
 }
 
+function sanitizeApartmentDetails(raw) {
+  if (!raw || typeof raw !== "object" || raw.v !== 1 || !["studio", "apartament", "penthouse"].includes(raw.kind)) return null;
+  const optKeys = (n) => APT_OPTS[n].map((o) => o[0]);
+  const pickOpt = (n, v) => (typeof v === "string" && optKeys(n).includes(v) ? v : "");
+  const filtOpt = (n, arr, max) => { const ok = optKeys(n), out = []; (Array.isArray(arr) ? arr : []).forEach((k) => { if (ok.includes(k) && !out.includes(k) && out.length < (max || 10)) out.push(k); }); return out; };
+  const filt = (sec, arr, max) => { const out = []; (Array.isArray(arr) ? arr : []).forEach((k) => { if (typeof k === "string" && APT_INDEX[sec][k] && !out.includes(k) && out.length < (max || 30)) out.push(k); }); return out; };
+  const int = (v, lo, hi) => { const n = parseInt(v, 10); return Number.isInteger(n) && n >= lo && n <= hi ? n : null; };
+  const num = (v, lo, hi) => { const n = parseFloat(v); return Number.isFinite(n) && n >= lo && n <= hi ? n : null; };
+  const time = (v) => (typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : "");
+  const kind = raw.kind;
+  const bedCount = kind === "studio" ? 0 : Math.min(APT_BEDROOMS_MAX, Math.max(1, parseInt(raw.bedroomCount, 10) || 1));
+  const srcBeds = Array.isArray(raw.bedrooms) ? raw.bedrooms : [];
+  const bedrooms = Array.from({ length: bedCount }, (_, i) => { const b = srcBeds[i] && typeof srcBeds[i] === "object" ? srcBeds[i] : {}; return { beds: filtOpt("beds", b.beds, 4), amenities: filt("bedroom", b.amenities, 20) }; });
+  const mn = raw.main && typeof raw.main === "object" ? raw.main : {};
+  const main = kind === "studio" ? { beds: filtOpt("beds", mn.beds, 4), amenities: filt("bedroom", mn.amenities, 20) } : null;
+  const lv = raw.living && typeof raw.living === "object" ? raw.living : {};
+  const lvItems = filt("living", lv.items, 20);
+  const cap = parseInt(lv.sofaCapacity, 10);
+  const living = { items: lvItems, sofaCapacity: lvItems.includes("sofa_ext") && (cap === 1 || cap === 2) ? cap : null, fireplace: lvItems.includes("semineu") ? filtOpt("fireplace", lv.fireplace, 3) : [] };
+  const srcBaths = Array.isArray(raw.baths) ? raw.baths : [];
+  const bathCount = Math.min(APT_BATHS_MAX, Math.max(1, srcBaths.length || 1));
+  const baths = Array.from({ length: bathCount }, (_, i) => { const b = srcBaths[i] && typeof srcBaths[i] === "object" ? srcBaths[i] : {}; return { amenities: filt("bath", b.amenities, 20) }; });
+  const bd = raw.building && typeof raw.building === "object" ? raw.building : {};
+  const building = { floor: typeof bd.floor === "string" ? bd.floor.trim().slice(0, 10) : "", elevator: bd.elevator === true, privateEntrance: bd.privateEntrance === true };
+  const fc = raw.facilities && typeof raw.facilities === "object" ? raw.facilities : {};
+  const fItems = filt("facilities", fc.items, 30);
+  const parking = fItems.includes("parcare") && (fc.parking === "gratuit" || fc.parking === "contra_cost") ? fc.parking : "";
+  const facilities = { items: fItems, wifiMbps: fItems.includes("wifi") ? int(fc.wifiMbps, 1, 10000) : null, parking, parkingPrice: parking === "contra_cost" ? num(fc.parkingPrice, 0, 10000) : null };
+  const rl = raw.rules && typeof raw.rules === "object" ? raw.rules : {};
+  const rules = { smoking: pickOpt("smoking", rl.smoking), parties: pickOpt("parties", rl.parties), pets: pickOpt("pets", rl.pets), quietFrom: time(rl.quietFrom), quietTo: time(rl.quietTo) };
+  return { v: 1, kind, bedroomCount: bedCount, building, bedrooms, main, living, baths, facilities, checkin: pickOpt("checkin", raw.checkin), rules };
+}
+
 function sanitizeCampingDetails(raw) {
   if (!raw || typeof raw !== "object") return null;
   const pick = (map, v) => (typeof v === "string" && map[v] ? v : "");
   const num = (v, lo, hi) => { const n = parseFloat(v); return Number.isFinite(n) && n >= lo && n <= hi ? n : null; };
   const int = (v, lo, hi) => { const n = parseInt(v, 10); return Number.isInteger(n) && n >= lo && n <= hi ? n : null; };
-  const urls = (arr) => (Array.isArray(arr) ? arr.filter((u) => typeof u === "string" && isOwnBlobUrl(u)).slice(0, 20) : []);
+  const filt = (map, arr, max) => { const out = []; (Array.isArray(arr) ? arr : []).forEach((k) => { if (typeof k === "string" && map[k] && !out.includes(k) && out.length < (max || 30)) out.push(k); }); return out; };
+  const urls = (arr) => (Array.isArray(arr) ? arr.filter((u) => typeof u === "string" && isOwnBlobUrl(u)).slice(0, CAMP_PHOTO_MAX) : []);
   const t = raw.tents && typeof raw.tents === "object" ? raw.tents : {};
   const c = raw.caravans && typeof raw.caravans === "object" ? raw.caravans : {};
   const f = raw.fees && typeof raw.fees === "object" ? raw.fees : {};
+  const v2 = raw.v === 2;
+  // modelul vechi (v1: preț cort mic / mare, o singură rulotă) se convertește la cel nou
+  const tentCount = int(t.count, 0, 5000);
+  const tentPrice = v2 ? num(t.price, 0, 100000) : (num(t.priceSmall, 0, 100000) != null ? num(t.priceSmall, 0, 100000) : num(t.priceLarge, 0, 100000));
+  const tentsOn = v2 ? t.on === true : ((tentCount || 0) > 0 || tentPrice > 0);
+  const carCount = int(c.count, 0, 5000), carPrice = num(c.price, 0, 100000);
+  const carOn = v2 ? c.on === true : ((carCount || 0) > 0 || carPrice > 0);
   const units = {};
   Object.keys(CAMP_UNITS).forEach((k) => {
     const u = raw.units && raw.units[k];
     if (!u || typeof u !== "object" || u.has !== true) return;
-    units[k] = { has: true, count: int(u.count, 1, 500) || 1, capacity: int(u.capacity, 1, 50) || 2, price: num(u.price, 0, 1000000), photos: urls(u.photos) };
+    units[k] = { has: true, count: int(u.count, 1, 500) || 1, capacity: int(u.capacity, 1, 50) || 2, beds: filt(CAMP_UNIT_BEDS, u.beds, 3), amenities: filt(CAMP_UNIT_AMENITIES, u.amenities, 3), price: num(u.price, 0, 1000000), photos: urls(u.photos) };
   });
   const photoGroups = raw.photoGroups && typeof raw.photoGroups === "object" ? raw.photoGroups : {};
   return {
+    v: 2,
     seasonality: raw.seasonality === "sezonier" ? "sezonier" : "permanent",
     certificate: typeof raw.certificate === "string" ? raw.certificate.trim().slice(0, 60) : "",
-    tents: { count: int(t.count, 0, 5000), priceSmall: num(t.priceSmall, 0, 100000), priceLarge: num(t.priceLarge, 0, 100000) },
-    caravans: { count: int(c.count, 0, 5000), price: num(c.price, 0, 100000), electric: c.electric === true, water: c.water === true },
+    tents: tentsOn ? { on: true, count: tentCount, shade: pick(CAMP_SHADE, t.shade), price: tentPrice, power: t.power === "da" || t.power === "nu" ? t.power : "" } : { on: false, count: null, shade: "", price: null, power: "" },
+    caravans: carOn ? { on: true, count: carCount, price: carPrice, priceFull: num(c.priceFull, 0, 100000), electric: c.electric === true, water: c.water === true, sewer: c.sewer === true } : { on: false, count: null, price: null, priceFull: null, electric: false, water: false, sewer: false },
     units,
     fees: { adult: num(f.adult, 0, 100000), child: num(f.child, 0, 100000), car: num(f.car, 0, 100000), electric: num(f.electric, 0, 100000), pet: num(f.pet, 0, 100000) },
     facilities: Array.isArray(raw.facilities) ? raw.facilities.filter((k) => CAMP_FACILITIES[k]).slice(0, 20) : [],
@@ -7402,4 +7472,4 @@ Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile 
 Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${langName}, nu în română, cu excepția cazului în care ${langName} chiar este română. Nu uita nici de cerința de mai sus: array-ul "zile" trebuie să aibă EXACT ${zile} ${zile === 1 ? "element" : "elemente"}, nu doar unul singur.`;
 }
 
-module.exports = { redirectLegacyRoPage, buildSubBackLinkScript, transferWidgetSrcFor, getAccommodationMonthlyPriceCents, getExchangeRates, toGoogleLang, getAttractionVoteCount, getBeachTagCounts, getReportCounts, isBotRequest, comingSoonTextFor, itineraryLabelsFor, buildBeachPartnerCarouselHtml, isRealRomanianHolidayToday, glovoLinkFor, bringoLinkFor, bookingSearchLinkFor, getExtraLabels, geoBtnLabelsFor, attractionFooterTextFor, noLiveDataTextFor, liveGoogleLabelFor, bookingPlanningLabelsFor, reportIssueLabelsFor, closedPermanentlyLabelsFor, reportedWrongTextFor, howToGetThereLabelsFor, contextualWidgetLabelsFor, travelGuidesBoxLabelsFor, buildBookingPlanningButtonsHtml, buildPlanVisitScript, restaurantsOpenNowLinkFor, wazeLinkFor, buildStoreMainHtml, contactInfoHtml, buildLocalBusinessSchema, buildCityFaqHtml, buildTouristAttractionSchema, buildReportIssueHtml, buildReportIssueScript, renderClosedPermanentlyHtml, reportedWrongBannerHtml, omioLinkFor, restaurantLinkFor, parkingLinkFor, carRentalLinkFor, buildHowToGetThereHtml, buildHowToGetThereScript, extractStatusEntity, noResultsItineraryLabelsFor, buildNoResultsItineraryPromoHtml, buildListStatusBadgeScript, mallCinemaLabelsFor, buildContextualWidgetHtml, buildContextualWidgetScript, b64url, ticketUrlFor, dedupeTrailingCityName, recommendedLabelFor, recommendedFirstLabelFor, beachesMegaCategoryLabelFor, discoverBeachLabelFor, beachReviewLabelsFor, beachContentLabelsFor, buildBeachContentIntroHtml, buildBeachContentEquipmentHtml, buildBeachContentRestHtml, buildBeachVoteCentralizationHtml, buildBeachVoteCentralizationScript, itineraryPromoLabelsFor, buildItineraryPromoCardHtml, greeceBeachPromoLabelsFor, buildGreeceBeachPromoCardHtml, buildCombinedTripPromoCardHtml, voteLabelsFor, beachTagLabelsFor, boatTourLabelFor, buildVoteWidgetHtml, buildVoteWidgetScript, normAttractionName, isFreeAccessAttraction, needsSeasonalWarning, freeAccessLabelFor, openOnlyStoreLabelFor, openOnlyAttractionLabelFor, openOnlyAttractionShortLabelFor, isMountainRoad, seasonalWarningLabelFor, genericScheduleForCategory, computeGenericIsOpenNow, isScheduleOpenAt, determineAttractionOpenStatus, liveComingSoonLabelFor, estimatedScheduleLabelFor, categoryLabelFor, loadingTextFor, buildStoreAffiliateButtonHtml, buildStoreAffiliateCarouselScript, buildGenericPartnerCarouselScript, buildGenericAffiliateCarouselHtml, buildLanguageSwitcher, buildLanguageSwitcherScript, inferCityForAttraction, storeCategoryLabelFor, getHost, isIntlHost, baseUrlFor, checkWeatherApiQuota, fetchTomorrowRainForecast, haversineKm, geocodeCityApprox, roCityAttractionsHref, localizeAttractionsHref, starsHtml, reviewThanksHtml, loadPlaceReviews, reviewDateText, reviewReplyBlockHtml, reviewReplyButtonHtml, buildPlaceReviewsSection, reviewsScriptHtml, ownerCanManageReview, proposalTypeLabel, escapeHtml, sanitizePublicUrl, buildCitySelectorHtml, safeJson, isOwnBlobUrl, fileMatchesDeclaredType, generateNonce, withNonce, buildCsp, buildClientScript, buildPushSubscribeScript, buildSmartInstallHtml, buildSmartInstallScript, buildTabsScript, buildAttractionAccordionScript, mapUnifiedToggleLabelFor, mapLoadingStoresLabelFor, mapLoadingAttractionsLabelFor, buildCityMapHtml, buildLiveMapPinsScript, buildLiveAttractionsMapPinsScript, buildAttractionListFilterScript, buildAttractionLazyScript, renderWeekTableRows, renderHolidayRows, adSlotHtml, buildThemeToggleHtml, backButtonLabelFor, submitPlaceDayName, submitPlaceLabelsFor, noMatchesLabelFor, renderSubmitPlacePage, buildGlobalBackButtonHtml, buildGlobalBackButtonScript, buildThemeToggleScript, buildBottomNavHtml, buildBottomNavScript, buildLiveStatusFetchScript, buildWidgetRevealScript, buildAffiliateClickTrackingScript, pageShell, navLabelsFor, flightSearchLabelFor, carRentalLabelFor, tripTypeLabelsFor, vibeLabelsFor, budgetLabelsFor, itineraryHrefFor, travelGuidesForLang, guidesPageLabelsFor, buildTravelGuidesBoxHtmlIntl, renderTravelGuidePageIntl, renderTravelGuidesIndexPageIntl, parseListingPhotos, buildLocalListingGroupHtml, findApprovedListingCityBySlug, slugifyCityName, KNOWN_CITY_SLUGS, decodeGeoHeader, generateSitemapXml, hashIp, getClientIp, hashPassword, verifyPassword, checkRateLimit, verifyTurnstile, parseCookies, signCookiePayload, verifyCookiePayload, appendSetCookie, accommodationGate, trackAccommodationDailyVisit, localDateStringForCounter, sendAccommodationLoginEmail, sendPhotoRequestEmail, sendOwnerNoticeEmail, sendAccommodationApprovalEmail, getAccommodationOwnerSession, setAccommodationOwnerSession, ownerStillExists, requireAccommodationOwner, requireAccommodationOwnerApi, getAdminSession, setAdminSession, requireAdminPage, requireAdminApi, accWhitePageStyles, getAccLang, accLangHref, accLangSwitchHtml, roNowParts, hhmmToMin, isOpenBetween, sqlDateStr, isAvailableTonight, todayLiveStatus, socialLinksHtml, ratingSymbolFor, classificationOptionLabels, classificationLabelText, classificationOptionsHtml, accWhiteLegalHtml, accDarkFooterHtml, accCurrencyModalHtml, accCurrencyScript, accShellStyles, accDrawerHtml, accDrawerScript, accShellHeader, adminShellStyles, adminMobileBarHtml, adminSidebarScript, restaurantGate, mapFor, renderAttractionListingForm, requireRestaurantOwner, requireRestaurantOwnerApi, renderRestaurantListingForm, handleAdminRequestPhotos, buildOwnerLiveStatusControls, blobUrlsStillReferenced, fetchListingRow, sanitizeProposalSchedule, loadOwnerFlagsById, adminOwnerBadgeHtml, adminMissingHtml, parseJsonArr, missingForRestaurant, missingForAttraction, sendRestaurantApprovalEmail, sendAttractionApprovalEmail, seoTypeWord, seoTruncate, stripDescriptionMarkers, buildDescriptionAiPrompt, bedTypeLabel, formatBedsPlain, sanitizeBedsObj, sanitizeRoomTypes, sanitizeExteriorInfo, exteriorInfoToText, stripLeadingEmoji, paIcon, ACCOMMODATION_AMENITIES_I18N, buildListingSeoHeadHtml, typeDetailsClientDef, sanitizeHotelDetails, sanitizePensionDetails, sanitizeCampingDetails, insertListingWithOptionalSource, getClaimCookieId, revealVenuePhone, localSearchAllowed, generateProspectRefCode, markProspectConverted, getProspectTemplates, prospectRowForClient, buildPropertyCountryModalHtml, buildPropertyCountryModalScript, normalizeJudetInput, detecteazaJudet, filtreazaObiectivePentruOras, filtreazaObiectivePentruOrasIntl, toTitleCase, boostParcuriAgrement, buildCityByNameMap, buildItineraryPrompt };
+module.exports = { redirectLegacyRoPage, buildSubBackLinkScript, transferWidgetSrcFor, getAccommodationMonthlyPriceCents, getExchangeRates, toGoogleLang, getAttractionVoteCount, getBeachTagCounts, getReportCounts, isBotRequest, comingSoonTextFor, itineraryLabelsFor, buildBeachPartnerCarouselHtml, isRealRomanianHolidayToday, glovoLinkFor, bringoLinkFor, bookingSearchLinkFor, getExtraLabels, geoBtnLabelsFor, attractionFooterTextFor, noLiveDataTextFor, liveGoogleLabelFor, bookingPlanningLabelsFor, reportIssueLabelsFor, closedPermanentlyLabelsFor, reportedWrongTextFor, howToGetThereLabelsFor, contextualWidgetLabelsFor, travelGuidesBoxLabelsFor, buildBookingPlanningButtonsHtml, buildPlanVisitScript, restaurantsOpenNowLinkFor, wazeLinkFor, buildStoreMainHtml, contactInfoHtml, buildLocalBusinessSchema, buildCityFaqHtml, buildTouristAttractionSchema, buildReportIssueHtml, buildReportIssueScript, renderClosedPermanentlyHtml, reportedWrongBannerHtml, omioLinkFor, restaurantLinkFor, parkingLinkFor, carRentalLinkFor, buildHowToGetThereHtml, buildHowToGetThereScript, extractStatusEntity, noResultsItineraryLabelsFor, buildNoResultsItineraryPromoHtml, buildListStatusBadgeScript, mallCinemaLabelsFor, buildContextualWidgetHtml, buildContextualWidgetScript, b64url, ticketUrlFor, dedupeTrailingCityName, recommendedLabelFor, recommendedFirstLabelFor, beachesMegaCategoryLabelFor, discoverBeachLabelFor, beachReviewLabelsFor, beachContentLabelsFor, buildBeachContentIntroHtml, buildBeachContentEquipmentHtml, buildBeachContentRestHtml, buildBeachVoteCentralizationHtml, buildBeachVoteCentralizationScript, itineraryPromoLabelsFor, buildItineraryPromoCardHtml, greeceBeachPromoLabelsFor, buildGreeceBeachPromoCardHtml, buildCombinedTripPromoCardHtml, voteLabelsFor, beachTagLabelsFor, boatTourLabelFor, buildVoteWidgetHtml, buildVoteWidgetScript, normAttractionName, isFreeAccessAttraction, needsSeasonalWarning, freeAccessLabelFor, openOnlyStoreLabelFor, openOnlyAttractionLabelFor, openOnlyAttractionShortLabelFor, isMountainRoad, seasonalWarningLabelFor, genericScheduleForCategory, computeGenericIsOpenNow, isScheduleOpenAt, determineAttractionOpenStatus, liveComingSoonLabelFor, estimatedScheduleLabelFor, categoryLabelFor, loadingTextFor, buildStoreAffiliateButtonHtml, buildStoreAffiliateCarouselScript, buildGenericPartnerCarouselScript, buildGenericAffiliateCarouselHtml, buildLanguageSwitcher, buildLanguageSwitcherScript, inferCityForAttraction, storeCategoryLabelFor, getHost, isIntlHost, baseUrlFor, checkWeatherApiQuota, fetchTomorrowRainForecast, haversineKm, geocodeCityApprox, roCityAttractionsHref, localizeAttractionsHref, starsHtml, reviewThanksHtml, loadPlaceReviews, reviewDateText, reviewReplyBlockHtml, reviewReplyButtonHtml, buildPlaceReviewsSection, reviewsScriptHtml, ownerCanManageReview, proposalTypeLabel, escapeHtml, sanitizePublicUrl, buildCitySelectorHtml, safeJson, isOwnBlobUrl, fileMatchesDeclaredType, generateNonce, withNonce, buildCsp, buildClientScript, buildPushSubscribeScript, buildSmartInstallHtml, buildSmartInstallScript, buildTabsScript, buildAttractionAccordionScript, mapUnifiedToggleLabelFor, mapLoadingStoresLabelFor, mapLoadingAttractionsLabelFor, buildCityMapHtml, buildLiveMapPinsScript, buildLiveAttractionsMapPinsScript, buildAttractionListFilterScript, buildAttractionLazyScript, renderWeekTableRows, renderHolidayRows, adSlotHtml, buildThemeToggleHtml, backButtonLabelFor, submitPlaceDayName, submitPlaceLabelsFor, noMatchesLabelFor, renderSubmitPlacePage, buildGlobalBackButtonHtml, buildGlobalBackButtonScript, buildThemeToggleScript, buildBottomNavHtml, buildBottomNavScript, buildLiveStatusFetchScript, buildWidgetRevealScript, buildAffiliateClickTrackingScript, pageShell, navLabelsFor, flightSearchLabelFor, carRentalLabelFor, tripTypeLabelsFor, vibeLabelsFor, budgetLabelsFor, itineraryHrefFor, travelGuidesForLang, guidesPageLabelsFor, buildTravelGuidesBoxHtmlIntl, renderTravelGuidePageIntl, renderTravelGuidesIndexPageIntl, parseListingPhotos, buildLocalListingGroupHtml, findApprovedListingCityBySlug, slugifyCityName, KNOWN_CITY_SLUGS, decodeGeoHeader, generateSitemapXml, hashIp, getClientIp, hashPassword, verifyPassword, checkRateLimit, verifyTurnstile, parseCookies, signCookiePayload, verifyCookiePayload, appendSetCookie, accommodationGate, trackAccommodationDailyVisit, localDateStringForCounter, sendAccommodationLoginEmail, sendPhotoRequestEmail, sendOwnerNoticeEmail, sendAccommodationApprovalEmail, getAccommodationOwnerSession, setAccommodationOwnerSession, ownerStillExists, requireAccommodationOwner, requireAccommodationOwnerApi, getAdminSession, setAdminSession, requireAdminPage, requireAdminApi, accWhitePageStyles, getAccLang, accLangHref, accLangSwitchHtml, roNowParts, hhmmToMin, isOpenBetween, sqlDateStr, isAvailableTonight, todayLiveStatus, socialLinksHtml, ratingSymbolFor, classificationOptionLabels, classificationLabelText, classificationOptionsHtml, accWhiteLegalHtml, accDarkFooterHtml, accCurrencyModalHtml, accCurrencyScript, accShellStyles, accDrawerHtml, accDrawerScript, accShellHeader, adminShellStyles, adminMobileBarHtml, adminSidebarScript, restaurantGate, mapFor, renderAttractionListingForm, requireRestaurantOwner, requireRestaurantOwnerApi, renderRestaurantListingForm, handleAdminRequestPhotos, buildOwnerLiveStatusControls, blobUrlsStillReferenced, fetchListingRow, sanitizeProposalSchedule, loadOwnerFlagsById, adminOwnerBadgeHtml, adminMissingHtml, parseJsonArr, missingForRestaurant, missingForAttraction, sendRestaurantApprovalEmail, sendAttractionApprovalEmail, seoTypeWord, seoTruncate, stripDescriptionMarkers, buildDescriptionAiPrompt, bedTypeLabel, formatBedsPlain, sanitizeBedsObj, sanitizeRoomTypes, sanitizeExteriorInfo, exteriorInfoToText, stripLeadingEmoji, paIcon, ACCOMMODATION_AMENITIES_I18N, buildListingSeoHeadHtml, typeDetailsClientDef, sanitizeHotelDetails, sanitizePensionDetails, sanitizeCampingDetails, insertListingWithOptionalSource, getClaimCookieId, revealVenuePhone, localSearchAllowed, generateProspectRefCode, markProspectConverted, getProspectTemplates, prospectRowForClient, buildPropertyCountryModalHtml, buildPropertyCountryModalScript, normalizeJudetInput, detecteazaJudet, filtreazaObiectivePentruOras, filtreazaObiectivePentruOrasIntl, toTitleCase, boostParcuriAgrement, buildCityByNameMap, buildItineraryPrompt, sanitizeApartmentDetails };
