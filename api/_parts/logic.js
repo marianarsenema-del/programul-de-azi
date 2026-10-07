@@ -6868,11 +6868,21 @@ function sanitizeHotelDetails(raw) {
     const name = typeof rt.name === "string" ? rt.name.trim().slice(0, 80) : "";
     if (!name) return null;
     const count = Number.isInteger(rt.count) && rt.count >= 1 && rt.count <= 500 ? rt.count : 1;
+    // apartament / suită cu mai multe încăperi (2–3): fiecare încăpere e dormitor sau living, cu paturile ei
+    let spaces = (Array.isArray(rt.spaces) ? rt.spaces : []).slice(0, 3).map((sp) => ({ kind: sp && sp.kind === "living" ? "living" : "dormitor", beds: filt(HOTEL_BEDS, sp && sp.beds, 5) }));
+    if (spaces.length < 2) spaces = [];
+    else {
+      let seenLiving = false;
+      spaces = spaces.map((sp) => { if (sp.kind === "living") { if (seenLiving) return { kind: "dormitor", beds: sp.beds }; seenLiving = true; } return sp; });
+      if (!spaces.some((sp) => sp.kind === "dormitor")) spaces[0] = { kind: "dormitor", beds: spaces[0].beds };
+    }
+    const allBeds = spaces.length ? [...new Set(spaces.reduce((a, sp) => a.concat(sp.beds), []))] : filt(HOTEL_BEDS, rt.beds, 5);
     return {
       name, count,
       adults: typeof rt.adults === "string" ? rt.adults.slice(0, 3) : "2",
       children: typeof rt.children === "string" ? rt.children.slice(0, 3) : "0",
-      beds: filt(HOTEL_BEDS, rt.beds, 5),
+      spaces,
+      beds: allBeds,
       amenities: filt(HOTEL_ROOM_AMENITIES, rt.amenities, 10),
       price: num(rt.price, 0, 1000000),
       photos: urls(rt.photos, HOTEL_ROOM_PHOTO_MAX),
