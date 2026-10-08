@@ -691,7 +691,8 @@ function buildReportIssueScript(nonce, labels) {
     }
   } catch(e){}
 
-  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; });
+  function showPanel(){ if (panel.scrollIntoView) panel.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  btn.addEventListener("click", function(){ panel.hidden = !panel.hidden; if (!panel.hidden) setTimeout(showPanel, 60); });
 
   function send(motiv, thanksText){
     fetch("/api/report-issue", {
@@ -711,6 +712,7 @@ function buildReportIssueScript(nonce, labels) {
         msg.textContent = (data && data.alreadyReported) ? ${safeJson(t.alreadyReported)} : thanksText;
         msg.hidden = false;
         msg.className = "report-issue-msg is-success";
+        setTimeout(showPanel, 60);
         try { localStorage.setItem(storageKey, "1"); } catch(e){}
       })
       .catch(function(){
@@ -726,6 +728,7 @@ function buildReportIssueScript(nonce, labels) {
   document.getElementById("reportQ1No").addEventListener("click", function(){
     step1.hidden = true;
     step2.hidden = false;
+    setTimeout(showPanel, 60);
   });
   document.getElementById("reportQ2Yes").addEventListener("click", function(){
     send("inchis_definitiv", ${safeJson(t.thanksReport)});
@@ -2097,10 +2100,11 @@ function sanitizePublicUrl(raw) {
 // mai căutate orașe (acces rapid, un singur tap) + o căutare live care
 // filtrează lista completă de dedesubt, fără reîncărcare de pagină. Merge
 // identic pe orice listă de orașe (RO cu 41, sau fiecare țară de pe .eu).
-function buildCitySelectorHtml({ popularCities, hrefPrefix }) {
+function buildCitySelectorHtml({ popularCities, hrefPrefix, searchLabel }) {
   const chipsHtml = popularCities.map((c) => `<a href="${hrefPrefix}${slugifyCityName(c)}" class="city-chip">${escapeHtml(c)}</a>`).join("");
+  const searchChip = searchLabel ? `<label class="city-chip chip-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" class="bar-search" data-bar="store-city" placeholder="${escapeHtml(searchLabel)}" aria-label="${escapeHtml(searchLabel)}" autocomplete="off" enterkeyhint="search"></label>` : "";
   return `
-  <div class="city-chips-row">${chipsHtml}</div>`;
+  <div class="city-chips-row">${searchChip}${chipsHtml}</div>`;
 }
 
 
@@ -2941,6 +2945,27 @@ function buildAttractionListFilterScript(nonce) {
   // explicit: sincronizat prin localStorage, ca preferința să rămână
   // activă și după ce utilizatorul comută pe tab-ul de magazine, sau chiar
   // dacă reîncarcă pagina.
+  // Locurile propuse de comunitate / înscrise de proprietari au program real (data-sched, în ora țării lor):
+  // fără program introdus = deschis 24/7. Închise acum => dispar când filtrul „Deschise acum” e activ.
+  function schedOpen(card){
+    var raw = card.getAttribute("data-sched");
+    if (!raw) return true;
+    var s; try { s = JSON.parse(raw); } catch (e) { return true; }
+    var dayIdx, minutes;
+    try {
+      var parts = new Intl.DateTimeFormat("en-GB", { timeZone: s.tz, hour: "2-digit", minute: "2-digit", weekday: "short", hour12: false }).formatToParts(new Date());
+      var p = {}; parts.forEach(function(x){ p[x.type] = x.value; });
+      dayIdx = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[p.weekday];
+      minutes = (p.hour === "24" ? 0 : +p.hour) * 60 + (+p.minute);
+    } catch (e) { return true; }
+    function mm(t){ var a = String(t).split(":"); return (+a[0]) * 60 + (+a[1]); }
+    var prev = s.d[(dayIdx + 6) % 7];
+    if (prev && mm(prev[1]) <= mm(prev[0]) && minutes < mm(prev[1])) return true;
+    var today = s.d[dayIdx];
+    if (!today) return false;
+    var o = mm(today[0]), c = mm(today[1]);
+    return c <= o ? (minutes >= o || minutes < c) : (minutes >= o && minutes < c);
+  }
   function applyGlobalFilter(){
     var toggle = document.getElementById("attractionListOpenOnlyToggle");
     var onlyOpen = toggle && toggle.checked;
@@ -2951,6 +2976,11 @@ function buildAttractionListFilterScript(nonce) {
       var closed = itemIsOpen(li) === false;
       li.style.display = closed ? "none" : "";
       if (!closed) visibleCount++;
+    });
+    document.querySelectorAll(".nearby-stay-card[data-sched]").forEach(function(card){
+      var closedNow = !schedOpen(card);
+      card.style.display = (onlyOpen && closedNow) ? "none" : "";
+      if (!(onlyOpen && closedNow)) visibleCount++;
     });
     // Mesaj "nimic deschis acum" — cerut explicit: quando filtrul ajunge la
     // 0 rezultate (ex. seara târziu), arătăm o alternativă, spre itinerarul
@@ -3209,8 +3239,12 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
     <label class="submit-place-label">${escapeHtml(t.nameLabel)}
       <input type="text" id="spName" placeholder="${escapeHtml(t.namePlaceholder)}" maxlength="255" required>
     </label>
-    <label class="submit-place-label">${escapeHtml(t.cityLabel)}
+    <label class="submit-place-label" id="spCountryWrap">${escapeHtml(t.countryLabel)}
+      <select id="spCountry" required>${countryOptionsHtml}</select>
+    </label>
+    <label class="submit-place-label" id="spCityWrap">${escapeHtml(t.cityLabel)}
       <input type="text" id="spCity" placeholder="${escapeHtml(t.cityPlaceholder)}" maxlength="255" required>
+      <span class="sp-field-error" id="spCityError" hidden></span>
     </label>
     ${t.scheduleLabel ? `
     <div class="submit-place-label">${escapeHtml(t.scheduleLabel)}
@@ -3230,9 +3264,6 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
         </div>`).join("")}
       </div>
     </div>` : ""}
-    <label class="submit-place-label">${escapeHtml(t.countryLabel)}
-      <select id="spCountry" required>${countryOptionsHtml}</select>
-    </label>
     <label class="submit-place-label">${escapeHtml(t.categoryLabel)}
       <input type="text" id="spCategory" placeholder="${escapeHtml(t.categoryPlaceholder)}" maxlength="50">
     </label>
@@ -3280,6 +3311,46 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
       });
     });
   }
+  // Orele: două liste simple (ora : minutele) în loc de câmpul nativ de oră, care pe unele tablete nu deschide nimic.
+  var HOUR_LABEL = ${safeJson(lang === "ro" ? "Ora" : "Hour")}, MIN_LABEL = ${safeJson(lang === "ro" ? "Minutele" : "Minutes")};
+  function pad2(n){ return (n < 10 ? "0" : "") + n; }
+  function enhanceTime(input){
+    var parts = String(input.value || "09:00").split(":"), hh = pad2(+parts[0] || 0), mm = pad2(+parts[1] || 0);
+    var wrap = document.createElement("span"); wrap.className = "sp-time-pick";
+    var hs = document.createElement("select"); hs.className = "sp-h"; hs.setAttribute("aria-label", HOUR_LABEL);
+    for (var h = 0; h < 24; h++) { var o = document.createElement("option"); o.value = pad2(h); o.textContent = pad2(h); hs.appendChild(o); }
+    var minsList = []; for (var m = 0; m < 60; m += 5) minsList.push(pad2(m));
+    if (minsList.indexOf(mm) === -1) { minsList.push(mm); minsList.sort(); }
+    var ms = document.createElement("select"); ms.className = "sp-m"; ms.setAttribute("aria-label", MIN_LABEL);
+    minsList.forEach(function(v){ var o2 = document.createElement("option"); o2.value = v; o2.textContent = v; ms.appendChild(o2); });
+    hs.value = hh; ms.value = mm;
+    function sync(){ input.value = hs.value + ":" + ms.value; }
+    hs.addEventListener("change", sync); ms.addEventListener("change", sync);
+    input.type = "hidden"; sync();
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(hs); wrap.appendChild(document.createTextNode(":")); wrap.appendChild(ms);
+  }
+  if (spSchedule) spSchedule.querySelectorAll(".sp-open, .sp-close").forEach(enhanceTime);
+
+  // Dacă proprietarul scrie și țara în câmpul „Oraș” (ex. „Orăștie România”), o scoatem noi — țara se alege separat.
+  var countrySel = document.getElementById("spCountry"), cityInput = document.getElementById("spCity");
+  var cityErr = document.getElementById("spCityError"), cityWrap = document.getElementById("spCityWrap"), countryWrap = document.getElementById("spCountryWrap");
+  function nrm(x){ return String(x || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  var COUNTRY_NAMES = [];
+  if (countrySel) Array.prototype.forEach.call(countrySel.options, function(o){ COUNTRY_NAMES.push(nrm(o.textContent.replace(/^\\S+\\s+/, ""))); });
+  ["romania", "germany", "united kingdom", "spain", "france", "italy", "poland", "netherlands", "austria", "switzerland", "belgium", "denmark", "sweden", "portugal", "czech republic", "czechia", "finland", "greece", "hungary", "croatia", "ireland", "slovakia", "slovenia", "lithuania", "latvia", "estonia", "cyprus", "malta", "luxembourg", "turkey"].forEach(function(n){ if (COUNTRY_NAMES.indexOf(n) === -1) COUNTRY_NAMES.push(n); });
+  function cleanCity(raw){
+    var c = String(raw || "").trim().replace(/[\\s,;-]+$/, "");
+    var toks = c.split(/\\s+/);
+    for (var k = Math.min(3, toks.length - 1); k >= 1; k--) {
+      var tail = nrm(toks.slice(-k).join(" "));
+      if (tail && COUNTRY_NAMES.indexOf(tail) !== -1) return toks.slice(0, toks.length - k).join(" ").replace(/[\\s,;-]+$/, "");
+    }
+    return c;
+  }
+  function clearCityError(){ if (cityErr) { cityErr.hidden = true; cityErr.textContent = ""; } if (cityWrap) cityWrap.classList.remove("sp-has-error"); if (countryWrap) countryWrap.classList.remove("sp-has-error"); }
+  if (cityInput) { cityInput.addEventListener("input", clearCityError); cityInput.addEventListener("blur", function(){ var cl = cleanCity(cityInput.value); if (cl && cl !== cityInput.value) cityInput.value = cl; }); }
+  if (countrySel) countrySel.addEventListener("change", clearCityError);
   function collectSchedule(){
     if (!spSchedule || !spMode || spMode.value === "none") return null;
     if (spMode.value === "247") return { is247: true, days: null };
@@ -3297,6 +3368,8 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
   form.addEventListener("submit", function(e){
     e.preventDefault();
     errorBox.hidden = true;
+    clearCityError();
+    if (cityInput) { var cl0 = cleanCity(cityInput.value); if (cl0 && cl0 !== cityInput.value) cityInput.value = cl0; }
     btn.disabled = true;
     fetch("/api/propune-loc", {
       method: "POST",
@@ -3319,8 +3392,18 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
           form.querySelectorAll("input, select, textarea, button").forEach(function(el){ el.disabled = true; });
           thanks.hidden = false;
         } else {
-          errorBox.textContent = res.status === 429 ? ERROR_RATE : (res.data && CITY_ERRORS[res.data.error]) || ERROR_GENERIC;
-          errorBox.hidden = false;
+          var cityMsg = res.data && CITY_ERRORS[res.data.error];
+          if (cityMsg && cityErr && (res.data.error === "city_not_in_country" || res.data.error === "city_contains_name")) {
+            // eroarea apare în dreptul câmpurilor Țară / Oraș (în roșu), nu jos, sub buton
+            cityErr.textContent = cityMsg; cityErr.hidden = false;
+            if (cityWrap) cityWrap.classList.add("sp-has-error");
+            if (res.data.error === "city_not_in_country" && countryWrap) countryWrap.classList.add("sp-has-error");
+            if (cityWrap && cityWrap.scrollIntoView) cityWrap.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (cityInput) cityInput.focus();
+          } else {
+            errorBox.textContent = res.status === 429 ? ERROR_RATE : cityMsg || ERROR_GENERIC;
+            errorBox.hidden = false;
+          }
           btn.disabled = false;
         }
       })
@@ -5461,8 +5544,14 @@ ${t._fromProposal ? `<div style="margin:0 0 18px;padding:14px 16px;border:1.5px 
         } else {
           var marker = cmd === "bold" ? "**" : cmd === "italic" ? "*" : "__";
           var selected = val.slice(start, end);
+          // fără spații / rânduri noi la capete (pe telefon, selecția unui paragraf le include)
+          var lead = selected.length - selected.trimStart().length, trail = selected.length - selected.trimEnd().length;
+          if (lead + trail >= selected.length) { ta.focus(); return; }
+          start += lead; end -= trail; selected = val.slice(start, end);
+          var NL = String.fromCharCode(10);
           var already2 = selected.length >= marker.length * 2 && selected.slice(0, marker.length) === marker && selected.slice(-marker.length) === marker;
-          var replacement = already2 ? selected.slice(marker.length, selected.length - marker.length) : marker + selected + marker;
+          var replacement = already2 ? selected.slice(marker.length, selected.length - marker.length)
+            : (selected.indexOf(NL) !== -1 ? selected.split(NL).map(function(line){ return line.trim() ? marker + line + marker : line; }).join(NL) : marker + selected + marker);
           ta.value = val.slice(0, start) + replacement + val.slice(end);
           ta.selectionStart = start; ta.selectionEnd = start + replacement.length;
         }
@@ -6834,7 +6923,7 @@ function typeDetailsClientDef(lang) {
       fireplaceTypes: Object.keys(FIREPLACE_TYPES).map((k) => ({ k, l: lab(FIREPLACE_TYPES[k]) })),
       livingGroups: LIVING_GROUPS.map((g) => ({ id: g.id, title: lab(g), icon: paIcon(g.icon, 20), items: g.items.map((it) => ({ k: it.k, l: lab(it), icon: paIcon(it.icon, 20) })) })),
       facGroups: [
-        { id: "curte", title: en ? "Yard & relaxation facilities" : "Facilități curte și relaxare", keys: ["pescuit", "piscina", "jacuzzi", "loc_de_joaca", "gratar", "sauna", "parcare"] },
+        { id: "curte", title: en ? "Yard & relaxation facilities" : "Facilități curte și relaxare", keys: ["pescuit", "piscina", "piscina_incalzita", "jacuzzi", "loc_de_joaca", "gratar", "sauna", "parcare"] },
         { id: "servicii", title: en ? "Services & meals" : "Servicii și masă", keys: ["mic_dejun", "restaurant_propriu", "plata_card", "receptie", "curatenie_zilnica", "sala_conferinte", "animale"] },
         { id: "dotari", title: en ? "Amenities & comfort" : "Dotări și confort", keys: ["wifi", "aer_conditionat", "smart_tv", "bucatarie_utilata", "masina_spalat", "masina_spalat_vase", "espressor"] },
       ],
@@ -6895,14 +6984,17 @@ function sanitizeHotelDetails(raw) {
     menus: filt(HOTEL_MENUS, r.menus, 10),
     mealPlan: pick(HOTEL_MEAL_PLANS, r.mealPlan),
     breakfastPolicy: r.breakfastPolicy === "included" || r.breakfastPolicy === "paid" ? r.breakfastPolicy : "",
+    breakfastMode: r.breakfastPolicy === "paid" ? (r.breakfastMode === "cerere" ? "cerere" : "optional") : "",
     breakfastPrice: num(r.breakfastPrice, 0, 10000),
     photos: urls(r.photos, HOTEL_PHOTO_MAX),
   };
-  if (!restaurant.has) { restaurant.name = ""; restaurant.menus = []; restaurant.mealPlan = ""; restaurant.breakfastPolicy = ""; restaurant.breakfastPrice = null; restaurant.photos = []; }
+  if (!restaurant.has) { restaurant.name = ""; restaurant.menus = []; restaurant.mealPlan = ""; restaurant.breakfastPolicy = ""; restaurant.breakfastMode = ""; restaurant.breakfastPrice = null; restaurant.photos = []; }
   return {
     subtype: pick(HOTEL_SUBTYPES, raw.subtype),
     seasonality: raw.seasonality === "sezonier" ? "sezonier" : "permanent",
     reception: pick(HOTEL_RECEPTION, raw.reception),
+    receptionFrom: pick(HOTEL_RECEPTION, raw.reception) === "program" && /^([01]\d|2[0-3]):[0-5]\d$/.test(String(raw.receptionFrom || "")) ? raw.receptionFrom : "",
+    receptionTo: pick(HOTEL_RECEPTION, raw.reception) === "program" && /^([01]\d|2[0-3]):[0-5]\d$/.test(String(raw.receptionTo || "")) ? raw.receptionTo : "",
     pets: pick(HOTEL_PETS, raw.pets),
     quiet: pick(HOTEL_QUIET, raw.quiet),
     certificate: typeof raw.certificate === "string" ? raw.certificate.trim().slice(0, 60) : "",
