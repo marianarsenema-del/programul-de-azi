@@ -260,7 +260,7 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "";
 const WEATHER_DAILY_SAFETY_LIMIT = 950;
 
 const dbPool = DB_CONNECTION_STRING
-  ? new Pool({ connectionString: DB_CONNECTION_STRING, ssl: { rejectUnauthorized: false }, max: 3 })
+  ? new Pool({ connectionString: DB_CONNECTION_STRING, ssl: { rejectUnauthorized: false }, max: 3, connectionTimeoutMillis: 8000, idleTimeoutMillis: 15000, query_timeout: 15000 })
   : null;
 
 
