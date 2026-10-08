@@ -36,6 +36,15 @@
     {
       "path": "/api/cron/push-zilnic",
       "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/curatare-stocare",
+      "schedule": "0 3 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "api/server.js": {
+      "maxDuration": 60
+    }
+  }
 }
