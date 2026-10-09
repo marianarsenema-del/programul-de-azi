@@ -3,7 +3,7 @@
 "use strict";
 const crypto = require("crypto");
 const core = require("./bookings-core");
-const { dbPool, RESEND_API_KEY, RO_DOMAIN } = require("./static");
+const { dbPool, RESEND_API_KEY, INTL_DOMAIN } = require("./static");
 const L = require("./logic");
 
 const KEY = process.env.BOOKINGS_DATA_KEY || "";
@@ -11,7 +11,7 @@ const ENABLED = !!core.dataKey(KEY);
 const RETENTION_DAYS = Math.min(3650, Math.max(7, Number(process.env.BOOKINGS_FORM_RETENTION_DAYS) || 90)); // după check-out; de confirmat cu contabilul/juristul
 const E = L.escapeHtml;
 const sha = core.sha256;
-const siteBase = () => "https://" + (RO_DOMAIN || "programul-de-azi.ro");
+const siteBase = () => "https://" + (INTL_DOMAIN || "opening-hours-today.eu");
 const tokenOf = (rid) => core.deriveToken(rid, process.env.ACCOMMODATION_SESSION_SECRET || "");
 const dRo = (s) => { const [y, m, d] = String(s).slice(0, 10).split("-"); return `${d}.${m}.${y}`; };
 const jsDate = (v) => (v instanceof Date ? `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, "0")}-${String(v.getDate()).padStart(2, "0")}` : String(v || "").slice(0, 10));
