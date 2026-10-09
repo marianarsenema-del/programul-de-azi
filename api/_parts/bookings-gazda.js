@@ -268,6 +268,7 @@ const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',
 // ---------- AZI ----------
 async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/azi?listing='+LID);}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
  v.replaceChildren();
+ v.append(roomsCard(j.rooms||[]));
  v.append(el('div',{class:'kpis'},[kpi(j.arrivals_today.length,'Sosiri azi'),kpi(j.in_house.length,'În casă'),kpi(j.departures_today.length,'Plecări azi')]));
  if(j.alerts.length){const c=el('div',{class:'card alert'},[el('h2',{},['De rezolvat'])]);j.alerts.forEach(a=>c.append(el('div',{class:'item'},[a])));v.append(c);}
  const list=(title,arr,empty)=>{const c=el('div',{class:'card'},[el('h2',{},[title])]);if(!arr.length)c.append(el('div',{class:'sub'},[empty]));arr.forEach(x=>c.append(resCard(x,false)));v.append(c);};
@@ -275,6 +276,15 @@ async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  list('Sunt la tine acum',j.in_house,'Nimeni cazat acum.');
  if(j.arrivals_today.length||j.departures_today.length){list('Azi',j.arrivals_today.concat(j.departures_today),'');}
  v.append(el('div',{class:'card'},[el('div',{class:'sub'},['Următoarele 30 de nopți: '+j.occupied_30+' ocupate din 30'])]));}
+const STN={0:'liber',1:'închis de tine',2:'ocupat (altă platformă)',3:'în curs de rezervare',4:'rezervat'};
+function roomsCard(rooms){const free=rooms.filter(r=>r.tonight===0).length;
+ const c=el('div',{class:'card'},[el('h2',{},['Camere în seara asta: '+free+' libere din '+rooms.length])]);
+ rooms.forEach(r=>{const it=el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+STN[r.tonight]+' · Mâine noapte: '+STN[r.tomorrow]])]);
+  const row=el('div',{class:'row',style:'margin-top:4px'});
+  [['tonight','azi',0],['tomorrow','mâine',1]].forEach(k=>{const st=r[k[0]];if(st===0||st===1){const b=el('button',{class:(st===0?'d':'s')+' mini',type:'button'},[(st===0?'Închide ':'Deschide ')+k[1]]);
+   b.onclick=async()=>{b.disabled=true;try{const d=new Date();d.setDate(d.getDate()+k[2]);const day=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    await api('POST',B()+'/zile',{days:[day],action:st===0?'close':'open',unit:r.unit_no?r.unit_no:undefined});show('azi');}catch(e){alert(errT(e));b.disabled=false;}};row.append(b);}});
+  if(row.children.length)it.append(row);c.append(it);});return c;}
 function kpi(n,t){return el('div',{class:'card'},[el('div',{class:'big'},[String(n)]),el('div',{class:'sub',style:'margin:4px 0 0'},[t])]);}
 function resCard(x,actions){const kids=[el('b',{},[x.guest_name+(x.status==='cancelled'?(x.refused?' · refuzată':' · anulată'):'')]),
  el('div',{class:'sub',style:'margin:2px 0'},[dRo(x.check_in)+' → '+dRo(x.check_out)+' · '+x.guests+' pers.'+(x.unit_names?' · '+x.unit_names:'')+(STAFF()?'':' · '+ron(x.total_bani))+(!STAFF()&&x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status):'')])];
@@ -686,6 +696,12 @@ function mount(r, o) {
       const inHouse = (await dbPool.query(`${sel} AND r.check_in <= ${today} AND r.check_out > ${today} ORDER BY r.check_out, r.id`, [lid])).rows.map(map);
       const depToday = (await dbPool.query(`${sel} AND r.check_out = ${today} ORDER BY r.id`, [lid])).rows.map(map);
       const occ = (await dbPool.query(`SELECT count(DISTINCT day)::int AS n FROM booking_calendar_days WHERE listing_id = $1 AND status IN (2,4) AND day >= ${today} AND day < ${today} + 30`, [lid])).rows[0];
+      // camere: libere / ocupate în seara asta și mâine (0 liber, 1 închis de gazdă, 2 platformă, 3 în rezervare, 4 rezervat)
+      const us = (await dbPool.query(`SELECT unit_no, name FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [lid])).rows;
+      const dd = (await dbPool.query(`SELECT unit_id, status, (day = ${today}) AS is_today FROM booking_calendar_days WHERE listing_id = $1 AND day >= ${today} AND day <= ${today} + 1 AND NOT (status = 3 AND blocked_until < now())`, [lid])).rows;
+      const units = us.length ? us.map((u) => ({ unit_no: Number(u.unit_no), name: u.name })) : [{ unit_no: 0, name: "Toată proprietatea" }];
+      const stOf = (u, today_) => { const f = dd.find((x) => !!x.is_today === today_ && (Number(x.unit_id) === u.unit_no || (us.length && Number(x.unit_id) === 0))); return f ? Number(f.status) : 0; };
+      const rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
       const alerts = [];
       const rf = (await dbPool.query(`SELECT guest_name FROM booking_reservations WHERE listing_id = $1 AND status = 'confirmed' AND pay_status = 'rest_failed'`, [lid])).rows;
       rf.forEach((x) => alerts.push("Restul de plată al lui " + x.guest_name + " nu a putut fi încasat; turistul are 48 de ore să plătească."));
@@ -694,8 +710,8 @@ function mount(r, o) {
       const cf = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL`, [lid])).rows[0];
       if (cf && cf.n > 0) alerts.push(cf.n + " zi(le) apar ocupate și pe altă platformă, dar sunt deja rezervate la tine. Verifică și anulează de unde e cazul.");
       noStore(res);
-      if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, alerts: [] }); }
-      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, alerts });
+      if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, rooms, alerts: [] }); }
+      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, alerts });
     } catch (e) { console.error("gazda azi:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 }
