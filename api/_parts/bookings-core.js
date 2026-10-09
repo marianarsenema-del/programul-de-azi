@@ -58,13 +58,21 @@ function suggestedTemplates(year) {
 
 // ---------- tarife ----------
 // Prioritate pe noapte: interval (prioritate mai mare, apoi cel mai nou) > weekend (vineri/sâmbătă) > preț de bază.
+// la egalitate de tip: regula specifică unei camere bate regula generală, apoi prioritatea, apoi cea mai nouă
+function better(a, b) {
+  if (!b) return true;
+  const sa = a.unit_no != null, sb = b.unit_no != null;
+  if (sa !== sb) return sa;
+  if (a.priority !== b.priority) return a.priority > b.priority;
+  return a.id > b.id;
+}
 function priceForNight(day, rules, basePriceBani) {
   let best = null;
   for (const r of rules) {
     if (!r.active) continue;
     if (r.kind !== "interval") continue;
     if (day >= r.date_from && day <= r.date_to) {
-      if (!best || r.priority > best.priority || (r.priority === best.priority && r.id > best.id)) best = r;
+      if (better(r, best)) best = r;
     }
   }
   if (best) return { price: best.price_bani, rule: best };
@@ -75,7 +83,7 @@ function priceForNight(day, rules, basePriceBani) {
       if (!r.active || r.kind !== "weekend") continue;
       if (r.date_from && day < r.date_from) continue;
       if (r.date_to && day > r.date_to) continue;
-      if (!wk || r.priority > wk.priority || (r.priority === wk.priority && r.id > wk.id)) wk = r;
+      if (better(r, wk)) wk = r;
     }
   }
   if (wk) return { price: wk.price_bani, rule: wk };
@@ -98,7 +106,7 @@ function computeQuote({ checkIn, checkOut, guests, settings, rules, busyDays }) 
   let minNights = settings.min_nights || 1;
   let checkinDays = null, checkoutDays = null;
   const covering = rules.filter((r) => r.active && (r.kind === "interval" ? checkIn >= r.date_from && checkIn <= r.date_to : true));
-  const interval = covering.filter((r) => r.kind === "interval").sort((a, b) => b.priority - a.priority || b.id - a.id)[0];
+  const interval = covering.filter((r) => r.kind === "interval").reduce((acc, r) => (better(r, acc) ? r : acc), null);
   const ruleForArrival = interval || null;
   if (ruleForArrival) {
     if (ruleForArrival.min_nights) minNights = Math.max(minNights, ruleForArrival.min_nights);
