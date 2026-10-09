@@ -679,3 +679,11 @@ module.exports = function mountBookings(app) {
   app.use(r);
 };
 module.exports.syncFeed = syncFeed;
+// vizibilitate pentru butonul din /cont: pornit global sau previzualizare validă (fără să seteze cookie-uri)
+module.exports.canSee = (req) => {
+  if (!dbPool) return false;
+  if (ENABLED) return true;
+  if (!PREVIEW_KEY) return false;
+  const cookie = L.parseCookies(req).bkPreview;
+  return !!cookie && safeEq(cookie, PREVIEW_KEY);
+};
