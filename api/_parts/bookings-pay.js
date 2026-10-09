@@ -5,7 +5,7 @@
 "use strict";
 const crypto = require("crypto");
 const core = require("./bookings-core");
-const { dbPool, STRIPE_SECRET_KEY, RESEND_API_KEY, RO_DOMAIN } = require("./static");
+const { dbPool, STRIPE_SECRET_KEY, RESEND_API_KEY, INTL_DOMAIN } = require("./static");
 const L = require("./logic");
 const forms = require("./bookings-forms");
 
@@ -15,7 +15,7 @@ const LIVE = process.env.BOOKINGS_PAYMENTS_LIVE === "true" && !!STRIPE_SECRET_KE
 const STRIPE_VERSION = "2024-06-20";
 const E = L.escapeHtml;
 const sha = core.sha256;
-const siteBase = () => "https://" + (RO_DOMAIN || "programul-de-azi.ro");
+const siteBase = () => "https://" + (INTL_DOMAIN || "opening-hours-today.eu");
 const fmtRon = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " RON";
 const dRo = (s) => { const [y, m, d] = String(s).slice(0, 10).split("-"); return `${d}.${m}.${y}`; };
 const tokenOf = (rid) => core.deriveToken(rid, process.env.ACCOMMODATION_SESSION_SECRET || "");
