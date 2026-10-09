@@ -17,14 +17,20 @@ module.exports = function mountPublic(r, c) {
 
   async function sendMail(to, subject, html) {
     if (!RESEND_API_KEY || !to) return false;
-    try {
-      const resp = await fetch("https://api.resend.com/emails", {
-        method: "POST", signal: AbortSignal.timeout(8000),
-        headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: "Opening Hours Today <cazare@programul-de-azi.ro>", to: [to], subject, html }),
-      });
-      return resp.ok;
-    } catch (e) { return false; }
+    // expeditor principal pe domeniul site-ului; dacă Resend îl refuză (domeniu neverificat încă), reîncercăm cu expeditorul vechi, ca să nu se piardă coduri sau confirmări
+    const senders = [process.env.BOOKINGS_MAIL_FROM || "Opening Hours Today <cazare@opening-hours-today.eu>", "Opening Hours Today <cazare@programul-de-azi.ro>"];
+    for (let i = 0; i < senders.length; i++) {
+      try {
+        const resp = await fetch("https://api.resend.com/emails", {
+          method: "POST", signal: AbortSignal.timeout(8000),
+          headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ from: senders[i], to: [to], subject, html }),
+        });
+        if (resp.ok) return true;
+        if (![401, 403, 422].includes(resp.status)) return false; // alte erori (limite, rețea) nu se rezolvă prin schimbarea expeditorului
+      } catch (e) { return false; }
+    }
+    return false;
   }
   const E = L.escapeHtml;
   const fmtRon = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " RON";
@@ -239,6 +245,7 @@ module.exports = function mountPublic(r, c) {
     const period = `${dRo(done.ci)} – ${dRo(done.co)}`;
     await sendMail(done.guest_email, "Rezervare confirmată · " + done.listing_name,
       `<p>Bună, ${E(done.guest_name)},</p><p>Rezervarea ta la <b>${E(done.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${done.guests} persoane${roomsOf(done.nights_snapshot)}<br>Total: <b>${fmtRon(done.total_bani)}</b> (se achită direct la proprietate, conform înțelegerii cu gazda)</p>${FORMS ? `<p>Înainte de sosire, completează <a href="${base}/cazare/fisa/${token}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi sau anulează rezervarea</a></p>`);
+    await require("./bookings-gazda-notify").pushByListing(done.listing_id, { title: "Rezervare nouă", body: done.guest_name + " · " + dRo(done.ci) + " – " + dRo(done.co) + " · " + done.guests + " pers.", tag: "gz-r" + done.id });
     await sendMail(done.owner_email, "Rezervare nouă · " + done.listing_name,
       `<p>Ai o rezervare nouă confirmată la <b>${E(done.listing_name)}</b>.</p><p>${E(done.guest_name)} · ${E(done.guest_phone)} · ${E(done.guest_email)}<br>Perioada: ${period} · ${done.guests} persoane${roomsOf(done.nights_snapshot)} · ${fmtRon(done.total_bani)}</p><p>Zilele s-au blocat automat în calendar. O vezi în contul tău, la Rezervări.</p>`);
     noStore(res); res.json({ ok: true, link });
@@ -295,6 +302,7 @@ ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" 
       if (!row || row.status !== "confirmed" || row.ci <= core.todayRo()) return res.status(400).json({ error: "nu_se_poate_anula" });
       const done = isOnline(row) ? await pay.cancelByGuest(row) : await freeAndCancel(row.id, "guest");
       if (done) {
+        await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare anulată de oaspete", body: row.guest_name + " · " + dRo(row.ci) + " – " + dRo(row.co), tag: "gz-r" + row.id });
         await sendMail(row.owner_email, "Rezervare anulată · " + row.listing_name, `<p>${E(row.guest_name)} a anulat rezervarea ${dRo(row.ci)} – ${dRo(row.co)}. Zilele au fost eliberate în calendar.${isOnline(row) ? " Conform condițiilor, suma plătită nu se returnează turistului; ți se virează, minus comision, la 24 de ore după data check-in." : ""}</p>`);
       }
       res.json({ ok: true });
