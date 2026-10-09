@@ -302,11 +302,79 @@ async function safeFetchIcs(rawUrl, cond, deps) {
   return { ok: false, error: "prea_multe_redirectari" };
 }
 
+// ---------- plăți ----------
+// Peste 30 de zile până la check-in: avans 30% acum, restul se debitează cu 30 de zile înainte de sosire.
+// 30 de zile sau mai puțin: se plătește totul acum.
+function planPayment(totalBani, checkIn, today) {
+  const daysTo = dayNum(checkIn) - dayNum(today);
+  if (daysTo > 30) {
+    const advance = Math.round(totalBani * 0.3);
+    return { scheme: "advance", advance, rest: totalBani - advance, restDueOn: addDays(checkIn, -30) };
+  }
+  return { scheme: "full", advance: totalBani, rest: 0, restDueOn: null };
+}
+// comisionul se împarte între încasări fără să se piardă un ban: avansul primește partea lui rotunjită, restul primește diferența
+function splitCommission(commissionBani, advanceBani, totalBani) {
+  const adv = totalBani > 0 ? Math.round(commissionBani * advanceBani / totalBani) : 0;
+  return { advance: adv, rest: commissionBani - adv };
+}
+// Tokenul secret din linkul turistului: derivat din ID cu HMAC, ca să poată fi refăcut în e-mailuri (webhook) fără să fie stocat.
+function deriveToken(rid, secret) {
+  if (!secret) return crypto.randomBytes(32).toString("hex");
+  return crypto.createHmac("sha256", secret).update("bk-res:" + rid).digest("hex");
+}
+
+// ---------- fișa de cazare: criptare și validări ----------
+// AES-256-GCM; cheia (32 de octeți, base64) vine din BOOKINGS_DATA_KEY. Format: v1.iv.tag.text, toate în base64url.
+function dataKey(b64) {
+  const k = Buffer.from(String(b64 || ""), "base64");
+  return k.length === 32 ? k : null;
+}
+function encryptField(plain, b64key) {
+  const key = dataKey(b64key);
+  if (!key || plain == null || plain === "") return null;
+  const iv = crypto.randomBytes(12);
+  const c = crypto.createCipheriv("aes-256-gcm", key, iv);
+  const ct = Buffer.concat([c.update(String(plain), "utf8"), c.final()]);
+  return ["v1", iv.toString("base64url"), c.getAuthTag().toString("base64url"), ct.toString("base64url")].join(".");
+}
+function decryptField(enc, b64key) {
+  const key = dataKey(b64key);
+  if (!key || !enc) return null;
+  const [v, iv, tag, ct] = String(enc).split(".");
+  if (v !== "v1" || !iv || !tag || !ct) return null;
+  try {
+    const d = crypto.createDecipheriv("aes-256-gcm", key, Buffer.from(iv, "base64url"));
+    d.setAuthTag(Buffer.from(tag, "base64url"));
+    return Buffer.concat([d.update(Buffer.from(ct, "base64url")), d.final()]).toString("utf8");
+  } catch (e) { return null; }
+}
+// CNP românesc: 13 cifre, prima 1-8 (9 = străin rezident), dată validă, cifra de control (ponderi 279146358279)
+function validCnp(cnp) {
+  if (!/^[1-9]\d{12}$/.test(String(cnp))) return false;
+  const w = [2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9];
+  const sum = w.reduce((a, x, i) => a + x * Number(cnp[i]), 0);
+  let c = sum % 11; if (c === 10) c = 1;
+  if (c !== Number(cnp[12])) return false;
+  const s = Number(cnp[0]), mm = Number(cnp.slice(3, 5)), dd = Number(cnp.slice(5, 7));
+  const yy = Number(cnp.slice(1, 3));
+  const base = s <= 2 ? 1900 : s <= 4 ? 1800 : s <= 6 ? 2000 : 1900;
+  const d = new Date(Date.UTC(base + yy, mm - 1, dd));
+  return mm >= 1 && mm <= 12 && d.getUTCMonth() === mm - 1 && d.getUTCDate() === dd;
+}
+// vârsta în ani împliniți la data „on” (ambele YYYY-MM-DD)
+function ageOn(birth, on) {
+  const [by, bm, bd] = birth.split("-").map(Number), [oy, om, od] = on.split("-").map(Number);
+  return oy - by - (om < bm || (om === bm && od < bd) ? 1 : 0);
+}
+const maskTail = (s, n) => (s && s.length > n ? "•".repeat(s.length - n) + s.slice(-n) : s ? "•".repeat(s.length) : "");
+
 function sha256(s) { return crypto.createHash("sha256").update(s).digest("hex"); }
 function newExportToken() { return crypto.randomBytes(24).toString("hex"); }
 
 module.exports = {
   MAX_RANGE_DAYS, HORIZON_DAYS, isDateStr, dayNum, numToDay, addDays, dow, todayRo, eachDay,
   orthodoxEaster, suggestedTemplates, priceForNight, computeQuote, groupDays, buildIcs, parseIcs,
-  isPrivateIp, parseFeedUrl, resolvePublic, safeFetchIcs, sha256, newExportToken,
+  isPrivateIp, parseFeedUrl, resolvePublic, safeFetchIcs, sha256, newExportToken, planPayment, splitCommission, deriveToken,
+  dataKey, encryptField, decryptField, validCnp, ageOn, maskTail,
 };
