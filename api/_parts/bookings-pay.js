@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const core = require("./bookings-core");
 const { dbPool, STRIPE_SECRET_KEY, RESEND_API_KEY, RO_DOMAIN } = require("./static");
 const L = require("./logic");
+const forms = require("./bookings-forms");
 
 const PUBLISHABLE = process.env.STRIPE_PUBLISHABLE_KEY || "";
 const WEBHOOK_SECRET = process.env.STRIPE_BOOKINGS_WEBHOOK_SECRET || "";
@@ -79,7 +80,7 @@ async function mailConfirmed(row) {
     ? `Ai plătit avansul de <b>${fmtRon(row.advance_bani)}</b>. Restul de <b>${fmtRon(row.rest_bani)}</b> se debitează automat de pe același card pe <b>${dRo(row.rest_due)}</b>; cu 3 zile înainte primești un memento.`
     : `Ai plătit integral <b>${fmtRon(row.total_bani)}</b>.`;
   await sendMail(row.guest_email, "Rezervare confirmată · " + row.listing_name,
-    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p><p><a href="${link}">Vezi rezervarea</a></p>`);
+    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
   await sendMail(row.owner_email, "Rezervare nouă (plătită online) · " + row.listing_name,
     `<p>Ai o rezervare nouă confirmată la <b>${E(row.listing_name)}</b>.</p><p>${E(row.guest_name)} · ${E(row.guest_phone)} · ${E(row.guest_email)}<br>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)} · ${fmtRon(row.total_bani)}</p><p>Plata se face prin Opening Hours Today; banii îți ajung în cont la 24 de ore după check-in.</p>`);
 }
@@ -187,6 +188,31 @@ async function webhook(req, res, next) {
   catch (e) { console.error("rezervari webhook:", e.message); res.status(500).send("retry"); }
 }
 
+// ---------- garanție (blocare pe card, fără debitare) ----------
+async function releaseGuarantee(row) {
+  try {
+    if (row && row.guarantee_status === "held" && row.guarantee_pi) {
+      await stripeReq("POST", `/payment_intents/${row.guarantee_pi}/cancel`, {}, `bk-gcancel-${row.guarantee_pi}`);
+      await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'released' WHERE id = $1 AND guarantee_status = 'held'`, [row.id]);
+    }
+  } catch (e) { console.error("rezervari: eliberare garanție:", e.message); }
+}
+// Gazda reține (parțial sau total) din garanție, până a doua zi după check-out. Banii merg la gazdă prin același mecanism de plată, fără comision.
+async function claimGuarantee(row, amountBani, note) {
+  if (row.guarantee_status !== "held" || !row.guarantee_pi) return { ok: false, error: "garantie_indisponibila" };
+  if (!Number.isInteger(amountBani) || amountBani < 1 || amountBani > row.guarantee_bani) return { ok: false, error: "suma_invalida" };
+  if (core.todayRo() > core.addDays(row.co, 1)) return { ok: false, error: "termen_expirat" };
+  const cap = await stripeReq("POST", `/payment_intents/${row.guarantee_pi}/capture`, { amount_to_capture: amountBani }, `bk-gcap-${row.id}-${amountBani}`);
+  if (!cap.ok) { console.error("rezervari: captură garanție eșuată", row.id, cap.error && cap.error.message); return { ok: false, error: "captura_esuata" }; }
+  await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'claimed', guarantee_claimed_bani = $2, guarantee_note = $3 WHERE id = $1 AND guarantee_status = 'held'`, [row.id, amountBani, note]);
+  await dbPool.query(
+    `INSERT INTO booking_payouts (reservation_id, listing_id, owner_id, pi_id, charge_id, gross_bani, commission_bani, amount_bani, due_at) VALUES ($1,$2,$3,$4,$5,$6,0,$6, now()) ON CONFLICT (pi_id) DO NOTHING`,
+    [row.id, row.listing_id, row.owner_id, row.guarantee_pi, typeof cap.data.latest_charge === "string" ? cap.data.latest_charge : null, amountBani]);
+  await sendMail(row.guest_email, "Din garanția ta s-a reținut o sumă · " + row.listing_name,
+    `<p>Bună, ${E(row.guest_name)},</p><p>Gazda de la <b>${E(row.listing_name)}</b> a reținut <b>${fmtRon(amountBani)}</b> din garanția de ${fmtRon(row.guarantee_bani)}. Motiv declarat: ${E(note)}</p><p>Restul garanției a fost eliberat. Dacă nu ești de acord, contactează gazda sau răspunde la acest e-mail.</p>`);
+  return { ok: true };
+}
+
 // ---------- anulări ----------
 async function cancelPendingIntents(row) {
   for (const pi of [row.pi_advance, row.pi_rest]) if (pi) await stripeReq("POST", `/payment_intents/${pi}/cancel`, {}, `bk-cancel-${pi}`); // doar cele neplătite se pot anula; restul întorc eroare, ignorată
@@ -197,6 +223,7 @@ async function cancelByGuest(row) {
   if (!up.rowCount) return false;
   await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
   if (row.pay_scheme !== "direct" && row.pay_status === "partial") await cancelPendingIntents({ pi_rest: row.pi_rest });
+  await releaseGuarantee(row);
   return true;
 }
 // Gazda anulează: rambursare integrală a ce s-a plătit. Dacă o rambursare eșuează, nu anulăm (se poate reîncerca fără dublare).
@@ -214,12 +241,13 @@ async function cancelByOwner(row) {
   }
   const up = await dbPool.query(`UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = 'owner' WHERE id = $1 AND status IN ('confirmed','hold') RETURNING id`, [row.id]);
   if (up.rowCount) await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
+  await releaseGuarantee(row);
   return { ok: true };
 }
 
 // ---------- cron orar ----------
 async function runPaymentCron() {
-  const st = { rest_charged: 0, rest_failed: 0, reminders: 0, expired: 0, payouts: 0, payout_errors: 0 };
+  const st = { rest_charged: 0, rest_failed: 0, reminders: 0, expired: 0, payouts: 0, payout_errors: 0, guarantee_held: 0, guarantee_failed: 0, guarantee_released: 0 };
   const started = Date.now(), budget = () => Date.now() - started < 45000;
   // 1) restul de plată, debitat automat cu 30 de zile înainte de check-in
   const due = (await dbPool.query(RES_SELECT + ` WHERE r.status = 'confirmed' AND r.pay_scheme = 'advance' AND r.pay_status = 'partial' AND r.pi_rest IS NULL AND r.rest_due_on <= (now() AT TIME ZONE 'Europe/Bucharest')::date ORDER BY r.rest_due_on LIMIT 20`)).rows;
@@ -248,9 +276,39 @@ async function runPaymentCron() {
     if (!up.rowCount) continue;
     await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
     await cancelPendingIntents({ pi_rest: row.pi_rest });
+    await releaseGuarantee(row);
     await sendMail(row.guest_email, "Rezervare anulată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Nu am primit plata restului în termen de 48 de ore, așa că rezervarea la <b>${E(row.listing_name)}</b> (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată. Conform politicii de anulare, avansul nu se returnează.</p>`);
     await sendMail(row.owner_email, "Rezervare anulată (rest neachitat) · " + row.listing_name, `<p>Rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată pentru că restul nu a fost plătit. Zilele sunt din nou libere, iar avansul încasat (minus comisionul) îți va fi plătit la 24 de ore după data check-in.</p>`);
     st.expired++;
+  }
+  // 3b) garanția: blocare pe card cu o zi înainte de sosire (doar dacă totul e plătit) și eliberare după plecare
+  const gnew = (await dbPool.query(RES_SELECT + ` WHERE r.status = 'confirmed' AND r.guarantee_status = 'pending' AND r.guarantee_bani > 0 AND r.pay_status = 'paid' AND r.stripe_pm_id IS NOT NULL AND r.check_in - 1 <= (now() AT TIME ZONE 'Europe/Bucharest')::date AND r.check_out > (now() AT TIME ZONE 'Europe/Bucharest')::date LIMIT 20`)).rows;
+  for (const row of gnew) {
+    if (!budget()) break;
+    const g = await stripeReq("POST", "/payment_intents", {
+      amount: row.guarantee_bani, currency: String(row.currency || "RON").toLowerCase(), customer: row.stripe_customer_id, payment_method: row.stripe_pm_id,
+      off_session: "true", confirm: "true", capture_method: "manual", description: `Garanție rezervare #${row.id} · ${row.listing_name}`, metadata: { reservation_id: row.id, kind: "guarantee" },
+    }, `bk-guar-${row.id}`);
+    if (g.ok && g.data.status === "requires_capture") {
+      await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'held', guarantee_pi = $2 WHERE id = $1 AND guarantee_status = 'pending'`, [row.id, g.data.id]);
+      await sendMail(row.guest_email, "Garanția a fost blocată pe card · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Am blocat pe cardul tău garanția de <b>${fmtRon(row.guarantee_bani)}</b> pentru <b>${E(row.listing_name)}</b>. Suma NU este debitată și se eliberează automat după plecare, dacă nu există daune.</p>`);
+      st.guarantee_held++;
+    } else {
+      await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'failed' WHERE id = $1 AND guarantee_status = 'pending'`, [row.id]);
+      await sendMail(row.guest_email, "Nu am putut bloca garanția · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Banca nu a permis blocarea garanției de ${fmtRon(row.guarantee_bani)}. Rezervarea rămâne valabilă; te rugăm să te înțelegi cu gazda pentru garanție la sosire.</p>`);
+      await sendMail(row.owner_email, "Garanția nu a putut fi blocată · " + row.listing_name, `<p>Pentru rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) nu am putut bloca garanția de ${fmtRon(row.guarantee_bani)} pe card. Poți cere garanția direct, la sosire.</p>`);
+      st.guarantee_failed++;
+    }
+  }
+  const grel = (await dbPool.query(RES_SELECT + ` WHERE r.guarantee_status = 'held' AND r.check_out + 2 <= (now() AT TIME ZONE 'Europe/Bucharest')::date LIMIT 30`)).rows;
+  for (const row of grel) {
+    const c = await stripeReq("POST", `/payment_intents/${row.guarantee_pi}/cancel`, {}, `bk-gcancel-${row.guarantee_pi}`);
+    let gone = c.ok;
+    if (!gone) { const g = await stripeReq("GET", `/payment_intents/${row.guarantee_pi}`); gone = g.ok && g.data.status === "canceled"; } // blocarea poate fi expirat deja la bancă
+    if (!gone) continue;
+    await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'released' WHERE id = $1 AND guarantee_status = 'held'`, [row.id]);
+    await sendMail(row.guest_email, "Garanția a fost eliberată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Garanția de ${fmtRon(row.guarantee_bani)} blocată pe cardul tău pentru <b>${E(row.listing_name)}</b> a fost eliberată. Îți mulțumim pentru sejur!</p>`);
+    st.guarantee_released++;
   }
   // 4) plata către gazde
   const pays = (await dbPool.query(
@@ -276,7 +334,7 @@ btn.onclick=async()=>{btn.disabled=true;say(msg,'Se procesează plata…',true);
 `;
 
 function mount(r, ctx) {
-  const { jsonOnly, ownerApi, shell, COMMON_JS, noStore, toId } = ctx;
+  const { jsonOnly, ownerApi, ownListing, shell, COMMON_JS, noStore, toId } = ctx;
   const ipKey = (req) => L.hashIp(L.getClientIp(req));
   const live = (req, res, next) => (LIVE ? next() : res.status(404).json({ error: "negasit" }));
 
@@ -349,7 +407,7 @@ function mount(r, ctx) {
           description: `Rezervare #${row.id} · ${row.listing_name}`, receipt_email: row.guest_email, transfer_group: `res_${row.id}`,
           metadata: { reservation_id: row.id, kind: row.pay_scheme === "advance" ? "advance" : "full" },
         };
-        if (row.pay_scheme === "advance") params.setup_future_usage = "off_session"; // cardul se salvează pentru debitarea restului
+        if (row.pay_scheme === "advance" || row.guarantee_bani > 0) params.setup_future_usage = "off_session"; // cardul se salvează pentru debitarea restului sau pentru garanție
         const c = await stripeReq("POST", "/payment_intents", params, `bk-res-${row.id}-adv`);
         if (!c.ok) { console.error("rezervari: creare PaymentIntent eșuată:", c.error && c.error.message); return res.status(502).json({ error: "plata_indisponibila" }); }
         pi = c.data;
@@ -409,6 +467,21 @@ function mount(r, ctx) {
     } catch (e) { console.error("rezervari pagina plata:", e.message); res.status(500).send("Eroare"); }
   });
 
+  // --- gazda: reține din garanție ---
+  r.post("/api/rezervari/:id/rezervari/:rid/garantie", ...ownerApi, ownListing, live, async (req, res) => {
+    try {
+      const rid = toId(req.params.rid), b = req.body || {};
+      const amount = Math.round(Number(b.amount_ron) * 100), note = ctx.cleanText(b.note, 300);
+      if (!rid || !Number.isFinite(amount) || note.length < 10) return res.status(400).json({ error: "date_invalide" });
+      if (!(await L.checkRateLimit("own:" + req.accommodationOwner.ownerId, "rez-guar-claim", 20, 10))) return res.status(429).json({ error: "prea_multe_cereri" });
+      const row = (await dbPool.query(RES_SELECT + ` WHERE r.id = $1 AND r.listing_id = $2`, [rid, req.listing.id])).rows[0];
+      if (!row) return res.status(404).json({ error: "negasit" });
+      const out = await claimGuarantee(row, amount, note);
+      if (!out.ok) return res.status(409).json({ error: out.error });
+      res.json({ ok: true });
+    } catch (e) { console.error("rezervari garantie:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+
   // --- cron orar ---
   r.get("/api/cron/plati-rezervari", async (req, res) => {
     const secret = process.env.CRON_SECRET || "";
@@ -421,4 +494,4 @@ function mount(r, ctx) {
   });
 }
 
-module.exports = { LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
+module.exports = { claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
