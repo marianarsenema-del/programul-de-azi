@@ -6,7 +6,7 @@
 const crypto = require("crypto");
 const express = require("express");
 const core = require("./bookings-core");
-const { dbPool } = require("./static");
+const { dbPool, RESEND_API_KEY } = require("./static");
 const L = require("./logic");
 
 const ENABLED = process.env.BOOKINGS_ENABLED === "true";
@@ -54,7 +54,7 @@ const cleanDays = (arr) => {
 
 async function loadListing(listingId, ownerId) {
   const { rows } = await dbPool.query(
-    `SELECT l.id, l.name, l.owner_id, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests
+    `SELECT l.id, l.name, l.owner_id, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.instant_enabled, s.lead_days
        FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id
       WHERE l.id = $1::integer AND l.owner_id = $2::integer`, [listingId, ownerId]);
   return rows[0] || null;
@@ -67,9 +67,19 @@ async function ownListing(req, res, next) {
     const lst = await loadListing(id, req.accommodationOwner.ownerId);
     if (!lst) return res.status(404).json({ error: "negasit" });
     if (!lst.bookings_enabled) return res.status(403).json({ error: "dezactivat" });
+    lst.units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
     req.listing = lst;
     next();
   } catch (e) { console.error("rezervari ownListing:", e.message); res.status(500).json({ error: "eroare" }); }
+}
+
+// camera cerută de client: fără camere definite = proprietate întreagă (unit 0); cu camere, implicit prima
+function unitOf(req, v) {
+  const us = req.listing.units || [];
+  if (!us.length) return 0;
+  if (v == null || v === "") return us[0].unit_no;
+  const n = Number(v);
+  return us.some((u) => u.unit_no === n) ? n : null;
 }
 
 // ---------- sincronizare iCal ----------
@@ -164,10 +174,10 @@ function say(box,t,ok){box.textContent=t;box.className='msg '+(ok?'ok':'err');}
 
 const OWNER_APP_JS = COMMON_JS + `
 const LID=Number(location.pathname.split('/').pop());const B='/api/rezervari/'+LID;
-let month=new Date();month=new Date(Date.UTC(month.getFullYear(),month.getMonth(),1));let days={},sel=[],settings={},rules=[],feeds=[];
+let month=new Date();month=new Date(Date.UTC(month.getFullYear(),month.getMonth(),1));let days={},sel=[],settings={},rules=[],feeds=[];let units=[],curUnit='';const uq=(p)=>curUnit?(p+'unit='+curUnit):'';
 const ds=(d)=>d.toISOString().slice(0,10);const today=ds(new Date());
 const RO=['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
-async function loadCal(){const from=ds(month),to=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1)));const j=await api('GET',B+'/calendar?from='+from+'&to='+to);days={};j.days.forEach(d=>days[d.day]=d.status);renderCal();}
+async function loadCal(){const from=ds(month),to=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1)));const j=await api('GET',B+'/calendar?from='+from+'&to='+to+uq('&'));days={};j.days.forEach(d=>days[d.day]=d.status);renderCal();}
 function renderCal(){const g=$('#cal');g.replaceChildren();['L','M','M','J','V','S','D'].forEach(x=>g.append(el('div',{class:'h'},[x])));
 const first=month.getUTCDay()===0?6:month.getUTCDay()-1;for(let i=0;i<first;i++)g.append(el('div',{style:'border:0;background:none'}));
 const n=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,0)).getUTCDate();
@@ -176,25 +186,32 @@ const c=el('div',{class:(st?'s'+st:'')+(s<today?' past':' cl')+(sel.includes(s)?
 if(s>=today)c.addEventListener('click',()=>{if(sel.includes(s))sel=sel.filter(x=>x!==s);else sel.push(s);renderCal();$('#selinfo').textContent=sel.length?sel.length+' zile selectate':'';});g.append(c);}
 $('#mname').textContent=RO[month.getUTCMonth()]+' '+month.getUTCFullYear();}
 async function act(action){const m=$('#calmsg');if(!sel.length)return say(m,'Alege mai întâi zilele din calendar.',false);
-try{const r=await api('POST',B+'/zile',{days:sel,action});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,e.message,false);}}
+try{const r=await api('POST',B+'/zile',{days:sel,action,unit:curUnit?Number(curUnit):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,e.message,false);}}
 $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadCal();};
 $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadCal();};
 $('#close').onclick=()=>act('close');$('#open').onclick=()=>act('open');
-async function loadAll(){const j=await api('GET',B+'/tarife');settings=j.settings;rules=j.rules;
+async function loadAll(){const j=await api('GET',B+'/tarife');settings=j.settings;rules=j.rules;units=j.units||[];renderUnits();
+$('#inst').checked=!!settings.instant_enabled;$('#lead').value=String(settings.lead_days);$('#publink').textContent=settings.instant_enabled?('Link de rezervare: '+location.origin+'/cazare/rezerva/'+LID):'';
 $('#base').value=settings.base_price_bani==null?'':(settings.base_price_bani/100);$('#minn').value=settings.min_nights;$('#maxg').value=settings.max_guests||'';
 const box=$('#rules');box.replaceChildren();if(!rules.length)box.append(el('div',{class:'sub'},['Nu ai încă tarife speciale.']));
 rules.forEach(r=>{const dn=['D','L','Ma','Mi','J','V','S'];const info=(r.kind==='weekend'?'Weekend (vineri și sâmbătă)':r.date_from+' → '+r.date_to)+' · '+(r.price_bani/100)+' RON/noapte'+(r.min_nights?' · min '+r.min_nights+' nopți':'')+(r.checkin_days?' · check-in: '+r.checkin_days.map(x=>dn[x]).join(','):'')+(r.checkout_days?' · check-out: '+r.checkout_days.map(x=>dn[x]).join(','):'');
 const del=el('button',{class:'d',type:'button'},['Șterge']);del.onclick=async()=>{if(!confirm('Ștergi tariful „'+r.name+'”?'))return;await api('DELETE',B+'/tarife/'+r.id);loadAll();};
 const ed=el('button',{class:'s',type:'button'},['Editează']);ed.onclick=()=>fillRule(r);
-box.append(el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub'},[info]),el('div',{class:'row'},[ed,del])]));});}
-function fillRule(r){$('#rid').value=r.id||'';$('#rname').value=r.name||'';$('#rkind').value=r.kind||'interval';$('#rfrom').value=r.date_from||'';$('#rto').value=r.date_to||'';$('#rprice').value=r.price_bani?r.price_bani/100:'';$('#rmin').value=r.min_nights||'';$('#rprio').value=r.priority||0;
+box.append(el('div',{class:'item'},[el('b',{},[r.name+unitTag(r.unit_no)]),el('div',{class:'sub'},[info]),el('div',{class:'row'},[ed,del])]));});}
+function fillRule(r){$('#runit').value=r.unit_no==null?'':String(r.unit_no);$('#rid').value=r.id||'';$('#rname').value=r.name||'';$('#rkind').value=r.kind||'interval';$('#rfrom').value=r.date_from||'';$('#rto').value=r.date_to||'';$('#rprice').value=r.price_bani?r.price_bani/100:'';$('#rmin').value=r.min_nights||'';$('#rprio').value=r.priority||0;
 for(let i=0;i<7;i++){$('#ci'+i).checked=!r.checkin_days||r.checkin_days.includes(i);$('#co'+i).checked=!r.checkout_days||r.checkout_days.includes(i);}window.scrollTo({top:$('#ruleform').offsetTop-10,behavior:'smooth'});}
 $('#savebase').onclick=async()=>{const m=$('#basemsg');try{await api('POST',B+'/setari',{base_price_ron:$('#base').value===''?null:Number($('#base').value),min_nights:Number($('#minn').value||1),max_guests:$('#maxg').value?Number($('#maxg').value):null});say(m,'Salvat',true);}catch(e){say(m,e.message,false);}};
 function days7(p){const a=[];for(let i=0;i<7;i++)if($('#'+p+i).checked)a.push(i);return a.length===7?null:a;}
-$('#saverule').onclick=async()=>{const m=$('#rulemsg');try{const body={id:$('#rid').value?Number($('#rid').value):undefined,name:$('#rname').value,kind:$('#rkind').value,date_from:$('#rfrom').value||null,date_to:$('#rto').value||null,price_ron:Number($('#rprice').value),min_nights:$('#rmin').value?Number($('#rmin').value):null,checkin_days:days7('ci'),checkout_days:days7('co'),priority:Number($('#rprio').value||0)};
+$('#saverule').onclick=async()=>{const m=$('#rulemsg');try{const body={unit_no:$('#runit').value===''?null:Number($('#runit').value),id:$('#rid').value?Number($('#rid').value):undefined,name:$('#rname').value,kind:$('#rkind').value,date_from:$('#rfrom').value||null,date_to:$('#rto').value||null,price_ron:Number($('#rprice').value),min_nights:$('#rmin').value?Number($('#rmin').value):null,checkin_days:days7('ci'),checkout_days:days7('co'),priority:Number($('#rprio').value||0)};
 await api('POST',B+'/tarife',body);fillRule({});say(m,'Tarif salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
 (async()=>{const t=await api('GET','/api/rezervari/sabloane?year='+new Date().getFullYear());const box=$('#tpl');t.templates.forEach(x=>{const b=el('button',{class:'s',type:'button'},[x.name]);b.onclick=()=>fillRule({name:x.name,kind:'interval',date_from:x.date_from,date_to:x.date_to});box.append(b);});})();
-$('#qgo').onclick=async()=>{const m=$('#qmsg');try{const q=await api('GET',B+'/pret?checkin='+$('#qin').value+'&checkout='+$('#qout').value+'&guests='+($('#qg').value||1));
+$('#saveinst').onclick=async()=>{const m=$('#instmsg');try{await api('POST',B+'/setari',{base_price_ron:settings.base_price_bani==null?null:settings.base_price_bani/100,min_nights:settings.min_nights,max_guests:settings.max_guests,instant_enabled:$('#inst').checked,lead_days:Number($('#lead').value)});say(m,'Salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
+async function loadResv(){const j=await api('GET',B+'/rezervari');const box=$('#resv');box.replaceChildren();if(!j.reservations.length)box.append(el('div',{class:'sub'},['Nu ai încă rezervări.']));
+j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+x.unit_ids.map(unitName).join(', '):'')+' · '+x.guests+' pers. · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'');
+const kids=[el('b',{},[x.guest_name+(x.status==='cancelled'?' · anulată':'')]),el('div',{class:'sub'},[info]),el('div',{class:'sub'},[x.guest_phone+' · '+x.guest_email])];
+if(x.status==='confirmed'){const b=el('button',{class:'d',type:'button'},['Anulează']);b.onclick=async()=>{if(!confirm('Anulezi rezervarea lui '+x.guest_name+'? Zilele se eliberează și turistul primește e-mail.'))return;try{await api('POST',B+'/rezervari/'+x.id+'/anuleaza',{});loadResv();loadCal();}catch(e){alert(e.message);}};kids.push(el('div',{class:'row'},[b]));}
+box.append(el('div',{class:'item'},kids));});}
+$('#qgo').onclick=async()=>{const m=$('#qmsg');try{const q=await api('GET',B+'/pret?checkin='+$('#qin').value+'&checkout='+$('#qout').value+'&guests='+($('#qg').value||1)+uq('&'));
 say(m,(q.ok?'Disponibil · ':'Nu se poate: '+q.errors.join(', ')+' · ')+'total '+(q.totalBani/100)+' RON ('+q.nights.length+' nopți)',q.ok);}catch(e){say(m,e.message,false);}};
 async function loadFeeds(){const j=await api('GET',B+'/fluxuri');feeds=j.feeds;const box=$('#feeds');box.replaceChildren();
 if(!feeds.length)box.append(el('div',{class:'sub'},['Nu ai adăugat încă nicio platformă.']));
@@ -203,39 +220,65 @@ const sy=el('button',{class:'s',type:'button'},['Sincronizează acum']);sy.oncli
 const cp=el('button',{class:'s',type:'button'},['Copiază linkul nostru']);cp.onclick=async()=>{try{await navigator.clipboard.writeText(url);cp.textContent='Copiat ✓';setTimeout(()=>cp.textContent='Copiază linkul nostru',2000);}catch(e){prompt('Copiază linkul:',url);}};
 const del=el('button',{class:'d',type:'button'},['Șterge']);del.onclick=async()=>{if(!confirm('Ștergi platforma „'+f.platform+'”? Zilele ei se eliberează.'))return;await api('DELETE',B+'/fluxuri/'+f.id);loadFeeds();loadCal();};
 const st=f.import_url?(f.last_status==='ok'?'Ultima sincronizare reușită: '+(f.last_ok_at||'-').replace('T',' ').slice(0,16):(f.last_status==='error'?'Eroare: '+f.last_error:'Încă nesincronizat')):'Doar export (fără import)';
-feeds && box.append(el('div',{class:'item'},[el('b',{},[f.platform+(f.label?' · '+f.label:'')]),el('div',{class:'sub'},[st]),el('div',{class:'mono'},[url]),el('div',{class:'row'},[cp,f.import_url?sy:el('span'),del])]));});}
+feeds && box.append(el('div',{class:'item'},[el('b',{},[f.platform+(f.label?' · '+f.label:'')+unitTag(f.unit_id)]),el('div',{class:'sub'},[st]),el('div',{class:'mono'},[url]),el('div',{class:'row'},[cp,f.import_url?sy:el('span'),del])]));});}
 $('#fprev').onclick=async()=>{const m=$('#fmsg');try{const r=await api('POST',B+'/fluxuri/previzualizare',{import_url:$('#furl').value});say(m,'Link valid: '+r.events+' evenimente, '+r.nights+' nopți ocupate.'+(r.periods.length?' Ex.: '+r.periods.slice(0,3).map(p=>p.from+' → '+p.toExclusive).join('; '):''),true);}catch(e){say(m,e.message,false);}};
-$('#fadd').onclick=async()=>{const m=$('#fmsg');try{await api('POST',B+'/fluxuri',{platform:$('#fplat').value,label:$('#flabel').value,import_url:$('#furl').value||null});$('#furl').value='';$('#flabel').value='';say(m,'Platformă adăugată',true);loadFeeds();loadCal();}catch(e){say(m,e.message,false);}};
-loadCal();loadAll();loadFeeds();
+$('#fadd').onclick=async()=>{const m=$('#fmsg');try{await api('POST',B+'/fluxuri',{platform:$('#fplat').value,label:$('#flabel').value,import_url:$('#furl').value||null,unit_no:$('#funit').value===''?null:Number($('#funit').value)});$('#furl').value='';$('#flabel').value='';say(m,'Platformă adăugată',true);loadFeeds();loadCal();}catch(e){say(m,e.message,false);}};
+function unitName(n){const u=units.find(x=>x.unit_no===n);return u?u.name:('Camera '+n);}
+function unitTag(n){return (n==null||n===0||!units.length)?'':' · '+unitName(n);}
+function renderUnits(){const sel=$('#unitsel'),rs=$('#runit'),fs=$('#funit');$('#unitwrap').hidden=!units.length;$('#funitwrap').hidden=!units.length;
+sel.replaceChildren();units.forEach(u=>sel.append(el('option',{value:String(u.unit_no)},[u.name])));
+const prev=curUnit;if(units.length){if(!units.some(u=>String(u.unit_no)===curUnit))curUnit=String(units[0].unit_no);sel.value=curUnit;}else curUnit='';
+rs.replaceChildren(el('option',{value:''},[units.length?'Toate camerele':'Toată proprietatea']));units.forEach(u=>rs.append(el('option',{value:String(u.unit_no)},[u.name])));
+fs.replaceChildren();units.forEach(u=>fs.append(el('option',{value:String(u.unit_no)},[u.name])));
+const box=$('#units');box.replaceChildren();if(!units.length)box.append(el('div',{class:'sub'},['Fără camere definite: toată proprietatea se rezervă ca o singură unitate. Adaugă camere dacă le închiriezi separat.']));
+units.forEach(u=>{const ed=el('button',{class:'s',type:'button'},['Editează']);ed.onclick=()=>{$('#uno').value=u.unit_no;$('#uname').value=u.name;$('#ucap').value=u.capacity;$('#uprice').value=u.base_price_bani==null?'':u.base_price_bani/100;};
+const del=el('button',{class:'d',type:'button'},['Șterge']);del.onclick=async()=>{if(!confirm('Ștergi „'+u.name+'”? Se șterg și calendarul și legăturile ei cu platformele.'))return;try{await api('DELETE',B+'/camere/'+u.unit_no);await loadAll();loadFeeds();loadCal();}catch(e){say($('#unitmsg'),e.message,false);}};
+box.append(el('div',{class:'item'},[el('b',{},[u.name]),el('div',{class:'sub'},[u.capacity+' persoane'+(u.base_price_bani==null?' · preț de bază':' · '+(u.base_price_bani/100)+' RON/noapte')]),el('div',{class:'row'},[ed,del])]));});
+if(curUnit!==prev&&prev!==undefined&&days)loadCal();}
+$('#unitsel').onchange=()=>{curUnit=$('#unitsel').value;sel=[];$('#selinfo').textContent='';loadCal();};
+$('#saveunit').onclick=async()=>{const m=$('#unitmsg');try{await api('POST',B+'/camere',{unit_no:$('#uno').value?Number($('#uno').value):undefined,name:$('#uname').value,capacity:Number($('#ucap').value),price_ron:$('#uprice').value===''?null:Number($('#uprice').value)});['uno','uname','ucap','uprice'].forEach(i=>$('#'+i).value='');say(m,'Salvat',true);await loadAll();loadFeeds();loadCal();}catch(e){say(m,e.message,false);}};
+loadCal();loadAll();loadFeeds();loadResv();
 `;
 const dayChecks = (p) => [0, 1, 2, 3, 4, 5, 6].map((i) => `<label style="display:inline-block;margin:4px 8px 0 0;font-weight:500"><input type="checkbox" id="${p}${i}" checked style="width:auto;height:auto;margin:0 3px 0 0">${["D", "L", "Ma", "Mi", "J", "V", "S"][i]}</label>`).join("");
 const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p>
-<div class="card"><h2>Calendar</h2><div class="row" style="align-items:center"><button class="s" id="prev" type="button">‹</button><b id="mname" style="text-align:center"></b><button class="s" id="next" type="button">›</button></div><div class="cal" id="cal" style="margin-top:10px"></div>
+<div class="card"><h2>Camere</h2><div class="sub">Dacă închiriezi camerele separat, adaugă-le aici. Fiecare are calendar, preț și linkuri iCal proprii. Turistul poate rezerva una, mai multe sau toate camerele deodată.</div><div id="units"></div>
+<input type="hidden" id="uno"><div class="row"><div><label>Nume cameră<input id="uname" maxlength="60" placeholder="Camera 1"></label></div><div><label>Persoane<input id="ucap" type="number" min="1" max="50"></label></div><div><label>Preț/noapte (RON, opțional)<input id="uprice" type="number" min="0"></label></div></div>
+<div class="row" style="margin-top:10px"><button id="saveunit" type="button">Salvează camera</button></div><div class="msg" id="unitmsg"></div></div>
+<div class="card"><h2>Calendar</h2><div id="unitwrap" hidden><label>Camera<select id="unitsel"></select></label></div><div class="row" style="align-items:center"><button class="s" id="prev" type="button">‹</button><b id="mname" style="text-align:center"></b><button class="s" id="next" type="button">›</button></div><div class="cal" id="cal" style="margin-top:10px"></div>
 <div class="leg"><span>Gri = închis de tine</span><span>Albastru = platformă externă</span><span>Galben = blocare temporară</span><span>Verde = rezervat</span></div>
 <div class="row" style="margin-top:10px"><button id="close" type="button">Închide zilele alese</button><button class="s" id="open" type="button">Deschide zilele alese</button></div><div class="sub" id="selinfo"></div><div class="msg" id="calmsg"></div></div>
 <div class="card"><h2>Preț de bază și reguli generale</h2><div class="row"><div><label>Preț pe noapte (RON)<input id="base" type="number" min="0" step="1"></label></div><div><label>Ședere minimă (nopți)<input id="minn" type="number" min="1" max="60"></label></div><div><label>Număr maxim de persoane<input id="maxg" type="number" min="1"></label></div></div><div class="row" style="margin-top:10px"><button id="savebase" type="button">Salvează</button></div><div class="msg" id="basemsg"></div></div>
 <div class="card"><h2>Tarife speciale</h2><div class="sub">Ordinea de prioritate: perioadă specială → weekend → preț de bază.</div><div id="rules"></div></div>
 <div class="card" id="ruleform"><h2>Adaugă / editează tarif</h2><div class="sub">Șabloane rapide:</div><div class="row" id="tpl"></div><input type="hidden" id="rid">
-<label>Nume<input id="rname" maxlength="80"></label><div class="row"><div><label>Tip<select id="rkind"><option value="interval">Perioadă</option><option value="weekend">Weekend (vineri și sâmbătă)</option></select></label></div><div><label>Preț pe noapte (RON)<input id="rprice" type="number" min="0"></label></div></div>
+<label>Nume<input id="rname" maxlength="80"></label><label>Se aplică la<select id="runit"></select></label><div class="row"><div><label>Tip<select id="rkind"><option value="interval">Perioadă</option><option value="weekend">Weekend (vineri și sâmbătă)</option></select></label></div><div><label>Preț pe noapte (RON)<input id="rprice" type="number" min="0"></label></div></div>
 <div class="row"><div><label>De la<input id="rfrom" type="date"></label></div><div><label>Până la (inclusiv)<input id="rto" type="date"></label></div></div>
 <div class="row"><div><label>Ședere minimă (opțional)<input id="rmin" type="number" min="1" max="60"></label></div><div><label>Prioritate (mai mare câștigă)<input id="rprio" type="number" value="0"></label></div></div>
 <label>Zile de check-in permise</label><div>${dayChecks("ci")}</div><label>Zile de check-out permise</label><div>${dayChecks("co")}</div>
 <div class="row" style="margin-top:10px"><button id="saverule" type="button">Salvează tariful</button></div><div class="msg" id="rulemsg"></div></div>
 <div class="card"><h2>Verifică un preț</h2><div class="row"><div><label>Sosire<input id="qin" type="date"></label></div><div><label>Plecare<input id="qout" type="date"></label></div><div><label>Persoane<input id="qg" type="number" min="1" value="2"></label></div></div><div class="row" style="margin-top:10px"><button class="s" id="qgo" type="button">Calculează</button></div><div class="msg" id="qmsg"></div></div>
+<div class="card"><h2>Rezervare instant</h2><div class="sub">Turiștii pot rezerva singuri perioadele libere, fără aprobarea ta. Plata se face direct la tine. Primești e-mail la fiecare rezervare.</div>
+<label style="display:flex;gap:8px;align-items:center;font-weight:600;color:#17222B"><input type="checkbox" id="inst" style="width:22px;height:22px;margin:0">Activează rezervarea instant</label>
+<label>Cel mai devreme se poate rezerva<select id="lead"><option value="0">chiar azi</option><option value="1">de mâine</option><option value="2">peste 2 zile</option><option value="3">peste 3 zile</option><option value="7">peste 7 zile</option></select></label>
+<div class="row" style="margin-top:10px"><button id="saveinst" type="button">Salvează</button></div><div class="msg" id="instmsg"></div>
+<div class="sub" id="publink" style="margin-top:6px"></div></div>
+<div class="card"><h2>Rezervări</h2><div id="resv"></div></div>
 <div class="card"><h2>Sincronizare platforme (iCal)</h2><div class="sub">Pentru fiecare platformă primești un link al nostru, pe care îl lipești în calendarul acelei platforme, și poți adăuga linkul ei pe care îl citim noi.</div><div id="feeds"></div></div>
 <div class="card"><h2>Adaugă o platformă</h2><div class="row"><div><label>Platforma<select id="fplat"><option>Booking.com</option><option>Airbnb</option><option>Travelminit</option><option>Direct Booking</option><option>Altă platformă</option></select></label></div><div><label>Nume (opțional)<input id="flabel" maxlength="80"></label></div></div>
-<label>Linkul iCal al platformei (https://…)<input id="furl" placeholder="https://"></label><div class="row" style="margin-top:10px"><button class="s" id="fprev" type="button">Verifică linkul</button><button id="fadd" type="button">Adaugă platforma</button></div><div class="msg" id="fmsg"></div></div>`;
+<div id="funitwrap" hidden><label>Pentru camera<select id="funit"></select></label></div><label>Linkul iCal al platformei (https://…)<input id="furl" placeholder="https://"></label><div class="row" style="margin-top:10px"><button class="s" id="fprev" type="button">Verifică linkul</button><button id="fadd" type="button">Adaugă platforma</button></div><div class="msg" id="fmsg"></div></div>`;
 
 const ADMIN_APP_JS = COMMON_JS + `
 async function load(){const j=await api('GET','/api/admin/rezervari/anunturi');$('#st').textContent='Comutator global: '+(j.globalEnabled?'PORNIT':'OPRIT (doar previzualizare)');
 const b=$('#tb');b.replaceChildren();j.listings.forEach(l=>{const c=el('input',{type:'checkbox'});c.checked=l.enabled;c.style.cssText='width:22px;height:22px';
 c.onchange=async()=>{try{await api('POST','/api/admin/rezervari/setari',{listingId:l.id,enabled:c.checked});}catch(e){alert(e.message);c.checked=!c.checked;}};
-b.append(el('tr',{},[el('td',{},[l.name+' · '+(l.city||'')]),el('td',{},['#'+l.id]),el('td',{},[c])]));});}
+const ci=el('input',{type:'number',min:'0',max:'50',step:'0.5'});ci.value=l.commission_bps/100;ci.style.cssText='width:70px;height:34px';
+ci.onchange=async()=>{try{await api('POST','/api/admin/rezervari/setari',{listingId:l.id,enabled:c.checked,commissionPct:Number(ci.value)});}catch(e){alert(e.message);}};
+b.append(el('tr',{},[el('td',{},[l.name+' · '+(l.city||'')+(l.instant?' · instant ON':'')]),el('td',{},['#'+l.id]),el('td',{},[c]),el('td',{},[ci])]));});}
 load();`;
 
 // ---------- montare ----------
 module.exports = function mountBookings(app) {
   const r = express.Router();
+  let cleanupHolds = async () => {};
   r.use((req, res, next) => (allowed(req, res) && dbPool ? next() : next("router"))); // oprit → cade mai departe (404 normal)
   const ownerApi = [L.requireAccommodationOwnerApi, jsonOnly];
 
@@ -271,9 +314,11 @@ module.exports = function mountBookings(app) {
     try {
       const { from, to } = req.query;
       if (!core.isDateStr(from) || !core.isDateStr(to) || core.dayNum(to) <= core.dayNum(from) || core.dayNum(to) - core.dayNum(from) > core.MAX_RANGE_DAYS) return res.status(400).json({ error: "interval_invalid" });
+      const unit = unitOf(req, req.query.unit);
+      if (unit === null) return res.status(400).json({ error: "camera_invalida" });
       const { rows } = await dbPool.query(
         `SELECT to_char(day,'YYYY-MM-DD') AS day, status FROM booking_calendar_days
-          WHERE listing_id = $1 AND unit_id = 0 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now()) ORDER BY day`, [req.listing.id, from, to]);
+          WHERE listing_id = $1 AND unit_id = $4 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now()) ORDER BY day`, [req.listing.id, from, to, unit]);
       noStore(res); res.json({ days: rows });
     } catch (e) { console.error("rezervari calendar:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -281,17 +326,19 @@ module.exports = function mountBookings(app) {
     try {
       const { days, action } = req.body || {};
       if (!Array.isArray(days) || !days.length || days.length > core.MAX_RANGE_DAYS || !days.every(core.isDateStr) || !["close", "open"].includes(action)) return res.status(400).json({ error: "date_invalide" });
+      const unit = unitOf(req, (req.body || {}).unit);
+      if (unit === null) return res.status(400).json({ error: "camera_invalida" });
       const today = core.todayRo();
       const list = [...new Set(days)].filter((d) => d >= today);
       if (!list.length) return res.status(400).json({ error: "zile_trecute" });
       let changed;
       if (action === "close") {
         // nu suprascrie niciodată ocupări externe/rezervări; blocările temporare expirate se pot înlocui
-        await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = 0 AND status = 3 AND blocked_until < now() AND day = ANY($2::date[])`, [req.listing.id, list]);
-        const q = await dbPool.query(`INSERT INTO booking_calendar_days (listing_id, unit_id, day, status) SELECT $1, 0, d, 1 FROM unnest($2::date[]) d ON CONFLICT (listing_id, unit_id, day) DO NOTHING`, [req.listing.id, list]);
+        await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $3 AND status = 3 AND blocked_until < now() AND day = ANY($2::date[])`, [req.listing.id, list, unit]);
+        const q = await dbPool.query(`INSERT INTO booking_calendar_days (listing_id, unit_id, day, status) SELECT $1, $3, d, 1 FROM unnest($2::date[]) d ON CONFLICT (listing_id, unit_id, day) DO NOTHING`, [req.listing.id, list, unit]);
         changed = q.rowCount;
       } else {
-        const q = await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = 0 AND status = 1 AND day = ANY($2::date[])`, [req.listing.id, list]);
+        const q = await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $3 AND status = 1 AND day = ANY($2::date[])`, [req.listing.id, list, unit]);
         changed = q.rowCount;
       }
       res.json({ ok: true, changed, skipped: list.length - changed });
@@ -302,10 +349,10 @@ module.exports = function mountBookings(app) {
   r.get("/api/rezervari/:id/tarife", ...ownerApi, ownListing, async (req, res) => {
     try {
       const rules = (await dbPool.query(
-        `SELECT id, name, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active
+        `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active
            FROM booking_rate_rules WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
       const l = req.listing;
-      noStore(res); res.json({ settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON" }, rules });
+      noStore(res); res.json({ units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days }, rules });
     } catch (e) { console.error("rezervari tarife:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.post("/api/rezervari/:id/setari", ...ownerApi, ownListing, async (req, res) => {
@@ -314,7 +361,11 @@ module.exports = function mountBookings(app) {
       const base = b.base_price_ron == null ? null : bani(b.base_price_ron);
       const minN = Number(b.min_nights), maxG = b.max_guests == null ? null : Number(b.max_guests);
       if ((b.base_price_ron != null && base === null) || !Number.isInteger(minN) || minN < 1 || minN > 60 || (maxG !== null && (!Number.isInteger(maxG) || maxG < 1 || maxG > 100))) return res.status(400).json({ error: "date_invalide" });
-      await dbPool.query(`UPDATE booking_settings SET base_price_bani = $2, min_nights = $3, max_guests = $4, updated_at = now() WHERE listing_id = $1`, [req.listing.id, base, minN, maxG]);
+      const inst = b.instant_enabled == null ? !!req.listing.instant_enabled : b.instant_enabled === true;
+      const lead = b.lead_days == null ? (req.listing.lead_days == null ? 1 : req.listing.lead_days) : Number(b.lead_days);
+      if (!Number.isInteger(lead) || lead < 0 || lead > 30) return res.status(400).json({ error: "date_invalide" });
+      if (inst && base === null && !(req.listing.units || []).some((u) => u.base_price_bani != null) && !(await dbPool.query(`SELECT 1 FROM booking_rate_rules WHERE listing_id = $1 AND active AND kind = 'interval' LIMIT 1`, [req.listing.id])).rowCount) return res.status(400).json({ error: "Setează mai întâi un preț de bază ca să poți activa rezervarea instant" });
+      await dbPool.query(`UPDATE booking_settings SET base_price_bani = $2, min_nights = $3, max_guests = $4, instant_enabled = $5, lead_days = $6, updated_at = now() WHERE listing_id = $1`, [req.listing.id, base, minN, maxG, inst, lead]);
       res.json({ ok: true });
     } catch (e) { console.error("rezervari setari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -326,17 +377,19 @@ module.exports = function mountBookings(app) {
       const minN = b.min_nights == null ? null : Number(b.min_nights);
       const prio = Number.isInteger(Number(b.priority)) ? Math.max(-100, Math.min(100, Number(b.priority))) : 0;
       if (!name || !["interval", "weekend"].includes(kind) || price === null || ci === undefined || co === undefined || (minN !== null && (!Number.isInteger(minN) || minN < 1 || minN > 60))) return res.status(400).json({ error: "date_invalide" });
+      let unitNo = null;
+      if (b.unit_no != null) { unitNo = Number(b.unit_no); if (!(req.listing.units || []).some((u) => u.unit_no === unitNo)) return res.status(400).json({ error: "camera_invalida" }); }
       let from = b.date_from || null, to = b.date_to || null;
       if (kind === "interval") { if (!core.isDateStr(from) || !core.isDateStr(to) || to < from || core.dayNum(to) - core.dayNum(from) > 400) return res.status(400).json({ error: "perioada_invalida" }); }
       else { if ((from && !core.isDateStr(from)) || (to && !core.isDateStr(to))) return res.status(400).json({ error: "perioada_invalida" }); }
       if (b.id != null) {
         const id = toId(b.id);
-        const q = await dbPool.query(`UPDATE booking_rate_rules SET name=$3, kind=$4, date_from=$5, date_to=$6, price_bani=$7, min_nights=$8, checkin_days=$9, checkout_days=$10, priority=$11 WHERE id=$1 AND listing_id=$2 AND active`, [id, req.listing.id, name, kind, from, to, price, minN, ci, co, prio]);
+        const q = await dbPool.query(`UPDATE booking_rate_rules SET name=$3, kind=$4, date_from=$5, date_to=$6, price_bani=$7, min_nights=$8, checkin_days=$9, checkout_days=$10, priority=$11, unit_no=$12 WHERE id=$1 AND listing_id=$2 AND active`, [id, req.listing.id, name, kind, from, to, price, minN, ci, co, prio, unitNo]);
         if (!q.rowCount) return res.status(404).json({ error: "negasit" });
       } else {
         const cnt = await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_rate_rules WHERE listing_id = $1 AND active`, [req.listing.id]);
         if (cnt.rows[0].c >= 100) return res.status(400).json({ error: "prea_multe_tarife" });
-        await dbPool.query(`INSERT INTO booking_rate_rules (listing_id, name, kind, date_from, date_to, price_bani, min_nights, checkin_days, checkout_days, priority) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [req.listing.id, name, kind, from, to, price, minN, ci, co, prio]);
+        await dbPool.query(`INSERT INTO booking_rate_rules (listing_id, name, kind, date_from, date_to, price_bani, min_nights, checkin_days, checkout_days, priority, unit_no) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, [req.listing.id, name, kind, from, to, price, minN, ci, co, prio, unitNo]);
       }
       res.json({ ok: true });
     } catch (e) { console.error("rezervari tarif:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -352,18 +405,70 @@ module.exports = function mountBookings(app) {
     try {
       const { checkin, checkout } = req.query;
       if (!core.isDateStr(checkin) || !core.isDateStr(checkout)) return res.status(400).json({ error: "date_invalide" });
-      const rules = (await dbPool.query(`SELECT id, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active FROM booking_rate_rules WHERE listing_id = $1 AND active`, [req.listing.id])).rows;
-      const busy = (await dbPool.query(`SELECT to_char(day,'YYYY-MM-DD') AS day FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = 0 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now())`, [req.listing.id, checkin, checkout])).rows;
+      const unit = unitOf(req, req.query.unit);
+      if (unit === null) return res.status(400).json({ error: "camera_invalida" });
+      const uObj = (req.listing.units || []).find((u) => u.unit_no === unit) || null;
+      const rules = (await dbPool.query(`SELECT id, unit_no, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active FROM booking_rate_rules WHERE listing_id = $1 AND active`, [req.listing.id])).rows.filter((x) => x.unit_no == null || x.unit_no === unit);
+      const busy = (await dbPool.query(`SELECT to_char(day,'YYYY-MM-DD') AS day FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $4 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now())`, [req.listing.id, checkin, checkout, unit])).rows;
       const l = req.listing;
-      const q = core.computeQuote({ checkIn: checkin, checkOut: checkout, guests: Number(req.query.guests) || 1, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests }, rules, busyDays: new Set(busy.map((x) => x.day)) });
+      const guestN = Number(req.query.guests) || 1;
+      const q = core.computeQuote({ checkIn: checkin, checkOut: checkout, guests: guestN, settings: { base_price_bani: uObj && uObj.base_price_bani != null ? uObj.base_price_bani : l.base_price_bani, min_nights: l.min_nights || 1, max_guests: uObj ? uObj.capacity : l.max_guests }, rules, busyDays: new Set(busy.map((x) => x.day)) });
       noStore(res); res.json(q);
     } catch (e) { console.error("rezervari pret:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+
+  // --- camere (unități) ---
+  r.post("/api/rezervari/:id/camere", ...ownerApi, ownListing, async (req, res) => {
+    let client;
+    try {
+      const b = req.body || {};
+      const name = cleanText(b.name, 60), cap = Number(b.capacity);
+      const price = b.price_ron == null || b.price_ron === "" ? null : bani(b.price_ron);
+      if (!name || !Number.isInteger(cap) || cap < 1 || cap > 50 || (b.price_ron != null && b.price_ron !== "" && price === null)) return res.status(400).json({ error: "date_invalide" });
+      if (b.unit_no != null) {
+        const n = Number(b.unit_no);
+        if (!(req.listing.units || []).some((u) => u.unit_no === n)) return res.status(404).json({ error: "negasit" });
+        await dbPool.query(`UPDATE booking_units SET name = $3, capacity = $4, base_price_bani = $5 WHERE listing_id = $1 AND unit_no = $2 AND active`, [req.listing.id, n, name, cap, price]);
+        return res.json({ ok: true });
+      }
+      client = await dbPool.connect();
+      await client.query("BEGIN");
+      await client.query(`SELECT pg_advisory_xact_lock($1::bigint)`, [req.listing.id]);
+      const mx = (await client.query(`SELECT COALESCE(MAX(unit_no), 0)::int AS m, COUNT(*) FILTER (WHERE active)::int AS act FROM booking_units WHERE listing_id = $1`, [req.listing.id])).rows[0];
+      if (mx.m >= 50) { await client.query("ROLLBACK"); return res.status(400).json({ error: "Ai atins numărul maxim de camere" }); }
+      const n = mx.m + 1;
+      await client.query(`INSERT INTO booking_units (listing_id, unit_no, name, capacity, base_price_bani, sort_order) VALUES ($1,$2,$3,$4,$5,$2)`, [req.listing.id, n, name, cap, price]);
+      if (mx.act === 0) { // prima cameră: ce era pe „proprietatea întreagă” (unit 0) se mută pe ea
+        await client.query(`UPDATE booking_calendar_days SET unit_id = $2 WHERE listing_id = $1 AND unit_id = 0`, [req.listing.id, n]);
+        await client.query(`UPDATE booking_ical_feeds SET unit_id = $2 WHERE listing_id = $1 AND unit_id = 0`, [req.listing.id, n]);
+        await client.query(`UPDATE booking_reservations SET unit_ids = ARRAY[$2::smallint] WHERE listing_id = $1 AND unit_ids = ARRAY[0::smallint] AND status IN ('hold','confirmed')`, [req.listing.id, n]);
+      }
+      await client.query("COMMIT");
+      res.json({ ok: true, unit_no: n });
+    } catch (e) {
+      if (client) await client.query("ROLLBACK").catch(() => {});
+      console.error("rezervari camere:", e.message); res.status(500).json({ error: "eroare" });
+    } finally { if (client) client.release(); }
+  });
+  r.delete("/api/rezervari/:id/camere/:n", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const n = Number(req.params.n), us = req.listing.units || [];
+      if (!us.some((u) => u.unit_no === n)) return res.status(404).json({ error: "negasit" });
+      if (us.length < 2) return res.status(400).json({ error: "Trebuie să rămână cel puțin o cameră" });
+      const busy = await dbPool.query(`SELECT 1 FROM booking_reservations WHERE listing_id = $1 AND status IN ('hold','confirmed') AND check_out > (now() AT TIME ZONE 'Europe/Bucharest')::date AND $2::smallint = ANY(unit_ids) LIMIT 1`, [req.listing.id, n]);
+      if (busy.rowCount) return res.status(400).json({ error: "Camera are rezervări viitoare. Anulează-le întâi." });
+      await dbPool.query(`UPDATE booking_units SET active = FALSE WHERE listing_id = $1 AND unit_no = $2`, [req.listing.id, n]);
+      await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $2`, [req.listing.id, n]);
+      await dbPool.query(`DELETE FROM booking_ical_feeds WHERE listing_id = $1 AND unit_id = $2`, [req.listing.id, n]);
+      await dbPool.query(`UPDATE booking_rate_rules SET active = FALSE WHERE listing_id = $1 AND unit_no = $2`, [req.listing.id, n]);
+      res.json({ ok: true });
+    } catch (e) { console.error("rezervari camera stearsa:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
   // --- fluxuri iCal ---
   r.get("/api/rezervari/:id/fluxuri", ...ownerApi, ownListing, async (req, res) => {
     try {
-      const feeds = (await dbPool.query(`SELECT id, platform, label, import_url, export_token, enabled, last_sync_at, last_ok_at, last_status, last_error, event_count FROM booking_ical_feeds WHERE listing_id = $1 ORDER BY id`, [req.listing.id])).rows;
+      const feeds = (await dbPool.query(`SELECT id, unit_id, platform, label, import_url, export_token, enabled, last_sync_at, last_ok_at, last_status, last_error, event_count FROM booking_ical_feeds WHERE listing_id = $1 ORDER BY id`, [req.listing.id])).rows;
       const conflicts = (await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL`, [req.listing.id])).rows[0].c;
       noStore(res); res.json({ feeds, conflicts });
     } catch (e) { console.error("rezervari fluxuri:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -391,8 +496,10 @@ module.exports = function mountBookings(app) {
       const b = req.body || {};
       const platform = cleanText(b.platform, 40), label = cleanText(b.label, 80) || null;
       if (!platform) return res.status(400).json({ error: "date_invalide" });
+      const fUnit = unitOf(req, b.unit_no);
+      if (fUnit === null) return res.status(400).json({ error: "camera_invalida" });
       const cnt = (await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_ical_feeds WHERE listing_id = $1`, [req.listing.id])).rows[0].c;
-      if (cnt >= MAX_FEEDS) return res.status(400).json({ error: "Ai atins numărul maxim de platforme" });
+      if (cnt >= MAX_FEEDS * Math.max(1, (req.listing.units || []).length)) return res.status(400).json({ error: "Ai atins numărul maxim de platforme" });
       let importUrl = null, v = null;
       if (b.import_url) {
         if (!(await L.checkRateLimit("own:" + req.accommodationOwner.ownerId, "rez-prev", 20, 10))) return res.status(429).json({ error: "Prea multe încercări, încearcă peste câteva minute" });
@@ -402,7 +509,7 @@ module.exports = function mountBookings(app) {
         const dup = await dbPool.query(`SELECT 1 FROM booking_ical_feeds WHERE listing_id = $1 AND import_url = $2`, [req.listing.id, importUrl]);
         if (dup.rowCount) return res.status(400).json({ error: "Acest link este deja adăugat" });
       }
-      const ins = await dbPool.query(`INSERT INTO booking_ical_feeds (listing_id, platform, label, import_url, export_token) VALUES ($1,$2,$3,$4,$5) RETURNING *`, [req.listing.id, platform, label, importUrl, core.newExportToken()]);
+      const ins = await dbPool.query(`INSERT INTO booking_ical_feeds (listing_id, unit_id, platform, label, import_url, export_token) VALUES ($1,$6,$2,$3,$4,$5) RETURNING *`, [req.listing.id, platform, label, importUrl, core.newExportToken(), fUnit]);
       if (importUrl) await syncFeed(ins.rows[0]);
       res.json({ ok: true, id: ins.rows[0].id });
     } catch (e) { console.error("rezervari flux nou:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -465,6 +572,7 @@ module.exports = function mountBookings(app) {
       }
       await dbPool.query(`DELETE FROM booking_calendar_days WHERE day < (now() AT TIME ZONE 'Europe/Bucharest')::date - 1 OR (status = 3 AND blocked_until < now() - interval '1 hour')`);
       await dbPool.query(`DELETE FROM booking_sync_log WHERE at < now() - interval '30 days'`);
+      await cleanupHolds();
       res.json({ ok: true, ...stats });
     } catch (e) { console.error("rezervari cron:", e.message); res.status(500).json({ ok: false }); }
   });
@@ -472,12 +580,12 @@ module.exports = function mountBookings(app) {
   // --- admin: comutator per anunț ---
   r.get("/admin/rezervari", (req, res) => {
     if (!L.requireAdminPage(req, res)) return;
-    shell(res, "Admin · Rezervări", `<h1>Rezervări — comutatoare</h1><p class="sub" id="st"></p><div class="card"><table><thead><tr><th>Anunț</th><th>ID</th><th>Activ</th></tr></thead><tbody id="tb"></tbody></table></div>`, ADMIN_APP_JS);
+    shell(res, "Admin · Rezervări", `<h1>Rezervări — comutatoare</h1><p class="sub" id="st"></p><div class="card"><table><thead><tr><th>Anunț</th><th>ID</th><th>Activ</th><th>Comision %</th></tr></thead><tbody id="tb"></tbody></table></div>`, ADMIN_APP_JS);
   });
   r.get("/api/admin/rezervari/anunturi", async (req, res) => {
     if (!L.requireAdminApi(req, res)) return;
     try {
-      const rows = (await dbPool.query(`SELECT l.id, l.name, l.city, COALESCE(s.bookings_enabled, FALSE) AS enabled FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id WHERE l.status = 'approved' ORDER BY l.name LIMIT 1000`)).rows;
+      const rows = (await dbPool.query(`SELECT l.id, l.name, l.city, COALESCE(s.bookings_enabled, FALSE) AS enabled, COALESCE(s.commission_bps, 0) AS commission_bps, COALESCE(s.instant_enabled, FALSE) AS instant FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id WHERE l.status = 'approved' ORDER BY l.name LIMIT 1000`)).rows;
       noStore(res); res.json({ globalEnabled: ENABLED, listings: rows });
     } catch (e) { console.error("admin rezervari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -485,13 +593,18 @@ module.exports = function mountBookings(app) {
     if (!L.requireAdminApi(req, res)) return;
     try {
       const id = toId((req.body || {}).listingId), en = (req.body || {}).enabled === true;
-      if (!id) return res.status(400).json({ error: "date_invalide" });
+      const cp = (req.body || {}).commissionPct;
+      const bps = cp == null ? null : Math.round(Number(cp) * 100);
+      if (!id || (bps !== null && (!Number.isInteger(bps) || bps < 0 || bps > 5000))) return res.status(400).json({ error: "date_invalide" });
       const l = (await dbPool.query(`SELECT owner_id FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
       if (!l) return res.status(404).json({ error: "negasit" });
       await dbPool.query(`INSERT INTO booking_settings (listing_id, owner_id, bookings_enabled) VALUES ($1,$2,$3) ON CONFLICT (listing_id) DO UPDATE SET bookings_enabled = EXCLUDED.bookings_enabled, owner_id = EXCLUDED.owner_id, updated_at = now()`, [id, l.owner_id, en]);
+      if (bps !== null) await dbPool.query(`UPDATE booking_settings SET commission_bps = $2 WHERE listing_id = $1`, [id, bps]);
       res.json({ ok: true });
     } catch (e) { console.error("admin rezervari setari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
+
+  cleanupHolds = require("./bookings-public")(r, { dbPool, core, L, jsonOnly, noStore, toId, cleanText, shell, COMMON_JS, ownerApi, ownListing, safeEq, RESEND_API_KEY });
 
   app.use(r);
 };
