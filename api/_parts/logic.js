@@ -4370,7 +4370,10 @@ async function checkRateLimit(ipHash, endpoint, maxRequests, windowMinutes) {
 // Cloudflare Turnstile — verificare server-side a token-ului trimis de
 // widget-ul din formular. Vezi TURNSTILE_SITE_KEY/SECRET_KEY mai sus.
 async function verifyTurnstile(token, ip) {
-  if (!TURNSTILE_SECRET_KEY) return true; // nu e configurată încă — nu blocăm
+  if (!TURNSTILE_SECRET_KEY) {
+    if (!verifyTurnstile._warned) { verifyTurnstile._warned = true; console.warn("ATENȚIE: TURNSTILE_SECRET_KEY lipsește — verificarea anti-bot este dezactivată."); }
+    return true; // nu e configurată încă — nu blocăm
+  }
   if (typeof token !== "string" || !token) return false;
   try {
     const resp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -7157,6 +7160,7 @@ function getClaimCookieId(req) {
 // pagină, doar la apăsare; contorizăm vizualizarea (dacă există coloana).
 async function revealVenuePhone(table, req, res) {
   if (!dbPool || !/^\d+$/.test(req.params.id)) { res.status(404).json({ error: "not_found" }); return; }
+  if (!(await checkRateLimit(hashIp(getClientIp(req)), "vizualizare-telefon", 60, 10))) { res.status(429).json({ error: "too_many_requests" }); return; }
   try {
     let rows;
     try {
