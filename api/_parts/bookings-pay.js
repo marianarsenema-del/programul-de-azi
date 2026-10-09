@@ -57,14 +57,20 @@ function verifySig(raw, header, secret, nowSec) {
 
 async function sendMail(to, subject, html) {
   if (!RESEND_API_KEY || !to) return false;
-  try {
-    const resp = await fetch("https://api.resend.com/emails", {
-      method: "POST", signal: AbortSignal.timeout(8000),
-      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: "Opening Hours Today <cazare@programul-de-azi.ro>", to: [to], subject, html }),
-    });
-    return resp.ok;
-  } catch (e) { return false; }
+  // expeditor principal pe domeniul site-ului; dacă Resend îl refuză (domeniu neverificat încă), reîncercăm cu expeditorul vechi, ca să nu se piardă coduri sau confirmări
+  const senders = [process.env.BOOKINGS_MAIL_FROM || "Opening Hours Today <cazare@opening-hours-today.eu>", "Opening Hours Today <cazare@programul-de-azi.ro>"];
+  for (let i = 0; i < senders.length; i++) {
+    try {
+      const resp = await fetch("https://api.resend.com/emails", {
+        method: "POST", signal: AbortSignal.timeout(8000),
+        headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: senders[i], to: [to], subject, html }),
+      });
+      if (resp.ok) return true;
+      if (![401, 403, 422].includes(resp.status)) return false; // alte erori (limite, rețea) nu se rezolvă prin schimbarea expeditorului
+    } catch (e) { return false; }
+  }
+  return false;
 }
 
 const RES_SELECT = `SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, to_char(r.rest_due_on,'YYYY-MM-DD') AS rest_due, l.name AS listing_name, l.owner_id AS owner_id, o.email AS owner_email
@@ -81,6 +87,7 @@ async function mailConfirmed(row) {
     : `Ai plătit integral <b>${fmtRon(row.total_bani)}</b>.`;
   await sendMail(row.guest_email, "Rezervare confirmată · " + row.listing_name,
     `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
+  await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare nouă", body: row.guest_name + " · " + dRo(row.ci) + " – " + dRo(row.co) + " · " + row.guests + " pers.", tag: "gz-r" + row.id });
   await sendMail(row.owner_email, "Rezervare nouă (plătită online) · " + row.listing_name,
     `<p>Ai o rezervare nouă confirmată la <b>${E(row.listing_name)}</b>.</p><p>${E(row.guest_name)} · ${E(row.guest_phone)} · ${E(row.guest_email)}<br>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)} · ${fmtRon(row.total_bani)}</p><p>Plata se face prin Opening Hours Today; banii îți ajung în cont la 24 de ore după check-in.</p>`);
 }
@@ -278,6 +285,7 @@ async function runPaymentCron() {
     await cancelPendingIntents({ pi_rest: row.pi_rest });
     await releaseGuarantee(row);
     await sendMail(row.guest_email, "Rezervare anulată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Nu am primit plata restului în termen de 48 de ore, așa că rezervarea la <b>${E(row.listing_name)}</b> (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată. Conform politicii de anulare, avansul nu se returnează.</p>`);
+    await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare anulată", body: row.guest_name + ": restul nu a fost plătit în termen. Zilele s-au eliberat.", tag: "gz-r" + row.id });
     await sendMail(row.owner_email, "Rezervare anulată (rest neachitat) · " + row.listing_name, `<p>Rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată pentru că restul nu a fost plătit. Zilele sunt din nou libere, iar avansul încasat (minus comisionul) îți va fi plătit la 24 de ore după data check-in.</p>`);
     st.expired++;
   }
@@ -296,6 +304,7 @@ async function runPaymentCron() {
     } else {
       await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'failed' WHERE id = $1 AND guarantee_status = 'pending'`, [row.id]);
       await sendMail(row.guest_email, "Nu am putut bloca garanția · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Banca nu a permis blocarea garanției de ${fmtRon(row.guarantee_bani)}. Rezervarea rămâne valabilă; te rugăm să te înțelegi cu gazda pentru garanție la sosire.</p>`);
+      await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Garanția nu a putut fi blocată", body: row.guest_name + " · " + dRo(row.ci), tag: "gz-r" + row.id });
       await sendMail(row.owner_email, "Garanția nu a putut fi blocată · " + row.listing_name, `<p>Pentru rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) nu am putut bloca garanția de ${fmtRon(row.guarantee_bani)} pe card. Poți cere garanția direct, la sosire.</p>`);
       st.guarantee_failed++;
     }
