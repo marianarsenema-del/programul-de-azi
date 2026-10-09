@@ -320,6 +320,7 @@ module.exports = function mountBookings(app) {
   let cleanupHolds = async () => {};
   r.use((req, res, next) => (allowed(req, res) && dbPool ? next() : next("router"))); // oprit → cade mai departe (404 normal)
   const ownerApi = [L.requireAccommodationOwnerApi, jsonOnly];
+  require("./bookings-gazda").mount(r, { jsonOnly, noStore, shell, PAGE_CSS }); // aplicația „Gazdă” (PWA, Face ID)
 
   // --- pagini proprietar ---
   r.get("/cont/rezervari", L.requireAccommodationOwner, async (req, res) => {
@@ -327,10 +328,10 @@ module.exports = function mountBookings(app) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id
           WHERE l.owner_id = $1::integer AND s.bookings_enabled ORDER BY l.name`, [req.accommodationOwner.ownerId]);
-      const body = `<h1>Rezervări</h1><p class="sub">Alege proprietatea.</p>` + (rows.length
+      const body = `<h1>Rezervări</h1><p class="sub">Alege proprietatea.</p>` + (rows.length ? `<a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Aplicația Gazdă</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN. Deschide și activează o singură dată.</div></a><div class="card"><b>Ai deja aplicația pe ecranul principal?</b><div class="sub" style="margin:4px 0 8px">Generează un cod de unică folosință și scrie-l în aplicație, ca să o activezi cu PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>` : "") + (rows.length
         ? rows.map((x) => `<a class="card" style="display:block;color:inherit;text-decoration:none;font-weight:700" href="/cont/rezervari/${x.id}">${L.escapeHtml(x.name)}</a>`).join("")
         : `<div class="card">Rezervările nu sunt încă activate pentru proprietățile tale.</div>`);
-      shell(res, "Rezervări", body, "");
+      shell(res, "Rezervări", body, COMMON_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
   r.get("/cont/rezervari/:id(\\d+)", L.requireAccommodationOwner, async (req, res) => {
@@ -633,6 +634,7 @@ module.exports = function mountBookings(app) {
       await dbPool.query(`DELETE FROM booking_sync_log WHERE at < now() - interval '30 days'`);
       await cleanupHolds();
       try { stats.forms = await forms.cron(); } catch (e) { console.error("rezervari cron fise:", e.message); }
+      try { stats.gazda = await require("./bookings-gazda-notify").cron(); } catch (e) { console.error("rezervari cron gazda:", e.message); }
       res.json({ ok: true, ...stats });
     } catch (e) { console.error("rezervari cron:", e.message); res.status(500).json({ ok: false }); }
   });
