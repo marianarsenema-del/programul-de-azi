@@ -490,7 +490,7 @@ module.exports = function mountBookings(app) {
     try {
       const out = await sync.setRoomPrice(req.listing.id, (req.body || {}).price);
       if (out.error === "pret_invalid") return res.status(400).json({ error: "Scrie un preț valid pe noapte pentru o cameră." });
-      if (out.error === "nu_se_aplica") return res.status(400).json({ error: "Prețul pe cameră se poate seta doar pentru o pensiune cu cel puțin 2 camere, închiriată acum doar întreagă." });
+      if (out.error === "nu_se_aplica") return res.status(400).json({ error: "Prețul pe cameră se poate seta doar pentru o pensiune cu camere, închiriată acum doar întreagă." });
       if (out.error) return res.status(404).json({ error: "negasit" });
       res.json({ ok: true });
     } catch (e) { console.error("rezervari pret-camera:", e.message); res.status(500).json({ error: "eroare" }); }
