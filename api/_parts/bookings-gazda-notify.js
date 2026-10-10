@@ -132,7 +132,7 @@ async function cron(now) {
 }
 // condițiile ca oaspetele să primească informațiile de acces
 function blockedReason(row) {
-  if (forms.ENABLED && row.nforms < row.guests) return "fișa de cazare nu e completată pentru toți oaspeții.";
+  // fișa de cazare NU blochează mesajul: oaspetele o poate completa și la sosire (mesajul conține linkul către ea)
   if (row.pay_scheme && row.pay_scheme !== "direct" && row.pay_status !== "paid") return "plata nu este încheiată.";
   return null;
 }
