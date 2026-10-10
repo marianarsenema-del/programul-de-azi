@@ -93,8 +93,38 @@ function ohtQr(text) {
 
 // ---------- ghidul de instalare ----------
 function installCard() {
-  if (standalone()) return null;
   const ua = navigator.userAgent || '';
+  // aplicația OHT Host instalată se pornește cu ?app=1 (vezi manifestul) și își ține semnul în memoria ei
+  try { if (/[?&]app=1(&|$)/.test(location.search)) lsSet('ohtApp', '1'); } catch (e) {}
+  if (standalone()) {
+    let mine = false; try { mine = lsGet('ohtApp') === '1'; } catch (e) {}
+    if (mine) return null;
+    // fereastră „standalone”, dar nu OHT Host: de ex. aplicația Programul de Azi instalată, care deschide aici linkurile din ea
+    const iosX = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const cx = el('div', { class: 'card', style: 'border:2px solid #FF6B00;background:#FFF3E8' });
+    cx.append(el('div', { style: 'font-size:12px;font-weight:800;color:#9B3F00;background:#FFE2CC;border-radius:8px;padding:5px 9px;display:inline-block' }, ['Detectat: te afli într-o altă aplicație, nu în browser']));
+    cx.append(el('div', { style: 'font-size:18px;font-weight:800;margin-top:8px' }, ['Instalarea se face din ' + (iosX ? 'Safari' : 'Chrome')]));
+    const sx = (n, t) => el('div', { style: 'display:flex;gap:10px;align-items:flex-start;margin-top:10px' }, [el('div', { style: 'flex:none;width:26px;height:26px;border-radius:50%;background:#0E6B63;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center' }, [String(n)]), el('div', { style: 'font-size:15px;line-height:1.4;padding-top:2px' }, [t])]);
+    const tgt = location.origin + '/gazda/';
+    const ob2 = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:52px;font-size:17px' }, [iosX ? 'Deschide în Safari' : 'Deschide în Chrome']);
+    ob2.onclick = () => {
+      if (iosX) location.href = 'x-safari-' + tgt;
+      else location.href = 'intent://' + location.host + '/gazda/#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(tgt) + ';end';
+    };
+    cx.append(ob2);
+    cx.append(el('div', { class: 'sub', style: 'margin-top:12px' }, ['Nu s-a deschis? Fă așa:']));
+    cx.append(sx(1, 'Apasă butonul de mai jos, ca să copiezi linkul.'));
+    cx.append(sx(2, 'Închide această aplicație și deschide ' + (iosX ? 'Safari' : 'Chrome') + ' din telefon (nu din aplicația Programul de Azi).'));
+    cx.append(sx(3, 'Lipește linkul în bara de adresă și apasă Go. Acolo vei vedea pașii de instalare.'));
+    const cb = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:50px;font-size:16px' }, ['Copiază linkul']);
+    cb.onclick = async () => {
+      const t = location.origin + '/gazda/'; let ok = false;
+      try { await navigator.clipboard.writeText(t); ok = true; } catch (e) { try { const ta = el('textarea', { style: 'position:fixed;opacity:0' }); ta.value = t; document.body.append(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) { ok = false; } }
+      cb.textContent = ok ? 'Link copiat. Lipește-l în ' + (iosX ? 'Safari' : 'Chrome') + '.' : 'Copiază manual: ' + t;
+    };
+    cx.append(cb);
+    return cx;
+  }
   const iOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /Android/i.test(ua);
   const google = /GSA\/|GoogleApp/i.test(ua);
