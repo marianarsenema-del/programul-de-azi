@@ -94,6 +94,27 @@ function ohtQr(text) {
 // ---------- ghidul de instalare ----------
 function installCard() {
   const ua = navigator.userAgent || '';
+  // când omul pleacă în browser și se întoarce, ecranul se curăță: nu mai arată pașii vechi, ci „Ai terminat?”
+  const armReturn = (card) => {
+    let left = false;
+    const onVis = () => {
+      if (!card.isConnected) { document.removeEventListener('visibilitychange', onVis); return; }
+      if (document.visibilityState === 'hidden') { left = true; return; }
+      if (!left) return;
+      left = false; document.removeEventListener('visibilitychange', onVis);
+      card.replaceChildren(
+        el('div', { style: 'font-size:18px;font-weight:800' }, ['Ai terminat?']),
+        el('div', { style: 'font-size:15px;line-height:1.45;margin:8px 0 12px' }, ['Dacă ai adăugat OHT Host pe ecranul principal, deschide-o de acolo. De acum nu mai ai nevoie de acest ecran.']));
+      const goBtn = el('button', { type: 'button', style: 'width:100%;height:50px;font-size:16px' }, ['Merg în contul meu']);
+      goBtn.onclick = () => { location.href = '/cont'; };
+      const again = el('button', { type: 'button', class: 's', style: 'width:100%;margin-top:8px' }, ['Nu am instalat încă']);
+      again.onclick = () => { const n = installCard(); if (n) card.replaceWith(n); };
+      card.append(goBtn, again);
+      card.style.cssText = 'border:2px solid #0E6B63';
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return { mark: () => { left = true; } };
+  };
   // aplicația OHT Host instalată se pornește cu ?app=1 (vezi manifestul) și își ține semnul în memoria ei
   try { if (/[?&]app=1(&|$)/.test(location.search)) lsSet('ohtApp', '1'); } catch (e) {}
   if (standalone()) {
@@ -107,7 +128,9 @@ function installCard() {
     const sx = (n, t) => el('div', { style: 'display:flex;gap:10px;align-items:flex-start;margin-top:10px' }, [el('div', { style: 'flex:none;width:26px;height:26px;border-radius:50%;background:#0E6B63;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center' }, [String(n)]), el('div', { style: 'font-size:15px;line-height:1.4;padding-top:2px' }, [t])]);
     const tgt = location.origin + '/gazda/';
     const ob2 = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:52px;font-size:17px' }, [iosX ? 'Deschide în Safari' : 'Deschide în Chrome']);
+    const rt2 = armReturn(cx);
     ob2.onclick = () => {
+      rt2.mark();
       if (iosX) location.href = 'x-safari-' + tgt;
       else location.href = 'intent://' + location.host + '/gazda/#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(tgt) + ';end';
     };
@@ -120,6 +143,7 @@ function installCard() {
     cb.onclick = async () => {
       const t = location.origin + '/gazda/'; let ok = false;
       try { await navigator.clipboard.writeText(t); ok = true; } catch (e) { try { const ta = el('textarea', { style: 'position:fixed;opacity:0' }); ta.value = t; document.body.append(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) { ok = false; } }
+      rt2.mark();
       cb.textContent = ok ? 'Link copiat. Lipește-l în ' + (iosX ? 'Safari' : 'Chrome') + '.' : 'Copiază manual: ' + t;
     };
     cx.append(cb);
@@ -162,12 +186,14 @@ function installCard() {
       try { await navigator.clipboard.writeText(location.href.split('#')[0]); ok = true; } catch (e) {
         try { const t = el('textarea', { style: 'position:fixed;opacity:0' }); t.value = location.href.split('#')[0]; document.body.append(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (e2) { ok = false; }
       }
+      if (rt) rt.mark();
       b.textContent = ok ? 'Link copiat. Lipește-l în ' + (iOS ? 'Safari' : 'Chrome') + '.' : 'Copiază manual: ' + location.href.split('#')[0];
     };
     return b;
   };
 
   const c = el('div', { class: 'card', style: 'border:2px solid #0E6B63' });
+  const rt = (kind === 'inapp' || kind === 'ios-other') ? armReturn(c) : null;
   c.append(el('div', { style: 'font-size:12px;font-weight:800;color:#0E6B63;background:#E6F2F0;border-radius:8px;padding:5px 9px;display:inline-block' }, ['Detectat: ' + label]));
   c.append(el('div', { style: 'font-size:18px;font-weight:800;margin-top:8px' }, [kind === 'inapp' ? (iOS ? 'Deschide mai întâi în Safari' : 'Deschide mai întâi în Chrome') : (kind === 'desktop' ? 'Aplicația se instalează pe telefon' : 'Instalează aplicația OHT Host pe telefon')]));
 
@@ -208,7 +234,7 @@ function installCard() {
     };
     c.append(el('div', { style: 'font-size:15px;line-height:1.4;margin-top:6px' }, ['Instalarea merge doar din browserul telefonului, nu din ' + (google ? 'aplicația Google' : 'această aplicație') + '.']));
     const ob = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:52px;font-size:17px' }, [iOS ? 'Deschide în Safari' : 'Deschide în Chrome']);
-    ob.onclick = openExt;
+    ob.onclick = () => { if (rt) rt.mark(); openExt(); };
     c.append(ob);
     c.append(el('div', { class: 'sub', style: 'margin-top:12px' }, ['Nu s-a deschis? Fă așa:']));
     c.append(step(1, ['Apasă cele trei puncte ', ring(iDots()), ' sau butonul ', ring(iShare()), ' din colțul de sus.']));
