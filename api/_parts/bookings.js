@@ -11,6 +11,9 @@ const sync = require("./bookings-sync")(dbPool); // prețuri: formular <-> rezer
 const L = require("./logic");
 const pay = require("./bookings-pay");
 const forms = require("./bookings-forms");
+const camp = require("./bookings-camp"); // camping: locuri pe tip, cu stoc
+const campModelOf = (td) => camp.campModel(td);
+const campTd = async (id) => ((await dbPool.query(`SELECT type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0] || {}).type_details;
 const { qrSrc, codeRowSrc } = require("./gazda-install-ui");
 
 const ENABLED = process.env.BOOKINGS_ENABLED === "true";
@@ -58,7 +61,7 @@ const cleanDays = (arr) => {
 
 async function loadListing(listingId, ownerId) {
   const { rows } = await dbPool.query(
-    `SELECT l.id, l.name, l.owner_id, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.instant_enabled, s.lead_days, s.whole_discount_bps, s.payment_mode${pay.LIVE ? ", s.guarantee_bani" : ""}
+    `SELECT l.id, l.name, l.owner_id, l.type, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.instant_enabled, s.lead_days, s.whole_discount_bps, s.payment_mode${pay.LIVE ? ", s.guarantee_bani" : ""}
        FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id
       WHERE l.id = $1::integer AND l.owner_id = $2::integer`, [listingId, ownerId]);
   return rows[0] || null;
@@ -238,7 +241,7 @@ payNote();}catch(e){}}
 $('#pmo').onchange=$('#pmd').onchange=payNote;
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 async function loadResv(){const j=await api('GET',B+'/rezervari');let fm=null;try{fm=(await api('GET',B+'/fise-rezumat')).forms||{};}catch(e){}const box=$('#resv');box.replaceChildren();if(!j.reservations.length)box.append(el('div',{class:'sub'},['Nu ai încă rezervări.']));
-j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+x.unit_ids.map(unitName).join(', '):'')+' · '+x.guests+' pers. · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'')+(x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status)+' ('+(x.paid_bani/100)+' RON)':'');
+j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+(()=>{const c={};x.unit_ids.forEach(n=>{const k=n>=1000?Math.floor(n/1000):n;c[k]=(c[k]||0)+1;});return Object.keys(c).map(k=>(c[k]>1?c[k]+' × ':'')+unitName(Number(k))).join(', ');})():'')+' · '+x.guests+' pers. · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'')+(x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status)+' ('+(x.paid_bani/100)+' RON)':'');
 const kids=[el('b',{},[x.guest_name+(x.status==='cancelled'?(x.refused?' · refuzată de gazdă':' · anulată'):'')]),el('div',{class:'sub'},[info]),el('div',{class:'sub'},[x.guest_phone+' · '+x.guest_email])];
 if(x.status==='confirmed'){const b=el('button',{class:'d',type:'button'},['Anulează']);b.onclick=async()=>{if(!confirm('Anulezi rezervarea lui '+x.guest_name+'? Zilele se eliberează și turistul primește e-mail.'+(x.pay_scheme&&x.pay_scheme!=='direct'&&x.paid_bani?' Suma plătită se returnează integral turistului.':'')))return;try{await api('POST',B+'/rezervari/'+x.id+'/anuleaza',{});loadResv();loadCal();}catch(e){alert({plata_efectuata:'Banii au fost deja virați; nu se mai poate anula automat. Contactează-ne.',rambursare_esuata:'Rambursarea a eșuat. Încearcă din nou în câteva minute.'}[e.message]||e.message);}};kids.push(el('div',{class:'row'},[b]));}
 if(fm&&x.status==='confirmed'){const n=fm[x.id]||0;const fr=el('div',{class:'sub'},['Fișe de cazare: '+n+' din '+x.guests+' ']);if(n)fr.append(el('a',{href:'/cont/rezervari/'+LID+'/fisa/'+x.id,target:'_blank',rel:'noopener'},['Vezi fișele']));kids.push(fr);}
@@ -266,7 +269,7 @@ const st=f.import_url?(f.last_status==='ok'?'Ultima sincronizare reușită: '+(f
 feeds && box.append(el('div',{class:'item'},[el('b',{},[f.platform+(f.label?' · '+f.label:'')+unitTag(f.unit_id)]),el('div',{class:'sub'},[st]),el('div',{class:'mono'},[url]),el('div',{class:'row'},[cp,f.import_url?sy:el('span'),del])]));});}
 $('#fprev').onclick=async()=>{const m=$('#fmsg');try{const r=await api('POST',B+'/fluxuri/previzualizare',{import_url:$('#furl').value});say(m,'Link valid: '+r.events+' evenimente, '+r.nights+' nopți ocupate.'+(r.periods.length?' Ex.: '+r.periods.slice(0,3).map(p=>p.from+' → '+p.toExclusive).join('; '):''),true);}catch(e){say(m,e.message,false);}};
 $('#fadd').onclick=async()=>{const m=$('#fmsg');try{await api('POST',B+'/fluxuri',{platform:$('#fplat').value,label:$('#flabel').value,import_url:$('#furl').value||null,unit_no:$('#funit').value===''?null:Number($('#funit').value)});$('#furl').value='';$('#flabel').value='';say(m,'Platformă adăugată',true);loadFeeds();loadCal();}catch(e){say(m,e.message,false);}};
-function unitName(n){const u=units.find(x=>x.unit_no===n);return u?u.name:('Camera '+n);}
+function unitName(n){const t=n>=1000?Math.floor(n/1000):n;const u=units.find(x=>x.unit_no===t);return u?u.name:('Camera '+n);}
 function unitTag(n){return (n==null||n===0||!units.length)?'':' · '+unitName(n);}
 function renderUnits(){const sel=$('#unitsel'),rs=$('#runit'),fs=$('#funit');$('#unitwrap').hidden=!units.length;$('#funitwrap').hidden=!units.length;
 sel.replaceChildren();units.forEach(u=>sel.append(el('option',{value:String(u.unit_no)},[u.name])));
@@ -373,6 +376,10 @@ module.exports = function mountBookings(app) {
       if (!core.isDateStr(from) || !core.isDateStr(to) || core.dayNum(to) <= core.dayNum(from) || core.dayNum(to) - core.dayNum(from) > core.MAX_RANGE_DAYS) return res.status(400).json({ error: "interval_invalid" });
       const unit = unitOf(req, req.query.unit);
       if (unit === null) return res.status(400).json({ error: "camera_invalida" });
+      if (req.listing.type === "camping") { // camping: pe tip de loc, cu locuri libere pe zi
+        const m = campModelOf(await campTd(req.listing.id)), ty = m.types.find((x) => x.no === unit);
+        noStore(res); return res.json({ days: ty ? await camp.calendarOf(dbPool, req.listing.id, ty, from, to) : [], stock: ty ? ty.stock : 0 });
+      }
       const { rows } = await dbPool.query(
         `SELECT to_char(day,'YYYY-MM-DD') AS day, status FROM booking_calendar_days
           WHERE listing_id = $1 AND unit_id = $4 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now()) ORDER BY day`, [req.listing.id, from, to, unit]);
@@ -388,6 +395,14 @@ module.exports = function mountBookings(app) {
       const today = core.todayRo();
       const list = [...new Set(days)].filter((d) => d >= today);
       if (!list.length) return res.status(400).json({ error: "zile_trecute" });
+      if (req.listing.type === "camping") { // camping: închide/deschide câte locuri vrei dintr-un tip (gol = toate)
+        const m = campModelOf(await campTd(req.listing.id)), ty = m.types.find((x) => x.no === unit);
+        if (!ty) return res.status(400).json({ error: "camera_invalida" });
+        const qty = (req.body || {}).qty == null || (req.body || {}).qty === "" ? 0 : Number((req.body || {}).qty);
+        if (!Number.isInteger(qty) || qty < 0 || qty > 999) return res.status(400).json({ error: "date_invalide" });
+        const changed = await camp.setClosed(dbPool, req.listing.id, ty, list, action, qty);
+        return res.json({ ok: true, changed, skipped: 0 });
+      }
       let changed;
       if (action === "close") {
         // nu suprascrie niciodată ocupări externe/rezervări; blocările temporare expirate se pot înlocui
@@ -408,11 +423,12 @@ module.exports = function mountBookings(app) {
       await sync.ensure(req.listing.id); // preia din formular dacă s-a schimbat de la ultima sincronizare
       req.listing = Object.assign(req.listing, (await dbPool.query(`SELECT base_price_bani, whole_discount_bps FROM booking_settings WHERE listing_id = $1`, [req.listing.id])).rows[0] || {});
       req.listing.units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [req.listing.id])).rows;
+      if (req.listing.type === "camping") { const m = campModelOf(await campTd(req.listing.id)); req.listing.units.forEach((u) => { const t = m.types.find((x) => x.no === u.unit_no); u.stock = t ? t.stock : 0; }); }
       const rules = (await dbPool.query(
         `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps
            FROM booking_rate_rules r WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
       const l = req.listing;
-      noStore(res); res.json({ units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
+      noStore(res); res.json({ camp: l.type === "camping", units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
     } catch (e) { console.error("rezervari tarife:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.post("/api/rezervari/:id/setari", ...ownerApi, ownListing, async (req, res) => {
@@ -494,6 +510,23 @@ module.exports = function mountBookings(app) {
       if (out.error) return res.status(404).json({ error: "negasit" });
       res.json({ ok: true });
     } catch (e) { console.error("rezervari pret-camera:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  // camping: tipurile de loc, prețurile și taxele pe persoană, ca în formularul cazării
+  r.get("/api/rezervari/:id/camping", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const j = await sync.getCamping(req.listing.id);
+      if (!j) return res.status(404).json({ error: "negasit" });
+      noStore(res); res.json(j);
+    } catch (e) { console.error("rezervari camping get:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  r.post("/api/rezervari/:id/camping", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const out = await sync.setCamping(req.listing.id, req.body || {});
+      if (out.error === "pret_invalid") return res.status(400).json({ error: "Prețurile trebuie să fie numere pozitive (sau goale)." });
+      if (out.error === "date_invalide") return res.status(400).json({ error: "date_invalide" });
+      if (out.error) return res.status(404).json({ error: "negasit" });
+      res.json({ ok: true });
+    } catch (e) { console.error("rezervari camping post:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   // pensiune: modul de închiriere și prețurile, ca în formularul cazării
   r.get("/api/rezervari/:id/pensiune", ...ownerApi, ownListing, async (req, res) => {
