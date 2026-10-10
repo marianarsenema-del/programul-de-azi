@@ -255,7 +255,20 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
   if(r.ok){setup.append(el('b',{style:'font-size:18px'},['Cum dorești să te loghezi pe viitor?']),el('p',{class:'sub'},['Alegi o singură dată. De acum intri direct, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
    const m=el('div',{class:'msg'});
    const b=el('button',{type:'button',style:'width:100%;height:54px;font-size:17px'},['Face ID / amprentă']);
-   b.onclick=async()=>{b.disabled=true;try{if(!(await faceOk())){await notice('Face ID / amprenta nu este disponibilă',NOFACE);b.disabled=false;return;}await enroll(guessLabel());await boot();}catch(e){if(e&&(e.name==='NotSupportedError'||e.name==='SecurityError'||e.name==='InvalidStateError'||e.name==='UnknownError')){await notice('Face ID / amprenta nu este disponibilă',NOFACE);}else say(m,errT(e),false);b.disabled=false;}};
+   b.onclick=async()=>{b.disabled=true;try{
+     if(!(await faceOk())){await notice('Face ID / amprenta nu este disponibilă',NOFACE);b.disabled=false;return;}
+     try{await enroll(guessLabel());}
+     catch(e){
+      if(e&&e.name==='InvalidStateError'){await faceLogin();} // cheia există deja pe acest telefon: intrăm cu ea
+      else throw e;
+     }
+     await boot();
+    }catch(e){
+     const n=(e&&e.name)||'';
+     if(n==='NotSupportedError'){await notice('Face ID / amprenta nu este disponibilă',NOFACE);}
+     else if(n==='NotAllowedError'||n==='AbortError'){say(m,'Anulat. Apasă din nou pe Face ID / amprentă sau alege PIN.',false);}
+     else say(m,errT(e)+(n?' ('+n+')':''),false);
+     b.disabled=false;}};
    const pb=el('button',{type:'button',class:'s',style:'width:100%;margin-top:8px;height:54px;font-size:17px'},['PIN de 6 cifre']);pb.onclick=async()=>{pb.disabled=true;try{await pinEnroll();await boot();}catch(e){say(m,errT(e),false);pb.disabled=false;}};setup.append(b,pb,m);}
   else{
    const m=el('div',{class:'msg'});
@@ -273,7 +286,9 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
      if(r2.ok){await boot();return;} // codul din pagina de instalare: aplicația te conectează și te întreabă cum vrei să intri
      await pinEnroll(c);await boot(); // codul din cont (activare directă cu PIN)
     }catch(e){say(m,errT(e),false);}cb.disabled=false;};
-   setup.append(code,cb,m);}});
+   const pst=el('button',{type:'button',class:'s',style:'width:100%;margin-top:8px;height:44px;font-size:15px'},['Lipește codul copiat']);
+   pst.onclick=async()=>{try{const t=(await navigator.clipboard.readText()||'').replace(/[^A-Za-z0-9]/g,'').slice(0,8).toUpperCase();if(t)code.value=t;else say(m,'Nu am găsit un cod copiat.',false);}catch(e){say(m,'Ține apăsat în câmpul de mai sus și alege Lipește.',false);}};
+   setup.append(code,pst,cb,m);}});
  };
  // browser fără aplicația instalată și fără intrare rapidă: singurul lucru de văzut este instalarea în 2 pași
  const slot=el('div',{id:'instslot'});const ic=first.length?null:installCard();if(ic)slot.append(ic);
@@ -419,7 +434,7 @@ async function arrivalCard(){const c=el('div',{class:'card'},[el('h2',{},['Mesaj
 function staffCard(){const c=el('div',{class:'card'},[el('h2',{},['Personal (recepție, familie)']),el('div',{class:'sub'},['Dă acces limitat unei persoane de încredere: vede calendarul și rezervările și poate închide zile. Nu vede sume, nu anulează și nu schimbă setări.'])]);
  const m=el('div',{class:'msg'});const b=el('button',{class:'s',type:'button'},['Adaugă o persoană']);
  b.onclick=async()=>{const name=prompt('Cum o numești? (ex.: Maria recepție)');if(!name)return;let ls=me.listings.map(l=>l.id);if(ls.length>1&&confirm('Acces doar la cazarea curentă? OK = doar aceasta, Anulează = la toate.'))ls=[LID];
-  try{const j=await api('POST','/api/gazda/personal/cod',{label:name,listings:ls});say(m,'Cod pentru '+name+': '+j.code+' (valabil '+j.minutes+' min, o singură dată). Persoana deschide '+location.origin+'/gazda/, scrie codul și își alege un PIN.',true);}catch(e){say(m,errT(e),false);}};c.append(b,m);return c;}
+  try{const j=await api('POST','/api/gazda/personal/cod',{label:name,listings:ls});say(m,'Cod pentru '+name+' (valabil '+j.minutes+' min, o singură dată). Persoana deschide '+location.origin+'/gazda/, scrie codul și își alege un PIN.',true);m.append(codeRow(j.code));}catch(e){say(m,errT(e),false);}};c.append(b,m);return c;}
 
 ${planCardsSrc}
 function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>r.kind==='weekend'&&r.unit_no==null),multi=(t.units||[]).length>1,hotel=!!(pl&&pl.hotel),uni=multi?'pe noapte / cameră':'pe noapte, toată pensiunea';
