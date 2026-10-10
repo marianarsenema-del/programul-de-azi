@@ -56,7 +56,7 @@ module.exports = function mountPublic(r, c) {
   }
   // date pentru ofertă, încărcate o singură dată pentru toate camerele
   async function loadQuoteData(lst, checkin, checkout) {
-    const rules = (await dbPool.query(`SELECT id, unit_no, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active FROM booking_rate_rules WHERE listing_id = $1 AND active`, [lst.id])).rows;
+    const rules = (await dbPool.query(`SELECT id, unit_no, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps FROM booking_rate_rules r WHERE listing_id = $1 AND active`, [lst.id])).rows;
     const busyByUnit = new Map();
     if (core.isDateStr(checkin) && core.isDateStr(checkout) && core.dayNum(checkout) - core.dayNum(checkin) <= 60) {
       (await dbPool.query(`SELECT unit_id, to_char(day,'YYYY-MM-DD') AS day FROM booking_calendar_days WHERE listing_id = $1 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now())`, [lst.id, checkin, checkout])).rows
