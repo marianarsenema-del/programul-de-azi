@@ -168,7 +168,7 @@ body{padding-bottom:78px}.w{padding-top:12px}
 .nav button{flex:1;height:58px;background:none;color:#5B6770;border:0;border-radius:0;font-size:12px;font-weight:700}.nav button.on{color:#0E6B63;box-shadow:inset 0 3px 0 #0E6B63}
 .badge{display:inline-block;background:#9B1C1C;color:#fff;border-radius:10px;font-size:11px;padding:1px 7px;margin-left:6px}
 .big{font-size:34px;font-weight:800;line-height:1}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.kpis .card{margin:0;text-align:center;padding:12px 6px}
-.alert{border-color:#E8B4B4;background:#FDF3F3}.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;background:#E4DFD5;color:#17222B}
+.redwarn{background:#FDECEA;border:1px solid #C0392B;border-radius:10px;padding:10px 12px;margin:0 0 12px;color:#9B1C1C;font-weight:700;font-size:14px;line-height:1.45}.redwarn a{color:#9B1C1C}.alert{border-color:#E8B4B4;background:#FDF3F3}.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;background:#E4DFD5;color:#17222B}
 .mini{height:34px;font-size:13px;padding:0 10px}a.mini{display:inline-flex;align-items:center;text-decoration:none;border-radius:10px;border:1px solid #0E6B63;color:#0E6B63;font-weight:700;background:#fff}
 .hero{text-align:center;padding:36px 8px 10px}.hero h1{font-size:26px}.face{font-size:54px}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:9}.sheet>.card{width:100%;max-width:560px;margin:0;border-radius:18px 18px 0 0}
@@ -273,9 +273,12 @@ let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='';
 const today=ds(new Date());
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 
+function icalWarn(){return el('div',{class:'redwarn'},['⚠️ Important: dacă ai cazarea listată și pe alte platforme (Booking.com, Airbnb, Travelminit etc.), este obligatoriu să adaugi linkul lor iCal în cont, la „Sincronizare platforme”. Altfel calendarele nu se sincronizează și riști overbooking (aceeași perioadă rezervată de două ori, o dată la ele și o dată la noi). ',el('a',{href:'/cont/rezervari/'+LID},['Adaugă acum în cont'])]);}
 // ---------- AZI ----------
 async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/azi?listing='+LID);}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
  v.replaceChildren();
+ if(j.ical_missing)v.append(icalWarn());
+ v.append(freeCard(j));
  v.append(roomsCard(j.rooms||[]));
  v.append(el('div',{class:'kpis'},[kpi(j.arrivals_today.length,'Sosiri azi'),kpi(j.in_house.length,'În casă'),kpi(j.departures_today.length,'Plecări azi')]));
  if(j.alerts.length){const c=el('div',{class:'card alert'},[el('h2',{},['De rezolvat'])]);j.alerts.forEach(a=>c.append(el('div',{class:'item'},[a])));v.append(c);}
@@ -284,7 +287,11 @@ async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  list('Sunt la tine acum',j.in_house,'Nimeni cazat acum.');
  if(j.arrivals_today.length||j.departures_today.length){list('Azi',j.arrivals_today.concat(j.departures_today),'');}
  v.append(el('div',{class:'card'},[el('div',{class:'sub'},['Următoarele 30 de nopți: '+j.occupied_30+' ocupate din 30'])]));}
-const STN={0:'liber',1:'închis de tine',2:'ocupat (altă platformă)',3:'în curs de rezervare',4:'rezervat'};
+function freeCard(j){const f=j.free_tonight||{};if(!f.approved)return el('span');const on=!!f.on;const freeN=(j.rooms||[]).filter(r=>r.tonight===0).length;
+ const b=el('button',{type:'button',class:on?'s':'',style:'width:100%;height:50px;font-size:15px'},[on?'🟢 Liber în seara asta · apasă ca să anulezi':'🟢 Am camere libere în seara asta']);
+ b.onclick=async()=>{b.disabled=true;try{await api('POST','/api/gazda/liber-diseara',{listing:LID,on:!on,rooms:(!on&&freeN>0&&(j.rooms||[]).length>1)?freeN:undefined});show('azi');}catch(e){alert(errT(e));b.disabled=false;}};
+ return el('div',{class:'card'},[b,el('div',{class:'sub',style:'margin:6px 0 0'},[on?'Pe site apare eticheta verde „Liber în seara asta”, până la miezul nopții.':'Pe site apare eticheta verde „Liber în seara asta” până la miezul nopții. Dacă ai mai multe camere, afișăm câte sunt libere.'])]);}
+const STN={0:'liber\',1:'închis de tine',2:'ocupat (altă platformă)',3:'în curs de rezervare',4:'rezervat'};
 function roomsCard(rooms){const free=rooms.filter(r=>r.tonight===0).length;
  const c=el('div',{class:'card'},[el('h2',{},['Camere în seara asta: '+free+' libere din '+rooms.length])]);
  rooms.forEach(r=>{const it=el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+STN[r.tonight]+' · Mâine noapte: '+STN[r.tomorrow]])]);
@@ -389,7 +396,7 @@ async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{
  sv.onclick=async()=>{try{await api('POST',B()+'/setari',{base_price_ron:s.base_price_bani==null?null:s.base_price_bani/100,min_nights:s.min_nights,max_guests:s.max_guests,instant_enabled:inst.checked,lead_days:Number(lead.value)});say(m1,'Salvat',true);}catch(e){say(m1,errT(e),false);}};
  v.append(el('div',{class:'card'},[el('h2',{},['Rezervare instant']),el('label',{style:'display:flex;gap:8px;align-items:center'},[inst,'Acceptă rezervări instant']),el('label',{},['Cât de repede poate rezerva turistul',lead]),sv,m1,
   s.instant_enabled?el('div',{class:'mono',style:'margin-top:8px'},[location.origin+'/cazare/rezerva/'+LID]):el('span')]));
- v.append(el('div',{class:'card'},[el('h2',{},['Tarife, camere, platforme']),el('div',{class:'sub'},['Tarifele detaliate, camerele și sincronizarea cu alte platforme se gestionează din contul tău.']),el('a',{class:'mini',href:'/cont/rezervari/'+LID,style:'height:42px'},['Deschide în cont'])]));
+ v.append(el('div',{class:'card'},[el('h2',{},['Tarife, camere, platforme']),icalWarn(),el('div',{class:'sub'},['Tarifele detaliate, camerele și sincronizarea cu alte platforme se gestionează din contul tău.']),el('a',{class:'mini',href:'/cont/rezervari/'+LID,style:'height:42px'},['Deschide în cont'])]));
  v.append(await pushCard());v.append(await arrivalCard());v.append(staffCard());
  const dv=el('div',{class:'card'},[el('h2',{},['Dispozitivele mele'])]);v.append(dv);
  try{const d=await api('GET','/api/gazda/dispozitive');d.devices.forEach(x=>{const it=el('div',{class:'item'},[el('b',{},[(x.role==='staff'?'Personal · ':(x.kind==='pin'?'PIN · ':'Face ID · '))+x.label+(x.current?' (acesta)':'')]),el('div',{class:'sub',style:'margin:2px 0'},['Adăugat '+x.created+' · ultima folosire '+x.last_used])]);
@@ -692,6 +699,23 @@ function mount(r, o) {
     } catch (e) { res.status(500).json({ error: "eroare" }); }
   });
 
+  // „Am camere libere în seara asta”: același mecanism ca butonul din „Proprietățile mele” (aceleași coloane; expiră singur la miezul nopții)
+  r.post("/api/gazda/liber-diseara", jsonOnly, gzAuth, async (req, res) => {
+    try {
+      const b = req.body || {};
+      const lid = toId(b.listing);
+      if (!lid) return res.status(404).json({ error: "negasit" });
+      if (req.gz.role === "staff" && req.gz.lids.length && !req.gz.lids.includes(lid)) return res.status(404).json({ error: "negasit" });
+      const rooms = Number.isInteger(b.rooms) && b.rooms > 0 && b.rooms < 1000 ? b.rooms : null;
+      const u = b.on === true
+        ? await dbPool.query(`UPDATE accommodation_listings SET available_date = (now() AT TIME ZONE 'Europe/Bucharest')::date, available_rooms = $3 WHERE id = $1::integer AND owner_id = $2::integer AND status = 'approved' RETURNING id`, [lid, req.gz.ownerId, rooms])
+        : await dbPool.query(`UPDATE accommodation_listings SET available_date = NULL, available_rooms = NULL WHERE id = $1::integer AND owner_id = $2::integer AND status = 'approved' RETURNING id`, [lid, req.gz.ownerId]);
+      if (!u.rows.length) return res.status(404).json({ error: "negasit" });
+      await logEv(req.gz.ownerId, req.gz.did, b.on === true ? "free_tonight_on" : "free_tonight_off", lid);
+      noStore(res); res.json({ ok: true });
+    } catch (e) { console.error("gazda liber diseara:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+
   require("./bookings-gazda-notify").mount(r, { jsonOnly, noStore, gzAuth, ownerRole, fresh, toId, logEv });
 
   // ---------- ecranul „Azi” ----------
@@ -716,6 +740,10 @@ function mount(r, o) {
       const units = us.length ? us.map((u) => ({ unit_no: Number(u.unit_no), name: u.name })) : [{ unit_no: 0, name: "Toată proprietatea" }];
       const stOf = (u, today_) => { const f = dd.find((x) => !!x.is_today === today_ && (Number(x.unit_id) === u.unit_no || (us.length && Number(x.unit_id) === 0))); return f ? Number(f.status) : 0; };
       const rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
+      const ft = (await dbPool.query(`SELECT (available_date::date = ${today}) AS on, available_rooms, (status = 'approved') AS approved FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0] || {};
+      const free_tonight = { on: !!ft.on, rooms: ft.available_rooms || null, approved: !!ft.approved };
+      const icalN = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_ical_feeds WHERE listing_id = $1 AND import_url IS NOT NULL`, [lid])).rows[0];
+      const ical_missing = !icalN || icalN.n === 0;
       const alerts = [];
       const rf = (await dbPool.query(`SELECT guest_name FROM booking_reservations WHERE listing_id = $1 AND status = 'confirmed' AND pay_status = 'rest_failed'`, [lid])).rows;
       rf.forEach((x) => alerts.push("Restul de plată al lui " + x.guest_name + " nu a putut fi încasat; turistul are 48 de ore să plătească."));
@@ -724,8 +752,8 @@ function mount(r, o) {
       const cf = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL`, [lid])).rows[0];
       if (cf && cf.n > 0) alerts.push(cf.n + " zi(le) apar ocupate și pe altă platformă, dar sunt deja rezervate la tine. Verifică și anulează de unde e cazul.");
       noStore(res);
-      if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, rooms, alerts: [] }); }
-      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, alerts });
+      if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts: [] }); }
+      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts, ical_missing });
     } catch (e) { console.error("gazda azi:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 }
