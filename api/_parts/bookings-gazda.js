@@ -222,6 +222,13 @@ async function enroll(label){
 const ERR={dispozitiv_limita:'Ai deja prea multe dispozitive. Șterge unul din Setări.',inregistrare_invalida:'Nu am putut activa Face ID. Încearcă din nou.',autentificare_invalida:'Nu am recunoscut dispozitivul. Încearcă din nou sau activează Face ID din cont.',prea_multe_cereri:'Prea multe încercări. Așteaptă puțin.',interzis:'Nu ai acces la această acțiune.',notificari_indisponibile:'Notificările nu sunt configurate pe server.',pin_slab:'PIN prea simplu. Alege 6 cifre fără șiruri (111111, 123456).',pin_gresit:'PIN greșit.',pin_blocat:'PIN greșit de 5 ori: dispozitivul a fost blocat. Activează-l din nou din cont.',cod_invalid:'Cod greșit sau expirat. Generează unul nou din cont.',dezactivat:'Rezervările nu sunt activate pentru această proprietate.'};
 const errT=(e)=>{const m=(e&&e.message)||'Eroare';if(e&&e.name==='NotAllowedError')return 'Anulat. Încearcă din nou.';return ERR[m]||m;};
 
+let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;const h=document.getElementById('instslot');if(h){h.replaceChildren();const c=installCard();if(c)h.append(c);}});
+const standalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+function installCard(){if(standalone())return null;const c=el('div',{class:'card',style:'border-color:#0E6B63'},[el('b',{},['📲 Instalează aplicația Gazdă'])]);
+ if(deferredPrompt){const b=el('button',{type:'button',style:'width:100%;margin-top:8px'},['Instalează acum']);b.onclick=async()=>{deferredPrompt.prompt();try{await deferredPrompt.userChoice;}catch(e){}deferredPrompt=null;c.remove();};c.append(b);}
+ else if(/iPhone|iPad/.test(navigator.userAgent))c.append(el('div',{class:'sub',style:'margin:6px 0 0'},['În Safari: apasă butonul Partajează (pătratul cu săgeată), apoi „Adaugă pe ecranul principal”.']));
+ else c.append(el('div',{class:'sub',style:'margin:6px 0 0'},['În Chrome: deschide meniul ⋮ și alege „Instalează aplicația” sau „Adaugă pe ecranul principal”.']));
+ return c;}
 let me=null,LID=0,tab='azi';const STAFF=()=>!!me&&me.role==='staff';
 function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.replaceChildren();
  const dev=myPinDev();const msg=el('div',{class:'msg'});const first=[];
@@ -230,7 +237,8 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
  if(WA){const fb=el('button',{type:'button',class:dev?'s':'',style:'width:100%;height:52px;font-size:16px;'+(dev?'margin-top:8px':'')},['Intră cu Face ID / amprentă']);run(fb,faceLogin);first.push(fb);}
  const box=el('div',{class:'card'},first.concat([msg]));
  const setup=el('div',{class:'card'});
- root.append(el('div',{class:'hero'},[el('div',{class:'face'},['🏡']),el('h1',{},['Gazdă']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup);
+ const slot=el('div',{id:'instslot'});const ic=installCard();if(ic)slot.append(ic);
+ root.append(el('div',{class:'hero'},[el('div',{class:'face'},['🏡']),el('h1',{},['Gazdă']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup,slot);
  raw('GET','/api/gazda/inrolare/stare').then(r=>{
   if(r.ok){setup.append(el('b',{},['Activează intrarea rapidă pe acest telefon']),el('p',{class:'sub'},['Ești conectat în cont ('+r.j.email+'). Alege cum vrei să intri de acum încolo, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
    const m=el('div',{class:'msg'});
@@ -373,6 +381,7 @@ function staffCard(){const c=el('div',{class:'card'},[el('h2',{},['Personal (rec
 
 // ---------- SETĂRI ----------
 async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{},['Cont de personal']),el('div',{class:'sub'},['Poți vedea calendarul și rezervările și poți închide sau deschide zile.'])]));const o2=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);o2.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(o2);return;}
+ const ic2=installCard();if(ic2)v.append(ic2);
  let t;try{t=await api('GET',B()+'/tarife');}catch(e){v.append(el('div',{class:'card err'},[errT(e)]));return;}const s=t.settings;
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
@@ -400,13 +409,13 @@ async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{
 
 function page(res, nonce) {
   res.set({
-    "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
+    "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; style-src-attr 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
     "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer",
   });
 }
 
 function mount(r, o) {
-  const { jsonOnly, noStore, shell, PAGE_CSS } = o;
+  const { jsonOnly, noStore, shell, PAGE_CSS, previewKey } = o;
   const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
   const ownerOnly = L.requireAccommodationOwnerApi;
 
@@ -446,7 +455,12 @@ function mount(r, o) {
   };
   r.get("/gazda", appPage);
   r.get("/gazda/", appPage);
-  r.get("/gazda/manifest.webmanifest", (req, res) => { res.type("application/manifest+json").set("Cache-Control", "public, max-age=3600").send(JSON.stringify(MANIFEST)); });
+  r.get("/gazda/manifest.webmanifest", (req, res) => {
+    // în previzualizare (rezervările nu sunt pornite global) aplicația instalată trebuie să poarte parola, altfel s-ar deschide pe 404; cu funcția pornită manifestul e curat
+    const pk = previewKey ? previewKey(req) : "";
+    const mf = pk ? Object.assign({}, MANIFEST, { start_url: "/gazda/?bkpreview=" + encodeURIComponent(pk) }) : MANIFEST;
+    res.type("application/manifest+json").set(pk ? { "Cache-Control": "private, no-store" } : { "Cache-Control": "public, max-age=3600" }).send(JSON.stringify(mf));
+  });
   r.get("/gazda/sw.js", (req, res) => { res.type("application/javascript").set({ "Cache-Control": "no-cache", "Service-Worker-Allowed": "/gazda/" }).send(SW); });
 
   // ---------- activare Face ID (doar din cont, o singură dată pe dispozitiv) ----------
