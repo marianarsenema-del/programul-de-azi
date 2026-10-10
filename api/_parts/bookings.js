@@ -11,7 +11,7 @@ const sync = require("./bookings-sync")(dbPool); // prețuri: formular <-> rezer
 const L = require("./logic");
 const pay = require("./bookings-pay");
 const forms = require("./bookings-forms");
-const { qrSrc } = require("./gazda-install-ui");
+const { qrSrc, codeRowSrc } = require("./gazda-install-ui");
 
 const ENABLED = process.env.BOOKINGS_ENABLED === "true";
 const PREVIEW_KEY = process.env.BOOKINGS_PREVIEW_KEY || "";
@@ -181,6 +181,8 @@ function say(box,t,ok){box.textContent=t;box.className='msg '+(ok?'ok':'err');}
 
 const INSTALL_JS = `
 ${qrSrc}
+${codeRowSrc}
+function showCode(box,code,min){box.className='';box.replaceChildren(codeRow(code),el('div',{class:'sub',style:'margin-top:6px'},['Valabil '+min+' minute, o singură dată.']));}
 const gi=$('#gzinst');if(gi)gi.onclick=async()=>{gi.disabled=true;const o=$('#gzinstout');try{const j=await api('POST','/api/gazda/link/creeaza',{});const ua=navigator.userAgent;
  const mob=/Android|iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&/Linux/.test(ua)&&!/CrOS/.test(ua));
  if(mob){location.href=j.url;return;}
@@ -346,14 +348,14 @@ module.exports = function mountBookings(app) {
       const body = `<h1>Rezervări</h1><p class="sub">Alege proprietatea.</p>` + (rows.length ? `<div class="card" style="border-color:#0E6B63"><b>📲 Instalează aplicația OHT Host</b><div class="sub" style="margin:4px 0 10px">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN. Apeși o dată și te duce direct pe pagina de instalare, deja conectat.</div><button id="gzinst" type="button" style="width:100%;height:52px;font-size:17px">Instalează aplicația</button><div id="gzinstout"></div></div><div class="card"><b>Aplicația OHT Host îți cere un cod de legătură?</b><div class="sub" style="margin:4px 0 8px">Generează un cod de legătură și scrie-l în aplicația OHT Host, ca să o legi de contul tău (la prima instalare sau după o reinstalare). După aceea alegi Face ID sau PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>` : "") + (rows.length
         ? rows.map((x) => `<a class="card" style="display:block;color:inherit;text-decoration:none;font-weight:700" href="/cont/rezervari/${x.id}">${L.escapeHtml(x.name)}</a>`).join("")
         : `<div class="card">Rezervările nu sunt încă activate pentru proprietățile tale.</div>`);
-      shell(res, "Rezervări", body, COMMON_JS + INSTALL_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
+      shell(res, "Rezervări", body, COMMON_JS + INSTALL_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});showCode($('#gzout'),j.code,j.minutes);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
   r.get("/cont/rezervari/:id(\\d+)", L.requireAccommodationOwner, async (req, res) => {
     try {
       const lst = await loadListing(toId(req.params.id), req.accommodationOwner.ownerId);
       if (!lst || !lst.bookings_enabled) return res.status(404).send("Not found");
-      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS + INSTALL_JS + `\nconst gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
+      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS + INSTALL_JS + `\nconst gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});showCode($('#gzout'),j.code,j.minutes);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
 
