@@ -100,6 +100,21 @@ function ohtQrSvg(text, px) {
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + t + ' ' + t + '" width="' + (px || 200) + '" height="' + (px || 200) + '" role="img" aria-label="Cod QR" style="display:block;margin:12px auto;background:#fff;border-radius:8px"><rect width="' + t + '" height="' + t + '" fill="#fff"/><path d="' + d + '" fill="#17222B"/></svg>';
 }
 
+// cod scurt afișat într-o casetă, cu buton „Copiază” lângă el
+function codeRow(code) {
+  const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:8px';
+  const box = document.createElement('div'); box.textContent = code; box.style.cssText = 'flex:1;min-width:0;padding:11px 12px;border:1px solid #C8D2D8;border-radius:10px;background:#fff;font-size:22px;font-weight:800;letter-spacing:4px;text-align:center;user-select:all;-webkit-user-select:all';
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Copiază'; b.style.cssText = 'flex:none;height:48px;padding:0 18px;font-size:16px';
+  b.onclick = async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(code); ok = true; } catch (e) {
+      try { const t = document.createElement('textarea'); t.value = code; t.style.cssText = 'position:fixed;opacity:0'; document.body.append(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (e2) { ok = false; }
+    }
+    b.textContent = ok ? 'Copiat ✓' : 'Ține apăsat pe cod';
+  };
+  row.append(box, b); return row;
+}
+
 // ---------- ghidul de instalare ----------
 function installCard() {
   const ua = navigator.userAgent || '';
@@ -279,11 +294,11 @@ function installCard() {
   c.append(block(2, 'Deschide OHT Host de pe ecran', el('div', {}, [s2, codeBox])));
   if (iOS && typeof raw === 'function' && (kind === 'ios-safari' || kind === 'ios-other')) {
     raw('POST', '/api/gazda/link/creeaza', { short: true }).then((r) => {
-      if (r && r.ok && r.j && r.j.code) { codeBox.style.display = 'block'; codeBox.replaceChildren('Dacă aplicația îți cere un cod la prima deschidere, scrie: ', el('b', { style: 'letter-spacing:2px;font-size:16px' }, [r.j.code]), ' (valabil ' + r.j.minutes + ' de minute, o singură dată).'); }
+      if (r && r.ok && r.j && r.j.code) { codeBox.style.display = 'block'; codeBox.replaceChildren('Dacă aplicația îți cere un cod la prima deschidere, scrie-l sau lipește-l aici (valabil ' + r.j.minutes + ' de minute, o singură dată):', codeRow(r.j.code)); }
     }).catch(() => {});
   }
   c.append(el('div', { style: 'margin-top:14px;font-size:11px;color:#8A949C' }, ['Detectat: ' + label]));
   return c;
 }
 
-module.exports = { installSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() + "\n" + installCard.toString(), qrSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() };
+module.exports = { installSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() + "\n" + codeRow.toString() + "\n" + installCard.toString(), codeRowSrc: codeRow.toString(), qrSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() };
