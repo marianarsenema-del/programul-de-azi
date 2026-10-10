@@ -168,6 +168,9 @@ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}.w{padding-top:calc
 .nav button{flex:1;height:58px;background:none;color:#5B6770;border:0;border-radius:0;font-size:12px;font-weight:700}.nav button.on{color:#0E6B63;box-shadow:inset 0 3px 0 #0E6B63}
 .badge{display:inline-block;background:#9B1C1C;color:#fff;border-radius:10px;font-size:11px;padding:1px 7px;margin-left:6px}
 .big{font-size:34px;font-weight:800;line-height:1}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.kpis .card{margin:0;text-align:center;padding:12px 6px}
+.calnav{display:flex;align-items:center;gap:10px;margin:6px 0 12px}.calnav button{width:54px;height:46px;flex:none;padding:0;font-size:24px;line-height:1}.calnav b{flex:1;text-align:center;font-size:18px}
+.cal{gap:5px}.cal div{height:48px;font-size:17px;border-color:#CFC8BA}.cal .h{height:26px;font-size:13px;border:0}.cal .s1{background:#B4BAC1;color:#222B32;font-weight:700;border-color:#8E969E}.cal .s2{background:#BBD9F5;color:#0B2F5C;font-weight:700;border-color:#6FA8E0}.cal .s3{background:#FFE08A;color:#5A4200;font-weight:700;border-color:#D9A800}.cal .s4{background:#0E6B63;color:#fff;font-weight:700}.cal .past{opacity:.5}
+.leg{font-size:15px;gap:10px 16px;color:#17222B;margin-top:12px}.leg span{display:inline-flex;align-items:center;gap:6px}.sw{display:inline-block;width:18px;height:18px;border-radius:5px;border:1px solid #8E969E}.w0{background:#fff;border-color:#CFC8BA}.w1{background:#B4BAC1}.w2{background:#BBD9F5;border-color:#6FA8E0}.w3{background:#FFE08A;border-color:#D9A800}.w4{background:#0E6B63;border-color:#0E6B63}
 .redwarn{background:#FDECEA;border:1px solid #C0392B;border-radius:10px;padding:10px 12px;margin:0 0 12px;color:#9B1C1C;font-weight:700;font-size:14px;line-height:1.45}.redwarn a{color:#9B1C1C}.alert{border-color:#E8B4B4;background:#FDF3F3}.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;background:#E4DFD5;color:#17222B}
 .mini{height:34px;font-size:13px;padding:0 10px}a.mini{display:inline-flex;align-items:center;text-decoration:none;border-radius:10px;border:1px solid #0E6B63;color:#0E6B63;font-weight:700;background:#fff}
 .hero{text-align:center;padding:36px 8px 10px}.hero h1{font-size:26px}.face{font-size:54px}
@@ -281,7 +284,7 @@ async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  if(j.ical_missing)v.append(icalWarn());
  v.append(freeCard(j));
  v.append(roomsCard(j.rooms||[]));
- v.append(el('div',{class:'kpis'},[kpi(j.arrivals_today.length,'Sosiri azi'),kpi(j.in_house.length,'În casă'),kpi(j.departures_today.length,'Plecări azi')]));
+ v.append(el('div',{class:'kpis'},[kpi(j.arrivals_today.length,'Sosiri azi'),kpi(j.in_house.length,'Cazați'),kpi(j.departures_today.length,'Plecări azi')]));
  if(j.alerts.length){const c=el('div',{class:'card alert'},[el('h2',{},['De rezolvat'])]);j.alerts.forEach(a=>c.append(el('div',{class:'item'},[a])));v.append(c);}
  const list=(title,arr,empty)=>{const c=el('div',{class:'card'},[el('h2',{},[title])]);if(!arr.length)c.append(el('div',{class:'sub'},[empty]));arr.forEach(x=>c.append(resCard(x,false)));v.append(c);};
  list('Sosesc în următoarele 7 zile',j.arrivals_soon,'Nicio sosire în următoarele 7 zile.');
@@ -311,9 +314,9 @@ function resCard(x,actions){const kids=[el('b',{},[x.guest_name+(x.status==='can
 // ---------- CALENDAR ----------
 async function viewCal(v){
  v.append(el('div',{class:'card'},[el('div',{id:'unitwrap',hidden:'hidden'},[el('label',{},['Camera',el('select',{id:'unitsel'})])]),
-  el('div',{class:'row',style:'align-items:center;justify-content:space-between;margin:8px 0'},[el('button',{class:'s',id:'prev',type:'button'},['‹']),el('b',{id:'mname',style:'text-align:center'}),el('button',{class:'s',id:'next',type:'button'},['›'])]),
+  el('div',{class:'calnav'},[el('button',{class:'s',id:'prev',type:'button','aria-label':'Luna anterioară'},['‹']),el('b',{id:'mname'}),el('button',{class:'s',id:'next',type:'button','aria-label':'Luna următoare'},['›'])]),
   el('div',{class:'cal',id:'cal'}),
-  el('div',{class:'leg'},[el('span',{},['■ liber'],),el('span',{style:'color:#5B6770'},['■ închis de tine']),el('span',{style:'color:#123A6B'},['■ platformă']),el('span',{style:'color:#B58100'},['■ în rezervare']),el('span',{style:'color:#0E6B63'},['■ rezervat'])]),
+  el('div',{class:'leg'},[el('span',{},[el('i',{class:'sw w0'}),'liber']),el('span',{},[el('i',{class:'sw w1'}),'închis de tine']),el('span',{},[el('i',{class:'sw w2'}),'platformă']),el('span',{},[el('i',{class:'sw w3'}),'în rezervare']),el('span',{},[el('i',{class:'sw w4'}),'rezervat'])]),
   el('div',{class:'sub',id:'selinfo',style:'margin-top:8px'}),
   el('div',{class:'row'},[el('button',{id:'close',type:'button'},['Închide zilele alese']),el('button',{class:'s',id:'open',type:'button'},['Deschide zilele alese'])]),el('div',{class:'msg',id:'calmsg'})]));
  $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadCal();};
