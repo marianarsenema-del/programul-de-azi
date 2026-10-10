@@ -282,6 +282,7 @@ function icalWarn(){return el('div',{class:'redwarn'},['⚠️ Important: dacă 
 // ---------- AZI ----------
 async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/azi?listing='+LID);}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
  v.replaceChildren();
+ {const ic3=installCard();if(ic3)v.append(ic3);}
  if(j.ical_missing)v.append(icalWarn());
  v.append(freeCard(j));
  v.append(roomsCard(j.rooms||[]));
