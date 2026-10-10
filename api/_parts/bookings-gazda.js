@@ -741,7 +741,7 @@ function mount(r, o) {
       const units = us.length ? us.map((u) => ({ unit_no: Number(u.unit_no), name: u.name })) : [{ unit_no: 0, name: "Toată proprietatea" }];
       const stOf = (u, today_) => { const f = dd.find((x) => !!x.is_today === today_ && (Number(x.unit_id) === u.unit_no || (us.length && Number(x.unit_id) === 0))); return f ? Number(f.status) : 0; };
       const rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
-      const ft = (await dbPool.query(`SELECT (available_date::date = ${today}) AS on, available_rooms, (status = 'approved') AS approved FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0] || {};
+      let ft = {}; try { ft = (await dbPool.query(`SELECT (available_date::date = ${today}) AS on, available_rooms, (status = 'approved') AS approved FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0] || {}; } catch (e) { console.error("gazda azi liber:", e.message); }
       const free_tonight = { on: !!ft.on, rooms: ft.available_rooms || null, approved: !!ft.approved };
       const icalN = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_ical_feeds WHERE listing_id = $1 AND import_url IS NOT NULL`, [lid])).rows[0];
       const ical_missing = !icalN || icalN.n === 0;
