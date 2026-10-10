@@ -6,6 +6,7 @@
 const crypto = require("crypto");
 const { dbPool, INTL_DOMAIN, ACCOMMODATION_SESSION_SECRET } = require("./static");
 const L = require("./logic");
+const { planCardsSrc } = require("./gazda-plan-ui");
 
 const RP_ID = process.env.GAZDA_RPID || INTL_DOMAIN;
 const ORIGIN = process.env.GAZDA_ORIGIN || ("https://" + INTL_DOMAIN);
@@ -162,6 +163,7 @@ e.respondWith(fetch(r).catch(function(){return new Response('<!doctype html><met
 `;
 
 const APP_CSS = `
+.pill.off{background:#F1D9D9;color:#7A1F1F}.item .row{flex-wrap:wrap}
 body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}.w{padding-top:calc(14px + env(safe-area-inset-top));padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
 .top{display:flex;gap:8px;align-items:center;margin-bottom:12px}.top select{flex:1;font-weight:700}
 .nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #E4DFD5;display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
@@ -391,10 +393,29 @@ function staffCard(){const c=el('div',{class:'card'},[el('h2',{},['Personal (rec
  b.onclick=async()=>{const name=prompt('Cum o numești? (ex.: Maria recepție)');if(!name)return;let ls=me.listings.map(l=>l.id);if(ls.length>1&&confirm('Acces doar la cazarea curentă? OK = doar aceasta, Anulează = la toate.'))ls=[LID];
   try{const j=await api('POST','/api/gazda/personal/cod',{label:name,listings:ls});say(m,'Cod pentru '+name+': '+j.code+' (valabil '+j.minutes+' min, o singură dată). Persoana deschide '+location.origin+'/gazda/, scrie codul și își alege un PIN.',true);}catch(e){say(m,errT(e),false);}};c.append(b,m);return c;}
 
+${planCardsSrc}
+function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>r.kind==='weekend'&&r.unit_no==null),multi=(t.units||[]).length>1,hotel=!!(pl&&pl.hotel),uni=multi?'pe noapte / cameră':'pe noapte, toată pensiunea';
+ const c=el('div',{class:'card'},[el('h2',{},['Prețuri']),el('div',{class:'sub'},[hotel?'Prețul fiecărui tip de cameră se schimbă din formularul cazării (tipuri de cameră). Aici setezi nopțile minime; weekendul, sărbătorile și ofertele sunt mai jos.':'Aceleași prețuri apar pe pagina pensiunii și în formularul cazării: le schimbi o singură dată, aici sau în cont. Prețurile sunt '+uni+'. Sărbătorile și ofertele sunt mai jos.'])]);
+ const inp=(v,ph,mn,mx,st)=>el('input',{type:'number',inputmode:'decimal',min:String(mn),max:String(mx),step:String(st),placeholder:ph||'',value:v==null?'':String(v)});
+ const base=inp(s.base_price_bani==null?null:s.base_price_bani/100,'ex. 250',0,100000,1),we=inp(wk?wk.price_bani/100:null,'la fel ca în timpul săptămânii',0,100000,1),mn=inp(s.min_nights||1,'',1,60,1),wd=inp(s.whole_discount_bps?s.whole_discount_bps/100:'','0',0,50,1);
+ const row=(l,i)=>el('label',{},[l,i]);
+ if(hotel)c.append(row('Nopți minime',mn));else c.append(row('Preț '+uni+', în timpul săptămânii (RON)',base),row('Preț '+uni+', vineri și sâmbătă (RON, opțional)',we),row('Nopți minime',mn));
+ if(multi&&!hotel)c.append(row('Reducere dacă se închiriază toată pensiunea (%)',wd));
+ const m=el('div',{class:'msg'}),b=el('button',{type:'button',style:'margin-top:10px;width:100%'},['Salvează prețurile']);
+ b.onclick=async()=>{b.disabled=true;try{
+  if(!hotel&&base.value==='')throw new Error('Scrie prețul pe noapte.');
+  await api('POST',B()+'/setari',{base_price_ron:hotel?(s.base_price_bani==null?null:s.base_price_bani/100):Number(base.value),min_nights:Number(mn.value||1),max_guests:s.max_guests,instant_enabled:s.instant_enabled,lead_days:s.lead_days});
+  if(hotel){}else if(we.value!=='')await api('POST',B()+'/tarife',{id:wk?wk.id:undefined,name:'Weekend',kind:'weekend',price_ron:Number(we.value),min_nights:wk?wk.min_nights:null,checkin_days:wk?wk.checkin_days:null,checkout_days:wk?wk.checkout_days:null,priority:wk?wk.priority:0});
+  else if(wk)await api('DELETE',B()+'/tarife/'+wk.id,{});
+  if(multi&&!hotel)await api('POST',B()+'/preferinte',{whole_discount_pct:wd.value===''?0:Number(wd.value)});
+  say(m,'Prețuri salvate. Se văd acum și pe pagina pensiunii.',true);}catch(e){say(m,errT(e),false);}b.disabled=false;};
+ c.append(b,m);return c;}
 // ---------- SETĂRI ----------
 async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{},['Cont de personal']),el('div',{class:'sub'},['Poți vedea calendarul și rezervările și poți închide sau deschide zile.'])]));const o2=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);o2.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(o2);return;}
  const ic2=installCard();if(ic2)v.append(ic2);
  let t;try{t=await api('GET',B()+'/tarife');}catch(e){v.append(el('div',{class:'card err'},[errT(e)]));return;}const s=t.settings;
+ let pl=null;try{pl=await api('GET',B()+'/plan');}catch(e){pl=null;}
+ v.append(pricesCard(t,pl));if(pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
  const m1=el('div',{class:'msg'});const sv=el('button',{type:'button'},['Salvează']);
