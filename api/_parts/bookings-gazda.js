@@ -162,7 +162,7 @@ e.respondWith(fetch(r).catch(function(){return new Response('<!doctype html><met
 `;
 
 const APP_CSS = `
-body{padding-bottom:78px}.w{padding-top:12px}
+body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}.w{padding-top:calc(14px + env(safe-area-inset-top));padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
 .top{display:flex;gap:8px;align-items:center;margin-bottom:12px}.top select{flex:1;font-weight:700}
 .nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #E4DFD5;display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
 .nav button{flex:1;height:58px;background:none;color:#5B6770;border:0;border-radius:0;font-size:12px;font-weight:700}.nav button.on{color:#0E6B63;box-shadow:inset 0 3px 0 #0E6B63}
@@ -755,7 +755,7 @@ function mount(r, o) {
       noStore(res);
       if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts: [] }); }
       res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts, ical_missing });
-    } catch (e) { console.error("gazda azi:", e.message); res.status(500).json({ error: "eroare" }); }
+    } catch (e) { console.error("gazda azi:", e.message); const schema = e && (e.code === "42703" || e.code === "42P01"); res.status(500).json({ error: schema ? "Lipsește ceva în baza de date (" + String(e.message).slice(0, 120) + "). Rulează scripturile SQL în ordine." : "eroare" }); }
   });
 }
 
