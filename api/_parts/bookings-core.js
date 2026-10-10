@@ -66,6 +66,11 @@ function better(a, b) {
   if (a.priority !== b.priority) return a.priority > b.priority;
   return a.id > b.id;
 }
+// regulă în procente (hoteluri): prețul camerei + pct_bps; altfel prețul fix al regulii
+function ruleAmount(rule, basePriceBani) {
+  if (rule.pct_bps != null) return basePriceBani == null ? null : Math.round(basePriceBani * (10000 + rule.pct_bps) / 10000);
+  return rule.price_bani;
+}
 function priceForNight(day, rules, basePriceBani) {
   let best = null;
   for (const r of rules) {
@@ -75,7 +80,7 @@ function priceForNight(day, rules, basePriceBani) {
       if (better(r, best)) best = r;
     }
   }
-  if (best) return { price: best.price_bani, rule: best };
+  if (best) return { price: ruleAmount(best, basePriceBani), rule: best };
   let wk = null;
   const d = dow(day);
   if (d === 5 || d === 6) {
@@ -86,7 +91,7 @@ function priceForNight(day, rules, basePriceBani) {
       if (better(r, wk)) wk = r;
     }
   }
-  if (wk) return { price: wk.price_bani, rule: wk };
+  if (wk) return { price: ruleAmount(wk, basePriceBani), rule: wk };
   return { price: basePriceBani, rule: null };
 }
 
@@ -98,7 +103,7 @@ function computeQuote({ checkIn, checkOut, guests, settings, rules, busyDays }) 
   if (n < 1) return { ok: false, errors: ["date_invalide"] };
   if (n > 60) return { ok: false, errors: ["prea_multe_nopti"] };
   if (checkIn < todayRo()) errors.push("data_trecuta");
-  if (settings.base_price_bani == null && !rules.some((r) => r.active && r.kind === "interval")) errors.push("fara_pret");
+  if (settings.base_price_bani == null && !rules.some((r) => r.active && r.kind === "interval" && r.pct_bps == null)) errors.push("fara_pret");
   const days = eachDay(checkIn, checkOut);
   for (const d of days) if (busyDays.has(d)) { errors.push("indisponibil"); break; }
   if (settings.max_guests && guests && guests > settings.max_guests) errors.push("prea_multi_oaspeti");
