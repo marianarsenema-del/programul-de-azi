@@ -267,7 +267,7 @@ $('#saveunit').onclick=async()=>{const m=$('#unitmsg');try{await api('POST',B+'/
 loadCal();loadAll();loadFeeds();loadResv();
 `;
 const dayChecks = (p) => [0, 1, 2, 3, 4, 5, 6].map((i) => `<label style="display:inline-block;margin:4px 8px 0 0;font-weight:500"><input type="checkbox" id="${p}${i}" checked style="width:auto;height:auto;margin:0 3px 0 0">${["D", "L", "Ma", "Mi", "J", "V", "S"][i]}</label>`).join("");
-const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p><a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Instalează aplicația Gazdă</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN.</div></a>
+const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p><a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Instalează aplicația Gazdă</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN.</div></a><div class="card"><b>Ai deja aplicația pe ecranul principal și îți cere un cod?</b><div class="sub" style="margin:4px 0 8px">Apasă butonul de mai jos. Apare un cod de 8 caractere, valabil 10 minute. Scrie-l în aplicație și alege un PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>
 <div class="card"><h2>Camere</h2><div class="sub">Dacă închiriezi camerele separat, adaugă-le aici. Fiecare are calendar, preț și linkuri iCal proprii. Turistul poate rezerva una, mai multe sau toate camerele deodată.</div><div id="units"></div>
 <input type="hidden" id="uno"><div class="row"><div><label>Nume cameră<input id="uname" maxlength="60" placeholder="Camera 1"></label></div><div><label>Persoane<input id="ucap" type="number" min="1" max="50"></label></div><div><label>Preț/noapte (RON, opțional)<input id="uprice" type="number" min="0"></label></div></div>
 <div class="row" style="margin-top:10px"><button id="saveunit" type="button">Salvează camera</button></div><div class="msg" id="unitmsg"></div></div>
@@ -339,7 +339,7 @@ module.exports = function mountBookings(app) {
     try {
       const lst = await loadListing(toId(req.params.id), req.accommodationOwner.ownerId);
       if (!lst || !lst.bookings_enabled) return res.status(404).send("Not found");
-      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS);
+      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS + `\nconst gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
 
