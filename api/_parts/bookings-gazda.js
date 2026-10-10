@@ -12,6 +12,12 @@ const ICONS = require("./gazda-icons");
 
 const RP_ID = process.env.GAZDA_RPID || INTL_DOMAIN;
 const ORIGIN = process.env.GAZDA_ORIGIN || ("https://" + INTL_DOMAIN);
+// aplicația rulează pe propriul subdomeniu (nu intră în domeniul aplicației mari Programul de Azi, deci se poate instala separat);
+// GAZDA_HOST=off oprește mutarea (totul rămâne ca înainte, pe domeniul principal)
+const HOST_ENV = process.env.GAZDA_HOST;
+const HOST_ON = HOST_ENV !== "off";
+const HOST = HOST_ON ? (HOST_ENV || ("host." + INTL_DOMAIN)) : "";
+const HOST_ORIGIN = HOST ? ("https://" + HOST) : ORIGIN;
 const COOKIE = "gzSession";
 const SESSION_DAYS = 60;
 const FRESH_MS = 10 * 60 * 1000; // acțiunile sensibile cer Face ID făcut în ultimele 10 minute
@@ -71,7 +77,7 @@ function coseToJwk(m) {
 function checkClientData(raw, type, challengeB64) {
   let cd;
   try { cd = JSON.parse(Buffer.from(raw).toString("utf8")); } catch (e) { throw new Error("clientdata"); }
-  if (!cd || cd.type !== type || cd.challenge !== challengeB64 || cd.origin !== ORIGIN || cd.crossOrigin === true) throw new Error("clientdata");
+  if (!cd || cd.type !== type || cd.challenge !== challengeB64 || (cd.origin !== ORIGIN && !(HOST && cd.origin === HOST_ORIGIN)) || cd.crossOrigin === true) throw new Error("clientdata");
 }
 
 // ---------- provocări (stateless, semnate, 3 minute) ----------
@@ -264,7 +270,7 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
  else{const skip=el('button',{type:'button',class:'s mini',style:'width:100%;height:40px;margin-top:4px'},['Continuă fără să instalez']);skip.onclick=()=>{slot.remove();skip.remove();root.append(setup);startSetup();};root.append(skip);}
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
-async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{await api('POST','/api/gazda/cont',{});location.href='/cont';}catch(e){alert(errT(e));}}
+async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{const j=await api('POST','/api/gazda/cont',{});location.href=(j&&j.url)||'/cont';}catch(e){alert(errT(e));}}
 async function boot(){let r=await raw('GET','/api/gazda/eu');if(!r.ok){return showLogin();}me=r.j;
  if(!me.listings.length){$('#app').replaceChildren(el('div',{class:'card'},['Rezervările nu sunt încă activate pentru proprietățile tale. Contactează-ne ca să le activăm.']));return;}
  let saved=0;try{saved=Number(localStorage.getItem('gzListing'))||0;}catch(e){}
@@ -446,12 +452,14 @@ async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{
   dv.append(el('div',{class:'sub',style:'margin-top:8px'},['Ca să schimbi metoda: adaugă una nouă, apoi șterge-o pe cea veche.']));}catch(e){dv.append(el('div',{class:'sub'},[errT(e)]));}
  const out=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);out.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(out);}
 
+// link personal din cont sau din QR (#t=...): se schimbă pe o sesiune, apoi adresa se curăță
+async function takeLink(){try{const m=(location.hash||'').match(/[#&]t=([A-Za-z0-9_-]{30,64})/);if(!m)return;history.replaceState(null,'',location.pathname+location.search);await raw('POST','/api/gazda/link/intra',{t:m[1]});}catch(e){}}
 // Service worker-ul principal al site-ului memorează toate răspunsurile GET; datele rezervărilor nu trebuie să treacă prin el.
 // De aceea așteptăm ca service worker-ul aplicației Gazdă (care nu memorează nimic) să preia controlul înainte de a cere date.
 (async()=>{try{if('serviceWorker' in navigator){await navigator.serviceWorker.register('/gazda/sw.js',{scope:'/gazda/'});await navigator.serviceWorker.ready;
  const ours=()=>navigator.serviceWorker.controller&&/\\/gazda\\/sw\\.js$/.test(navigator.serviceWorker.controller.scriptURL);
  if(!ours())await new Promise(res=>{const t=setTimeout(res,3000);navigator.serviceWorker.addEventListener('controllerchange',()=>{if(ours()){clearTimeout(t);res();}});});}}catch(e){}
- boot();})();
+ await takeLink();boot();})();
 `;
 
 function page(res, nonce) {
@@ -495,13 +503,22 @@ function mount(r, o) {
   // ---------- pagina + manifest + service worker ----------
   const appPage = (req, res) => {
     const hostOnly = String(req.headers.host || "").replace(/:\d+$/, "");
-    if (hostOnly !== RP_ID && hostOnly !== "localhost") return res.redirect(302, ORIGIN + "/gazda/"); // un singur domeniu, ca passkey-ul să fie valabil
+    const onHost = !!HOST && hostOnly === HOST;
+    // pe domeniul principal: aplicațiile deja instalate de acolo (?app=1) continuă să meargă; restul merg la subdomeniu
+    if (HOST && !onHost && hostOnly === RP_ID && !/[?&]app=1(&|$)/.test(String(req.originalUrl || req.url || "")) && !/[?&]bkpreview=/.test(String(req.originalUrl || req.url || ""))) return res.redirect(302, HOST_ORIGIN + "/gazda/");
+    if (!onHost && hostOnly !== RP_ID && hostOnly !== "localhost") return res.redirect(302, (HOST_ORIGIN || ORIGIN) + "/gazda/"); // domenii necunoscute: la subdomeniu
     const nonce = crypto.randomBytes(16).toString("base64");
     page(res, nonce);
     res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>OHT Host</title><link rel="manifest" href="/gazda/manifest.webmanifest"><meta name="theme-color" content="#0E6B63"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OHT Host"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="/gazda/icon-180.png"><link rel="icon" type="image/png" href="/gazda/icon-192.png"><style nonce="${nonce}">${PAGE_CSS}${APP_CSS}</style></head><body><div class="w" id="app"><div class="sub" style="padding:40px 0;text-align:center">Se încarcă…</div></div><script nonce="${nonce}">${APP_JS}</script></body></html>`);
   };
   r.get("/gazda", appPage);
   r.get("/gazda/", appPage);
+  // pe domeniul principal: preia linkul de o singură folosință venit din aplicație și duce în contul principal
+  r.get("/gazda/cont", (req, res) => {
+    const nonce = crypto.randomBytes(16).toString("base64");
+    page(res, nonce);
+    res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>OHT Host</title></head><body style="font-family:system-ui,sans-serif;padding:24px"><p id="m">Te conectez în cont…</p><script nonce="${nonce}">(async()=>{const m=document.getElementById('m');try{const t=(location.hash.match(/[#&]t=([A-Za-z0-9_-]+)/)||[])[1];history.replaceState(null,'',location.pathname);if(!t)throw 0;const r=await fetch('/api/gazda/link/intra',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t})});if(!r.ok)throw 0;location.replace('/cont');}catch(e){m.textContent='Linkul a expirat. ';const a=document.createElement('a');a.href='/cont';a.textContent='Intră în cont';m.append(a);}})();</script></body></html>`);
+  });
   r.get("/gazda/manifest.webmanifest", (req, res) => {
     // în previzualizare (rezervările nu sunt pornite global) aplicația instalată trebuie să poarte parola, altfel s-ar deschide pe 404; cu funcția pornită manifestul e curat
     const pk = previewKey ? previewKey(req) : "";
@@ -617,6 +634,37 @@ function mount(r, o) {
     } catch (e) { console.error("gazda cod:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
+  // link personal de o singură folosință (în QR sau în butonul „Instalează”): telefonul se deschide direct conectat.
+  // Jetonul stă în partea de după # a adresei (nu ajunge în jurnale, nu se arde din previzualizări de link) și se schimbă pe o sesiune.
+  const LINK_LABEL = "link";
+  const newLinkToken = () => b64u(crypto.randomBytes(24));
+  const mkLink = async (oid, minutes, label, base) => {
+    const tok = newLinkToken();
+    await dbPool.query(`DELETE FROM gazda_codes WHERE owner_id = $1::integer AND (used_at IS NOT NULL OR expires_at < now())`, [oid]);
+    await dbPool.query(`INSERT INTO gazda_codes (code_hash, owner_id, expires_at, label) VALUES ($1,$2,now() + ($3 || ' minutes')::interval,$4)`, [sha256(tok).toString("hex"), oid, String(minutes), label]);
+    return tok;
+  };
+  r.post("/api/gazda/link/creeaza", ownerOnly, jsonOnly, async (req, res) => {
+    try {
+      if (!(await L.checkRateLimit(ipKey(req), "gz-link", 20, 60))) return res.status(429).json({ error: "prea_multe_cereri" });
+      const tok = await mkLink(req.accommodationOwner.ownerId, 10, LINK_LABEL);
+      noStore(res); res.json({ ok: true, url: HOST_ORIGIN + "/gazda/#t=" + tok, minutes: 10 });
+    } catch (e) { console.error("gazda link:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  r.post("/api/gazda/link/intra", jsonOnly, async (req, res) => {
+    try {
+      if (!(await L.checkRateLimit(ipKey(req), "gz-link-in", 12, 15))) return res.status(429).json({ error: "prea_multe_cereri" });
+      const t = String((req.body || {}).t || "");
+      if (!/^[A-Za-z0-9_-]{30,64}$/.test(t)) return res.status(401).json({ error: "link_invalid" });
+      const u = await dbPool.query(`UPDATE gazda_codes SET used_at = now() WHERE code_hash = $1 AND used_at IS NULL AND expires_at > now() AND label = $2 AND role = 'owner' RETURNING owner_id`, [sha256(t).toString("hex"), LINK_LABEL]);
+      if (!u.rows.length || !(await L.ownerStillExists(u.rows[0].owner_id))) return res.status(401).json({ error: "link_invalid" });
+      const oid = u.rows[0].owner_id;
+      const em = ((await dbPool.query(`SELECT email FROM accommodation_owners WHERE id = $1::integer`, [oid])).rows[0] || {}).email || "";
+      L.setAccommodationOwnerSession(res, oid, em);
+      noStore(res); res.json({ ok: true });
+    } catch (e) { console.error("gazda link intra:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+
   r.post("/api/gazda/pin/inrolare", jsonOnly, async (req, res) => {
     try {
       if (!(await L.checkRateLimit(ipKey(req), "gz-pin-reg", 15, 15))) return res.status(429).json({ error: "prea_multe_cereri" });
@@ -711,7 +759,14 @@ function mount(r, o) {
 
   const ownerRole = (req, res, next) => (req.gz.role === "staff" ? res.status(403).json({ error: "interzis" }) : next());
   r.post("/api/gazda/cont", jsonOnly, gzAuth, ownerRole, (req, res, next) => (!req.gz.auth || Date.now() - req.gz.auth > FRESH_MS ? res.status(401).json({ error: "reautentificare" }) : next()), async (req, res) => {
-    try { L.setAccommodationOwnerSession(res, req.gz.ownerId, req.gz.email); noStore(res); res.json({ ok: true }); }
+    try {
+      const hostOnly = String(req.headers.host || "").replace(/:\d+$/, "");
+      if (HOST && hostOnly === HOST) { // cookie-ul contului principal e al domeniului principal: trecem printr-un link scurt, de o singură folosință
+        const tok = await mkLink(req.gz.ownerId, 2, LINK_LABEL);
+        noStore(res); return res.json({ ok: true, url: ORIGIN + "/gazda/cont#t=" + tok });
+      }
+      L.setAccommodationOwnerSession(res, req.gz.ownerId, req.gz.email); noStore(res); res.json({ ok: true });
+    }
     catch (e) { console.error("gazda cont:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   const fresh = (req, res, next) => (!req.gz.auth || Date.now() - req.gz.auth > FRESH_MS ? res.status(401).json({ error: "reautentificare" }) : next());
