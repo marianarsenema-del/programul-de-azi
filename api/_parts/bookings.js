@@ -11,6 +11,7 @@ const sync = require("./bookings-sync")(dbPool); // prețuri: formular <-> rezer
 const L = require("./logic");
 const pay = require("./bookings-pay");
 const forms = require("./bookings-forms");
+const { qrSrc } = require("./gazda-install-ui");
 
 const ENABLED = process.env.BOOKINGS_ENABLED === "true";
 const PREVIEW_KEY = process.env.BOOKINGS_PREVIEW_KEY || "";
@@ -177,6 +178,18 @@ async function api(method,url,body){const r=await fetch(url,{method,credentials:
 function say(box,t,ok){box.textContent=t;box.className='msg '+(ok?'ok':'err');}
 `;
 
+
+const INSTALL_JS = `
+${qrSrc}
+const gi=$('#gzinst');if(gi)gi.onclick=async()=>{gi.disabled=true;const o=$('#gzinstout');try{const j=await api('POST','/api/gazda/link/creeaza',{});const ua=navigator.userAgent;
+ const mob=/Android|iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&/Linux/.test(ua)&&!/CrOS/.test(ua));
+ if(mob){location.href=j.url;return;}
+ o.replaceChildren();o.append(el('div',{class:'sub',style:'margin-top:10px'},['Scanează codul cu camera telefonului. Se deschide pagina de instalare, deja conectat. Codul este valabil '+j.minutes+' minute și merge o singură dată.']));
+ const h=el('div');h.innerHTML=ohtQrSvg(j.url,200);o.append(h);
+ o.append(el('a',{style:'display:block;text-align:center;margin-top:8px;padding:12px;border:1px solid #0E6B63;border-radius:10px;color:#0E6B63;font-weight:700;text-decoration:none',href:'https://wa.me/?text='+encodeURIComponent('OHT Host: '+j.url),target:'_blank',rel:'noopener'},['Trimite pe WhatsApp']));
+}catch(e){o.className='msg err';o.textContent=e.message;}gi.disabled=false;};
+`;
+
 const OWNER_APP_JS = COMMON_JS + `
 const LID=Number(location.pathname.split('/').pop());const B='/api/rezervari/'+LID;
 let month=new Date();month=new Date(Date.UTC(month.getFullYear(),month.getMonth(),1));let days={},sel=[],settings={},rules=[],feeds=[];let units=[],curUnit='';const uq=(p)=>curUnit?(p+'unit='+curUnit):'';
@@ -268,7 +281,7 @@ $('#saveunit').onclick=async()=>{const m=$('#unitmsg');try{await api('POST',B+'/
 loadCal();loadAll();loadFeeds();loadResv();
 `;
 const dayChecks = (p) => [0, 1, 2, 3, 4, 5, 6].map((i) => `<label style="display:inline-block;margin:4px 8px 0 0;font-weight:500"><input type="checkbox" id="${p}${i}" checked style="width:auto;height:auto;margin:0 3px 0 0">${["D", "L", "Ma", "Mi", "J", "V", "S"][i]}</label>`).join("");
-const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p><a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Instalează aplicația OHT Host</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN.</div></a><div class="card"><b>Ai deja aplicația OHT Host pe ecranul principal și îți cere un cod?</b><div class="sub" style="margin:4px 0 8px">Apasă butonul de mai jos. Apare un cod de 8 caractere, valabil 10 minute. Scrie-l în aplicația OHT Host și alege un PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>
+const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p><div class="card" style="border-color:#0E6B63"><b>📲 Instalează aplicația OHT Host</b><div class="sub" style="margin:4px 0 10px">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN. Apeși o dată și te duce direct pe pagina de instalare, deja conectat.</div><button id="gzinst" type="button" style="width:100%;height:52px;font-size:17px">Instalează aplicația</button><div id="gzinstout"></div></div><div class="card"><b>Ai deja aplicația OHT Host pe ecranul principal și îți cere un cod?</b><div class="sub" style="margin:4px 0 8px">Apasă butonul de mai jos. Apare un cod de 8 caractere, valabil 10 minute. Scrie-l în aplicația OHT Host și alege un PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>
 <div class="card"><h2>Camere</h2><div class="sub">Dacă închiriezi camerele separat, adaugă-le aici. Fiecare are calendar, preț și linkuri iCal proprii. Turistul poate rezerva una, mai multe sau toate camerele deodată.</div><div id="units"></div>
 <input type="hidden" id="uno"><div class="row"><div><label>Nume cameră<input id="uname" maxlength="60" placeholder="Camera 1"></label></div><div><label>Persoane<input id="ucap" type="number" min="1" max="50"></label></div><div><label>Preț/noapte (RON, opțional)<input id="uprice" type="number" min="0"></label></div></div>
 <div class="row" style="margin-top:10px"><button id="saveunit" type="button">Salvează camera</button></div><div class="msg" id="unitmsg"></div></div>
@@ -330,17 +343,17 @@ module.exports = function mountBookings(app) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id
           WHERE l.owner_id = $1::integer AND s.bookings_enabled ORDER BY l.name`, [req.accommodationOwner.ownerId]);
-      const body = `<h1>Rezervări</h1><p class="sub">Alege proprietatea.</p>` + (rows.length ? `<a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Aplicația OHT Host</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN. Deschide și activează o singură dată.</div></a><div class="card"><b>Ai deja aplicația OHT Host pe ecranul principal?</b><div class="sub" style="margin:4px 0 8px">Generează un cod de unică folosință și scrie-l în aplicația OHT Host, ca să o activezi cu PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>` : "") + (rows.length
+      const body = `<h1>Rezervări</h1><p class="sub">Alege proprietatea.</p>` + (rows.length ? `<div class="card" style="border-color:#0E6B63"><b>📲 Instalează aplicația OHT Host</b><div class="sub" style="margin:4px 0 10px">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN. Apeși o dată și te duce direct pe pagina de instalare, deja conectat.</div><button id="gzinst" type="button" style="width:100%;height:52px;font-size:17px">Instalează aplicația</button><div id="gzinstout"></div></div><div class="card"><b>Ai deja aplicația OHT Host pe ecranul principal?</b><div class="sub" style="margin:4px 0 8px">Generează un cod de unică folosință și scrie-l în aplicația OHT Host, ca să o activezi cu PIN.</div><button id="gzcode" type="button">Generează cod</button><div id="gzout" class="msg"></div></div>` : "") + (rows.length
         ? rows.map((x) => `<a class="card" style="display:block;color:inherit;text-decoration:none;font-weight:700" href="/cont/rezervari/${x.id}">${L.escapeHtml(x.name)}</a>`).join("")
         : `<div class="card">Rezervările nu sunt încă activate pentru proprietățile tale.</div>`);
-      shell(res, "Rezervări", body, COMMON_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
+      shell(res, "Rezervări", body, COMMON_JS + INSTALL_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
   r.get("/cont/rezervari/:id(\\d+)", L.requireAccommodationOwner, async (req, res) => {
     try {
       const lst = await loadListing(toId(req.params.id), req.accommodationOwner.ownerId);
       if (!lst || !lst.bookings_enabled) return res.status(404).send("Not found");
-      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS + `\nconst gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
+      shell(res, "Rezervări · " + lst.name, OWNER_APP_HTML(lst.name), OWNER_APP_JS + INSTALL_JS + `\nconst gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});say($('#gzout'),'Codul tău: '+j.code+' (valabil '+j.minutes+' minute, o singură dată)',true);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
   });
 
