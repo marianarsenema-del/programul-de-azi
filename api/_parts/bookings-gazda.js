@@ -235,6 +235,7 @@ async function enroll(label){
 const ERR={dispozitiv_limita:'Ai deja prea multe dispozitive. Șterge unul din Setări.',inregistrare_invalida:'Nu am putut activa Face ID. Încearcă din nou.',autentificare_invalida:'Nu am recunoscut dispozitivul. Încearcă din nou sau activează Face ID din cont.',prea_multe_cereri:'Prea multe încercări. Așteaptă puțin.',interzis:'Nu ai acces la această acțiune.',notificari_indisponibile:'Notificările nu sunt configurate pe server.',pin_slab:'PIN prea simplu. Alege 6 cifre fără șiruri (111111, 123456).',pin_gresit:'PIN greșit.',pin_blocat:'PIN greșit de 5 ori: dispozitivul a fost blocat. Activează-l din nou din cont.',cod_invalid:'Cod greșit sau expirat. Generează unul nou din cont.',dezactivat:'Rezervările nu sunt activate pentru această proprietate.'};
 const errT=(e)=>{const m=(e&&e.message)||'Eroare';if(e&&e.name==='NotAllowedError')return 'Anulat. Încearcă din nou.';return ERR[m]||m;};
 
+window.addEventListener('appinstalled',()=>{document.querySelectorAll('[data-oht-install]').forEach(n=>n.replaceWith(ohtInstallDone()));const k=document.getElementById('instskip');if(k)k.remove();}); // instalare terminată (și din meniul browserului)
 let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;const h=document.getElementById('instslot');if(h){h.replaceChildren();const c=installCard();if(c)h.append(c);}});
 const standalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
 ${installSrc}
@@ -295,7 +296,7 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
  root.append(hero,slot);
  if(first.length)root.append(box);
  if(!ic){root.append(setup);startSetup();}
- else{const skip=el('button',{type:'button',class:'s mini',style:'width:100%;height:40px;margin-top:4px'},['Continuă fără să instalez']);skip.onclick=()=>{slot.remove();skip.remove();root.append(setup);startSetup();};root.append(skip);}
+ else{const skip=el('button',{id:'instskip',type:'button',class:'s mini',style:'width:100%;height:40px;margin-top:4px'},['Continuă fără să instalez']);skip.onclick=()=>{slot.remove();skip.remove();root.append(setup);startSetup();};root.append(skip);}
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
 async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{const j=await api('POST','/api/gazda/cont',{});location.href=(j&&j.url)||'/cont';}catch(e){alert(errT(e));}}
@@ -453,7 +454,7 @@ function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>
   if(multi&&!hotel)await api('POST',B()+'/preferinte',{whole_discount_pct:wd.value===''?0:Number(wd.value)});
   say(m,'Prețuri salvate. Se văd acum și pe pagina pensiunii.',true);}catch(e){say(m,errT(e),false);}b.disabled=false;};
  c.append(b,m);
- if(pl&&!hotel&&pl.mode==='integral'&&pl.n>=2&&!multi){const rp=inp(null,'ex. 400',0,100000,1),m2=el('div',{class:'msg'}),b2=el('button',{type:'button',class:'s',style:'margin-top:10px;width:100%'},['Setează prețul pe cameră']);
+ if(pl&&!hotel&&pl.mode==='integral'&&pl.n>=1&&!multi){const rp=inp(null,'ex. 400',0,100000,1),m2=el('div',{class:'msg'}),b2=el('button',{type:'button',class:'s',style:'margin-top:10px;width:100%'},['Setează prețul pe cameră']);
   b2.onclick=async()=>{b2.disabled=true;try{if(rp.value===''||Number(rp.value)<=0)throw new Error('Scrie prețul pe noapte pentru o cameră.');
    await api('POST',B()+'/pret-camera',{price:Number(rp.value)});say(m2,'Gata: acum primești rezervări și pe camere. Prețul pentru toată pensiunea a rămas.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m2,errT(e),false);}b2.disabled=false;};
   c.append(el('div',{style:'margin-top:16px;padding-top:12px;border-top:1px solid #E4DFD5'},[el('b',{},['Închiriezi și pe camere?']),el('div',{class:'sub'},['Acum ai preț doar pentru toată pensiunea ('+pl.n+' camere). Scrie prețul pe noapte pentru o cameră ca turistul să poată rezerva și camere separate. Prețul pentru toată pensiunea rămâne.']),row('Preț pe noapte / cameră (RON)',rp),b2,m2]));}
