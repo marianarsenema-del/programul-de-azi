@@ -7,6 +7,8 @@ const crypto = require("crypto");
 const { dbPool, INTL_DOMAIN, ACCOMMODATION_SESSION_SECRET } = require("./static");
 const L = require("./logic");
 const { planCardsSrc } = require("./gazda-plan-ui");
+const { installSrc } = require("./gazda-install-ui");
+const ICONS = require("./gazda-icons");
 
 const RP_ID = process.env.GAZDA_RPID || INTL_DOMAIN;
 const ORIGIN = process.env.GAZDA_ORIGIN || ("https://" + INTL_DOMAIN);
@@ -142,24 +144,24 @@ async function logEv(ownerId, did, action, listingId) {
 
 // ---------- pagina aplicației ----------
 const MANIFEST = {
-  name: "Gazdă · Programul de Azi", short_name: "Gazdă", description: "Rezervări și calendar pentru gazde",
+  name: "OHT Host", short_name: "OHT Host", description: "Rezervări și calendar pentru gazde",
   start_url: "/gazda/", scope: "/gazda/", id: "/gazda/", display: "standalone", orientation: "portrait",
   background_color: "#F5F2EC", theme_color: "#0E6B63", lang: "ro",
   icons: [
-    { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-    { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-    { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    { src: "/gazda/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+    { src: "/gazda/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+    { src: "/gazda/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
   ],
 };
-const SW = `// Gazdă: fără cache pentru date private; doar permite instalarea și afișează un mesaj offline.
+const SW = `// OHT Host: fără cache pentru date private; doar permite instalarea și afișează un mesaj offline.
 self.addEventListener('install',function(){self.skipWaiting();});
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});
 self.addEventListener('push',function(e){var d={};try{d=e.data?e.data.json():{};}catch(x){}
-e.waitUntil(self.registration.showNotification(d.title||'Gazdă',{body:d.body||'',icon:'/icon-192.png',badge:'/icon-192.png',tag:d.tag||'gz',data:{url:d.url||'/gazda/'}}));});
+e.waitUntil(self.registration.showNotification(d.title||'OHT Host',{body:d.body||'',icon:'/gazda/icon-192.png',badge:'/gazda/icon-192.png',tag:d.tag||'gz',data:{url:d.url||'/gazda/'}}));});
 self.addEventListener('notificationclick',function(e){e.notification.close();var u=(e.notification.data&&e.notification.data.url)||'/gazda/';
 e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(l){for(var i=0;i<l.length;i++){if(l[i].url.indexOf('/gazda/')>-1&&'focus' in l[i])return l[i].focus();}return self.clients.openWindow(u);}));});
 self.addEventListener('fetch',function(e){var r=e.request;if(r.method!=='GET'||r.mode!=='navigate')return;
-e.respondWith(fetch(r).catch(function(){return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><body style="font-family:system-ui;padding:24px;background:#F5F2EC;color:#17222B"><h2>Fără conexiune</h2><p>Aplicația Gazdă are nevoie de internet. Reîncearcă în câteva secunde.</p>',{headers:{'Content-Type':'text/html; charset=utf-8'}});}));});
+e.respondWith(fetch(r).catch(function(){return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><body style="font-family:system-ui;padding:24px;background:#F5F2EC;color:#17222B"><h2>Fără conexiune</h2><p>Aplicația OHT Host are nevoie de internet. Reîncearcă în câteva secunde.</p>',{headers:{'Content-Type':'text/html; charset=utf-8'}});}));});
 `;
 
 const APP_CSS = `
@@ -229,13 +231,9 @@ const errT=(e)=>{const m=(e&&e.message)||'Eroare';if(e&&e.name==='NotAllowedErro
 
 let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;const h=document.getElementById('instslot');if(h){h.replaceChildren();const c=installCard();if(c)h.append(c);}});
 const standalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
-function installCard(){if(standalone())return null;const c=el('div',{class:'card',style:'border-color:#0E6B63'},[el('b',{},['📲 Instalează aplicația Gazdă'])]);
- if(deferredPrompt){const b=el('button',{type:'button',style:'width:100%;margin-top:8px'},['Instalează acum']);b.onclick=async()=>{deferredPrompt.prompt();try{await deferredPrompt.userChoice;}catch(e){}deferredPrompt=null;c.remove();};c.append(b);}
- else if(/iPhone|iPad/.test(navigator.userAgent))c.append(el('div',{class:'sub',style:'margin:6px 0 0'},['În Safari: apasă butonul Partajează (pătratul cu săgeată), apoi „Adaugă pe ecranul principal”.']));
- else c.append(el('div',{class:'sub',style:'margin:6px 0 0'},['În Chrome: deschide meniul ⋮ și alege „Instalează aplicația” sau „Adaugă pe ecranul principal”.']));
- return c;}
+${installSrc}
 let me=null,LID=0,tab='azi';const STAFF=()=>!!me&&me.role==='staff';
-function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.replaceChildren();
+function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root.replaceChildren();
  const dev=myPinDev();const msg=el('div',{class:'msg'});const first=[];
  const run=(b,fn)=>{b.onclick=async()=>{b.disabled=true;try{await fn();await boot();}catch(e){say(msg,errT(e),false);if(!lsGet('gzDev')&&dev)showLogin();}b.disabled=false;};};
  if(dev){const pb=el('button',{type:'button',style:'width:100%;height:52px;font-size:16px'},['Intră cu PIN']);run(pb,pinLogin);first.push(pb);}
@@ -243,7 +241,7 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
  const box=el('div',{class:'card'},first.concat([msg]));
  const setup=el('div',{class:'card'});
  const slot=el('div',{id:'instslot'});const ic=installCard();if(ic)slot.append(ic);
- root.append(el('div',{class:'hero'},[el('div',{class:'face'},['🏡']),el('h1',{},['Gazdă']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup,slot);
+ root.append(el('div',{class:'hero'},[el('img',{src:'/gazda/icon-192.png',alt:'',width:'88',height:'88',style:'border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.2)'}),el('h1',{},['OHT Host']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),slot,first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup);
  if(!dev&&lsGet('gzM')!=='face'&&first.length)root.insertBefore(setup,box);
  raw('GET','/api/gazda/inrolare/stare').then(r=>{
   if(r.ok){setup.append(el('b',{},['Activează intrarea rapidă pe acest telefon']),el('p',{class:'sub'},['Ești conectat în cont ('+r.j.email+'). Alege cum vrei să intri de acum încolo, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
@@ -256,7 +254,7 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
    setup.append(code,cb,m,el('a',{href:'/cazare/login',class:'mini',style:'height:42px;margin-top:8px'},['Intră în cont (pentru Face ID)']));}});
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
-async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația Gazdă rămâne instalată, te întorci oricând.'))return;try{await api('POST','/api/gazda/cont',{});location.href='/cont';}catch(e){alert(errT(e));}}
+async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{await api('POST','/api/gazda/cont',{});location.href='/cont';}catch(e){alert(errT(e));}}
 async function boot(){let r=await raw('GET','/api/gazda/eu');if(!r.ok){return showLogin();}me=r.j;
  if(!me.listings.length){$('#app').replaceChildren(el('div',{class:'card'},['Rezervările nu sunt încă activate pentru proprietățile tale. Contactează-ne ca să le activăm.']));return;}
  let saved=0;try{saved=Number(localStorage.getItem('gzListing'))||0;}catch(e){}
@@ -489,7 +487,7 @@ function mount(r, o) {
     if (hostOnly !== RP_ID && hostOnly !== "localhost") return res.redirect(302, ORIGIN + "/gazda/"); // un singur domeniu, ca passkey-ul să fie valabil
     const nonce = crypto.randomBytes(16).toString("base64");
     page(res, nonce);
-    res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Gazdă</title><link rel="manifest" href="/gazda/manifest.webmanifest"><meta name="theme-color" content="#0E6B63"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gazdă"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="/icon-192.png"><style nonce="${nonce}">${PAGE_CSS}${APP_CSS}</style></head><body><div class="w" id="app"><div class="sub" style="padding:40px 0;text-align:center">Se încarcă…</div></div><script nonce="${nonce}">${APP_JS}</script></body></html>`);
+    res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>OHT Host</title><link rel="manifest" href="/gazda/manifest.webmanifest"><meta name="theme-color" content="#0E6B63"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="OHT Host"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="/gazda/icon-180.png"><link rel="icon" type="image/png" href="/gazda/icon-192.png"><style nonce="${nonce}">${PAGE_CSS}${APP_CSS}</style></head><body><div class="w" id="app"><div class="sub" style="padding:40px 0;text-align:center">Se încarcă…</div></div><script nonce="${nonce}">${APP_JS}</script></body></html>`);
   };
   r.get("/gazda", appPage);
   r.get("/gazda/", appPage);
@@ -498,6 +496,9 @@ function mount(r, o) {
     const pk = previewKey ? previewKey(req) : "";
     const mf = pk ? Object.assign({}, MANIFEST, { start_url: "/gazda/?bkpreview=" + encodeURIComponent(pk) }) : MANIFEST;
     res.type("application/manifest+json").set(pk ? { "Cache-Control": "private, no-store" } : { "Cache-Control": "public, max-age=3600" }).send(JSON.stringify(mf));
+  });
+  [["icon-180", 180], ["icon-192", 192], ["icon-512", 512], ["icon-maskable-512", 512]].forEach((ic) => {
+    r.get("/gazda/" + ic[0] + ".png", (req, res) => { res.type("image/png").set({ "Cache-Control": "public, max-age=86400" }).send(ICONS[ic[0]]); });
   });
   r.get("/gazda/sw.js", (req, res) => { res.type("application/javascript").set({ "Cache-Control": "no-cache", "Service-Worker-Allowed": "/gazda/" }).send(SW); });
 
