@@ -254,6 +254,7 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
    setup.append(code,cb,m,el('a',{href:'/cazare/login',class:'mini',style:'height:42px;margin-top:8px'},['Intră în cont (pentru Face ID)']));}});
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
+async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația Gazdă rămâne instalată, te întorci oricând.'))return;try{await api('POST','/api/gazda/cont',{});location.href='/cont';}catch(e){alert(errT(e));}}
 async function boot(){let r=await raw('GET','/api/gazda/eu');if(!r.ok){return showLogin();}me=r.j;
  if(!me.listings.length){$('#app').replaceChildren(el('div',{class:'card'},['Rezervările nu sunt încă activate pentru proprietățile tale. Contactează-ne ca să le activăm.']));return;}
  let saved=0;try{saved=Number(localStorage.getItem('gzListing'))||0;}catch(e){}
@@ -262,7 +263,7 @@ function draw(){const root=$('#app');root.replaceChildren();
  const sw=el('select',{'aria-label':'Proprietate'});me.listings.forEach(l=>sw.append(el('option',{value:String(l.id)},[l.name])));sw.value=String(LID);sw.hidden=me.listings.length<2;
  sw.onchange=()=>{LID=Number(sw.value);try{localStorage.setItem('gzListing',String(LID));}catch(e){}resetState();show(tab);};
  root.append(el('div',{class:'top'},[me.listings.length<2?el('b',{style:'font-size:17px'},[me.listings[0].name]):sw]),el('div',{id:'view'}));
- const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=()=>show(t[0]);nav.append(b);});document.body.append(nav);
+ const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].concat(STAFF()?[]:[['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
  show(tab);}
 function resetState(){month=firstOfMonth(new Date());days={};sel=[];units=[];curUnit='';}
 function show(t){tab=t;document.querySelectorAll('.nav button').forEach(b=>b.className=b.dataset.t===t?'on':'');const v=$('#view');if(!v)return;v.replaceChildren();
@@ -377,7 +378,7 @@ async function pushCard(){const c=el('div',{class:'card'},[el('h2',{},['Notific�
  let on=false;try{const reg=await navigator.serviceWorker.ready;on=!!(await reg.pushManager.getSubscription())&&Notification.permission==='granted';}catch(e){}
  const m=el('div',{class:'msg'});const b=el('button',{type:'button',class:on?'s':''},[on?'Notificări active ✓ (apasă ca să reactivezi)':'Activează notificările']);
  b.onclick=async()=>{b.disabled=true;try{await enablePush();say(m,'Notificări active pe acest telefon.',true);}catch(e){say(m,errT(e),false);}b.disabled=false;};c.append(b,m);return c;}
-async function arrivalCard(){const c=el('div',{class:'card'},[el('h2',{},['Mesaj de sosire (automat)']),el('div',{class:'sub'},['Oaspetele primește pe e-mail mesajul tău și informațiile de acces înainte de sosire, doar dacă fișa de cazare e completată pentru toți și plata e încheiată. Altfel te anunțăm pe tine.'])]);
+async function arrivalCard(){const c=el('div',{class:'card'},[el('h2',{},['Mesaj de sosire (automat)']),el('div',{class:'sub'},['Oaspetele primește pe e-mail mesajul tău și informațiile de acces înainte de sosire, chiar dacă fișa de cazare nu e completată încă (se poate completa și la sosire). Dacă o plată online nu e încheiată, nu îl trimitem și te anunțăm pe tine.'])]);
  let s;try{s=await api('GET','/api/gazda/sosire/setari?listing='+LID);}catch(e){c.append(el('div',{class:'sub'},[errT(e)]));return c;}
  const au=el('input',{type:'checkbox',style:'width:auto;height:auto'});au.checked=s.auto;const dy=el('select',{});[['1','cu 1 zi înainte'],['2','cu 2 zile înainte']].forEach(o=>dy.append(el('option',{value:o[0]},[o[1]])));dy.value=String(s.days);
  const msg=el('textarea',{rows:'3',maxlength:'1000',placeholder:'Ex.: Te așteptăm! Check-in după ora 14.',style:'width:100%;border:1px solid #C9C3B6;border-radius:8px;padding:8px;font-size:15px'});msg.value=s.message;
@@ -671,6 +672,10 @@ function mount(r, o) {
   };
 
   const ownerRole = (req, res, next) => (req.gz.role === "staff" ? res.status(403).json({ error: "interzis" }) : next());
+  r.post("/api/gazda/cont", jsonOnly, gzAuth, ownerRole, (req, res, next) => (!req.gz.auth || Date.now() - req.gz.auth > FRESH_MS ? res.status(401).json({ error: "reautentificare" }) : next()), async (req, res) => {
+    try { L.setAccommodationOwnerSession(res, req.gz.ownerId, req.gz.email); noStore(res); res.json({ ok: true }); }
+    catch (e) { console.error("gazda cont:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
   const fresh = (req, res, next) => (!req.gz.auth || Date.now() - req.gz.auth > FRESH_MS ? res.status(401).json({ error: "reautentificare" }) : next());
   r.get("/api/gazda/eu", gzAuth, async (req, res) => {
     try {
