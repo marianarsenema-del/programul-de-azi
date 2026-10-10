@@ -91,6 +91,15 @@ function ohtQr(text) {
   return best;
 }
 
+// SVG-ul codului QR ca text (folosit în pagina contului, unde nu există ajutoarele aplicației)
+function ohtQrSvg(text, px) {
+  const m = ohtQr(text); if (!m) return '';
+  const n = m.length, q = 4; let d = '';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (m[y][x]) d += 'M' + (x + q) + ' ' + (y + q) + 'h1v1h-1z';
+  const t = n + 2 * q;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + t + ' ' + t + '" width="' + (px || 200) + '" height="' + (px || 200) + '" role="img" aria-label="Cod QR" style="display:block;margin:12px auto;background:#fff;border-radius:8px"><rect width="' + t + '" height="' + t + '" fill="#fff"/><path d="' + d + '" fill="#17222B"/></svg>';
+}
+
 // ---------- ghidul de instalare ----------
 function installCard() {
   const ua = navigator.userAgent || '';
@@ -181,18 +190,22 @@ function installCard() {
       if (iOS) location.href = 'x-safari-' + target;
       else location.href = 'intent://' + location.host + '/gazda/#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.android.chrome;component=com.android.chrome/com.google.android.apps.chrome.Main;S.browser_fallback_url=' + encodeURIComponent(target) + ';end';
     };
-    const note = el('div', { style: 'display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:#FFE2CC;color:#6B2A00;font-size:15px;line-height:1.4;font-weight:600' });
     const btn = el('button', { type: 'button', style: 'width:100%;margin-top:10px;height:54px;font-size:18px' }, [iOS ? 'Deschide în Safari' : 'Deschide în Chrome']);
-    btn.onclick = async () => {
+    btn.onclick = () => { if (mark) mark(); launch(); };
+    // dacă telefonul nu pornește singur browserul: linkul se vede și se copiază cu un buton, fără copiere automată
+    const cp = el('button', { type: 'button', class: 's', style: 'flex:none;height:44px;padding:0 16px;font-size:15px' }, ['Copiază']);
+    cp.onclick = async () => {
       if (mark) mark();
-      let copied = false; try { await navigator.clipboard.writeText(target); copied = true; } catch (e) {}
-      launch();
-      setTimeout(() => {
-        if (document.visibilityState === 'hidden' || !note.isConnected) return;
-        note.style.display = 'block';
-        note.textContent = (copied ? 'Linkul este copiat. ' : '') + 'Telefonul nu a deschis ' + (iOS ? 'Safari' : 'Chrome') + ' singur. Deschide-l tu din lista de aplicații, ține apăsat în bara de adresă, alege Lipește, apoi Go.';
-      }, 1800);
+      let ok = false;
+      try { await navigator.clipboard.writeText(target); ok = true; } catch (e) {
+        try { const t = el('textarea', { style: 'position:fixed;opacity:0' }); t.value = target; document.body.append(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (e2) { ok = false; }
+      }
+      cp.textContent = ok ? 'Copiat ✓' : 'Ține apăsat pe link';
     };
+    const note = el('div', { style: 'margin-top:12px' }, [
+      el('div', { style: 'font-size:15px;line-height:1.4' }, ['Dacă nu se deschide, copiază linkul de mai jos, deschide ' + (iOS ? 'Safari' : 'Chrome') + ' din lista de aplicații și lipește-l în bara de adresă.']),
+      el('div', { style: 'display:flex;gap:8px;align-items:center;margin-top:8px' }, [
+        el('div', { style: 'flex:1;min-width:0;padding:10px 12px;border:1px solid #C8D2D8;border-radius:10px;background:#fff;font-size:14px;word-break:break-all;user-select:all' }, [target]), cp])]);
     return { btn, note, launch };
   };
   if (kind === 'ios-safari') {
@@ -216,6 +229,7 @@ function installCard() {
       s1.append(step(2, ['Alege ', B('Instalează aplicația'), ' (sau ', B('Adaugă pe ecranul principal'), ').']));
       s1.append(step(3, ['Apasă ', B('Instalează'), ' și deschide ', B('OHT Host'), ' de pe ecranul principal.']));
     }
+    if (!deferredPrompt) s1.append(el('div', { style: 'margin-top:12px;padding:9px 11px;border-radius:10px;background:#EEF4F3;font-size:14px;line-height:1.4' }, ['Chrome spune „Această aplicație este instalată deja”? Atunci OHT Host e pe telefon. Apasă pe acel mesaj ca s-o deschizi, sau caut-o în lista de aplicații și ține apăsat ca s-o muți pe ecranul principal.']));
   } else if (kind === 'native') {
     s1.append(el('div', { style: 'font-size:15px;line-height:1.4;margin-top:6px' }, ['Apasă butonul. Aplicația se instalează și apare pe ecranul principal sau în lista de aplicații.']));
     const nb = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:54px;font-size:18px' }, ['Instalează aplicația']);
@@ -236,21 +250,21 @@ function installCard() {
     if (!sa) { let tried = false; try { tried = sessionStorage.getItem('ohtOpen') === '1'; sessionStorage.setItem('ohtOpen', '1'); } catch (e) {} if (!tried) setTimeout(o.launch, 600); }
   } else { // calculator
     s1.append(el('div', { style: 'font-size:15px;line-height:1.4;margin-top:6px;color:#4A565F' }, ['Scanează codul cu camera telefonului. Se deschide pagina, iar telefonul îți arată pașii potriviți.']));
-    const m = ohtQr(url);
-    if (m) {
-      const n = m.length, q = 4, s = document.createElementNS(NS, 'svg');
-      s.setAttribute('viewBox', '0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q)); s.setAttribute('width', '200'); s.setAttribute('height', '200'); s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'Cod QR către ' + url); s.style.cssText = 'display:block;margin:12px auto;background:#fff;border-radius:8px';
-      const bg = document.createElementNS(NS, 'rect'); bg.setAttribute('width', n + 2 * q); bg.setAttribute('height', n + 2 * q); bg.setAttribute('fill', '#fff'); s.append(bg);
-      let d = '';
-      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (m[y][x]) d += 'M' + (x + q) + ' ' + (y + q) + 'h1v1h-1z';
-      const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('fill', '#17222B'); s.append(p);
-      s1.append(s);
-    }
-    s1.append(el('div', { class: 'sub', style: 'text-align:center' }, ['sau trimite-ți linkul:']));
-    const row = el('div', { style: 'display:flex;gap:8px;margin-top:8px' });
-    row.append(el('a', { class: 'mini', href: 'https://wa.me/?text=' + encodeURIComponent('OHT Host: ' + url), target: '_blank', rel: 'noopener', style: 'flex:1;justify-content:center;background:#0E6B63;color:#fff;height:44px' }, ['WhatsApp']));
-    row.append(el('a', { class: 'mini', href: 'mailto:?subject=' + encodeURIComponent('Aplicația OHT Host') + '&body=' + encodeURIComponent(url), style: 'flex:1;justify-content:center;height:44px' }, ['E-mail']));
-    s1.append(row);
+    const qbox = el('div');
+    const paint = (u) => {
+      qbox.replaceChildren();
+      const holder = el('div'); holder.innerHTML = ohtQrSvg(u, 200); // markup generat local din date proprii, fără conținut extern
+      qbox.append(holder);
+      qbox.append(el('div', { class: 'sub', style: 'text-align:center' }, ['sau trimite-ți linkul:']));
+      const row = el('div', { style: 'display:flex;gap:8px;margin-top:8px' });
+      row.append(el('a', { class: 'mini', href: 'https://wa.me/?text=' + encodeURIComponent('OHT Host: ' + u), target: '_blank', rel: 'noopener', style: 'flex:1;justify-content:center;background:#0E6B63;color:#fff;height:44px' }, ['WhatsApp']));
+      row.append(el('a', { class: 'mini', href: 'mailto:?subject=' + encodeURIComponent('Aplicația OHT Host') + '&body=' + encodeURIComponent(u), style: 'flex:1;justify-content:center;height:44px' }, ['E-mail']));
+      qbox.append(row);
+    };
+    paint(url);
+    // în cont, codul poartă un link personal de o singură folosință: telefonul se deschide direct conectat
+    if (typeof raw === 'function') raw('POST', '/api/gazda/link/creeaza', {}).then((r) => { if (r && r.ok && r.j && r.j.url) paint(r.j.url); }).catch(() => {});
+    s1.append(qbox);
   }
   const block = (n, title, content) => el('div', { style: 'display:flex;gap:12px;align-items:flex-start;margin-top:16px' }, [
     el('div', { style: 'flex:none;width:34px;height:34px;border-radius:50%;background:#0E6B63;color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center' }, [String(n)]),
@@ -265,4 +279,4 @@ function installCard() {
   return c;
 }
 
-module.exports = { installSrc: ohtQr.toString() + "\n" + installCard.toString() };
+module.exports = { installSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() + "\n" + installCard.toString(), qrSrc: ohtQr.toString() + "\n" + ohtQrSvg.toString() };
