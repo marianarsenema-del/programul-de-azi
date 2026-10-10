@@ -409,7 +409,12 @@ function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>
   else if(wk)await api('DELETE',B()+'/tarife/'+wk.id,{});
   if(multi&&!hotel)await api('POST',B()+'/preferinte',{whole_discount_pct:wd.value===''?0:Number(wd.value)});
   say(m,'Prețuri salvate. Se văd acum și pe pagina pensiunii.',true);}catch(e){say(m,errT(e),false);}b.disabled=false;};
- c.append(b,m);return c;}
+ c.append(b,m);
+ if(pl&&!hotel&&pl.mode==='integral'&&pl.n>=2&&!multi){const rp=inp(null,'ex. 400',0,100000,1),m2=el('div',{class:'msg'}),b2=el('button',{type:'button',class:'s',style:'margin-top:10px;width:100%'},['Setează prețul pe cameră']);
+  b2.onclick=async()=>{b2.disabled=true;try{if(rp.value===''||Number(rp.value)<=0)throw new Error('Scrie prețul pe noapte pentru o cameră.');
+   await api('POST',B()+'/pret-camera',{price:Number(rp.value)});say(m2,'Gata: acum primești rezervări și pe camere. Prețul pentru toată pensiunea a rămas.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m2,errT(e),false);}b2.disabled=false;};
+  c.append(el('div',{style:'margin-top:16px;padding-top:12px;border-top:1px solid #E4DFD5'},[el('b',{},['Închiriezi și pe camere?']),el('div',{class:'sub'},['Acum ai preț doar pentru toată pensiunea ('+pl.n+' camere). Scrie prețul pe noapte pentru o cameră ca turistul să poată rezerva și camere separate. Prețul pentru toată pensiunea rămâne.']),row('Preț pe noapte / cameră (RON)',rp),b2,m2]));}
+ return c;}
 // ---------- SETĂRI ----------
 async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{},['Cont de personal']),el('div',{class:'sub'},['Poți vedea calendarul și rezervările și poți închide sau deschide zile.'])]));const o2=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);o2.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(o2);return;}
  const ic2=installCard();if(ic2)v.append(ic2);
