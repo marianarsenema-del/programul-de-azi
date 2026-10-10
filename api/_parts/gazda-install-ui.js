@@ -150,7 +150,10 @@ function installCard() {
     return cx;
   }
   const iOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const android = /Android/i.test(ua);
+  // tabletele Android cer des „site pentru calculator”: user-agent fără „Android”, dar cu atingere (ecran tactil) și Linux
+  const touch = (navigator.maxTouchPoints || 0) > 1;
+  const uaPlat = (navigator.userAgentData && navigator.userAgentData.platform) || '';
+  const android = /Android/i.test(ua) || uaPlat === 'Android' || (!iOS && touch && /Linux|X11/.test(ua) && !/CrOS/.test(ua));
   const google = /GSA\/|GoogleApp/i.test(ua);
   // browser din altă aplicație (Google, Facebook, Instagram, WhatsApp…): pe iPhone un WebView nu are „Safari/” în user-agent și nici navigator.standalone
   const inApp = google || /FBAN|FBAV|FB_IAB|Instagram|WhatsApp|Messenger|TikTok|musical_ly|Snapchat|LinkedInApp|Line\/|Twitter|; wv\)/i.test(ua)
@@ -167,7 +170,10 @@ function installCard() {
     if (/SamsungBrowser/.test(ua)) { kind = 'samsung'; label = 'Android · Samsung Internet'; }
     else if (/Firefox/.test(ua)) { kind = 'android-ff'; label = 'Android · Firefox'; }
     else { kind = 'android-chrome'; label = /EdgA/.test(ua) ? 'Android · Edge' : (/OPR\//.test(ua) ? 'Android · Opera' : 'Android · Chrome'); }
-  } else { kind = 'desktop'; label = 'calculator (nu telefon)'; }
+  } else if (deferredPrompt) { kind = 'native'; label = 'browser care poate instala aplicația'; }
+  else { kind = 'desktop'; label = 'calculator (nu telefon)'; }
+  // oriunde browserul oferă instalarea nativă (Chrome, Edge), un singur buton face totul
+  if (deferredPrompt && (kind === 'android-chrome' || kind === 'desktop' || kind === 'samsung' || kind === 'android-ff')) kind = kind === 'desktop' ? 'native' : 'android-chrome';
 
   const NS = 'http://www.w3.org/2000/svg';
   const svg = (paths, size, col, fill) => { const s = document.createElementNS(NS, 'svg'); s.setAttribute('width', size); s.setAttribute('height', size); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', fill || 'none'); s.setAttribute('stroke', col || '#0A84FF'); s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); paths.forEach((d) => { const p = document.createElementNS(NS, d.t || 'path'); for (const a in d) if (a !== 't') p.setAttribute(a, d[a]); s.append(p); }); return s; };
@@ -195,7 +201,7 @@ function installCard() {
   const c = el('div', { class: 'card', style: 'border:2px solid #0E6B63' });
   const rt = (kind === 'inapp' || kind === 'ios-other') ? armReturn(c) : null;
   c.append(el('div', { style: 'font-size:12px;font-weight:800;color:#0E6B63;background:#E6F2F0;border-radius:8px;padding:5px 9px;display:inline-block' }, ['Detectat: ' + label]));
-  c.append(el('div', { style: 'font-size:18px;font-weight:800;margin-top:8px' }, [kind === 'inapp' ? (iOS ? 'Deschide mai întâi în Safari' : 'Deschide mai întâi în Chrome') : (kind === 'desktop' ? 'Aplicația se instalează pe telefon' : 'Instalează aplicația OHT Host pe telefon')]));
+  c.append(el('div', { style: 'font-size:18px;font-weight:800;margin-top:8px' }, [kind === 'inapp' ? (iOS ? 'Deschide mai întâi în Safari' : 'Deschide mai întâi în Chrome') : (kind === 'desktop' ? 'Aplicația se instalează pe telefon' : kind === 'native' ? 'Instalează aplicația OHT Host' : 'Instalează aplicația OHT Host pe telefon')]));
 
   if (kind === 'ios-safari') {
     c.append(step(1, ['Apasă butonul ', B('Partajează'), ' ', ring(iShare()), ' din bara de jos a ecranului.']));
@@ -218,6 +224,11 @@ function installCard() {
       c.append(step(2, ['Alege ', B('Instalează aplicația'), ' (sau ', B('Adaugă pe ecranul principal'), ').']));
       c.append(step(3, ['Apasă ', B('Instalează'), ' și deschide ', B('OHT Host'), ' de pe ecranul principal.']));
     }
+  } else if (kind === 'native') {
+    c.append(el('div', { style: 'font-size:15px;line-height:1.4;margin-top:6px' }, ['Apasă butonul. Aplicația se instalează și apare pe ecranul principal sau în lista de aplicații.']));
+    const nb = el('button', { type: 'button', style: 'width:100%;margin-top:12px;height:54px;font-size:18px' }, ['Instalează aplicația']);
+    nb.onclick = async () => { deferredPrompt.prompt(); try { await deferredPrompt.userChoice; } catch (e) {} deferredPrompt = null; c.remove(); };
+    c.append(nb);
   } else if (kind === 'samsung') {
     c.append(step(1, ['Apasă meniul ', ring(iBars()), ' din bara de jos.']));
     c.append(step(2, ['Alege ', B('Adaugă pagina la'), ' → ', B('Ecran principal'), '.']));
@@ -262,7 +273,7 @@ function installCard() {
     row.append(el('a', { class: 'mini', href: 'mailto:?subject=' + encodeURIComponent('Aplicația OHT Host') + '&body=' + encodeURIComponent(url), style: 'flex:1;justify-content:center;height:44px' }, ['E-mail']));
     c.append(row);
   }
-  if (kind !== 'desktop') c.append(el('div', { class: 'sub', style: 'margin-top:12px' }, ['După instalare, deschide OHT Host din pictogramă și conectează-te acolo o singură dată. Apoi activezi Face ID sau amprenta și nu mai scrii nimic.']));
+  if (kind !== 'desktop' && kind !== 'native') c.append(el('div', { class: 'sub', style: 'margin-top:12px' }, ['După instalare, deschide OHT Host din pictogramă și conectează-te acolo o singură dată. Apoi activezi Face ID sau amprenta și nu mai scrii nimic.']));
   return c;
 }
 
