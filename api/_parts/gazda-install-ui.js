@@ -274,7 +274,14 @@ function installCard() {
     el('div', {}, ['Caută pictograma ', B('OHT Host'), ' pe ecranul telefonului și apas-o. Alegi cum intri de acum încolo, ', B('Face ID'), ' sau ', B('PIN'), ', și ai intrat în aplicație.'])]);
   c.append(el('div', { style: 'font-size:20px;font-weight:800' }, ['Instalează OHT Host în 2 pași']));
   c.append(block(1, s1Title, s1));
-  c.append(block(2, 'Deschide OHT Host de pe ecran', s2));
+  // pe iPhone, aplicația de pe ecran nu primește sesiunea din Safari: arătăm aici un cod scurt, valabil 30 de minute, pentru prima deschidere
+  const codeBox = el('div', { style: 'margin-top:8px;padding:9px 11px;border-radius:10px;background:#EEF4F3;font-size:14px;line-height:1.4;display:none' });
+  c.append(block(2, 'Deschide OHT Host de pe ecran', el('div', {}, [s2, codeBox])));
+  if (iOS && typeof raw === 'function' && (kind === 'ios-safari' || kind === 'ios-other')) {
+    raw('POST', '/api/gazda/link/creeaza', { short: true }).then((r) => {
+      if (r && r.ok && r.j && r.j.code) { codeBox.style.display = 'block'; codeBox.replaceChildren('Dacă aplicația îți cere un cod la prima deschidere, scrie: ', el('b', { style: 'letter-spacing:2px;font-size:16px' }, [r.j.code]), ' (valabil ' + r.j.minutes + ' de minute, o singură dată).'); }
+    }).catch(() => {});
+  }
   c.append(el('div', { style: 'margin-top:14px;font-size:11px;color:#8A949C' }, ['Detectat: ' + label]));
   return c;
 }
