@@ -454,7 +454,7 @@ module.exports = function mountBookings(app) {
     try {
       const p = await sync.getPlan(req.listing.id);
       if (!p) return res.status(404).json({ error: "negasit" });
-      noStore(res); res.json({ plan: p.plan, hotel: p.hotel, type: p.type, stored: p.stored, today: core.todayRo(), suggestions: core.suggestedTemplates(Number(core.todayRo().slice(0, 4))).concat(core.suggestedTemplates(Number(core.todayRo().slice(0, 4)) + 1)) });
+      noStore(res); res.json({ plan: p.plan, hotel: p.hotel, type: p.type, mode: p.mode, n: p.n, stored: p.stored, today: core.todayRo(), suggestions: core.suggestedTemplates(Number(core.todayRo().slice(0, 4))).concat(core.suggestedTemplates(Number(core.todayRo().slice(0, 4)) + 1)) });
     } catch (e) { console.error("rezervari plan get:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.post("/api/rezervari/:id/plan", ...ownerApi, ownListing, async (req, res) => {
@@ -469,6 +469,16 @@ module.exports = function mountBookings(app) {
       if (out.error) return res.status(404).json({ error: "negasit" });
       res.json({ ok: true, plan: out.plan });
     } catch (e) { console.error("rezervari plan post:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  // pensiune doar „toată pensiunea”: setează prețul pe cameră din aplicație (trece în modul hibrid)
+  r.post("/api/rezervari/:id/pret-camera", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const out = await sync.setRoomPrice(req.listing.id, (req.body || {}).price);
+      if (out.error === "pret_invalid") return res.status(400).json({ error: "Scrie un preț valid pe noapte pentru o cameră." });
+      if (out.error === "nu_se_aplica") return res.status(400).json({ error: "Prețul pe cameră se poate seta doar pentru o pensiune cu cel puțin 2 camere, închiriată acum doar întreagă." });
+      if (out.error) return res.status(404).json({ error: "negasit" });
+      res.json({ ok: true });
+    } catch (e) { console.error("rezervari pret-camera:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   // ofertă: aceeași logică va fi folosită de turist în Etapa 1
   r.get("/api/rezervari/:id/pret", ...ownerApi, ownListing, async (req, res) => {
