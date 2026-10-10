@@ -10,6 +10,7 @@
 "use strict";
 const crypto = require("crypto");
 const PP = require("./price-plan");
+const CAMP = require("./bookings-camp");
 
 const PENSION = ["pensiune", "cabana", "aframe"];
 const HOTEL = "hotel_mic";
@@ -84,11 +85,82 @@ module.exports = function (dbPool) {
     return row;
   }
 
+  // ---------- camping: tipurile de loc din formular devin „tipuri” în rezervări (cu stoc) ----------
+  async function isCamping(id) {
+    try { const r = (await dbPool.query(`SELECT type, price_currency FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0]; return !!r && r.type === "camping" && (r.price_currency || "RON") === "RON"; }
+    catch (e) { return false; }
+  }
+  async function campPull(id, opts) {
+    const c = await caps();
+    if (!c.units) return { skipped: true };
+    const row = (await dbPool.query(`SELECT l.type_details, s.price_sync_sig FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer`, [id])).rows[0];
+    if (!row) return { skipped: true };
+    const model = CAMP.campModel(row.type_details);
+    const sig = crypto.createHash("sha1").update(JSON.stringify(["camp", model.types.map((t) => [t.no, t.name, t.stock, t.price, t.cap]), model.fees])).digest("hex").slice(0, 16);
+    if (!(opts && opts.force) && row.price_sync_sig === sig) return { unchanged: true };
+    const client = await dbPool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(`SELECT pg_advisory_xact_lock($1::bigint)`, [id]);
+      const have = (await client.query(`SELECT unit_no FROM booking_units WHERE listing_id = $1`, [id])).rows.map((x) => Number(x.unit_no));
+      for (const ty of model.types) {
+        const b = ty.price ? Math.round(ty.price * 100) : null;
+        const cap = ty.cap || 4;
+        if (have.includes(ty.no)) await client.query(`UPDATE booking_units SET name = $3, capacity = $4, base_price_bani = $5, active = TRUE, sort_order = $2, sync_key = $6 WHERE listing_id = $1 AND unit_no = $2`, [id, ty.no, ty.name, cap, b, "ck:" + ty.key]);
+        else await client.query(`INSERT INTO booking_units (listing_id, unit_no, name, capacity, base_price_bani, sort_order, sync_key) VALUES ($1,$2,$3,$4,$5,$2,$6)`, [id, ty.no, ty.name, cap, b, "ck:" + ty.key]);
+      }
+      const keep = model.types.map((t) => t.no);
+      await client.query(`UPDATE booking_units SET active = FALSE WHERE listing_id = $1 AND sync_key LIKE 'ck:%' AND NOT (unit_no = ANY($2::int[]))`, [id, keep]);
+      const prices = model.bookable.map((t) => t.price);
+      const base = prices.length ? Math.min(...prices) : (model.fees.adult || null);
+      await client.query(`UPDATE booking_settings SET base_price_bani = $2, updated_at = now(), price_sync_sig = $3 WHERE listing_id = $1`, [id, base ? Math.round(base * 100) : null, sig]);
+      await client.query("COMMIT");
+    } catch (e) { await client.query("ROLLBACK").catch(() => {}); console.error("bookings-sync campPull:", e.message); return { error: true }; } finally { client.release(); }
+    return { ok: true };
+  }
+  // pentru aplicație și cont: tipurile, prețurile și tarifele pe persoană, exact ca în formular
+  async function getCamping(id) {
+    const r = (await dbPool.query(`SELECT l.type, l.type_details, s.min_nights FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer`, [id])).rows[0];
+    if (!r || r.type !== "camping") return null;
+    const m = CAMP.campModel(r.type_details);
+    return { types: m.types.map((t) => ({ no: t.no, key: t.key, name: t.name, kind: t.kind, stock: t.stock, price: t.price, priceFull: t.priceFull, cap: t.cap })), fees: m.fees, min_nights: r.min_nights || 1 };
+  }
+  async function setCamping(id, o) {
+    o = o || {};
+    const r = (await dbPool.query(`SELECT type, type_details, price_currency FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
+    if (!r || r.type !== "camping") return { error: "negasit" };
+    if ((r.price_currency || "RON") !== "RON") return { error: "nu_se_aplica" };
+    const td = CAMP.parseTd(r.type_details);
+    // numere: gol/null = fără preț; altfel pozitiv
+    const nv = (v) => { if (v == null || v === "") return null; const x = Number(v); return Number.isFinite(x) && x > 0 && x <= 1000000 ? Math.round(x * 100) / 100 : NaN; };
+    const bad = [];
+    const take = (v) => { const x = nv(v); if (Number.isNaN(x)) bad.push(1); return x; };
+    if (o.tents && td.tents && td.tents.on !== false && o.tents.price !== undefined) td.tents.price = take(o.tents.price);
+    if (o.caravans && td.caravans && td.caravans.on !== false) {
+      if (o.caravans.price !== undefined) td.caravans.price = take(o.caravans.price);
+      if (o.caravans.priceFull !== undefined) td.caravans.priceFull = take(o.caravans.priceFull);
+    }
+    if (o.units && td.units && typeof td.units === "object") Object.keys(o.units).forEach((k) => { if (td.units[k] && td.units[k].has === true && o.units[k] && o.units[k].price !== undefined) td.units[k].price = take(o.units[k].price); });
+    if (o.fees) { td.fees = td.fees && typeof td.fees === "object" ? td.fees : {}; ["adult", "child", "car", "electric", "pet"].forEach((k) => { if (o.fees[k] !== undefined) td.fees[k] = take(o.fees[k]); }); }
+    if (bad.length) return { error: "pret_invalid" };
+    let minN = null;
+    if (o.min_nights !== undefined) { minN = Number(o.min_nights); if (!Number.isInteger(minN) || minN < 1 || minN > 60) return { error: "date_invalide" }; }
+    // „de la” pentru lista de anunțuri: același calcul ca în formular
+    const m = CAMP.campModel(td);
+    const prices = m.types.map((t) => t.price).filter((x) => x > 0);
+    const pf = prices.length ? Math.min(...prices) : (m.fees.adult > 0 ? m.fees.adult : null);
+    await dbPool.query(`UPDATE accommodation_listings SET type_details = $2, price_from = $3 WHERE id = $1::integer`, [id, JSON.stringify(td), pf]);
+    if (minN !== null) await dbPool.query(`UPDATE booking_settings SET min_nights = $2, updated_at = now() WHERE listing_id = $1`, [id, minN]);
+    await campPull(id, { force: true });
+    return { ok: true };
+  }
+
   // formular -> rezervări
   async function pull(id, opts) {
     try {
       const c = await caps();
       const row = await load(id, c);
+      if (!row && await isCamping(id)) return await campPull(id, opts);
       if (!row) return { skipped: true };
       const L = readListing(row);
       if (!(opts && opts.force) && row.price_sync_sig === L.sig) return { unchanged: true };
@@ -408,7 +480,7 @@ module.exports = function (dbPool) {
     await pull(id, { force: true });
     return { ok: true };
   }
-  return { pull, push, getPension, setPension, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule, setRoomPrice };
+  return { pull, push, getCamping, setCamping, isCamping, getPension, setPension, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule, setRoomPrice };
 };
 module.exports.readListing = readListing;
 module.exports.hotelRooms = hotelRooms;
