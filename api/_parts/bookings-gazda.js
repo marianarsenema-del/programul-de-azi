@@ -234,11 +234,12 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
  const dev=myPinDev();const msg=el('div',{class:'msg'});const first=[];
  const run=(b,fn)=>{b.onclick=async()=>{b.disabled=true;try{await fn();await boot();}catch(e){say(msg,errT(e),false);if(!lsGet('gzDev')&&dev)showLogin();}b.disabled=false;};};
  if(dev){const pb=el('button',{type:'button',style:'width:100%;height:52px;font-size:16px'},['Intră cu PIN']);run(pb,pinLogin);first.push(pb);}
- if(WA){const fb=el('button',{type:'button',class:dev?'s':'',style:'width:100%;height:52px;font-size:16px;'+(dev?'margin-top:8px':'')},['Intră cu Face ID / amprentă']);run(fb,faceLogin);first.push(fb);}
+ if(WA){const had=lsGet('gzM')==='face';const fb=el('button',{type:'button',class:(dev||!had)?'s':'',style:'width:100%;'+(had?'height:52px;font-size:16px;':'height:42px;font-size:14px;')+((dev||!had)?'margin-top:8px':'')},[had?'Intră cu Face ID / amprentă':'Am activat deja Face ID pe acest telefon']);run(fb,faceLogin);first.push(fb);}
  const box=el('div',{class:'card'},first.concat([msg]));
  const setup=el('div',{class:'card'});
  const slot=el('div',{id:'instslot'});const ic=installCard();if(ic)slot.append(ic);
  root.append(el('div',{class:'hero'},[el('div',{class:'face'},['🏡']),el('h1',{},['Gazdă']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup,slot);
+ if(!dev&&lsGet('gzM')!=='face'&&first.length)root.insertBefore(setup,box);
  raw('GET','/api/gazda/inrolare/stare').then(r=>{
   if(r.ok){setup.append(el('b',{},['Activează intrarea rapidă pe acest telefon']),el('p',{class:'sub'},['Ești conectat în cont ('+r.j.email+'). Alege cum vrei să intri de acum încolo, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
    const m=el('div',{class:'msg'});
