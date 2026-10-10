@@ -244,7 +244,7 @@ function showLogin(){me=null;document.title='Gazdă';const root=$('#app');root.r
    const m=el('div',{class:'msg'});
    if(WA){const b=el('button',{type:'button',style:'width:100%'},['Face ID / amprentă']);b.onclick=async()=>{b.disabled=true;try{await enroll(guessLabel());await boot();}catch(e){say(m,errT(e),false);b.disabled=false;}};setup.append(b);}
    const pb=el('button',{type:'button',class:WA?'s':'',style:'width:100%;margin-top:8px'},['PIN de 6 cifre']);pb.onclick=async()=>{pb.disabled=true;try{await pinEnroll();await boot();}catch(e){say(m,errT(e),false);pb.disabled=false;}};setup.append(pb,m);}
-  else{setup.append(el('b',{},['Prima dată?']),el('p',{class:'sub'},['În cont, la „Aplicația Gazdă”, apeși „Generează cod”. Scrie codul aici și alege un PIN. Dacă folosești Face ID, intră în cont direct din acest telefon.']));
+  else{setup.append(el('b',{},['Prima dată?']),el('p',{class:'sub'},['Deschide contul tău în browserul telefonului (Proprietățile mele → 📅 Rezervări și calendar) și apasă „Generează cod”. Scrie codul aici și alege un PIN. Mai târziu poți adăuga și Face ID din Setări → Dispozitivele mele.']));
    const code=el('input',{placeholder:'Cod din cont (8 caractere)',maxlength:'8',autocapitalize:'characters',style:'text-transform:uppercase;letter-spacing:3px;text-align:center'});const m=el('div',{class:'msg'});
    const cb=el('button',{type:'button',style:'width:100%;margin-top:8px'},['Activează cu PIN']);cb.onclick=async()=>{cb.disabled=true;try{await pinEnroll(code.value.trim());await boot();}catch(e){say(m,errT(e),false);cb.disabled=false;}};
    setup.append(code,cb,m,el('a',{href:'/cazare/login',class:'mini',style:'height:42px;margin-top:8px'},['Intră în cont (pentru Face ID)']));}});
