@@ -321,11 +321,34 @@ module.exports = function (dbPool) {
   // planul de prețuri al unei cazări (pentru aplicația Gazdă); ofertele vechi (text pe linii) devin oferte fără dată
   async function getPlan(id) {
     const c = await caps();
-    const row = (await dbPool.query(`SELECT type, special_offers${c.plan ? ", price_plan" : ""} FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
+    const row = (await dbPool.query(`SELECT type, type_details, special_offers${c.plan ? ", price_plan" : ""} FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
     if (!row) return null;
     const hotel = row.type === HOTEL;
     const plan = PP.planOf(row, hotel);
-    return { plan, hotel, type: row.type, stored: c.plan };
+    const td = parseTd(row.type_details);
+    const pension = PENSION.includes(row.type);
+    const mode = pension ? (["integral", "camere", "hibrid"].includes(td.rentalMode) ? td.rentalMode : "integral") : "";
+    const n = pension && Array.isArray(td.bedrooms) ? td.bedrooms.length : 0;
+    return { plan, hotel, type: row.type, stored: c.plan, mode, n };
+  }
+  // pensiune închiriată doar întreagă, cu mai multe camere: gazda poate seta și prețul pe cameră din aplicație (devine „hibrid")
+  async function setRoomPrice(id, price) {
+    const p = Number(price);
+    if (!Number.isFinite(p) || p <= 0 || p > 100000) return { error: "pret_invalid" };
+    const c = await caps();
+    const row = await load(id, c);
+    if (!row) return { error: "negasit" };
+    const L = readListing(row);
+    if (!L.pension || L.mode !== "integral" || L.n < 2) return { error: "nu_se_aplica" };
+    const td = L.td && typeof L.td === "object" ? L.td : {};
+    td.rentalMode = "hibrid";
+    // weekendul întreg se păstrează, proporțional, ca preț de weekend pe cameră (altfel s-ar pierde la trecerea în hibrid)
+    const pw = L.pp && L.ppw ? Math.round(p * L.ppw / L.pp) : null;
+    const pr = Math.round(p * 100) / 100;
+    const pf = L.pp ? Math.min(pr, L.pp) : pr;
+    await dbPool.query(`UPDATE accommodation_listings SET price_per_room = $2, price_weekend = $3, price_from = $4, type_details = $5 WHERE id = $1::integer`, [id, pr, pw, pf, JSON.stringify(td)]);
+    await pull(id, { force: true });
+    return { ok: true };
   }
   // salvează o parte din plan (perioade, oferte, weekend hotel); fără re-aprobare; apoi rezervările se aliniază
   async function savePlan(id, input) {
@@ -349,7 +372,7 @@ module.exports = function (dbPool) {
       if (r && r.bookings_enabled) await pull(id);
     } catch (e) { console.error("bookings-sync onListingSaved:", e.message); }
   }
-  return { pull, push, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule };
+  return { pull, push, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule, setRoomPrice };
 };
 module.exports.readListing = readListing;
 module.exports.hotelRooms = hotelRooms;
