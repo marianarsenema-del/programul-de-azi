@@ -46,7 +46,7 @@ module.exports = function mountPublic(r, c) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
-          WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]);
+          WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type IS DISTINCT FROM 'camping'`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true; // comision doar dacă gazda a ales online ȘI contul ei Stripe poate primi bani
       rows[0].units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
@@ -253,6 +253,7 @@ module.exports = function mountPublic(r, c) {
 
   // ---------- pagina turistului (după token) ----------
   function roomsOf(snap) {
+    if (snap && !Array.isArray(snap) && snap.camp_items) return "<br>Locuri: " + snap.camp_items.map((x) => (x.qty > 1 ? x.qty + " × " : "") + E(x.name)).join(", ");
     const names = snap && !Array.isArray(snap) && snap.units ? snap.units.map((u) => u.name).filter(Boolean) : [];
     return names.length ? "<br>Camere: " + names.map(E).join(", ") : "";
   }
@@ -362,8 +363,11 @@ ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" 
     } catch (e) { console.error("rezervari refuz:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
+  // ---------- camping: rute și pagină proprii (locuri pe tip, cu stoc) ----------
+  const camp = require("./bookings-camp-public")(r, { dbPool, core, L, jsonOnly, noStore, toId, cleanText, sendMail, E, dRo, newCode, codeHash, sha, ipKey, HOLD_MIN, LIVE, SECRET, FORMS, page: () => ({ html: PUB_HTML, base: PUB_BASE, boot: PUB_BOOT }), pay });
+
   // ---------- pagina publică de rezervare ----------
-  const PUB_JS = COMMON_JS + `
+  const PUB_BASE = COMMON_JS + `
 const LID=Number(location.pathname.split('/').pop());const P='/api/rezervari/public/'+LID;
 const MSG={indisponibil:'Perioada nu mai este liberă.',data_trecuta:'Data aleasă a trecut.',prea_aproape:'Rezervarea instant nu este disponibilă pentru data aleasă. Contactează pensiunea.',check_in_nepermis:'În ziua aleasă nu se poate face check-in.',check_out_nepermis:'În ziua aleasă nu se poate face check-out.',prea_multi_oaspeti:'Prea multe persoane pentru această proprietate.',fara_pret:'Prețul nu este setat încă.',date_invalide:'Date invalide.',prea_multe_cereri:'Prea multe încercări. Încearcă peste câteva minute.',prea_multe_blocari:'Ai deja două rezervări în curs.',email_esuat:'Nu am putut trimite codul pe e-mail. Verifică adresa.',expirat:'Timpul a expirat. Alege din nou perioada.',cod_gresit:'Cod greșit.',prea_multe_incercari:'Prea multe încercări greșite.',asteapta:'Așteaptă puțin înainte de a cere alt cod.',oferta_invalida:'Oferta nu mai este valabilă.'};
 const tr=(c)=>{if(/^sedere_minima:/.test(c))return 'Ședere minimă: '+c.split(':')[1]+' nopți.';return MSG[c]||c;};
@@ -422,7 +426,9 @@ async function waitDone(){const m=$('#pmsg');clearInterval(timer);say(m,'Plata a
 for(let i=0;i<40;i++){try{const s=await call('GET','/api/rezervari/public/rezervare/'+rid+'/stare?token='+tok);if(s.status==='confirmed'){$('#s5').hidden=true;$('#s4').hidden=false;$('#s4t').textContent='Plata a fost efectuată. Ți-am trimis confirmarea pe e-mail.';$('#mylink').href='/cazare/rezervare/'+tok;return;}
 if(s.status==='cancelled'||s.status==='expired'){say(m,'Rezervarea nu a putut fi confirmată. Dacă ai fost taxat, suma se returnează automat.',false);return;}}catch(e){}await new Promise(ok=>setTimeout(ok,1500));}
 say(m,'Încă procesăm plata. Vei primi un e-mail de confirmare; poți verifica și pe pagina rezervării.',true);$('#mylink').href='/cazare/rezervare/'+tok;$('#s4').hidden=false;$('#s4t').textContent='Plata se procesează. Vei primi confirmarea pe e-mail.';}
-(function(){const n=new Date();month=new Date(Date.UTC(n.getFullYear(),n.getMonth(),1));loadMonth().catch(e=>say($('#qmsg'),'Rezervarea nu este disponibilă.',false));})();`;
+`;
+  const PUB_BOOT = "(function(){const n=new Date();month=new Date(Date.UTC(n.getFullYear(),n.getMonth(),1));loadMonth().catch(e=>say($('#qmsg'),'Rezervarea nu este disponibilă.',false));})();";
+  const PUB_JS = PUB_BASE + PUB_BOOT;
   const PUB_HTML = `<h1 id="nm">Rezervare</h1><p class="sub" id="psub">Rezervare instant. Plata se face direct la proprietate.</p>
 <div id="s1"><div class="card"><div class="row" style="align-items:center"><button class="s" id="prev" type="button">‹</button><b id="mname" style="text-align:center"></b><button class="s" id="next" type="button">›</button></div><div class="cal" id="cal" style="margin-top:10px"></div><div class="leg"><span>Albastru = ocupat</span><span>Portocaliu = alegerea ta</span></div>
 <label>Persoane<input id="guests" type="number" min="1" max="100" value="2"></label><div id="rooms" style="margin-top:8px"></div><div class="msg" id="qmsg"></div><div class="row" style="margin-top:8px"><button id="go" type="button" disabled>Continuă</button></div></div></div>
@@ -438,8 +444,14 @@ say(m,'Încă procesăm plata. Vei primi un e-mail de confirmare; poți verifica
   r.get("/cazare/rezerva/:id(\\d+)", async (req, res) => {
     try {
       const id = toId(req.params.id);
-      const ok = id && (await dbPool.query(`SELECT 1 FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id])).rowCount;
-      if (!ok) return res.status(404).send("Not found");
+      const okQ = id ? await dbPool.query(`SELECT 1 FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]) : null;
+      if (!okQ || !okQ.rowCount) return res.status(404).send("Not found");
+      const tyRow = ((await dbPool.query(`SELECT type FROM accommodation_listings WHERE id = $1::integer`, [id])) || {}).rows;
+      if (tyRow && tyRow[0] && tyRow[0].type === "camping") { // camping: locuri pe tip, cu stoc
+        const html = camp.pageHtml();
+        if (!html) return res.status(500).send("Eroare");
+        return LIVE ? shell(res, "Rezervare", html, camp.pageJs() + pay.STRIPE_CLIENT_JS, { stripe: true }) : shell(res, "Rezervare", html, camp.pageJs());
+      }
       if (LIVE) shell(res, "Rezervare", PUB_HTML, PUB_JS + pay.STRIPE_CLIENT_JS, { stripe: true }); else shell(res, "Rezervare", PUB_HTML, PUB_JS);
     } catch (e) { console.error("rezervari pagina publica:", e.message); res.status(500).send("Eroare"); }
   });
