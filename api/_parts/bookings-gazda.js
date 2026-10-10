@@ -220,7 +220,7 @@ async function pinLogin(){const d=myPinDev();if(!d)throw new Error('autentificar
  const f=await raw('POST','/api/gazda/pin/login',{deviceId:d.id,secret:d.secret,pin});
  if(!f.ok){if(f.j.error==='pin_blocat'){try{localStorage.removeItem('gzDev');}catch(e){}}const e=new Error(f.j.error==='pin_gresit'?('PIN greșit. Mai ai '+f.j.ramase+' încercări.'):(f.j.error||'Eroare'));throw e;}
  lsSet('gzM','pin');return f.j;}
-async function pinEnroll(code){const pin=await pinPrompt('Alege un PIN de 6 cifre',true);if(!pin){const e=new Error('anulat');e.name='NotAllowedError';throw e;}
+async function pinEnroll(code){const pin=await pinPrompt('Alege PIN-ul tău de 6 cifre',true);if(!pin){const e=new Error('anulat');e.name='NotAllowedError';throw e;}
  const f=await raw('POST','/api/gazda/pin/inrolare',{pin,label:guessLabel(),code:code||undefined});if(!f.ok)throw new Error(f.j.error||'Eroare');
  lsSet('gzDev',JSON.stringify({id:f.j.deviceId,secret:f.j.secret}));lsSet('gzM','pin');return f.j;}
 async function reLogin(){return (lsGet('gzM')==='pin'&&myPinDev())?pinLogin():faceLogin();}
@@ -257,10 +257,23 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
    const b=el('button',{type:'button',style:'width:100%;height:54px;font-size:17px'},['Face ID / amprentă']);
    b.onclick=async()=>{b.disabled=true;try{if(!(await faceOk())){await notice('Face ID / amprenta nu este disponibilă',NOFACE);b.disabled=false;return;}await enroll(guessLabel());await boot();}catch(e){if(e&&(e.name==='NotSupportedError'||e.name==='SecurityError'||e.name==='InvalidStateError'||e.name==='UnknownError')){await notice('Face ID / amprenta nu este disponibilă',NOFACE);}else say(m,errT(e),false);b.disabled=false;}};
    const pb=el('button',{type:'button',class:'s',style:'width:100%;margin-top:8px;height:54px;font-size:17px'},['PIN de 6 cifre']);pb.onclick=async()=>{pb.disabled=true;try{await pinEnroll();await boot();}catch(e){say(m,errT(e),false);pb.disabled=false;}};setup.append(b,pb,m);}
-  else{setup.append(el('b',{},['Prima dată?']),el('p',{class:'sub'},['Deschide contul tău în browserul telefonului (Proprietățile mele → 📅 Rezervări și calendar) și apasă „Generează cod”. Scrie codul aici și alege un PIN. Mai târziu poți adăuga și Face ID din Setări → Dispozitivele mele.']));
-   const code=el('input',{placeholder:'Cod din cont (8 caractere)',maxlength:'8',autocapitalize:'characters',style:'text-transform:uppercase;letter-spacing:3px;text-align:center'});const m=el('div',{class:'msg'});
-   const cb=el('button',{type:'button',style:'width:100%;margin-top:8px'},['Activează cu PIN']);cb.onclick=async()=>{cb.disabled=true;try{await pinEnroll(code.value.trim());await boot();}catch(e){say(m,errT(e),false);cb.disabled=false;}};
-   setup.append(code,cb,m,el('a',{href:'/cazare/login',class:'mini',style:'height:42px;margin-top:8px'},['Intră în cont (pentru Face ID)']));}});
+  else{
+   const m=el('div',{class:'msg'});
+   setup.append(el('b',{style:'font-size:18px'},['Intră în aplicație']));
+   // Face ID salvat pe acest telefon (cheie de acces din iCloud/Google): se poate folosi imediat, fără cont deschis
+   const fb=el('button',{type:'button',style:'width:100%;height:54px;font-size:17px;margin-top:10px;display:none'},['Intră cu Face ID / amprentă']);
+   fb.onclick=async()=>{fb.disabled=true;try{await faceLogin();await boot();}catch(e){say(m,'Nu am găsit Face ID salvat pentru contul tău pe acest telefon. Dacă e prima dată, scrie codul de mai jos.',false);}fb.disabled=false;};
+   faceOk().then(ok=>{if(ok)fb.style.display='block';});
+   setup.append(fb);
+   setup.append(el('p',{class:'sub',style:'margin-top:14px'},['Prima dată sau ai reinstalat aplicația? Scrie aici codul de legătură generat de contul tău (Rezervări → Generează cod, sau pe pagina de instalare). După ce îl scrii, alegi Face ID sau PIN.']));
+   const code=el('input',{placeholder:'Cod de legătură (8 caractere)',maxlength:'8',autocapitalize:'characters',autocomplete:'off',style:'text-transform:uppercase;letter-spacing:3px;text-align:center'});
+   const cb=el('button',{type:'button',class:'s',style:'width:100%;margin-top:8px;height:50px;font-size:16px'},['Leagă telefonul de cont']);
+   cb.onclick=async()=>{const c=code.value.trim();if(c.length!==8)return say(m,'Codul are 8 caractere.',false);cb.disabled=true;
+    try{const r2=await raw('POST','/api/gazda/link/intra',{t:c});
+     if(r2.ok){await boot();return;} // codul din pagina de instalare: aplicația te conectează și te întreabă cum vrei să intri
+     await pinEnroll(c);await boot(); // codul din cont (activare directă cu PIN)
+    }catch(e){say(m,errT(e),false);}cb.disabled=false;};
+   setup.append(code,cb,m);}});
  };
  // browser fără aplicația instalată și fără intrare rapidă: singurul lucru de văzut este instalarea în 2 pași
  const slot=el('div',{id:'instslot'});const ic=first.length?null:installCard();if(ic)slot.append(ic);
@@ -628,8 +641,7 @@ function mount(r, o) {
       if (!(await L.checkRateLimit(ipKey(req), "gz-code", 10, 60))) return res.status(429).json({ error: "prea_multe_cereri" });
       const oid = req.accommodationOwner.ownerId;
       const code = newCode();
-      await dbPool.query(`DELETE FROM gazda_codes WHERE owner_id = $1::integer AND (used_at IS NOT NULL OR expires_at < now())`, [oid]);
-      await dbPool.query(`INSERT INTO gazda_codes (code_hash, owner_id, expires_at) VALUES ($1,$2,now() + interval '10 minutes')`, [sha256(code).toString("hex"), oid]);
+      await mkLink(oid, 10, LINK_LABEL, code); // cod de legătură: leagă telefonul de cont; PIN-ul / Face ID se aleg după
       noStore(res); res.json({ code, minutes: 10 });
     } catch (e) { console.error("gazda cod:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -638,8 +650,8 @@ function mount(r, o) {
   // Jetonul stă în partea de după # a adresei (nu ajunge în jurnale, nu se arde din previzualizări de link) și se schimbă pe o sesiune.
   const LINK_LABEL = "link";
   const newLinkToken = () => b64u(crypto.randomBytes(24));
-  const mkLink = async (oid, minutes, label, base) => {
-    const tok = newLinkToken();
+  const mkLink = async (oid, minutes, label, tokIn) => {
+    const tok = tokIn || newLinkToken();
     await dbPool.query(`DELETE FROM gazda_codes WHERE owner_id = $1::integer AND (used_at IS NOT NULL OR expires_at < now())`, [oid]);
     await dbPool.query(`INSERT INTO gazda_codes (code_hash, owner_id, expires_at, label) VALUES ($1,$2,now() + ($3 || ' minutes')::interval,$4)`, [sha256(tok).toString("hex"), oid, String(minutes), label]);
     return tok;
@@ -647,6 +659,10 @@ function mount(r, o) {
   r.post("/api/gazda/link/creeaza", ownerOnly, jsonOnly, async (req, res) => {
     try {
       if (!(await L.checkRateLimit(ipKey(req), "gz-link", 20, 60))) return res.status(429).json({ error: "prea_multe_cereri" });
+      if (req.body && req.body.short === true) { // cod scurt, de scris în aplicația instalată pe iPhone (acolo sesiunea din Safari nu trece)
+        const code = await mkLink(req.accommodationOwner.ownerId, 30, LINK_LABEL, newCode());
+        noStore(res); return res.json({ ok: true, code, minutes: 30 });
+      }
       const tok = await mkLink(req.accommodationOwner.ownerId, 10, LINK_LABEL);
       noStore(res); res.json({ ok: true, url: HOST_ORIGIN + "/gazda/#t=" + tok, minutes: 10 });
     } catch (e) { console.error("gazda link:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -654,8 +670,9 @@ function mount(r, o) {
   r.post("/api/gazda/link/intra", jsonOnly, async (req, res) => {
     try {
       if (!(await L.checkRateLimit(ipKey(req), "gz-link-in", 12, 15))) return res.status(429).json({ error: "prea_multe_cereri" });
-      const t = String((req.body || {}).t || "");
-      if (!/^[A-Za-z0-9_-]{30,64}$/.test(t)) return res.status(401).json({ error: "link_invalid" });
+      let t = String((req.body || {}).t || "").trim();
+      if (/^[A-Za-z2-9]{8}$/.test(t)) t = t.toUpperCase(); // cod scurt
+      else if (!/^[A-Za-z0-9_-]{30,64}$/.test(t)) return res.status(401).json({ error: "link_invalid" });
       const u = await dbPool.query(`UPDATE gazda_codes SET used_at = now() WHERE code_hash = $1 AND used_at IS NULL AND expires_at > now() AND label = $2 AND role = 'owner' RETURNING owner_id`, [sha256(t).toString("hex"), LINK_LABEL]);
       if (!u.rows.length || !(await L.ownerStillExists(u.rows[0].owner_id))) return res.status(401).json({ error: "link_invalid" });
       const oid = u.rows[0].owner_id;
