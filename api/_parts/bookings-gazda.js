@@ -233,25 +233,35 @@ let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.prev
 const standalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
 ${installSrc}
 let me=null,LID=0,tab='azi';const STAFF=()=>!!me&&me.role==='staff';
+async function faceOk(){if(!WA)return false;try{return !!(await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());}catch(e){return false;}}
+function notice(title,text){return new Promise((res)=>{const ov=el('div',{class:'sheet'});const ok=el('button',{type:'button',style:'width:100%'},['Am înțeles']);ok.onclick=()=>{ov.remove();res();};ov.append(el('div',{class:'card'},[el('h2',{},[title]),el('p',{style:'font-size:15px;line-height:1.45;margin:8px 0 14px'},[text]),ok]));document.body.append(ov);});}
+const NOFACE='Funcția nu este activată în setările telefonului sau dispozitivul nu o permite. Activeaz-o din Setările telefonului (Face ID sau amprentă) ori alege PIN-ul de 6 cifre.';
 function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root.replaceChildren();
- const dev=myPinDev();const msg=el('div',{class:'msg'});const first=[];
+ const dev=myPinDev();const had=lsGet('gzM')==='face';const msg=el('div',{class:'msg'});const first=[];
  const run=(b,fn)=>{b.onclick=async()=>{b.disabled=true;try{await fn();await boot();}catch(e){say(msg,errT(e),false);if(!lsGet('gzDev')&&dev)showLogin();}b.disabled=false;};};
  if(dev){const pb=el('button',{type:'button',style:'width:100%;height:52px;font-size:16px'},['Intră cu PIN']);run(pb,pinLogin);first.push(pb);}
- if(WA){const had=lsGet('gzM')==='face';const fb=el('button',{type:'button',class:(dev||!had)?'s':'',style:'width:100%;'+(had?'height:52px;font-size:16px;':'height:42px;font-size:14px;')+((dev||!had)?'margin-top:8px':'')},[had?'Intră cu Face ID / amprentă':'Am activat deja Face ID pe acest telefon']);run(fb,faceLogin);first.push(fb);}
+ if(WA&&had){const fb=el('button',{type:'button',class:dev?'s':'',style:'width:100%;height:52px;font-size:16px;'+(dev?'margin-top:8px':'')},['Intră cu Face ID / amprentă']);run(fb,faceLogin);first.push(fb);}
  const box=el('div',{class:'card'},first.concat([msg]));
  const setup=el('div',{class:'card'});
- const slot=el('div',{id:'instslot'});const ic=installCard();if(ic)slot.append(ic);
- root.append(el('div',{class:'hero'},[el('img',{src:'/gazda/icon-192.png',alt:'',width:'88',height:'88',style:'border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.2)'}),el('h1',{},['OHT Host']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]),slot,first.length?box:el('div',{class:'card err'},['Acest telefon nu suportă Face ID / amprentă în browser. Poți folosi un PIN.']),setup);
- if(!dev&&lsGet('gzM')!=='face'&&first.length)root.insertBefore(setup,box);
- raw('GET','/api/gazda/inrolare/stare').then(r=>{
-  if(r.ok){setup.append(el('b',{},['Activează intrarea rapidă pe acest telefon']),el('p',{class:'sub'},['Ești conectat în cont ('+r.j.email+'). Alege cum vrei să intri de acum încolo, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
+ const hero=el('div',{class:'hero'},[el('img',{src:'/gazda/icon-192.png',alt:'',width:'88',height:'88',style:'border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.2)'}),el('h1',{},['OHT Host']),el('p',{class:'sub'},['Rezervările și calendarul tău, la o atingere distanță.'])]);
+ const startSetup=()=>{
+  raw('GET','/api/gazda/inrolare/stare').then(r=>{
+  if(r.ok){setup.append(el('b',{style:'font-size:18px'},['Cum dorești să te loghezi pe viitor?']),el('p',{class:'sub'},['Alegi o singură dată. De acum intri direct, fără e-mail și fără parolă. Poți schimba oricând din Setări.']));
    const m=el('div',{class:'msg'});
-   if(WA){const b=el('button',{type:'button',style:'width:100%'},['Face ID / amprentă']);b.onclick=async()=>{b.disabled=true;try{await enroll(guessLabel());await boot();}catch(e){say(m,errT(e),false);b.disabled=false;}};setup.append(b);}
-   const pb=el('button',{type:'button',class:WA?'s':'',style:'width:100%;margin-top:8px'},['PIN de 6 cifre']);pb.onclick=async()=>{pb.disabled=true;try{await pinEnroll();await boot();}catch(e){say(m,errT(e),false);pb.disabled=false;}};setup.append(pb,m);}
+   const b=el('button',{type:'button',style:'width:100%;height:54px;font-size:17px'},['Face ID / amprentă']);
+   b.onclick=async()=>{b.disabled=true;try{if(!(await faceOk())){await notice('Face ID / amprenta nu este disponibilă',NOFACE);b.disabled=false;return;}await enroll(guessLabel());await boot();}catch(e){if(e&&(e.name==='NotSupportedError'||e.name==='SecurityError'||e.name==='InvalidStateError'||e.name==='UnknownError')){await notice('Face ID / amprenta nu este disponibilă',NOFACE);}else say(m,errT(e),false);b.disabled=false;}};
+   const pb=el('button',{type:'button',class:'s',style:'width:100%;margin-top:8px;height:54px;font-size:17px'},['PIN de 6 cifre']);pb.onclick=async()=>{pb.disabled=true;try{await pinEnroll();await boot();}catch(e){say(m,errT(e),false);pb.disabled=false;}};setup.append(b,pb,m);}
   else{setup.append(el('b',{},['Prima dată?']),el('p',{class:'sub'},['Deschide contul tău în browserul telefonului (Proprietățile mele → 📅 Rezervări și calendar) și apasă „Generează cod”. Scrie codul aici și alege un PIN. Mai târziu poți adăuga și Face ID din Setări → Dispozitivele mele.']));
    const code=el('input',{placeholder:'Cod din cont (8 caractere)',maxlength:'8',autocapitalize:'characters',style:'text-transform:uppercase;letter-spacing:3px;text-align:center'});const m=el('div',{class:'msg'});
    const cb=el('button',{type:'button',style:'width:100%;margin-top:8px'},['Activează cu PIN']);cb.onclick=async()=>{cb.disabled=true;try{await pinEnroll(code.value.trim());await boot();}catch(e){say(m,errT(e),false);cb.disabled=false;}};
    setup.append(code,cb,m,el('a',{href:'/cazare/login',class:'mini',style:'height:42px;margin-top:8px'},['Intră în cont (pentru Face ID)']));}});
+ };
+ // browser fără aplicația instalată și fără intrare rapidă: singurul lucru de văzut este instalarea în 2 pași
+ const slot=el('div',{id:'instslot'});const ic=first.length?null:installCard();if(ic)slot.append(ic);
+ root.append(hero,slot);
+ if(first.length)root.append(box);
+ if(!ic){root.append(setup);startSetup();}
+ else{const skip=el('button',{type:'button',class:'s mini',style:'width:100%;height:40px;margin-top:4px'},['Continuă fără să instalez']);skip.onclick=()=>{slot.remove();skip.remove();root.append(setup);startSetup();};root.append(skip);}
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
 async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{await api('POST','/api/gazda/cont',{});location.href='/cont';}catch(e){alert(errT(e));}}
