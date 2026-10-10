@@ -145,7 +145,7 @@ async function logEv(ownerId, did, action, listingId) {
 // ---------- pagina aplicației ----------
 const MANIFEST = {
   name: "OHT Host", short_name: "OHT Host", description: "Rezervări și calendar pentru gazde",
-  start_url: "/gazda/", scope: "/gazda/", id: "/gazda/", display: "standalone", orientation: "portrait",
+  start_url: "/gazda/?app=1", scope: "/gazda/", id: "/gazda/", display: "standalone", orientation: "portrait",
   background_color: "#F5F2EC", theme_color: "#0E6B63", lang: "ro",
   icons: [
     { src: "/gazda/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
@@ -495,7 +495,7 @@ function mount(r, o) {
   r.get("/gazda/manifest.webmanifest", (req, res) => {
     // în previzualizare (rezervările nu sunt pornite global) aplicația instalată trebuie să poarte parola, altfel s-ar deschide pe 404; cu funcția pornită manifestul e curat
     const pk = previewKey ? previewKey(req) : "";
-    const mf = pk ? Object.assign({}, MANIFEST, { start_url: "/gazda/?bkpreview=" + encodeURIComponent(pk) }) : MANIFEST;
+    const mf = pk ? Object.assign({}, MANIFEST, { start_url: "/gazda/?app=1&bkpreview=" + encodeURIComponent(pk) }) : MANIFEST;
     res.type("application/manifest+json").set(pk ? { "Cache-Control": "private, no-store" } : { "Cache-Control": "public, max-age=3600" }).send(JSON.stringify(mf));
   });
   [["icon-180", 180], ["icon-192", 192], ["icon-512", 512], ["icon-maskable-512", 512]].forEach((ic) => {
