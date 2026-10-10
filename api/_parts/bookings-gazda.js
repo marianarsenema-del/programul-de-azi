@@ -180,7 +180,7 @@ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}.w{padding-top:calc
 .big{font-size:34px;font-weight:800;line-height:1}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.kpis .card{margin:0;text-align:center;padding:12px 6px}
 .calnav{display:flex;align-items:center;gap:10px;margin:6px 0 12px}.calnav button{width:54px;height:46px;flex:none;padding:0;font-size:24px;line-height:1}.calnav b{flex:1;text-align:center;font-size:18px}
 .cal{gap:5px}.cal div{height:48px;font-size:17px;border-color:#CFC8BA}.cal .h{height:26px;font-size:13px;border:0}.cal .s1{background:#B4BAC1;color:#222B32;font-weight:700;border-color:#8E969E}.cal .s2{background:#BBD9F5;color:#0B2F5C;font-weight:700;border-color:#6FA8E0}.cal .s3{background:#FFE08A;color:#5A4200;font-weight:700;border-color:#D9A800}.cal .s4{background:#0E6B63;color:#fff;font-weight:700}.cal .past{opacity:.5}
-.leg{font-size:15px;gap:10px 16px;color:#17222B;margin-top:12px}.leg span{display:inline-flex;align-items:center;gap:6px}.sw{display:inline-block;width:18px;height:18px;border-radius:5px;border:1px solid #8E969E}.w0{background:#fff;border-color:#CFC8BA}.w1{background:#B4BAC1}.w2{background:#BBD9F5;border-color:#6FA8E0}.w3{background:#FFE08A;border-color:#D9A800}.w4{background:#0E6B63;border-color:#0E6B63}
+.cal .s5{background:#D6EFE9;color:#0B4A44;font-weight:700;border-color:#4FA89E}.cal small{display:block;font-size:11px;font-weight:600;line-height:1}.w5{background:#D6EFE9;border-color:#4FA89E}.leg{font-size:15px;gap:10px 16px;color:#17222B;margin-top:12px}.leg span{display:inline-flex;align-items:center;gap:6px}.sw{display:inline-block;width:18px;height:18px;border-radius:5px;border:1px solid #8E969E}.w0{background:#fff;border-color:#CFC8BA}.w1{background:#B4BAC1}.w2{background:#BBD9F5;border-color:#6FA8E0}.w3{background:#FFE08A;border-color:#D9A800}.w4{background:#0E6B63;border-color:#0E6B63}
 .redwarn{background:#FDECEA;border:1px solid #C0392B;border-radius:10px;padding:10px 12px;margin:0 0 12px;color:#9B1C1C;font-weight:700;font-size:14px;line-height:1.45}.redwarn a{color:#9B1C1C}.alert{border-color:#E8B4B4;background:#FDF3F3}.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;background:#E4DFD5;color:#17222B}
 .mini{height:34px;font-size:13px;padding:0 10px}a.mini{display:inline-flex;align-items:center;text-decoration:none;border-radius:10px;border:1px solid #0E6B63;color:#0E6B63;font-weight:700;background:#fff}
 .hero{text-align:center;padding:36px 8px 10px}.hero h1{font-size:26px}.face{font-size:54px}
@@ -311,7 +311,7 @@ function draw(){const root=$('#app');root.replaceChildren();
  root.append(el('div',{class:'top'},[me.listings.length<2?el('b',{style:'font-size:17px'},[me.listings[0].name]):sw]),el('div',{id:'view'}));
  const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].concat(STAFF()?[]:[['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
  show(tab);}
-function resetState(){month=firstOfMonth(new Date());days={};sel=[];units=[];curUnit='';}
+function resetState(){month=firstOfMonth(new Date());days={};sel=[];units=[];curUnit='';CAMPL=false;dinfo={};}
 function show(t){tab=t;document.querySelectorAll('.nav button').forEach(b=>b.className=b.dataset.t===t?'on':'');const v=$('#view');if(!v)return;v.replaceChildren();
  ({azi:viewAzi,cal:viewCal,rez:viewRez,set:viewSet})[t](v);}
 const B=()=>'/api/rezervari/'+LID;
@@ -320,7 +320,7 @@ const RO=['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec
 const dRo=(s)=>{const p=s.split('-');return Number(p[2])+' '+RO[Number(p[1])-1];};
 const ron=(b)=>(b/100).toLocaleString('ro-RO')+' RON';
 function firstOfMonth(d){return new Date(Date.UTC(d.getFullYear(),d.getMonth(),1));}
-let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='';
+let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='',CAMPL=false,dinfo={};
 const today=ds(new Date());
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 
@@ -339,12 +339,13 @@ async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  list('Sunt la tine acum',j.in_house,'Nimeni cazat acum.');
  if(j.arrivals_today.length||j.departures_today.length){list('Azi',j.arrivals_today.concat(j.departures_today),'');}
  v.append(el('div',{class:'card'},[el('div',{class:'sub'},['Următoarele 30 de nopți: '+j.occupied_30+' ocupate din 30'])]));}
-function freeCard(j){const f=j.free_tonight||{};if(!f.approved)return el('span');const on=!!f.on;const freeN=(j.rooms||[]).filter(r=>r.tonight===0).length;
+function freeCard(j){const f=j.free_tonight||{};if(!f.approved)return el('span');const on=!!f.on;const isC=(j.rooms||[]).length&&j.rooms[0].camp;const freeN=isC?(j.rooms||[]).reduce((a,r)=>a+(r.free_tonight||0),0):(j.rooms||[]).filter(r=>r.tonight===0).length;
  const b=el('button',{type:'button',class:on?'s':'',style:'width:100%;height:50px;font-size:15px'},[on?'🟢 Liber în seara asta · apasă ca să anulezi':'🟢 Am camere libere în seara asta']);
- b.onclick=async()=>{b.disabled=true;try{await api('POST','/api/gazda/liber-diseara',{listing:LID,on:!on,rooms:(!on&&freeN>0&&(j.rooms||[]).length>1)?freeN:undefined});show('azi');}catch(e){alert(errT(e));b.disabled=false;}};
+ b.onclick=async()=>{b.disabled=true;try{await api('POST','/api/gazda/liber-diseara',{listing:LID,on:!on,rooms:(!on&&freeN>0&&((j.rooms||[]).length>1||isC))?freeN:undefined});show('azi');}catch(e){alert(errT(e));b.disabled=false;}};
  return el('div',{class:'card'},[b,el('div',{class:'sub',style:'margin:6px 0 0'},[on?'Pe site apare eticheta verde „Liber în seara asta”, până la miezul nopții.':'Pe site apare eticheta verde „Liber în seara asta” până la miezul nopții. Dacă ai mai multe camere, afișăm câte sunt libere.'])]);}
 const STN={0:'liber\',1:'închis de tine',2:'ocupat (altă platformă)',3:'în curs de rezervare',4:'rezervat'};
-function roomsCard(rooms){const free=rooms.filter(r=>r.tonight===0).length;
+function campRoomsCard(rooms){const c=el('div',{class:'card'},[el('h2',{},['Locuri în seara asta'])]);rooms.forEach(r=>c.append(el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+r.free_tonight+' libere din '+r.stock+' · Mâine noapte: '+r.free_tomorrow+' libere din '+r.stock])])));if(!rooms.length)c.append(el('div',{class:'sub'},['Niciun tip de loc rezervabil. Completează tipurile de loc, numărul și prețul în formularul cazării.']));return c;}
+function roomsCard(rooms){if(rooms.length&&rooms[0].camp)return campRoomsCard(rooms);const free=rooms.filter(r=>r.tonight===0).length;
  const c=el('div',{class:'card'},[el('h2',{},['Camere în seara asta: '+free+' libere din '+rooms.length])]);
  rooms.forEach(r=>{const it=el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+STN[r.tonight]+' · Mâine noapte: '+STN[r.tomorrow]])]);
   const row=el('div',{class:'row',style:'margin-top:4px'});
@@ -365,27 +366,28 @@ async function viewCal(v){
   el('div',{class:'calnav'},[el('button',{class:'s',id:'prev',type:'button','aria-label':'Luna anterioară'},['‹']),el('b',{id:'mname'}),el('button',{class:'s',id:'next',type:'button','aria-label':'Luna următoare'},['›'])]),
   el('div',{class:'cal',id:'cal'}),
   el('div',{class:'leg'},[el('span',{},[el('i',{class:'sw w0'}),'liber']),el('span',{},[el('i',{class:'sw w1'}),'închis de tine']),el('span',{},[el('i',{class:'sw w2'}),'platformă']),el('span',{},[el('i',{class:'sw w3'}),'în rezervare']),el('span',{},[el('i',{class:'sw w4'}),'rezervat'])]),
-  el('div',{class:'sub',id:'selinfo',style:'margin-top:8px'}),
+  el('div',{class:'sub',id:'selinfo',style:'margin-top:8px'}),el('div',{id:'qtywrap',hidden:'hidden'},[el('label',{},['Câte locuri închizi / deschizi în zilele alese (gol = toate)',el('input',{id:'qty',type:'number',inputmode:'numeric',min:'1',max:'999',placeholder:'toate'})])]),
   el('div',{class:'row'},[el('button',{id:'close',type:'button'},['Închide zilele alese']),el('button',{class:'s',id:'open',type:'button'},['Deschide zilele alese'])]),el('div',{class:'msg',id:'calmsg'})]));
  $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadCal();};
  $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadCal();};
  $('#close').onclick=()=>act('close');$('#open').onclick=()=>act('open');
- try{const t=await api('GET',B()+'/tarife');units=t.units||[];}catch(e){}
+ try{const t=await api('GET',B()+'/tarife');units=t.units||[];CAMPL=!!t.camp;}catch(e){}
  const us=$('#unitsel');$('#unitwrap').hidden=!units.length;units.forEach(u=>us.append(el('option',{value:String(u.unit_no)},[u.name])));
  if(units.length){if(!units.some(u=>String(u.unit_no)===curUnit))curUnit=String(units[0].unit_no);us.value=curUnit;}else curUnit='';
  us.onchange=()=>{curUnit=us.value;sel=[];$('#selinfo').textContent='';loadCal();};
+ if(CAMPL){$('#qtywrap').hidden=false;$('#unitwrap').querySelector('label').firstChild.textContent='Tip de loc';$('#close').textContent='Închide locuri în zilele alese';$('#open').textContent='Deschide locuri în zilele alese';const lg=document.querySelector('.leg');if(lg)lg.append(el('span',{},[el('i',{class:'sw w5'}),'parțial (mai sunt locuri)']));}
  loadCal();}
 const uq=(p)=>curUnit?(p+'unit='+curUnit):'';
-async function loadCal(){try{const from=ds(month),to=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1)));const j=await api('GET',B()+'/calendar?from='+from+'&to='+to+uq('&'));days={};j.days.forEach(d=>days[d.day]=d.status);renderCal();}catch(e){const m=$('#calmsg');if(m)say(m,errT(e),false);}}
+async function loadCal(){try{const from=ds(month),to=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1)));const j=await api('GET',B()+'/calendar?from='+from+'&to='+to+uq('&'));days={};dinfo={};j.days.forEach(d=>{days[d.day]=d.status;dinfo[d.day]=d;});renderCal();}catch(e){const m=$('#calmsg');if(m)say(m,errT(e),false);}}
 function renderCal(){const g=$('#cal');if(!g)return;g.replaceChildren();['L','M','M','J','V','S','D'].forEach(x=>g.append(el('div',{class:'h'},[x])));
  const first=month.getUTCDay()===0?6:month.getUTCDay()-1;for(let i=0;i<first;i++)g.append(el('div',{style:'border:0;background:none'}));
  const n=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,0)).getUTCDate();
  for(let d=1;d<=n;d++){const s=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth(),d)));const st=days[s]||0;
-  const c=el('div',{class:(st?'s'+st:'')+(s<today?' past':' cl')+(sel.includes(s)?' sel':'')},[String(d)]);
+  const di=dinfo[s];const c=el('div',{class:(st?'s'+st:'')+(s<today?' past':' cl')+(sel.includes(s)?' sel':'')},CAMPL?[String(d),el('small',{},[di?(di.free+' lib.'):'liber'])]:[String(d)]);
   if(s>=today)c.addEventListener('click',()=>{if(sel.includes(s))sel=sel.filter(x=>x!==s);else sel.push(s);renderCal();$('#selinfo').textContent=sel.length?sel.length+' zile selectate':'';});g.append(c);}
  $('#mname').textContent=RO[month.getUTCMonth()]+' '+month.getUTCFullYear();}
 async function act(action){const m=$('#calmsg');if(!sel.length)return say(m,'Alege mai întâi zilele din calendar.',false);
- try{const r=await api('POST',B()+'/zile',{days:sel,action,unit:curUnit?Number(curUnit):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,errT(e),false);}}
+ try{const r=await api('POST',B()+'/zile',{days:sel,action,unit:curUnit?Number(curUnit):undefined,qty:(CAMPL&&$('#qty')&&$('#qty').value)?Number($('#qty').value):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,errT(e),false);}}
 
 // ---------- REZERVĂRI ----------
 async function viewRez(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j,fm={};try{j=await api('GET',B()+'/rezervari');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
@@ -394,7 +396,7 @@ async function viewRez(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  v.replaceChildren();const up=j.reservations.filter(x=>x.status==='confirmed'&&x.check_out>=today).sort((a,b)=>a.check_in<b.check_in?-1:1);
  const past=j.reservations.filter(x=>!(x.status==='confirmed'&&x.check_out>=today));
  const mk=(title,arr,empty,act)=>{const c=el('div',{class:'card'},[el('h2',{},[title])]);if(!arr.length)c.append(el('div',{class:'sub'},[empty]));
-  arr.forEach(x=>{x.unit_names=(x.unit_ids&&x.unit_ids[0]!==0)?x.unit_ids.map(n=>{const u=un.find(z=>z.unit_no===n);return u?u.name:('Camera '+n);}).join(', '):'';
+  arr.forEach(x=>{x.unit_names=(x.unit_ids&&x.unit_ids[0]!==0)?(x.unit_ids[0]>=1000?(()=>{const g={};x.unit_ids.forEach(n=>{const t=Math.floor(n/1000);g[t]=(g[t]||0)+1;});const nights=Math.max(1,Math.round((new Date(x.check_out)-new Date(x.check_in))/864e5));return Object.keys(g).map(t=>{const u=un.find(z=>z.unit_no===Number(t));return Math.max(1,Math.round(g[t]/nights))+' × '+(u?u.name:'Loc');}).join(', ');})():x.unit_ids.map(n=>{const u=un.find(z=>z.unit_no===n);return u?u.name:('Camera '+n);}).join(', ')):'';
    const it=resCard(x,act);const kids=[];
    if(act&&x.status==='confirmed'&&STAFF()){kids.push(el('div',{class:'sub',style:'margin:4px 0'},['Fișe de cazare: '+(fm[x.id]||0)+' din '+x.guests]));}
    else if(act&&x.status==='confirmed'){const n=fm[x.id]||0;kids.push(el('div',{class:'sub',style:'margin:4px 0'},['Fișe de cazare: '+n+' din '+x.guests]));
@@ -473,12 +475,31 @@ function pricesCard(t,pl,pen){if(pen)return pensionCard(t,pl,pen);const s=t.sett
  c.append(b,m);
  return c;}
 // ---------- SETĂRI ----------
+function campCard(t,cj){const s=t.settings;
+ const c=el('div',{class:'card'},[el('h2',{},['Prețuri și taxe']),el('div',{class:'sub'},['Sunt aceleași ca în formularul cazării: le schimbi o singură dată, aici sau în cont. Numărul de locuri pe tip îl modifici doar în formular. Taxele pe persoană se adaugă automat la totalul rezervării.'])]);
+ const inp=(v,ph)=>el('input',{type:'number',inputmode:'decimal',min:'0',max:'1000000',step:'1',placeholder:ph||'',value:v==null?'':String(v)});
+ const row=(l,i)=>el('label',{},[l,i]);const f={};
+ if(!cj.types.length)c.append(el('div',{class:'sub'},['Nu ai încă niciun tip de loc completat în formular (cort, rulotă, căsuță, bungalou, glamping).']));
+ cj.types.forEach(ty=>{const g=el('div',{style:'margin-top:10px'},[el('b',{},[ty.name+' · '+ty.stock+' locuri'])]);
+  const pi=inp(ty.price,'RON / noapte');f[ty.key]={price:pi};g.append(row(ty.kind==='unit'?'Preț / noapte / unitate (RON)':ty.kind==='caravan'?'Preț / noapte / loc (RON)':'Preț / noapte / loc (RON)',pi));
+  if(ty.kind==='caravan'){const pf=inp(ty.priceFull,'opțional');f[ty.key].priceFull=pf;g.append(row('Preț / noapte cu facilități incluse (RON, opțional)',pf));}
+  if(ty.cap)g.append(el('div',{class:'sub'},['Capacitate: '+ty.cap+' persoane / unitate']));c.append(g);});
+ const fg=el('div',{style:'margin-top:12px'},[el('b',{},['Taxe pe persoană / pe noapte (RON)'])]);
+ [['adult','Adult'],['child','Copil 3–12 ani'],['car','Mașină'],['pet','Animal de companie'],['electric','Curent electric / zi']].forEach(k=>{const i=inp(cj.fees[k[0]]||'','0');f['fee_'+k[0]]=i;fg.append(row(k[1],i));});
+ const mn=inp(cj.min_nights||1,'');c.append(fg,row('Nopți minime',mn));
+ const m=el('div',{class:'msg'}),b=el('button',{type:'button',style:'margin-top:10px;width:100%'},['Salvează prețurile']);
+ b.onclick=async()=>{b.disabled=true;try{const body={fees:{},units:{},min_nights:Number(mn.value||1)};
+  ['adult','child','car','pet','electric'].forEach(k=>{body.fees[k]=f['fee_'+k].value;});
+  cj.types.forEach(ty=>{const x=f[ty.key];if(ty.key==='tents')body.tents={price:x.price.value};else if(ty.key==='caravans')body.caravans={price:x.price.value,priceFull:x.priceFull.value};else body.units[ty.key]={price:x.price.value};});
+  await api('POST',B()+'/camping',body);say(m,'Prețuri salvate. Se văd acum și pe pagina de rezervare și în formular.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m,errT(e),false);}b.disabled=false;};
+ c.append(b,m);return c;}
 async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{},['Cont de personal']),el('div',{class:'sub'},['Poți vedea calendarul și rezervările și poți închide sau deschide zile.'])]));const o2=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);o2.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(o2);return;}
  const ic2=installCard();if(ic2)v.append(ic2);
  let t;try{t=await api('GET',B()+'/tarife');}catch(e){v.append(el('div',{class:'card err'},[errT(e)]));return;}const s=t.settings;
  let pl=null;try{pl=await api('GET',B()+'/plan');}catch(e){pl=null;}
  let pen=null;if(pl&&pl.mode&&!pl.hotel){try{pen=await api('GET',B()+'/pensiune');}catch(e){pen=null;}}
- v.append(pricesCard(t,pl,pen));if(pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
+ let cj=null;if(t.camp){try{cj=await api('GET',B()+'/camping');}catch(e){cj=null;}}
+ v.append(cj?campCard(t,cj):pricesCard(t,pl,pen));if(!cj&&pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
  const m1=el('div',{class:'msg'});const sv=el('button',{type:'button'},['Salvează']);
@@ -888,7 +909,11 @@ function mount(r, o) {
       const dd = (await dbPool.query(`SELECT unit_id, status, (day = ${today}) AS is_today FROM booking_calendar_days WHERE listing_id = $1 AND day >= ${today} AND day <= ${today} + 1 AND NOT (status = 3 AND blocked_until < now())`, [lid])).rows;
       const units = us.length ? us.map((u) => ({ unit_no: Number(u.unit_no), name: u.name })) : [{ unit_no: 0, name: "Toată proprietatea" }];
       const stOf = (u, today_) => { const f = dd.find((x) => !!x.is_today === today_ && (Number(x.unit_id) === u.unit_no || (us.length && Number(x.unit_id) === 0))); return f ? Number(f.status) : 0; };
-      const rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
+      let rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
+      try { // camping: locuri libere pe tip, nu camere
+        const tyR = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0];
+        if (tyR && tyR.type === "camping") { const CAMP = require("./bookings-camp"); rooms = await CAMP.tonight(dbPool, lid, CAMP.campModel(tyR.type_details), today); }
+      } catch (e) { console.error("gazda azi camping:", e.message); }
       let ft = {}; try { ft = (await dbPool.query(`SELECT (available_date::date = ${today}) AS on, available_rooms, (status = 'approved') AS approved FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0] || {}; } catch (e) { console.error("gazda azi liber:", e.message); }
       const free_tonight = { on: !!ft.on, rooms: ft.available_rooms || null, approved: !!ft.approved };
       const icalN = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_ical_feeds WHERE listing_id = $1 AND import_url IS NOT NULL`, [lid])).rows[0];
