@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const express = require("express");
 const core = require("./bookings-core");
 const { dbPool, RESEND_API_KEY } = require("./static");
+const sync = require("./bookings-sync")(dbPool); // prețuri: formular <-> rezervări <-> pagina pensiunii
 const L = require("./logic");
 const pay = require("./bookings-pay");
 const forms = require("./bookings-forms");
@@ -172,7 +173,7 @@ function shell(res, title, bodyHtml, scriptJs, opts) {
 const COMMON_JS = `
 const $=(s,r)=>(r||document).querySelector(s);
 function el(t,a,c){const e=document.createElement(t);if(a)for(const k in a){if(k==='class')e.className=a[k];else e.setAttribute(k,a[k]);}(c||[]).forEach(x=>e.append(x));return e;}
-async function api(method,url,body){const r=await fetch(url,{method,credentials:'same-origin',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});let j={};try{j=await r.json();}catch(e){}if(!r.ok)throw new Error(j.error||('Eroare '+r.status));return j;}
+async function api(method,url,body){const r=await fetch(url,{method,credentials:'same-origin',headers:(body||method!=='GET')?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):(method!=='GET'?'{}':undefined)});let j={};try{j=await r.json();}catch(e){}if(!r.ok)throw new Error(j.error||('Eroare '+r.status));return j;}
 function say(box,t,ok){box.textContent=t;box.className='msg '+(ok?'ok':'err');}
 `;
 
@@ -200,7 +201,7 @@ payNote();loadPay();$('#guarwrap').hidden=!settings.payments_live;$('#guar').val
 $('#inst').checked=!!settings.instant_enabled;$('#lead').value=String(settings.lead_days);$('#publink').textContent=settings.instant_enabled?('Link de rezervare: '+location.origin+'/cazare/rezerva/'+LID):'';
 $('#base').value=settings.base_price_bani==null?'':(settings.base_price_bani/100);$('#minn').value=settings.min_nights;$('#maxg').value=settings.max_guests||'';
 const box=$('#rules');box.replaceChildren();if(!rules.length)box.append(el('div',{class:'sub'},['Nu ai încă tarife speciale.']));
-rules.forEach(r=>{const dn=['D','L','Ma','Mi','J','V','S'];const info=(r.kind==='weekend'?'Weekend (vineri și sâmbătă)':r.date_from+' → '+r.date_to)+' · '+(r.price_bani/100)+' RON/noapte'+(r.min_nights?' · min '+r.min_nights+' nopți':'')+(r.checkin_days?' · check-in: '+r.checkin_days.map(x=>dn[x]).join(','):'')+(r.checkout_days?' · check-out: '+r.checkout_days.map(x=>dn[x]).join(','):'');
+rules.forEach(r=>{const dn=['D','L','Ma','Mi','J','V','S'];const info=(r.kind==='weekend'?'Weekend (vineri și sâmbătă)':r.date_from+' → '+r.date_to)+' · '+(r.pct_bps!=null?((r.pct_bps>=0?'+':'')+(r.pct_bps/100)+'% față de prețul camerei'):(r.price_bani/100)+' RON/noapte')+(r.min_nights?' · min '+r.min_nights+' nopți':'')+(r.checkin_days?' · check-in: '+r.checkin_days.map(x=>dn[x]).join(','):'')+(r.checkout_days?' · check-out: '+r.checkout_days.map(x=>dn[x]).join(','):'');
 const del=el('button',{class:'d',type:'button'},['Șterge']);del.onclick=async()=>{if(!confirm('Ștergi tariful „'+r.name+'”?'))return;await api('DELETE',B+'/tarife/'+r.id);loadAll();};
 const ed=el('button',{class:'s',type:'button'},['Editează']);ed.onclick=()=>fillRule(r);
 box.append(el('div',{class:'item'},[el('b',{},[r.name+unitTag(r.unit_no)]),el('div',{class:'sub'},[info]),el('div',{class:'row'},[ed,del])]));});}
@@ -389,9 +390,12 @@ module.exports = function mountBookings(app) {
   // --- setări & tarife ---
   r.get("/api/rezervari/:id/tarife", ...ownerApi, ownListing, async (req, res) => {
     try {
+      await sync.ensure(req.listing.id); // preia din formular dacă s-a schimbat de la ultima sincronizare
+      req.listing = Object.assign(req.listing, (await dbPool.query(`SELECT base_price_bani, whole_discount_bps FROM booking_settings WHERE listing_id = $1`, [req.listing.id])).rows[0] || {});
+      req.listing.units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [req.listing.id])).rows;
       const rules = (await dbPool.query(
-        `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active
-           FROM booking_rate_rules WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
+        `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps
+           FROM booking_rate_rules r WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
       const l = req.listing;
       noStore(res); res.json({ units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
     } catch (e) { console.error("rezervari tarife:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -407,6 +411,7 @@ module.exports = function mountBookings(app) {
       if (!Number.isInteger(lead) || lead < 0 || lead > 30) return res.status(400).json({ error: "date_invalide" });
       if (inst && base === null && !(req.listing.units || []).some((u) => u.base_price_bani != null) && !(await dbPool.query(`SELECT 1 FROM booking_rate_rules WHERE listing_id = $1 AND active AND kind = 'interval' LIMIT 1`, [req.listing.id])).rowCount) return res.status(400).json({ error: "Setează mai întâi un preț de bază ca să poți activa rezervarea instant" });
       await dbPool.query(`UPDATE booking_settings SET base_price_bani = $2, min_nights = $3, max_guests = $4, instant_enabled = $5, lead_days = $6, updated_at = now() WHERE listing_id = $1`, [req.listing.id, base, minN, maxG, inst, lead]);
+      await sync.push(req.listing.id);
       res.json({ ok: true });
     } catch (e) { console.error("rezervari setari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -432,14 +437,38 @@ module.exports = function mountBookings(app) {
         if (cnt.rows[0].c >= 100) return res.status(400).json({ error: "prea_multe_tarife" });
         await dbPool.query(`INSERT INTO booking_rate_rules (listing_id, name, kind, date_from, date_to, price_bani, min_nights, checkin_days, checkout_days, priority, unit_no) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, [req.listing.id, name, kind, from, to, price, minN, ci, co, prio, unitNo]);
       }
+      await sync.push(req.listing.id);
       res.json({ ok: true });
     } catch (e) { console.error("rezervari tarif:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.delete("/api/rezervari/:id/tarife/:rid", ...ownerApi, ownListing, async (req, res) => {
     try {
+      await sync.dropSeasonOfRule(req.listing.id, toId(req.params.rid)); // perioada dispare și din plan (formular + pagina pensiunii)
       await dbPool.query(`UPDATE booking_rate_rules SET active = FALSE WHERE id = $1 AND listing_id = $2`, [toId(req.params.rid), req.listing.id]);
+      await sync.push(req.listing.id);
       res.json({ ok: true });
     } catch (e) { res.status(500).json({ error: "eroare" }); }
+  });
+  // Plan de prețuri: perioade speciale (sărbători, sezoane, zile alese) + oferte; același plan ca în formularul cazării
+  r.get("/api/rezervari/:id/plan", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const p = await sync.getPlan(req.listing.id);
+      if (!p) return res.status(404).json({ error: "negasit" });
+      noStore(res); res.json({ plan: p.plan, hotel: p.hotel, type: p.type, stored: p.stored, today: core.todayRo(), suggestions: core.suggestedTemplates(Number(core.todayRo().slice(0, 4))).concat(core.suggestedTemplates(Number(core.todayRo().slice(0, 4)) + 1)) });
+    } catch (e) { console.error("rezervari plan get:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  r.post("/api/rezervari/:id/plan", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const b = req.body || {};
+      const out = await sync.savePlan(req.listing.id, {
+        seasons: Array.isArray(b.seasons) ? b.seasons : undefined,
+        offers: Array.isArray(b.offers) ? b.offers : undefined,
+        weekendPct: b.weekendPct === undefined ? undefined : b.weekendPct,
+      });
+      if (out.error === "sql_lipsa") return res.status(409).json({ error: "Lipsește scriptul SQL „etapa 6”. Rulează-l în Neon și încearcă din nou." });
+      if (out.error) return res.status(404).json({ error: "negasit" });
+      res.json({ ok: true, plan: out.plan });
+    } catch (e) { console.error("rezervari plan post:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   // ofertă: aceeași logică va fi folosită de turist în Etapa 1
   r.get("/api/rezervari/:id/pret", ...ownerApi, ownListing, async (req, res) => {
@@ -449,7 +478,7 @@ module.exports = function mountBookings(app) {
       const unit = unitOf(req, req.query.unit);
       if (unit === null) return res.status(400).json({ error: "camera_invalida" });
       const uObj = (req.listing.units || []).find((u) => u.unit_no === unit) || null;
-      const rules = (await dbPool.query(`SELECT id, unit_no, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active FROM booking_rate_rules WHERE listing_id = $1 AND active`, [req.listing.id])).rows.filter((x) => x.unit_no == null || x.unit_no === unit);
+      const rules = (await dbPool.query(`SELECT id, unit_no, kind, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, name, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps FROM booking_rate_rules r WHERE listing_id = $1 AND active`, [req.listing.id])).rows.filter((x) => x.unit_no == null || x.unit_no === unit);
       const busy = (await dbPool.query(`SELECT to_char(day,'YYYY-MM-DD') AS day FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $4 AND day >= $2::date AND day < $3::date AND (status <> 3 OR blocked_until > now())`, [req.listing.id, checkin, checkout, unit])).rows;
       const l = req.listing;
       const guestN = Number(req.query.guests) || 1;
@@ -474,6 +503,7 @@ module.exports = function mountBookings(app) {
       }
       await dbPool.query(`UPDATE booking_settings SET payment_mode = $2, whole_discount_bps = $3, updated_at = now() WHERE listing_id = $1`, [req.listing.id, mode, bps]);
       if (gar !== null) await dbPool.query(`UPDATE booking_settings SET guarantee_bani = $2 WHERE listing_id = $1`, [req.listing.id, gar]);
+      await sync.push(req.listing.id);
       res.json({ ok: true });
     } catch (e) { console.error("rezervari preferinte:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -490,6 +520,7 @@ module.exports = function mountBookings(app) {
         const n = Number(b.unit_no);
         if (!(req.listing.units || []).some((u) => u.unit_no === n)) return res.status(404).json({ error: "negasit" });
         await dbPool.query(`UPDATE booking_units SET name = $3, capacity = $4, base_price_bani = $5 WHERE listing_id = $1 AND unit_no = $2 AND active`, [req.listing.id, n, name, cap, price]);
+        await sync.push(req.listing.id);
         return res.json({ ok: true });
       }
       client = await dbPool.connect();
@@ -505,6 +536,7 @@ module.exports = function mountBookings(app) {
         await client.query(`UPDATE booking_reservations SET unit_ids = ARRAY[$2::smallint] WHERE listing_id = $1 AND unit_ids = ARRAY[0::smallint] AND status IN ('hold','confirmed')`, [req.listing.id, n]);
       }
       await client.query("COMMIT");
+      await sync.push(req.listing.id);
       res.json({ ok: true, unit_no: n });
     } catch (e) {
       if (client) await client.query("ROLLBACK").catch(() => {});
@@ -522,6 +554,7 @@ module.exports = function mountBookings(app) {
       await dbPool.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND unit_id = $2`, [req.listing.id, n]);
       await dbPool.query(`DELETE FROM booking_ical_feeds WHERE listing_id = $1 AND unit_id = $2`, [req.listing.id, n]);
       await dbPool.query(`UPDATE booking_rate_rules SET active = FALSE WHERE listing_id = $1 AND unit_no = $2`, [req.listing.id, n]);
+      await sync.push(req.listing.id);
       res.json({ ok: true });
     } catch (e) { console.error("rezervari camera stearsa:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -671,6 +704,7 @@ module.exports = function mountBookings(app) {
       if (!l) return res.status(404).json({ error: "negasit" });
       await dbPool.query(`INSERT INTO booking_settings (listing_id, owner_id, bookings_enabled) VALUES ($1,$2,$3) ON CONFLICT (listing_id) DO UPDATE SET bookings_enabled = EXCLUDED.bookings_enabled, owner_id = EXCLUDED.owner_id, updated_at = now()`, [id, l.owner_id, en]);
       if (bps !== null) await dbPool.query(`UPDATE booking_settings SET commission_bps = $2 WHERE listing_id = $1`, [id, bps]);
+      if (en) await sync.pull(id); // preia prețurile din formularul cazării
       res.json({ ok: true });
     } catch (e) { console.error("admin rezervari setari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
