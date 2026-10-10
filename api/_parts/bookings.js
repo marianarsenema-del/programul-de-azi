@@ -149,7 +149,7 @@ async function syncFeed(feed) {
 }
 
 // ---------- pagini ----------
-const PAGE_CSS = `*{box-sizing:border-box}body{margin:0;background:#F5F2EC;color:#17222B;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+const PAGE_CSS = `*{box-sizing:border-box}.global-back-btn{position:fixed;bottom:calc(28px + env(safe-area-inset-bottom,0px));left:16px;z-index:900;width:48px;height:48px;border-radius:50%;background:#1A1F35;border:2px solid #F0813A;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#F0813A;padding:0;line-height:1;box-shadow:0 8px 20px -6px rgba(0,0,0,.45)}.global-back-btn[hidden]{display:none}body{margin:0;background:#F5F2EC;color:#17222B;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .w{max-width:760px;margin:0 auto;padding:16px}h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px}.sub{color:#5B6770;font-size:13px;margin:0 0 14px}
 .card{background:#fff;border:1px solid #E4DFD5;border-radius:14px;padding:14px;margin-bottom:14px}label{display:block;font-size:12px;font-weight:600;color:#5B6770;margin-top:8px}
 input,select{width:100%;height:42px;border:1px solid #C9C3B6;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;color:#17222B;margin-top:3px}
