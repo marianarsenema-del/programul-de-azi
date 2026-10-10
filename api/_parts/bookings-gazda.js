@@ -299,7 +299,8 @@ function showLogin(){me=null;document.title='OHT Host';const root=$('#app');root
  else{const skip=el('button',{id:'instskip',type:'button',class:'s mini',style:'width:100%;height:40px;margin-top:4px'},['Continuă fără să instalez']);skip.onclick=()=>{slot.remove();skip.remove();root.append(setup);startSetup();};root.append(skip);}
 }
 function guessLabel(){const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Telefon Android':/Mac/.test(u)?'Mac':'Dispozitiv';}
-async function goAccount(){if(!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{const j=await api('POST','/api/gazda/cont',{});location.href=(j&&j.url)||'/cont';}catch(e){alert(errT(e));}}
+async function goAccount(to,direct){if(typeof to!=='string')to='';if(!direct&&!confirm('Mergi în contul tău principal de pe platformă? Aplicația OHT Host rămâne instalată, te întorci oricând.'))return;try{const j=await api('POST','/api/gazda/cont',{});location.href=(j&&j.url)?j.url+(to?'&to='+encodeURIComponent(to):''):(to||'/cont');}catch(e){alert(errT(e));}}
+function accLink(txt,path,attrs){const a=el('a',Object.assign({href:path},attrs||{}),[txt]);a.onclick=ev=>{ev.preventDefault();goAccount(path,true);};return a;}
 async function boot(){let r=await raw('GET','/api/gazda/eu');if(!r.ok){return showLogin();}me=r.j;
  if(!me.listings.length){$('#app').replaceChildren(el('div',{class:'card'},['Rezervările nu sunt încă activate pentru proprietățile tale. Contactează-ne ca să le activăm.']));return;}
  let saved=0;try{saved=Number(localStorage.getItem('gzListing'))||0;}catch(e){}
@@ -323,7 +324,7 @@ let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='';
 const today=ds(new Date());
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 
-function icalWarn(){return el('div',{class:'redwarn'},['⚠️ Important: dacă ai cazarea listată și pe alte platforme (Booking.com, Airbnb, Travelminit etc.), este obligatoriu să adaugi linkul lor iCal în cont, la „Sincronizare platforme”. Altfel calendarele nu se sincronizează și riști overbooking (aceeași perioadă rezervată de două ori, o dată la ele și o dată la noi). ',el('a',{href:'/cont/rezervari/'+LID},['Adaugă acum în cont'])]);}
+function icalWarn(){return el('div',{class:'redwarn'},['⚠️ Important: dacă ai cazarea listată și pe alte platforme (Booking.com, Airbnb, Travelminit etc.), este obligatoriu să adaugi linkul lor iCal în cont, la „Sincronizare platforme”. Altfel calendarele nu se sincronizează și riști overbooking (aceeași perioadă rezervată de două ori, o dată la ele și o dată la noi). ',accLink('Adaugă acum în cont','/cont/rezervari/'+LID)]);}
 // ---------- AZI ----------
 async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/azi?listing='+LID);}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
  v.replaceChildren();
@@ -438,7 +439,23 @@ function staffCard(){const c=el('div',{class:'card'},[el('h2',{},['Personal (rec
   try{const j=await api('POST','/api/gazda/personal/cod',{label:name,listings:ls});say(m,'Cod pentru '+name+' (valabil '+j.minutes+' min, o singură dată). Persoana deschide '+location.origin+'/gazda/, scrie codul și își alege un PIN.',true);m.append(codeRow(j.code));}catch(e){say(m,errT(e),false);}};c.append(b,m);return c;}
 
 ${planCardsSrc}
-function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>r.kind==='weekend'&&r.unit_no==null),multi=(t.units||[]).length>1,hotel=!!(pl&&pl.hotel),uni=multi?'pe noapte / cameră':'pe noapte, toată pensiunea';
+function pensionCard(t,pl,pen){const s=t.settings;
+ const c=el('div',{class:'card'},[el('h2',{},['Prețuri']),el('div',{class:'sub'},['Aceleași prețuri apar pe pagina pensiunii și în formularul cazării: le schimbi o singură dată, aici sau în cont. Sărbătorile și ofertele sunt mai jos.'])]);
+ const inp=(v,ph,mn,mx,st)=>el('input',{type:'number',inputmode:'decimal',min:String(mn),max:String(mx),step:String(st),placeholder:ph||'',value:v==null?'':String(v)});
+ const row=(l,i)=>{const w=el('label',{},[l,i]);return w;};
+ const mode=el('select',{});[['integral','Integral: toată pensiunea'],['camere','Pe camere: fiecare cameră separat'],['hibrid','Hibrid: și integral, și camere separat']].forEach(o=>mode.append(el('option',{value:o[0]},[o[1]])));mode.value=pen.mode;
+ const pr=inp(pen.pr,'ex. 350',0,100000,1),pw=inp(pen.pw,'la fel ca în timpul săptămânii',0,100000,1),pp=inp(pen.pp,'ex. 2500',0,100000,1),ppw=inp(pen.ppw,'la fel ca în timpul săptămânii',0,100000,1),mn=inp(s.min_nights||1,'',1,60,1);
+ const gRoom=el('div',{},[el('b',{},['Camere individual']),row('Preț / noapte / cameră, în timpul săptămânii (RON)',pr),row('Preț / noapte / cameră, în weekend (RON, opțional)',pw)]);
+ const gWhole=el('div',{style:'margin-top:10px'},[el('b',{},['Toată pensiunea']),row('Preț / noapte / toată pensiunea, în timpul săptămânii (RON)',pp),row('Preț / noapte / toată pensiunea, în weekend (RON, opțional)',ppw)]);
+ const sync=()=>{const m=mode.value;gRoom.style.display=m==='integral'?'none':'';gWhole.style.display=m==='camere'?'none':'';};mode.onchange=sync;sync();
+ c.append(row('Cum se închiriază?',mode),gRoom,gWhole,row('Nopți minime',mn));
+ const m=el('div',{class:'msg'}),b=el('button',{type:'button',style:'margin-top:10px;width:100%'},['Salvează prețurile']);
+ b.onclick=async()=>{b.disabled=true;try{const md=mode.value;
+  await api('POST',B()+'/pensiune',{mode:md,pr:pr.value,pw:pw.value,pp:pp.value,ppw:ppw.value});
+  await api('POST',B()+'/setari',{base_price_ron:Number(md==='integral'?pp.value:pr.value),min_nights:Number(mn.value||1),max_guests:s.max_guests,instant_enabled:s.instant_enabled,lead_days:s.lead_days});
+  say(m,'Prețuri salvate. Se văd acum și pe pagina pensiunii și în formular.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m,errT(e),false);}b.disabled=false;};
+ c.append(b,m);return c;}
+function pricesCard(t,pl,pen){if(pen)return pensionCard(t,pl,pen);const s=t.settings,rules=t.rules||[],wk=rules.find(r=>r.kind==='weekend'&&r.unit_no==null),multi=(t.units||[]).length>1,hotel=!!(pl&&pl.hotel),uni=multi?'pe noapte / cameră':'pe noapte, toată pensiunea';
  const c=el('div',{class:'card'},[el('h2',{},['Prețuri']),el('div',{class:'sub'},[hotel?'Prețul fiecărui tip de cameră se schimbă din formularul cazării (tipuri de cameră). Aici setezi nopțile minime; weekendul, sărbătorile și ofertele sunt mai jos.':'Aceleași prețuri apar pe pagina pensiunii și în formularul cazării: le schimbi o singură dată, aici sau în cont. Prețurile sunt '+uni+'. Sărbătorile și ofertele sunt mai jos.'])]);
  const inp=(v,ph,mn,mx,st)=>el('input',{type:'number',inputmode:'decimal',min:String(mn),max:String(mx),step:String(st),placeholder:ph||'',value:v==null?'':String(v)});
  const base=inp(s.base_price_bani==null?null:s.base_price_bani/100,'ex. 250',0,100000,1),we=inp(wk?wk.price_bani/100:null,'la fel ca în timpul săptămânii',0,100000,1),mn=inp(s.min_nights||1,'',1,60,1),wd=inp(s.whole_discount_bps?s.whole_discount_bps/100:'','0',0,50,1);
@@ -454,24 +471,21 @@ function pricesCard(t,pl){const s=t.settings,rules=t.rules||[],wk=rules.find(r=>
   if(multi&&!hotel)await api('POST',B()+'/preferinte',{whole_discount_pct:wd.value===''?0:Number(wd.value)});
   say(m,'Prețuri salvate. Se văd acum și pe pagina pensiunii.',true);}catch(e){say(m,errT(e),false);}b.disabled=false;};
  c.append(b,m);
- if(pl&&!hotel&&pl.mode==='integral'&&pl.n>=1&&!multi){const rp=inp(null,'ex. 400',0,100000,1),m2=el('div',{class:'msg'}),b2=el('button',{type:'button',class:'s',style:'margin-top:10px;width:100%'},['Setează prețul pe cameră']);
-  b2.onclick=async()=>{b2.disabled=true;try{if(rp.value===''||Number(rp.value)<=0)throw new Error('Scrie prețul pe noapte pentru o cameră.');
-   await api('POST',B()+'/pret-camera',{price:Number(rp.value)});say(m2,'Gata: acum primești rezervări și pe camere. Prețul pentru toată pensiunea a rămas.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m2,errT(e),false);}b2.disabled=false;};
-  c.append(el('div',{style:'margin-top:16px;padding-top:12px;border-top:1px solid #E4DFD5'},[el('b',{},['Închiriezi și pe camere?']),el('div',{class:'sub'},['Acum ai preț doar pentru toată pensiunea ('+pl.n+' camere). Scrie prețul pe noapte pentru o cameră ca turistul să poată rezerva și camere separate. Prețul pentru toată pensiunea rămâne.']),row('Preț pe noapte / cameră (RON)',rp),b2,m2]));}
  return c;}
 // ---------- SETĂRI ----------
 async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{},['Cont de personal']),el('div',{class:'sub'},['Poți vedea calendarul și rezervările și poți închide sau deschide zile.'])]));const o2=el('button',{class:'s',type:'button',style:'width:100%'},['Ieși din aplicație']);o2.onclick=async()=>{await raw('POST','/api/gazda/iesire',{});showLogin();};v.append(o2);return;}
  const ic2=installCard();if(ic2)v.append(ic2);
  let t;try{t=await api('GET',B()+'/tarife');}catch(e){v.append(el('div',{class:'card err'},[errT(e)]));return;}const s=t.settings;
  let pl=null;try{pl=await api('GET',B()+'/plan');}catch(e){pl=null;}
- v.append(pricesCard(t,pl));if(pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
+ let pen=null;if(pl&&pl.mode&&!pl.hotel){try{pen=await api('GET',B()+'/pensiune');}catch(e){pen=null;}}
+ v.append(pricesCard(t,pl,pen));if(pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
  const m1=el('div',{class:'msg'});const sv=el('button',{type:'button'},['Salvează']);
  sv.onclick=async()=>{try{await api('POST',B()+'/setari',{base_price_ron:s.base_price_bani==null?null:s.base_price_bani/100,min_nights:s.min_nights,max_guests:s.max_guests,instant_enabled:inst.checked,lead_days:Number(lead.value)});say(m1,'Salvat',true);}catch(e){say(m1,errT(e),false);}};
  v.append(el('div',{class:'card'},[el('h2',{},['Rezervare instant']),el('label',{style:'display:flex;gap:8px;align-items:center'},[inst,'Acceptă rezervări instant']),el('label',{},['Cât de repede poate rezerva turistul',lead]),sv,m1,
   s.instant_enabled?el('div',{class:'mono',style:'margin-top:8px'},[location.origin+'/cazare/rezerva/'+LID]):el('span')]));
- v.append(el('div',{class:'card'},[el('h2',{},['Tarife, camere, platforme']),icalWarn(),el('div',{class:'sub'},['Tarifele detaliate, camerele și sincronizarea cu alte platforme se gestionează din contul tău.']),el('a',{class:'mini',href:'/cont/rezervari/'+LID,style:'height:42px'},['Deschide în cont'])]));
+ v.append(el('div',{class:'card'},[el('h2',{},['Tarife, camere, platforme']),icalWarn(),el('div',{class:'sub'},['Tarifele detaliate, camerele și sincronizarea cu alte platforme se gestionează din contul tău.']),accLink('Deschide în cont','/cont/rezervari/'+LID,{class:'mini',style:'height:42px'})]));
  v.append(await pushCard());v.append(await arrivalCard());v.append(staffCard());
  const dv=el('div',{class:'card'},[el('h2',{},['Dispozitivele mele'])]);v.append(dv);
  try{const d=await api('GET','/api/gazda/dispozitive');d.devices.forEach(x=>{const it=el('div',{class:'item'},[el('b',{},[(x.role==='staff'?'Personal · ':(x.kind==='pin'?'PIN · ':'Face ID · '))+x.label+(x.current?' (acesta)':'')]),el('div',{class:'sub',style:'margin:2px 0'},['Adăugat '+x.created+' · ultima folosire '+x.last_used])]);
@@ -546,7 +560,7 @@ function mount(r, o) {
   r.get("/gazda/cont", (req, res) => {
     const nonce = crypto.randomBytes(16).toString("base64");
     page(res, nonce);
-    res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>OHT Host</title></head><body style="font-family:system-ui,sans-serif;padding:24px"><p id="m">Te conectez în cont…</p><script nonce="${nonce}">(async()=>{const m=document.getElementById('m');try{const t=(location.hash.match(/[#&]t=([A-Za-z0-9_-]+)/)||[])[1];history.replaceState(null,'',location.pathname);if(!t)throw 0;const r=await fetch('/api/gazda/link/intra',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t})});if(!r.ok)throw 0;location.replace('/cont');}catch(e){m.textContent='Linkul a expirat. ';const a=document.createElement('a');a.href='/cont';a.textContent='Intră în cont';m.append(a);}})();</script></body></html>`);
+    res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>OHT Host</title></head><body style="font-family:system-ui,sans-serif;padding:24px"><p id="m">Te conectez în cont…</p><script nonce="${nonce}">(async()=>{const m=document.getElementById('m');try{const t=(location.hash.match(/[#&]t=([A-Za-z0-9_-]+)/)||[])[1];let to=''; try{to=decodeURIComponent((location.hash.match(/[#&]to=([^&]+)/)||[])[1]||'');}catch(e){} if(!/^\\/cont(\\/[A-Za-z0-9_-]+)*\\/?$/.test(to))to='';history.replaceState(null,'',location.pathname);if(!t)throw 0;const r=await fetch('/api/gazda/link/intra',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t})});if(!r.ok)throw 0;location.replace(to||'/cont');}catch(e){m.textContent='Linkul a expirat. ';const a=document.createElement('a');a.href=to||'/cont';a.textContent='Intră în cont';m.append(a);}})();</script></body></html>`);
   });
   r.get("/gazda/manifest.webmanifest", (req, res) => {
     // în previzualizare (rezervările nu sunt pornite global) aplicația instalată trebuie să poarte parola, altfel s-ar deschide pe 404; cu funcția pornită manifestul e curat
