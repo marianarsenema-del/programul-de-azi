@@ -153,6 +153,7 @@ const PAGE_CSS = `*{box-sizing:border-box}body{margin:0;background:#F5F2EC;color
 .w{max-width:760px;margin:0 auto;padding:16px}h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px}.sub{color:#5B6770;font-size:13px;margin:0 0 14px}
 .card{background:#fff;border:1px solid #E4DFD5;border-radius:14px;padding:14px;margin-bottom:14px}label{display:block;font-size:12px;font-weight:600;color:#5B6770;margin-top:8px}
 input,select{width:100%;height:42px;border:1px solid #C9C3B6;border-radius:8px;padding:0 10px;font-size:15px;background:#fff;color:#17222B;margin-top:3px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;margin:0 6px 0 0;padding:0;accent-color:#0E6B63;vertical-align:middle;flex:none}
 button{height:42px;border:0;border-radius:10px;background:#0E6B63;color:#fff;font-weight:700;font-size:14px;padding:0 14px;cursor:pointer}button.s{background:#fff;color:#0E6B63;border:1px solid #0E6B63}button.d{background:#fff;color:#9B1C1C;border:1px solid #D9A3A3}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}.row>*{flex:1 1 120px}.msg{font-size:13px;margin-top:8px;min-height:18px}.err{color:#9B1C1C}.ok{color:#14532D}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal div{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;border:1px solid #E4DFD5;background:#fff;user-select:none}
@@ -163,7 +164,7 @@ function shell(res, title, bodyHtml, scriptJs, opts) {
   const st = opts && opts.stripe; // doar paginile cu plată adaugă domeniile Stripe în CSP
   const nonce = crypto.randomBytes(16).toString("base64");
   res.set({
-    "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'${st ? " https://js.stripe.com" : ""}; style-src 'nonce-${nonce}' 'unsafe-inline'; connect-src 'self'${st ? " https://api.stripe.com" : ""}; img-src 'self' data:${st ? " https://*.stripe.com" : ""}${st ? "; frame-src https://js.stripe.com https://hooks.stripe.com" : ""}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
+    "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'${st ? " https://js.stripe.com" : ""}; style-src 'nonce-${nonce}'; style-src-attr 'unsafe-inline'; connect-src 'self'${st ? " https://api.stripe.com" : ""}; img-src 'self' data:${st ? " https://*.stripe.com" : ""}${st ? "; frame-src https://js.stripe.com https://hooks.stripe.com" : ""}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
     "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer",
   });
   res.type("html").send(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>${L.escapeHtml(title)}</title><style nonce="${nonce}">${PAGE_CSS}</style></head><body><div class="w">${bodyHtml}</div><script nonce="${nonce}">${scriptJs || ""}</script></body></html>`);
@@ -266,7 +267,7 @@ $('#saveunit').onclick=async()=>{const m=$('#unitmsg');try{await api('POST',B+'/
 loadCal();loadAll();loadFeeds();loadResv();
 `;
 const dayChecks = (p) => [0, 1, 2, 3, 4, 5, 6].map((i) => `<label style="display:inline-block;margin:4px 8px 0 0;font-weight:500"><input type="checkbox" id="${p}${i}" checked style="width:auto;height:auto;margin:0 3px 0 0">${["D", "L", "Ma", "Mi", "J", "V", "S"][i]}</label>`).join("");
-const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p>
+const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">Calendar, tarife și sincronizare cu alte platforme</p><a class="card" style="display:block;color:inherit;text-decoration:none;border-color:#0E6B63" href="/gazda/"><b>📲 Instalează aplicația Gazdă</b><div class="sub" style="margin:4px 0 0">Calendar și rezervări pe telefon, cu Face ID, amprentă sau PIN.</div></a>
 <div class="card"><h2>Camere</h2><div class="sub">Dacă închiriezi camerele separat, adaugă-le aici. Fiecare are calendar, preț și linkuri iCal proprii. Turistul poate rezerva una, mai multe sau toate camerele deodată.</div><div id="units"></div>
 <input type="hidden" id="uno"><div class="row"><div><label>Nume cameră<input id="uname" maxlength="60" placeholder="Camera 1"></label></div><div><label>Persoane<input id="ucap" type="number" min="1" max="50"></label></div><div><label>Preț/noapte (RON, opțional)<input id="uprice" type="number" min="0"></label></div></div>
 <div class="row" style="margin-top:10px"><button id="saveunit" type="button">Salvează camera</button></div><div class="msg" id="unitmsg"></div></div>
@@ -306,7 +307,7 @@ const b=$('#tb');b.replaceChildren();j.listings.forEach(l=>{const c=el('input',{
 c.onchange=async()=>{try{await api('POST','/api/admin/rezervari/setari',{listingId:l.id,enabled:c.checked});}catch(e){alert(e.message);c.checked=!c.checked;}};
 const ci=el('input',{type:'number',min:'0',max:'50',step:'0.5'});ci.value=l.commission_bps/100;ci.style.cssText='width:70px;height:34px';
 ci.onchange=async()=>{try{await api('POST','/api/admin/rezervari/setari',{listingId:l.id,enabled:c.checked,commissionPct:Number(ci.value)});}catch(e){alert(e.message);}};
-b.append(el('tr',{},[el('td',{},[l.name+' · '+(l.city||'')+(l.instant?' · instant ON':'')]),el('td',{},['#'+l.id]),el('td',{},[c]),el('td',{},[ci])]));});}
+b.append(el('tr',{},[el('td',{},[l.name+' · '+(l.city||'')+(l.instant?' · instant ON':''),el('div',{class:'sub',style:'margin:2px 0 0'},['Cont proprietar: '+(l.owner_email||'—')])]),el('td',{},['#'+l.id]),el('td',{},[c]),el('td',{},[ci])]));});}
 load();
 const RC={form_incomplete:'Fișă incompletă',false_data:'Date false/suspecte',fraud:'Comportament/fraudă',other:'Altul'};
 async function loadRef(){try{const j=await api('GET','/api/admin/rezervari/refuzuri');const a=$('#alerts');a.replaceChildren();
@@ -320,7 +321,7 @@ module.exports = function mountBookings(app) {
   let cleanupHolds = async () => {};
   r.use((req, res, next) => (allowed(req, res) && dbPool ? next() : next("router"))); // oprit → cade mai departe (404 normal)
   const ownerApi = [L.requireAccommodationOwnerApi, jsonOnly];
-  require("./bookings-gazda").mount(r, { jsonOnly, noStore, shell, PAGE_CSS }); // aplicația „Gazdă” (PWA, Face ID)
+  require("./bookings-gazda").mount(r, { jsonOnly, noStore, shell, PAGE_CSS, previewKey: (req) => (!ENABLED && PREVIEW_KEY && L.parseCookies(req).bkPreview && safeEq(L.parseCookies(req).bkPreview, PREVIEW_KEY) ? PREVIEW_KEY : "") }); // aplicația „Gazdă” (PWA, Face ID)
 
   // --- pagini proprietar ---
   r.get("/cont/rezervari", L.requireAccommodationOwner, async (req, res) => {
@@ -642,12 +643,12 @@ module.exports = function mountBookings(app) {
   // --- admin: comutator per anunț ---
   r.get("/admin/rezervari", (req, res) => {
     if (!L.requireAdminPage(req, res)) return;
-    shell(res, "Admin · Rezervări", `<h1>Rezervări — comutatoare</h1><p class="sub" id="st"></p><div id="alerts"></div><div class="card"><table><thead><tr><th>Anunț</th><th>ID</th><th>Activ</th><th>Comision %</th></tr></thead><tbody id="tb"></tbody></table></div><div class="card"><h2>Refuzuri recente</h2><table><thead><tr><th>Data</th><th>Anunț</th><th>Motiv</th><th>Comentariu</th><th>Rambursat</th></tr></thead><tbody id="rf"></tbody></table></div>`, ADMIN_APP_JS);
+    shell(res, "Admin · Rezervări", `<h1>Rezervări — comutatoare</h1><p class="sub" id="st"></p><div class="card"><b>Testezi ca gazdă?</b><div class="sub" style="margin:4px 0 8px">Contul tău de proprietar, cu e-mailul de admin, te duce mereu în admin din /cont. De aici ajungi direct la ecranele de gazdă (trebuie să fii și logat ca proprietar, la /cazare/login).</div><div class="row"><a class="mini" href="/cont/rezervari" style="height:42px;padding:0 12px;display:inline-flex;align-items:center;border:1px solid #0E6B63;border-radius:10px;color:#0E6B63;font-weight:700;text-decoration:none">Rezervări (cont gazdă)</a><a class="mini" href="/gazda/" style="height:42px;padding:0 12px;display:inline-flex;align-items:center;border:1px solid #0E6B63;border-radius:10px;color:#0E6B63;font-weight:700;text-decoration:none">📲 Aplicația Gazdă</a></div></div><div id="alerts"></div><div class="card"><table><thead><tr><th>Anunț</th><th>ID</th><th>Activ</th><th>Comision %</th></tr></thead><tbody id="tb"></tbody></table></div><div class="card"><h2>Refuzuri recente</h2><table><thead><tr><th>Data</th><th>Anunț</th><th>Motiv</th><th>Comentariu</th><th>Rambursat</th></tr></thead><tbody id="rf"></tbody></table></div>`, ADMIN_APP_JS);
   });
   r.get("/api/admin/rezervari/anunturi", async (req, res) => {
     if (!L.requireAdminApi(req, res)) return;
     try {
-      const rows = (await dbPool.query(`SELECT l.id, l.name, l.city, COALESCE(s.bookings_enabled, FALSE) AS enabled, COALESCE(s.commission_bps, 0) AS commission_bps, COALESCE(s.instant_enabled, FALSE) AS instant FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id WHERE l.status = 'approved' ORDER BY l.name LIMIT 1000`)).rows;
+      const rows = (await dbPool.query(`SELECT l.id, l.name, l.city, COALESCE(s.bookings_enabled, FALSE) AS enabled, COALESCE(s.commission_bps, 0) AS commission_bps, COALESCE(s.instant_enabled, FALSE) AS instant, o.email AS owner_email FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id LEFT JOIN accommodation_owners o ON o.id = l.owner_id WHERE l.status = 'approved' ORDER BY l.name LIMIT 1000`)).rows;
       noStore(res); res.json({ globalEnabled: ENABLED, listings: rows });
     } catch (e) { console.error("admin rezervari:", e.message); res.status(500).json({ error: "eroare" }); }
   });
@@ -682,10 +683,16 @@ module.exports = function mountBookings(app) {
 };
 module.exports.syncFeed = syncFeed;
 // vizibilitate pentru butonul din /cont: pornit global sau previzualizare validă (fără să seteze cookie-uri)
-module.exports.canSee = (req) => {
+module.exports.canSee = (req, res) => {
   if (!dbPool) return false;
   if (ENABLED) return true;
   if (!PREVIEW_KEY) return false;
   const cookie = L.parseCookies(req).bkPreview;
-  return !!cookie && safeEq(cookie, PREVIEW_KEY);
+  if (cookie && safeEq(cookie, PREVIEW_KEY)) return true;
+  // previzualizare: ?bkpreview=PAROLA pe /cont setează cookie-ul și în acest browser/telefon
+  if (res && typeof req.query.bkpreview === "string" && safeEq(req.query.bkpreview, PREVIEW_KEY)) {
+    L.appendSetCookie(res, `bkPreview=${encodeURIComponent(PREVIEW_KEY)}; Path=/; Max-Age=${30 * 24 * 3600}; HttpOnly; SameSite=Lax; Secure`);
+    return true;
+  }
+  return false;
 };
