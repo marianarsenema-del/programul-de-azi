@@ -331,7 +331,7 @@ module.exports = function (dbPool) {
     const n = pension && Array.isArray(td.bedrooms) ? td.bedrooms.length : 0;
     return { plan, hotel, type: row.type, stored: c.plan, mode, n };
   }
-  // pensiune închiriată doar întreagă, cu mai multe camere: gazda poate seta și prețul pe cameră din aplicație (devine „hibrid")
+  // pensiune închiriată doar întreagă, cu cel puțin o cameră: gazda poate seta și prețul pe cameră din aplicație (devine „hibrid")
   async function setRoomPrice(id, price) {
     const p = Number(price);
     if (!Number.isFinite(p) || p <= 0 || p > 100000) return { error: "pret_invalid" };
@@ -339,7 +339,7 @@ module.exports = function (dbPool) {
     const row = await load(id, c);
     if (!row) return { error: "negasit" };
     const L = readListing(row);
-    if (!L.pension || L.mode !== "integral" || L.n < 2) return { error: "nu_se_aplica" };
+    if (!L.pension || L.mode !== "integral" || L.n < 1) return { error: "nu_se_aplica" };
     const td = L.td && typeof L.td === "object" ? L.td : {};
     td.rentalMode = "hibrid";
     // weekendul întreg se păstrează, proporțional, ca preț de weekend pe cameră (altfel s-ar pierde la trecerea în hibrid)
