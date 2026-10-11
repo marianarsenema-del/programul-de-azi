@@ -11,6 +11,7 @@
 const crypto = require("crypto");
 const PP = require("./price-plan");
 const CAMP = require("./bookings-camp");
+const PARTY = require("./bookings-party");
 
 const PENSION = ["pensiune", "cabana", "aframe"];
 const HOTEL = "hotel_mic";
@@ -153,6 +154,28 @@ module.exports = function (dbPool) {
     if (minN !== null) await dbPool.query(`UPDATE booking_settings SET min_nights = $2, updated_at = now() WHERE listing_id = $1`, [id, minN]);
     await campPull(id, { force: true });
     return { ok: true };
+  }
+
+  // ---------- copii și persoane în plus: politica din formular (type_details.kids) ----------
+  async function getKids(id) {
+    const r = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
+    if (!r || !SYNC_TYPES.includes(r.type)) return null;
+    const td = parseTd(r.type_details);
+    return { type: r.type, hotel: r.type === HOTEL, kids: PARTY.sanitizeKids(td.kids) };
+  }
+  async function setKids(id, raw) {
+    const r = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
+    if (!r || !SYNC_TYPES.includes(r.type)) return { error: "negasit" };
+    const want = raw && typeof raw === "object" ? raw : null;
+    const clean = want ? PARTY.sanitizeKids(want) : null;
+    const given = want && Array.isArray(want.bands) ? want.bands.length : 0;
+    if (want && given > PARTY.MAX_BANDS) return { error: "date_invalide" };
+    if (clean && clean.bands.length < given) return { error: "date_invalide" }; // intervale suprapuse sau greșite: nu le tăcem
+    const td = parseTd(r.type_details);
+    if (r.type === HOTEL && clean) clean.included = null; // la hotel „incluse” = adulții din tipul de cameră
+    if (clean) td.kids = clean; else delete td.kids;
+    await dbPool.query(`UPDATE accommodation_listings SET type_details = $2 WHERE id = $1::integer`, [id, JSON.stringify(td)]);
+    return { ok: true, kids: clean };
   }
 
   // formular -> rezervări
@@ -480,7 +503,7 @@ module.exports = function (dbPool) {
     await pull(id, { force: true });
     return { ok: true };
   }
-  return { pull, push, getCamping, setCamping, isCamping, getPension, setPension, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule, setRoomPrice };
+  return { pull, push, getKids, setKids, getCamping, setCamping, isCamping, getPension, setPension, onListingSaved, ensure: (id) => pull(id), getPlan, savePlan, dropSeasonOfRule, setRoomPrice };
 };
 module.exports.readListing = readListing;
 module.exports.hotelRooms = hotelRooms;
