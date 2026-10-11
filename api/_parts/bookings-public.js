@@ -33,6 +33,7 @@ module.exports = function mountPublic(r, c) {
     return false;
   }
   const E = L.escapeHtml;
+  const PARTY = require("./bookings-party");
   const fmtRon = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " RON";
   const dRo = (s) => { const [y, m, d] = s.split("-"); return `${d}.${m}.${y}`; };
   const codeHash = (id, access, code) => sha(`${id}:${access}:${code}`);
@@ -44,12 +45,21 @@ module.exports = function mountPublic(r, c) {
       const id = toId(req.params.id);
       if (!id) return res.status(404).json({ error: "negasit" });
       const { rows } = await dbPool.query(
-        `SELECT l.id, l.name, l.owner_id, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
+        `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
           WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type IS DISTINCT FROM 'camping'`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true; // comision doar dacă gazda a ales online ȘI contul ei Stripe poate primi bani
       rows[0].units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
+      try { // politica pentru copii din formular + legătura camerelor cu tipurile de cameră de hotel (sync_key există doar după etapa 6)
+        let td = rows[0].type_details; if (typeof td === "string") { try { td = JSON.parse(td); } catch (e) { td = null; } }
+        rows[0].td = td && typeof td === "object" ? td : {};
+        rows[0].kids = PARTY.sanitizeKids(rows[0].td.kids);
+        if (rows[0].kids || (rows[0].td.roomTypes || []).length) {
+          const ks = (await dbPool.query(`SELECT unit_no, sync_key FROM booking_units WHERE listing_id = $1 AND active`, [id])).rows;
+          rows[0].units.forEach((u) => { const k = ks.find((x) => Number(x.unit_no) === u.unit_no); if (k) u.sync_key = k.sync_key; });
+        }
+      } catch (e) { rows[0].kids = rows[0].kids || null; }
       req.pub = rows[0];
       next();
     } catch (e) { console.error("rezervari pubListing:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -74,7 +84,27 @@ module.exports = function mountPublic(r, c) {
     if (core.isDateStr(checkin) && checkin < core.addDays(core.todayRo(), lst.lead_days || 0) && !q.errors.includes("data_trecuta")) { q.errors.push("prea_aproape"); q.ok = false; }
     return q;
   }
+  const peopleTxt = (snap, g) => (snap && snap.party && Array.isArray(snap.party.ages) ? PARTY.partyText(snap.party.adults, snap.party.ages) : g + " persoane");
   const guestsOf = (v) => { const n = Number(v); return Number.isInteger(n) && n >= 1 && n <= 100 ? n : null; };
+  // familia: adulți + vârstele copiilor (ca la Booking); vechiul „guests” = doar adulți, fără suplimente
+  function partyOf(src) {
+    const s = src || {};
+    if (s.adults !== undefined && s.adults !== null && s.adults !== "") {
+      const a = Number(s.adults); const ages = PARTY.parseAges(s.ages);
+      if (!Number.isInteger(a) || a < 1 || a > 50 || ages === null) return null;
+      return { adults: a, ages, g: a + ages.length };
+    }
+    const g = guestsOf(s.guests);
+    return g ? { adults: g, ages: [], g, legacy: true } : null;
+  }
+  // câte persoane includ camerele alese, capacitatea lor și prețul pe persoană inclusă (pentru „adult în plus” fără preț setat)
+  const bedCount = (kids, party) => party.adults + party.ages.filter((a) => { const b = kids ? PARTY.classify(kids, a) : null; return !(b && b.nobed); }).length;
+  function partyCtx(lst, chosen, perNightBani) {
+    const units = chosen.filter(Boolean);
+    const included = units.length ? units.reduce((a, u) => a + (PARTY.includedOf(lst.td, lst.kids, u, null) || u.capacity), 0) : (PARTY.includedOf(lst.td, lst.kids, null, lst.max_guests) || null);
+    const max = units.length ? units.reduce((a, u) => a + u.capacity, 0) : (lst.max_guests || null);
+    return { included, max, perPerson: included ? Math.round(perNightBani / included) : 0 };
+  }
 
   r.get("/api/rezervari/public/:id/disponibilitate", pubListing, async (req, res) => {
     try {
@@ -87,23 +117,26 @@ module.exports = function mountPublic(r, c) {
       (units.length ? units.map((u) => u.unit_no) : [0]).forEach((n) => { busyByUnit[n] = []; });
       rows.forEach((x) => { if (busyByUnit[x.unit_id]) busyByUnit[x.unit_id].push(x.day); });
       noStore(res);
-      res.json({ name: l.name, units: units.map((u) => ({ no: u.unit_no, name: u.name, capacity: u.capacity })), busyByUnit, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1, max_guests: l.max_guests });
+      res.json({ name: l.name, kids: l.kids || null, units: units.map((u) => ({ no: u.unit_no, name: u.name, capacity: u.capacity })), busyByUnit, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1, max_guests: l.max_guests });
     } catch (e) { console.error("rezervari disponibilitate:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.get("/api/rezervari/public/:id/oferta", pubListing, async (req, res) => {
     try {
       if (!(await L.checkRateLimit(ipKey(req), "rez-oferta", 120, 10))) return res.status(429).json({ error: "prea_multe_cereri" });
-      const g = guestsOf(req.query.guests);
-      if (!g) return res.status(400).json({ error: "date_invalide" });
+      const party = partyOf(req.query);
+      if (!party) return res.status(400).json({ error: "date_invalide" });
       const lst = req.pub, units = lst.units || [];
+      const g = bedCount(lst.kids, party);
       const data = await loadQuoteData(lst, req.query.checkin, req.query.checkout);
       noStore(res);
+      const pinfo = { kids: lst.kids || null, party: { adults: party.adults, ages: party.ages } };
       if (!units.length) {
         const q = quoteUnit(lst, data, null, req.query.checkin, req.query.checkout, g);
-        return res.json({ ok: q.ok, errors: q.errors, totalBani: q.totalBani || 0, nights: (q.nights || []).length, minNights: q.minNights, units: [] });
+        const nn = (q.nights || []).length, ctx = partyCtx(lst, [null], nn ? Math.round((q.totalBani || 0) / nn) : 0);
+        return res.json({ ok: q.ok, errors: q.errors, totalBani: q.totalBani || 0, nights: nn, minNights: q.minNights, units: [], ...pinfo, included: ctx.included, max: ctx.max, perPerson: ctx.perPerson });
       }
-      const out = units.map((u) => { const q = quoteUnit(lst, data, u, req.query.checkin, req.query.checkout, g); return { no: u.unit_no, name: u.name, capacity: u.capacity, ok: q.ok, errors: q.errors, totalBani: q.totalBani || 0 }; });
-      res.json({ wholeDiscountBps: units.length > 1 ? (lst.whole_discount_bps || 0) : 0, ok: out.some((x) => x.ok), nights: core.isDateStr(req.query.checkin) && core.isDateStr(req.query.checkout) ? core.dayNum(req.query.checkout) - core.dayNum(req.query.checkin) : 0, units: out, errors: [] });
+      const out = units.map((u) => { const q = quoteUnit(lst, data, u, req.query.checkin, req.query.checkout, g); return { no: u.unit_no, name: u.name, capacity: u.capacity, included: PARTY.includedOf(lst.td, lst.kids, u, null) || u.capacity, ok: q.ok, errors: q.errors, totalBani: q.totalBani || 0 }; });
+      res.json({ ...pinfo, wholeDiscountBps: units.length > 1 ? (lst.whole_discount_bps || 0) : 0, ok: out.some((x) => x.ok), nights: core.isDateStr(req.query.checkin) && core.isDateStr(req.query.checkout) ? core.dayNum(req.query.checkout) - core.dayNum(req.query.checkin) : 0, units: out, errors: [] });
     } catch (e) { console.error("rezervari oferta:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
@@ -111,7 +144,7 @@ module.exports = function mountPublic(r, c) {
   r.post("/api/rezervari/public/:id/blocheaza", jsonOnly, pubListing, async (req, res) => {
     const b = req.body || {};
     const name = cleanText(b.name, 80), email = cleanText(b.email, 160).toLowerCase(), phone = cleanText(b.phone, 25).replace(/[^\d+]/g, "");
-    const g = guestsOf(b.guests);
+    const party = partyOf(b), g = party ? party.g : null;
     if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !/^(\+?\d{9,15})$/.test(phone) || !g || b.consent !== true) return res.status(400).json({ error: "date_invalide" });
     if (!(await L.checkRateLimit(ipKey(req), "rez-hold", 8, 60)) || !(await L.checkRateLimit(sha("em:" + email), "rez-hold-em", 5, 60))) return res.status(429).json({ error: "prea_multe_cereri" });
     const lst = req.pub, allUnits = lst.units || [];
@@ -120,19 +153,24 @@ module.exports = function mountPublic(r, c) {
       const nums = Array.isArray(b.units) ? [...new Set(b.units.map(Number))] : [];
       if (!nums.length || nums.length > allUnits.length || !nums.every((n) => allUnits.some((u) => u.unit_no === n))) return res.status(400).json({ error: "date_invalide" });
       chosen = allUnits.filter((u) => nums.includes(u.unit_no));
-      if (g > chosen.reduce((a, u) => a + u.capacity, 0)) return res.status(409).json({ error: "oferta_invalida", errors: ["prea_multi_oaspeti"] });
+      if (bedCount(req.pub.kids, party) > chosen.reduce((a, u) => a + u.capacity, 0)) return res.status(409).json({ error: "oferta_invalida", errors: ["prea_multi_oaspeti"] });
     } else chosen = [null];
     let client;
     try {
       const data = await loadQuoteData(lst, b.checkin, b.checkout);
-      const parts = chosen.map((u) => ({ u, q: quoteUnit(lst, data, u, b.checkin, b.checkout, g) }));
+      const parts = chosen.map((u) => ({ u, q: quoteUnit(lst, data, u, b.checkin, b.checkout, bedCount(lst.kids, party)) }));
       const bad = parts.find((x) => !x.q.ok);
       if (bad) return res.status(409).json({ error: "oferta_invalida", errors: bad.q.errors });
       const subtotal = parts.reduce((a, x) => a + x.q.totalBani, 0);
       const whole = allUnits.length > 1 && chosen.length === allUnits.length; // toate camerele → reducere „toată pensiunea”
       const discount = whole ? Math.round(subtotal * (lst.whole_discount_bps || 0) / 10000) : 0;
-      const total = subtotal - discount;
-      const snapshot = { discount_bani: discount, whole, units: parts.map((x) => ({ unit_no: x.u ? x.u.unit_no : 0, name: x.u ? x.u.name : null, total_bani: x.q.totalBani, nights: x.q.nights })) };
+      // suplimentul pentru persoane în plus / copii, pe noapte × nopți (nu intră în reducerea „toată pensiunea”)
+      const nightsN = core.dayNum(b.checkout) - core.dayNum(b.checkin);
+      const sup = lst.kids ? PARTY.supp(lst.kids, partyCtx(lst, chosen, nightsN > 0 ? Math.round(subtotal / nightsN) : 0), party.adults, party.ages) : { ok: true, perNightBani: 0, lines: [] };
+      if (!sup.ok) return res.status(409).json({ error: "oferta_invalida", errors: sup.errors });
+      const suppTotal = sup.perNightBani * Math.max(0, nightsN);
+      const total = subtotal - discount + suppTotal;
+      const snapshot = { discount_bani: discount, whole, party: { adults: party.adults, ages: party.ages, supp_night_bani: sup.perNightBani, supp_bani: suppTotal, lines: sup.lines }, units: parts.map((x) => ({ unit_no: x.u ? x.u.unit_no : 0, name: x.u ? x.u.name : null, total_bani: x.q.totalBani, nights: x.q.nights })) };
       const active = (await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_reservations WHERE status = 'hold' AND hold_until > now() AND (lower(guest_email) = $1 OR guest_phone = $2)`, [email, phone])).rows[0].c;
       if (active >= 2) return res.status(429).json({ error: "prea_multe_blocari" });
       let token = crypto.randomBytes(32).toString("hex"), access = sha(token);
@@ -244,10 +282,10 @@ module.exports = function mountPublic(r, c) {
     const base = L.baseUrlFor(req), link = `${base}/cazare/rezervare/${token}`;
     const period = `${dRo(done.ci)} – ${dRo(done.co)}`;
     await sendMail(done.guest_email, "Rezervare confirmată · " + done.listing_name,
-      `<p>Bună, ${E(done.guest_name)},</p><p>Rezervarea ta la <b>${E(done.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${done.guests} persoane${roomsOf(done.nights_snapshot)}<br>Total: <b>${fmtRon(done.total_bani)}</b> (se achită direct la proprietate, conform înțelegerii cu gazda)</p>${FORMS ? `<p>Înainte de sosire, completează <a href="${base}/cazare/fisa/${token}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi sau anulează rezervarea</a></p>`);
+      `<p>Bună, ${E(done.guest_name)},</p><p>Rezervarea ta la <b>${E(done.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${peopleTxt(done.nights_snapshot, done.guests)}${roomsOf(done.nights_snapshot)}<br>Total: <b>${fmtRon(done.total_bani)}</b> (se achită direct la proprietate, conform înțelegerii cu gazda)</p>${FORMS ? `<p>Înainte de sosire, completează <a href="${base}/cazare/fisa/${token}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi sau anulează rezervarea</a></p>`);
     await require("./bookings-gazda-notify").pushByListing(done.listing_id, { title: "Rezervare nouă", body: done.guest_name + " · " + dRo(done.ci) + " – " + dRo(done.co) + " · " + done.guests + " pers.", tag: "gz-r" + done.id });
     await sendMail(done.owner_email, "Rezervare nouă · " + done.listing_name,
-      `<p>Ai o rezervare nouă confirmată la <b>${E(done.listing_name)}</b>.</p><p>${E(done.guest_name)} · ${E(done.guest_phone)} · ${E(done.guest_email)}<br>Perioada: ${period} · ${done.guests} persoane${roomsOf(done.nights_snapshot)} · ${fmtRon(done.total_bani)}</p><p>Zilele s-au blocat automat în calendar. O vezi în contul tău, la Rezervări.</p>`);
+      `<p>Ai o rezervare nouă confirmată la <b>${E(done.listing_name)}</b>.</p><p>${E(done.guest_name)} · ${E(done.guest_phone)} · ${E(done.guest_email)}<br>Perioada: ${period} · ${peopleTxt(done.nights_snapshot, done.guests)}${roomsOf(done.nights_snapshot)} · ${fmtRon(done.total_bani)}</p><p>Zilele s-au blocat automat în calendar. O vezi în contul tău, la Rezervări.</p>`);
     noStore(res); res.json({ ok: true, link });
   });
 
@@ -283,7 +321,7 @@ module.exports = function mountPublic(r, c) {
         else if (row.pay_status === "forfeited") payTxt = `suma plătită (${paid}) nu se returnează`;
         else payTxt = `plătit ${paid}`;
       }
-      const body = `<h1>${E(row.listing_name)}</h1><p class="sub">Rezervarea ta</p><div class="card"><b>${row.status === "confirmed" ? "Confirmată" : "Anulată"}</b><div class="sub" style="margin-top:6px">${dRo(row.ci)} – ${dRo(row.co)} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: ${fmtRon(row.total_bani)} (${payTxt})</div>
+      const body = `<h1>${E(row.listing_name)}</h1><p class="sub">Rezervarea ta</p><div class="card"><b>${row.status === "confirmed" ? "Confirmată" : "Anulată"}</b><div class="sub" style="margin-top:6px">${dRo(row.ci)} – ${dRo(row.co)} · ${peopleTxt(row.nights_snapshot, row.guests)}${roomsOf(row.nights_snapshot)}<br>Total: ${fmtRon(row.total_bani)} (${payTxt})</div>
 ${row.status === "confirmed" && FORMS && row.ci >= core.todayRo() ? `<div style="margin-top:10px"><a href="/cazare/fisa/${req.params.token}">Completează fișa de cazare</a> <span class="sub">(obligatorie, pentru fiecare oaspete)</span></div>` : ""}${online && row.guarantee_bani > 0 && row.status === "confirmed" ? `<div class="sub" style="margin-top:6px">Garanție ${fmtRon(row.guarantee_bani)}: ${{ pending: "se blochează pe card cu o zi înainte de sosire", held: "blocată pe card (nu se debitează)", failed: "nu a putut fi blocată; te înțelegi cu gazda", released: "eliberată", claimed: "reținută parțial/total de gazdă" }[row.guarantee_status] || ""}</div>` : ""}
 ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" type="button">Anulează rezervarea</button></div><div class="msg" id="m"></div>` : ""}</div>`;
       const warn = online ? "Sigur anulezi rezervarea? Conform condițiilor acceptate la plată, suma plătită NU se returnează. Camera se eliberează imediat." : "Sigur anulezi rezervarea? Camera se eliberează imediat.";
@@ -316,7 +354,7 @@ ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" 
       const rows = (await dbPool.query(
         `SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, to_char(r.confirmed_at,'YYYY-MM-DD HH24:MI') AS conf
            FROM booking_reservations r WHERE r.listing_id = $1 AND r.status IN ('confirmed','cancelled') AND r.check_out >= (now() AT TIME ZONE 'Europe/Bucharest')::date - 30 ORDER BY r.check_in DESC LIMIT 200`, [req.listing.id])).rows
-        .map((x) => ({ id: x.id, unit_ids: x.unit_ids, status: x.status, check_in: x.ci, check_out: x.co, guests: x.guests, total_bani: x.total_bani, commission_bani: x.commission_bani, guest_name: x.guest_name, guest_phone: x.guest_phone, guest_email: x.guest_email, confirmed_at: x.conf,
+        .map((x) => ({ id: x.id, unit_ids: x.unit_ids, status: x.status, check_in: x.ci, check_out: x.co, guests: x.guests, party_text: x.nights_snapshot && x.nights_snapshot.party && Array.isArray(x.nights_snapshot.party.ages) ? PARTY.partyText(x.nights_snapshot.party.adults, x.nights_snapshot.party.ages) : "", total_bani: x.total_bani, commission_bani: x.commission_bani, guest_name: x.guest_name, guest_phone: x.guest_phone, guest_email: x.guest_email, confirmed_at: x.conf,
           pay_scheme: x.pay_scheme || "direct", pay_status: x.pay_status || "none", paid_bani: x.paid_bani || 0,
           guarantee_bani: x.guarantee_bani || 0, guarantee_status: x.guarantee_status || "none", guarantee_claimed_bani: x.guarantee_claimed_bani || 0, refused: !!x.refusal_code }));
       noStore(res); res.json({ reservations: rows });
@@ -364,10 +402,10 @@ ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" 
   });
 
   // ---------- camping: rute și pagină proprii (locuri pe tip, cu stoc) ----------
-  const camp = require("./bookings-camp-public")(r, { dbPool, core, L, jsonOnly, noStore, toId, cleanText, sendMail, E, dRo, newCode, codeHash, sha, ipKey, HOLD_MIN, LIVE, SECRET, FORMS, page: () => ({ html: PUB_HTML, base: PUB_BASE, boot: PUB_BOOT }), pay });
+  const camp = require("./bookings-camp-public")(r, { dbPool, core, L, jsonOnly, noStore, toId, cleanText, sendMail, E, dRo, newCode, codeHash, sha, ipKey, HOLD_MIN, LIVE, SECRET, FORMS, page: () => ({ partyHtml: PARTY_HTML, html: PUB_HTML, base: PUB_BASE, boot: PUB_BOOT }), pay });
 
   // ---------- pagina publică de rezervare ----------
-  const PUB_BASE = COMMON_JS + `
+  const PUB_BASE = COMMON_JS + PARTY.CLIENT_JS + `
 const LID=Number(location.pathname.split('/').pop());const P='/api/rezervari/public/'+LID;
 const MSG={indisponibil:'Perioada nu mai este liberă.',data_trecuta:'Data aleasă a trecut.',prea_aproape:'Rezervarea instant nu este disponibilă pentru data aleasă. Contactează pensiunea.',check_in_nepermis:'În ziua aleasă nu se poate face check-in.',check_out_nepermis:'În ziua aleasă nu se poate face check-out.',prea_multi_oaspeti:'Prea multe persoane pentru această proprietate.',fara_pret:'Prețul nu este setat încă.',date_invalide:'Date invalide.',prea_multe_cereri:'Prea multe încercări. Încearcă peste câteva minute.',prea_multe_blocari:'Ai deja două rezervări în curs.',email_esuat:'Nu am putut trimite codul pe e-mail. Verifică adresa.',expirat:'Timpul a expirat. Alege din nou perioada.',cod_gresit:'Cod greșit.',prea_multe_incercari:'Prea multe încercări greșite.',asteapta:'Așteaptă puțin înainte de a cere alt cod.',oferta_invalida:'Oferta nu mai este valabilă.'};
 const tr=(c)=>{if(/^sedere_minima:/.test(c))return 'Ședere minimă: '+c.split(':')[1]+' nopți.';return MSG[c]||c;};
@@ -386,10 +424,21 @@ const inr=ci&&co&&s>=ci&&s<co;const c=el('div',{class:(isFull(s)?'s2':'')+(s<inf
 c.addEventListener('click',()=>pick(s));g.append(c);}
 $('#mname').textContent=RO[month.getUTCMonth()]+' '+month.getUTCFullYear();}
 function pick(s){if(s<info.today)return;if(!ci||(ci&&co)){if(isFull(s)||s<minDay())return;ci=s;co=null;}else if(s>ci){co=s;}else{if(isFull(s)||s<minDay())return;ci=s;}render();quote();}
+function party(){const a=Number($('#adults').value)||1;const ag=[...document.querySelectorAll('#ages select')].map(x=>x.value);return {a,ag,ok:ag.every(v=>v!=='')};}
+function bedN(kids,pt){return pt.a+pt.ag.filter(v=>{const b=kids?classify(kids,Number(v)):null;return !(b&&b.nobed);}).length;}
+function spLines(sp){return sp.lines.map(l=>(l.count>1?l.count+' × ':'')+l.label+' '+(l.perNightBani/100)+' RON/noapte').join(', ');}
+function kidsInfo(){const k=info&&info.kids,b=$('#kidsinfo');if(!b)return;if(!k||(!(k.bands||[]).length&&k.adultExtra==null)){b.textContent='';return;}
+const parts=(k.bands||[]).map(x=>{const age=x.from===x.to?x.from+' ani':x.from+'–'+x.to+' ani';return age+': '+(x.mode==='free'?'gratuit':x.mode==='pct'?x.value+'% din prețul adultului':(x.value+' RON/noapte'))+(x.nobed?' (pătuț)':'');});
+if(k.adultExtra!=null)parts.push('adult în plus: '+k.adultExtra+' RON/noapte');b.textContent='Copii și persoane în plus: '+parts.join(' · ');}
+function ageUi(){const n=Number($('#kidsn').value)||0,box=$('#ages');const old=[...box.querySelectorAll('select')].map(x=>x.value);box.replaceChildren();for(let i=0;i<n;i++){const x=el('select',{class:'age'});x.append(el('option',{value:''},['Vârsta copilului '+(i+1)]));for(let a=0;a<=17;a++)x.append(el('option',{value:String(a)},[a===0?'sub 1 an':(a===1?'1 an':a+' ani')]));if(old[i]!==undefined)x.value=old[i];x.onchange=partyChanged;box.append(x);}partyChanged();}
+function partyChanged(){const pt=party();$('#guests').value=String(pt.a+pt.ag.length);if(ci&&co)quote();}
 async function quote(){const m=$('#qmsg');$('#go').disabled=true;$('#rooms').replaceChildren();rooms=null;if(!ci||!co){say(m,ci?'Alege data de plecare.':'Alege data de sosire.',true);return;}
-try{const q=await call('GET',P+'/oferta?checkin='+ci+'&checkout='+co+'&guests='+$('#guests').value);
+const pt=party();if(!pt.ok){say(m,'Alege vârsta fiecărui copil.',true);return;}
+try{const q=await call('GET',P+'/oferta?checkin='+ci+'&checkout='+co+'&adults='+pt.a+'&ages='+pt.ag.join(','));
 if(q.units&&q.units.length){rooms=q;renderRooms();return;}
-if(q.ok){say(m,q.nights+' nopți · total '+(q.totalBani/100)+' RON',true);$('#go').disabled=false;}else say(m,q.errors.map(tr).join(' '),false);}catch(e){say(m,e.message,false);}}
+if(q.ok){const sp=q.kids?supp(q.kids,{included:q.included,max:q.max,perPerson:q.perPerson},pt.a,pt.ag.map(Number)):{ok:true,perNightBani:0,lines:[]};
+if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*q.nights;
+say(m,q.nights+' nopți · total '+((q.totalBani+extra)/100)+' RON'+(extra?' (inclusiv familie: '+spLines(sp)+')':''),true);$('#go').disabled=false;}else say(m,q.errors.map(tr).join(' '),false);}catch(e){say(m,e.message,false);}}
 function renderRooms(){const box=$('#rooms');box.replaceChildren();const avail=rooms.units.filter(u=>u.ok);
 box.append(el('div',{class:'sub'},['Alege camera sau camerele:']));
 rooms.units.forEach(u=>{const cb=el('input',{type:'checkbox',id:'rm'+u.no,style:'width:20px;height:20px;margin:0'});cb.disabled=!u.ok;cb.onchange=sum;
@@ -397,17 +446,19 @@ box.append(el('label',{style:'display:flex;gap:10px;align-items:center;font-weig
 if(rooms.units.length>1){const all=el('button',{class:'s',type:'button'},['Toată pensiunea']);all.disabled=avail.length!==rooms.units.length;all.onclick=()=>{rooms.units.forEach(u=>{$('#rm'+u.no).checked=true;});sum();};if(rooms.wholeDiscountBps)all.textContent='Toată pensiunea (-'+(rooms.wholeDiscountBps/100)+'%)';box.append(el('div',{class:'row',style:'margin-top:8px'},[all]));}
 sum();}
 function picked(){return rooms?rooms.units.filter(u=>$('#rm'+u.no)&&$('#rm'+u.no).checked):[];}
-function sum(){const m=$('#qmsg'),p=picked(),g=Number($('#guests').value)||1;$('#go').disabled=true;
+function sum(){const m=$('#qmsg'),p=picked(),pt=party(),g=bedN(rooms.kids,pt);$('#go').disabled=true;
 if(!p.length){const any=rooms.units.some(u=>u.ok);say(m,any?'Bifează camerele dorite.':((rooms.units[0].errors||[]).map(tr).join(' ')||'Nicio cameră liberă în perioada aleasă.'),any);return;}
-const cap=p.reduce((a,u)=>a+u.capacity,0);let tot=p.reduce((a,u)=>a+u.totalBani,0);const whole=rooms.units.length>1&&p.length===rooms.units.length&&rooms.wholeDiscountBps;const disc=whole?Math.round(tot*rooms.wholeDiscountBps/10000):0;tot-=disc;
+const cap=p.reduce((a,u)=>a+u.capacity,0);let tot=p.reduce((a,u)=>a+u.totalBani,0);const tot0=tot;const whole=rooms.units.length>1&&p.length===rooms.units.length&&rooms.wholeDiscountBps;const disc=whole?Math.round(tot*rooms.wholeDiscountBps/10000):0;tot-=disc;
 if(g>cap){say(m,'Camerele alese au loc pentru '+cap+' persoane. Alege încă o cameră sau mai puține persoane.',false);return;}
-say(m,rooms.nights+' nopți · total '+(tot/100)+' RON'+(disc?' (reducere toată pensiunea: -'+(disc/100)+' RON)':''),true);$('#go').disabled=false;}
+const nn=rooms.nights,inc=p.reduce((a,u)=>a+(u.included||u.capacity),0);const sp=rooms.kids?supp(rooms.kids,{included:inc,max:cap,perPerson:nn&&inc?Math.round(tot0/nn/inc):0},pt.a,pt.ag.map(Number)):{ok:true,perNightBani:0,lines:[]};
+if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*nn;tot+=extra;
+say(m,nn+' nopți · total '+(tot/100)+' RON'+(disc?' (reducere toată pensiunea: -'+(disc/100)+' RON)':'')+(extra?' · familie: '+spLines(sp):''),true);$('#go').disabled=false;}
 $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadMonth();};
 $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadMonth();};
-$('#guests').onchange=quote;
+if($('#adults')){$('#adults').onchange=partyChanged;$('#kidsn').onchange=ageUi;}
 $('#go').onclick=()=>{$('#s1').hidden=true;$('#s2').hidden=false;};
 $('#back').onclick=()=>{$('#s2').hidden=true;$('#s1').hidden=false;};
-$('#hold').onclick=async()=>{const m=$('#dmsg');$('#hold').disabled=true;try{const j=await call('POST',P+'/blocheaza',{checkin:ci,checkout:co,guests:Number($('#guests').value),units:picked().map(u=>u.no),name:$('#gname').value,phone:$('#gphone').value,email:$('#gemail').value,consent:$('#gok').checked});
+$('#hold').onclick=async()=>{const m=$('#dmsg');$('#hold').disabled=true;try{const j=await call('POST',P+'/blocheaza',{checkin:ci,checkout:co,adults:party().a,ages:party().ag.map(Number),units:picked().map(u=>u.no),name:$('#gname').value,phone:$('#gphone').value,email:$('#gemail').value,consent:$('#gok').checked});
 tok=j.token;rid=j.id;$('#s2').hidden=true;$('#s3').hidden=false;$('#cemail').textContent=$('#gemail').value;countdown(new Date(j.holdUntil));}catch(e){say(m,e.message,false);}$('#hold').disabled=false;};
 function countdown(end){clearInterval(timer);const t=()=>{const s=Math.max(0,Math.floor((end-Date.now())/1000));$('#timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(!s){clearInterval(timer);say($('#cmsg'),tr('expirat'),false);$('#conf').disabled=true;}};t();timer=setInterval(t,1000);}
 $('#conf').onclick=async()=>{const m=$('#cmsg');try{const j=await call('POST','/api/rezervari/public/rezervare/'+rid+'/confirma',{token:tok,code:$('#code').value});clearInterval(timer);$('#s3').hidden=true;if(j.pay){startPay(j);}else{$('#s4').hidden=false;$('#mylink').href=j.link||'#';}}catch(e){say(m,e.message+(e.data&&e.data.remaining!=null?' Mai ai '+e.data.remaining+' încercări.':''),false);}};
@@ -427,11 +478,19 @@ for(let i=0;i<40;i++){try{const s=await call('GET','/api/rezervari/public/rezerv
 if(s.status==='cancelled'||s.status==='expired'){say(m,'Rezervarea nu a putut fi confirmată. Dacă ai fost taxat, suma se returnează automat.',false);return;}}catch(e){}await new Promise(ok=>setTimeout(ok,1500));}
 say(m,'Încă procesăm plata. Vei primi un e-mail de confirmare; poți verifica și pe pagina rezervării.',true);$('#mylink').href='/cazare/rezervare/'+tok;$('#s4').hidden=false;$('#s4t').textContent='Plata se procesează. Vei primi confirmarea pe e-mail.';}
 `;
-  const PUB_BOOT = "(function(){const n=new Date();month=new Date(Date.UTC(n.getFullYear(),n.getMonth(),1));loadMonth().catch(e=>say($('#qmsg'),'Rezervarea nu este disponibilă.',false));})();";
+  const PUB_BOOT = "(function(){const n=new Date();month=new Date(Date.UTC(n.getFullYear(),n.getMonth(),1));"
+    + "async function prefill(){try{if(!$('#adults'))return;const u=new URLSearchParams(location.search);const a=Number(u.get('adulti'));if(a>=1&&a<=10)$('#adults').value=String(a);"
+    + "const ag=(u.get('varste')||'').split(',').filter(x=>x!=='');"
+    + "if(ag.length&&ag.length<=6&&ag.every(x=>/^[0-9]{1,2}$/.test(x)&&Number(x)<=17)){$('#kidsn').value=String(ag.length);ageUi();[...document.querySelectorAll('#ages select')].forEach((s,i)=>{s.value=ag[i];});}"
+    + "const c1=u.get('checkin'),c2=u.get('checkout');"
+    + "if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(c1||'')&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(c2||'')&&c2>c1&&c1>=info.today){ci=c1;co=c2;month=new Date(Date.UTC(Number(c1.slice(0,4)),Number(c1.slice(5,7))-1,1));await loadMonth();render();}"
+    + "partyChanged();}catch(e){}}"
+    + "loadMonth().then(function(){kidsInfo();return prefill();}).catch(e=>say($('#qmsg'),'Rezervarea nu este disponibilă.',false));})();";
   const PUB_JS = PUB_BASE + PUB_BOOT;
+  const PARTY_HTML = '<div class="row" style="gap:10px"><label style="flex:1">Adulți<select id="adults"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label><label style="flex:1">Copii (0–17 ani)<select id="kidsn"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label></div><div id="ages"></div><div id="kidsinfo" class="sub"></div><input id="guests" type="hidden" value="2">';
   const PUB_HTML = `<h1 id="nm">Rezervare</h1><p class="sub" id="psub">Rezervare instant. Plata se face direct la proprietate.</p>
 <div id="s1"><div class="card"><div class="row" style="align-items:center"><button class="s" id="prev" type="button">‹</button><b id="mname" style="text-align:center"></b><button class="s" id="next" type="button">›</button></div><div class="cal" id="cal" style="margin-top:10px"></div><div class="leg"><span>Albastru = ocupat</span><span>Portocaliu = alegerea ta</span></div>
-<label>Persoane<input id="guests" type="number" min="1" max="100" value="2"></label><div id="rooms" style="margin-top:8px"></div><div class="msg" id="qmsg"></div><div class="row" style="margin-top:8px"><button id="go" type="button" disabled>Continuă</button></div></div></div>
+${PARTY_HTML}<div id="rooms" style="margin-top:8px"></div><div class="msg" id="qmsg"></div><div class="row" style="margin-top:8px"><button id="go" type="button" disabled>Continuă</button></div></div></div>
 <div id="s2" hidden><div class="card"><h2>Datele tale</h2><label>Nume complet<input id="gname" maxlength="80" autocomplete="name"></label><label>Telefon<input id="gphone" maxlength="25" inputmode="tel" autocomplete="tel" placeholder="07xx xxx xxx"></label><label>E-mail (primești codul de confirmare)<input id="gemail" type="email" maxlength="160" autocomplete="email"></label>
 <label style="display:flex;gap:8px;align-items:flex-start;font-weight:500"><input id="gok" type="checkbox" style="width:20px;height:20px;margin-top:2px;flex:none"><span>Sunt de acord ca datele mele să fie transmise gazdei pentru această rezervare și accept termenii și politica de confidențialitate.</span></label>
 <div class="row" style="margin-top:10px"><button class="s" id="back" type="button">Înapoi</button><button id="hold" type="button">Trimite codul</button></div><div class="msg" id="dmsg"></div></div></div>
