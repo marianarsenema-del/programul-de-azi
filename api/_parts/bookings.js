@@ -241,7 +241,7 @@ payNote();}catch(e){}}
 $('#pmo').onchange=$('#pmd').onchange=payNote;
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 async function loadResv(){const j=await api('GET',B+'/rezervari');let fm=null;try{fm=(await api('GET',B+'/fise-rezumat')).forms||{};}catch(e){}const box=$('#resv');box.replaceChildren();if(!j.reservations.length)box.append(el('div',{class:'sub'},['Nu ai încă rezervări.']));
-j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+(()=>{const c={};x.unit_ids.forEach(n=>{const k=n>=1000?Math.floor(n/1000):n;c[k]=(c[k]||0)+1;});return Object.keys(c).map(k=>(c[k]>1?c[k]+' × ':'')+unitName(Number(k))).join(', ');})():'')+' · '+x.guests+' pers. · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'')+(x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status)+' ('+(x.paid_bani/100)+' RON)':'');
+j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+(()=>{const c={};x.unit_ids.forEach(n=>{const k=n>=1000?Math.floor(n/1000):n;c[k]=(c[k]||0)+1;});return Object.keys(c).map(k=>(c[k]>1?c[k]+' × ':'')+unitName(Number(k))).join(', ');})():'')+' · '+(x.party_text||(x.guests+' pers.'))+' · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'')+(x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status)+' ('+(x.paid_bani/100)+' RON)':'');
 const kids=[el('b',{},[x.guest_name+(x.status==='cancelled'?(x.refused?' · refuzată de gazdă':' · anulată'):'')]),el('div',{class:'sub'},[info]),el('div',{class:'sub'},[x.guest_phone+' · '+x.guest_email])];
 if(x.status==='confirmed'){const b=el('button',{class:'d',type:'button'},['Anulează']);b.onclick=async()=>{if(!confirm('Anulezi rezervarea lui '+x.guest_name+'? Zilele se eliberează și turistul primește e-mail.'+(x.pay_scheme&&x.pay_scheme!=='direct'&&x.paid_bani?' Suma plătită se returnează integral turistului.':'')))return;try{await api('POST',B+'/rezervari/'+x.id+'/anuleaza',{});loadResv();loadCal();}catch(e){alert({plata_efectuata:'Banii au fost deja virați; nu se mai poate anula automat. Contactează-ne.',rambursare_esuata:'Rambursarea a eșuat. Încearcă din nou în câteva minute.'}[e.message]||e.message);}};kids.push(el('div',{class:'row'},[b]));}
 if(fm&&x.status==='confirmed'){const n=fm[x.id]||0;const fr=el('div',{class:'sub'},['Fișe de cazare: '+n+' din '+x.guests+' ']);if(n)fr.append(el('a',{href:'/cont/rezervari/'+LID+'/fisa/'+x.id,target:'_blank',rel:'noopener'},['Vezi fișele']));kids.push(fr);}
@@ -511,6 +511,22 @@ module.exports = function mountBookings(app) {
       res.json({ ok: true });
     } catch (e) { console.error("rezervari pret-camera:", e.message); res.status(500).json({ error: "eroare" }); }
   });
+  // copii și persoane în plus: aceleași reguli ca în formularul cazării (type_details.kids)
+  r.get("/api/rezervari/:id/copii", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const j = await sync.getKids(req.listing.id);
+      if (!j) return res.status(404).json({ error: "negasit" });
+      noStore(res); res.json(j);
+    } catch (e) { console.error("rezervari copii get:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  r.post("/api/rezervari/:id/copii", ...ownerApi, ownListing, async (req, res) => {
+    try {
+      const out = await sync.setKids(req.listing.id, (req.body || {}).kids);
+      if (out.error === "date_invalide") return res.status(400).json({ error: "Verifică intervalele de vârstă: să nu se suprapună și să fie cel mult 3." });
+      if (out.error) return res.status(404).json({ error: "negasit" });
+      res.json({ ok: true, kids: out.kids });
+    } catch (e) { console.error("rezervari copii post:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
   // camping: tipurile de loc, prețurile și taxele pe persoană, ca în formularul cazării
   r.get("/api/rezervari/:id/camping", ...ownerApi, ownListing, async (req, res) => {
     try {
@@ -743,6 +759,8 @@ module.exports = function mountBookings(app) {
       await dbPool.query(`DELETE FROM booking_calendar_days WHERE day < (now() AT TIME ZONE 'Europe/Bucharest')::date - 1 OR (status = 3 AND blocked_until < now() - interval '1 hour')`);
       await dbPool.query(`DELETE FROM booking_sync_log WHERE at < now() - interval '30 days'`);
       await cleanupHolds();
+      // datele personale ale turiștilor se anonimizează la 3 ani după check-out (termenul general de prescripție); cifrele rămân pentru evidențe
+      try { const an = await dbPool.query(`UPDATE booking_reservations SET guest_name = '[anonimizat]', guest_phone = '', guest_email = '', ip_hash = '' WHERE check_out < (now() AT TIME ZONE 'Europe/Bucharest')::date - 1095 AND (guest_email <> '' OR guest_phone <> '')`); stats.anonymized = an.rowCount; } catch (e) { console.error("rezervari cron anonimizare:", e.message); }
       try { stats.forms = await forms.cron(); } catch (e) { console.error("rezervari cron fise:", e.message); }
       try { stats.gazda = await require("./bookings-gazda-notify").cron(); } catch (e) { console.error("rezervari cron gazda:", e.message); }
       res.json({ ok: true, ...stats });
