@@ -204,7 +204,7 @@ module.exports = function mountCampPublic(r, h) {
 
   function pageHtml() {
     const PUB_HTML = page().html;
-    const a = '<label>Persoane<input id="guests" type="number" min="1" max="100" value="2"></label><div id="rooms" style="margin-top:8px"></div>';
+    const a = page().partyHtml + '<div id="rooms" style="margin-top:8px"></div>';
     const b = '<input id="guests" type="hidden" value="2"><div id="campbox" style="margin-top:8px"></div>';
     if (!PUB_HTML.includes(a)) { console.error("rezervari camp: pagina nu s-a putut adapta"); return null; }
     return PUB_HTML.replace(a, b).replace("Camera îți este ținută", "Locurile îți sunt ținute").replace("Camera îți este ținută", "Locurile îți sunt ținute");
