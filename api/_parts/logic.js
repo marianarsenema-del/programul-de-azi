@@ -6952,7 +6952,8 @@ function typeDetailsClientDef(lang) {
 }
 
 
-function sanitizeHotelDetails(raw) {
+function sanitizeHotelDetails(raw, opts) {
+  const big = !!(opts && opts.big); // hotel mare: rezervări pe stoc, pe tip de cameră (tid stabil 1–32)
   if (!raw || typeof raw !== "object") return null;
   const pick = (map, v) => (typeof v === "string" && map[v] ? v : "");
   const filt = (map, arr, max) => (Array.isArray(arr) ? arr.filter((k) => map[k]).slice(0, max || 30) : []);
@@ -6962,7 +6963,7 @@ function sanitizeHotelDetails(raw) {
     if (!rt || typeof rt !== "object") return null;
     const name = typeof rt.name === "string" ? rt.name.trim().slice(0, 80) : "";
     if (!name) return null;
-    const count = Number.isInteger(rt.count) && rt.count >= 1 && rt.count <= 500 ? rt.count : 1;
+    const count = Number.isInteger(rt.count) && rt.count >= 1 && rt.count <= (big ? 999 : 500) ? rt.count : 1;
     // apartament / suită cu mai multe încăperi (2–3): fiecare încăpere e dormitor sau living, cu paturile ei
     let spaces = (Array.isArray(rt.spaces) ? rt.spaces : []).slice(0, 3).map((sp) => ({ kind: sp && sp.kind === "living" ? "living" : "dormitor", beds: filt(HOTEL_BEDS, sp && sp.beds, 5) }));
     if (spaces.length < 2) spaces = [];
@@ -6973,7 +6974,7 @@ function sanitizeHotelDetails(raw) {
     }
     const allBeds = spaces.length ? [...new Set(spaces.reduce((a, sp) => a.concat(sp.beds), []))] : filt(HOTEL_BEDS, rt.beds, 5);
     return {
-      name, count,
+      name, count, tid: Number.isInteger(rt.tid) && rt.tid >= 1 && rt.tid <= 32 ? rt.tid : 0,
       adults: typeof rt.adults === "string" ? rt.adults.slice(0, 3) : "2",
       children: typeof rt.children === "string" ? rt.children.slice(0, 3) : "0",
       spaces,
@@ -6982,7 +6983,19 @@ function sanitizeHotelDetails(raw) {
       price: num(rt.price, 0, 1000000),
       photos: urls(rt.photos, HOTEL_ROOM_PHOTO_MAX),
     };
-  }).filter(Boolean).slice(0, 40);
+  }).filter(Boolean).slice(0, big ? 32 : 40);
+  let tidSeq = 0;
+  if (big) { // numere stabile și unice; cele lipsă primesc următorul număr (nu se refolosesc cât timp mai sunt libere)
+    const seen = new Set();
+    roomTypes.forEach((rt) => { if (rt.tid && !seen.has(rt.tid)) seen.add(rt.tid); else rt.tid = 0; });
+    tidSeq = Math.max(Number.isInteger(raw.tidSeq) ? Math.min(raw.tidSeq, 32) : 0, ...seen, 0);
+    roomTypes.forEach((rt) => {
+      if (rt.tid) return;
+      let n = tidSeq + 1;
+      if (n > 32 || seen.has(n)) { n = 1; while (n <= 32 && seen.has(n)) n++; }
+      rt.tid = n <= 32 ? n : 0; if (rt.tid) { seen.add(n); if (n > tidSeq) tidSeq = n; }
+    });
+  } else roomTypes.forEach((rt) => { delete rt.tid; });
   const r = raw.restaurant && typeof raw.restaurant === "object" ? raw.restaurant : {};
   const restaurant = {
     has: r.has === true,
@@ -7007,6 +7020,7 @@ function sanitizeHotelDetails(raw) {
     facilities: filt(HOTEL_FACILITIES, raw.facilities, 10),
     roomTypes,
     restaurant,
+    ...(big ? { tidSeq } : {}),
   };
 }
 
