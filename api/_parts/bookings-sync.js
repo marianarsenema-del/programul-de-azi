@@ -183,20 +183,20 @@ module.exports = function (dbPool) {
   // ---------- copii și persoane în plus: politica din formular (type_details.kids) ----------
   async function getKids(id) {
     const r = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
-    if (!r || !SYNC_TYPES.includes(r.type) || r.type === MARE) return null; // la hotelul mare rezervarea e pe stoc: fără politica de copii pe bandă de vârstă
+    if (!r || !SYNC_TYPES.includes(r.type)) return null;
     const td = parseTd(r.type_details);
-    return { type: r.type, hotel: r.type === HOTEL, kids: PARTY.sanitizeKids(td.kids) };
+    return { type: r.type, hotel: r.type === HOTEL || r.type === MARE, kids: PARTY.sanitizeKids(td.kids) };
   }
   async function setKids(id, raw) {
     const r = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0];
-    if (!r || !SYNC_TYPES.includes(r.type) || r.type === MARE) return { error: "negasit" };
+    if (!r || !SYNC_TYPES.includes(r.type)) return { error: "negasit" };
     const want = raw && typeof raw === "object" ? raw : null;
     const clean = want ? PARTY.sanitizeKids(want) : null;
     const given = want && Array.isArray(want.bands) ? want.bands.length : 0;
     if (want && given > PARTY.MAX_BANDS) return { error: "date_invalide" };
     if (clean && clean.bands.length < given) return { error: "date_invalide" }; // intervale suprapuse sau greșite: nu le tăcem
     const td = parseTd(r.type_details);
-    if (r.type === HOTEL && clean) clean.included = null; // la hotel „incluse” = adulții din tipul de cameră
+    if ((r.type === HOTEL || r.type === MARE) && clean) clean.included = null; // la hotel „incluse” = adulții din tipul de cameră
     if (clean) td.kids = clean; else delete td.kids;
     await dbPool.query(`UPDATE accommodation_listings SET type_details = $2 WHERE id = $1::integer`, [id, JSON.stringify(td)]);
     return { ok: true, kids: clean };
