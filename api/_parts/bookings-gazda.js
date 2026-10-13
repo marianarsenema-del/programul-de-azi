@@ -526,7 +526,7 @@ async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{
  let pl=null;try{pl=await api('GET',B()+'/plan');}catch(e){pl=null;}
  let pen=null;if(pl&&pl.mode&&!pl.hotel){try{pen=await api('GET',B()+'/pensiune');}catch(e){pen=null;}}
  let cj=null;if(t.camp){try{cj=await api('GET',B()+'/camping');}catch(e){cj=null;}}
- v.append(cj?campCard(t,cj):pricesCard(t,pl,pen));if(!cj){try{const kj=await api('GET',B()+'/copii');v.append(kidsCard(kj));}catch(e){}}if((!cj||cj.hotel)&&pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
+ v.append(cj?campCard(t,cj):pricesCard(t,pl,pen));if(!cj||cj.hotel){try{const kj=await api('GET',B()+'/copii');v.append(kidsCard(kj));}catch(e){}}if((!cj||cj.hotel)&&pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
  const m1=el('div',{class:'msg'});const sv=el('button',{type:'button'},['Salvează']);
