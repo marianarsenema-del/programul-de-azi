@@ -24,9 +24,21 @@ const slotId = (typeNo, slot) => typeNo * SLOT + slot;
 const typeOfUnit = (unitId) => (unitId >= SLOT ? Math.floor(unitId / SLOT) : unitId);
 const typeDef = (no) => TYPES.find((t) => t.no === no) || null;
 
+// hotel mare: fiecare tip de cameră din formular (cu număr stabil `tid`, 1–32) este un tip cu stoc; prețul e pe cameră / noapte, fără taxe pe persoană
+function hotelModel(td) {
+  const rts = (Array.isArray(td.roomTypes) ? td.roomTypes : []).filter((rt) => rt && rt.name && Number.isInteger(rt.tid) && rt.tid >= 1 && rt.tid <= 32);
+  const prices = rts.map((rt) => num(rt.price)).filter(Boolean);
+  const cheapest = prices.length ? Math.min(...prices) : null;
+  const types = rts.map((rt) => ({
+    no: rt.tid, key: "rt" + rt.tid, name: String(rt.name).slice(0, 60), kind: "unit", stock: Math.min(MAX_STOCK, Math.max(1, parseInt(rt.count, 10) || 1)),
+    price: num(rt.price) || cheapest, priceFull: null, cap: Math.min(50, Math.max(1, (parseInt(rt.adults, 10) || 0) + (parseInt(rt.children, 10) || 0))), electricPaid: false,
+  }));
+  return { types, fees: { adult: 0, child: 0, car: 0, electric: 0, pet: 0 }, bookable: types.filter((x) => x.stock >= 1 && x.price), hotel: true, unitWord: "camere" };
+}
 // tipurile rezervabile din formular + tarifele pe persoană (în RON, ca în formular)
 function campModel(tdIn) {
   const td = parseTd(tdIn);
+  if (Array.isArray(td.roomTypes) && !td.tents && !td.caravans && !td.units) return hotelModel(td);
   const t = td.tents && typeof td.tents === "object" ? td.tents : {};
   const c = td.caravans && typeof td.caravans === "object" ? td.caravans : {};
   const f = td.fees && typeof td.fees === "object" ? td.fees : {};
@@ -48,7 +60,7 @@ function campModel(tdIn) {
     types.push({ no: d.no, key: d.key, name: d.name, kind: "unit", stock: Math.min(MAX_STOCK, parseInt(u.count, 10) || 1), price: num(u.price), priceFull: null, cap: Math.min(50, Math.max(1, parseInt(u.capacity, 10) || 2)), electricPaid: false });
   });
   const fees = { adult: num(f.adult) || 0, child: num(f.child) || 0, car: num(f.car) || 0, electric: num(f.electric) || 0, pet: num(f.pet) || 0 };
-  return { types, fees, bookable: types.filter((x) => x.stock >= 1 && x.price) };
+  return { types, fees, bookable: types.filter((x) => x.stock >= 1 && x.price), hotel: false, unitWord: "locuri" };
 }
 
 // ---------- ofertă ----------
@@ -153,9 +165,9 @@ function snapshotOf(model, qt, pairs, guests) {
     if (!bySlot.has(id)) bySlot.set(id, []);
     bySlot.get(id).push({ day, price_bani: priceOf.get(typeOfUnit(id) + "|" + day) || 0 });
   });
-  const unitsArr = [...bySlot.entries()].map(([id, nights]) => ({ unit_no: id, name: (typeDef(typeOfUnit(id)) || {}).name || "Loc", total_bani: nights.reduce((a, x) => a + x.price_bani, 0), nights }));
+  const unitsArr = [...bySlot.entries()].map(([id, nights]) => ({ unit_no: id, name: ((model.types.find((x) => x.no === typeOfUnit(id))) || typeDef(typeOfUnit(id)) || {}).name || "Loc", total_bani: nights.reduce((a, x) => a + x.price_bani, 0), nights }));
   return {
-    camp: true, discount_bani: 0, whole: false, units: unitsArr,
+    camp: true, hotel: !!model.hotel, discount_bani: 0, whole: false, units: unitsArr,
     camp_items: qt.lines.map((l) => ({ no: l.no, name: l.name, qty: l.qty, full: l.full, total_bani: l.total_bani })),
     fees: { total_bani: qt.feesTotal, lines: qt.feeLines }, guests,
   };
@@ -209,7 +221,7 @@ async function tonight(db, listingId, model, todaySql) {
   return model.types.map((ty) => {
     const mine = rows.filter((x) => typeOfUnit(Number(x.unit_id)) === ty.no);
     const t0 = mine.filter((x) => x.is_today).length, t1 = mine.filter((x) => !x.is_today).length;
-    return { unit_no: ty.no, name: ty.name, camp: true, stock: ty.stock, free_tonight: Math.max(0, ty.stock - t0), free_tomorrow: Math.max(0, ty.stock - t1) };
+    return { unit_no: ty.no, name: ty.name, camp: true, word: model.unitWord, stock: ty.stock, free_tonight: Math.max(0, ty.stock - t0), free_tomorrow: Math.max(0, ty.stock - t1) };
   });
 }
 // nume lizibil pentru o listă de unit_ids dintr-o rezervare de camping: „2 × Loc de cort”
