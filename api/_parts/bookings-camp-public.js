@@ -15,7 +15,7 @@ module.exports = function mountCampPublic(r, h) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
-          WHERE l.id = $1::integer AND l.type = 'camping' AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]);
+          WHERE l.id = $1::integer AND l.type IN ('camping', 'hotel_mare') AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true;
       rows[0].model = CAMP.campModel(rows[0].type_details);
@@ -40,7 +40,7 @@ module.exports = function mountCampPublic(r, h) {
       const open = m.bookable.map((t) => t.no);
       const fullDays = days.filter((d) => !open.some((no) => free[no][d] > 0));
       noStore(res);
-      res.json({ name: l.name, types: pubTypes(m), fees: feesPub(m), free, fullDays, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1 });
+      res.json({ name: l.name, unit_word: m.unitWord, types: pubTypes(m), fees: feesPub(m), free, fullDays, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1 });
     } catch (e) { console.error("rezervari camp disponibilitate:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
@@ -115,7 +115,7 @@ module.exports = function mountCampPublic(r, h) {
       await client.query("COMMIT");
       const what = snapshot.camp_items.map((x) => (x.qty > 1 ? x.qty + " × " : "") + E(x.name)).join(", ");
       const sent = await sendMail(email, "Codul tău de confirmare: " + code,
-        `<p>Bună, ${E(name)},</p><p>Codul de confirmare pentru rezervarea la <b>${E(lst.name)}</b> (${dRo(p.checkin)} – ${dRo(p.checkout)} · ${what}) este:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p><p>Locurile îți sunt ținute ${HOLD_MIN} minute. Dacă nu ai cerut tu acest cod, ignoră mesajul.</p>`);
+        `<p>Bună, ${E(name)},</p><p>Codul de confirmare pentru rezervarea la <b>${E(lst.name)}</b> (${dRo(p.checkin)} – ${dRo(p.checkout)} · ${what}) este:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p><p>${model.hotel ? "Camerele îți sunt ținute" : "Locurile îți sunt ținute"} ${HOLD_MIN} minute. Dacă nu ai cerut tu acest cod, ignoră mesajul.</p>`);
       if (!sent) {
         await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status = 3`, [rid]);
         await dbPool.query(`UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = 'system' WHERE id = $1`, [rid]);
@@ -133,7 +133,7 @@ module.exports = function mountCampPublic(r, h) {
   function campClient() {
     let CAMP = null, qTimer = null;
     const money = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " RON";
-    const E_ = Object.assign(MSG, { tip_indisponibil: "Tipul de loc ales nu mai este disponibil.", curent_prea_multe: "Ai ales mai multe locuri cu curent decât locuri eligibile.", prea_multi_oaspeti: "Locurile alese nu au capacitate pentru atâtea persoane." });
+    const E_ = Object.assign(MSG, { tip_indisponibil: "Tipul ales nu mai este disponibil.", curent_prea_multe: "Ai ales mai multe locuri cu curent decât locuri eligibile.", prea_multi_oaspeti: "Alegerea făcută nu are capacitate pentru atâtea persoane." });
     loadMonth = async function () {
       const f = ds(month), t = ds(new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 1)));
       const j = await call("GET", P + "/camp/disponibilitate?from=" + f + "&to=" + t);
@@ -152,12 +152,12 @@ module.exports = function mountCampPublic(r, h) {
       const box = $("#campbox"); box.replaceChildren();
       const ts = (CAMP.types || []).filter((t) => t.bookable);
       if (!ts.length) { say($("#qmsg"), "Rezervarea online nu este disponibilă momentan.", false); return; }
-      box.append(el("div", { class: "sub" }, ["Alege locurile:"]));
+      const HW = CAMP.unit_word === "camere"; box.append(el("div", { class: "sub" }, [HW ? "Alege camerele:" : "Alege locurile:"]));
       ts.forEach((t) => {
         const free = minFree(t.no), sel = el("select", { id: "cq" + t.no, style: "width:90px" });
-        for (let i = 0; i <= Math.min(free, 30); i++) sel.append(el("option", { value: String(i) }, [String(i)]));
+        for (let i = 0; i <= Math.min(free, HW ? 100 : 30); i++) sel.append(el("option", { value: String(i) }, [String(i)]));
         sel.disabled = free < 1; sel.onchange = campSum;
-        const cap = t.cap ? " · până la " + t.cap + " pers./unitate" : "";
+        const cap = t.cap ? " · până la " + t.cap + (HW ? " pers./cameră" : " pers./unitate") : "";
         const row = el("div", { style: "padding:8px 0;border-top:1px solid #E4DFD5" }, [el("div", { style: "font-weight:700" }, [t.name]),
           el("div", { class: "sub" }, [money(t.price_bani) + " / noapte" + cap + " · " + (free > 0 ? "libere: " + free : "indisponibil în perioada aleasă")]), el("div", { class: "row", style: "align-items:center;margin-top:4px" }, [el("span", { class: "sub" }, ["Număr:"]), sel])]);
         if (t.full_bani) { const cb = el("input", { type: "checkbox", id: "cf" + t.no, style: "width:20px;height:20px;margin:0" }); cb.onchange = campSum; row.append(el("label", { style: "display:flex;gap:8px;align-items:center;font-weight:500;margin-top:6px" }, [cb, el("span", {}, ["Cu facilități incluse (curent, apă, evacuare): " + money(t.full_bani) + " / noapte"])])); }
@@ -165,7 +165,7 @@ module.exports = function mountCampPublic(r, h) {
       });
       const f = CAMP.fees || {};
       const inp = (id, label, v, mn, note) => el("label", {}, [label + (note ? " · " + note : ""), el("input", { id, type: "number", min: String(mn), max: "200", value: String(v), inputmode: "numeric" })]);
-      const pr = el("div", { style: "margin-top:8px" }, [el("div", { class: "sub" }, ["Persoane și taxe:"]), inp("cad", "Adulți", 2, 1, f.adult ? money(f.adult) + " / noapte" : ""), inp("cch", "Copii (3–12 ani)", 0, 0, f.child ? money(f.child) + " / noapte" : "")]);
+      const pr = el("div", { style: "margin-top:8px" }, [el("div", { class: "sub" }, [HW ? "Persoane:" : "Persoane și taxe:"]), inp("cad", "Adulți", 2, 1, f.adult ? money(f.adult) + " / noapte" : ""), inp("cch", "Copii (3–12 ani)", 0, 0, f.child ? money(f.child) + " / noapte" : "")]);
       if (f.car) pr.append(inp("ccar", "Autoturisme", 0, 0, money(f.car) + " / noapte"));
       if (f.pet) pr.append(inp("cpet", "Animale de companie", 0, 0, money(f.pet) + " / noapte"));
       if (f.electric) pr.append(inp("cel", "Locuri cu curent electric", 0, 0, money(f.electric) + " / noapte"));
@@ -175,7 +175,7 @@ module.exports = function mountCampPublic(r, h) {
     function campSum() {
       clearTimeout(qTimer); $("#go").disabled = true;
       const p = params(); $("#guests").value = String(p.adults + p.children);
-      if (!p.items.length) { say($("#qmsg"), "Alege cel puțin un loc.", true); return; }
+      if (!p.items.length) { say($("#qmsg"), CAMP && CAMP.unit_word === "camere" ? "Alege cel puțin o cameră." : "Alege cel puțin un loc.", true); return; }
       qTimer = setTimeout(async () => {
         const m = $("#qmsg");
         try {
@@ -202,12 +202,13 @@ module.exports = function mountCampPublic(r, h) {
     };
   }
 
-  function pageHtml() {
+  function pageHtml(hotel) {
     const PUB_HTML = page().html;
     const a = page().partyHtml + '<div id="rooms" style="margin-top:8px"></div>';
     const b = '<input id="guests" type="hidden" value="2"><div id="campbox" style="margin-top:8px"></div>';
     if (!PUB_HTML.includes(a)) { console.error("rezervari camp: pagina nu s-a putut adapta"); return null; }
-    return PUB_HTML.replace(a, b).replace("Camera îți este ținută", "Locurile îți sunt ținute").replace("Camera îți este ținută", "Locurile îți sunt ținute");
+    const held = hotel ? "Camerele îți sunt ținute" : "Locurile îți sunt ținute";
+    return PUB_HTML.replace(a, b).replace("Camera îți este ținută", held).replace("Camera îți este ținută", held);
   }
   const pageJs = () => { const pg = page(); return pg.base + "\n(" + campClient.toString() + ")();\n" + pg.boot; };
   return { pageHtml, pageJs };
