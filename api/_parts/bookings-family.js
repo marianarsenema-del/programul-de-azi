@@ -168,7 +168,7 @@ module.exports = function (dbPool) {
     const lists = (await dbPool.query(
       `SELECT l.id, l.type_details, s.base_price_bani, s.min_nights, s.max_guests, s.lead_days
          FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id
-        WHERE l.id = ANY($1::int[]) AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type IS DISTINCT FROM 'camping'`, [ids])).rows;
+        WHERE l.id = ANY($1::int[]) AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type NOT IN ('camping', 'hotel_mare')`, [ids])).rows;
     if (!lists.length) return { managed, offers: out };
     const lid = lists.map((x) => x.id);
     const units = (await dbPool.query(`SELECT listing_id, unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = ANY($1::int[]) AND active ORDER BY listing_id, sort_order, unit_no`, [lid])).rows;
