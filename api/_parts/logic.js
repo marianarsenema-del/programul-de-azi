@@ -5220,6 +5220,8 @@ function accCurrencyScript() {
 // ============================================================
 function accShellStyles() {
   return `
+/* paginile de cont sunt desenate pe fundal deschis (cardurile au alb fix): tema întunecată a telefonului nu trebuie să schimbe culorile textului */
+:root,html[data-theme="dark"],html[data-theme="light"]{color-scheme:light;--bg:#FAF8F4;--surface:#FFFFFF;--surface-2:#F3F0EA;--border:#E8E3DA;--btn-surface:#FFFFFF;--text:#1C1E24;--muted:#6B7280;--accent-dim:#FFE4CC;--header-bg:rgba(250,248,244,.88);--glass-bg:rgba(255,255,255,.6);--glass-border:rgba(0,0,0,.06);}
 .acc-shell-header{background:#161b22;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;}
 .acc-shell-header .brand{color:#fff;font-weight:900;font-size:19px;text-decoration:none;}
 .acc-shell-header .brand span{color:var(--accent);}
