@@ -4819,7 +4819,7 @@ input[type=file]{max-width:100%;font-size:14px;}
 /* iOS Safari ignoră width:100% la input-urile de tip oră, dacă nu le scoatem aspectul nativ */
 input[type=time].acc-white-input{-webkit-appearance:none;appearance:none;background:#fff;color:#111;min-height:52px;}
 input[type=time]::-webkit-date-and-time-value{text-align:left;}
-.acc-desc-box{min-height:220px;line-height:1.5;resize:vertical;}
+.acc-desc-box{min-height:220px;line-height:1.5;resize:vertical;}#detForm textarea,.acc-desc-box,.pn-other-ta{font-family:inherit;font-size:16px;}
 .acc-desc-field-wrap{position:relative;}
 .acc-desc-counter{text-align:right;font-size:12.5px;color:#777;margin:-6px 0 12px;}
 .desc-char-badge{position:absolute;top:8px;right:10px;background:rgba(255,255,255,.92);color:#888;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;pointer-events:none;border:1px solid #eee;}
@@ -4936,6 +4936,7 @@ input[type=time]::-webkit-date-and-time-value{text-align:left;}
 .pn-other-toggle .pa-icon{display:none;}
 #detForm select{background-color:#ffffff;}
 #detForm .pn-count{background-color:#ffffff;}
+#detForm select.pn-count,#detForm select.pn-seat{height:46px;padding:0 12px;line-height:1.2;}  /* cifra nu mai e tăiată: înălțimea fixă de 42px cu padding de 14px lăsa doar 14px pentru text */
 .acc-td-box{margin:6px 0 18px;}.acc-td-heading{font-weight:800;font-size:16px;color:#1a1f2e;margin:22px 0 8px;padding-bottom:6px;border-bottom:2px solid #F0813A;}.acc-td-box .acc-roomtype-card{border:1px solid #dde1e6;border-radius:12px;padding:14px;margin:10px 0;position:relative;background:#fff;}.acc-editable-field-wrap{position:relative;}.acc-editable-field-wrap input{padding-right:38px !important;}.acc-editable-pencil{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#aaa;pointer-events:none;display:flex;}.acc-radio-col{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}.acc-radio-item{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#333;cursor:pointer;}.acc-radio-item input{width:16px;height:16px;accent-color:#F0813A;}.acc-unit-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 16px;}.acc-unit-photo-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;}.acc-unit-photo-thumb img{width:100%;height:100%;object-fit:cover;}.acc-unit-photo-remove{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;cursor:pointer;}.acc-unit-photo-add{aspect-ratio:1;border:2px dashed #ccc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#888;cursor:pointer;}
 
 @media (max-width:400px){
@@ -6945,7 +6946,7 @@ function typeDetailsClientDef(lang) {
     },
     apt: {
       groups: aptGroups, opts: aptOpts, bedroomsMax: APT_BEDROOMS_MAX, bathsMax: APT_BATHS_MAX,
-      icons: { bed: paIcon("bed", 20), bath: paIcon("bath", 20), sofa: paIcon("sofa", 20), lift: paIcon("lift", 20), door: paIcon("door", 20), home: paIcon("home", 20), key: paIcon("check", 20) },
+      icons: { bed: paIcon("bed", 20), bath: paIcon("bath", 20), sofa: paIcon("sofa", 20), lift: paIcon("lift", 20), door: paIcon("door", 20), home: paIcon("home", 20), key: paIcon("check", 20), kitchen: paIcon("kitchen", 20) },
     },
   };
 }
@@ -7086,7 +7087,10 @@ function sanitizeApartmentDetails(raw) {
   const bd = raw.building && typeof raw.building === "object" ? raw.building : {};
   const building = { floor: typeof bd.floor === "string" ? bd.floor.trim().slice(0, 10) : "", elevator: bd.elevator === true, privateEntrance: bd.privateEntrance === true };
   const fc = raw.facilities && typeof raw.facilities === "object" ? raw.facilities : {};
-  const fItems = filt("facilities", fc.items, 30);
+  // dotările „Birou / Plasă / Fier” erau pe fiecare dormitor: acum sunt o singură dată, în „Alte dotări” (facilități) — le preluăm din datele vechi
+  const legacyAm = [];
+  srcBeds.concat([mn]).forEach((b) => { (b && Array.isArray(b.amenities) ? b.amenities : []).forEach((k) => { if (["birou", "plasa", "fier"].includes(k) && !legacyAm.includes(k)) legacyAm.push(k); }); });
+  const fItems = filt("facilities", (Array.isArray(fc.items) ? fc.items : []).concat(legacyAm), 40);
   const parking = fItems.includes("parcare") && (fc.parking === "gratuit" || fc.parking === "contra_cost") ? fc.parking : "";
   const facilities = { items: fItems, wifiMbps: fItems.includes("wifi") ? int(fc.wifiMbps, 1, 10000) : null, parking, parkingPrice: parking === "contra_cost" ? num(fc.parkingPrice, 0, 10000) : null };
   const rl = raw.rules && typeof raw.rules === "object" ? raw.rules : {};
