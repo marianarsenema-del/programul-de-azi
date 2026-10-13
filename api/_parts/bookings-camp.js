@@ -5,6 +5,7 @@
 // se vede din numărul de sloturi libere dintr-o noapte.
 "use strict";
 
+const PARTY = require("./bookings-party");
 const SLOT = 1000;
 // tipurile fixe (numărul tipului = unit_no în booking_units, stabil în timp)
 const TYPES = [
@@ -31,7 +32,7 @@ function hotelModel(td) {
   const cheapest = prices.length ? Math.min(...prices) : null;
   const types = rts.map((rt) => ({
     no: rt.tid, key: "rt" + rt.tid, name: String(rt.name).slice(0, 60), kind: "unit", stock: Math.min(MAX_STOCK, Math.max(1, parseInt(rt.count, 10) || 1)),
-    price: num(rt.price) || cheapest, priceFull: null, cap: Math.min(50, Math.max(1, (parseInt(rt.adults, 10) || 0) + (parseInt(rt.children, 10) || 0))), electricPaid: false,
+    inc: Math.max(1, Math.min(50, parseInt(rt.adults, 10) || 0)) || null, price: num(rt.price) || cheapest, priceFull: null, cap: Math.min(50, Math.max(1, (parseInt(rt.adults, 10) || 0) + (parseInt(rt.children, 10) || 0))), electricPaid: false,
   }));
   return { types, fees: { adult: 0, child: 0, car: 0, electric: 0, pet: 0 }, bookable: types.filter((x) => x.stock >= 1 && x.price), hotel: true, unitWord: "camere" };
 }
@@ -76,10 +77,12 @@ function parseParams(src) {
     if (no === null || qty === null || seen.has(no)) return null;
     seen.add(no); items.push({ no, qty, full: it.full === true });
   }
-  const adults = intIn(src.adults, 1, 200), children = intIn(src.children == null || src.children === "" ? 0 : src.children, 0, 200);
+  let ages = null;
+  if (src.ages !== undefined && src.ages !== null && src.ages !== "") { ages = PARTY.parseAges(src.ages); if (ages === null) return null; }
+  const adults = intIn(src.adults, 1, 200), children = ages ? ages.length : intIn(src.children == null || src.children === "" ? 0 : src.children, 0, 200);
   const cars = intIn(src.cars == null || src.cars === "" ? 0 : src.cars, 0, 200), pets = intIn(src.pets == null || src.pets === "" ? 0 : src.pets, 0, 200), electric = intIn(src.electric == null || src.electric === "" ? 0 : src.electric, 0, 999);
   if (!items.length || adults === null || children === null || cars === null || pets === null || electric === null) return null;
-  return { checkin: src.checkin, checkout: src.checkout, items, adults, children, cars, pets, electric };
+  return { checkin: src.checkin, checkout: src.checkout, items, adults, children, ages, cars, pets, electric };
 }
 // core = bookings-core; rules = regulile de tarif active ale anunțului (opțional); lst = {min_nights, lead_days}
 function quote(core, model, rules, lst, p) {
@@ -110,9 +113,17 @@ function quote(core, model, rules, lst, p) {
     units.push({ ty, it, nights: q.nights });
   }
   const persons = p.adults + p.children;
+  let kidsLines = [], kidsTotal = 0;
+  const kidsPol = model.hotel && lst.kids && p.ages ? lst.kids : null; // hotel mare cu politică de copii: vârstele contează (pat propriu, gratuit, reducere)
   if (units.length && units.every((u) => u.ty.kind === "unit")) {
     const cap = units.reduce((a, u) => a + u.ty.cap * u.it.qty, 0);
-    if (persons > cap) errors.push("prea_multi_oaspeti");
+    if (kidsPol) {
+      const inc = units.reduce((a, u) => a + Math.min(u.ty.inc || u.ty.cap, u.ty.cap) * u.it.qty, 0);
+      const roomsNight = units.reduce((a, u) => a + u.it.qty * (u.nights.reduce((x, y) => x + (y.price_bani || 0), 0) / Math.max(1, u.nights.length)), 0);
+      const sp = PARTY.supp(kidsPol, { included: inc, max: cap, perPerson: inc ? Math.round(roomsNight / inc) : 0 }, p.adults, p.ages);
+      sp.errors.forEach((e) => { if (!errors.includes(e)) errors.push(e); });
+      if (sp.ok) { kidsTotal = sp.perNightBani * n; kidsLines = sp.lines.map((x) => ({ label: x.label, count: x.count, fee_bani: x.perNightBani, total_bani: x.perNightBani * x.count * n })); }
+    } else if (persons > cap) errors.push("prea_multi_oaspeti");
   }
   if (core.isDateStr(p.checkin) && p.checkin < core.addDays(core.todayRo(), lst.lead_days || 0) && !errors.includes("data_trecuta")) errors.push("prea_aproape");
   if (p.electric > eligibleElectric && model.fees.electric > 0) errors.push("curent_prea_multe");
@@ -121,9 +132,10 @@ function quote(core, model, rules, lst, p) {
   const add = (label, count, fee) => { if (count > 0 && fee > 0) feeLines.push({ label, count, fee_bani: bani(fee), total_bani: bani(fee) * count * n }); };
   add("Adulți", p.adults, f.adult); add("Copii (3–12 ani)", p.children, f.child); add("Autoturisme", p.cars, f.car); add("Animale de companie", p.pets, f.pet);
   if (model.fees.electric > 0) add("Curent electric", Math.min(p.electric, eligibleElectric), f.electric);
+  kidsLines.forEach((x) => feeLines.push(x));
   const feesTotal = feeLines.reduce((a, x) => a + x.total_bani, 0);
   const ok = errors.length === 0 && lines.length === p.items.length;
-  return { ok, errors, nights: n, days: days || [], lines, feeLines, feesTotal, pitchTotal, totalBani: pitchTotal + feesTotal, persons, units };
+  return { ok, errors, nights: n, days: days || [], lines, feeLines, feesTotal, pitchTotal, totalBani: pitchTotal + feesTotal, persons, units, kidsPolicy: !!kidsPol, kidsBani: kidsTotal };
 }
 
 // ---------- disponibilitate (stoc) ----------
@@ -168,6 +180,7 @@ function snapshotOf(model, qt, pairs, guests) {
   const unitsArr = [...bySlot.entries()].map(([id, nights]) => ({ unit_no: id, name: ((model.types.find((x) => x.no === typeOfUnit(id))) || typeDef(typeOfUnit(id)) || {}).name || "Loc", total_bani: nights.reduce((a, x) => a + x.price_bani, 0), nights }));
   return {
     camp: true, hotel: !!model.hotel, discount_bani: 0, whole: false, units: unitsArr,
+    ...(Array.isArray(guests.ages) ? { party: { adults: guests.adults, ages: guests.ages, supp_bani: qt.kidsBani || 0 } } : {}),
     camp_items: qt.lines.map((l) => ({ no: l.no, name: l.name, qty: l.qty, full: l.full, total_bani: l.total_bani })),
     fees: { total_bani: qt.feesTotal, lines: qt.feeLines }, guests,
   };
