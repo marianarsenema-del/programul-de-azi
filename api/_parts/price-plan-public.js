@@ -15,7 +15,7 @@ const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"
 
 // prețul de bază pe noapte (pentru calendar și tabele) și ce înseamnă el
 function baseInfo(r, td, plan) {
-  const hotel = r.type === "hotel_mic";
+  const hotel = r.type === "hotel_mic" || r.type === "hotel_mare";
   const pr = posNum(r.price_per_room), pw = posNum(r.price_weekend), pp = posNum(r.price_per_property), ppw = posNum(r.price_property_weekend);
   if (hotel) {
     const prices = (Array.isArray(td.roomTypes) ? td.roomTypes : []).map((rt) => posNum(rt && rt.price)).filter(Boolean);
@@ -42,7 +42,7 @@ function build(r, opts) {
   const L = (ro, en) => (lang === "en" ? en : ro);
   const today = opts.today;
   const cur = r.price_currency || "RON";
-  const hotel = r.type === "hotel_mic";
+  const hotel = r.type === "hotel_mic" || r.type === "hotel_mare";
   const td = parseTd(r.type_details);
   const plan = PP.planOf(r, hotel);
   const MO = lang === "en" ? MONTHS_EN : MONTHS_RO;
