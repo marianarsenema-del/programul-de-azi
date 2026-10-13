@@ -320,7 +320,7 @@ const RO=['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec
 const dRo=(s)=>{const p=s.split('-');return Number(p[2])+' '+RO[Number(p[1])-1];};
 const ron=(b)=>(b/100).toLocaleString('ro-RO')+' RON';
 function firstOfMonth(d){return new Date(Date.UTC(d.getFullYear(),d.getMonth(),1));}
-let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='',CAMPL=false,dinfo={};
+let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='',CAMPL=false,STOCKW='locuri',dinfo={};
 const today=ds(new Date());
 const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
 
@@ -344,7 +344,7 @@ function freeCard(j){const f=j.free_tonight||{};if(!f.approved)return el('span')
  b.onclick=async()=>{b.disabled=true;try{await api('POST','/api/gazda/liber-diseara',{listing:LID,on:!on,rooms:(!on&&freeN>0&&((j.rooms||[]).length>1||isC))?freeN:undefined});show('azi');}catch(e){alert(errT(e));b.disabled=false;}};
  return el('div',{class:'card'},[b,el('div',{class:'sub',style:'margin:6px 0 0'},[on?'Pe site apare eticheta verde „Liber în seara asta”, până la miezul nopții.':'Pe site apare eticheta verde „Liber în seara asta” până la miezul nopții. Dacă ai mai multe camere, afișăm câte sunt libere.'])]);}
 const STN={0:'liber\',1:'închis de tine',2:'ocupat (altă platformă)',3:'în curs de rezervare',4:'rezervat'};
-function campRoomsCard(rooms){const c=el('div',{class:'card'},[el('h2',{},['Locuri în seara asta'])]);rooms.forEach(r=>c.append(el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+r.free_tonight+' libere din '+r.stock+' · Mâine noapte: '+r.free_tomorrow+' libere din '+r.stock])])));if(!rooms.length)c.append(el('div',{class:'sub'},['Niciun tip de loc rezervabil. Completează tipurile de loc, numărul și prețul în formularul cazării.']));return c;}
+function campRoomsCard(rooms){const c=el('div',{class:'card'},[el('h2',{},[(rooms[0]&&rooms[0].word==='camere'?'Camere':'Locuri')+' în seara asta'])]);rooms.forEach(r=>c.append(el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+r.free_tonight+' libere din '+r.stock+' · Mâine noapte: '+r.free_tomorrow+' libere din '+r.stock])])));if(!rooms.length)c.append(el('div',{class:'sub'},[rooms.hotelEmpty?'Niciun tip de cameră rezervabil. Completează tipurile de cameră, numărul și prețul în formularul cazării.':'Niciun tip de loc rezervabil. Completează tipurile de loc, numărul și prețul în formularul cazării.']));return c;}
 function roomsCard(rooms){if(rooms.length&&rooms[0].camp)return campRoomsCard(rooms);const free=rooms.filter(r=>r.tonight===0).length;
  const c=el('div',{class:'card'},[el('h2',{},['Camere în seara asta: '+free+' libere din '+rooms.length])]);
  rooms.forEach(r=>{const it=el('div',{class:'item'},[el('b',{},[r.name]),el('div',{class:'sub',style:'margin:2px 0'},['Azi noapte: '+STN[r.tonight]+' · Mâine noapte: '+STN[r.tomorrow]])]);
@@ -371,11 +371,11 @@ async function viewCal(v){
  $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadCal();};
  $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadCal();};
  $('#close').onclick=()=>act('close');$('#open').onclick=()=>act('open');
- try{const t=await api('GET',B()+'/tarife');units=t.units||[];CAMPL=!!t.camp;}catch(e){}
+ try{const t=await api('GET',B()+'/tarife');units=t.units||[];CAMPL=!!t.camp;STOCKW=t.stock_word||'locuri';}catch(e){}
  const us=$('#unitsel');$('#unitwrap').hidden=!units.length;units.forEach(u=>us.append(el('option',{value:String(u.unit_no)},[u.name])));
  if(units.length){if(!units.some(u=>String(u.unit_no)===curUnit))curUnit=String(units[0].unit_no);us.value=curUnit;}else curUnit='';
  us.onchange=()=>{curUnit=us.value;sel=[];$('#selinfo').textContent='';loadCal();};
- if(CAMPL){$('#qtywrap').hidden=false;$('#unitwrap').querySelector('label').firstChild.textContent='Tip de loc';$('#close').textContent='Închide locuri în zilele alese';$('#open').textContent='Deschide locuri în zilele alese';const lg=document.querySelector('.leg');if(lg)lg.append(el('span',{},[el('i',{class:'sw w5'}),'parțial (mai sunt locuri)']));}
+ if(CAMPL){$('#qtywrap').hidden=false;$('#unitwrap').querySelector('label').firstChild.textContent=(STOCKW==='camere'?'Tip de cameră':'Tip de loc');$('#close').textContent='Închide '+STOCKW+' în zilele alese';$('#open').textContent='Deschide '+STOCKW+' în zilele alese';const lg=document.querySelector('.leg');if(lg)lg.append(el('span',{},[el('i',{class:'sw w5'}),'parțial (mai sunt '+STOCKW+')']));}
  loadCal();}
 const uq=(p)=>curUnit?(p+'unit='+curUnit):'';
 async function loadCal(){try{const from=ds(month),to=ds(new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1)));const j=await api('GET',B()+'/calendar?from='+from+'&to='+to+uq('&'));days={};dinfo={};j.days.forEach(d=>{days[d.day]=d.status;dinfo[d.day]=d;});renderCal();}catch(e){const m=$('#calmsg');if(m)say(m,errT(e),false);}}
@@ -476,20 +476,20 @@ function pricesCard(t,pl,pen){if(pen)return pensionCard(t,pl,pen);const s=t.sett
  return c;}
 // ---------- SETĂRI ----------
 function campCard(t,cj){const s=t.settings;
- const c=el('div',{class:'card'},[el('h2',{},['Prețuri și taxe']),el('div',{class:'sub'},['Sunt aceleași ca în formularul cazării: le schimbi o singură dată, aici sau în cont. Numărul de locuri pe tip îl modifici doar în formular. Taxele pe persoană se adaugă automat la totalul rezervării.'])]);
+ const c=el('div',{class:'card'},[el('h2',{},['Prețuri și taxe']),el('div',{class:'sub'},[cj.hotel?'Sunt aceleași ca în formularul cazării: le schimbi o singură dată, aici sau în cont. Numărul de camere pe tip îl modifici doar în formular.':'Sunt aceleași ca în formularul cazării: le schimbi o singură dată, aici sau în cont. Numărul de locuri pe tip îl modifici doar în formular. Taxele pe persoană se adaugă automat la totalul rezervării.'])]);
  const inp=(v,ph)=>el('input',{type:'number',inputmode:'decimal',min:'0',max:'1000000',step:'1',placeholder:ph||'',value:v==null?'':String(v)});
  const row=(l,i)=>el('label',{},[l,i]);const f={};
- if(!cj.types.length)c.append(el('div',{class:'sub'},['Nu ai încă niciun tip de loc completat în formular (cort, rulotă, căsuță, bungalou, glamping).']));
- cj.types.forEach(ty=>{const g=el('div',{style:'margin-top:10px'},[el('b',{},[ty.name+' · '+ty.stock+' locuri'])]);
-  const pi=inp(ty.price,'RON / noapte');f[ty.key]={price:pi};g.append(row(ty.kind==='unit'?'Preț / noapte / unitate (RON)':ty.kind==='caravan'?'Preț / noapte / loc (RON)':'Preț / noapte / loc (RON)',pi));
+ if(!cj.types.length)c.append(el('div',{class:'sub'},[cj.hotel?'Nu ai încă niciun tip de cameră completat în formular.':'Nu ai încă niciun tip de loc completat în formular (cort, rulotă, căsuță, bungalou, glamping).']));
+ cj.types.forEach(ty=>{const g=el('div',{style:'margin-top:10px'},[el('b',{},[ty.name+' · '+ty.stock+(cj.hotel?' camere':' locuri')])]);
+  const pi=inp(ty.price,'RON / noapte');f[ty.key]={price:pi};g.append(row(cj.hotel?'Preț / noapte / cameră (RON)':ty.kind==='unit'?'Preț / noapte / unitate (RON)':ty.kind==='caravan'?'Preț / noapte / loc (RON)':'Preț / noapte / loc (RON)',pi));
   if(ty.kind==='caravan'){const pf=inp(ty.priceFull,'opțional');f[ty.key].priceFull=pf;g.append(row('Preț / noapte cu facilități incluse (RON, opțional)',pf));}
-  if(ty.cap)g.append(el('div',{class:'sub'},['Capacitate: '+ty.cap+' persoane / unitate']));c.append(g);});
+  if(ty.cap)g.append(el('div',{class:'sub'},['Capacitate: '+ty.cap+(cj.hotel?' persoane / cameră':' persoane / unitate')]));c.append(g);});
  const fg=el('div',{style:'margin-top:12px'},[el('b',{},['Taxe pe persoană / pe noapte (RON)'])]);
  [['adult','Adult'],['child','Copil 3–12 ani'],['car','Mașină'],['pet','Animal de companie'],['electric','Curent electric / zi']].forEach(k=>{const i=inp(cj.fees[k[0]]||'','0');f['fee_'+k[0]]=i;fg.append(row(k[1],i));});
- const mn=inp(cj.min_nights||1,'');c.append(fg,row('Nopți minime',mn));
+ const mn=inp(cj.min_nights||1,'');if(cj.hotel)c.append(row('Nopți minime',mn));else c.append(fg,row('Nopți minime',mn));
  const m=el('div',{class:'msg'}),b=el('button',{type:'button',style:'margin-top:10px;width:100%'},['Salvează prețurile']);
  b.onclick=async()=>{b.disabled=true;try{const body={fees:{},units:{},min_nights:Number(mn.value||1)};
-  ['adult','child','car','pet','electric'].forEach(k=>{body.fees[k]=f['fee_'+k].value;});
+  if(!cj.hotel)['adult','child','car','pet','electric'].forEach(k=>{body.fees[k]=f['fee_'+k].value;});
   cj.types.forEach(ty=>{const x=f[ty.key];if(ty.key==='tents')body.tents={price:x.price.value};else if(ty.key==='caravans')body.caravans={price:x.price.value,priceFull:x.priceFull.value};else body.units[ty.key]={price:x.price.value};});
   await api('POST',B()+'/camping',body);say(m,'Prețuri salvate. Se văd acum și pe pagina de rezervare și în formular.',true);setTimeout(()=>show('set'),1200);}catch(e){say(m,errT(e),false);}b.disabled=false;};
  c.append(b,m);return c;}
@@ -526,7 +526,7 @@ async function viewSet(v){if(STAFF()){v.append(el('div',{class:'card'},[el('b',{
  let pl=null;try{pl=await api('GET',B()+'/plan');}catch(e){pl=null;}
  let pen=null;if(pl&&pl.mode&&!pl.hotel){try{pen=await api('GET',B()+'/pensiune');}catch(e){pen=null;}}
  let cj=null;if(t.camp){try{cj=await api('GET',B()+'/camping');}catch(e){cj=null;}}
- v.append(cj?campCard(t,cj):pricesCard(t,pl,pen));if(!cj){try{const kj=await api('GET',B()+'/copii');v.append(kidsCard(kj));}catch(e){}}if(!cj&&pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
+ v.append(cj?campCard(t,cj):pricesCard(t,pl,pen));if(!cj){try{const kj=await api('GET',B()+'/copii');v.append(kidsCard(kj));}catch(e){}}if((!cj||cj.hotel)&&pl&&pl.plan)v.append(await planCards(pl,(t.units||[]).length>1));
  const inst=el('input',{type:'checkbox',id:'inst',style:'width:auto;height:auto'});inst.checked=!!s.instant_enabled;
  const lead=el('select',{id:'lead'});[['0','Oricând, chiar și în aceeași zi'],['1','Cu cel puțin 1 zi înainte'],['2','Cu cel puțin 2 zile înainte'],['3','Cu cel puțin 3 zile înainte'],['7','Cu cel puțin 7 zile înainte']].forEach(o=>lead.append(el('option',{value:o[0]},[o[1]])));lead.value=String(s.lead_days);
  const m1=el('div',{class:'msg'});const sv=el('button',{type:'button'},['Salvează']);
@@ -939,7 +939,7 @@ function mount(r, o) {
       let rooms = units.map((u) => ({ unit_no: u.unit_no, name: u.name, tonight: stOf(u, true), tomorrow: stOf(u, false) }));
       try { // camping: locuri libere pe tip, nu camere
         const tyR = (await dbPool.query(`SELECT type, type_details FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0];
-        if (tyR && tyR.type === "camping") { const CAMP = require("./bookings-camp"); rooms = await CAMP.tonight(dbPool, lid, CAMP.campModel(tyR.type_details), today); }
+        if (tyR && (tyR.type === "camping" || tyR.type === "hotel_mare")) { const CAMP = require("./bookings-camp"); rooms = await CAMP.tonight(dbPool, lid, CAMP.campModel(tyR.type_details), today); }
       } catch (e) { console.error("gazda azi camping:", e.message); }
       let ft = {}; try { ft = (await dbPool.query(`SELECT (available_date::date = ${today}) AS on, available_rooms, (status = 'approved') AS approved FROM accommodation_listings WHERE id = $1::integer`, [lid])).rows[0] || {}; } catch (e) { console.error("gazda azi liber:", e.message); }
       const free_tonight = { on: !!ft.on, rooms: ft.available_rooms || null, approved: !!ft.approved };
