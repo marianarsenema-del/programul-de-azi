@@ -4,6 +4,7 @@
 "use strict";
 const crypto = require("crypto");
 const CAMP = require("./bookings-camp");
+const PARTY = require("./bookings-party");
 
 module.exports = function mountCampPublic(r, h) {
   const { dbPool, core, L, jsonOnly, noStore, toId, cleanText, sendMail, E, dRo, newCode, codeHash, sha, ipKey, HOLD_MIN, LIVE, SECRET, FORMS, page, pay } = h;
@@ -19,6 +20,7 @@ module.exports = function mountCampPublic(r, h) {
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true;
       rows[0].model = CAMP.campModel(rows[0].type_details);
+      rows[0].kids = rows[0].model.hotel ? PARTY.sanitizeKids((CAMP.parseTd(rows[0].type_details) || {}).kids) : null;
       req.pub = rows[0];
       next();
     } catch (e) { console.error("rezervari pubCamp:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -40,7 +42,7 @@ module.exports = function mountCampPublic(r, h) {
       const open = m.bookable.map((t) => t.no);
       const fullDays = days.filter((d) => !open.some((no) => free[no][d] > 0));
       noStore(res);
-      res.json({ name: l.name, unit_word: m.unitWord, types: pubTypes(m), fees: feesPub(m), free, fullDays, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1 });
+      res.json({ name: l.name, unit_word: m.unitWord, kids: l.kids || null, types: pubTypes(m), fees: feesPub(m), free, fullDays, today: core.todayRo(), lead_days: l.lead_days, min_nights: l.min_nights || 1 });
     } catch (e) { console.error("rezervari camp disponibilitate:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
@@ -92,7 +94,7 @@ module.exports = function mountCampPublic(r, h) {
       await client.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND status = 3 AND blocked_until < now()`, [lst.id]);
       const pairs = CAMP.allocate(model, p.items, qt.days, await slotRows(client, lst.id, p.checkin, p.checkout));
       if (!pairs) { await client.query("ROLLBACK"); return res.status(409).json({ error: "oferta_invalida", errors: ["indisponibil"] }); }
-      const snapshot = CAMP.snapshotOf(model, qt, pairs, { adults: p.adults, children: p.children, cars: p.cars, pets: p.pets, electric: p.electric });
+      const snapshot = CAMP.snapshotOf(model, qt, pairs, { adults: p.adults, children: p.children, ages: p.ages || undefined, cars: p.cars, pets: p.pets, electric: p.electric });
       const unitIds = snapshot.units.map((x) => x.unit_no);
       const ins = await client.query(
         `INSERT INTO booking_reservations (listing_id, check_in, check_out, guests, total_bani, commission_bani, currency, nights_snapshot, status, guest_name, guest_phone, guest_email, access_hash, code_expires_at, code_sent_at, hold_until, ip_hash, unit_ids)
@@ -146,7 +148,19 @@ module.exports = function mountCampPublic(r, h) {
     function params() {
       const items = [];
       (CAMP.types || []).forEach((t) => { const q = num("cq" + t.no); if (q > 0) items.push({ no: t.no, qty: q, full: !!($("#cf" + t.no) && $("#cf" + t.no).checked) }); });
-      return { checkin: ci, checkout: co, items, adults: Math.max(1, num("cad")), children: num("cch"), cars: num("ccar"), pets: num("cpet"), electric: num("cel") };
+      const r = { checkin: ci, checkout: co, items, adults: Math.max(1, num("cad")), children: num("cch"), cars: num("ccar"), pets: num("cpet"), electric: num("cel") };
+      if (CAMP && CAMP.kids) { const ag = [].slice.call(document.querySelectorAll("#cages select")).map((x) => x.value); r.children = ag.length; r.ages = ag.every((v) => v !== "") ? ag.map(Number) : null; r.agesMissing = ag.some((v) => v === ""); }
+      return r;
+    }
+    function kidsUi() { // hotel mare cu politică de copii: câți copii + vârsta fiecăruia
+      const wrap = el("div", {}), n = el("select", { id: "ckn" }), box = el("div", { id: "cages", class: "row", style: "gap:8px;flex-wrap:wrap;margin-top:4px" });
+      for (let i = 0; i <= 6; i++) n.append(el("option", { value: String(i) }, [String(i)]));
+      n.onchange = function () {
+        const old = [].slice.call(box.querySelectorAll("select")).map((x) => x.value); box.replaceChildren();
+        for (let i = 0; i < Number(n.value); i++) { const s = el("select", { class: "age" }); s.append(el("option", { value: "" }, ["Vârsta…"])); for (let a = 0; a <= 17; a++) s.append(el("option", { value: String(a) }, [a === 0 ? "sub 1 an" : a + (a === 1 ? " an" : " ani")])); s.value = old[i] || ""; s.onchange = campSum; box.append(s); }
+        campSum();
+      };
+      wrap.append(el("label", {}, ["Copii (0–17 ani)", n]), box); return wrap;
     }
     function renderCamp() {
       const box = $("#campbox"); box.replaceChildren();
@@ -165,7 +179,7 @@ module.exports = function mountCampPublic(r, h) {
       });
       const f = CAMP.fees || {};
       const inp = (id, label, v, mn, note) => el("label", {}, [label + (note ? " · " + note : ""), el("input", { id, type: "number", min: String(mn), max: "200", value: String(v), inputmode: "numeric" })]);
-      const pr = el("div", { style: "margin-top:8px" }, [el("div", { class: "sub" }, [HW ? "Persoane:" : "Persoane și taxe:"]), inp("cad", "Adulți", 2, 1, f.adult ? money(f.adult) + " / noapte" : ""), inp("cch", "Copii (3–12 ani)", 0, 0, f.child ? money(f.child) + " / noapte" : "")]);
+      const pr = el("div", { style: "margin-top:8px" }, [el("div", { class: "sub" }, [HW ? "Persoane:" : "Persoane și taxe:"]), inp("cad", "Adulți", 2, 1, f.adult ? money(f.adult) + " / noapte" : ""), (CAMP.kids ? kidsUi() : inp("cch", "Copii (3–12 ani)", 0, 0, f.child ? money(f.child) + " / noapte" : ""))]);
       if (f.car) pr.append(inp("ccar", "Autoturisme", 0, 0, money(f.car) + " / noapte"));
       if (f.pet) pr.append(inp("cpet", "Animale de companie", 0, 0, money(f.pet) + " / noapte"));
       if (f.electric) pr.append(inp("cel", "Locuri cu curent electric", 0, 0, money(f.electric) + " / noapte"));
@@ -175,11 +189,12 @@ module.exports = function mountCampPublic(r, h) {
     function campSum() {
       clearTimeout(qTimer); $("#go").disabled = true;
       const p = params(); $("#guests").value = String(p.adults + p.children);
+      if (p.agesMissing) { say($("#qmsg"), "Alege vârsta fiecărui copil.", true); return; }
       if (!p.items.length) { say($("#qmsg"), CAMP && CAMP.unit_word === "camere" ? "Alege cel puțin o cameră." : "Alege cel puțin un loc.", true); return; }
       qTimer = setTimeout(async () => {
         const m = $("#qmsg");
         try {
-          const q = await call("GET", P + "/camp/oferta?checkin=" + ci + "&checkout=" + co + "&items=" + encodeURIComponent(JSON.stringify(p.items)) + "&adults=" + p.adults + "&children=" + p.children + "&cars=" + p.cars + "&pets=" + p.pets + "&electric=" + p.electric);
+          const q = await call("GET", P + "/camp/oferta?checkin=" + ci + "&checkout=" + co + "&items=" + encodeURIComponent(JSON.stringify(p.items)) + "&adults=" + p.adults + "&children=" + p.children + (p.ages ? "&ages=" + p.ages.join(",") : "") + "&cars=" + p.cars + "&pets=" + p.pets + "&electric=" + p.electric);
           const parts = q.lines.map((x) => (x.qty > 1 ? x.qty + " × " : "") + x.name + ": " + money(x.total_bani)).concat((q.feeLines || []).map((x) => x.label + " (" + x.count + "): " + money(x.total_bani)));
           if (q.ok) { say(m, q.nights + " nopți · " + parts.join(" · ") + " · TOTAL " + money(q.totalBani), true); $("#go").disabled = false; }
           else say(m, q.errors.map(tr).join(" "), false);
