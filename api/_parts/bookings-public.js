@@ -47,7 +47,7 @@ module.exports = function mountPublic(r, c) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
-          WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type IS DISTINCT FROM 'camping'`, [id]);
+          WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type NOT IN ('camping', 'hotel_mare')`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true; // comision doar dacă gazda a ales online ȘI contul ei Stripe poate primi bani
       rows[0].units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
@@ -291,7 +291,7 @@ module.exports = function mountPublic(r, c) {
 
   // ---------- pagina turistului (după token) ----------
   function roomsOf(snap) {
-    if (snap && !Array.isArray(snap) && snap.camp_items) return "<br>Locuri: " + snap.camp_items.map((x) => (x.qty > 1 ? x.qty + " × " : "") + E(x.name)).join(", ");
+    if (snap && !Array.isArray(snap) && snap.camp_items) return (snap.hotel ? "<br>Camere: " : "<br>Locuri: ") + snap.camp_items.map((x) => (x.qty > 1 ? x.qty + " × " : "") + E(x.name)).join(", ");
     const names = snap && !Array.isArray(snap) && snap.units ? snap.units.map((u) => u.name).filter(Boolean) : [];
     return names.length ? "<br>Camere: " + names.map(E).join(", ") : "";
   }
@@ -506,8 +506,9 @@ ${PARTY_HTML}<div id="rooms" style="margin-top:8px"></div><div class="msg" id="q
       const okQ = id ? await dbPool.query(`SELECT 1 FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]) : null;
       if (!okQ || !okQ.rowCount) return res.status(404).send("Not found");
       const tyRow = ((await dbPool.query(`SELECT type FROM accommodation_listings WHERE id = $1::integer`, [id])) || {}).rows;
-      if (tyRow && tyRow[0] && tyRow[0].type === "camping") { // camping: locuri pe tip, cu stoc
-        const html = camp.pageHtml();
+      if (tyRow && tyRow[0] && (tyRow[0].type === "camping" || tyRow[0].type === "hotel_mare")) { // camping / hotel mare: pe tip, cu stoc
+        const big = tyRow[0].type === "hotel_mare";
+        const html = camp.pageHtml(big);
         if (!html) return res.status(500).send("Eroare");
         return LIVE ? shell(res, "Rezervare", html, camp.pageJs() + pay.STRIPE_CLIENT_JS, { stripe: true }) : shell(res, "Rezervare", html, camp.pageJs());
       }
