@@ -62,8 +62,8 @@ function client(CFG) {
   var S = { seasons: clone(CFG.plan.seasons || []), offers: clone(CFG.plan.offers || []), weekendPct: CFG.plan.weekendPct, minNights: CFG.plan.minNights, minInit: CFG.plan.minNights, panel: null, offerPanel: false };
   var PENSION = ["pensiune", "cabana", "aframe"];
   function curType() { var s = $("dType"); return s && s.value ? s.value : CFG.type; }
-  function isHotel() { return curType() === "hotel_mic"; }
-  function seasonsOn() { return ["pensiune", "cabana", "aframe", "apartament", "hotel_mic"].indexOf(curType()) !== -1; }
+  function isHotel() { return curType() === "hotel_mic" || curType() === "hotel_mare"; }
+  function seasonsOn() { return ["pensiune", "cabana", "aframe", "apartament", "hotel_mic", "hotel_mare"].indexOf(curType()) !== -1; }
   function curMode() { try { var td = window.__collectTypeDetails ? window.__collectTypeDetails() : null; return (td && td.rentalMode) || ""; } catch (e) { return ""; } }
   function perRoom() { return PENSION.indexOf(curType()) !== -1 && curMode() !== "integral" && curMode() !== ""; }
   function priceLabel() { return perRoom() ? T("Preț pe noapte, pe cameră (RON)", "Price per night, per room (RON)") : T("Preț pe noapte (RON)", "Price per night (RON)"); }
