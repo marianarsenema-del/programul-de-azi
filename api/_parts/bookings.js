@@ -13,6 +13,7 @@ const pay = require("./bookings-pay");
 const forms = require("./bookings-forms");
 const camp = require("./bookings-camp"); // camping: locuri pe tip, cu stoc
 const campModelOf = (td) => camp.campModel(td);
+const isStock = (type) => type === "camping" || type === "hotel_mare"; // rezervări pe tip, cu stoc (camping; hotel mare)
 const campTd = async (id) => ((await dbPool.query(`SELECT type_details FROM accommodation_listings WHERE id = $1::integer`, [id])).rows[0] || {}).type_details;
 const { qrSrc, codeRowSrc } = require("./gazda-install-ui");
 
@@ -376,7 +377,7 @@ module.exports = function mountBookings(app) {
       if (!core.isDateStr(from) || !core.isDateStr(to) || core.dayNum(to) <= core.dayNum(from) || core.dayNum(to) - core.dayNum(from) > core.MAX_RANGE_DAYS) return res.status(400).json({ error: "interval_invalid" });
       const unit = unitOf(req, req.query.unit);
       if (unit === null) return res.status(400).json({ error: "camera_invalida" });
-      if (req.listing.type === "camping") { // camping: pe tip de loc, cu locuri libere pe zi
+      if (isStock(req.listing.type)) { // camping: pe tip de loc, cu locuri libere pe zi
         const m = campModelOf(await campTd(req.listing.id)), ty = m.types.find((x) => x.no === unit);
         noStore(res); return res.json({ days: ty ? await camp.calendarOf(dbPool, req.listing.id, ty, from, to) : [], stock: ty ? ty.stock : 0 });
       }
@@ -395,7 +396,7 @@ module.exports = function mountBookings(app) {
       const today = core.todayRo();
       const list = [...new Set(days)].filter((d) => d >= today);
       if (!list.length) return res.status(400).json({ error: "zile_trecute" });
-      if (req.listing.type === "camping") { // camping: închide/deschide câte locuri vrei dintr-un tip (gol = toate)
+      if (isStock(req.listing.type)) { // camping: închide/deschide câte locuri vrei dintr-un tip (gol = toate)
         const m = campModelOf(await campTd(req.listing.id)), ty = m.types.find((x) => x.no === unit);
         if (!ty) return res.status(400).json({ error: "camera_invalida" });
         const qty = (req.body || {}).qty == null || (req.body || {}).qty === "" ? 0 : Number((req.body || {}).qty);
@@ -423,12 +424,12 @@ module.exports = function mountBookings(app) {
       await sync.ensure(req.listing.id); // preia din formular dacă s-a schimbat de la ultima sincronizare
       req.listing = Object.assign(req.listing, (await dbPool.query(`SELECT base_price_bani, whole_discount_bps FROM booking_settings WHERE listing_id = $1`, [req.listing.id])).rows[0] || {});
       req.listing.units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [req.listing.id])).rows;
-      if (req.listing.type === "camping") { const m = campModelOf(await campTd(req.listing.id)); req.listing.units.forEach((u) => { const t = m.types.find((x) => x.no === u.unit_no); u.stock = t ? t.stock : 0; }); }
+      if (isStock(req.listing.type)) { const m = campModelOf(await campTd(req.listing.id)); req.listing.units.forEach((u) => { const t = m.types.find((x) => x.no === u.unit_no); u.stock = t ? t.stock : 0; }); }
       const rules = (await dbPool.query(
         `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps
            FROM booking_rate_rules r WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
       const l = req.listing;
-      noStore(res); res.json({ camp: l.type === "camping", units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
+      noStore(res); res.json({ camp: isStock(l.type), stock_word: l.type === "hotel_mare" ? "camere" : "locuri", units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
     } catch (e) { console.error("rezervari tarife:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.post("/api/rezervari/:id/setari", ...ownerApi, ownListing, async (req, res) => {
