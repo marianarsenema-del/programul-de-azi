@@ -18,7 +18,7 @@ function html(lang, nonce) {
 #qfBox .qf-chev{flex:none;align-self:center;width:11px;height:11px;border-right:3px solid #E8751A;border-bottom:3px solid #E8751A;transform:translateY(-3px) rotate(45deg);transition:transform .2s}
 #qfBox[open]>summary .qf-chev{transform:translateY(3px) rotate(-135deg)}
 #qfBox .qf-body{padding:14px 2px 0}
-#qfGo{display:block;width:100%;box-sizing:border-box;margin-top:12px;background:#F0813A;color:#fff;border:0;border-radius:12px;padding:15px 18px;font-size:16px;font-weight:800;cursor:pointer;transition:background .15s}
+#qfGo{display:block;width:100%;box-sizing:border-box;margin-top:12px;background:#F0813A;color:#fff;border:0;border-radius:12px;padding:15px 18px;font-size:16px;font-weight:800;cursor:pointer;transition:background-color .3s ease,color .3s ease}
 #qfGo:hover:not(:disabled){background:#E8751A}
 #qfGo:disabled{background:#E3E8F0;color:#8A94A6;cursor:not-allowed}
 #qfText{width:100%;box-sizing:border-box}
