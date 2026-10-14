@@ -8,6 +8,7 @@ const core = require("./bookings-core");
 const { dbPool, STRIPE_SECRET_KEY, RESEND_API_KEY, INTL_DOMAIN } = require("./static");
 const L = require("./logic");
 const forms = require("./bookings-forms");
+const POL = require("./bookings-policy");
 
 const PUBLISHABLE = process.env.STRIPE_PUBLISHABLE_KEY || "";
 const WEBHOOK_SECRET = process.env.STRIPE_BOOKINGS_WEBHOOK_SECRET || "";
@@ -86,7 +87,7 @@ async function mailConfirmed(row) {
     ? `Ai plătit avansul de <b>${fmtRon(row.advance_bani)}</b>. Restul de <b>${fmtRon(row.rest_bani)}</b> se debitează automat de pe același card pe <b>${dRo(row.rest_due)}</b>; cu 3 zile înainte primești un memento.`
     : `Ai plătit integral <b>${fmtRon(row.total_bani)}</b>.`;
   await sendMail(row.guest_email, "Rezervare confirmată · " + row.listing_name,
-    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
+    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.cancel_policy ? `<p><b>Politica de anulare:</b> ${E(POL.shortText(row.cancel_policy))}</p>` : ""}<p style="color:#555">Factura pentru serviciile de cazare va fi emisă de către gazdă.</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
   await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare nouă", body: row.guest_name + " · " + dRo(row.ci) + " – " + dRo(row.co) + " · " + row.guests + " pers.", tag: "gz-r" + row.id });
   await sendMail(row.owner_email, "Rezervare nouă (plătită online) · " + row.listing_name,
     `<p>Ai o rezervare nouă confirmată la <b>${E(row.listing_name)}</b>.</p><p>${E(row.guest_name)} · ${E(row.guest_phone)} · ${E(row.guest_email)}<br>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)} · ${fmtRon(row.total_bani)}</p><p>Plata se face prin Opening Hours Today; banii îți ajung în cont la 24 de ore după check-in.</p>`);
@@ -224,15 +225,62 @@ async function claimGuarantee(row, amountBani, note) {
 async function cancelPendingIntents(row) {
   for (const pi of [row.pi_advance, row.pi_rest]) if (pi) await stripeReq("POST", `/payment_intents/${pi}/cancel`, {}, `bk-cancel-${pi}`); // doar cele neplătite se pot anula; restul întorc eroare, ignorată
 }
-// Turistul anulează: nu se rambursează nimic (avansul sau totul se pierde); banii merg la gazdă (minus comision) la data plății.
-async function cancelByGuest(row) {
-  const up = await dbPool.query(`UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = 'guest', pay_status = CASE WHEN pay_scheme <> 'direct' AND paid_bani > 0 THEN 'forfeited' ELSE pay_status END WHERE id = $1 AND status IN ('confirmed','hold') RETURNING id`, [row.id]);
-  if (!up.rowCount) return false;
-  await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
-  if (row.pay_scheme !== "direct" && row.pay_status === "partial") await cancelPendingIntents({ pi_rest: row.pi_rest });
-  await releaseGuarantee(row);
+// Rezultatul anulării de către turist după politica salvată pe rezervare (rezervările vechi, fără politică, păstrează regula veche: nu se returnează nimic).
+function guestOutcome(row, now) {
+  const paid = row.pay_scheme !== "direct" ? Math.max(0, Number(row.paid_bani) || 0) : 0;
+  if (!row.cancel_policy) return { allowed: true, free: false, penalty: paid, refund: 0, hoursLeft: 0, legacy: true };
+  const at = row.checkin_at ? new Date(row.checkin_at) : POL.checkinInstant(row.ci, null);
+  return POL.cancelOutcome({ policy: row.cancel_policy, paid, total: row.total_bani, firstNight: row.first_night_bani || 0, checkinAt: at, now: now || new Date() });
+}
+// Rambursează `refund` bani din plățile încă neplătite gazdei (întâi restul, apoi avansul) și ajustează plățile: ce rămâne e penalitatea,
+// din care platforma ia comisionul rezervării (proporțional; 0 la rezervări fără comision). Reluare sigură: cheile Stripe conțin suma.
+async function settleRefunds(row, outcome) {
+  const pays = (await dbPool.query(`SELECT * FROM booking_payouts WHERE reservation_id = $1 AND status = 'pending' ORDER BY id DESC`, [row.id])).rows;
+  let remaining = outcome.refund - (Number(row.refunded_bani) || 0);
+  for (const p of pays) {
+    if (remaining <= 0) break;
+    const amt = Math.min(remaining, p.gross_bani);
+    if (amt <= 0) continue;
+    const rf = await stripeReq("POST", "/refunds", { payment_intent: p.pi_id, amount: amt, metadata: { reservation_id: row.id, reason: "turist" } }, `bk-grefund-${p.pi_id}-${amt}`);
+    if (!rf.ok) { console.error("rezervari: rambursare turist eșuată", row.id, rf.error && rf.error.message); return false; }
+    await dbPool.query(`UPDATE booking_payouts SET gross_bani = gross_bani - $2, amount_bani = amount_bani - $2 WHERE id = $1`, [p.id, amt]);
+    await dbPool.query(`UPDATE booking_reservations SET refunded_bani = refunded_bani + $2 WHERE id = $1`, [row.id, amt]);
+    p.gross_bani -= amt; p.amount_bani -= amt; remaining -= amt;
+  }
+  const left = pays.filter((p) => p.gross_bani > 0);
+  const pc = POL.penaltyCommission(row.commission_bani, row.total_bani, outcome.penalty);
+  let restC = pc;
+  for (let i = 0; i < left.length; i++) {
+    const p = left[i];
+    const c = i === left.length - 1 ? restC : Math.min(restC, Math.round(pc * p.gross_bani / Math.max(1, outcome.penalty)));
+    restC -= c;
+    await dbPool.query(`UPDATE booking_payouts SET commission_bani = $2, amount_bani = gross_bani - $2 WHERE id = $1`, [p.id, c]);
+  }
+  for (const p of pays.filter((x) => x.gross_bani <= 0)) await dbPool.query(`UPDATE booking_payouts SET status = 'cancelled', commission_bani = 0, amount_bani = 0 WHERE id = $1`, [p.id]);
   return true;
 }
+// Turistul (sau sistemul, la rest neplătit) anulează. Întoarce { ok, outcome } sau { ok:false, error }.
+async function settleGuestCancel(row, by) {
+  const outcome = guestOutcome(row);
+  if (!outcome.allowed) return { ok: false, error: "nu_se_poate_anula" };
+  const online = row.pay_scheme !== "direct" && row.paid_bani > 0;
+  if (online && !outcome.legacy) {
+    const pays = (await dbPool.query(`SELECT 1 FROM booking_payouts WHERE reservation_id = $1 AND status = 'paid' LIMIT 1`, [row.id])).rows;
+    if (pays.length) return { ok: false, error: "plata_efectuata" };
+    if (!(await settleRefunds(row, outcome))) return { ok: false, error: "rambursare_esuata" };
+  }
+  const full = online && !outcome.legacy && outcome.refund >= row.paid_bani;
+  const up = await dbPool.query(
+    `UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = $2, penalty_bani = $3, cancel_refund_bani = $4,
+       pay_status = CASE WHEN $5::boolean THEN 'refunded' WHEN pay_scheme <> 'direct' AND paid_bani > 0 THEN 'forfeited' ELSE pay_status END
+     WHERE id = $1 AND status IN ('confirmed','hold') RETURNING id`, [row.id, by, online ? outcome.penalty : 0, online ? outcome.refund : 0, full]);
+  if (!up.rowCount) return { ok: false, error: "nu_se_poate_anula" };
+  await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
+  if (row.pay_scheme !== "direct" && (row.pay_status === "partial" || row.pay_status === "rest_failed")) await cancelPendingIntents({ pi_rest: row.pi_rest });
+  await releaseGuarantee(row);
+  return { ok: true, outcome };
+}
+async function cancelByGuest(row) { return (await settleGuestCancel(row, "guest")).ok; }
 // Gazda anulează: rambursare integrală a ce s-a plătit. Dacă o rambursare eșuează, nu anulăm (se poate reîncerca fără dublare).
 async function cancelByOwner(row) {
   if (row.pay_scheme !== "direct" && row.paid_bani > 0) {
@@ -279,14 +327,13 @@ async function runPaymentCron() {
   // 3) termen de 48 de ore depășit → rezervarea se anulează, avansul se pierde
   const exp = (await dbPool.query(RES_SELECT + ` WHERE r.status = 'confirmed' AND r.pay_status = 'rest_failed' AND r.rest_deadline < now() LIMIT 20`)).rows;
   for (const row of exp) {
-    const up = await dbPool.query(`UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = 'system', pay_status = 'forfeited' WHERE id = $1 AND status = 'confirmed' AND pay_status = 'rest_failed' RETURNING id`, [row.id]);
-    if (!up.rowCount) continue;
-    await dbPool.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status IN (3,4)`, [row.id]);
-    await cancelPendingIntents({ pi_rest: row.pi_rest });
-    await releaseGuarantee(row);
-    await sendMail(row.guest_email, "Rezervare anulată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Nu am primit plata restului în termen de 48 de ore, așa că rezervarea la <b>${E(row.listing_name)}</b> (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată. Conform politicii de anulare, avansul nu se returnează.</p>`);
+    const done = await settleGuestCancel({ ...row, pay_status: "rest_failed" }, "system");
+    if (!done.ok) { if (done.error === "rambursare_esuata") st.payout_errors++; continue; }
+    const o = done.outcome;
+    const guestTxt = o.refund > 0 ? `Conform politicii de anulare, ți s-au returnat <b>${fmtRon(o.refund)}</b>${o.penalty > 0 ? ` (se reține ${fmtRon(o.penalty)})` : ""}.` : "Conform politicii de anulare, avansul nu se returnează.";
+    await sendMail(row.guest_email, "Rezervare anulată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Nu am primit plata restului în termen de 48 de ore, așa că rezervarea la <b>${E(row.listing_name)}</b> (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată. ${guestTxt}</p>`);
     await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare anulată", body: row.guest_name + ": restul nu a fost plătit în termen. Zilele s-au eliberat.", tag: "gz-r" + row.id });
-    await sendMail(row.owner_email, "Rezervare anulată (rest neachitat) · " + row.listing_name, `<p>Rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată pentru că restul nu a fost plătit. Zilele sunt din nou libere, iar avansul încasat (minus comisionul) îți va fi plătit la 24 de ore după data check-in.</p>`);
+    await sendMail(row.owner_email, "Rezervare anulată (rest neachitat) · " + row.listing_name, `<p>Rezervarea ${E(row.guest_name)} (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată pentru că restul nu a fost plătit. Zilele sunt din nou libere.${o.penalty > 0 ? ` Din suma încasată rămân la tine <b>${fmtRon(o.penalty)}</b> (minus comisionul, dacă e cazul), plătiți la 24 de ore după data check-in.` : " Suma încasată a fost returnată turistului conform politicii de anulare."}</p>`);
     st.expired++;
   }
   // 3b) garanția: blocare pe card cu o zi înainte de sosire (doar dacă totul e plătit) și eliberare după plecare
@@ -332,6 +379,8 @@ async function runPaymentCron() {
     if (t.ok) { await dbPool.query(`UPDATE booking_payouts SET status = 'paid', transfer_id = $2 WHERE id = $1`, [p.id, t.data.id]); st.payouts++; }
     else { await dbPool.query(`UPDATE booking_payouts SET attempts = attempts + 1, last_error = $2 WHERE id = $1`, [p.id, String((t.error && t.error.message) || "eroare").slice(0, 200)]); st.payout_errors++; }
   }
+  // 5) facturile de comision (Oblio), doar dacă sunt configurate; erorile nu opresc restul cronului
+  try { const inv = await require("./bookings-invoice").runInvoices(sendMail); st.invoices = inv.issued; st.invoice_errors = inv.failed + inv.check; } catch (e) { console.error("rezervari facturi:", e.message); }
   return st;
 }
 
@@ -503,4 +552,4 @@ function mount(r, ctx) {
   });
 }
 
-module.exports = { claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
+module.exports = { guestOutcome, settleGuestCancel, claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
