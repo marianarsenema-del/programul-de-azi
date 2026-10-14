@@ -388,7 +388,7 @@ function travelGuidesBoxLabelsFor(lang) {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket, accessDifficulty, isBeach }) {
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket, accessDifficulty, isBeach, ownStaysHref, ownStaysLabel }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   // hideTicket — obiective cu acces liber (poduri, lacuri, munți, șosele)
@@ -429,7 +429,9 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
     <p class="plan-visit-hint" id="planVisitHint">${escapeHtml(t.hint(name))}</p>
     <div class="plan-visit-panel" id="planVisitPanel" hidden>
       ${ticketHtml}
-      <a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>
+      ${ownStaysHref
+        ? `<a href="${escapeHtml(ownStaysHref)}" class="plan-visit-option plan-visit-booking">${escapeHtml(ownStaysLabel || t.stays)}</a>`
+        : `<a href="${escapeHtml(bookingSearchLinkFor(name))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-booking">${escapeHtml(t.stays)}</a>`}
       ${restaurantHtml}
       ${parkingHtml}
     </div>
@@ -1112,7 +1114,7 @@ function mallCinemaLabelsFor(lang) {
   return getExtraLabels(lang);
 }
 
-function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCode }) {
+function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCode, ownStaysHref, ownStaysLabel }) {
   const t = labels || CONTEXTUAL_WIDGET_LABELS_RO;
   const place = orasDisplay || name;
   // Fără countryCode explicit (apelurile vechi, mereu de pe .ro) = România.
@@ -1135,7 +1137,9 @@ function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCod
     : "";
   const closedContentHtml =
     type === "attraction"
-      ? `<a href="${escapeHtml(bookingSearchLinkFor(place))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.booking)}</a>
+      ? `${ownStaysHref
+          ? `<a href="${escapeHtml(ownStaysHref)}" class="contextual-widget-btn">${escapeHtml(ownStaysLabel || t.booking)}</a>`
+          : `<a href="${escapeHtml(bookingSearchLinkFor(place))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.booking)}</a>`}
          <a href="${escapeHtml(restaurantsOpenNowLinkFor(place))}" target="_blank" rel="noopener" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.restaurants)}</a>`
       : `${glovoHtml}${bringoHtml}`;
 
@@ -5112,6 +5116,7 @@ function accDarkFooterHtml(lang) {
     ${en ? "By signing in or creating an account, you agree to our" : "Prin autentificare sau prin crearea unui cont, sunteți de acord cu"} <a href="/termeni-si-conditii">${en ? "Terms and Conditions" : "Termenii și Condițiile noastre"}</a> ${en ? "and our" : "și cu"} <a href="/politica-de-confidentialitate">${en ? "Privacy Policy" : "Politica de confidențialitate"}</a>.<br>
     ${en ? "All rights reserved." : "Toate drepturile rezervate."}<br>
     Copyright Opening <span style="color:var(--accent)">Hours Today</span>™
+    <div style="margin-top:14px"><a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer" title="${en ? "ANPC – Alternative Dispute Resolution (SAL)" : "ANPC – Soluționarea Alternativă a Litigiilor (SAL)"}" style="display:inline-block;background:#fff;border-radius:10px;padding:8px 14px;text-decoration:none"><img src="/anpc-logo.svg" alt="${en ? "ANPC – Alternative Dispute Resolution (SAL)" : "ANPC – Soluționarea Alternativă a Litigiilor (SAL)"}" width="150" height="71" loading="lazy" style="display:block;width:150px;height:auto"></a><div style="margin-top:6px"><a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer">${en ? "Alternative Dispute Resolution (SAL)" : "Soluționarea Alternativă a Litigiilor (SAL)"}</a></div></div>
   </div>
 </footer>`;
 }
