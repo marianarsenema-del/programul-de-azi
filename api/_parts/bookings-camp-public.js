@@ -5,6 +5,8 @@
 const crypto = require("crypto");
 const CAMP = require("./bookings-camp");
 const PARTY = require("./bookings-party");
+const POL = require("./bookings-policy");
+const PROMO = require("./bookings-promo");
 
 module.exports = function mountCampPublic(r, h) {
   const { dbPool, core, L, jsonOnly, noStore, toId, cleanText, sendMail, E, dRo, newCode, codeHash, sha, ipKey, HOLD_MIN, LIVE, SECRET, FORMS, page, pay } = h;
@@ -14,11 +16,12 @@ module.exports = function mountCampPublic(r, h) {
       const id = toId(req.params.id);
       if (!id) return res.status(404).json({ error: "negasit" });
       const { rows } = await dbPool.query(
-        `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
+        `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.payment_mode, l.checkin_time${LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
           WHERE l.id = $1::integer AND l.type IN ('camping', 'hotel_mare') AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true;
+      rows[0].policy = POL.normalize(rows[0].cancel_policy);
       rows[0].model = CAMP.campModel(rows[0].type_details);
       rows[0].kids = rows[0].model.hotel ? PARTY.sanitizeKids((CAMP.parseTd(rows[0].type_details) || {}).kids) : null;
       req.pub = rows[0];
@@ -47,7 +50,8 @@ module.exports = function mountCampPublic(r, h) {
   });
 
   const paramsOf = (src) => { let items = src.items; if (typeof items === "string") { try { items = JSON.parse(items); } catch (e) { items = null; } } return CAMP.parseParams({ ...src, items }); };
-  const outQuote = (q) => ({ ok: q.ok, errors: q.errors, nights: q.nights, persons: q.persons, totalBani: q.totalBani || 0, pitchBani: q.pitchTotal || 0, feesBani: q.feesTotal || 0,
+  const policyDiscOf = (lst, totalBani) => (lst.online ? Math.round((totalBani || 0) * POL.discountBps(lst.policy) / 10000) : 0);
+  const outQuote = (q, lst) => ({ ok: q.ok, errors: q.errors, nights: q.nights, persons: q.persons, totalBani: (q.totalBani || 0) - (lst ? policyDiscOf(lst, q.totalBani) : 0), policyDiscountBani: lst ? policyDiscOf(lst, q.totalBani) : 0, policy: lst && lst.online ? { key: lst.policy, text: POL.shortText(lst.policy) } : null, pitchBani: q.pitchTotal || 0, feesBani: q.feesTotal || 0,
     lines: (q.lines || []).map((x) => ({ no: x.no, name: x.name, qty: x.qty, full: x.full, total_bani: x.total_bani })), feeLines: q.feeLines || [] });
 
   r.get("/api/rezervari/public/:id/camp/oferta", pubCamp, async (req, res) => {
@@ -61,7 +65,7 @@ module.exports = function mountCampPublic(r, h) {
         const free = CAMP.freeByDay(l.model, await slotRows(dbPool, l.id, p.checkin, p.checkout), q.days);
         p.items.forEach((it) => { if (q.days.some((d) => (free[it.no] || {})[d] < it.qty) && !q.errors.includes("indisponibil")) { q.errors.push("indisponibil"); q.ok = false; } });
       }
-      noStore(res); res.json(outQuote(q));
+      noStore(res); res.json(outQuote(q, l));
     } catch (e) { console.error("rezervari camp oferta:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
@@ -77,24 +81,29 @@ module.exports = function mountCampPublic(r, h) {
     try {
       const qt = CAMP.quote(core, model, await rulesOf(lst.id), lst, p);
       if (!qt.ok) return res.status(409).json({ error: "oferta_invalida", errors: qt.errors });
-      const total = qt.totalBani;
+      const online = !!lst.online;
+      const policyDisc = policyDiscOf(lst, qt.totalBani);
+      const total = qt.totalBani - policyDisc;
       const guests = qt.persons;
       if (guests > 32000) return res.status(400).json({ error: "date_invalide" });
       const active = (await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_reservations WHERE status = 'hold' AND hold_until > now() AND (lower(guest_email) = $1 OR guest_phone = $2)`, [email, phone])).rows[0].c;
       if (active >= 2) return res.status(429).json({ error: "prea_multe_blocari" });
       let token = crypto.randomBytes(32).toString("hex"), access = sha(token);
       const code = newCode();
-      const online = !!lst.online;
-      const plan = online ? core.planPayment(total, p.checkin, core.todayRo()) : null;
-      const commission = online ? Math.round(total * (lst.commission_bps || 0) / 10000) : 0;
+      let plan = null;
+      let commission = online ? Math.round(total * (lst.commission_bps || 0) / 10000) : 0, promoFree = false; // promoția (primele 5 online / cont gazdă) se decide în tranzacție
       client = await dbPool.connect();
       await client.query("BEGIN");
       await client.query(`SELECT pg_advisory_xact_lock($1::bigint)`, [lst.id]);
+      if (online && commission > 0) { await PROMO.lockOwner(client, lst.owner_id); if (await PROMO.nextIsFree(client, lst.owner_id)) { commission = 0; promoFree = true; } }
       await client.query(`UPDATE booking_reservations SET status = 'expired' WHERE listing_id = $1 AND status = 'hold' AND hold_until < now()`, [lst.id]);
       await client.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND status = 3 AND blocked_until < now()`, [lst.id]);
       const pairs = CAMP.allocate(model, p.items, qt.days, await slotRows(client, lst.id, p.checkin, p.checkout));
       if (!pairs) { await client.query("ROLLBACK"); return res.status(409).json({ error: "oferta_invalida", errors: ["indisponibil"] }); }
       const snapshot = CAMP.snapshotOf(model, qt, pairs, { adults: p.adults, children: p.children, ages: p.ages || undefined, cars: p.cars, pets: p.pets, electric: p.electric });
+      if (policyDisc > 0) snapshot.policy_discount_bani = policyDisc;
+      const firstNight = online ? POL.firstNightOf(snapshot, total) : 0;
+      if (online) plan = POL.planPayment(core, total, p.checkin, core.todayRo(), lst.policy, firstNight);
       const unitIds = snapshot.units.map((x) => x.unit_no);
       const ins = await client.query(
         `INSERT INTO booking_reservations (listing_id, check_in, check_out, guests, total_bani, commission_bani, currency, nights_snapshot, status, guest_name, guest_phone, guest_email, access_hash, code_expires_at, code_sent_at, hold_until, ip_hash, unit_ids)
@@ -104,8 +113,8 @@ module.exports = function mountCampPublic(r, h) {
       if (online) {
         token = core.deriveToken(rid, SECRET); access = sha(token);
         const gar = Math.max(0, Number(lst.guarantee_bani) || 0);
-        await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3, pay_scheme = $4, pay_status = 'awaiting', advance_bani = $5, rest_bani = $6, rest_due_on = $7::date, guarantee_bani = $8, guarantee_status = $9 WHERE id = $1`,
-          [rid, codeHash(rid, access, code), access, plan.scheme, plan.advance, plan.rest, plan.restDueOn || null, gar, gar > 0 ? "pending" : "none"]);
+        await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3, pay_scheme = $4, pay_status = 'awaiting', advance_bani = $5, rest_bani = $6, rest_due_on = $7::date, guarantee_bani = $8, guarantee_status = $9, cancel_policy = $10, policy_discount_bani = $11, first_night_bani = $12, checkin_at = $13::timestamptz, promo_free = $14 WHERE id = $1`,
+          [rid, codeHash(rid, access, code), access, plan.scheme, plan.advance, plan.rest, plan.restDueOn || null, gar, gar > 0 ? "pending" : "none", lst.policy, policyDisc, firstNight, POL.checkinInstant(p.checkin, lst.checkin_time).toISOString(), promoFree]);
       } else if (FORMS) {
         token = core.deriveToken(rid, SECRET); access = sha(token);
         await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3 WHERE id = $1`, [rid, codeHash(rid, access, code), access]);
@@ -196,7 +205,7 @@ module.exports = function mountCampPublic(r, h) {
         try {
           const q = await call("GET", P + "/camp/oferta?checkin=" + ci + "&checkout=" + co + "&items=" + encodeURIComponent(JSON.stringify(p.items)) + "&adults=" + p.adults + "&children=" + p.children + (p.ages ? "&ages=" + p.ages.join(",") : "") + "&cars=" + p.cars + "&pets=" + p.pets + "&electric=" + p.electric);
           const parts = q.lines.map((x) => (x.qty > 1 ? x.qty + " × " : "") + x.name + ": " + money(x.total_bani)).concat((q.feeLines || []).map((x) => x.label + " (" + x.count + "): " + money(x.total_bani)));
-          if (q.ok) { say(m, q.nights + " nopți · " + parts.join(" · ") + " · TOTAL " + money(q.totalBani), true); $("#go").disabled = false; }
+          if (q.ok) { say(m, q.nights + " nopți · " + parts.join(" · ") + (q.policyDiscountBani ? " · reducere nerambursabil: -" + money(q.policyDiscountBani) : "") + " · TOTAL " + money(q.totalBani) + (q.policy ? " · Anulare: " + q.policy.text : ""), true); $("#go").disabled = false; }
           else say(m, q.errors.map(tr).join(" "), false);
         } catch (e) { say(m, e.message, false); }
       }, 250);
