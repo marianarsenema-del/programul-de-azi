@@ -4936,7 +4936,8 @@ input[type=time]::-webkit-date-and-time-value{text-align:left;}
 .pn-roomlist{display:flex;flex-direction:column;gap:14px;}.pn-roomhead{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .pn-two2{display:flex;gap:12px;flex-wrap:wrap;}.pn-two2>.pn-field{flex:1 1 150px;min-width:0;}
 #detForm .pn-roomhead .acc-white-input{height:52px;padding:0 14px;font-size:15px;font-weight:600;border-radius:12px;margin-bottom:0;}
-.pn-roomhead{flex-wrap:wrap;}.pn-roomhead>.acc-white-input{flex:1 1 220px;min-width:0;}.pn-roomhead .pn-two{flex:1 1 100%;gap:12px;}.pn-roomhead .pn-two>div{flex:1 1 150px;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.pn-roomhead{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 16px;align-items:center;}.pn-roomhead .pn-mini{margin:0;}.pn-roomhead .pn-two,.pn-roomhead .pn-two>div{display:contents;}
+@media (max-width:560px){.pn-roomhead{grid-template-columns:minmax(0,1fr);gap:6px;}.pn-roomhead .acc-white-input{margin-bottom:8px;}}
 .pn-rm{width:44px;height:44px;border:1.5px solid #d6deea;border-radius:12px;background:#fff;color:#6b7280;font-size:16px;cursor:pointer;}
 .pn-add{margin-top:14px;width:100%;height:52px;border:1.5px dashed #b9c7dd;border-radius:14px;background:#fff;color:#1a1f35;font-weight:800;font-size:15.5px;cursor:pointer;}
 .pn-other-toggle .pa-icon{display:none;}
