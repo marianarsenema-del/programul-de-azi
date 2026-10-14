@@ -6,11 +6,25 @@
 function html(lang, nonce) {
   const en = lang === "en";
   const t = (ro, e) => (en ? e : ro);
-  return `<details class="acc-section-box" id="qfBox" style="margin:0 0 18px"><summary style="cursor:pointer;font-weight:700">⚡ ${t("Completare rapidă din descrierea ta", "Quick fill from your description")}</summary>
-<p class="acc-white-hint" style="margin:10px 0">${t("Ai deja o descriere (de pe site-ul tău sau de oriunde)? Lipește-o aici și completăm facilitățile, orele de check-in/check-out, capacitatea. Textul nu se trimite nicăieri, iar tu verifici și corectezi totul.", "Already have a description (from your own site or anywhere)? Paste it here and we fill in amenities, check-in/out times, capacity. The text is not sent anywhere, and you review and correct everything.")}</p>
+  return `<style nonce="${nonce}">
+#qfBox{margin:0 0 18px;border:0;padding:0;background:none}
+#qfBox>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;background:#fff;border:2px solid #F0813A;border-radius:14px;padding:16px 18px;color:#E8751A;font-weight:800;font-size:16px;line-height:1.35;transition:background .15s,box-shadow .15s}
+#qfBox>summary::-webkit-details-marker{display:none}
+#qfBox>summary::marker{content:""}
+#qfBox>summary:hover{background:#FFF6EE;box-shadow:0 2px 10px rgba(240,129,58,.25)}
+#qfBox>summary:focus-visible{outline:3px solid rgba(240,129,58,.45);outline-offset:2px}
+#qfBox .qf-chev{flex:none;width:12px;height:12px;border-right:3px solid #E8751A;border-bottom:3px solid #E8751A;transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .2s}
+#qfBox[open]>summary .qf-chev{transform:rotate(-135deg);margin:4px 4px 0 0}
+#qfBox .qf-body{padding:14px 2px 0}
+#qfGo{display:block;width:100%;box-sizing:border-box;margin-top:12px;background:#F0813A;color:#fff;border:0;border-radius:12px;padding:15px 18px;font-size:16px;font-weight:800;cursor:pointer;transition:background .15s}
+#qfGo:hover{background:#E8751A}
+#qfText{width:100%;box-sizing:border-box}
+</style>
+<details id="qfBox"><summary><span>⚡ ${t("Completează totul automat dintr-o descriere existentă (apasă aici)", "Fill everything in automatically from an existing description (tap here)")}</span><span class="qf-chev" aria-hidden="true"></span></summary>
+<div class="qf-body"><p class="acc-white-hint" style="margin:0 0 10px">${t("Ai deja o descriere (de pe site-ul tău sau de oriunde)? Lipește-o aici și completăm facilitățile, orele de check-in/check-out și capacitatea. Textul nu se trimite nicăieri, iar tu verifici și corectezi totul.", "Already have a description (from your own site or anywhere)? Paste it here and we fill in amenities, check-in/out times and capacity. The text is not sent anywhere, and you review and correct everything.")}</p>
 <textarea id="qfText" class="acc-white-input" rows="7" maxlength="8000" placeholder="${t("Lipește descrierea aici…", "Paste your description here…")}"></textarea>
-<button type="button" id="qfGo" class="acc-edit-btn" style="margin-top:10px">${t("Completează câmpurile", "Fill in the fields")}</button>
-<div id="qfOut" class="acc-white-hint" style="margin-top:10px" aria-live="polite"></div></details>
+<button type="button" id="qfGo">${t("Completează facilitățile acum", "Fill in the amenities now")}</button>
+<div id="qfOut" class="acc-white-hint" style="margin-top:10px" aria-live="polite"></div></div></details>
 <script nonce="${nonce}">${JS(en)}</script>`;
 }
 
