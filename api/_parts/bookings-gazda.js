@@ -309,11 +309,27 @@ function draw(){const root=$('#app');root.replaceChildren();
  const sw=el('select',{'aria-label':'Proprietate'});me.listings.forEach(l=>sw.append(el('option',{value:String(l.id)},[l.name])));sw.value=String(LID);sw.hidden=me.listings.length<2;
  sw.onchange=()=>{LID=Number(sw.value);try{localStorage.setItem('gzListing',String(LID));}catch(e){}resetState();show(tab);};
  root.append(el('div',{class:'top'},[me.listings.length<2?el('b',{style:'font-size:17px'},[me.listings[0].name]):sw]),el('div',{id:'view'}));
- const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].concat(STAFF()?[]:[['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
+ const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].concat(STAFF()?[]:[['msg','Mesaje'+(me.unread?' ('+me.unread+')':'')],['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
  show(tab);}
 function resetState(){month=firstOfMonth(new Date());days={};sel=[];units=[];curUnit='';CAMPL=false;dinfo={};}
 function show(t){tab=t;document.querySelectorAll('.nav button').forEach(b=>b.className=b.dataset.t===t?'on':'');const v=$('#view');if(!v)return;v.replaceChildren();
- ({azi:viewAzi,cal:viewCal,rez:viewRez,set:viewSet})[t](v);}
+ ({azi:viewAzi,cal:viewCal,rez:viewRez,set:viewSet,msg:viewMsg})[t](v);}
+async function viewMsg(v){if(STAFF()){show('azi');return;}v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/mesaje');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
+ v.replaceChildren();me.unread=j.unread;const tb=document.querySelector('.nav button[data-t="msg"]');if(tb)tb.textContent='Mesaje'+(j.unread?' ('+j.unread+')':'');
+ const KD={cazare:'Cazare',atractie:'Obiectiv',restaurant:'Local'};
+ v.append(el('div',{class:'sub'},[j.unread?j.unread+' necitite':'Toate citite']));
+ if(j.unread){const ra=el('button',{class:'s',type:'button',style:'width:100%;margin:8px 0'},['Marchează toate citite']);ra.onclick=async()=>{try{await api('POST','/api/gazda/mesaje/citit',{all:true});viewMsgReload();}catch(e){alert(errT(e));}};v.append(ra);}
+ if(!j.messages.length)v.append(el('div',{class:'card'},['Nu ai primit încă mesaje.']));
+ j.messages.forEach(m=>{const c=el('div',{class:'card',style:m.read?'':'border:2px solid #0E6B63'});
+  c.append(el('div',{style:'display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap'},[el('b',{},[(m.read?'':'● ')+m.guest_name]),el('span',{class:'sub'},[m.at])]));
+  c.append(el('div',{class:'sub'},[(KD[m.kind]||'')+' · '+(m.listing_name||'')+(m.arrival?' · sosire: '+m.arrival:'')]));
+  c.append(el('div',{style:'white-space:pre-wrap;margin:8px 0'},[m.message]));
+  const row=el('div',{class:'row'});
+  row.append(el('a',{href:'mailto:'+m.guest_email+'?subject='+encodeURIComponent('Re: mesajul tău către '+(m.listing_name||'proprietate')),style:'text-align:center;padding:12px;border:1px solid #0E6B63;border-radius:10px;color:#0E6B63;font-weight:700;text-decoration:none'},['Răspunde pe e-mail']));
+  if(m.guest_phone)row.append(el('a',{href:'tel:'+m.guest_phone,style:'text-align:center;padding:12px;border:1px solid #0E6B63;border-radius:10px;color:#0E6B63;font-weight:700;text-decoration:none'},['Sună']));
+  if(!m.read){const b=el('button',{type:'button',class:'s'},['Marchează citit']);b.onclick=async()=>{b.disabled=true;try{await api('POST','/api/gazda/mesaje/citit',{ids:[m.id]});viewMsgReload();}catch(e){b.disabled=false;}};row.append(b);}
+  c.append(row);v.append(c);});}
+function viewMsgReload(){const v=$('#view');if(v){v.replaceChildren();viewMsg(v);}}
 const B=()=>'/api/rezervari/'+LID;
 const ds=(d)=>d.toISOString().slice(0,10);
 const RO=['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
@@ -322,7 +338,7 @@ const ron=(b)=>(b/100).toLocaleString('ro-RO')+' RON';
 function firstOfMonth(d){return new Date(Date.UTC(d.getFullYear(),d.getMonth(),1));}
 let month=firstOfMonth(new Date()),days={},sel=[],units=[],curUnit='',CAMPL=false,STOCKW='locuri',dinfo={};
 const today=ds(new Date());
-const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
+const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, penalitate reținută',refund_failed:'rambursare de verificat'};
 
 function icalWarn(){return el('div',{class:'redwarn'},['⚠️ Important: dacă ai cazarea listată și pe alte platforme (Booking.com, Airbnb, Travelminit etc.), este obligatoriu să adaugi linkul lor iCal în cont, la „Sincronizare platforme”. Altfel calendarele nu se sincronizează și riști overbooking (aceeași perioadă rezervată de două ori, o dată la ele și o dată la noi). ',accLink('Adaugă acum în cont','/cont/rezervari/'+LID)]);}
 // ---------- AZI ----------
@@ -869,7 +885,9 @@ function mount(r, o) {
     try {
       let ls = (await dbPool.query(`SELECT l.id, l.name FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.owner_id = $1::integer AND s.bookings_enabled ORDER BY l.name`, [req.gz.ownerId])).rows;
       if (req.gz.role === "staff" && req.gz.lids.length) ls = ls.filter((x) => req.gz.lids.includes(Number(x.id)));
-      noStore(res); res.json({ email: req.gz.role === "staff" ? "" : (req.gz.email || ""), role: req.gz.role, listings: ls.map((x) => ({ id: x.id, name: x.name })) });
+      let unread = 0;
+      if (req.gz.role !== "staff") { try { const ms = await require("./messages").summary(req.gz.ownerId); unread = ms ? ms.unread : 0; } catch (e) { unread = 0; } }
+      noStore(res); res.json({ email: req.gz.role === "staff" ? "" : (req.gz.email || ""), role: req.gz.role, unread, listings: ls.map((x) => ({ id: x.id, name: x.name })) });
     } catch (e) { console.error("gazda eu:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
@@ -914,6 +932,16 @@ function mount(r, o) {
   });
 
   require("./bookings-gazda-notify").mount(r, { jsonOnly, noStore, gzAuth, ownerRole, fresh, toId, logEv });
+
+  // ---------- mesaje de la vizitatori (doar proprietarul, nu personalul) ----------
+  r.get("/api/gazda/mesaje", gzAuth, ownerRole, async (req, res) => {
+    try { noStore(res); res.json(await require("./messages").listFor(req.gz.ownerId)); }
+    catch (e) { console.error("gazda mesaje:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  r.post("/api/gazda/mesaje/citit", jsonOnly, gzAuth, ownerRole, async (req, res) => {
+    try { await require("./messages").markRead(req.gz.ownerId, req.body || {}); noStore(res); res.json({ ok: true }); }
+    catch (e) { console.error("gazda mesaje citit:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
 
   // ---------- ecranul „Azi” ----------
   r.get("/api/gazda/azi", gzAuth, async (req, res) => {
