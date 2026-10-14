@@ -10,6 +10,8 @@ const { dbPool, RESEND_API_KEY } = require("./static");
 const sync = require("./bookings-sync")(dbPool); // prețuri: formular <-> rezervări <-> pagina pensiunii
 const L = require("./logic");
 const pay = require("./bookings-pay");
+const POLX = require("./bookings-policy");
+const PROMO = require("./bookings-promo");
 const forms = require("./bookings-forms");
 const camp = require("./bookings-camp"); // camping: locuri pe tip, cu stoc
 const campModelOf = (td) => camp.campModel(td);
@@ -62,7 +64,7 @@ const cleanDays = (arr) => {
 
 async function loadListing(listingId, ownerId) {
   const { rows } = await dbPool.query(
-    `SELECT l.id, l.name, l.owner_id, l.type, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.instant_enabled, s.lead_days, s.whole_discount_bps, s.payment_mode${pay.LIVE ? ", s.guarantee_bani" : ""}
+    `SELECT l.id, l.name, l.owner_id, l.type, s.bookings_enabled, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.instant_enabled, s.lead_days, s.whole_discount_bps, s.payment_mode${pay.LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}
        FROM accommodation_listings l LEFT JOIN booking_settings s ON s.listing_id = l.id
       WHERE l.id = $1::integer AND l.owner_id = $2::integer`, [listingId, ownerId]);
   return rows[0] || null;
@@ -216,7 +218,7 @@ $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.get
 $('#close').onclick=()=>act('close');$('#open').onclick=()=>act('open');
 async function loadAll(){const j=await api('GET',B+'/tarife');settings=j.settings;rules=j.rules;units=j.units||[];renderUnits();
 $('#pmd').checked=settings.payment_mode!=='online';$('#pmo').checked=settings.payment_mode==='online';$('#wdisc').value=settings.whole_discount_bps?settings.whole_discount_bps/100:'';
-payNote();loadPay();$('#guarwrap').hidden=!settings.payments_live;$('#guar').value=settings.guarantee_bani?settings.guarantee_bani/100:'';
+payNote();loadPay();$('#guarwrap').hidden=!settings.payments_live;$('#polwrap').hidden=!settings.payments_live;(document.querySelector('input[name=pol][value='+(settings.cancel_policy||'flexible')+']')||{}).checked=true;$('#guar').value=settings.guarantee_bani?settings.guarantee_bani/100:'';
 $('#inst').checked=!!settings.instant_enabled;$('#lead').value=String(settings.lead_days);$('#publink').textContent=settings.instant_enabled?('Link de rezervare: '+location.origin+'/cazare/rezerva/'+LID):'';
 $('#base').value=settings.base_price_bani==null?'':(settings.base_price_bani/100);$('#minn').value=settings.min_nights;$('#maxg').value=settings.max_guests||'';
 const box=$('#rules');box.replaceChildren();if(!rules.length)box.append(el('div',{class:'sub'},['Nu ai încă tarife speciale.']));
@@ -232,15 +234,16 @@ $('#saverule').onclick=async()=>{const m=$('#rulemsg');try{const body={unit_no:$
 await api('POST',B+'/tarife',body);fillRule({});say(m,'Tarif salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
 (async()=>{const t=await api('GET','/api/rezervari/sabloane?year='+new Date().getFullYear());const box=$('#tpl');t.templates.forEach(x=>{const b=el('button',{class:'s',type:'button'},[x.name]);b.onclick=()=>fillRule({name:x.name,kind:'interval',date_from:x.date_from,date_to:x.date_to});box.append(b);});})();
 $('#saveinst').onclick=async()=>{const m=$('#instmsg');try{await api('POST',B+'/setari',{base_price_ron:settings.base_price_bani==null?null:settings.base_price_bani/100,min_nights:settings.min_nights,max_guests:settings.max_guests,instant_enabled:$('#inst').checked,lead_days:Number($('#lead').value)});say(m,'Salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
-$('#savepref').onclick=async()=>{const m=$('#prefmsg');try{await api('POST',B+'/preferinte',{payment_mode:$('#pmo').checked?'online':'direct',whole_discount_pct:$('#wdisc').value===''?0:Number($('#wdisc').value),guarantee_ron:settings.payments_live?($('#guar').value===''?0:Number($('#guar').value)):undefined});say(m,'Salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
-function payNote(){const on=$('#pmo').checked;let t='';if(on){if(!settings.payments_live)t='Plata online nu este încă activă. Deocamdată rezervările tale funcționează cu plata direct la proprietate, fără comision. Te trecem pe plata online când o lansăm.';else if(window.__payOk===false)t='Ca să primești plăți online, configurează încasările (Stripe). Până atunci rezervările rămân cu plată directă, fără comision.';}$('#pmnote').textContent=t;}
+$('#rdl').onclick=()=>{const id=B.split('/').pop();const q=new URLSearchParams({id});if($('#rfrom').value)q.set('from',$('#rfrom').value);if($('#rto').value)q.set('to',$('#rto').value);location.href='/cont/rezervari/raport.xlsx?'+q.toString();};
+$('#savepref').onclick=async()=>{const m=$('#prefmsg');try{await api('POST',B+'/preferinte',{payment_mode:$('#pmo').checked?'online':'direct',whole_discount_pct:$('#wdisc').value===''?0:Number($('#wdisc').value),cancel_policy:settings.payments_live?(document.querySelector('input[name=pol]:checked')||{value:'flexible'}).value:undefined,guarantee_ron:settings.payments_live?($('#guar').value===''?0:Number($('#guar').value)):undefined});say(m,'Salvat',true);loadAll();}catch(e){say(m,e.message,false);}};
+function payNote(){const on=$('#pmo').checked;let t='';if(on){if(!settings.payments_live)t='Plata online nu este încă activă. Deocamdată rezervările tale funcționează cu plata direct la proprietate, fără comision. Te trecem pe plata online când o lansăm.';else if(window.__payOk===false)t='Ca să primești plăți online, configurează încasările (Stripe). Până atunci rezervările rămân cu plată directă, fără comision.';}if(on&&settings.payments_live&&settings.promo_left!=null&&window.__payOk!==false)t=(settings.promo_left>0?'Promoție de lansare: mai ai '+settings.promo_left+' din 5 rezervări online fără comision.':'Promoția de lansare (primele 5 rezervări fără comision) a fost folosită; se aplică comisionul de 8%.');$('#pmnote').textContent=t;}
 async function loadPay(){const box=$('#stripebox');box.replaceChildren();if(!settings.payments_live)return;
 try{const j=await api('GET','/api/rezervari/plati/stare');const ok=!!j.payouts_enabled;window.__payOk=ok;
 box.append(el('div',{class:'sub'},[ok?'Încasări online: active. Banii rezervărilor plătite online îți sunt virați la 24 de ore după check-in, minus comisionul.':(j.connected?'Contul tău de încasări nu este încă complet. Finalizează formularul Stripe.':'Pentru plata online trebuie să îți configurezi contul de încasări (Stripe).')]));
 if(!ok){const b=el('button',{type:'button'},[j.connected?'Continuă configurarea':'Configurează încasările (Stripe)']);b.onclick=async()=>{b.disabled=true;try{const r=await api('POST','/api/rezervari/plati/cont',{});location.href=r.url;}catch(e){alert(e.message);b.disabled=false;}};box.append(el('div',{class:'row',style:'margin-top:6px'},[b]));}
 payNote();}catch(e){}}
 $('#pmo').onchange=$('#pmd').onchange=payNote;
-const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, suma se reține',refund_failed:'rambursare de verificat'};
+const PAYST={awaiting:'în așteptare',partial:'avans plătit',paid:'plătită',rest_failed:'rest neplătit',refunded:'returnată',forfeited:'anulată, penalitate reținută',refund_failed:'rambursare de verificat'};
 async function loadResv(){const j=await api('GET',B+'/rezervari');let fm=null;try{fm=(await api('GET',B+'/fise-rezumat')).forms||{};}catch(e){}const box=$('#resv');box.replaceChildren();if(!j.reservations.length)box.append(el('div',{class:'sub'},['Nu ai încă rezervări.']));
 j.reservations.forEach(x=>{const info=x.check_in+' → '+x.check_out+(x.unit_ids&&x.unit_ids[0]!==0?' · '+(()=>{const c={};x.unit_ids.forEach(n=>{const k=n>=1000?Math.floor(n/1000):n;c[k]=(c[k]||0)+1;});return Object.keys(c).map(k=>(c[k]>1?c[k]+' × ':'')+unitName(Number(k))).join(', ');})():'')+' · '+(x.party_text||(x.guests+' pers.'))+' · '+(x.total_bani/100)+' RON'+(x.commission_bani?' (comision '+(x.commission_bani/100)+' RON)':'')+(x.pay_scheme&&x.pay_scheme!=='direct'?' · online: '+(PAYST[x.pay_status]||x.pay_status)+' ('+(x.paid_bani/100)+' RON)':'');
 const kids=[el('b',{},[x.guest_name+(x.status==='cancelled'?(x.refused?' · refuzată de gazdă':' · anulată'):'')]),el('div',{class:'sub'},[info]),el('div',{class:'sub'},[x.guest_phone+' · '+x.guest_email])];
@@ -261,7 +264,7 @@ ov.append(el('div',{class:'card',style:'max-width:460px;width:100%'},[el('h2',{}
 $('#qgo').onclick=async()=>{const m=$('#qmsg');try{const q=await api('GET',B+'/pret?checkin='+$('#qin').value+'&checkout='+$('#qout').value+'&guests='+($('#qg').value||1)+uq('&'));
 say(m,(q.ok?'Disponibil · ':'Nu se poate: '+q.errors.join(', ')+' · ')+'total '+(q.totalBani/100)+' RON ('+q.nights.length+' nopți)',q.ok);}catch(e){say(m,e.message,false);}};
 async function loadFeeds(){const j=await api('GET',B+'/fluxuri');feeds=j.feeds;const box=$('#feeds');box.replaceChildren();
-if(!feeds.length)box.append(el('div',{class:'sub'},['Nu ai adăugat încă nicio platformă.']));
+if(!feeds.length){const go=el('button',{type:'button',style:'margin-top:8px'},['Leagă calendarul acum']);go.onclick=()=>{const u=$('#furl');if(u){u.scrollIntoView({behavior:'smooth',block:'center'});u.focus();}};box.append(el('div',{style:'background:#E7F3F1;border:1px solid #0E6B63;border-radius:10px;padding:12px 14px'},[el('b',{},['Primul pas: leagă calendarul (≈ 2 minute)']),el('div',{class:'sub',style:'margin-top:4px'},['Dacă ai cazarea și pe Booking.com, Airbnb sau altă platformă, lipește linkul lor iCal mai jos și lipește linkul nostru în calendarul lor. Așa nu apar suprapuneri de rezervări.']),go]));}
 feeds.forEach(f=>{const url=location.origin+'/api/rezervari/ical/'+f.export_token+'.ics';
 const sy=el('button',{class:'s',type:'button'},['Sincronizează acum']);sy.onclick=async()=>{sy.disabled=true;try{const r=await api('POST',B+'/fluxuri/'+f.id+'/sincronizare');say($('#fmsg'),r.ok?'Sincronizat':r.error,r.ok);}catch(e){say($('#fmsg'),e.message,false);}sy.disabled=false;loadFeeds();loadCal();};
 const cp=el('button',{class:'s',type:'button'},['Copiază linkul nostru']);cp.onclick=async()=>{try{await navigator.clipboard.writeText(url);cp.textContent='Copiat ✓';setTimeout(()=>cp.textContent='Copiază linkul nostru',2000);}catch(e){prompt('Copiază linkul:',url);}};
@@ -311,12 +314,20 @@ const OWNER_APP_HTML = (name) => `<h1>${L.escapeHtml(name)}</h1><p class="sub">C
 <div class="card"><h2>Plată și reduceri</h2>
 <label>Cum încasezi plata</label>
 <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:6px"><input type="radio" name="pm" id="pmd" value="direct" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Direct la proprietate</b><br><span class="sub">Fără comision. Te înțelegi cu turistul cum încasezi.</span></span></label>
-<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:8px"><input type="radio" name="pm" id="pmo" value="online" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Plată prin Opening Hours Today</b> <span style="background:#0E6B63;color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700">Recomandată</span><br><span class="sub">Turistul plătește online, în siguranță, iar tu primești banii după sosire. Se aplică un comision. Disponibilă în curând.</span></span></label>
+<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:8px"><input type="radio" name="pm" id="pmo" value="online" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Plată prin Opening Hours Today</b> <span style="background:#0E6B63;color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700">Recomandată</span><br><span class="sub">Turistul plătește online, în siguranță, iar tu primești banii la 24 de ore după check-in. Comision 8%, iar <b>primele 5 rezervări plătite online ale contului tău au comision 0%</b>. Ai nevoie de contul de încasări (Stripe) activ.</span></span></label>
 <div class="sub" id="pmnote" style="margin-top:6px"></div><div id="stripebox" style="margin-top:6px"></div>
+<div id="polwrap" hidden><label>Politica de anulare (pentru plata online)</label>
+<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:6px"><input type="radio" name="pol" value="flexible" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Flexibilă</b><br><span class="sub">Anulare gratuită cu mai mult de 48 de ore înainte de check-in; după aceea se reține prima noapte. Avans minim 30% (cel puțin prima noapte).</span></span></label>
+<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:8px"><input type="radio" name="pol" value="moderate" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Moderată</b><br><span class="sub">Anulare gratuită cu mai mult de 7 zile înainte; după aceea se reține 50% din total. Avans 50%.</span></span></label>
+<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:#17222B;margin-top:8px"><input type="radio" name="pol" value="strict" style="width:20px;height:20px;margin:2px 0 0;flex:none"><span><b>Strictă (nerambursabilă)</b><br><span class="sub">Turistul plătește 100% la rezervare și primește automat 10% reducere. Nu se returnează nimic dacă anulează.</span></span></label>
+<div class="sub" style="margin-bottom:8px">Anularea e posibilă până la ora de check-in a proprietății (implicit 14:00). Politica se salvează pe fiecare rezervare în momentul plății. Dacă anulezi tu, turistul primește mereu banii înapoi integral.</div></div>
 <div id="guarwrap" hidden><label>Garanție pentru stricăciuni (RON, 0 = fără)<input id="guar" type="number" min="0" max="10000" step="1" placeholder="0"></label><div class="sub">Se blochează pe cardul turistului cu o zi înainte de sosire (nu se debitează) și se eliberează automat după plecare. Dacă ai daune, o poți reține din cont. Doar la plata online.</div></div>
 <label>Reducere dacă se închiriază toată pensiunea (%)<input id="wdisc" type="number" min="0" max="50" step="0.5" placeholder="0"></label><div class="sub">Se aplică automat când turistul rezervă toate camerele deodată.</div>
 <div class="row" style="margin-top:10px"><button id="savepref" type="button">Salvează</button></div><div class="msg" id="prefmsg"></div></div>
 <div class="card"><h2>Rezervări</h2><div id="resv"></div></div>
+<div class="card"><h2>Raport Excel</h2><div class="sub">Rezervările acestei proprietăți cu brut, comision și net. Alege perioada (după data check-in) sau lasă gol pentru toate.</div>
+<div class="row" style="margin-top:8px"><label style="flex:1">De la<input id="rfrom" type="date"></label><label style="flex:1">Până la<input id="rto" type="date"></label></div>
+<div class="row" style="margin-top:10px"><button id="rdl" type="button">Descarcă raportul (.xlsx)</button></div></div>
 <div class="card"><h2>Sincronizare platforme (iCal)</h2><div class="sub">Pentru fiecare platformă primești un link al nostru, pe care îl lipești în calendarul acelei platforme, și poți adăuga linkul ei pe care îl citim noi.</div><div id="feeds"></div></div>
 <div class="card"><h2>Adaugă o platformă</h2><div style="background:#FDECEA;border:1px solid #C0392B;border-radius:10px;padding:10px 12px;margin:0 0 12px;color:#9B1C1C;font-weight:700;font-size:14px;line-height:1.45">⚠️ Important: dacă ai cazarea listată și pe alte platforme (Booking.com, Airbnb, Travelminit etc.), este obligatoriu să adaugi aici linkul lor iCal. Altfel calendarele nu se sincronizează și riști <u>overbooking</u> (aceeași perioadă rezervată de două ori, o dată la ele și o dată la noi).</div><div class="row"><div><label>Platforma<select id="fplat"><option>Booking.com</option><option>Airbnb</option><option>Travelminit</option><option>Direct Booking</option><option>Altă platformă</option></select></label></div><div><label>Nume (opțional)<input id="flabel" maxlength="80"></label></div></div>
 <div id="funitwrap" hidden><label>Pentru camera<select id="funit"></select></label></div><label>Linkul iCal al platformei (https://…)<input id="furl" placeholder="https://"></label><div class="row" style="margin-top:10px"><button class="s" id="fprev" type="button">Verifică linkul</button><button id="fadd" type="button">Adaugă platforma</button></div><div class="msg" id="fmsg"></div></div>`;
@@ -354,6 +365,19 @@ module.exports = function mountBookings(app) {
         : `<div class="card">Rezervările nu sunt încă activate pentru proprietățile tale.</div>`);
       shell(res, "Rezervări", body, COMMON_JS + INSTALL_JS + `const gb=$('#gzcode');if(gb)gb.onclick=async()=>{gb.disabled=true;try{const j=await api('POST','/api/gazda/cod/creeaza',{});showCode($('#gzout'),j.code,j.minutes);}catch(e){say($('#gzout'),e.message,false);}gb.disabled=false;};`);
     } catch (e) { console.error("rezervari pagina:", e.message); res.status(500).send("Eroare"); }
+  });
+  // raport Excel (brut / comision / net); `id` opțional = un singur anunț, `from`/`to` după data check-in
+  r.get("/cont/rezervari/raport.xlsx", L.requireAccommodationOwner, async (req, res) => {
+    try {
+      const ownerId = req.accommodationOwner.ownerId;
+      if (!(await L.checkRateLimit("own:" + ownerId, "rez-raport", 20, 10))) return res.status(429).send("Prea multe cereri. Încearcă peste câteva minute.");
+      const REPORT = require("./bookings-report");
+      let listingId = null, listingName = "";
+      if (req.query.id) { const lst = await loadListing(toId(req.query.id), ownerId); if (!lst) return res.status(404).send("Not found"); listingId = lst.id; listingName = lst.name; }
+      const out = await REPORT.report(ownerId, { listingId, listingName, from: String(req.query.from || ""), to: String(req.query.to || "") });
+      res.set({ "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Content-Disposition": `attachment; filename="raport-rezervari-${core.todayRo()}.xlsx"`, "Cache-Control": "no-store" });
+      res.send(out.buffer);
+    } catch (e) { console.error("rezervari raport:", e.message); res.status(500).send("Eroare la generarea raportului."); }
   });
   r.get("/cont/rezervari/:id(\\d+)", L.requireAccommodationOwner, async (req, res) => {
     try {
@@ -429,7 +453,7 @@ module.exports = function mountBookings(app) {
         `SELECT id, name, kind, unit_no, to_char(date_from,'YYYY-MM-DD') AS date_from, to_char(date_to,'YYYY-MM-DD') AS date_to, price_bani, min_nights, checkin_days, checkout_days, priority, active, (to_jsonb(r)->>'pct_bps')::integer AS pct_bps
            FROM booking_rate_rules r WHERE listing_id = $1 AND active ORDER BY kind, date_from NULLS FIRST, id`, [req.listing.id])).rows;
       const l = req.listing;
-      noStore(res); res.json({ camp: isStock(l.type), stock_word: l.type === "hotel_mare" ? "camere" : "locuri", units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0 }, rules });
+      noStore(res); res.json({ camp: isStock(l.type), stock_word: l.type === "hotel_mare" ? "camere" : "locuri", units: l.units, settings: { base_price_bani: l.base_price_bani, min_nights: l.min_nights || 1, max_guests: l.max_guests, currency: l.currency || "RON", instant_enabled: !!l.instant_enabled, lead_days: l.lead_days == null ? 1 : l.lead_days, whole_discount_bps: l.whole_discount_bps || 0, payment_mode: l.payment_mode || "direct", payments_live: !!pay.LIVE, guarantee_bani: l.guarantee_bani || 0, cancel_policy: POLX.normalize(l.cancel_policy), promo_left: await PROMO.remaining(dbPool, l.owner_id).catch(() => null) }, rules });
     } catch (e) { console.error("rezervari tarife:", e.message); res.status(500).json({ error: "eroare" }); }
   });
   r.post("/api/rezervari/:id/setari", ...ownerApi, ownListing, async (req, res) => {
@@ -594,7 +618,10 @@ module.exports = function mountBookings(app) {
         gar = Math.round(Number(b.guarantee_ron) * 100);
         if (!Number.isFinite(gar) || gar < 0 || gar > 1000000) return res.status(400).json({ error: "date_invalide" });
       }
+      let pol = null;
+      if (b.cancel_policy != null && pay.LIVE) { if (!POLX.KEYS.includes(b.cancel_policy)) return res.status(400).json({ error: "date_invalide" }); pol = b.cancel_policy; }
       await dbPool.query(`UPDATE booking_settings SET payment_mode = $2, whole_discount_bps = $3, updated_at = now() WHERE listing_id = $1`, [req.listing.id, mode, bps]);
+      if (pol !== null) await dbPool.query(`UPDATE booking_settings SET cancel_policy = $2 WHERE listing_id = $1`, [req.listing.id, pol]);
       if (gar !== null) await dbPool.query(`UPDATE booking_settings SET guarantee_bani = $2 WHERE listing_id = $1`, [req.listing.id, gar]);
       await sync.push(req.listing.id);
       res.json({ ok: true });
@@ -811,6 +838,8 @@ module.exports = function mountBookings(app) {
   app.use(r);
 };
 module.exports.syncFeed = syncFeed;
+module.exports.shell = shell;
+module.exports.COMMON_JS = COMMON_JS;
 // vizibilitate pentru butonul din /cont: pornit global sau previzualizare validă (fără să seteze cookie-uri)
 module.exports.canSee = (req, res) => {
   if (!dbPool) return false;
