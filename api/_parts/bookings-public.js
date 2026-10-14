@@ -34,6 +34,8 @@ module.exports = function mountPublic(r, c) {
   }
   const E = L.escapeHtml;
   const PARTY = require("./bookings-party");
+  const POL = require("./bookings-policy");
+  const PROMO = require("./bookings-promo");
   const fmtRon = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " RON";
   const dRo = (s) => { const [y, m, d] = s.split("-"); return `${d}.${m}.${y}`; };
   const codeHash = (id, access, code) => sha(`${id}:${access}:${code}`);
@@ -45,11 +47,12 @@ module.exports = function mountPublic(r, c) {
       const id = toId(req.params.id);
       if (!id) return res.status(404).json({ error: "negasit" });
       const { rows } = await dbPool.query(
-        `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode${LIVE ? ", s.guarantee_bani" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
+        `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode, l.checkin_time${LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
           WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type NOT IN ('camping', 'hotel_mare')`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
       rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true; // comision doar dacă gazda a ales online ȘI contul ei Stripe poate primi bani
+      rows[0].policy = POL.normalize(rows[0].cancel_policy); // politica de anulare (contează doar la plata online)
       rows[0].units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
       try { // politica pentru copii din formular + legătura camerelor cu tipurile de cameră de hotel (sync_key există doar după etapa 6)
         let td = rows[0].type_details; if (typeof td === "string") { try { td = JSON.parse(td); } catch (e) { td = null; } }
@@ -129,7 +132,7 @@ module.exports = function mountPublic(r, c) {
       const g = bedCount(lst.kids, party);
       const data = await loadQuoteData(lst, req.query.checkin, req.query.checkout);
       noStore(res);
-      const pinfo = { kids: lst.kids || null, party: { adults: party.adults, ages: party.ages } };
+      const pinfo = { kids: lst.kids || null, party: { adults: party.adults, ages: party.ages }, policy: lst.online ? { key: lst.policy, discountBps: POL.discountBps(lst.policy), text: POL.shortText(lst.policy) } : null };
       if (!units.length) {
         const q = quoteUnit(lst, data, null, req.query.checkin, req.query.checkout, g);
         const nn = (q.nights || []).length, ctx = partyCtx(lst, [null], nn ? Math.round((q.totalBani || 0) / nn) : 0);
@@ -169,21 +172,25 @@ module.exports = function mountPublic(r, c) {
       const sup = lst.kids ? PARTY.supp(lst.kids, partyCtx(lst, chosen, nightsN > 0 ? Math.round(subtotal / nightsN) : 0), party.adults, party.ages) : { ok: true, perNightBani: 0, lines: [] };
       if (!sup.ok) return res.status(409).json({ error: "oferta_invalida", errors: sup.errors });
       const suppTotal = sup.perNightBani * Math.max(0, nightsN);
-      const total = subtotal - discount + suppTotal;
-      const snapshot = { discount_bani: discount, whole, party: { adults: party.adults, ages: party.ages, supp_night_bani: sup.perNightBani, supp_bani: suppTotal, lines: sup.lines }, units: parts.map((x) => ({ unit_no: x.u ? x.u.unit_no : 0, name: x.u ? x.u.name : null, total_bani: x.q.totalBani, nights: x.q.nights })) };
+      const preTotal = subtotal - discount + suppTotal;
+      const policyDisc = lst.online ? Math.round(preTotal * POL.discountBps(lst.policy) / 10000) : 0; // politica strictă: 10% reducere, afișată separat
+      const total = preTotal - policyDisc;
+      const snapshot = { discount_bani: discount, policy_discount_bani: policyDisc, whole, party: { adults: party.adults, ages: party.ages, supp_night_bani: sup.perNightBani, supp_bani: suppTotal, lines: sup.lines }, units: parts.map((x) => ({ unit_no: x.u ? x.u.unit_no : 0, name: x.u ? x.u.name : null, total_bani: x.q.totalBani, nights: x.q.nights })) };
       const active = (await dbPool.query(`SELECT COUNT(*)::int AS c FROM booking_reservations WHERE status = 'hold' AND hold_until > now() AND (lower(guest_email) = $1 OR guest_phone = $2)`, [email, phone])).rows[0].c;
       if (active >= 2) return res.status(429).json({ error: "prea_multe_blocari" });
       let token = crypto.randomBytes(32).toString("hex"), access = sha(token);
       const code = newCode();
       const online = !!lst.online;
-      const plan = online ? core.planPayment(total, b.checkin, core.todayRo()) : null;
+      const firstNight = online ? POL.firstNightOf(snapshot, total) : 0;
+      const plan = online ? POL.planPayment(core, total, b.checkin, core.todayRo(), lst.policy, firstNight) : null; // avansul acoperă mereu penalitatea politicii
       // comision doar la plata online reală (gazda a ales online, plățile sunt pornite, contul Stripe al gazdei e activ); altfel rezervare directă, fără comision
-      const commission = online ? Math.round(total * (lst.commission_bps || 0) / 10000) : 0;
+      let commission = online ? Math.round(total * (lst.commission_bps || 0) / 10000) : 0, promoFree = false; // promoția (primele 5 online / cont gazdă) se decide în tranzacție
       const pairs = []; // (cameră, zi)
       parts.forEach((x) => x.q.nights.forEach((n) => pairs.push([x.u ? x.u.unit_no : 0, n.day])));
       client = await dbPool.connect();
       await client.query("BEGIN");
       await client.query(`SELECT pg_advisory_xact_lock($1::bigint)`, [lst.id]);
+      if (online && commission > 0) { await PROMO.lockOwner(client, lst.owner_id); if (await PROMO.nextIsFree(client, lst.owner_id)) { commission = 0; promoFree = true; } }
       await client.query(`UPDATE booking_reservations SET status = 'expired' WHERE listing_id = $1 AND status = 'hold' AND hold_until < now()`, [lst.id]);
       await client.query(`DELETE FROM booking_calendar_days WHERE listing_id = $1 AND status = 3 AND blocked_until < now()`, [lst.id]);
       const ins = await client.query(
@@ -194,8 +201,9 @@ module.exports = function mountPublic(r, c) {
       if (online) { // token derivat (HMAC), ca e-mailurile trimise din webhook/cron să poată conține linkul rezervării
         token = core.deriveToken(rid, SECRET); access = sha(token);
         const gar = Math.max(0, Number(lst.guarantee_bani) || 0);
-        await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3, pay_scheme = $4, pay_status = 'awaiting', advance_bani = $5, rest_bani = $6, rest_due_on = $7::date, guarantee_bani = $8, guarantee_status = $9 WHERE id = $1`,
-          [rid, codeHash(rid, access, code), access, plan.scheme, plan.advance, plan.rest, plan.restDueOn || null, gar, gar > 0 ? "pending" : "none"]);
+        await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3, pay_scheme = $4, pay_status = 'awaiting', advance_bani = $5, rest_bani = $6, rest_due_on = $7::date, guarantee_bani = $8, guarantee_status = $9,
+            cancel_policy = $10, policy_discount_bani = $11, first_night_bani = $12, checkin_at = $13::timestamptz, promo_free = $14 WHERE id = $1`,
+          [rid, codeHash(rid, access, code), access, plan.scheme, plan.advance, plan.rest, plan.restDueOn || null, gar, gar > 0 ? "pending" : "none", lst.policy, policyDisc, firstNight, POL.checkinInstant(b.checkin, lst.checkin_time).toISOString(), promoFree]);
       } else if (FORMS) {
         token = core.deriveToken(rid, SECRET); access = sha(token);
         await client.query(`UPDATE booking_reservations SET code_hash = $2, access_hash = $3 WHERE id = $1`, [rid, codeHash(rid, access, code), access]);
@@ -253,7 +261,7 @@ module.exports = function mountPublic(r, c) {
         await client.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1 AND status = 3`, [rid]);
         await client.query("COMMIT"); return res.status(410).json({ error: "expirat" });
       }
-      const payInfo = (hu) => ({ ok: true, pay: { scheme: row.pay_scheme, advanceBani: row.advance_bani, restBani: row.rest_bani, restDueOn: row.rest_due_on ? jsDate(row.rest_due_on) : null, totalBani: row.total_bani, guaranteeBani: row.guarantee_bani || 0, holdUntil: hu } });
+      const payInfo = (hu) => ({ ok: true, pay: { scheme: row.pay_scheme, advanceBani: row.advance_bani, restBani: row.rest_bani, restDueOn: row.rest_due_on ? jsDate(row.rest_due_on) : null, totalBani: row.total_bani, guaranteeBani: row.guarantee_bani || 0, holdUntil: hu, policy: policyInfoOf(row) } });
       if (isOnline(row) && row.verified_at) { await client.query("ROLLBACK"); noStore(res); return res.json(payInfo(row.hold_until)); } // cod deja verificat: doar reafișăm pasul de plată
       if (row.code_attempts >= 5) { await client.query("ROLLBACK"); return res.status(429).json({ error: "prea_multe_incercari" }); }
       const ok = row.code_hash && safeEq(row.code_hash, codeHash(rid, sha(token), code));
@@ -295,6 +303,13 @@ module.exports = function mountPublic(r, c) {
     const names = snap && !Array.isArray(snap) && snap.units ? snap.units.map((u) => u.name).filter(Boolean) : [];
     return names.length ? "<br>Camere: " + names.map(E).join(", ") : "";
   }
+  // politica rezervării (salvată pe rezervare la momentul plății) + textele afișate turistului
+  function policyInfoOf(row) {
+    const key = POL.normalize(row.cancel_policy);
+    const at = row.checkin_at ? new Date(row.checkin_at) : POL.checkinInstant(row.ci, null);
+    const label = new Intl.DateTimeFormat("ro-RO", { timeZone: "Europe/Bucharest", hour: "2-digit", minute: "2-digit" }).format(at) + ", " + dRo(row.ci);
+    return { key, label: POL.LABELS[key], discountBani: row.policy_discount_bani || 0, text: POL.shortText(key), accept: POL.acceptText(key, { total: row.total_bani, firstNight: row.first_night_bani || 0, checkinLabel: label }) };
+  }
   async function byToken(token) {
     if (!/^[a-f0-9]{64}$/.test(String(token))) return null;
     return (await dbPool.query(`SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, l.name AS listing_name, o.email AS owner_email
@@ -311,20 +326,22 @@ module.exports = function mountPublic(r, c) {
         const js = COMMON_JS + `let n=0;const t=setInterval(async()=>{n++;try{const r=await fetch('/api/rezervari/public/rezervare/${row.id}/stare?token=${req.params.token}');const j=await r.json();if(j.status!=='hold'){clearInterval(t);location.reload();}}catch(e){}if(n>60){clearInterval(t);say($('#m'),'Încă procesăm plata. Vei primi un e-mail de confirmare.',true);}},2000);`;
         return shell(res, "Rezervarea ta", body, js);
       }
-      const can = row.status === "confirmed" && row.ci > core.todayRo();
+      const outcome = online ? pay.guestOutcome(row) : null;
+      const can = row.status === "confirmed" && (online ? outcome.allowed : row.ci > core.todayRo());
       let payTxt = "se achită direct la proprietate";
       if (online) {
         const paid = fmtRon(row.paid_bani || 0);
         if (row.pay_status === "partial") payTxt = `ai plătit ${paid}; restul de ${fmtRon(row.rest_bani)} se debitează automat pe ${dRo(jsDate(row.rest_due_on))}`;
         else if (row.pay_status === "rest_failed") payTxt = `ai plătit ${paid}; <a href="/cazare/plata/${req.params.token}">plătește restul de ${fmtRon(row.rest_bani)} cu alt card</a> înainte de expirarea termenului, altfel rezervarea se anulează`;
         else if (row.pay_status === "refunded") payTxt = "suma plătită a fost returnată";
-        else if (row.pay_status === "forfeited") payTxt = `suma plătită (${paid}) nu se returnează`;
+        else if (row.pay_status === "forfeited") payTxt = row.cancel_refund_bani > 0 ? `ți s-au returnat ${fmtRon(row.cancel_refund_bani)}; ${fmtRon(row.penalty_bani || 0)} se rețin conform politicii de anulare` : `suma plătită (${paid}) nu se returnează`;
         else payTxt = `plătit ${paid}`;
       }
       const body = `<h1>${E(row.listing_name)}</h1><p class="sub">Rezervarea ta</p><div class="card"><b>${row.status === "confirmed" ? "Confirmată" : "Anulată"}</b><div class="sub" style="margin-top:6px">${dRo(row.ci)} – ${dRo(row.co)} · ${peopleTxt(row.nights_snapshot, row.guests)}${roomsOf(row.nights_snapshot)}<br>Total: ${fmtRon(row.total_bani)} (${payTxt})</div>
 ${row.status === "confirmed" && FORMS && row.ci >= core.todayRo() ? `<div style="margin-top:10px"><a href="/cazare/fisa/${req.params.token}">Completează fișa de cazare</a> <span class="sub">(obligatorie, pentru fiecare oaspete)</span></div>` : ""}${online && row.guarantee_bani > 0 && row.status === "confirmed" ? `<div class="sub" style="margin-top:6px">Garanție ${fmtRon(row.guarantee_bani)}: ${{ pending: "se blochează pe card cu o zi înainte de sosire", held: "blocată pe card (nu se debitează)", failed: "nu a putut fi blocată; te înțelegi cu gazda", released: "eliberată", claimed: "reținută parțial/total de gazdă" }[row.guarantee_status] || ""}</div>` : ""}
+${online && row.cancel_policy ? `<div class="sub" style="margin-top:6px">Politica de anulare: <b>${E(POL.LABELS[POL.normalize(row.cancel_policy)])}</b>. ${E(POL.shortText(row.cancel_policy))}${row.policy_discount_bani > 0 ? ` Reducere nerambursabil inclusă: ${fmtRon(row.policy_discount_bani)}.` : ""}</div>` : ""}${row.status === "confirmed" && online && can ? `<div class="sub" style="margin-top:6px">${E(POL.cancelPreviewText(outcome))}</div>` : ""}
 ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" type="button">Anulează rezervarea</button></div><div class="msg" id="m"></div>` : ""}</div>`;
-      const warn = online ? "Sigur anulezi rezervarea? Conform condițiilor acceptate la plată, suma plătită NU se returnează. Camera se eliberează imediat." : "Sigur anulezi rezervarea? Camera se eliberează imediat.";
+      const warn = online ? "Sigur anulezi rezervarea? " + (row.cancel_policy ? POL.cancelPreviewText(outcome) : "Conform condițiilor acceptate la plată, suma plătită NU se returnează. Camera se eliberează imediat.") : "Sigur anulezi rezervarea? Camera se eliberează imediat.";
       const js = can ? COMMON_JS + `$('#cancel').onclick=async()=>{if(!confirm(${JSON.stringify(warn)}))return;try{await api('POST','/api/rezervari/public/rezervare/${req.params.token}/anuleaza',{});location.reload();}catch(e){say($('#m'),e.message,false);}};` : "";
       shell(res, "Rezervarea ta", body, js);
     } catch (e) { console.error("rezervari pagina token:", e.message); res.status(500).send("Eroare"); }
@@ -338,11 +355,17 @@ ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" 
     try {
       if (!(await L.checkRateLimit(ipKey(req), "rez-cancel", 20, 60))) return res.status(429).json({ error: "prea_multe_cereri" });
       const row = await byToken(req.params.token);
-      if (!row || row.status !== "confirmed" || row.ci <= core.todayRo()) return res.status(400).json({ error: "nu_se_poate_anula" });
-      const done = isOnline(row) ? await pay.cancelByGuest(row) : await freeAndCancel(row.id, "guest");
+      if (!row || row.status !== "confirmed" || (!isOnline(row) && row.ci <= core.todayRo())) return res.status(400).json({ error: "nu_se_poate_anula" });
+      let done, out = null;
+      if (isOnline(row)) {
+        const st = await pay.settleGuestCancel(row, "guest");
+        if (!st.ok) return res.status(st.error === "rambursare_esuata" ? 502 : 400).json({ error: st.error });
+        done = true; out = st.outcome;
+      } else done = await freeAndCancel(row.id, "guest");
       if (done) {
+        if (out && row.cancel_policy) await sendMail(row.guest_email, "Rezervare anulată · " + row.listing_name, `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> (${dRo(row.ci)} – ${dRo(row.co)}) a fost anulată.</p><p>${E(POL.cancelPreviewText(out).replace(/ Camera se eliberează imediat\./, ""))}${out.refund > 0 ? " Rambursarea ajunge pe card în câteva zile lucrătoare." : ""}</p>`);
         await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare anulată de oaspete", body: row.guest_name + " · " + dRo(row.ci) + " – " + dRo(row.co), tag: "gz-r" + row.id });
-        await sendMail(row.owner_email, "Rezervare anulată · " + row.listing_name, `<p>${E(row.guest_name)} a anulat rezervarea ${dRo(row.ci)} – ${dRo(row.co)}. Zilele au fost eliberate în calendar.${isOnline(row) ? " Conform condițiilor, suma plătită nu se returnează turistului; ți se virează, minus comision, la 24 de ore după data check-in." : ""}</p>`);
+        await sendMail(row.owner_email, "Rezervare anulată · " + row.listing_name, `<p>${E(row.guest_name)} a anulat rezervarea ${dRo(row.ci)} – ${dRo(row.co)}. Zilele au fost eliberate în calendar.${isOnline(row) ? (out && row.cancel_policy ? (out.refund > 0 ? ` Turistului i s-au returnat ${fmtRon(out.refund)}.` : "") + (out.penalty > 0 ? ` Conform politicii de anulare rămân la tine ${fmtRon(out.penalty)} (minus comisionul, dacă e cazul), plătiți la 24 de ore după data check-in.` : " Anulare gratuită: nu se reține nimic.") : " Conform condițiilor, suma plătită nu se returnează turistului; ți se virează, minus comision, la 24 de ore după data check-in.") : ""}</p>`);
       }
       res.json({ ok: true });
     } catch (e) { console.error("rezervari anulare turist:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -437,8 +460,8 @@ const pt=party();if(!pt.ok){say(m,'Alege vârsta fiecărui copil.',true);return;
 try{const q=await call('GET',P+'/oferta?checkin='+ci+'&checkout='+co+'&adults='+pt.a+'&ages='+pt.ag.join(','));
 if(q.units&&q.units.length){rooms=q;renderRooms();return;}
 if(q.ok){const sp=q.kids?supp(q.kids,{included:q.included,max:q.max,perPerson:q.perPerson},pt.a,pt.ag.map(Number)):{ok:true,perNightBani:0,lines:[]};
-if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*q.nights;
-say(m,q.nights+' nopți · total '+((q.totalBani+extra)/100)+' RON'+(extra?' (inclusiv familie: '+spLines(sp)+')':''),true);$('#go').disabled=false;}else say(m,q.errors.map(tr).join(' '),false);}catch(e){say(m,e.message,false);}}
+if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*q.nights;const pd=q.policy&&q.policy.discountBps?Math.round((q.totalBani+extra)*q.policy.discountBps/10000):0;
+say(m,q.nights+' nopți · total '+((q.totalBani+extra-pd)/100)+' RON'+(extra?' (inclusiv familie: '+spLines(sp)+')':'')+(pd?' · reducere nerambursabil: -'+(pd/100)+' RON':'')+(q.policy?' · Anulare: '+q.policy.text:''),true);$('#go').disabled=false;}else say(m,q.errors.map(tr).join(' '),false);}catch(e){say(m,e.message,false);}}
 function renderRooms(){const box=$('#rooms');box.replaceChildren();const avail=rooms.units.filter(u=>u.ok);
 box.append(el('div',{class:'sub'},['Alege camera sau camerele:']));
 rooms.units.forEach(u=>{const cb=el('input',{type:'checkbox',id:'rm'+u.no,style:'width:20px;height:20px;margin:0'});cb.disabled=!u.ok;cb.onchange=sum;
@@ -451,8 +474,8 @@ if(!p.length){const any=rooms.units.some(u=>u.ok);say(m,any?'Bifează camerele d
 const cap=p.reduce((a,u)=>a+u.capacity,0);let tot=p.reduce((a,u)=>a+u.totalBani,0);const tot0=tot;const whole=rooms.units.length>1&&p.length===rooms.units.length&&rooms.wholeDiscountBps;const disc=whole?Math.round(tot*rooms.wholeDiscountBps/10000):0;tot-=disc;
 if(g>cap){say(m,'Camerele alese au loc pentru '+cap+' persoane. Alege încă o cameră sau mai puține persoane.',false);return;}
 const nn=rooms.nights,inc=p.reduce((a,u)=>a+(u.included||u.capacity),0);const sp=rooms.kids?supp(rooms.kids,{included:inc,max:cap,perPerson:nn&&inc?Math.round(tot0/nn/inc):0},pt.a,pt.ag.map(Number)):{ok:true,perNightBani:0,lines:[]};
-if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*nn;tot+=extra;
-say(m,nn+' nopți · total '+(tot/100)+' RON'+(disc?' (reducere toată pensiunea: -'+(disc/100)+' RON)':'')+(extra?' · familie: '+spLines(sp):''),true);$('#go').disabled=false;}
+if(!sp.ok){say(m,sp.errors.map(tr).join(' '),false);return;}const extra=sp.perNightBani*nn;tot+=extra;const pd=rooms.policy&&rooms.policy.discountBps?Math.round(tot*rooms.policy.discountBps/10000):0;tot-=pd;
+say(m,nn+' nopți · total '+(tot/100)+' RON'+(disc?' (reducere toată pensiunea: -'+(disc/100)+' RON)':'')+(pd?' · reducere nerambursabil: -'+(pd/100)+' RON':'')+(extra?' · familie: '+spLines(sp):'')+(rooms.policy?' · Anulare: '+rooms.policy.text:''),true);$('#go').disabled=false;}
 $('#prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));loadMonth();};
 $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadMonth();};
 if($('#adults')){$('#adults').onchange=partyChanged;$('#kidsn').onchange=ageUi;}
@@ -465,9 +488,10 @@ $('#conf').onclick=async()=>{const m=$('#cmsg');try{const j=await call('POST','/
 $('#resend').onclick=async()=>{try{await call('POST','/api/rezervari/public/rezervare/'+rid+'/retrimite-cod',{token:tok});say($('#cmsg'),'Cod retrimis.',true);}catch(e){say($('#cmsg'),e.message,false);}};
 function money(b){return (b/100).toLocaleString('ro-RO',{minimumFractionDigits:0,maximumFractionDigits:2})+' RON';}
 function startPay(j){const p=j.pay;$('#s5').hidden=false;$('#psub').textContent='Rezervare instant cu plată online securizată (Stripe).';const dr=p.restDueOn?p.restDueOn.split('-').reverse().join('.'):'';
-if(p.scheme==='advance'){$('#psum').textContent='Total '+money(p.totalBani)+'. Plătești acum avansul de '+money(p.advanceBani)+' (30%). Restul de '+money(p.restBani)+' se debitează automat de pe același card pe '+dr+'; cu 3 zile înainte primești un memento pe e-mail.';
-$('#pacc-t').textContent='Sunt de acord ca restul de '+money(p.restBani)+' să fie debitat automat de pe acest card pe '+dr+'. Dacă banca refuză debitarea, am 48 de ore să plătesc cu alt card; altfel rezervarea se anulează și avansul se pierde. Am înțeles că, dacă anulez eu rezervarea, nu se returnează nicio sumă.';}
-else{$('#psum').textContent='Total '+money(p.totalBani)+'. Plătești acum întreaga sumă.';$('#pacc-t').textContent='Am înțeles că plata este nerambursabilă: dacă anulez eu rezervarea, nu se returnează nicio sumă. Dacă anulează gazda, primesc banii înapoi integral.';}
+const pol=p.policy||{text:'',accept:'Am înțeles că, dacă anulez eu rezervarea, nu se returnează nicio sumă. Dacă anulează gazda, primesc banii înapoi integral.',discountBani:0};const dsc=pol.discountBani>0?' Reducere nerambursabil: -'+money(pol.discountBani)+' (inclusă în total).':'';
+if(p.scheme==='advance'){$('#psum').textContent='Total '+money(p.totalBani)+'. Plătești acum avansul de '+money(p.advanceBani)+' ('+Math.round(p.advanceBani*100/p.totalBani)+'%). Restul de '+money(p.restBani)+' se debitează automat de pe același card pe '+dr+'; cu 3 zile înainte primești un memento pe e-mail.'+dsc+' Politica de anulare: '+pol.text;
+$('#pacc-t').textContent='Sunt de acord ca restul de '+money(p.restBani)+' să fie debitat automat de pe acest card pe '+dr+'. Dacă banca refuză debitarea, am 48 de ore să plătesc cu alt card; altfel rezervarea se anulează conform politicii de anulare. '+pol.accept;}
+else{$('#psum').textContent='Total '+money(p.totalBani)+'. Plătești acum întreaga sumă.'+dsc+' Politica de anulare: '+pol.text;$('#pacc-t').textContent=pol.accept;}
 if(p.guaranteeBani>0){$('#psum').textContent+=' Garanție: '+money(p.guaranteeBani)+' se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează după plecare, dacă nu există daune.';$('#pacc-t').textContent+=' Accept blocarea garanției de '+money(p.guaranteeBani)+' pe acest card; gazda o poate reține doar pentru daune, cu motiv comunicat pe e-mail.';}
 $('#pay').textContent='Plătește '+money(p.advanceBani);const end=new Date(p.holdUntil);clearInterval(timer);const t=()=>{const s=Math.max(0,Math.floor((end-Date.now())/1000));$('#timer5').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(!s){clearInterval(timer);say($('#pmsg'),tr('expirat'),false);$('#pinit').disabled=true;$('#pay').disabled=true;}};t();timer=setInterval(t,1000);}
 $('#pinit').onclick=async()=>{const m=$('#pmsg');if(!$('#pacc').checked){say(m,tr('acord_necesar'),false);return;}$('#pinit').disabled=true;
