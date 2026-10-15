@@ -49,9 +49,9 @@ module.exports = function mountPublic(r, c) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.whole_discount_bps, s.payment_mode, l.checkin_time${LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
-          WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled AND l.type NOT IN ('camping', 'hotel_mare')`, [id]);
+          WHERE l.id = $1::integer AND l.status = 'approved' AND ${pay ? pay.BOOKABLE_SQL : "FALSE"} AND l.type NOT IN ('camping', 'hotel_mare')`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
-      rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true; // comision doar dacă gazda a ales online ȘI contul ei Stripe poate primi bani
+      rows[0].online = LIVE && rows[0].payouts_enabled === true; // toate rezervările sunt cu plată online; contul Stripe al gazdei trebuie să poată primi bani
       rows[0].policy = POL.normalize(rows[0].cancel_policy); // politica de anulare (contează doar la plata online)
       rows[0].units = (await dbPool.query(`SELECT unit_no, name, capacity, base_price_bani FROM booking_units WHERE listing_id = $1 AND active ORDER BY sort_order, unit_no`, [id])).rows;
       try { // politica pentru copii din formular + legătura camerelor cu tipurile de cameră de hotel (sync_key există doar după etapa 6)
@@ -312,7 +312,7 @@ module.exports = function mountPublic(r, c) {
   }
   async function byToken(token) {
     if (!/^[a-f0-9]{64}$/.test(String(token))) return null;
-    return (await dbPool.query(`SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, l.name AS listing_name, o.email AS owner_email
+    return (await dbPool.query(`SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, l.name AS listing_name, o.email AS owner_email, l.contact_phone AS host_phone, l.contact_email AS host_email, to_jsonb(l)->>'address' AS host_address, l.city AS host_city
         FROM booking_reservations r JOIN accommodation_listings l ON l.id = r.listing_id JOIN accommodation_owners o ON o.id = l.owner_id WHERE r.access_hash = $1`, [sha(token)])).rows[0] || null;
   }
   r.get("/cazare/rezervare/:token", async (req, res) => {
@@ -340,6 +340,7 @@ module.exports = function mountPublic(r, c) {
       const body = `<h1>${E(row.listing_name)}</h1><p class="sub">Rezervarea ta</p><div class="card"><b>${row.status === "confirmed" ? "Confirmată" : "Anulată"}</b><div class="sub" style="margin-top:6px">${dRo(row.ci)} – ${dRo(row.co)} · ${peopleTxt(row.nights_snapshot, row.guests)}${roomsOf(row.nights_snapshot)}<br>Total: ${fmtRon(row.total_bani)} (${payTxt})</div>
 ${row.status === "confirmed" && FORMS && row.ci >= core.todayRo() ? `<div style="margin-top:10px"><a href="/cazare/fisa/${req.params.token}">Completează fișa de cazare</a> <span class="sub">(obligatorie, pentru fiecare oaspete)</span></div>` : ""}${online && row.guarantee_bani > 0 && row.status === "confirmed" ? `<div class="sub" style="margin-top:6px">Garanție ${fmtRon(row.guarantee_bani)}: ${{ pending: "se blochează pe card cu o zi înainte de sosire", held: "blocată pe card (nu se debitează)", failed: "nu a putut fi blocată; te înțelegi cu gazda", released: "eliberată", claimed: "reținută parțial/total de gazdă" }[row.guarantee_status] || ""}</div>` : ""}
 ${online && row.cancel_policy ? `<div class="sub" style="margin-top:6px">Politica de anulare: <b>${E(POL.LABELS[POL.normalize(row.cancel_policy)])}</b>. ${E(POL.shortText(row.cancel_policy))}${row.policy_discount_bani > 0 ? ` Reducere nerambursabil inclusă: ${fmtRon(row.policy_discount_bani)}.` : ""}</div>` : ""}${row.status === "confirmed" && online && can ? `<div class="sub" style="margin-top:6px">${E(POL.cancelPreviewText(outcome))}</div>` : ""}
+${row.status === "confirmed" && online && (row.paid_bani || 0) > 0 && pay.hostContactHtml ? `<div class="sub" style="margin-top:10px">${pay.hostContactHtml(row)}</div>` : ""}
 ${can ? `<div class="row" style="margin-top:10px"><button id="cancel" class="d" type="button">Anulează rezervarea</button></div><div class="msg" id="m"></div>` : ""}</div>`;
       const warn = online ? "Sigur anulezi rezervarea? " + (row.cancel_policy ? POL.cancelPreviewText(outcome) : "Conform condițiilor acceptate la plată, suma plătită NU se returnează. Camera se eliberează imediat.") : "Sigur anulezi rezervarea? Camera se eliberează imediat.";
       const js = can ? COMMON_JS + `$('#cancel').onclick=async()=>{if(!confirm(${JSON.stringify(warn)}))return;try{await api('POST','/api/rezervari/public/rezervare/${req.params.token}/anuleaza',{});location.reload();}catch(e){say($('#m'),e.message,false);}};` : "";
@@ -512,7 +513,7 @@ say(m,'Încă procesăm plata. Vei primi un e-mail de confirmare; poți verifica
     + "loadMonth().then(function(){kidsInfo();return prefill();}).catch(e=>say($('#qmsg'),'Rezervarea nu este disponibilă.',false));})();";
   const PUB_JS = PUB_BASE + PUB_BOOT;
   const PARTY_HTML = '<div class="row" style="gap:10px"><label style="flex:1">Adulți<select id="adults"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label><label style="flex:1">Copii (0–17 ani)<select id="kidsn"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label></div><div id="ages"></div><div id="kidsinfo" class="sub"></div><input id="guests" type="hidden" value="2">';
-  const PUB_HTML = `<h1 id="nm">Rezervare</h1><p class="sub" id="psub">Rezervare instant. Plata se face direct la proprietate.</p>
+  const PUB_HTML = `<h1 id="nm">Rezervare</h1><p class="sub" id="psub">Rezervare instant, cu plată online securizată (Stripe).</p>
 <div id="s1"><div class="card"><div class="row" style="align-items:center"><button class="s" id="prev" type="button">‹</button><b id="mname" style="text-align:center"></b><button class="s" id="next" type="button">›</button></div><div class="cal" id="cal" style="margin-top:10px"></div><div class="leg"><span>Albastru = ocupat</span><span>Portocaliu = alegerea ta</span></div>
 ${PARTY_HTML}<div id="rooms" style="margin-top:8px"></div><div class="msg" id="qmsg"></div><div class="row" style="margin-top:8px"><button id="go" type="button" disabled>Continuă</button></div></div></div>
 <div id="s2" hidden><div class="card"><h2>Datele tale</h2><label>Nume complet<input id="gname" maxlength="80" autocomplete="name"></label><label>Telefon<input id="gphone" maxlength="25" inputmode="tel" autocomplete="tel" placeholder="07xx xxx xxx"></label><label>E-mail (primești codul de confirmare)<input id="gemail" type="email" maxlength="160" autocomplete="email"></label>
@@ -520,14 +521,14 @@ ${PARTY_HTML}<div id="rooms" style="margin-top:8px"></div><div class="msg" id="q
 <div class="row" style="margin-top:10px"><button class="s" id="back" type="button">Înapoi</button><button id="hold" type="button">Trimite codul</button></div><div class="msg" id="dmsg"></div></div></div>
 <div id="s3" hidden><div class="card"><h2>Confirmă rezervarea</h2><p class="sub">Camera îți este ținută încă <b id="timer">10:00</b>. Am trimis un cod de 6 cifre la <b id="cemail"></b>.</p><label>Cod<input id="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
 <div class="row" style="margin-top:10px"><button class="s" id="resend" type="button">Retrimite codul</button><button id="conf" type="button">Confirmă rezervarea</button></div><div class="msg" id="cmsg"></div></div></div>
-<div id="s4" hidden><div class="card"><h2>Rezervare confirmată</h2><p class="sub" id="s4t">Ți-am trimis confirmarea pe e-mail. Plata se face direct la proprietate.</p><a id="mylink" href="#">Vezi rezervarea</a></div></div>
+<div id="s4" hidden><div class="card"><h2>Rezervare confirmată</h2><p class="sub" id="s4t">Ți-am trimis confirmarea pe e-mail, împreună cu datele gazdei.</p><a id="mylink" href="#">Vezi rezervarea</a></div></div>
 <div id="s5" hidden><div class="card"><h2>Plata</h2><p class="sub">Camera îți este ținută încă <b id="timer5">12:00</b>.</p><p id="psum"></p>
 <label style="display:flex;gap:8px;align-items:flex-start;font-weight:500"><input id="pacc" type="checkbox" style="width:20px;height:20px;margin-top:2px;flex:none"><span id="pacc-t"></span></label>
 <div class="row" style="margin-top:10px"><button id="pinit" type="button">Continuă la plată</button></div><div id="paybox" hidden><div id="pe" style="margin-top:12px"></div><div class="row" style="margin-top:10px"><button id="pay" type="button" disabled>Plătește</button></div></div><div class="msg" id="pmsg"></div></div></div>`;
   r.get("/cazare/rezerva/:id(\\d+)", async (req, res) => {
     try {
       const id = toId(req.params.id);
-      const okQ = id ? await dbPool.query(`SELECT 1 FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]) : null;
+      const okQ = id ? await dbPool.query(`SELECT 1 FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id WHERE l.id = $1::integer AND l.status = 'approved' AND ${pay ? pay.BOOKABLE_SQL : "FALSE"}`, [id]) : null;
       if (!okQ || !okQ.rowCount) return res.status(404).send("Not found");
       const tyRow = ((await dbPool.query(`SELECT type FROM accommodation_listings WHERE id = $1::integer`, [id])) || {}).rows;
       if (tyRow && tyRow[0] && (tyRow[0].type === "camping" || tyRow[0].type === "hotel_mare")) { // camping / hotel mare: pe tip, cu stoc
