@@ -4899,6 +4899,7 @@ input[type=time]::-webkit-date-and-time-value{text-align:left;}
 #rForm .acc-age-policy-option .pa-icon{color:#2f6fb0;}
 #rForm .acc-white-label .pa-icon{vertical-align:-3px;margin-right:6px;color:#2f6fb0;}
 .pn-sec-title{font-weight:900;font-size:19px;padding-bottom:8px;border-bottom:1.5px solid #d6deea;margin:26px 0 16px;}
+.acc-white-label.pn-sec-lbl{display:block;font-weight:900;font-size:19px;padding-bottom:8px;border-bottom:1.5px solid #d6deea;margin:26px 0 12px;color:inherit;text-transform:none;letter-spacing:normal;line-height:normal;}.pn-sec-lbl + .desc-ai-hint{margin-top:0 !important;}
 .pn-q{font-weight:800;font-size:15px;}.pn-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}.pn-row .acc-white-input{width:96px;margin-bottom:0;font-weight:700;}
 .pn-card{border:1.5px solid #d6deea;border-radius:16px;padding:12px;background:#fafcff;margin:0 0 14px;display:flex;flex-direction:column;gap:8px;}
 .pn-dd{border:1.5px solid #d6deea;border-radius:12px;background:#fff;}
@@ -6875,7 +6876,7 @@ const ACCOMMODATION_AMENITIES_I18N = Object.fromEntries(
   }])
 );
 
-function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, reviewCount, priceFrom, priceCurrency, noindex }) {
+function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, reviewCount, priceFrom, priceCurrency, noindex, hideContact }) {
   const isRo = lang === "ro";
   const typeWord = seoTypeWord(kind === "cazare" ? r.type : kind === "restaurant" ? r.venue_type : "obiectiv", lang);
   const cityPart = r.city ? `, ${r.city}` : "";
@@ -6898,9 +6899,9 @@ function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, revi
     url: canonical,
   };
   if (r.address || r.city) {
-    jsonLd.address = { "@type": "PostalAddress", streetAddress: r.address || undefined, addressLocality: r.city || undefined, addressRegion: r.county || undefined, addressCountry: (r.country_code || "RO").toUpperCase() };
+    jsonLd.address = { "@type": "PostalAddress", streetAddress: hideContact ? undefined : (r.address || undefined), addressLocality: r.city || undefined, addressRegion: r.county || undefined, addressCountry: (r.country_code || "RO").toUpperCase() };
   }
-  if (r.contact_phone) jsonLd.telephone = r.contact_phone;
+  if (r.contact_phone && !hideContact) jsonLd.telephone = r.contact_phone; // anunț rezervabil: contactul apare abia după rezervarea plătită
   if (priceFrom) jsonLd.priceRange = `${priceFrom}+ ${priceCurrency || "RON"}`;
   if (r.description) jsonLd.description = seoTruncate(stripDescriptionMarkers(r.description), 500);
   if (avgRating && reviewCount) {
