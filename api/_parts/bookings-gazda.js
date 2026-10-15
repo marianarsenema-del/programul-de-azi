@@ -163,7 +163,9 @@ const SW = `// OHT Host: fără cache pentru date private; doar permite instalar
 self.addEventListener('install',function(){self.skipWaiting();});
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});
 self.addEventListener('push',function(e){var d={};try{d=e.data?e.data.json():{};}catch(x){}
-e.waitUntil(self.registration.showNotification(d.title||'OHT Host',{body:d.body||'',icon:'/gazda/icon-192.png',badge:'/gazda/icon-192.png',tag:d.tag||'gz',data:{url:d.url||'/gazda/'}}));});
+var jobs=[self.registration.showNotification(d.title||'OHT Host',{body:d.body||'',icon:'/gazda/icon-192.png',badge:'/gazda/icon-192.png',tag:d.tag||'gz',data:{url:d.url||'/gazda/'}})];
+try{if(typeof d.badge==='number'&&self.navigator){if(d.badge>0&&self.navigator.setAppBadge)jobs.push(self.navigator.setAppBadge(d.badge));else if(d.badge<=0&&self.navigator.clearAppBadge)jobs.push(self.navigator.clearAppBadge());}}catch(x){}
+e.waitUntil(Promise.all(jobs.map(function(p){return Promise.resolve(p).catch(function(){});})));});
 self.addEventListener('notificationclick',function(e){e.notification.close();var u=(e.notification.data&&e.notification.data.url)||'/gazda/';
 e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(l){for(var i=0;i<l.length;i++){if(l[i].url.indexOf('/gazda/')>-1&&'focus' in l[i])return l[i].focus();}return self.clients.openWindow(u);}));});
 self.addEventListener('fetch',function(e){var r=e.request;if(r.method!=='GET'||r.mode!=='navigate')return;
@@ -309,13 +311,15 @@ function draw(){const root=$('#app');root.replaceChildren();
  const sw=el('select',{'aria-label':'Proprietate'});me.listings.forEach(l=>sw.append(el('option',{value:String(l.id)},[l.name])));sw.value=String(LID);sw.hidden=me.listings.length<2;
  sw.onchange=()=>{LID=Number(sw.value);try{localStorage.setItem('gzListing',String(LID));}catch(e){}resetState();show(tab);};
  root.append(el('div',{class:'top'},[me.listings.length<2?el('b',{style:'font-size:17px'},[me.listings[0].name]):sw]),el('div',{id:'view'}));
- const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'],['set','Setări']].concat(STAFF()?[]:[['msg','Mesaje'+(me.unread?' ('+me.unread+')':'')],['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
- show(tab);}
+ const nav=el('div',{class:'nav'});[['azi','Azi'],['cal','Calendar'],['rez','Rezervări'+(me.newRes?' ('+me.newRes+')':'')],['set','Setări']].concat(STAFF()?[]:[['msg','Mesaje'+(me.unread?' ('+me.unread+')':'')],['cont','Cont']]).forEach(t=>{const b=el('button',{type:'button','data-t':t[0]},[t[1]]);b.onclick=t[0]==='cont'?goAccount:()=>show(t[0]);nav.append(b);});document.body.append(nav);
+ updBadge();show(tab);}
+function updBadge(){try{const n=(me.unread||0)+(me.newRes||0);if(n>0){if(navigator.setAppBadge)Promise.resolve(navigator.setAppBadge(n)).catch(function(){});}else if(navigator.clearAppBadge)Promise.resolve(navigator.clearAppBadge()).catch(function(){});}catch(e){}}
+async function seenRez(){if(!me||!me.newRes)return;me.newRes=0;const b=document.querySelector('.nav button[data-t="rez"]');if(b)b.textContent='Rezervări';updBadge();try{await api('POST','/api/gazda/vazut',{});}catch(e){}}
 function resetState(){month=firstOfMonth(new Date());days={};sel=[];units=[];curUnit='';CAMPL=false;dinfo={};}
 function show(t){tab=t;document.querySelectorAll('.nav button').forEach(b=>b.className=b.dataset.t===t?'on':'');const v=$('#view');if(!v)return;v.replaceChildren();
  ({azi:viewAzi,cal:viewCal,rez:viewRez,set:viewSet,msg:viewMsg})[t](v);}
 async function viewMsg(v){if(STAFF()){show('azi');return;}v.append(el('div',{class:'sub'},['Se încarcă…']));let j;try{j=await api('GET','/api/gazda/mesaje');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
- v.replaceChildren();me.unread=j.unread;const tb=document.querySelector('.nav button[data-t="msg"]');if(tb)tb.textContent='Mesaje'+(j.unread?' ('+j.unread+')':'');
+ v.replaceChildren();me.unread=j.unread;const tb=document.querySelector('.nav button[data-t="msg"]');if(tb)tb.textContent='Mesaje'+(j.unread?' ('+j.unread+')':'');updBadge();
  const KD={cazare:'Cazare',atractie:'Obiectiv',restaurant:'Local'};
  v.append(el('div',{class:'sub'},[j.unread?j.unread+' necitite':'Toate citite']));
  if(j.unread){const ra=el('button',{class:'s',type:'button',style:'width:100%;margin:8px 0'},['Marchează toate citite']);ra.onclick=async()=>{try{await api('POST','/api/gazda/mesaje/citit',{all:true});viewMsgReload();}catch(e){alert(errT(e));}};v.append(ra);}
@@ -406,7 +410,7 @@ async function act(action){const m=$('#calmsg');if(!sel.length)return say(m,'Ale
  try{const r=await api('POST',B()+'/zile',{days:sel,action,unit:curUnit?Number(curUnit):undefined,qty:(CAMPL&&$('#qty')&&$('#qty').value)?Number($('#qty').value):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,errT(e),false);}}
 
 // ---------- REZERVĂRI ----------
-async function viewRez(v){v.append(el('div',{class:'sub'},['Se încarcă…']));let j,fm={};try{j=await api('GET',B()+'/rezervari');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
+async function viewRez(v){seenRez();v.append(el('div',{class:'sub'},['Se încarcă…']));let j,fm={};try{j=await api('GET',B()+'/rezervari');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
  try{fm=(await api('GET',B()+'/fise-rezumat')).forms||{};}catch(e){}
  let un=[];try{un=(await api('GET',B()+'/tarife')).units||[];}catch(e){}
  v.replaceChildren();const up=j.reservations.filter(x=>x.status==='confirmed'&&x.check_out>=today).sort((a,b)=>a.check_in<b.check_in?-1:1);
@@ -868,6 +872,7 @@ function mount(r, o) {
     req.gz = g; next();
   };
 
+  const newResFor = (did, init) => require("./bookings-gazda-notify").newReservations(did, init);
   const ownerRole = (req, res, next) => (req.gz.role === "staff" ? res.status(403).json({ error: "interzis" }) : next());
   r.post("/api/gazda/cont", jsonOnly, gzAuth, ownerRole, (req, res, next) => (!req.gz.auth || Date.now() - req.gz.auth > FRESH_MS ? res.status(401).json({ error: "reautentificare" }) : next()), async (req, res) => {
     try {
@@ -887,10 +892,20 @@ function mount(r, o) {
       if (req.gz.role === "staff" && req.gz.lids.length) ls = ls.filter((x) => req.gz.lids.includes(Number(x.id)));
       let unread = 0;
       if (req.gz.role !== "staff") { try { const ms = await require("./messages").summary(req.gz.ownerId); unread = ms ? ms.unread : 0; } catch (e) { unread = 0; } }
-      noStore(res); res.json({ email: req.gz.role === "staff" ? "" : (req.gz.email || ""), role: req.gz.role, unread, listings: ls.map((x) => ({ id: x.id, name: x.name })) });
+      let newRes = 0; try { newRes = await newResFor(req.gz.did, true); } catch (e) { newRes = 0; }
+      noStore(res); res.json({ email: req.gz.role === "staff" ? "" : (req.gz.email || ""), role: req.gz.role, unread, newRes, listings: ls.map((x) => ({ id: x.id, name: x.name })) });
     } catch (e) { console.error("gazda eu:", e.message); res.status(500).json({ error: "eroare" }); }
   });
 
+  // „văzut": gazda a deschis lista de rezervări → insigna scade
+  r.post("/api/gazda/vazut", jsonOnly, gzAuth, async (req, res) => {
+    try {
+      await require("./bookings-gazda-notify").markSeen(req.gz.did);
+      let unread = 0;
+      if (req.gz.role !== "staff") { try { const ms = await require("./messages").summary(req.gz.ownerId); unread = ms ? ms.unread : 0; } catch (e) { unread = 0; } }
+      noStore(res); res.json({ ok: true, unread, newRes: 0 });
+    } catch (e) { console.error("gazda vazut:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
   r.post("/api/gazda/iesire", jsonOnly, (req, res) => { clearGz(res); noStore(res); res.json({ ok: true }); });
 
   r.get("/api/gazda/dispozitive", gzAuth, ownerRole, async (req, res) => {
