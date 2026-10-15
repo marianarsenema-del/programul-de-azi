@@ -18,9 +18,9 @@ module.exports = function mountCampPublic(r, h) {
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.payment_mode, l.checkin_time${LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
-          WHERE l.id = $1::integer AND l.type IN ('camping', 'hotel_mare') AND l.status = 'approved' AND s.bookings_enabled AND s.instant_enabled`, [id]);
+          WHERE l.id = $1::integer AND l.type IN ('camping', 'hotel_mare') AND l.status = 'approved' AND ${pay ? pay.BOOKABLE_SQL : "FALSE"}`, [id]);
       if (!rows[0]) return res.status(404).json({ error: "negasit" });
-      rows[0].online = LIVE && rows[0].payment_mode === "online" && rows[0].payouts_enabled === true;
+      rows[0].online = LIVE && rows[0].payouts_enabled === true;
       rows[0].policy = POL.normalize(rows[0].cancel_policy);
       rows[0].model = CAMP.campModel(rows[0].type_details);
       rows[0].kids = rows[0].model.hotel ? PARTY.sanitizeKids((CAMP.parseTd(rows[0].type_details) || {}).kids) : null;
