@@ -1,7 +1,7 @@
 // Factura de comision (Oblio): platforma → gazdă, doar când comisionul salvat pe rezervare este > 0 (rezervările din promoție nu au factură).
 // Se emite după ce banii au fost viruți gazdei (la 24 de ore după check-in) sau, la anulare cu penalitate, din comisionul penalității (același mecanism: comisionul rămas pe plățile rezervării).
 // Oprit implicit: necesită OBLIO_LIVE=true și OBLIO_EMAIL, OBLIO_SECRET (tokenul din contul Oblio), OBLIO_CIF (CUI-ul firmei emitente) și OBLIO_SERIES.
-//   OBLIO_VAT_PERCENT (implicit 0 = neplătitor de TVA), OBLIO_VAT_NAME (implicit „Normala” / „SDD” la 0), OBLIO_VAT_INCLUDED (implicit true: comisionul de 8% se consideră cu TVA inclus).
+//   OBLIO_VAT_PERCENT (implicit 0 = neplătitor de TVA), OBLIO_VAT_NAME (implicit „Normala” / „SDD” la 0), OBLIO_VAT_INCLUDED (implicit true: comisionul de 10% se consideră cu TVA inclus).
 // Idempotență: câte o singură factură pe rezervare (UNIQUE), rând revendicat atomic înainte de apel; la eroare explicită Oblio se reîncearcă (max. 5),
 // la rezultat incert (timeout/rețea) rândul trece în „check”: NU se retrimite automat, ca să nu apară facturi duble — se verifică manual.
 "use strict";
@@ -41,7 +41,7 @@ function invoiceBody(client, reservation, amountBani) {
     cif: env.OBLIO_CIF, client, issueDate: todayRo(), seriesName: env.OBLIO_SERIES, language: "RO", precision: 2, currency: "RON", useStock: 0,
     mentions: `Comision pentru rezervarea #${reservation.id} (${reservation.ci} – ${reservation.co}), ${reservation.listing_name}`,
     internalNote: "OHT-COM-" + reservation.id,
-    products: [{ name: `Comision intermediere rezervare #${reservation.id} · ${reservation.listing_name}`, price: amountBani / 100, measuringUnit: "buc", currency: "RON", vatName: vat > 0 ? (env.OBLIO_VAT_NAME || "Normala") : (env.OBLIO_VAT_NAME || "SDD"), vatPercentage: vat, vatIncluded: included, quantity: 1, productType: "Serviciu" }],
+    products: [{ name: `Comision platformă (include procesarea plății) · rezervare #${reservation.id} · ${reservation.listing_name}`, price: amountBani / 100, measuringUnit: "buc", currency: "RON", vatName: vat > 0 ? (env.OBLIO_VAT_NAME || "Normala") : (env.OBLIO_VAT_NAME || "SDD"), vatPercentage: vat, vatIncluded: included, quantity: 1, productType: "Serviciu" }],
   };
 }
 
