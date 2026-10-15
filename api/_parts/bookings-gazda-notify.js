@@ -42,10 +42,43 @@ const state = {
     }
   },
 };
+// ---------- insigna de pe iconița aplicației ----------
+let seenCol = null;
+function ensureSeenCol() {
+  if (!seenCol) seenCol = dbPool.query(`ALTER TABLE gazda_devices ADD COLUMN IF NOT EXISTS seen_at TIMESTAMPTZ`).catch(() => {});
+  return seenCol;
+}
+// rezervări confirmate de la ultima deschidere a listei (per dispozitiv); init=true: la prima folosire pornește de la „acum"
+async function newReservations(deviceId, init) {
+  if (!dbPool || !deviceId) return 0;
+  await ensureSeenCol();
+  const d = (await dbPool.query(`SELECT owner_id, role, listing_ids, seen_at FROM gazda_devices WHERE id = $1::bigint AND revoked_at IS NULL`, [deviceId])).rows[0];
+  if (!d) return 0;
+  if (!d.seen_at) { if (init) await dbPool.query(`UPDATE gazda_devices SET seen_at = now() WHERE id = $1::bigint AND seen_at IS NULL`, [deviceId]); return 0; }
+  const lids = d.role === "staff" && (d.listing_ids || []).length ? d.listing_ids.map(Number) : null;
+  const r = await dbPool.query(
+    `SELECT count(*)::int AS n FROM booking_reservations r JOIN accommodation_listings l ON l.id = r.listing_id
+      WHERE l.owner_id = $1::integer AND r.status = 'confirmed' AND r.confirmed_at > $2::timestamptz AND ($3::int[] IS NULL OR r.listing_id = ANY($3::int[]))`, [d.owner_id, d.seen_at, lids]);
+  return r.rows[0].n;
+}
+async function markSeen(deviceId) {
+  if (!dbPool || !deviceId) return;
+  await ensureSeenCol();
+  await dbPool.query(`UPDATE gazda_devices SET seen_at = now() WHERE id = $1::bigint`, [deviceId]);
+}
+// numărul de pe insignă pentru un dispozitiv: mesaje necitite (doar proprietar) + rezervări noi
+async function badgeFor(deviceId, ownerId, role) {
+  let n = await newReservations(deviceId, false);
+  if (role !== "staff") {
+    try { const m = await require("./messages").summary(ownerId); n += m ? m.unread : 0; } catch (e) { /* fără mesaje */ }
+  }
+  return n;
+}
 async function deliver(subs, payload) {
   let sent = 0;
   for (const s of subs) {
-    const out = await state.sender(s, payload);
+    const pl = typeof s.badge === "number" ? Object.assign({}, payload, { badge: s.badge }) : payload;
+    const out = await state.sender(s, pl);
     if (out === "sent") sent++;
     else if (out === "expired") await dbPool.query(`DELETE FROM gazda_push WHERE endpoint = $1`, [s.endpoint]).catch(() => {});
   }
@@ -56,11 +89,12 @@ async function pushByListing(listingId, payload) {
   try {
     if (!dbPool || !listingId) return 0;
     const subs = (await dbPool.query(
-      `SELECT p.endpoint, p.p256dh, p.auth FROM gazda_push p
+      `SELECT p.endpoint, p.p256dh, p.auth, d.id AS did, d.owner_id, d.role FROM gazda_push p
          JOIN gazda_devices d ON d.id = p.device_id AND d.revoked_at IS NULL
          JOIN accommodation_listings l ON l.owner_id = d.owner_id
         WHERE l.id = $1::integer AND (d.role = 'owner' OR $1::integer = ANY(d.listing_ids)) LIMIT 40`, [listingId])).rows;
     if (!subs.length) return 0;
+    for (const s of subs) { try { s.badge = await badgeFor(s.did, s.owner_id, s.role); } catch (e) { /* trimite fără insignă */ } }
     return await Promise.race([deliver(subs, Object.assign({ url: "/gazda/" }, payload)), new Promise((res) => setTimeout(() => res(0), 7000))]);
   } catch (e) { console.error("gazda push:", e.message); return 0; }
 }
@@ -227,4 +261,4 @@ function mount(r, c) {
   });
 }
 
-module.exports = { mount, cron, pushByListing, state, blockedReason, sendArrival };
+module.exports = { mount, cron, pushByListing, state, blockedReason, sendArrival, newReservations, markSeen, badgeFor, ensureSeenCol };
