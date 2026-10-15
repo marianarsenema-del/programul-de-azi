@@ -13,6 +13,9 @@ const POL = require("./bookings-policy");
 const PUBLISHABLE = process.env.STRIPE_PUBLISHABLE_KEY || "";
 const WEBHOOK_SECRET = process.env.STRIPE_BOOKINGS_WEBHOOK_SECRET || "";
 const LIVE = process.env.BOOKINGS_PAYMENTS_LIVE === "true" && !!STRIPE_SECRET_KEY && !!PUBLISHABLE && !!WEBHOOK_SECRET;
+// Rezervabil = rezervări pornite + rezervare instant + plățile online LIVE + contul Stripe al gazdei poate primi bani (alias „l” = accommodation_listings, „s” = booking_settings).
+// Fără plata online activă nu există rezervare instant: anunțul rămâne în director, cu contact vizibil.
+const BOOKABLE_SQL = LIVE ? "(s.bookings_enabled AND s.instant_enabled AND EXISTS (SELECT 1 FROM booking_owner_payments bop WHERE bop.owner_id = l.owner_id AND bop.payouts_enabled))" : "FALSE";
 const STRIPE_VERSION = "2024-06-20";
 const E = L.escapeHtml;
 const sha = core.sha256;
@@ -74,8 +77,17 @@ async function sendMail(to, subject, html) {
   return false;
 }
 
-const RES_SELECT = `SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, to_char(r.rest_due_on,'YYYY-MM-DD') AS rest_due, l.name AS listing_name, l.owner_id AS owner_id, o.email AS owner_email
+const RES_SELECT = `SELECT r.*, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, to_char(r.rest_due_on,'YYYY-MM-DD') AS rest_due, l.name AS listing_name, l.owner_id AS owner_id, o.email AS owner_email, l.contact_phone AS host_phone, l.contact_email AS host_email, to_jsonb(l)->>'address' AS host_address, l.city AS host_city
   FROM booking_reservations r JOIN accommodation_listings l ON l.id = r.listing_id JOIN accommodation_owners o ON o.id = l.owner_id`;
+// datele de contact ale gazdei: apar doar după ce rezervarea e confirmată și plătită (e-mail + pagina rezervării)
+const hostContactHtml = (row) => {
+  const bits = [];
+  const addr = [row.host_address, row.host_city].filter(Boolean).join(", ");
+  if (addr) bits.push("Adresa: <b>" + E(addr) + "</b>");
+  if (row.host_phone) bits.push("Telefon: <b>" + E(row.host_phone) + "</b>");
+  if (row.host_email) bits.push("E-mail: <b>" + E(row.host_email) + "</b>");
+  return bits.length ? "<p><b>Datele gazdei</b><br>" + bits.join("<br>") + "</p>" : "";
+};
 const roomsOf = (snap) => { const n = snap && !Array.isArray(snap) && snap.units ? snap.units.map((u) => u.name).filter(Boolean) : []; return n.length ? "<br>Camere: " + n.map(E).join(", ") : ""; };
 const pairsOf = (snap) => snap.units.flatMap((u) => u.nights.map((n) => [u.unit_no, n.day]));
 
@@ -87,7 +99,7 @@ async function mailConfirmed(row) {
     ? `Ai plătit avansul de <b>${fmtRon(row.advance_bani)}</b>. Restul de <b>${fmtRon(row.rest_bani)}</b> se debitează automat de pe același card pe <b>${dRo(row.rest_due)}</b>; cu 3 zile înainte primești un memento.`
     : `Ai plătit integral <b>${fmtRon(row.total_bani)}</b>.`;
   await sendMail(row.guest_email, "Rezervare confirmată · " + row.listing_name,
-    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.cancel_policy ? `<p><b>Politica de anulare:</b> ${E(POL.shortText(row.cancel_policy))}</p>` : ""}<p style="color:#555">Factura pentru serviciile de cazare va fi emisă de către gazdă.</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
+    `<p>Bună, ${E(row.guest_name)},</p><p>Rezervarea ta la <b>${E(row.listing_name)}</b> este confirmată.</p><p>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)}<br>Total: <b>${fmtRon(row.total_bani)}</b></p><p>${payTxt}</p>${row.cancel_policy ? `<p><b>Politica de anulare:</b> ${E(POL.shortText(row.cancel_policy))}</p>` : ""}${hostContactHtml(row)}<p style="color:#555">Factura pentru serviciile de cazare va fi emisă de către gazdă.</p>${row.guarantee_bani > 0 ? `<p>Garanție: <b>${fmtRon(row.guarantee_bani)}</b>. Suma se blochează pe card (nu se debitează) cu o zi înainte de sosire și se eliberează automat după plecare, dacă nu există daune.</p>` : ""}${forms.ENABLED ? `<p>Înainte de sosire, completează <a href="${siteBase()}/cazare/fisa/${tokenOf(row.id)}">fișa de cazare</a> pentru fiecare oaspete (cerință legală).</p>` : ""}<p><a href="${link}">Vezi rezervarea</a></p>`);
   await require("./bookings-gazda-notify").pushByListing(row.listing_id, { title: "Rezervare nouă", body: row.guest_name + " · " + dRo(row.ci) + " – " + dRo(row.co) + " · " + row.guests + " pers.", tag: "gz-r" + row.id });
   await sendMail(row.owner_email, "Rezervare nouă (plătită online) · " + row.listing_name,
     `<p>Ai o rezervare nouă confirmată la <b>${E(row.listing_name)}</b>.</p><p>${E(row.guest_name)} · ${E(row.guest_phone)} · ${E(row.guest_email)}<br>Perioada: ${period} · ${row.guests} persoane${roomsOf(row.nights_snapshot)} · ${fmtRon(row.total_bani)}</p><p>Plata se face prin Opening Hours Today; banii îți ajung în cont la 24 de ore după check-in.</p>`);
@@ -167,6 +179,19 @@ async function markRestFailed(rid, piId) {
     `<p>Bună, ${E(row.guest_name)},</p><p>Banca a respins plata restului de <b>${fmtRon(row.rest_bani)}</b> pentru rezervarea la <b>${E(row.listing_name)}</b>.</p><p>Ai <b>48 de ore</b> să plătești cu alt card, printr-un link securizat:</p><p><a href="${siteBase()}/cazare/plata/${tokenOf(rid)}">Plătește restul</a></p><p>Dacă nu plătești în 48 de ore, rezervarea se anulează și avansul se pierde.</p>`);
 }
 
+// contul Stripe al gazdei s-a schimbat (eveniment sau cron): salvăm starea; la prima activare gazda primește un e-mail
+async function applyAccount(acc) {
+  if (!acc || !acc.id) return false;
+  const active = !!(acc.payouts_enabled && acc.capabilities && acc.capabilities.transfers === "active");
+  const prev = (await dbPool.query(`SELECT o.email, op.owner_id, op.payouts_enabled FROM booking_owner_payments op JOIN accommodation_owners o ON o.id = op.owner_id WHERE op.stripe_account_id = $1`, [acc.id])).rows[0];
+  if (!prev) return false;
+  await dbPool.query(`UPDATE booking_owner_payments SET details_submitted = $2, payouts_enabled = $3, updated_at = now() WHERE stripe_account_id = $1`, [acc.id, !!acc.details_submitted, active]);
+  if (active && !prev.payouts_enabled) {
+    try { await sendMail(prev.email, "Plățile sunt active · Opening Hours Today", `<p>Bună,</p><p>Contul tău Stripe a fost verificat și <b>plățile online sunt active</b>. Poți porni rezervarea instant (aplicația OHT Host → Setări → Rezervare instant), iar turiștii vor putea rezerva și plăti online.</p><p>Banii rezervărilor îți sunt virați la 24 de ore după check-in, iar la fiecare virare primești un e-mail.</p>`); } catch (e) { /* e-mailul nu blochează */ }
+  }
+  return active;
+}
+
 async function handleEvent(ev) {
   const obj = ev.data && ev.data.object;
   if (!obj) return;
@@ -182,6 +207,8 @@ async function handleEvent(ev) {
       await client.query("COMMIT");
     } catch (e) { await client.query("ROLLBACK").catch(() => {}); throw e; } finally { client.release(); }
     await afterCommit(act);
+  } else if (ev.type === "account.updated") {
+    await applyAccount(obj);
   } else if (ev.type === "payment_intent.payment_failed") {
     if (obj.metadata && obj.metadata.kind === "rest" && obj.metadata.reservation_id) await markRestFailed(Number(obj.metadata.reservation_id), obj.id);
   }
@@ -368,7 +395,7 @@ async function runPaymentCron() {
   }
   // 4) plata către gazde
   const pays = (await dbPool.query(
-    `SELECT p.*, a.stripe_account_id, r.currency FROM booking_payouts p JOIN booking_owner_payments a ON a.owner_id = p.owner_id AND a.payouts_enabled JOIN booking_reservations r ON r.id = p.reservation_id
+    `SELECT p.*, a.stripe_account_id, r.currency, r.guest_name, to_char(r.check_in,'YYYY-MM-DD') AS ci, to_char(r.check_out,'YYYY-MM-DD') AS co, l.name AS listing_name, o.email AS owner_email FROM booking_payouts p JOIN booking_owner_payments a ON a.owner_id = p.owner_id AND a.payouts_enabled JOIN booking_reservations r ON r.id = p.reservation_id JOIN accommodation_listings l ON l.id = p.listing_id JOIN accommodation_owners o ON o.id = p.owner_id
       WHERE p.status = 'pending' AND p.due_at <= now() AND p.attempts < 10 ORDER BY p.due_at LIMIT 30`)).rows;
   for (const p of pays) {
     if (!budget()) break;
@@ -376,9 +403,40 @@ async function runPaymentCron() {
       amount: p.amount_bani, currency: String(p.currency || "RON").toLowerCase(), destination: p.stripe_account_id, source_transaction: p.charge_id || undefined,
       transfer_group: `res_${p.reservation_id}`, description: `Rezervare #${p.reservation_id}`, metadata: { reservation_id: p.reservation_id, payout_id: p.id },
     }, `bk-payout-${p.id}`);
-    if (t.ok) { await dbPool.query(`UPDATE booking_payouts SET status = 'paid', transfer_id = $2 WHERE id = $1`, [p.id, t.data.id]); st.payouts++; }
+    if (t.ok) {
+      await dbPool.query(`UPDATE booking_payouts SET status = 'paid', transfer_id = $2 WHERE id = $1`, [p.id, t.data.id]); st.payouts++;
+      if (p.amount_bani > 0) { try { await sendMail(p.owner_email, "Ai primit " + fmtRon(p.amount_bani) + " · " + p.listing_name, `<p>Am virat <b>${fmtRon(p.amount_bani)}</b> în contul tău Stripe pentru rezervarea ${E(p.guest_name)} (${dRo(p.ci)} – ${dRo(p.co)}) la <b>${E(p.listing_name)}</b>${p.commission_bani > 0 ? ` (după comisionul platformei de ${fmtRon(p.commission_bani)}, care include procesarea plății)` : ""}.</p><p>Banii ajung în contul tău bancar conform calendarului de viramente Stripe, de obicei în 1–3 zile lucrătoare.</p>`); } catch (e) { /* e-mailul nu blochează virarea */ } }
+    }
     else { await dbPool.query(`UPDATE booking_payouts SET attempts = attempts + 1, last_error = $2 WHERE id = $1`, [p.id, String((t.error && t.error.message) || "eroare").slice(0, 200)]); st.payout_errors++; }
   }
+  // 4a) conturi Stripe încă neactive: le reîmprospătăm din Stripe, ca o cazare să devină rezervabilă fără ca gazda să redeschidă pagina
+  try {
+    const pend = (await dbPool.query(`SELECT stripe_account_id FROM booking_owner_payments WHERE NOT payouts_enabled ORDER BY updated_at LIMIT 20`)).rows;
+    for (const a of pend) {
+      if (!budget()) break;
+      const g = await stripeReq("GET", `/accounts/${a.stripe_account_id}`);
+      if (g.ok) { if (await applyAccount(g.data)) st.accounts_activated = (st.accounts_activated || 0) + 1; }
+      else await dbPool.query(`UPDATE booking_owner_payments SET updated_at = now() WHERE stripe_account_id = $1`, [a.stripe_account_id]);
+    }
+  } catch (e) { console.error("rezervari conturi stripe:", e.message); }
+  // 4b) gazde cu rezervări pornite, dar fără cont Stripe activ: e-mail la 1 zi și la 7 zile după activarea rezervărilor (o singură dată fiecare)
+  try {
+    const todo = (await dbPool.query(
+      `SELECT o.id AS owner_id, o.email, COALESCE(MAX(rm.stage), 0) AS stage, (now() - MIN(s.created_at)) >= interval '7 days' AS d7, (now() - MIN(s.created_at)) >= interval '1 day' AS d1
+         FROM booking_settings s JOIN accommodation_owners o ON o.id = s.owner_id JOIN accommodation_listings l ON l.id = s.listing_id AND l.status = 'approved'
+         LEFT JOIN booking_owner_payments op ON op.owner_id = o.id LEFT JOIN booking_stripe_reminders rm ON rm.owner_id = o.id
+        WHERE s.bookings_enabled AND COALESCE(op.payouts_enabled, false) = false
+        GROUP BY o.id, o.email LIMIT 30`)).rows;
+    for (const t of todo) {
+      const target = t.d7 ? 2 : t.d1 ? 1 : 0;
+      if (target <= Number(t.stage)) continue;
+      const claim = await dbPool.query(`INSERT INTO booking_stripe_reminders (owner_id, stage, sent_at) VALUES ($1,$2,now()) ON CONFLICT (owner_id) DO UPDATE SET stage = $2, sent_at = now() WHERE booking_stripe_reminders.stage < $2 RETURNING owner_id`, [t.owner_id, target]);
+      if (!claim.rowCount) continue;
+      await sendMail(t.email, "Activează plățile ca să primești rezervări online · Opening Hours Today",
+        `<p>Bună,</p><p>Cazarea ta este pregătită pentru rezervări online, dar <b>nu poate fi rezervată încă</b>: lipsește activarea plăților (contul Stripe).</p><p>Ce trebuie să faci: deschide aplicația OHT Host (Setări → Rezervare instant) sau contul tău, apasă <b>„Activează plățile”</b> și completează formularul Stripe. Ai nevoie de datele tale (sau ale firmei), un act de identitate și IBAN-ul în care vrei să primești banii. Durează aproximativ 10 minute.</p><p><a href="${siteBase()}/cont/rezervari">Deschide contul</a></p><p>Până atunci cazarea rămâne în director, cu datele tale de contact vizibile, dar turiștii nu o pot rezerva online.${target === 2 ? " Dacă ai nevoie de ajutor, răspunde la acest e-mail." : ""}</p>`);
+      st.stripe_reminders = (st.stripe_reminders || 0) + 1;
+    }
+  } catch (e) { console.error("rezervari memento stripe:", e.message); }
   // 5) facturile de comision (Oblio), doar dacă sunt configurate; erorile nu opresc restul cronului
   try { const inv = await require("./bookings-invoice").runInvoices(sendMail); st.invoices = inv.issued; st.invoice_errors = inv.failed + inv.check; } catch (e) { console.error("rezervari facturi:", e.message); }
   return st;
@@ -426,7 +484,8 @@ function mount(r, ctx) {
         acc = { stripe_account_id: c.data.id };
       }
       const base = L.baseUrlFor(req);
-      const link = await stripeReq("POST", "/account_links", { account: acc.stripe_account_id, type: "account_onboarding", refresh_url: base + "/cont/rezervari", return_url: base + "/cont/rezervari" });
+      const back = base + ((req.body || {}).app === true ? "/gazda/" : "/cont/rezervari"); // din aplicația OHT Host revine în aplicație
+      const link = await stripeReq("POST", "/account_links", { account: acc.stripe_account_id, type: "account_onboarding", refresh_url: back, return_url: back });
       if (!link.ok) return res.status(502).json({ error: "Nu am putut deschide formularul Stripe. Încearcă din nou." });
       res.json({ ok: true, url: link.data.url });
     } catch (e) { console.error("rezervari plati cont:", e.message); res.status(500).json({ error: "eroare" }); }
@@ -552,4 +611,4 @@ function mount(r, ctx) {
   });
 }
 
-module.exports = { guestOutcome, settleGuestCancel, claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
+module.exports = { hostContactHtml, BOOKABLE_SQL, guestOutcome, settleGuestCancel, claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
