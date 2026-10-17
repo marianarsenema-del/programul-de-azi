@@ -355,14 +355,28 @@ const TRAVEL_GUIDES_MONETIZATION_READY = true;
 // Google Analytics (GA4) — codul exact primit, păstrat ca atare. La randare,
 // nonce-ul curent se injectează automat pe <script>-ul inline de mai jos (vezi
 // withNonce mai jos) — altfel CSP-ul strict (fără unsafe-inline) l-ar bloca.
-const codAnalytics = `<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-04RLHKC4K8"></script>
+const codAnalytics = `<!-- Google tag (gtag.js) — încărcat după afișarea paginii (viteză), evenimentele rămân în coadă -->
 <script>
+  // window.__poaLater(fn, ms): rulează fn după încărcarea paginii + ms, sau mai devreme
+  // la prima interacțiune (atingere/scroll/tastă) — scripturile terțe nu mai încetinesc afișarea.
+  window.__poaLater = function(fn, ms){
+    var done = false;
+    function run(){ if (done) return; done = true; try { fn(); } catch(e){} }
+    function arm(){ setTimeout(run, ms || 0); }
+    if (document.readyState === "complete") arm(); else window.addEventListener("load", arm, { once: true });
+    ["pointerdown","keydown","scroll","touchstart"].forEach(function(ev){ window.addEventListener(ev, run, { once: true, passive: true }); });
+  };
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-04RLHKC4K8');
+  window.__poaLater(function(){
+    var g = document.createElement("script");
+    g.async = true;
+    g.src = "https://www.googletagmanager.com/gtag/js?id=G-04RLHKC4K8";
+    document.head.appendChild(g);
+  }, 1500);
 </script>`;
 
 
