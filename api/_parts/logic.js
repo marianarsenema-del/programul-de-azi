@@ -6892,7 +6892,8 @@ function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, revi
       ? `${r.name}, ${typeWord} în ${r.city || "România"}. Program, adresă, poze și recenzii, pe ${brand}.`
       : `${r.name}, ${typeWord} in ${r.city || "Romania"}. Hours, address, photos and reviews, on ${brand}.`;
   const description = seoTruncate(descBase, 160);
-  const canonical = `${baseUrl}${path}`;
+  // aceste pagini sunt servite și pe .eu, dar „casa” lor e domeniul românesc — canonical unic, ca să nu apară duplicate în Google
+  const canonical = `https://${RO_DOMAIN}${path}`;
   const photosArr = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? (() => { try { return JSON.parse(r.photos); } catch (e) { return []; } })() : []);
   const ogImage = r.cover_photo_url || photosArr[0] || `${baseUrl}/icon-512.png`;
   const schemaType = kind === "cazare" ? "LodgingBusiness" : kind === "restaurant" ? "Restaurant" : "TouristAttraction";
