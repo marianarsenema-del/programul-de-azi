@@ -1333,6 +1333,12 @@ const REVIEW_CRITERIA = {
     { k: 3, ro: "Preț", en: "Price", icon: "card", hintRo: "Dacă prețul este corect raportat la ce ai primit", hintEn: "Whether the price is fair for what you got" },
     { k: 4, ro: "Locație", en: "Location", icon: "pin", hintRo: "Curățenie, ambianță, confort, accesibilitate / parcare", hintEn: "Cleanliness, atmosphere, comfort, access / parking" },
   ],
+  cafe: [
+    { k: 1, ro: "Băuturi și produse", en: "Drinks & treats", icon: "coffee", hintRo: "Cafea, ceai, deserturi: gust și calitate", hintEn: "Coffee, tea, desserts: taste and quality" },
+    { k: 2, ro: "Serviciu", en: "Service", icon: "bell", hintRo: "Politețe, rapiditatea personalului / livrării", hintEn: "Politeness, speed of staff / delivery" },
+    { k: 3, ro: "Preț", en: "Price", icon: "card", hintRo: "Dacă prețul este corect raportat la ce ai primit", hintEn: "Whether the price is fair for what you got" },
+    { k: 4, ro: "Locație", en: "Location", icon: "pin", hintRo: "Curățenie, ambianță, confort, accesibilitate / parcare", hintEn: "Cleanliness, atmosphere, comfort, access / parking" },
+  ],
   attraction: [
     { k: 1, ro: "Experiență", en: "Experience", icon: "landmark", hintRo: "Ce ai văzut sau făcut și cât ți-a plăcut", hintEn: "What you saw or did and how much you enjoyed it" },
     { k: 2, ro: "Personal și organizare", en: "Staff & organisation", icon: "people", hintRo: "Politețe, informare, cozi, organizare", hintEn: "Politeness, information, queues, organisation" },
