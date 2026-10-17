@@ -4282,12 +4282,24 @@ async function generateSitemapXml(baseUrl, includeIntl, extraPaths) {
     (extraPaths || []).forEach((p) => { if (typeof p === "string" && p.startsWith("/")) urls.push(`${base}${p}`); });
   }
 
+  // Brandurile limitate la anumite orașe (SELECTIVE_BRAND_CITIES) dau 404 în
+  // alte orașe — nu le mai listăm în sitemap pentru combinațiile inexistente.
+  const stripKey = (x) => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+  const brandOkInCity = (countryCode, brandKey, city) => {
+    const r = SELECTIVE_BRAND_CITIES && SELECTIVE_BRAND_CITIES[countryCode];
+    if (!r) return true;
+    const k = Object.keys(r).find((x) => stripKey(x) === stripKey(brandKey));
+    if (!k || !Array.isArray(r[k])) return true;
+    return r[k].some((c) => stripKey(c) === stripKey(city));
+  };
+
   if (!includeIntl) {
     // domeniul RO — doar orașele/magazinele din România
     SITEMAP_CITIES.forEach((city) => {
       const citySlug = slugifyCityName(city);
       urls.push(`${base}/${citySlug}`); // pagina generală a orașului
       SITEMAP_BRANDS.forEach((brand) => {
+        if (!brandOkInCity("ro", brand, city)) return;
         urls.push(`${base}/${citySlug}/${brand}`); // ex: /cluj-napoca/kaufland
       });
     });
@@ -4305,6 +4317,7 @@ async function generateSitemapXml(baseUrl, includeIntl, extraPaths) {
         urls.push(`${base}/${countryCode}/${citySlug}`);
         Object.keys(country.config).forEach((brandKey) => {
           const brandSlug = country.config[brandKey].slug || brandKey;
+          if (!brandOkInCity(countryCode, brandKey, city)) return;
           urls.push(`${base}/${countryCode}/${citySlug}/${brandSlug}`);
         });
       });
