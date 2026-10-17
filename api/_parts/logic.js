@@ -3913,7 +3913,18 @@ function pageShell({ title, description, canonical, bodyHtml, dataForClient, non
 <link rel="stylesheet" href="/style.css">
 ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
 <!-- GetYourGuide Analytics -->
-<script async defer src="https://widget.getyourguide.com/dist/pa.umd.production.min.js" data-gyg-partner-id="LM6J21N"></script>
+<script nonce="${nonce}">
+  (function(){
+    function loadGyg(){
+      var g = document.createElement("script");
+      g.async = true; g.defer = true;
+      g.setAttribute("data-gyg-partner-id", "LM6J21N");
+      g.src = "https://widget.getyourguide.com/dist/pa.umd.production.min.js";
+      document.head.appendChild(g);
+    }
+    if (window.__poaLater) window.__poaLater(loadGyg, 3000); else loadGyg();
+  })();
+</script>
 <!-- Stay22 LinkSwap — transformă automat linkurile simple către Booking/Agoda/
      Expedia/Hotels.com/KAYAK/Vrbo/GetYourGuide în linkuri de afiliere urmărite,
      fără să fi avut nevoie de aprobare separată de la fiecare companie. -->
@@ -3921,11 +3932,15 @@ ${codAnalytics ? withNonce(codAnalytics, nonce) : ""}
   (function (s, t, a, y, twenty, two) {
     s.Stay22 = s.Stay22 || {};
     s.Stay22.params = { lmaID: '6a9c733810fb99ee3ebd2a0b' };
-    twenty = t.createElement(a);
-    two = t.getElementsByTagName(a)[0];
-    twenty.async = 1;
-    twenty.src = y;
-    two.parentNode.insertBefore(twenty, two);
+    function load() {
+      twenty = t.createElement(a);
+      two = t.getElementsByTagName(a)[0];
+      twenty.async = 1;
+      twenty.src = y;
+      two.parentNode.insertBefore(twenty, two);
+    }
+    // încărcat după afișarea paginii (sau la prima interacțiune), ca să nu încetinească încărcarea
+    if (s.__poaLater) s.__poaLater(load, 2500); else load();
   })(window, document, 'script', 'https://scripts.stay22.com/letmeallez.js');
 </script>
 <!-- Travelpayouts — GetTransfer + Omio, din contul tău Travelpayouts, cod diferit per domeniu (Project separat) -->
