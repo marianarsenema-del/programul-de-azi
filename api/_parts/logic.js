@@ -3878,7 +3878,7 @@ function buildAffiliateClickTrackingScript(nonce, pageCountryCode) {
 }
 
 
-function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks }) {
+function pageShell({ title, description, canonical, bodyHtml, dataForClient, nonce, langCode, alternateLinks, ogImage, extraHead }) {
   const meta = LANG_META[langCode] || LANG_META.ro;
   // banner + modal de instalare — nume de brand corect, per domeniu; textul
   // respectă limba paginii curente (langCode), nu doar domeniul — un vizitator
@@ -3985,6 +3985,8 @@ ${alternatesHtml}
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:locale" content="${meta.locale}">
+${ogImage ? `<meta property="og:image" content="${escapeHtml(ogImage)}">\n<meta name="twitter:card" content="summary_large_image">` : ""}
+${extraHead || ""}
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F1115">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF8F4">
@@ -4259,7 +4261,7 @@ function decodeGeoHeader(raw) {
 
 
 
-async function generateSitemapXml(baseUrl, includeIntl) {
+async function generateSitemapXml(baseUrl, includeIntl, extraPaths) {
   const base = baseUrl;
   const urls = [`${base}/`];
   // Cazări, restaurante și obiective turistice APROBATE — doar pe domeniul
@@ -4276,6 +4278,8 @@ async function generateSitemapXml(baseUrl, includeIntl) {
       restRes.rows.forEach((r) => urls.push(`${base}/restaurant/${r.slug}`));
       attrRes.rows.forEach((r) => urls.push(`${base}/atractie/${r.slug}`));
     } catch (e) { /* sitemap-ul tot funcționează, doar fără aceste adrese */ }
+    // locurile propuse de comunitate și aprobate (/loc/…), calculate de server
+    (extraPaths || []).forEach((p) => { if (typeof p === "string" && p.startsWith("/")) urls.push(`${base}${p}`); });
   }
 
   if (!includeIntl) {
@@ -6880,12 +6884,13 @@ function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, revi
   const isRo = lang === "ro";
   const typeWord = seoTypeWord(kind === "cazare" ? r.type : kind === "restaurant" ? r.venue_type : "obiectiv", lang);
   const cityPart = r.city ? `, ${r.city}` : "";
-  const title = `${r.name} — ${typeWord.charAt(0).toUpperCase() + typeWord.slice(1)}${cityPart} — Opening Hours Today`;
+  const brand = String(baseUrl || "").includes(INTL_DOMAIN) ? "Opening Hours Today" : "Programul de Azi";
+  const title = `${r.name} — ${typeWord.charAt(0).toUpperCase() + typeWord.slice(1)}${cityPart} — ${brand}`;
   const descBase = r.description
     ? stripDescriptionMarkers(r.description)
     : isRo
-      ? `${r.name}, ${typeWord} în ${r.city || "România"}. Program, adresă, poze și contact direct, fără intermediari, pe Opening Hours Today.`
-      : `${r.name}, ${typeWord} in ${r.city || "Romania"}. Hours, address, photos and direct contact, no middlemen, on Opening Hours Today.`;
+      ? `${r.name}, ${typeWord} în ${r.city || "România"}. Program, adresă, poze și recenzii, pe ${brand}.`
+      : `${r.name}, ${typeWord} in ${r.city || "Romania"}. Hours, address, photos and reviews, on ${brand}.`;
   const description = seoTruncate(descBase, 160);
   const canonical = `${baseUrl}${path}`;
   const photosArr = Array.isArray(r.photos) ? r.photos : (typeof r.photos === "string" ? (() => { try { return JSON.parse(r.photos); } catch (e) { return []; } })() : []);
