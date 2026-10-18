@@ -7026,6 +7026,8 @@ function sanitizeHotelDetails(raw, opts) {
     }
     const allBeds = spaces.length ? [...new Set(spaces.reduce((a, sp) => a.concat(sp.beds), []))] : filt(HOTEL_BEDS, rt.beds, 5);
     return {
+      ...(!big && Number.isInteger(+rt.oht) && +rt.oht >= 1 && +rt.oht < count ? { oht: +rt.oht } : {}), // câte camere se vând prin OHT (restul rămân pe alte platforme)
+      ...(!big && Array.isArray(rt.labels) && rt.labels.some((x) => typeof x === "string" && x.trim()) ? { labels: rt.labels.slice(0, count).map((x) => (typeof x === "string" ? x.trim().slice(0, 30) : "")) } : {}),
       name, count, tid: Number.isInteger(rt.tid) && rt.tid >= 1 && rt.tid <= 32 ? rt.tid : 0,
       adults: typeof rt.adults === "string" ? rt.adults.slice(0, 3) : "2",
       children: typeof rt.children === "string" ? rt.children.slice(0, 3) : "0",
