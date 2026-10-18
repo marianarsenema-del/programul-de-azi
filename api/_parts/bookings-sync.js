@@ -35,7 +35,13 @@ function hotelRooms(td) {
     if (!rt || !rt.name) return;
     const c = Math.max(1, parseInt(rt.count, 10) || 1);
     const cap = Math.min(50, Math.max(1, (parseInt(rt.adults, 10) || 0) + (parseInt(rt.children, 10) || 0)));
-    for (let j = 1; j <= c && out.length <= 60; j++) out.push({ key: `rt${i}-${j}`, type: i, name: String(c > 1 ? `${rt.name} ${j}` : rt.name).slice(0, 60), cap, price: num(rt.price) });
+    const oht = Math.min(c, Math.max(1, parseInt(rt.oht, 10) || c)); // câte camere se vând prin OHT
+    const lbl = Array.isArray(rt.labels) ? rt.labels : [];
+    for (let j = 1; j <= c && out.length <= 60; j++) {
+      const lb = typeof lbl[j - 1] === "string" ? lbl[j - 1].trim() : "";
+      const nm = lb ? `${rt.name} ${lb}` : (c > 1 ? `${rt.name} ${j}` : rt.name);
+      out.push({ key: `rt${i}-${j}`, type: i, name: String(nm).slice(0, 60), cap, price: num(rt.price), off: j > oht });
+    }
   });
   return out.length >= 2 && out.length <= 50 ? out : null;
 }
@@ -74,7 +80,7 @@ function readListing(row) {
   const ref = pr || (prooms ? Math.min(...prooms.map((x) => x.price || Infinity)) : null);
   const pcustom = !!(prooms && Number.isFinite(ref) && ref > 0 && prooms.some((x) => x.price && x.price !== ref));
   const extra = hotel || prooms || plan.seasons.length || plan.weekendPct != null || plan.minNights != null
-    ? [PP.planSignature(plan), rooms ? rooms.map((x) => [x.key, x.name, x.cap, x.price]) : (stock ? ["stock", stock.types.map((t) => [t.no, t.name, t.stock, t.price, t.cap])] : null), todayRo().slice(0, 4)].concat(prooms ? [prooms.map((x) => [x.key, x.name, x.cap, x.price])] : []) : undefined;
+    ? [PP.planSignature(plan), rooms ? rooms.map((x) => [x.key, x.name, x.cap, x.price].concat(x.off ? [1] : [])) : (stock ? ["stock", stock.types.map((t) => [t.no, t.name, t.stock, t.price, t.cap])] : null), todayRo().slice(0, 4)].concat(prooms ? [prooms.map((x) => [x.key, x.name, x.cap, x.price])] : []) : undefined;
   return { td, hotel, big, stock, pension, mode, n, pr, pw, pp, ppw, pf, plan, rooms, prooms, ref: Number.isFinite(ref) ? ref : null, pcustom, sig: sigOf(mode, n, pr, pw, pp, ppw, pf, extra), extra };
 }
 
@@ -280,10 +286,10 @@ module.exports = function (dbPool) {
             for (const rm of L.rooms) {
               const bani = rm.price ? Math.round(rm.price * 100) : null;
               if (byKey.has(rm.key)) {
-                await client.query(`UPDATE booking_units SET name = $3, capacity = $4, base_price_bani = $5, active = TRUE WHERE listing_id = $1 AND unit_no = $2`, [id, byKey.get(rm.key), rm.name, rm.cap, bani]);
+                await client.query(`UPDATE booking_units SET name = $3, capacity = $4, base_price_bani = $5, active = $6 WHERE listing_id = $1 AND unit_no = $2`, [id, byKey.get(rm.key), rm.name, rm.cap, bani, !rm.off]);
               } else if (next < 50) {
                 next += 1; if (firstNew === null) firstNew = next;
-                await client.query(`INSERT INTO booking_units (listing_id, unit_no, name, capacity, base_price_bani, sort_order, sync_key) VALUES ($1,$2,$3,$4,$5,$2,$6)`, [id, next, rm.name, rm.cap, bani, rm.key]);
+                await client.query(`INSERT INTO booking_units (listing_id, unit_no, name, capacity, base_price_bani, sort_order, sync_key, active) VALUES ($1,$2,$3,$4,$5,$2,$6,$7)`, [id, next, rm.name, rm.cap, bani, rm.key, !rm.off]);
               }
             }
             if (act.c === 0 && firstNew !== null) { // rezervările / zilele blocate de dinainte (proprietate întreagă) trec pe prima cameră
