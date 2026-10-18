@@ -6562,7 +6562,8 @@ async function fetchListingRow(table, id, ownerId) {
 function sanitizeProposalSchedule(schedule) {
   const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
   if (!schedule || typeof schedule !== "object") return null;
-  if (schedule.is247 === true) return { is247: true };
+  const sNote = typeof schedule.note === "string" ? schedule.note.trim().slice(0, 600) : "";
+  if (schedule.is247 === true) return sNote ? { is247: true, note: sNote } : { is247: true };
   if (schedule.days && typeof schedule.days === "object") {
     const days = {};
     for (const key of Object.keys(schedule.days)) {
@@ -6571,7 +6572,7 @@ function sanitizeProposalSchedule(schedule) {
       if (d && d.closed === true) days[key] = { closed: true };
       else if (d && TIME_RE.test(d.open) && TIME_RE.test(d.close)) days[key] = { open: d.open, close: d.close };
     }
-    if (Object.keys(days).length) return { is247: false, days };
+    if (Object.keys(days).length) return sNote ? { is247: false, days, note: sNote } : { is247: false, days };
   }
   return null;
 }
