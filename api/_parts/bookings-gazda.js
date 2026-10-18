@@ -353,6 +353,10 @@ async function viewAzi(v){v.append(el('div',{class:'sub'},['Se încarcă…']));
  v.append(freeCard(j));
  v.append(roomsCard(j.rooms||[]));
  v.append(el('div',{class:'kpis'},[kpi(j.arrivals_today.length,'Sosiri azi'),kpi(j.in_house.length,'Cazați'),kpi(j.departures_today.length,'Plecări azi')]));
+ (j.conflicts||[]).forEach(cf=>{const c=el('div',{class:'card',style:'background:#FDECEA;border:2px solid #B3261E'},[el('h2',{style:'color:#B3261E'},['ATENȚIE: ALERTĂ OVERBOOKING (iCal)']),
+  el('div',{class:'item'},[el('b',{},[cf.platform+' a primit o rezervare peste o rezervare de la noi.']),el('div',{class:'sub'},[cf.room+' · '+cf.check_in+' → '+cf.check_out+' · '+cf.guest_name]),el('div',{class:'sub'},['Rezervarea de pe OHT a rămas neatinsă. Contactează turistul și anulează sau mută rezervarea de pe platformă.'])])]);
+  const row=el('div',{class:'row'});if(cf.guest_phone){row.append(el('a',{class:'mini',href:'tel:'+cf.guest_phone},['Sună Turist OHT']),el('a',{class:'mini',href:'https://wa.me/'+String(cf.guest_phone).replace(/[^0-9]/g,''),target:'_blank',rel:'noopener'},['WhatsApp']));}
+  const ok=el('button',{class:'s',type:'button'},['Am rezolvat']);ok.onclick=async()=>{ok.disabled=true;try{await api('POST',B()+'/conflicte/rezolvat',{ids:cf.ids});}catch(e){}viewAzi(v);};row.append(ok);c.append(row);v.append(c);});
  if(j.alerts.length){const c=el('div',{class:'card alert'},[el('h2',{},['De rezolvat'])]);j.alerts.forEach(a=>c.append(el('div',{class:'item'},[a])));v.append(c);}
  const list=(title,arr,empty)=>{const c=el('div',{class:'card'},[el('h2',{},[title])]);if(!arr.length)c.append(el('div',{class:'sub'},[empty]));arr.forEach(x=>c.append(resCard(x,false)));v.append(c);};
  list('Sosesc în următoarele 7 zile',j.arrivals_soon,'Nicio sosire în următoarele 7 zile.');
@@ -392,8 +396,8 @@ async function viewCal(v){
  $('#next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));loadCal();};
  $('#close').onclick=()=>act('close');$('#open').onclick=()=>act('open');
  try{const t=await api('GET',B()+'/tarife');units=t.units||[];CAMPL=!!t.camp;STOCKW=t.stock_word||'locuri';}catch(e){}
- const us=$('#unitsel');$('#unitwrap').hidden=!units.length;units.forEach(u=>us.append(el('option',{value:String(u.unit_no)},[u.name])));
- if(units.length){if(!units.some(u=>String(u.unit_no)===curUnit))curUnit=String(units[0].unit_no);us.value=curUnit;}else curUnit='';
+ const us=$('#unitsel');$('#unitwrap').hidden=!units.length;if(units.length>=2&&!CAMPL)us.append(el('option',{value:'all'},['Toată pensiunea (vedere generală)']));units.forEach(u=>us.append(el('option',{value:String(u.unit_no)},[u.name])));
+ if(units.length){if(!(curUnit==='all'&&units.length>=2&&!CAMPL)&&!units.some(u=>String(u.unit_no)===curUnit))curUnit=String(units[0].unit_no);us.value=curUnit;}else curUnit='';
  us.onchange=()=>{curUnit=us.value;sel=[];$('#selinfo').textContent='';loadCal();};
  if(CAMPL){$('#qtywrap').hidden=false;$('#unitwrap').querySelector('label').firstChild.textContent=(STOCKW==='camere'?'Tip de cameră':'Tip de loc');$('#close').textContent='Închide '+STOCKW+' în zilele alese';$('#open').textContent='Deschide '+STOCKW+' în zilele alese';const lg=document.querySelector('.leg');if(lg)lg.append(el('span',{},[el('i',{class:'sw w5'}),'parțial (mai sunt '+STOCKW+')']));}
  loadCal();}
@@ -407,7 +411,7 @@ function renderCal(){const g=$('#cal');if(!g)return;g.replaceChildren();['L','M'
   if(s>=today)c.addEventListener('click',()=>{if(sel.includes(s))sel=sel.filter(x=>x!==s);else sel.push(s);renderCal();$('#selinfo').textContent=sel.length?sel.length+' zile selectate':'';});g.append(c);}
  $('#mname').textContent=RO[month.getUTCMonth()]+' '+month.getUTCFullYear();}
 async function act(action){const m=$('#calmsg');if(!sel.length)return say(m,'Alege mai întâi zilele din calendar.',false);
- try{const r=await api('POST',B()+'/zile',{days:sel,action,unit:curUnit?Number(curUnit):undefined,qty:(CAMPL&&$('#qty')&&$('#qty').value)?Number($('#qty').value):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,errT(e),false);}}
+ try{const r=await api('POST',B()+'/zile',{days:sel,action,unit:curUnit==='all'?'all':(curUnit?Number(curUnit):undefined),qty:(CAMPL&&$('#qty')&&$('#qty').value)?Number($('#qty').value):undefined});sel=[];$('#selinfo').textContent='';await loadCal();say(m,r.changed+' zile actualizate'+(r.skipped?(' · '+r.skipped+' nu pot fi schimbate (rezervare sau platformă)'):''),true);}catch(e){say(m,errT(e),false);}}
 
 // ---------- REZERVĂRI ----------
 async function viewRez(v){seenRez();v.append(el('div',{class:'sub'},['Se încarcă…']));let j,fm={};try{j=await api('GET',B()+'/rezervari');}catch(e){v.replaceChildren(el('div',{class:'card err'},[errT(e)]));return;}
@@ -998,11 +1002,21 @@ function mount(r, o) {
       rf.forEach((x) => alerts.push("Restul de plată al lui " + x.guest_name + " nu a putut fi încasat; turistul are 48 de ore să plătească."));
       const fe = (await dbPool.query(`SELECT platform FROM booking_ical_feeds WHERE listing_id = $1 AND import_url IS NOT NULL AND last_status = 'error'`, [lid])).rows;
       fe.forEach((x) => alerts.push("Sincronizarea cu " + x.platform + " are eroare. Verifică linkul în cont."));
-      const cf = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL`, [lid])).rows[0];
+      let conflicts = [], cf;
+      try {
+        const cr = (await dbPool.query(`SELECT c.id, to_char(c.day,'YYYY-MM-DD') AS day, c.reservation_id, c.unit_id, f.platform, r.guest_name, r.guest_phone, to_char(r.check_in,'YYYY-MM-DD') AS check_in, to_char(r.check_out,'YYYY-MM-DD') AS check_out, u.name AS room FROM booking_conflicts c LEFT JOIN booking_ical_feeds f ON f.id = c.feed_id LEFT JOIN booking_reservations r ON r.id = c.reservation_id LEFT JOIN booking_units u ON u.listing_id = c.listing_id AND u.unit_no = c.unit_id WHERE c.listing_id = $1 AND c.resolved_at IS NULL AND c.acknowledged_at IS NULL AND c.reservation_id IS NOT NULL ORDER BY c.day`, [lid])).rows;
+        const g = {};
+        cr.filter((x) => x && x.reservation_id).forEach((x) => { const k = x.reservation_id + ":" + (x.platform || ""); (g[k] = g[k] || { ids: [], platform: x.platform || "Platformă", room: x.room || "Cazare", check_in: x.check_in, check_out: x.check_out, guest_name: x.guest_name || "Turist", guest_phone: x.guest_phone || "" }).ids.push(x.id); });
+        conflicts = Object.values(g);
+        cf = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL AND acknowledged_at IS NULL AND reservation_id IS NULL`, [lid])).rows[0];
+      } catch (e) {
+        conflicts = [];
+        cf = (await dbPool.query(`SELECT count(*)::int AS n FROM booking_conflicts WHERE listing_id = $1 AND resolved_at IS NULL`, [lid])).rows[0];
+      }
       if (cf && cf.n > 0) alerts.push(cf.n + " zi(le) apar ocupate și pe altă platformă, dar sunt deja rezervate la tine. Verifică și anulează de unde e cazul.");
       noStore(res);
       if (req.gz.role === "staff") { const hide = (a) => a.map((x) => ({ ...x, total_bani: 0, pay_scheme: "direct", pay_status: "none" })); return res.json({ arrivals_today: hide(arrToday), arrivals_soon: hide(soon), in_house: hide(inHouse), departures_today: hide(depToday), occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts: [] }); }
-      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts, ical_missing });
+      res.json({ arrivals_today: arrToday, arrivals_soon: soon, in_house: inHouse, departures_today: depToday, occupied_30: occ ? occ.n : 0, rooms, free_tonight, alerts, conflicts, ical_missing });
     } catch (e) { console.error("gazda azi:", e.message); const schema = e && (e.code === "42703" || e.code === "42P01"); res.status(500).json({ error: schema ? "Lipsește ceva în baza de date (" + String(e.message).slice(0, 120) + "). Rulează scripturile SQL în ordine." : "eroare" }); }
   });
 }
