@@ -3275,7 +3275,7 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
       <input type="url" id="spMapsUrl" placeholder="${escapeHtml(t.mapsPlaceholder)}" maxlength="500">
     </label>
     <label class="submit-place-label">${escapeHtml(t.noteLabel)}
-      <textarea id="spNote" placeholder="${escapeHtml(t.notePlaceholder)}" maxlength="500" rows="3"></textarea>
+      <textarea id="spNote" placeholder="${escapeHtml(t.notePlaceholder)}" maxlength="2000" rows="4"></textarea>
     </label>
     <button type="submit" id="spSubmitBtn" class="submit-place-btn">${escapeHtml(t.submit)}</button>
     <p id="spThanks" class="submit-place-thanks" hidden>${escapeHtml(t.thanks)}</p>
@@ -6145,7 +6145,7 @@ ${t._fromProposal ? `<div style="margin:0 0 18px;padding:14px 16px;border:1.5px 
 
     <div class="r-section-title">${L("5. Detalii specifice", "5. Details")}</div>
     <label class="acc-white-label" for="rCuisine">${L("Specificul bucătăriei (ex: Italian, Tradițional Românesc, Asiatic)", "Cuisine (e.g. Italian, Traditional Romanian, Asian)")}</label>
-    <input type="text" id="rCuisine" class="acc-white-input" maxlength="100" value="${escapeHtml(t.cuisine || "")}" required>
+    <textarea id="rCuisine" class="acc-white-input" rows="4" maxlength="500" required>${escapeHtml(t.cuisine || "")}</textarea>
     <label class="acc-white-label" for="rCapacity">${L("Capacitate (număr de locuri, aproximativ)", "Capacity (approx. number of seats)")}</label>
     <input type="number" id="rCapacity" class="acc-white-input" min="1" value="${t.capacity || ""}">
     <label class="acc-white-label">${L("Opțiuni dietetice", "Dietary options")}</label>
@@ -6941,7 +6941,7 @@ function buildListingSeoHeadHtml({ kind, r, lang, baseUrl, path, avgRating, revi
   if (avgRating && reviewCount) {
     jsonLd.aggregateRating = { "@type": "AggregateRating", ratingValue: Number(avgRating).toFixed(1), reviewCount, bestRating: "10" };
   }
-  if (kind === "restaurant" && r.cuisine) jsonLd.servesCuisine = r.cuisine;
+  if (kind === "restaurant" && r.cuisine) jsonLd.servesCuisine = String(r.cuisine).slice(0, 120);
   const jsonLdStr = safeJson(jsonLd);
   return `<title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
