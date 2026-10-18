@@ -388,7 +388,61 @@ function travelGuidesBoxLabelsFor(lang) {
 // descriptiv de sub buton rămâne mereu în HTML (bun pentru Google — text
 // real, nu doar o etichetă de buton), doar vizual dispare/apare, sincron
 // cu deschiderea panoului.
-function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket, accessDifficulty, isBeach, ownStaysHref, ownStaysLabel }) {
+
+// ---- Buton unic „Restaurante” (înlocuiește TheFork / OpenTable / ghidul de restaurante) ----
+// Avem restaurante în localitate => buton spre pagina localității; altfel „Propune” + căutare Google Maps.
+const EAT_LABELS = {
+  ro: { local: (c, n) => `Restaurante în ${c} (${n})`, propose: (c) => c ? `Propune un restaurant din ${c}` : "Propune un restaurant", gmaps: "Caută restaurante pe Google Maps" },
+  uk: { local: (c, n) => `Restaurants in ${c} (${n})`, propose: (c) => c ? `Suggest a restaurant in ${c}` : "Suggest a restaurant", gmaps: "Search restaurants on Google Maps" },
+  de: { local: (c, n) => `Restaurants in ${c} (${n})`, propose: (c) => c ? `Restaurant in ${c} vorschlagen` : "Restaurant vorschlagen", gmaps: "Restaurants auf Google Maps suchen" },
+  fr: { local: (c, n) => `Restaurants à ${c} (${n})`, propose: (c) => c ? `Proposer un restaurant à ${c}` : "Proposer un restaurant", gmaps: "Chercher des restaurants sur Google Maps" },
+  it: { local: (c, n) => `Ristoranti a ${c} (${n})`, propose: (c) => c ? `Proponi un ristorante a ${c}` : "Proponi un ristorante", gmaps: "Cerca ristoranti su Google Maps" },
+  es: { local: (c, n) => `Restaurantes en ${c} (${n})`, propose: (c) => c ? `Proponer un restaurante en ${c}` : "Proponer un restaurante", gmaps: "Buscar restaurantes en Google Maps" },
+};
+function eatInfoFor({ countryCode, lang, city, n, name }) {
+  const L = EAT_LABELS[lang] || EAT_LABELS.uk;
+  const cc = /^[a-z]{2}$/.test(countryCode || "") ? countryCode : "ro";
+  const lg = /^[a-z]{2}(-[a-z]{2})?$/.test(lang || "") ? lang : "uk";
+  const citySlug = city ? slugifyCityName(String(city)) : "";
+  const n0 = Number(n) > 0 ? Number(n) : 0;
+  const info = { mode: (n0 > 0 && citySlug) ? "local" : "propose" };
+  if (info.mode === "local") {
+    info.href = `https://${INTL_DOMAIN}/${cc}/${citySlug}?lang=${lg}`;
+    info.label = L.local(city, n0);
+  } else {
+    const q = [];
+    q.push("tip=restaurant"); q.push("tara=" + cc);
+    if (city) q.push("oras=" + encodeURIComponent(String(city)));
+    info.proposeHref = (lg === "ro" ? `https://${RO_DOMAIN}/propune` : `https://${INTL_DOMAIN}/submit-place`) + "?" + q.join("&") + (lg !== "ro" ? "&lang=" + lg : "");
+    info.proposeLabel = L.propose(city);
+  }
+  const place = [name, city].filter(Boolean).join(" ");
+  info.gmapsHref = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((lg === "ro" ? "restaurante lângă " : "restaurants near ") + place);
+  info.gmapsLabel = L.gmaps;
+  return info;
+}
+// HTML-ul butoanelor; hrefurile sunt re-validate (info poate veni din client la /api/live-status-html)
+function eatBlockHtml(info, style) {
+  if (!info || typeof info !== "object") return "";
+  const okSite = (h) => typeof h === "string" && h.length < 400 && new RegExp("^https://(" + INTL_DOMAIN.replace(/\./g, "\\.") + "|" + RO_DOMAIN.replace(/\./g, "\\.") + ")/[A-Za-z0-9/_-]{1,120}(\\?[A-Za-z0-9=&%_.~+-]{0,300})?$").test(h);
+  const okMaps = (h) => typeof h === "string" && h.length < 500 && /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=[A-Za-z0-9%_.~+-]{1,400}$/.test(h);
+  const str = (x) => (typeof x === "string" ? x.slice(0, 120) : "");
+  const widget = style === "widget";
+  const c1 = widget ? "contextual-widget-btn contextual-widget-btn-secondary" : "plan-visit-option plan-visit-parking";
+  const c2 = widget ? "contextual-widget-btn contextual-widget-btn-secondary" : "plan-visit-option plan-visit-parking-alt";
+  let html = "";
+  if (info.mode === "local" && okSite(info.href) && str(info.label)) {
+    html += `<a href="${escapeHtml(info.href)}" class="${c1}">🍽️ ${escapeHtml(str(info.label))}</a>`;
+  } else if (okSite(info.proposeHref) && str(info.proposeLabel)) {
+    html += `<a href="${escapeHtml(info.proposeHref)}" class="${c1}">➕ ${escapeHtml(str(info.proposeLabel))}</a>`;
+  }
+  if (html && info.mode !== "local" && okMaps(info.gmapsHref) && str(info.gmapsLabel)) {
+    html += `<a href="${escapeHtml(info.gmapsHref)}" target="_blank" rel="noopener" class="${c2}">🔎 ${escapeHtml(str(info.gmapsLabel))}</a>`;
+  }
+  return html;
+}
+
+function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang, lat, lng, hideTicket, accessDifficulty, isBeach, ownStaysHref, ownStaysLabel, eat }) {
   const t = labels || BOOKING_PLANNING_LABELS_RO;
   const parkingQuery = city || name;
   // hideTicket — obiective cu acces liber (poduri, lacuri, munți, șosele)
@@ -417,9 +471,7 @@ function buildBookingPlanningButtonsHtml({ name, city, labels, countryCode, lang
   // acest panou; restaurant/parcare dispar complet (mutate conceptual spre
   // "Cum ajung acolo" -> Discover Cars, mai relevant la o plajă).
   const realParkingLink = parkingLinkFor(lat, lng, countryCode);
-  const restaurantHtml = isBeach ? "" : TRAVEL_GUIDES_MONETIZATION_READY
-    ? `<a href="${escapeHtml(restaurantLinkFor(countryCode || "ro", parkingQuery))}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking">${escapeHtml(t.restaurant)}</a>`
-    : `<p class="plan-visit-hint">${escapeHtml(comingSoonTextFor(lang || "ro"))}</p>`;
+  const restaurantHtml = isBeach ? "" : eatBlockHtml(eat, "panel");
   const parkingHtml = isBeach ? "" : realParkingLink
     ? `<a href="${escapeHtml(realParkingLink)}" target="_blank" rel="noopener sponsored" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.parkingNearby)}</a>`
     : `<p class="plan-visit-hint">${escapeHtml(comingSoonTextFor(lang || "ro"))}</p>`;
@@ -1114,7 +1166,7 @@ function mallCinemaLabelsFor(lang) {
   return getExtraLabels(lang);
 }
 
-function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCode, ownStaysHref, ownStaysLabel }) {
+function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCode, ownStaysHref, ownStaysLabel, eat }) {
   const t = labels || CONTEXTUAL_WIDGET_LABELS_RO;
   const place = orasDisplay || name;
   // Fără countryCode explicit (apelurile vechi, mereu de pe .ro) = România.
@@ -1140,7 +1192,7 @@ function buildContextualWidgetHtml({ type, name, orasDisplay, labels, countryCod
       ? `${ownStaysHref
           ? `<a href="${escapeHtml(ownStaysHref)}" class="contextual-widget-btn">${escapeHtml(ownStaysLabel || t.booking)}</a>`
           : `<a href="${escapeHtml(bookingSearchLinkFor(place))}" target="_blank" rel="noopener sponsored" class="contextual-widget-btn">${escapeHtml(t.booking)}</a>`}
-         <a href="${escapeHtml(restaurantsOpenNowLinkFor(place))}" target="_blank" rel="noopener" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.restaurants)}</a>`
+         ${eatBlockHtml(eat, "widget") || `<a href="${escapeHtml(restaurantsOpenNowLinkFor(place))}" target="_blank" rel="noopener" class="contextual-widget-btn contextual-widget-btn-secondary">${escapeHtml(t.restaurants)}</a>`}`
       : `${glovoHtml}${bringoHtml}`;
 
   return `
@@ -3418,6 +3470,19 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
       });
   });
 })();
+</script>
+<script nonce="${nonce}">
+(function(){
+  try {
+    var q = new URLSearchParams(window.location.search);
+    var t = q.get("tip"), c = q.get("tara"), o = q.get("oras");
+    var st = document.getElementById("spType"), sc = document.getElementById("spCountry"), si = document.getElementById("spCity");
+    var has = function(sel, v){ return sel && Array.prototype.some.call(sel.options, function(x){ return x.value === v; }); };
+    if (t && has(st, t)) { st.value = t; st.dispatchEvent(new Event("change")); }
+    if (c && has(sc, c)) { sc.value = c; sc.dispatchEvent(new Event("change")); }
+    if (o && si) { si.value = o.slice(0, 255); }
+  } catch (e) {}
+})();
 </script>`;
   return pageShell({ title: t.title, description: t.intro, canonical, bodyHtml, dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: lang });
 }
@@ -4121,7 +4186,6 @@ function buildTravelGuidesBoxHtmlIntl(lang) {
     <p class="intro-text"><strong>${escapeHtml(t.tgTitle)}</strong></p>
     <a href="/guides/${transportSlug}${langSuffix}" class="plan-visit-option plan-visit-ticket">${escapeHtml(t.tgTransport)}</a>
     <a href="/guides/${parkingSlug}${langSuffix}" class="plan-visit-option plan-visit-parking">${escapeHtml(t.tgParking)}</a>
-    <a href="/guides/${restaurantSlug}${langSuffix}" class="plan-visit-option plan-visit-parking-alt">${escapeHtml(t.tgRestaurant)}</a>
   </div>`;
 }
 
@@ -7653,4 +7717,4 @@ Răspunde STRICT în acest format JSON, fără text în afara JSON-ului. Cheile 
 Nu uita: TOT textul generat de tine (titlu, descriere) trebuie să fie în ${langName}, nu în română, cu excepția cazului în care ${langName} chiar este română. Nu uita nici de cerința de mai sus: array-ul "zile" trebuie să aibă EXACT ${zile} ${zile === 1 ? "element" : "elemente"}, nu doar unul singur.`;
 }
 
-module.exports = { redirectLegacyRoPage, buildSubBackLinkScript, transferWidgetSrcFor, getAccommodationMonthlyPriceCents, getExchangeRates, toGoogleLang, getAttractionVoteCount, getBeachTagCounts, getReportCounts, isBotRequest, comingSoonTextFor, itineraryLabelsFor, buildBeachPartnerCarouselHtml, isRealRomanianHolidayToday, glovoLinkFor, bringoLinkFor, bookingSearchLinkFor, getExtraLabels, geoBtnLabelsFor, attractionFooterTextFor, noLiveDataTextFor, liveGoogleLabelFor, bookingPlanningLabelsFor, reportIssueLabelsFor, closedPermanentlyLabelsFor, reportedWrongTextFor, howToGetThereLabelsFor, contextualWidgetLabelsFor, travelGuidesBoxLabelsFor, buildBookingPlanningButtonsHtml, buildPlanVisitScript, restaurantsOpenNowLinkFor, wazeLinkFor, buildStoreMainHtml, contactInfoHtml, buildLocalBusinessSchema, buildCityFaqHtml, buildTouristAttractionSchema, buildReportIssueHtml, buildReportIssueScript, renderClosedPermanentlyHtml, reportedWrongBannerHtml, omioLinkFor, restaurantLinkFor, parkingLinkFor, carRentalLinkFor, buildHowToGetThereHtml, buildHowToGetThereScript, extractStatusEntity, noResultsItineraryLabelsFor, buildNoResultsItineraryPromoHtml, buildListStatusBadgeScript, mallCinemaLabelsFor, buildContextualWidgetHtml, buildContextualWidgetScript, b64url, ticketUrlFor, dedupeTrailingCityName, recommendedLabelFor, recommendedFirstLabelFor, beachesMegaCategoryLabelFor, discoverBeachLabelFor, beachReviewLabelsFor, beachContentLabelsFor, buildBeachContentIntroHtml, buildBeachContentEquipmentHtml, buildBeachContentRestHtml, buildBeachVoteCentralizationHtml, buildBeachVoteCentralizationScript, itineraryPromoLabelsFor, buildItineraryPromoCardHtml, greeceBeachPromoLabelsFor, buildGreeceBeachPromoCardHtml, buildCombinedTripPromoCardHtml, voteLabelsFor, beachTagLabelsFor, boatTourLabelFor, buildVoteWidgetHtml, buildVoteWidgetScript, normAttractionName, isFreeAccessAttraction, needsSeasonalWarning, freeAccessLabelFor, openOnlyStoreLabelFor, openOnlyAttractionLabelFor, openOnlyAttractionShortLabelFor, isMountainRoad, seasonalWarningLabelFor, genericScheduleForCategory, computeGenericIsOpenNow, isScheduleOpenAt, determineAttractionOpenStatus, liveComingSoonLabelFor, estimatedScheduleLabelFor, categoryLabelFor, loadingTextFor, buildStoreAffiliateButtonHtml, buildStoreAffiliateCarouselScript, buildGenericPartnerCarouselScript, buildGenericAffiliateCarouselHtml, buildLanguageSwitcher, buildLanguageSwitcherScript, inferCityForAttraction, storeCategoryLabelFor, getHost, isIntlHost, baseUrlFor, checkWeatherApiQuota, fetchTomorrowRainForecast, haversineKm, geocodeCityApprox, roCityAttractionsHref, localizeAttractionsHref, starsHtml, reviewThanksHtml, loadPlaceReviews, reviewDateText, reviewReplyBlockHtml, reviewReplyButtonHtml, buildPlaceReviewsSection, reviewsScriptHtml, ownerCanManageReview, proposalTypeLabel, escapeHtml, sanitizePublicUrl, buildCitySelectorHtml, safeJson, isOwnBlobUrl, fileMatchesDeclaredType, generateNonce, withNonce, buildCsp, buildClientScript, buildPushSubscribeScript, buildSmartInstallHtml, buildSmartInstallScript, buildTabsScript, buildAttractionAccordionScript, mapUnifiedToggleLabelFor, mapLoadingStoresLabelFor, mapLoadingAttractionsLabelFor, buildCityMapHtml, buildLiveMapPinsScript, buildLiveAttractionsMapPinsScript, buildAttractionListFilterScript, buildAttractionLazyScript, renderWeekTableRows, renderHolidayRows, adSlotHtml, buildThemeToggleHtml, backButtonLabelFor, submitPlaceDayName, submitPlaceLabelsFor, noMatchesLabelFor, renderSubmitPlacePage, buildGlobalBackButtonHtml, buildGlobalBackButtonScript, buildThemeToggleScript, buildBottomNavHtml, buildBottomNavScript, buildLiveStatusFetchScript, buildWidgetRevealScript, buildAffiliateClickTrackingScript, pageShell, navLabelsFor, flightSearchLabelFor, carRentalLabelFor, tripTypeLabelsFor, vibeLabelsFor, budgetLabelsFor, itineraryHrefFor, travelGuidesForLang, guidesPageLabelsFor, buildTravelGuidesBoxHtmlIntl, renderTravelGuidePageIntl, renderTravelGuidesIndexPageIntl, parseListingPhotos, buildLocalListingGroupHtml, findApprovedListingCityBySlug, slugifyCityName, KNOWN_CITY_SLUGS, decodeGeoHeader, generateSitemapXml, hashIp, getClientIp, hashPassword, verifyPassword, checkRateLimit, verifyTurnstile, parseCookies, signCookiePayload, verifyCookiePayload, appendSetCookie, accommodationGate, trackAccommodationDailyVisit, localDateStringForCounter, sendAccommodationLoginEmail, sendPhotoRequestEmail, sendOwnerNoticeEmail, sendAccommodationApprovalEmail, getAccommodationOwnerSession, setAccommodationOwnerSession, ownerStillExists, requireAccommodationOwner, requireAccommodationOwnerApi, getAdminSession, setAdminSession, requireAdminPage, requireAdminApi, accWhitePageStyles, getAccLang, accLangHref, accLangSwitchHtml, roNowParts, hhmmToMin, isOpenBetween, sqlDateStr, isAvailableTonight, todayLiveStatus, socialLinksHtml, ratingSymbolFor, classificationOptionLabels, classificationLabelText, classificationOptionsHtml, accWhiteLegalHtml, accDarkFooterHtml, accCurrencyModalHtml, accCurrencyScript, accShellStyles, accDrawerHtml, accDrawerScript, accShellHeader, adminShellStyles, adminMobileBarHtml, adminSidebarScript, restaurantGate, mapFor, renderAttractionListingForm, requireRestaurantOwner, requireRestaurantOwnerApi, renderRestaurantListingForm, handleAdminRequestPhotos, buildOwnerLiveStatusControls, blobUrlsStillReferenced, fetchListingRow, sanitizeProposalSchedule, loadOwnerFlagsById, adminOwnerBadgeHtml, adminMissingHtml, parseJsonArr, missingForRestaurant, missingForAttraction, sendRestaurantApprovalEmail, sendAttractionApprovalEmail, seoTypeWord, seoTruncate, stripDescriptionMarkers, buildDescriptionAiPrompt, bedTypeLabel, formatBedsPlain, sanitizeBedsObj, sanitizeRoomTypes, sanitizeExteriorInfo, exteriorInfoToText, stripLeadingEmoji, paIcon, ACCOMMODATION_AMENITIES_I18N, buildListingSeoHeadHtml, typeDetailsClientDef, sanitizeHotelDetails, sanitizePensionDetails, sanitizeCampingDetails, insertListingWithOptionalSource, getClaimCookieId, revealVenuePhone, localSearchAllowed, generateProspectRefCode, markProspectConverted, getProspectTemplates, prospectRowForClient, buildPropertyCountryModalHtml, buildPropertyCountryModalScript, normalizeJudetInput, detecteazaJudet, filtreazaObiectivePentruOras, filtreazaObiectivePentruOrasIntl, toTitleCase, boostParcuriAgrement, buildCityByNameMap, buildItineraryPrompt, sanitizeApartmentDetails };
+module.exports = { eatInfoFor, eatBlockHtml, redirectLegacyRoPage, buildSubBackLinkScript, transferWidgetSrcFor, getAccommodationMonthlyPriceCents, getExchangeRates, toGoogleLang, getAttractionVoteCount, getBeachTagCounts, getReportCounts, isBotRequest, comingSoonTextFor, itineraryLabelsFor, buildBeachPartnerCarouselHtml, isRealRomanianHolidayToday, glovoLinkFor, bringoLinkFor, bookingSearchLinkFor, getExtraLabels, geoBtnLabelsFor, attractionFooterTextFor, noLiveDataTextFor, liveGoogleLabelFor, bookingPlanningLabelsFor, reportIssueLabelsFor, closedPermanentlyLabelsFor, reportedWrongTextFor, howToGetThereLabelsFor, contextualWidgetLabelsFor, travelGuidesBoxLabelsFor, buildBookingPlanningButtonsHtml, buildPlanVisitScript, restaurantsOpenNowLinkFor, wazeLinkFor, buildStoreMainHtml, contactInfoHtml, buildLocalBusinessSchema, buildCityFaqHtml, buildTouristAttractionSchema, buildReportIssueHtml, buildReportIssueScript, renderClosedPermanentlyHtml, reportedWrongBannerHtml, omioLinkFor, restaurantLinkFor, parkingLinkFor, carRentalLinkFor, buildHowToGetThereHtml, buildHowToGetThereScript, extractStatusEntity, noResultsItineraryLabelsFor, buildNoResultsItineraryPromoHtml, buildListStatusBadgeScript, mallCinemaLabelsFor, buildContextualWidgetHtml, buildContextualWidgetScript, b64url, ticketUrlFor, dedupeTrailingCityName, recommendedLabelFor, recommendedFirstLabelFor, beachesMegaCategoryLabelFor, discoverBeachLabelFor, beachReviewLabelsFor, beachContentLabelsFor, buildBeachContentIntroHtml, buildBeachContentEquipmentHtml, buildBeachContentRestHtml, buildBeachVoteCentralizationHtml, buildBeachVoteCentralizationScript, itineraryPromoLabelsFor, buildItineraryPromoCardHtml, greeceBeachPromoLabelsFor, buildGreeceBeachPromoCardHtml, buildCombinedTripPromoCardHtml, voteLabelsFor, beachTagLabelsFor, boatTourLabelFor, buildVoteWidgetHtml, buildVoteWidgetScript, normAttractionName, isFreeAccessAttraction, needsSeasonalWarning, freeAccessLabelFor, openOnlyStoreLabelFor, openOnlyAttractionLabelFor, openOnlyAttractionShortLabelFor, isMountainRoad, seasonalWarningLabelFor, genericScheduleForCategory, computeGenericIsOpenNow, isScheduleOpenAt, determineAttractionOpenStatus, liveComingSoonLabelFor, estimatedScheduleLabelFor, categoryLabelFor, loadingTextFor, buildStoreAffiliateButtonHtml, buildStoreAffiliateCarouselScript, buildGenericPartnerCarouselScript, buildGenericAffiliateCarouselHtml, buildLanguageSwitcher, buildLanguageSwitcherScript, inferCityForAttraction, storeCategoryLabelFor, getHost, isIntlHost, baseUrlFor, checkWeatherApiQuota, fetchTomorrowRainForecast, haversineKm, geocodeCityApprox, roCityAttractionsHref, localizeAttractionsHref, starsHtml, reviewThanksHtml, loadPlaceReviews, reviewDateText, reviewReplyBlockHtml, reviewReplyButtonHtml, buildPlaceReviewsSection, reviewsScriptHtml, ownerCanManageReview, proposalTypeLabel, escapeHtml, sanitizePublicUrl, buildCitySelectorHtml, safeJson, isOwnBlobUrl, fileMatchesDeclaredType, generateNonce, withNonce, buildCsp, buildClientScript, buildPushSubscribeScript, buildSmartInstallHtml, buildSmartInstallScript, buildTabsScript, buildAttractionAccordionScript, mapUnifiedToggleLabelFor, mapLoadingStoresLabelFor, mapLoadingAttractionsLabelFor, buildCityMapHtml, buildLiveMapPinsScript, buildLiveAttractionsMapPinsScript, buildAttractionListFilterScript, buildAttractionLazyScript, renderWeekTableRows, renderHolidayRows, adSlotHtml, buildThemeToggleHtml, backButtonLabelFor, submitPlaceDayName, submitPlaceLabelsFor, noMatchesLabelFor, renderSubmitPlacePage, buildGlobalBackButtonHtml, buildGlobalBackButtonScript, buildThemeToggleScript, buildBottomNavHtml, buildBottomNavScript, buildLiveStatusFetchScript, buildWidgetRevealScript, buildAffiliateClickTrackingScript, pageShell, navLabelsFor, flightSearchLabelFor, carRentalLabelFor, tripTypeLabelsFor, vibeLabelsFor, budgetLabelsFor, itineraryHrefFor, travelGuidesForLang, guidesPageLabelsFor, buildTravelGuidesBoxHtmlIntl, renderTravelGuidePageIntl, renderTravelGuidesIndexPageIntl, parseListingPhotos, buildLocalListingGroupHtml, findApprovedListingCityBySlug, slugifyCityName, KNOWN_CITY_SLUGS, decodeGeoHeader, generateSitemapXml, hashIp, getClientIp, hashPassword, verifyPassword, checkRateLimit, verifyTurnstile, parseCookies, signCookiePayload, verifyCookiePayload, appendSetCookie, accommodationGate, trackAccommodationDailyVisit, localDateStringForCounter, sendAccommodationLoginEmail, sendPhotoRequestEmail, sendOwnerNoticeEmail, sendAccommodationApprovalEmail, getAccommodationOwnerSession, setAccommodationOwnerSession, ownerStillExists, requireAccommodationOwner, requireAccommodationOwnerApi, getAdminSession, setAdminSession, requireAdminPage, requireAdminApi, accWhitePageStyles, getAccLang, accLangHref, accLangSwitchHtml, roNowParts, hhmmToMin, isOpenBetween, sqlDateStr, isAvailableTonight, todayLiveStatus, socialLinksHtml, ratingSymbolFor, classificationOptionLabels, classificationLabelText, classificationOptionsHtml, accWhiteLegalHtml, accDarkFooterHtml, accCurrencyModalHtml, accCurrencyScript, accShellStyles, accDrawerHtml, accDrawerScript, accShellHeader, adminShellStyles, adminMobileBarHtml, adminSidebarScript, restaurantGate, mapFor, renderAttractionListingForm, requireRestaurantOwner, requireRestaurantOwnerApi, renderRestaurantListingForm, handleAdminRequestPhotos, buildOwnerLiveStatusControls, blobUrlsStillReferenced, fetchListingRow, sanitizeProposalSchedule, loadOwnerFlagsById, adminOwnerBadgeHtml, adminMissingHtml, parseJsonArr, missingForRestaurant, missingForAttraction, sendRestaurantApprovalEmail, sendAttractionApprovalEmail, seoTypeWord, seoTruncate, stripDescriptionMarkers, buildDescriptionAiPrompt, bedTypeLabel, formatBedsPlain, sanitizeBedsObj, sanitizeRoomTypes, sanitizeExteriorInfo, exteriorInfoToText, stripLeadingEmoji, paIcon, ACCOMMODATION_AMENITIES_I18N, buildListingSeoHeadHtml, typeDetailsClientDef, sanitizeHotelDetails, sanitizePensionDetails, sanitizeCampingDetails, insertListingWithOptionalSource, getClaimCookieId, revealVenuePhone, localSearchAllowed, generateProspectRefCode, markProspectConverted, getProspectTemplates, prospectRowForClient, buildPropertyCountryModalHtml, buildPropertyCountryModalScript, normalizeJudetInput, detecteazaJudet, filtreazaObiectivePentruOras, filtreazaObiectivePentruOrasIntl, toTitleCase, boostParcuriAgrement, buildCityByNameMap, buildItineraryPrompt, sanitizeApartmentDetails };
