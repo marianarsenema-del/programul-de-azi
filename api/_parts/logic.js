@@ -5208,12 +5208,14 @@ function accWhiteLegalHtml(lang) {
     By signing in or creating an account, you agree to our <a href="/termeni-si-conditii">Terms and Conditions</a> and our <a href="/politica-de-confidentialitate">Privacy Policy</a>.<br>
     All rights reserved.<br>
     Copyright Opening <span style="color:var(--accent)">Hours Today</span>™
+    ${require("./footer-legal").html("en")}
   </div>`;
   }
   return `<div class="acc-white-legal">
     Prin autentificare sau prin crearea unui cont, sunteți de acord cu <a href="/termeni-si-conditii">Termenii și Condițiile noastre</a> și cu <a href="/politica-de-confidentialitate">Politica de confidențialitate</a>.<br>
     Toate drepturile rezervate.<br>
     Copyright Opening <span style="color:var(--accent)">Hours Today</span>™
+    ${require("./footer-legal").html(lang === "en" ? "en" : "ro")}
   </div>`;
 }
 
@@ -5228,7 +5230,7 @@ function accDarkFooterHtml(lang) {
     ${en ? "By signing in or creating an account, you agree to our" : "Prin autentificare sau prin crearea unui cont, sunteți de acord cu"} <a href="/termeni-si-conditii">${en ? "Terms and Conditions" : "Termenii și Condițiile noastre"}</a> ${en ? "and our" : "și cu"} <a href="/politica-de-confidentialitate">${en ? "Privacy Policy" : "Politica de confidențialitate"}</a>.<br>
     ${en ? "All rights reserved." : "Toate drepturile rezervate."}<br>
     Copyright Opening <span style="color:var(--accent)">Hours Today</span>™
-    <div style="margin-top:14px"><a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer" title="${en ? "ANPC – Alternative Dispute Resolution (SAL)" : "ANPC – Soluționarea Alternativă a Litigiilor (SAL)"}" style="display:inline-block;background:#fff;border-radius:10px;padding:8px 14px;text-decoration:none"><img src="/anpc-logo.svg" alt="${en ? "ANPC – Alternative Dispute Resolution (SAL)" : "ANPC – Soluționarea Alternativă a Litigiilor (SAL)"}" width="150" height="71" loading="lazy" style="display:block;width:150px;height:auto"></a><div style="margin-top:6px"><a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer">${en ? "Alternative Dispute Resolution (SAL)" : "Soluționarea Alternativă a Litigiilor (SAL)"}</a></div></div>
+    ${require("./footer-legal").html(en ? "en" : "ro")}
   </div>
 </footer>`;
 }
