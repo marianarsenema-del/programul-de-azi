@@ -24,6 +24,28 @@ const fmtRon = (b) => (b / 100).toLocaleString("ro-RO", { minimumFractionDigits:
 const dRo = (s) => { const [y, m, d] = String(s).slice(0, 10).split("-"); return `${d}.${m}.${y}`; };
 const tokenOf = (rid) => core.deriveToken(rid, process.env.ACCOMMODATION_SESSION_SECRET || "");
 
+// ---------- 3D Secure obligatoriu + descriptor pe extrasul turistului ----------
+// 3DS2 se cere la plățile făcute de turist (on-session). Excepții: cardurile prepaid (unele nu suportă 3DS2, riscul e limitat la soldul încărcat) și portofelele (Apple/Google Pay, autentificate pe dispozitiv).
+// Dacă o plată cu card (non-prepaid) reușește fără autentificare, se rambursează automat. OHT_3DS_ENFORCE=off oprește rambursarea automată (cererea de 3DS rămâne).
+const ENFORCE_3DS = String(process.env.OHT_3DS_ENFORCE || "on").toLowerCase() !== "off";
+const PM_OPTS_3DS = { card: { request_three_d_secure: "any" } };
+// „NUME_SITE * NUME_GAZDĂ”: prefixul platformei se setează în Stripe Dashboard (Settings → Business → Public details → Statement descriptor), iar Stripe adaugă „*” și sufixul de mai jos. Maxim 22 de caractere în total, deci tăiem scurt.
+function descriptorSuffix(name) {
+  const t = String(name || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 .\-]/g, " ").replace(/\s+/g, " ").trim().toUpperCase().slice(0, 14).trim();
+  return t.length >= 2 ? t : null;
+}
+// Verdictul 3DS pe baza încărcării (charge). null = nu putem decide (Stripe indisponibil) → nu blocăm plata (fail-open).
+function threeDsVerdict(charge) {
+  if (!charge || typeof charge !== "object") return { ok: true, unknown: true };
+  const card = charge.payment_method_details && charge.payment_method_details.card;
+  if (!card) return { ok: true, why: "not_card" };          // alte metode (Link, transfer etc.)
+  if (card.wallet) return { ok: true, why: "wallet" };
+  if (card.funding === "prepaid") return { ok: true, why: "prepaid" };
+  const r = card.three_d_secure && card.three_d_secure.result;
+  if (r === "authenticated" || r === "attempt_acknowledged") return { ok: true, why: "3ds" };
+  return { ok: false, why: r || "none" };
+}
+
 // ---------- Stripe HTTP ----------
 function flatten(obj, prefix, out) {
   for (const k of Object.keys(obj)) {
@@ -113,7 +135,7 @@ async function insertPayout(client, row, pi, gross, commission) {
 }
 
 // Se apelează în tranzacție. Întoarce acțiunile de făcut după COMMIT (e-mailuri, rambursare).
-async function onPaymentSucceeded(client, pi) {
+async function onPaymentSucceeded(client, pi, opts) {
   const md = pi.metadata || {};
   const rid = Number(md.reservation_id), kind = md.kind;
   if (!Number.isInteger(rid) || !["advance", "full", "rest"].includes(kind)) return {};
@@ -133,6 +155,11 @@ async function onPaymentSucceeded(client, pi) {
   if (row.status === "cancelled" || row.status === "confirmed" && row.paid_bani > 0) {
     if (row.status === "cancelled") return { refund: { pi: pi.id, amount }, row, reason: "anulata" };
     return {};
+  }
+  if (opts && opts.no3ds) { // plată cu card fără autentificare 3D Secure (și fără excepție): o rambursăm și eliberăm zilele
+    await client.query(`DELETE FROM booking_calendar_days WHERE reservation_id = $1`, [rid]);
+    await client.query(`UPDATE booking_reservations SET status = 'cancelled', cancelled_at = now(), cancelled_by = 'system', pay_status = 'refund_failed' WHERE id = $1`, [rid]);
+    return { refund: { pi: pi.id, amount }, row, reason: "fara_3ds" };
   }
   const pairs = pairsOf(row.nights_snapshot);
   let secured = (await client.query(`UPDATE booking_calendar_days SET status = 4, blocked_until = NULL, updated_at = now() WHERE reservation_id = $1 AND status IN (3,4)`, [rid])).rowCount === pairs.length;
@@ -163,6 +190,11 @@ async function afterCommit(act) {
     const rf = await stripeReq("POST", "/refunds", { payment_intent: act.refund.pi, amount: act.refund.amount, metadata: { reservation_id: act.row.id, reason: act.reason } }, `bk-refund-${act.refund.pi}`);
     if (rf.ok) await dbPool.query(`UPDATE booking_reservations SET pay_status = 'refunded', refunded_bani = refunded_bani + $2 WHERE id = $1`, [act.row.id, act.refund.amount]);
     else console.error("rezervari: rambursare eșuată pentru rezervarea", act.row.id, rf.error && rf.error.message);
+    if (act.reason === "fara_3ds") {
+      await sendMail(act.row.guest_email, "Plata nu a putut fi acceptată · " + act.row.listing_name,
+        `<p>Bună, ${E(act.row.guest_name)},</p><p>Din motive de securitate acceptăm plățile cu card doar cu autentificare 3D Secure (confirmare în aplicația băncii sau prin SMS). Cardul folosit nu a fost autentificat, așa că rezervarea la <b>${E(act.row.listing_name)}</b> nu a fost confirmată, iar suma de ${fmtRon(act.refund.amount)} îți este returnată integral (apare pe card în câteva zile).</p><p>Poți face o nouă rezervare cu un card care suportă 3D Secure, cu Apple Pay / Google Pay sau cu un card prepaid.</p>`);
+      return;
+    }
     await sendMail(act.row.guest_email, "Rezervarea nu a putut fi confirmată · " + act.row.listing_name,
       `<p>Bună, ${E(act.row.guest_name)},</p><p>Din păcate perioada aleasă la <b>${E(act.row.listing_name)}</b> nu a mai fost disponibilă în momentul plății. Suma de ${fmtRon(act.refund.amount)} îți este returnată integral și apare pe card în câteva zile. Ne cerem scuze și te invităm să alegi o altă perioadă.</p>`);
   }
@@ -179,6 +211,30 @@ async function markRestFailed(rid, piId) {
     `<p>Bună, ${E(row.guest_name)},</p><p>Banca a respins plata restului de <b>${fmtRon(row.rest_bani)}</b> pentru rezervarea la <b>${E(row.listing_name)}</b>.</p><p>Ai <b>48 de ore</b> să plătești cu alt card, printr-un link securizat:</p><p><a href="${siteBase()}/cazare/plata/${tokenOf(rid)}">Plătește restul</a></p><p>Dacă nu plătești în 48 de ore, rezervarea se anulează și avansul se pierde.</p>`);
 }
 
+// e-mailul de bun venit, trimis o singură dată, când contul Stripe devine activ (RO + EN)
+const ACTIVATION_SUBJECT = "🎉 Contul tău este activ! Bine ai venit pe OpeningHoursToday";
+function activationMail() {
+  const link = siteBase() + "/cont/plati";
+  const btn = (t) => `<p style="margin:22px 0"><a href="${link}" style="background:#F0813A;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;display:inline-block">${t}</a></p>`;
+  return `<p>Salutare,</p><p>Îți mulțumim că te-ai alăturat comunității noastre! Îți confirmăm că procesul de conectare cu Stripe a fost finalizat cu succes, iar contul tău este acum complet configurat.</p>
+<p><b>Ce înseamnă asta pentru tine?</b></p>
+<ul><li><b>Rezervări online:</b> proprietățile tale pot fi acum rezervate și plătite online de turiști din toată Europa (pornești rezervarea instant din aplicația OHT Host → Setări → Rezervare instant).</li>
+<li><b>Plăți sigure:</b> plățile turiștilor sunt securizate cu autentificare 3D Secure, iar banii fiecărei rezervări îți sunt virați direct în contul tău, la 24 de ore după check-in (minus comisionul platformei). La fiecare virare primești un e-mail.</li>
+<li><b>Transparență:</b> îți poți urmări încasările și istoricul tranzacțiilor în panoul tău Stripe, direct din pagina Setări plăți.</li></ul>
+<p><b>Ce urmează?</b> Dacă nu ai făcut-o deja, asigură-te că profilul tău este complet: adaugă fotografii atractive, descrieri clare și actualizează disponibilitatea din calendar pentru a primi primele rezervări cât mai repede!</p>
+<p>Dacă ai orice fel de întrebări sau ai nevoie de suport pe parcurs, răspunde direct la acest e-mail și te ajutăm cu drag. Îți dorim mult succes și cât mai multe rezervări!</p>
+${btn("Deschide Setări plăți")}<p>Cu drag,<br>Echipa OpeningHoursToday</p>
+<hr style="margin:28px 0 18px;border:none;border-top:1px solid #ddd"><p style="color:#666;font-size:13px;margin:0 0 10px">🇬🇧 English — Your account is active! Welcome to OpeningHoursToday</p>
+<p>Hello,</p><p>Thank you for joining our community! We confirm that your Stripe connection has been completed successfully and your account is now fully set up.</p>
+<p><b>What does this mean for you?</b></p>
+<ul><li><b>Online bookings:</b> your properties can now be booked and paid online by travellers from all over Europe (turn on instant booking in the OHT Host app → Settings → Instant booking).</li>
+<li><b>Secure payments:</b> guest payments are protected with 3D Secure authentication, and the money for each booking is transferred straight to your account 24 hours after check-in (minus the platform commission). You get an e-mail for every transfer.</li>
+<li><b>Transparency:</b> you can follow your earnings and transaction history in your Stripe dashboard, straight from the Payment settings page.</li></ul>
+<p><b>What next?</b> If you haven't already, complete your profile: add attractive photos, clear descriptions and keep your calendar availability up to date to get your first bookings sooner!</p>
+<p>If you have any questions or need support along the way, just reply to this e-mail and we'll gladly help. We wish you lots of success and plenty of bookings!</p>
+${btn("Open Payment settings")}<p>Warm regards,<br>The OpeningHoursToday team</p>`;
+}
+
 // contul Stripe al gazdei s-a schimbat (eveniment sau cron): salvăm starea; la prima activare gazda primește un e-mail
 async function applyAccount(acc) {
   if (!acc || !acc.id) return false;
@@ -187,7 +243,7 @@ async function applyAccount(acc) {
   if (!prev) return false;
   await dbPool.query(`UPDATE booking_owner_payments SET details_submitted = $2, payouts_enabled = $3, updated_at = now() WHERE stripe_account_id = $1`, [acc.id, !!acc.details_submitted, active]);
   if (active && !prev.payouts_enabled) {
-    try { await sendMail(prev.email, "Plățile sunt active · Opening Hours Today", `<p>Bună,</p><p>Contul tău Stripe a fost verificat și <b>plățile online sunt active</b>. Poți porni rezervarea instant (aplicația OHT Host → Setări → Rezervare instant), iar turiștii vor putea rezerva și plăti online.</p><p>Banii rezervărilor îți sunt virați la 24 de ore după check-in, iar la fiecare virare primești un e-mail.</p>`); } catch (e) { /* e-mailul nu blochează */ }
+    try { await sendMail(prev.email, ACTIVATION_SUBJECT, activationMail()); } catch (e) { /* e-mailul nu blochează */ }
   }
   return active;
 }
@@ -197,13 +253,20 @@ async function handleEvent(ev) {
   if (!obj) return;
   if (ev.type === "payment_intent.succeeded") {
     if (!obj.metadata || !obj.metadata.reservation_id) return;
+    let opts = {};
+    if (ENFORCE_3DS && ["advance", "full"].includes(obj.metadata.kind)) {
+      const chId = typeof obj.latest_charge === "string" ? obj.latest_charge : obj.latest_charge && obj.latest_charge.id;
+      const ch = chId ? await stripeReq("GET", `/charges/${chId}`) : null;
+      const v = threeDsVerdict(ch && ch.ok ? ch.data : null);
+      if (!v.ok) { opts = { no3ds: true }; console.error("rezervari: plată fără 3DS, se rambursează:", obj.id, v.why); }
+    }
     const client = await dbPool.connect();
     let act;
     try {
       await client.query("BEGIN");
       const ins = await client.query(`INSERT INTO booking_stripe_events (event_id, type) VALUES ($1,$2) ON CONFLICT DO NOTHING`, [ev.id, ev.type]);
       if (!ins.rowCount) { await client.query("ROLLBACK"); return; } // deja procesat
-      act = await onPaymentSucceeded(client, obj);
+      act = await onPaymentSucceeded(client, obj, opts);
       await client.query("COMMIT");
     } catch (e) { await client.query("ROLLBACK").catch(() => {}); throw e; } finally { client.release(); }
     await afterCommit(act);
@@ -337,7 +400,7 @@ async function runPaymentCron() {
     if (!budget()) break;
     const r = await stripeReq("POST", "/payment_intents", {
       amount: row.rest_bani, currency: String(row.currency || "RON").toLowerCase(), customer: row.stripe_customer_id, payment_method: row.stripe_pm_id,
-      off_session: "true", confirm: "true", description: `Rest rezervare #${row.id} · ${row.listing_name}`, transfer_group: `res_${row.id}`, metadata: { reservation_id: row.id, kind: "rest" },
+      off_session: "true", confirm: "true", statement_descriptor_suffix: descriptorSuffix(row.listing_name), description: `Rest rezervare #${row.id} · ${row.listing_name}`, transfer_group: `res_${row.id}`, metadata: { reservation_id: row.id, kind: "rest" },
     }, `bk-res-${row.id}-rest`);
     if (r.ok && r.data.status === "succeeded") { await dbPool.query(`UPDATE booking_reservations SET pi_rest = $2 WHERE id = $1`, [row.id, r.data.id]); st.rest_charged++; }
     else { const piId = r.ok ? r.data.id : (r.error && r.error.payment_intent && r.error.payment_intent.id); await markRestFailed(row.id, piId); st.rest_failed++; }
@@ -369,7 +432,7 @@ async function runPaymentCron() {
     if (!budget()) break;
     const g = await stripeReq("POST", "/payment_intents", {
       amount: row.guarantee_bani, currency: String(row.currency || "RON").toLowerCase(), customer: row.stripe_customer_id, payment_method: row.stripe_pm_id,
-      off_session: "true", confirm: "true", capture_method: "manual", description: `Garanție rezervare #${row.id} · ${row.listing_name}`, metadata: { reservation_id: row.id, kind: "guarantee" },
+      off_session: "true", confirm: "true", capture_method: "manual", statement_descriptor_suffix: descriptorSuffix(row.listing_name), description: `Garanție rezervare #${row.id} · ${row.listing_name}`, metadata: { reservation_id: row.id, kind: "guarantee" },
     }, `bk-guar-${row.id}`);
     if (g.ok && g.data.status === "requires_capture") {
       await dbPool.query(`UPDATE booking_reservations SET guarantee_status = 'held', guarantee_pi = $2 WHERE id = $1 AND guarantee_status = 'pending'`, [row.id, g.data.id]);
@@ -461,7 +524,7 @@ function mount(r, ctx) {
     const g = await stripeReq("GET", `/accounts/${acc.stripe_account_id}`);
     if (g.ok) await dbPool.query(`UPDATE booking_owner_payments SET details_submitted = $2, payouts_enabled = $3, updated_at = now() WHERE owner_id = $1`, [ownerId, !!g.data.details_submitted, !!(g.data.payouts_enabled && g.data.capabilities && g.data.capabilities.transfers === "active")]);
     const cur = (await dbPool.query(`SELECT details_submitted, payouts_enabled FROM booking_owner_payments WHERE owner_id = $1`, [ownerId])).rows[0];
-    return { connected: true, payouts_enabled: !!cur.payouts_enabled, details_submitted: !!cur.details_submitted };
+    return { connected: true, account_id: acc.stripe_account_id, payouts_enabled: !!cur.payouts_enabled, details_submitted: !!cur.details_submitted };
   }
   r.get("/api/rezervari/plati/stare", L.requireAccommodationOwnerApi, async (req, res) => {
     try {
@@ -484,12 +547,29 @@ function mount(r, ctx) {
         acc = { stripe_account_id: c.data.id };
       }
       const base = L.baseUrlFor(req);
-      const back = base + ((req.body || {}).app === true ? "/gazda/" : "/cont/rezervari"); // din aplicația OHT Host revine în aplicație
-      const link = await stripeReq("POST", "/account_links", { account: acc.stripe_account_id, type: "account_onboarding", refresh_url: back, return_url: back });
+      const bd = req.body || {};
+      const fromPage = bd.from === "plati"; // din pagina Setări plăți revine tot acolo (cu marcaj pentru starea „întrerupt”)
+      const back = base + (bd.app === true ? "/gazda/" : fromPage ? "/cont/plati?stare=revenit" : "/cont/rezervari"); // din aplicația OHT Host revine în aplicație
+      const refresh = fromPage ? base + "/cont/plati?stare=reinnoit" : back;
+      const link = await stripeReq("POST", "/account_links", { account: acc.stripe_account_id, type: "account_onboarding", refresh_url: refresh, return_url: back });
       if (!link.ok) return res.status(502).json({ error: "Nu am putut deschide formularul Stripe. Încearcă din nou." });
       res.json({ ok: true, url: link.data.url });
     } catch (e) { console.error("rezervari plati cont:", e.message); res.status(500).json({ error: "eroare" }); }
   });
+
+  // link de autentificare în panoul Stripe Express (valabil o singură dată, câteva minute)
+  r.post("/api/rezervari/plati/panou", ...ownerApi, live, async (req, res) => {
+    try {
+      const ownerId = req.accommodationOwner.ownerId;
+      if (!(await L.checkRateLimit("own:" + ownerId, "rez-pay-panel", 20, 10))) return res.status(429).json({ error: "prea_multe_cereri" });
+      const acc = (await dbPool.query(`SELECT stripe_account_id, details_submitted FROM booking_owner_payments WHERE owner_id = $1`, [ownerId])).rows[0];
+      if (!acc || !acc.details_submitted) return res.status(404).json({ error: "cont_neconectat" });
+      const lk = await stripeReq("POST", `/accounts/${acc.stripe_account_id}/login_links`, {});
+      if (!lk.ok) return res.status(502).json({ error: "Nu am putut deschide panoul Stripe. Încearcă din nou." });
+      res.json({ ok: true, url: lk.data.url });
+    } catch (e) { console.error("rezervari plati panou:", e.message); res.status(500).json({ error: "eroare" }); }
+  });
+  require("./plati-cont").mount(r, { live: LIVE });
 
   // --- turist: pornește plata (după ce a confirmat codul și a bifat acordurile) ---
   async function resByToken(rid, token) {
@@ -522,6 +602,7 @@ function mount(r, ctx) {
         const params = {
           amount: row.advance_bani, currency: String(row.currency || "RON").toLowerCase(), customer: cust, automatic_payment_methods: { enabled: "true" },
           description: `Rezervare #${row.id} · ${row.listing_name}`, receipt_email: row.guest_email, transfer_group: `res_${row.id}`,
+          payment_method_options: PM_OPTS_3DS, statement_descriptor_suffix: descriptorSuffix(row.listing_name),
           metadata: { reservation_id: row.id, kind: row.pay_scheme === "advance" ? "advance" : "full" },
         };
         if (row.pay_scheme === "advance" || row.guarantee_bani > 0) params.setup_future_usage = "off_session"; // cardul se salvează pentru debitarea restului sau pentru garanție
@@ -561,7 +642,8 @@ function mount(r, ctx) {
         const cust = await ensureCustomer(row);
         const c = await stripeReq("POST", "/payment_intents", {
           amount: row.rest_bani, currency: String(row.currency || "RON").toLowerCase(), customer: cust, automatic_payment_methods: { enabled: "true" },
-          description: `Rest rezervare #${row.id} · ${row.listing_name}`, receipt_email: row.guest_email, transfer_group: `res_${row.id}`, metadata: { reservation_id: row.id, kind: "rest" },
+          description: `Rest rezervare #${row.id} · ${row.listing_name}`, receipt_email: row.guest_email, transfer_group: `res_${row.id}`,
+          payment_method_options: PM_OPTS_3DS, statement_descriptor_suffix: descriptorSuffix(row.listing_name), metadata: { reservation_id: row.id, kind: "rest" },
         }, `bk-res-${row.id}-rest-manual-${row.rest_attempts}`);
         if (!c.ok) return res.status(502).json({ error: "plata_indisponibila" });
         pi = c.data;
@@ -611,4 +693,4 @@ function mount(r, ctx) {
   });
 }
 
-module.exports = { hostContactHtml, BOOKABLE_SQL, guestOutcome, settleGuestCancel, claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT };
+module.exports = { hostContactHtml, BOOKABLE_SQL, guestOutcome, settleGuestCancel, claimGuarantee, releaseGuarantee, LIVE, PUBLISHABLE, webhook, mount, cancelByGuest, cancelByOwner, runPaymentCron, sendMail, stripeReq, verifySig, handleEvent, STRIPE_CLIENT_JS, RES_SELECT, threeDsVerdict, descriptorSuffix, activationMail };
