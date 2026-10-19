@@ -413,7 +413,9 @@ function eatInfoFor({ countryCode, lang, city, n, name }) {
     const q = [];
     q.push("tip=restaurant"); q.push("tara=" + cc);
     if (city) q.push("oras=" + encodeURIComponent(String(city)));
-    info.proposeHref = (lg === "ro" ? `https://${RO_DOMAIN}/propune` : `https://${INTL_DOMAIN}/submit-place`) + "?" + q.join("&") + (lg !== "ro" ? "&lang=" + lg : "");
+    // formularul .ro doar pentru locuri din România, în română; orice altceva => formularul internațional (cu limba paginii)
+    const roForm = cc === "ro" && lg === "ro";
+    info.proposeHref = (roForm ? `https://${RO_DOMAIN}/propune` : `https://${INTL_DOMAIN}/submit-place`) + "?" + q.join("&") + (roForm ? "" : "&lang=" + lg);
     info.proposeLabel = L.propose(city);
   }
   const place = [name, city].filter(Boolean).join(" ");
@@ -3289,6 +3291,7 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
       </select>
     </label>
     ${t.otherTypeLabel ? `
+    <style>.submit-place-label[hidden]{display:none !important;}</style>
     <label class="submit-place-label" id="spOtherTypeWrap" hidden>${escapeHtml(t.otherTypeLabel)}
       <input type="text" id="spOtherType" placeholder="${escapeHtml(t.otherTypePlaceholder)}" maxlength="100">
     </label>` : ""}
@@ -5383,6 +5386,7 @@ function accDrawerHtml(activeItem, ownerEmail, lang) {
   const items = [
     { key: "contul-meu", href: "/cont/contul-meu", icon: paIcon("user"), label: L("Contul meu", "My account") },
     { key: "proprietati", href: "/cont", icon: paIcon("home"), label: L("Proprietățile mele", "My properties") },
+    { key: "plati", href: "/cont/plati", icon: paIcon("card"), label: L("Setări plăți", "Payment settings") },
     { key: "recenzii", href: "/cont/recenzii", icon: paIcon("star"), label: L("Recenzii", "Reviews") },
     { key: "fiscale", href: "/cont/date-fiscale", icon: paIcon("document"), label: L("Date fiscale", "Tax details") },
     { key: "adauga", href: "/cont/alege-tip", icon: paIcon("plus"), label: L("Adaugă o cazare", "Add a property") },
