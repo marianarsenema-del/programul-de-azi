@@ -5227,10 +5227,7 @@ function accDarkFooterHtml(lang) {
   return `
 <footer class="acc-dark-footer">
   <div class="acc-dark-footer-inner">
-    ${en ? "By signing in or creating an account, you agree to our" : "Prin autentificare sau prin crearea unui cont, sunteți de acord cu"} <a href="/termeni-si-conditii">${en ? "Terms and Conditions" : "Termenii și Condițiile noastre"}</a> ${en ? "and our" : "și cu"} <a href="/politica-de-confidentialitate">${en ? "Privacy Policy" : "Politica de confidențialitate"}</a>.<br>
-    ${en ? "All rights reserved." : "Toate drepturile rezervate."}<br>
-    Copyright Opening <span style="color:var(--accent)">Hours Today</span>™
-    ${require("./footer-legal").html(en ? "en" : "ro")}
+    ${require("./footer-legal").html(en ? "en" : "ro", { copyright: true })}
   </div>
 </footer>`;
 }
