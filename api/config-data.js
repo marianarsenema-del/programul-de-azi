@@ -2888,6 +2888,27 @@ exports.SELECTIVE_BRAND_CITIES = {
       "Sibiu", "Târgu Mureș",
     ],
     ikea: ["București", "Timișoara"],
+    // Fast-food: orașele din localizatoarele OFICIALE ale lanțurilor (mcdonalds.ro/restaurante — filtrul „Alege oraș”;
+    // kfc.ro/restaurante — filtrul de orașe), intersectate cu cele 103 orașe ale site-ului (Bragadiru, Otopeni, Balotești,
+    // Sinaia, Giarmata, Pecica nu sunt orașe de-ale site-ului). Octombrie 2026.
+    mcdonalds: [
+      "București", "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Botoșani", "Brăila", "Brașov", "Buzău", "Cluj-Napoca",
+      "Constanța", "Craiova", "Deva", "Drobeta-Turnu Severin", "Focșani", "Galați", "Giurgiu", "Hunedoara", "Iași",
+      "Mediaș", "Oradea", "Piatra Neamț", "Pitești", "Ploiești", "Râmnicu Vâlcea", "Satu Mare", "Sibiu", "Slatina",
+      "Suceava", "Târgoviște", "Târgu Jiu", "Târgu Mureș", "Timișoara", "Zalău",
+    ],
+    kfc: [
+      "București", "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Botoșani", "Brașov", "Brăila", "Buzău",
+      "Bârlad", "Cluj-Napoca", "Constanța", "Craiova", "Călărași", "Deva", "Drobeta-Turnu Severin", "Focșani", "Galați",
+      "Giurgiu", "Hunedoara", "Iași", "Miercurea Ciuc", "Oradea", "Orăștie", "Piatra Neamț", "Pitești", "Ploiești",
+      "Roman", "Râmnicu Vâlcea", "Satu Mare", "Sfântu Gheorghe", "Sibiu", "Slatina", "Slobozia", "Suceava", "Timișoara",
+      "Târgoviște", "Târgu Jiu", "Târgu Mureș", "Zalău",
+    ],
+    // Burger King: lista oficială nu a putut fi citită — doar orașele CONFIRMATE din surse publice (mai bine lipsă un oraș
+    // real decât unul inventat). De completat cu lista completă a lanțului.
+    burgerking: [
+      "București", "Cluj-Napoca", "Brașov", "Iași", "Oradea", "Sibiu", "Timișoara", "Constanța", "Târgu Mureș", "Medgidia",
+    ],
     xxxlutz: ["București"],
     momax: [
       "București", "Ploiești", "Pitești", "Timișoara", "Arad", "Oradea",
