@@ -134,7 +134,7 @@ add({ slug: "descrieri-si-poze", group: 2, icon: "image",
 <li><strong>Cu drepturi:</strong> încărcând o poză garantezi că ai dreptul să o publici.</li>
 <li><strong>Actualizează-le</strong> după renovări sau schimbări de mobilier, din butonul <em>Editează</em> al proprietății.</li>
 </ul>
-<div class="pn-box"><strong>Verificare rapidă înainte de trimitere:</strong> ai primele 5 poze bune, o descriere cu dotările reale, regulile casei și datele de contact corecte?</div>` },
+<div class="pn-box"><strong>Verificare rapidă înainte de trimitere.</strong> Asigură-te că ai:<ul><li>cel puțin 5 poze bune, cu prima poză aleasă cu grijă;</li><li>o descriere cu dotările reale și cu regulile casei;</li><li>datele de contact și tarifele corecte, completate în câmpurile dedicate.</li></ul>Cu acestea, pagina ta este completă și gata să primească mesaje și rezervări.</div>` },
   en: { label: "Descriptions and photos guide", desc: "How to write a good description and which photos attract guests.",
     title: "Descriptions and photos guide",
     lead: "A clear description and good photos bring more messages and bookings, and fewer disputes: the guest knows exactly what they get.",
@@ -158,7 +158,7 @@ add({ slug: "descrieri-si-poze", group: 2, icon: "image",
 <li><strong>With rights:</strong> by uploading a photo you guarantee you have the right to publish it.</li>
 <li><strong>Keep them up to date</strong> after renovations or new furniture, using the property's <em>Edit</em> button.</li>
 </ul>
-<div class="pn-box"><strong>Quick check before submitting:</strong> do you have the first 5 good photos, a description with the real amenities, the house rules and correct contact details?</div>` } });
+<div class="pn-box"><strong>Quick check before submitting.</strong> Make sure you have:<ul><li>at least 5 good photos, with the first one chosen with care;</li><li>a description with the real amenities and the house rules;</li><li>correct contact details and rates, filled in the dedicated fields.</li></ul>With these, your page is complete and ready to receive messages and bookings.</div>` } });
 
 add({ slug: "sincronizare-calendar", group: 2, icon: "calendar",
   ro: { label: "Sincronizarea calendarului (iCal)", desc: "Conectezi calendarul cu Booking.com sau Airbnb, ca să eviți rezervările duble.",
