@@ -248,6 +248,12 @@ async function inbound(req, res) {
     const from = full.from || d.from || "";
     const subject = clean(full.subject || d.subject || "(fără subiect)", 300);
     const text = clean(full.text || htmlToText(full.html) || "(corpul mesajului nu a putut fi citit — vezi dashboard-ul Resend)", 8000);
+    // ruta după destinatar: abuse@ / report@ → coada DSA; orice altă adresă (contact@ etc.) → inbox-ul general
+    const rcpts = [].concat(full.to || d.to || []).map((x) => addrOf(x));
+    if (!rcpts.some((x) => /^(abuse|report)@/.test(x))) {
+      const r = await require("./inbox").ingest({ emailId: String(emailId), to: rcpts[0] || "", fromAddr: addrOf(from), fromName: nameOf(from), subject, body: text });
+      return res.json(Object.assign({ ok: true, routed: "inbox" }, r.duplicate ? { duplicate: true } : {}));
+    }
     const um = /https?:\/\/[^\s<>"')]*(opening-hours-today\.eu|programul-de-azi\.ro)[^\s<>"')]*/i.exec(text);
     const ins = await dbPool.query(
       `INSERT INTO dsa_notices (source, url, category, description, reporter_name, reporter_email, subject, email_id, lang) VALUES ('email',$1,'altul',$2,$3,$4,$5,$6,$7) ON CONFLICT (email_id) DO NOTHING RETURNING *`,
