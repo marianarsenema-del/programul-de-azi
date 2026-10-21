@@ -1932,8 +1932,85 @@ Object.assign(exports.STORE_CONFIG, {
 // ci puse sub orașul mare de lângă ele: Mega Image Otopeni Central și
 // Mega Image Militari Rezidential (Chiajna) -> "București"; Profi Floresti
 // Eroilor -> "Cluj-Napoca" (același precedent ca la Mömax/XXXLutz).
+// Burger King: program standard primit de la proprietar — restaurante din mall-uri (food court) 10:00–22:00;
+// restaurante stradale (București Universitate / Piața Victoriei) 09:00–22:00 (unele se prelungesc până la 23:00
+// în weekend — nu avem orarul exact pe fiecare, deci folosim varianta prudentă). Indexare: 0 = duminică.
+const BK_MALL_WEEKLY = Array.from({ length: 7 }, () => ({ open: "10:00", close: "22:00" }));
+const BK_STREET_WEEKLY = Array.from({ length: 7 }, () => ({ open: "09:00", close: "22:00" }));
 exports.PER_LOCATION_WEEKLY = {
   ro: {
+    burgerking: {
+      "București": {
+        "Universitate": BK_STREET_WEEKLY,
+        "Piața Victoriei": BK_STREET_WEEKLY,
+        "AFI Cotroceni": BK_MALL_WEEKLY,
+        "Mega Mall": BK_MALL_WEEKLY,
+        "Sun Plaza": BK_MALL_WEEKLY,
+        "Promenada Mall": BK_MALL_WEEKLY,
+        "Veranda Mall": BK_MALL_WEEKLY,
+        "ParkLake": BK_MALL_WEEKLY,
+        "Băneasa Shopping City": BK_MALL_WEEKLY,
+        "Plaza România": BK_MALL_WEEKLY,
+      },
+      "Cluj-Napoca": {
+        "Sigma Center": BK_MALL_WEEKLY,
+        "Iulius Mall": BK_MALL_WEEKLY,
+        "VIVO": BK_MALL_WEEKLY,
+      },
+      "Timișoara": {
+        "Iulius Town": BK_MALL_WEEKLY,
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Brașov": {
+        "AFI Brașov": BK_MALL_WEEKLY,
+      },
+      "Sibiu": {
+        "Shopping City": BK_MALL_WEEKLY,
+        "Prima Shopping Center": BK_MALL_WEEKLY,
+      },
+      "Oradea": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Arad": {
+        "AFI Arad": BK_MALL_WEEKLY,
+      },
+      "Baia Mare": {
+        "Value Centre": BK_MALL_WEEKLY,
+      },
+      "Târgu Mureș": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Deva": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Iași": {
+        "Palas Mall": BK_MALL_WEEKLY,
+      },
+      "Suceava": {
+        "Iulius Mall": BK_MALL_WEEKLY,
+      },
+      "Galați": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Piatra Neamț": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Focșani": {
+        "Focșani Plaza": BK_MALL_WEEKLY,
+      },
+      "Constanța": {
+        "City Park Mall": BK_MALL_WEEKLY,
+      },
+      "Craiova": {
+        "Promenada Mall": BK_MALL_WEEKLY,
+      },
+      "Ploiești": {
+        "Shopping City": BK_MALL_WEEKLY,
+      },
+      "Pitești": {
+        "Argeș Mall": BK_MALL_WEEKLY,
+      },
+    },
     megaimage: {
       "București": {
         "Piata Amzei": NONSTOP_WEEKLY,
@@ -2281,6 +2358,79 @@ exports.PER_LOCATION_WEEKLY = {
 // nu una din București — ca utilizatorul să știe exact unde e, de fapt.
 exports.PER_LOCATION_ADDRESS = {
   ro: {
+    // Burger King — adrese din lista primită de la proprietar (octombrie 2026).
+    burgerking: {
+      "București": {
+        "Universitate": "Bd. Regina Elisabeta nr. 3",
+        "Piața Victoriei": "Calea Victoriei nr. 155",
+        "AFI Cotroceni": "Bd. General Paul Teodorescu nr. 4",
+        "Mega Mall": "Bd. Pierre de Coubertin nr. 3-5",
+        "Sun Plaza": "Calea Văcărești nr. 391",
+        "Promenada Mall": "Calea Floreasca nr. 246B",
+        "Veranda Mall": "Str. Ziduri Moși nr. 23",
+        "ParkLake": "Str. Liviu Rebreanu nr. 4",
+        "Băneasa Shopping City": "Șos. București-Ploiești nr. 42D",
+        "Plaza România": "Bd. Timișoara nr. 26",
+      },
+      "Cluj-Napoca": {
+        "Sigma Center": "Str. Republicii nr. 109",
+        "Iulius Mall": "Str. Alexandru Vaida Voevod nr. 53B",
+        "VIVO": "Str. Avram Iancu nr. 492-500",
+      },
+      "Timișoara": {
+        "Iulius Town": "Piața Consiliul Europei nr. 2",
+        "Shopping City": "Calea Șagului nr. 100",
+      },
+      "Brașov": {
+        "AFI Brașov": "Bd. 15 Noiembrie nr. 78",
+      },
+      "Sibiu": {
+        "Shopping City": "Str. Lector nr. 1-3A",
+        "Prima Shopping Center": "Calea Șurii Mari nr. 39C",
+      },
+      "Oradea": {
+        "Shopping City": "Str. Nufărului nr. 30",
+      },
+      "Arad": {
+        "AFI Arad": "Calea Aurel Vlaicu nr. 14",
+      },
+      "Baia Mare": {
+        "Value Centre": "Str. Victoriei nr. 73",
+      },
+      "Târgu Mureș": {
+        "Shopping City": "Bd. 1 Decembrie 1918 nr. 242",
+      },
+      "Deva": {
+        "Shopping City": "Calea Zarandului nr. 87",
+      },
+      "Iași": {
+        "Palas Mall": "Str. Palas nr. 7",
+      },
+      "Suceava": {
+        "Iulius Mall": "Calea Unirii nr. 22",
+      },
+      "Galați": {
+        "Shopping City": "Bd. George Coșbuc nr. 251",
+      },
+      "Piatra Neamț": {
+        "Shopping City": "Bd. Decebal nr. 79",
+      },
+      "Focșani": {
+        "Focșani Plaza": "Calea Moldovei nr. 38",
+      },
+      "Constanța": {
+        "City Park Mall": "Bd. Alexandru Lăpușneanu nr. 116C",
+      },
+      "Craiova": {
+        "Promenada Mall": "Calea Severinului nr. 61",
+      },
+      "Ploiești": {
+        "Shopping City": "DN1B km 6",
+      },
+      "Pitești": {
+        "Argeș Mall": "Str. Tudor Vladimirescu nr. 37",
+      },
+    },
     megaimage: {
       "București": {
         "Piata Amzei": "Str. Piața Amzei nr. 10-22, Sector 1",
@@ -2627,6 +2777,19 @@ exports.PER_LOCATION_ADDRESS = {
 // NU are o intrare aici, brandul cade pe programul general din STORE_CONFIG.
 exports.PER_CITY_WEEKLY = {
   ro: {
+    // FAN Courier Hunedoara — sediul local din Hășdat nr. 66 (confirmat de proprietar, octombrie 2026):
+    // luni–vineri 09:00–17:00, sâmbătă și duminică închis. Restul orașelor rămân cu programul general.
+    fancourier: {
+      "Hunedoara": [
+        null, // Duminică — închis
+        { open: "09:00", close: "17:00" }, // Luni
+        { open: "09:00", close: "17:00" },
+        { open: "09:00", close: "17:00" },
+        { open: "09:00", close: "17:00" },
+        { open: "09:00", close: "17:00" }, // Vineri
+        null, // Sâmbătă — închis
+      ],
+    },
     // Profi Deva — confirmat direct: doar 2 filiale în tot orașul, AMBELE
     // non-stop (vezi PER_LOCATION_WEEKLY.ro.profi.Deva) — deci pagina
     // generică "Profi Deva" poate arăta non-stop, fără să inducă în eroare.
@@ -2904,10 +3067,11 @@ exports.SELECTIVE_BRAND_CITIES = {
       "Roman", "Râmnicu Vâlcea", "Satu Mare", "Sfântu Gheorghe", "Sibiu", "Slatina", "Slobozia", "Suceava", "Timișoara",
       "Târgoviște", "Târgu Jiu", "Târgu Mureș", "Zalău",
     ],
-    // Burger King: lista oficială nu a putut fi citită — doar orașele CONFIRMATE din surse publice (mai bine lipsă un oraș
-    // real decât unul inventat). De completat cu lista completă a lanțului.
+    // Burger King: lista completă a restaurantelor, primită direct de la proprietar (octombrie 2026), intersectată cu
+    // orașele site-ului. Florești, Bragadiru și Domnești nu sunt orașe de-ale site-ului.
     burgerking: [
-      "București", "Cluj-Napoca", "Brașov", "Iași", "Oradea", "Sibiu", "Timișoara", "Constanța", "Târgu Mureș", "Medgidia",
+      "București", "Cluj-Napoca", "Timișoara", "Brașov", "Sibiu", "Oradea", "Arad", "Baia Mare", "Târgu Mureș", "Deva",
+      "Iași", "Suceava", "Galați", "Piatra Neamț", "Focșani", "Constanța", "Craiova", "Ploiești", "Pitești",
     ],
     xxxlutz: ["București"],
     momax: [
