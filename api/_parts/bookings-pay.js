@@ -15,7 +15,7 @@ const WEBHOOK_SECRET = process.env.STRIPE_BOOKINGS_WEBHOOK_SECRET || "";
 const LIVE = process.env.BOOKINGS_PAYMENTS_LIVE === "true" && !!STRIPE_SECRET_KEY && !!PUBLISHABLE && !!WEBHOOK_SECRET;
 // Rezervabil = rezervări pornite + rezervare instant + plățile online LIVE + contul Stripe al gazdei poate primi bani (alias „l” = accommodation_listings, „s” = booking_settings).
 // Fără plata online activă nu există rezervare instant: anunțul rămâne în director, cu contact vizibil.
-const BOOKABLE_SQL = LIVE ? "(s.bookings_enabled AND s.instant_enabled AND EXISTS (SELECT 1 FROM booking_owner_payments bop WHERE bop.owner_id = l.owner_id AND bop.payouts_enabled))" : "FALSE";
+const BOOKABLE_SQL = LIVE ? "(s.bookings_enabled AND s.instant_enabled AND EXISTS (SELECT 1 FROM booking_owner_payments bop WHERE bop.owner_id = l.owner_id AND bop.payouts_enabled)" + require("./contract").SIGNED_SQL("l") + ")" : "FALSE"; // + gazda trebuie să fi semnat contractul-cadru (CONTRACT_REQUIRED=false îl dezactivează)
 const STRIPE_VERSION = "2024-06-20";
 const E = L.escapeHtml;
 const sha = core.sha256;
