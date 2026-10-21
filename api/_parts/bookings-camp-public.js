@@ -15,6 +15,7 @@ module.exports = function mountCampPublic(r, h) {
     try {
       const id = toId(req.params.id);
       if (!id) return res.status(404).json({ error: "negasit" });
+      await require("./contract").ensureTables();
       const { rows } = await dbPool.query(
         `SELECT l.id, l.name, l.owner_id, l.type_details, o.email AS owner_email, s.base_price_bani, s.currency, s.min_nights, s.max_guests, s.lead_days, s.commission_bps, s.payment_mode, l.checkin_time${LIVE ? ", s.guarantee_bani, s.cancel_policy" : ""}${LIVE ? ", COALESCE(op.payouts_enabled, false) AS payouts_enabled" : ""}
            FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id JOIN accommodation_owners o ON o.id = l.owner_id${LIVE ? " LEFT JOIN booking_owner_payments op ON op.owner_id = l.owner_id" : ""}
