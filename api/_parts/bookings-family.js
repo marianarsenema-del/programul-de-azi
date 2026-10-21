@@ -165,6 +165,7 @@ module.exports = function (dbPool) {
     if (!ids.length || !core.isDateStr(checkin) || !core.isDateStr(checkout)) return { managed, offers: out };
     const nights = core.dayNum(checkout) - core.dayNum(checkin);
     if (nights < 1 || nights > 60) return { managed, offers: out };
+    await require("./contract").ensureTables();
     const lists = (await dbPool.query(
       `SELECT l.id, l.type_details, s.base_price_bani, s.min_nights, s.max_guests, s.lead_days
          FROM accommodation_listings l JOIN booking_settings s ON s.listing_id = l.id
