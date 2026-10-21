@@ -597,6 +597,8 @@ module.exports = function mountBookings(app) {
         if (!pay.LIVE) return res.status(409).json({ error: "Rezervarea online nu este încă lansată. Până atunci cazarea rămâne în director, cu datele tale de contact vizibile." });
         const act = (await dbPool.query(`SELECT 1 FROM booking_owner_payments WHERE owner_id = $1 AND payouts_enabled`, [req.listing.owner_id])).rowCount;
         if (!act) return res.status(409).json({ error: "Rezervarea instant funcționează doar cu plățile online active. Apasă „Activează plățile” și termină configurarea contului Stripe." });
+        const CT = require("./contract");
+        if (CT.REQUIRED && !(await CT.hostSigned(req.listing.owner_id))) return res.status(409).json({ error: "Pentru a primi rezervări online trebuie să semnezi contractul-cadru: Cont → Contract." });
       }
       await dbPool.query(`UPDATE booking_settings SET base_price_bani = $2, min_nights = $3, max_guests = $4, instant_enabled = $5, lead_days = $6, updated_at = now() WHERE listing_id = $1`, [req.listing.id, base, minN, maxG, inst, lead]);
       await sync.push(req.listing.id);
