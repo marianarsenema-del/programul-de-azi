@@ -3,6 +3,7 @@
 // Scriptul din pagină stă într-un template literal: fără backticks și fără ${ în codul clientului.
 "use strict";
 const L = require("./logic");
+const S = require("./static");
 
 const CSS = `
 .pc-wrap{max-width:900px;margin:0 auto;color:#1a1f35}
@@ -88,12 +89,13 @@ function texts(lang) {
   };
 }
 
-function pageHtml(lang, nonce, email, req, live) {
+function pageHtml(lang, nonce, email, req, live, needContract) {
   const { T, faq } = texts(lang);
   const E = L.escapeHtml;
   const faqHtml = faq.map((f, i) => `<details${i === 0 ? " open" : ""}><summary>${E(f[0])}</summary><p>${E(f[1])}</p></details>`).join("");
   const body = `<div class="pc-wrap">
 <div class="pc-head"><h1>${T("Setări plăți", "Payment settings")}</h1><span id="pcBadge" class="pc-badge pc-b-off" hidden><i></i><span id="pcBadgeT"></span></span></div>
+${needContract ? `<div class="pc-alert" role="note" style="display:block;background:#fff7ec;border:1.5px solid #f0c48e;color:#5a3a10;border-radius:14px;padding:16px 18px;margin:0 0 16px"><strong>${T("Pasul 1: semnează contractul-cadru", "Step 1: sign the framework agreement")}</strong><br>${T("Fără contract semnat, cazarea ta nu poate primi rezervări online, chiar dacă ți-ai activat plățile.", "Without a signed agreement your property cannot receive online bookings, even if your payments are active.")}<br><a href="/cont/contract" style="display:inline-block;margin-top:10px;background:#F0813A;color:#fff;font-weight:800;border-radius:10px;padding:10px 18px;text-decoration:none">${T("Citește și semnează contractul", "Read and sign the agreement")}</a></div>` : ""}
 <div id="pcAlert" class="pc-alert" role="alert" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 22px;margin-top:1px"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg><div id="pcAlertT"></div><button type="button" class="pc-x" id="pcAlertX" aria-label="${T("Închide alerta", "Dismiss")}">×</button></div>
 <div id="pcView"><section class="pc-card pc-center"><div class="pc-spin" aria-hidden="true"></div><div style="font-weight:700">${T("Se încarcă…", "Loading…")}</div></section></div>
 <div id="pcInfo" hidden>
@@ -208,13 +210,15 @@ ${js}</script></body></html>`;
 }
 
 function mount(r, deps) {
-  r.get("/cont/plati", L.accommodationGate, L.requireAccommodationOwner, (req, res) => {
+  r.get("/cont/plati", L.accommodationGate, L.requireAccommodationOwner, async (req, res) => {
     const nonce = L.generateNonce();
     res.set("Content-Security-Policy", L.buildCsp(nonce));
     res.set("Content-Type", "text/html; charset=utf-8");
     res.set("Cache-Control", "no-store");
     const lang = L.getAccLang(req, res);
-    res.send(pageHtml(lang, nonce, req.accommodationOwner.email, req, deps && deps.live));
+    let needContract = false;
+    try { const CT = require("./contract"); needContract = CT.REQUIRED && !!S.dbPool && !(await CT.hostSigned(req.accommodationOwner.ownerId)); } catch (e) { needContract = false; }
+    res.send(pageHtml(lang, nonce, req.accommodationOwner.email, req, deps && deps.live, needContract));
   });
 }
 
