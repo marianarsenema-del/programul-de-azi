@@ -3073,6 +3073,58 @@ exports.SELECTIVE_BRAND_CITIES = {
       "București", "Cluj-Napoca", "Timișoara", "Brașov", "Sibiu", "Oradea", "Arad", "Baia Mare", "Târgu Mureș", "Deva",
       "Iași", "Suceava", "Galați", "Piatra Neamț", "Focșani", "Constanța", "Craiova", "Ploiești", "Pitești",
     ],
+    // ING Bank: orașele cu sucursală/ING Office, din lista primită de la proprietar (octombrie 2026) — toate sunt orașe ale site-ului.
+    ing: [
+      "București", "Alba Iulia", "Arad", "Bacău", "Baia Mare", "Bistrița", "Brăila", "Brașov", "Buzău", "Cluj-Napoca",
+      "Constanța", "Craiova", "Deva", "Focșani", "Galați", "Hunedoara", "Iași", "Miercurea Ciuc", "Oradea", "Piatra Neamț",
+      "Pitești", "Ploiești", "Râmnicu Vâlcea", "Satu Mare", "Sibiu", "Slatina", "Suceava", "Târgoviște", "Târgu Mureș", "Timișoara",
+    ],
+    // dm drogerie markt: orașele din lista completă a magazinelor, primită de la proprietar (octombrie 2026), intersectată cu orașele
+    // site-ului (Mioveni, Voluntari, Bragadiru și Chiajna nu sunt orașe ale site-ului).
+    dm: [
+      "Alba Iulia", "Blaj", "Arad", "Pitești", "Bacău", "Onești", "Oradea", "Bistrița", "Botoșani", "Brăila",
+      "Brașov", "Făgăraș", "București", "Buzău", "Călărași", "Reșița", "Caransebeș", "Cluj-Napoca", "Turda", "Dej",
+      "Constanța", "Mangalia", "Sfântu Gheorghe", "Târgoviște", "Craiova", "Galați", "Giurgiu", "Târgu Jiu", "Miercurea Ciuc", "Odorheiu Secuiesc",
+      "Deva", "Hunedoara", "Petroșani", "Slobozia", "Iași", "Pașcani", "Baia Mare", "Sighetu Marmației", "Târgu Mureș", "Piatra Neamț",
+      "Roman", "Slatina", "Ploiești", "Câmpina", "Zalău", "Satu Mare", "Sibiu", "Mediaș", "Suceava", "Rădăuți",
+      "Alexandria", "Timișoara", "Lugoj", "Tulcea", "Râmnicu Vâlcea", "Vaslui", "Bârlad", "Focșani",
+    ],
+    // JYSK: orașele din lista completă a magazinelor, primită de la proprietar (octombrie 2026), intersectată cu orașele site-ului.
+    // Localitățile mici care nu sunt orașe ale site-ului (Bran, Feldioara, Chiajna etc.) sunt omise.
+    jysk: [
+      "Alba Iulia", "Blaj", "Sebeș", "Arad", "Curtea de Argeș", "Câmpulung", "Pitești", "Bacău", "Moinești", "Onești",
+      "Beiuș", "Marghita", "Oradea", "Salonta", "Bistrița", "Botoșani", "Dorohoi", "Brașov", "Codlea", "Făgăraș",
+      "Brăila", "București", "Buzău", "Râmnicu Sărat", "Caransebeș", "Reșița", "Cluj-Napoca", "Dej", "Gherla", "Turda",
+      "Constanța", "Mangalia", "Medgidia", "Sfântu Gheorghe", "Călărași", "Craiova", "Moreni", "Târgoviște", "Galați", "Tecuci",
+      "Giurgiu", "Motru", "Târgu Jiu", "Deva", "Hunedoara", "Lupeni", "Orăștie", "Petroșani", "Vulcan", "Slobozia",
+      "Urziceni", "Iași", "Pașcani", "Baia Mare", "Sighetu Marmației", "Drobeta-Turnu Severin", "Reghin", "Sighișoara", "Târgu Mureș", "Piatra Neamț",
+      "Roman", "Caracal", "Slatina", "Câmpina", "Ploiești", "Carei", "Satu Mare", "Mediaș", "Sibiu", "Câmpulung Moldovenesc",
+      "Fălticeni", "Rădăuți", "Suceava", "Zalău", "Alexandria", "Turnu Măgurele", "Lugoj", "Timișoara", "Tulcea", "Bârlad",
+      "Huși", "Vaslui", "Adjud", "Focșani", "Drăgășani", "Râmnicu Vâlcea",
+    ],
+    // Flanco: orașele din lista completă a magazinelor, primită de la proprietar (octombrie 2026), intersectată cu orașele site-ului.
+    // Localitățile care nu sunt orașe ale site-ului sunt omise.
+    flanco: [
+      "Alba Iulia", "Blaj", "Sebeș", "Arad", "Pitești", "Curtea de Argeș", "Câmpulung", "Bacău", "Moinești", "Onești",
+      "Oradea", "Salonta", "Bistrița", "Botoșani", "Dorohoi", "Brașov", "Făgăraș", "Codlea", "Brăila", "București",
+      "Buzău", "Râmnicu Sărat", "Călărași", "Reșița", "Caransebeș", "Cluj-Napoca", "Turda", "Constanța", "Mangalia", "Sfântu Gheorghe",
+      "Târgu Secuiesc", "Târgoviște", "Craiova", "Calafat", "Galați", "Tecuci", "Giurgiu", "Târgu Jiu", "Miercurea Ciuc", "Odorheiu Secuiesc",
+      "Gheorgheni", "Toplița", "Deva", "Hunedoara", "Orăștie", "Petroșani", "Slobozia", "Fetești", "Iași", "Pașcani",
+      "Baia Mare", "Drobeta-Turnu Severin", "Târgu Mureș", "Târnăveni", "Piatra Neamț", "Roman", "Slatina", "Caracal", "Ploiești", "Câmpina",
+      "Zalău", "Satu Mare", "Sibiu", "Suceava", "Rădăuți", "Câmpulung Moldovenesc", "Alexandria", "Timișoara", "Lugoj", "Tulcea",
+      "Vaslui", "Bârlad", "Huși", "Râmnicu Vâlcea", "Drăgășani", "Focșani",
+    ],
+    // Altex: orașele din lista completă a magazinelor, primită de la proprietar (octombrie 2026), intersectată cu orașele site-ului.
+    // Localitățile care nu sunt orașe ale site-ului sunt omise.
+    altex: [
+      "Alba Iulia", "Blaj", "Sebeș", "Arad", "Curtea de Argeș", "Câmpulung", "Pitești", "Bacău", "Onești", "Oradea",
+      "Salonta", "Bistrița", "Botoșani", "Brașov", "Făgăraș", "Brăila", "București", "Buzău", "Caransebeș", "Reșița",
+      "Cluj-Napoca", "Dej", "Turda", "Constanța", "Mangalia", "Medgidia", "Sfântu Gheorghe", "Călărași", "Craiova", "Târgoviște",
+      "Galați", "Tecuci", "Giurgiu", "Târgu Jiu", "Miercurea Ciuc", "Odorheiu Secuiesc", "Deva", "Hunedoara", "Orăștie", "Petroșani",
+      "Slobozia", "Iași", "Pașcani", "Baia Mare", "Sighetu Marmației", "Drobeta-Turnu Severin", "Reghin", "Sighișoara", "Târgu Mureș", "Piatra Neamț",
+      "Roman", "Caracal", "Slatina", "Câmpina", "Ploiești", "Satu Mare", "Mediaș", "Sibiu", "Fălticeni", "Rădăuți",
+      "Suceava", "Zalău", "Alexandria", "Lugoj", "Timișoara", "Tulcea", "Bârlad", "Vaslui", "Focșani", "Râmnicu Vâlcea",
+    ],
     xxxlutz: ["București"],
     momax: [
       "București", "Ploiești", "Pitești", "Timișoara", "Arad", "Oradea",
