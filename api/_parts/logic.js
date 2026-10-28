@@ -5766,6 +5766,10 @@ ${t._fromProposal ? `<div style="margin:0 0 18px;padding:14px 16px;border:1.5px 
       <label class="acc-white-label" for="aTicketUrl">${L("Link achiziție bilete online (opțional)", "Online ticket purchase link (optional)")}</label>
       <input type="url" id="aTicketUrl" class="acc-white-input" value="${escapeHtml(t.ticket_url || "")}">
     </div>
+    <label class="acc-white-label" for="aFacebook">${L("Pagină Facebook (opțional)", "Facebook page (optional)")}</label>
+    <input type="url" id="aFacebook" class="acc-white-input" placeholder="https://facebook.com/..." value="${escapeHtml(t.facebook_url || "")}">
+    <label class="acc-white-label" for="aInstagram">${L("Pagină Instagram (opțional)", "Instagram page (optional)")}</label>
+    <input type="url" id="aInstagram" class="acc-white-input" placeholder="https://instagram.com/..." value="${escapeHtml(t.instagram_url || "")}">
     <label class="acc-white-label" for="aExtraFees">${L("Taxe suplimentare (foto, ghid, parcare etc.)", "Extra fees (photography, guide, parking, etc.)")}</label>
     <input type="text" id="aExtraFees" class="acc-white-input" value="${escapeHtml(t.extra_fees || "")}">
     <label class="acc-white-label" for="aDuration">${L("Durata estimată a vizitei / activității (opțional)", "Estimated duration of the visit / activity (optional)")}</label>
@@ -6078,6 +6082,8 @@ ${t._fromProposal ? `<div style="margin:0 0 18px;padding:14px 16px;border:1.5px 
       duration: document.getElementById("aDuration").value,
       groupCapacity: document.getElementById("aGroupCapacity").value,
       ticketUrl: document.getElementById("aTicketUrl").value,
+      facebookUrl: document.getElementById("aFacebook").value,
+      instagramUrl: document.getElementById("aInstagram").value,
       weekdayOpen: document.getElementById("aWeekdayOpen").value,
       weekdayClose: document.getElementById("aWeekdayClose").value,
       saturdayOpen: document.getElementById("aSaturdayOpen").value,
