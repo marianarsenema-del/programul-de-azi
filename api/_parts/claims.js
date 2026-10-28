@@ -534,15 +534,15 @@ ${scriptBody || ""}</script></body></html>`;
   async function ownedPlace(req, id) {
     const q = await dbPool.query(
       `SELECT p.id, p.type, p.name, p.city, p.country_code, p.note, p.schedule, to_jsonb(p)->>'photo_url' AS photo_url, to_jsonb(p)->'photo_urls' AS photo_urls,
-              to_jsonb(p)->>'contact_phone' AS contact_phone, to_jsonb(p)->>'website_url' AS website_url, to_jsonb(p)->>'menu_url' AS menu_url,
+              to_jsonb(p)->>'contact_phone' AS contact_phone, to_jsonb(p)->>'website_url' AS website_url, to_jsonb(p)->>'menu_url' AS menu_url, to_jsonb(p)->>'facebook_url' AS facebook_url, to_jsonb(p)->>'instagram_url' AS instagram_url,
               to_jsonb(p)->'owner_edit' AS owner_edit, to_jsonb(p)->>'owner_edit_at' AS owner_edit_at
          FROM pending_submissions p WHERE p.id = $1::integer AND p.status = 'approved' AND p.claimed_by_owner_id = $2::integer`, [id, req.accommodationOwner.ownerId]);
     return q.rows[0] || null;
   }
   const effective = (r) => {
     const pend = parseJson(r.owner_edit);
-    if (pend) return { pending: true, photos: Array.isArray(pend.photos) ? pend.photos : [], note: pend.note || "", schedule: parseJson(pend.schedule), phone: pend.phone || "", website: pend.website || "", menu: pend.menu || "" };
-    return { pending: false, photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule), phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "" };
+    if (pend) return { pending: true, photos: Array.isArray(pend.photos) ? pend.photos : [], note: pend.note || "", schedule: parseJson(pend.schedule), phone: pend.phone || "", website: pend.website || "", menu: pend.menu || "", facebook: pend.facebook || "", instagram: pend.instagram || "" };
+    return { pending: false, photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule), phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "", facebook: r.facebook_url || "", instagram: r.instagram_url || "" };
   };
 
   app.get("/cont/pagina/:id", gate, ownerPage, async (req, res) => {
@@ -593,6 +593,8 @@ ${scriptBody || ""}</script></body></html>`;
         <div class="cl-row">
           <label class="cl-field">${T("Telefon", "Phone")}<input class="cl-in" id="edPhone" type="tel" maxlength="30" value="${E(v.phone)}"></label>
           <label class="cl-field">Website<input class="cl-in" id="edWeb" type="url" maxlength="500" placeholder="https://" value="${E(v.website)}"></label>
+          <label class="cl-field">Facebook<input class="cl-in" id="edFb" type="url" maxlength="500" placeholder="https://facebook.com/..." value="${E(v.facebook)}"></label>
+          <label class="cl-field">Instagram<input class="cl-in" id="edIg" type="url" maxlength="500" placeholder="https://instagram.com/..." value="${E(v.instagram)}"></label>
         </div>
         ${food ? `<h3>${T("Meniu", "Menu")}</h3>
         <label class="cl-field">${T("Link spre meniu (sau încarcă un PDF)", "Link to the menu (or upload a PDF)")}<input class="cl-in" id="edMenu" type="url" maxlength="500" placeholder="https://" value="${E(v.menu)}"></label>
@@ -663,7 +665,7 @@ ${scriptBody || ""}</script></body></html>`;
     }
     if (schedule) schedule.note = $("edSNote").value;
     var b = $("edSave"); b.disabled = true;
-    var body = { photos: photos, note: $("edNote").value, schedule: schedule, phone: $("edPhone").value, website: $("edWeb").value, menu: $("edMenu") ? $("edMenu").value : "" };
+    var body = { photos: photos, note: $("edNote").value, schedule: schedule, phone: $("edPhone").value, website: $("edWeb").value, facebook: $("edFb") ? $("edFb").value : "", instagram: $("edIg") ? $("edIg").value : "", menu: $("edMenu") ? $("edMenu").value : "" };
     clPost("/api/cont/pagina/" + PID, JSON.stringify(body), "application/json").then(function(r){
       b.disabled = false;
       if (r.ok) { ok.textContent = ${L.safeJson(T("✓ Trimis. Echipa verifică modificările și te anunță pe e-mail.", "✓ Sent. The team will review your changes and email you."))}; ok.hidden = false; window.scrollTo(0, document.body.scrollHeight); }
@@ -703,13 +705,17 @@ ${scriptBody || ""}</script></body></html>`;
       const webRaw = clean(b.website, 500);
       const website = webRaw ? (L.sanitizePublicUrl(webRaw) || "") : "";
       if (webRaw && !website) { res.status(400).json({ error: "invalid_website" }); return; }
+      const fbRaw = clean(b.facebook, 500), igRaw = clean(b.instagram, 500);
+      const facebook = fbRaw ? (L.sanitizePublicUrl(fbRaw) || "") : "";
+      const instagram = igRaw ? (L.sanitizePublicUrl(igRaw) || "") : "";
+      if ((fbRaw && !facebook) || (igRaw && !instagram)) { res.status(400).json({ error: "invalid_website" }); return; }
       let menu = "";
       if (food) {
         const mRaw = clean(b.menu, 500);
         if (mRaw) { menu = L.isOwnBlobUrl(mRaw) ? mRaw : (L.sanitizePublicUrl(mRaw) || ""); if (!menu) { res.status(400).json({ error: "invalid_menu" }); return; } }
       }
-      const cur = { photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule) || null, phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "" };
-      const next = { photos, note, schedule: schedule || null, phone, website, menu };
+      const cur = { photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule) || null, phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "", facebook: r.facebook_url || "", instagram: r.instagram_url || "" };
+      const next = { photos, note, schedule: schedule || null, phone, website, menu, facebook, instagram };
       if (JSON.stringify(cur) === JSON.stringify(next) && !parseJson(r.owner_edit)) { res.status(400).json({ error: "no_changes" }); return; }
       await dbPool.query(`UPDATE pending_submissions SET owner_edit = $1::jsonb, owner_edit_at = now() WHERE id = $2::integer AND claimed_by_owner_id = $3::integer`, [JSON.stringify(next), id, req.accommodationOwner.ownerId]);
       res.status(200).json({ ok: true });
@@ -781,7 +787,7 @@ function mountAdmin(app, deps) {
       try { counts.disputes = (await dbPool.query(`SELECT COUNT(*)::int AS n FROM place_disputes WHERE status='open'`)).rows[0].n; } catch (e) { needSql = true; }
       if (active === "edits") {
         rows = (await dbPool.query(
-          `SELECT p.id, p.name, p.city, p.type, p.note, p.schedule, p.photo_url, to_jsonb(p)->'photo_urls' AS photo_urls, to_jsonb(p)->>'contact_phone' AS contact_phone, to_jsonb(p)->>'website_url' AS website_url, to_jsonb(p)->>'menu_url' AS menu_url,
+          `SELECT p.id, p.name, p.city, p.type, p.note, p.schedule, p.photo_url, to_jsonb(p)->'photo_urls' AS photo_urls, to_jsonb(p)->>'contact_phone' AS contact_phone, to_jsonb(p)->>'website_url' AS website_url, to_jsonb(p)->>'menu_url' AS menu_url, to_jsonb(p)->>'facebook_url' AS facebook_url, to_jsonb(p)->>'instagram_url' AS instagram_url,
                   to_jsonb(p)->'owner_edit' AS owner_edit, to_jsonb(p)->>'owner_edit_at' AS owner_edit_at, o.email
              FROM pending_submissions p LEFT JOIN accommodation_owners o ON o.id = p.claimed_by_owner_id
             WHERE to_jsonb(p)->'owner_edit' IS NOT NULL AND to_jsonb(p)->>'owner_edit' <> 'null' ORDER BY to_jsonb(p)->>'owner_edit_at' DESC LIMIT 200`)).rows;
@@ -802,7 +808,7 @@ function mountAdmin(app, deps) {
     if (active === "edits") {
       cards = rows.map((r) => {
         const ed = parseJson(r.owner_edit) || {};
-        const cur = { photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule), phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "" };
+        const cur = { photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule), phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "", facebook: r.facebook_url || "", instagram: r.instagram_url || "" };
         const imgs = (a) => a.length ? `<div class="cl-a-th">${a.map((u) => `<img src="${E(u)}" alt="">`).join("")}</div>` : "<em>fără poze</em>";
         const schTxt = (s) => !s ? "—" : s.appt === true ? "Loc special: doar cu programare" + (s.contactEmail ? " · " + s.contactEmail : "") + (Array.isArray(s.openDays) && s.openDays.length ? " · porți deschise: " + s.openDays.map((d) => d.date + (d.to ? ".." + d.to : "") + (d.label ? " (" + d.label + ")" : "")).join("; ") : "") : s.is247 ? "Non-stop" : s.days ? Object.keys(s.days).sort().map((k) => `${["Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "Sâm"][k]}: ${s.days[k].closed ? "închis" : E(s.days[k].open + "–" + s.days[k].close)}`).join(" · ") : "—";
         const row = (lab, a, b) => `<tr><th>${lab}</th><td>${a}</td><td${a !== b ? ' class="cl-changed"' : ""}>${b}</td></tr>`;
@@ -818,6 +824,8 @@ function mountAdmin(app, deps) {
             ${row("Mențiune program", E((cur.schedule && cur.schedule.note) || "—"), E((ed.schedule && ed.schedule.note) || "—"))}
             ${row("Telefon", E(cur.phone || "—"), E(ed.phone || "—"))}
             ${row("Website", E(cur.website || "—"), E(ed.website || "—"))}
+            ${row("Facebook", E(cur.facebook || "—"), E(ed.facebook || "—"))}
+            ${row("Instagram", E(cur.instagram || "—"), E(ed.instagram || "—"))}
             ${row("Meniu", E(cur.menu || "—"), E(ed.menu || "—"))}
           </table>
           <div class="admin-submission-actions"><button type="button" class="admin-approve-btn" data-act="aproba">✓ Aprobă modificările</button><button type="button" class="admin-reject-btn" data-act="respinge">✕ Respinge</button></div></div>`;
@@ -978,6 +986,11 @@ document.querySelectorAll(".clm").forEach(function(card){
         await dbPool.query(
           `UPDATE pending_submissions SET note = $1, schedule = $2, photo_url = $3, photo_urls = $4::jsonb, contact_phone = $5, website_url = $6, menu_url = $7, owner_edit = NULL, owner_edit_at = NULL, actualizat_la = now() WHERE id = $8::integer`,
           [ed.note ? String(ed.note).slice(0, 2000) : null, sch ? JSON.stringify(sch) : null, newPhotos[0] || null, JSON.stringify(newPhotos.slice(1, 11)), ed.phone || null, ed.website || null, ed.menu || null, r.id]);
+        // Facebook / Instagram — separat, ca să nu strice aprobarea dacă coloanele nu există încă (retele-sociale.sql)
+        try {
+          const fbOk = ed.facebook ? L.sanitizePublicUrl(ed.facebook) : null, igOk = ed.instagram ? L.sanitizePublicUrl(ed.instagram) : null;
+          await dbPool.query(`UPDATE pending_submissions SET facebook_url = $1, instagram_url = $2 WHERE id = $3::integer`, [fbOk || null, igOk || null, r.id]);
+        } catch (e) { if (!(e && e.code === "42703")) console.error("modificari social:", e && e.message); }
         orphans = oldPhotos.filter((u) => !newPhotos.includes(u));
         if (deps.clearLocalCache) deps.clearLocalCache();
       } else {
