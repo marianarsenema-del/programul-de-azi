@@ -2318,13 +2318,13 @@ const NO_MATCHES_LABELS = {
 // Text scurt, pentru linkul din starea "niciun rezultat" a căutării —
 // separat de SUBMIT_PLACE_LABELS (acela e pentru formular, textul lung).
 const SUBMIT_PLACE_NO_RESULTS_LABELS = {
-  ro: "Nu-l găsești? Propune-l →", uk: "Can't find it? Suggest it →", de: "Nicht gefunden? Vorschlagen →",
-  fr: "Introuvable ? Proposez-le →", es: "¿No lo encuentras? Propónlo →", it: "Non lo trovi? Proponilo →",
-  pl: "Nie znajdujesz? Zaproponuj →", nl: "Niet gevonden? Stel voor →", da: "Kan du ikke finde det? Foreslå →",
-  cz: "Nenašli jste? Navrhněte →", fi: "Etkö löydä? Ehdota →", gr: "Δεν το βρίσκεις; Πρότεινέ το →",
-  hu: "Nem találod? Javasold →", hr: "Ne pronalaziš? Predloži →", sk: "Nenašli ste? Navrhnite →",
-  si: "Ne najdete? Predlagajte →", lt: "Nerandate? Pasiūlykite →", lv: "Neatrodat? Ieteiciet →",
-  pt: "Não encontras? Propõe →", se: "Hittar du inte? Föreslå →", ee: "Ei leia? Soovita →",
+  ro: "Nu găsiți locația? Adăugați-o aici →", uk: "Can't find the place? Add it here →", de: "Ort nicht gefunden? Hier hinzufügen →",
+  fr: "Lieu introuvable ? Ajoutez-le ici →", es: "¿No encuentra el lugar? Añádalo aquí →", it: "Non trova il luogo? Lo aggiunga qui →",
+  pl: "Nie ma tego miejsca? Dodaj je tutaj →", nl: "Plaats niet gevonden? Voeg het hier toe →", da: "Kan du ikke finde stedet? Tilføj det her →",
+  cz: "Nenašli jste místo? Přidejte ho zde →", fi: "Etkö löydä paikkaa? Lisää se tästä →", gr: "Δεν βρίσκετε τον χώρο; Προσθέστε τον εδώ →",
+  hu: "Nem találja a helyet? Adja hozzá itt →", hr: "Ne možete pronaći mjesto? Dodajte ga ovdje →", sk: "Nenašli ste miesto? Pridajte ho tu →",
+  si: "Ne najdete kraja? Dodajte ga tukaj →", lt: "Neradote vietos? Pridėkite ją čia →", lv: "Neatrodat vietu? Pievienojiet to šeit →",
+  pt: "Não encontra o local? Adicione-o aqui →", se: "Hittar du inte platsen? Lägg till den här →", ee: "Ei leia kohta? Lisa see siia →",
 };
 
 
