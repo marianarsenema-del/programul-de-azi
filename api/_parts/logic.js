@@ -4404,6 +4404,8 @@ async function generateSitemapXml(baseUrl, includeIntl, extraPaths) {
         });
       });
     });
+    // paginile hub „Locuri speciale de vizitat” (doar cele care au cel puțin un loc), calculate de server
+    (extraPaths || []).forEach((p) => { if (typeof p === "string" && p.startsWith("/")) urls.push(`${base}${p}`); });
   }
 
   const body = urls.map((u) => `  <url><loc>${escapeHtml(u)}</loc></url>`).join("\n");
@@ -6631,6 +6633,33 @@ function sanitizeProposalSchedule(schedule) {
   const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
   if (!schedule || typeof schedule !== "object") return null;
   const sNote = typeof schedule.note === "string" ? schedule.note.trim().slice(0, 600) : "";
+  // „Loc special de vizitat”: acces doar cu programare și/sau la zile cu porți deschise (fără program săptămânal, fără „deschis acum”)
+  if (schedule.appt === true) {
+    const out = { appt: true };
+    const email = typeof schedule.contactEmail === "string" ? schedule.contactEmail.trim().slice(0, 160) : "";
+    if (/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']{2,}$/.test(email)) out.contactEmail = email;
+    const phone = typeof schedule.contactPhone === "string" ? schedule.contactPhone.replace(/[^\d+()\-\s]/g, "").trim().slice(0, 30) : "";
+    if (phone.replace(/\D/g, "").length >= 7) out.contactPhone = phone;
+    const url = typeof schedule.contactUrl === "string" ? sanitizePublicUrl(schedule.contactUrl.trim().slice(0, 300)) : "";
+    if (url) out.contactUrl = url;
+    const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+    const validDate = (x) => DATE_RE.test(x) && !Number.isNaN(Date.parse(x + "T00:00:00Z")) && new Date(x + "T00:00:00Z").toISOString().slice(0, 10) === x;
+    const openDays = [];
+    if (Array.isArray(schedule.openDays)) {
+      for (const od of schedule.openDays.slice(0, 30)) {
+        if (!od || typeof od !== "object" || typeof od.date !== "string" || !validDate(od.date.trim())) continue;
+        const item = { date: od.date.trim() };
+        if (typeof od.to === "string" && validDate(od.to.trim()) && od.to.trim() > item.date) item.to = od.to.trim();
+        const label = typeof od.label === "string" ? od.label.replace(/\s+/g, " ").trim().slice(0, 120) : "";
+        if (label) item.label = label;
+        openDays.push(item);
+      }
+      openDays.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    }
+    if (openDays.length) out.openDays = openDays;
+    if (sNote) out.note = sNote;
+    return out;
+  }
   if (schedule.is247 === true) return sNote ? { is247: true, note: sNote } : { is247: true };
   if (schedule.days && typeof schedule.days === "object") {
     const days = {};
