@@ -1827,6 +1827,12 @@ function buildLanguageSwitcherScript(nonce) {
 <script nonce="${nonce}">
 (function(){
   var STORAGE_KEY = "oht_lang_pref";
+  // limba aleasă aici ghidează și paginile de cont / revendicare / formulare (care au doar RO și EN):
+  // ro => română, orice altă limbă => engleză. Cookie citit de server (getAccLang).
+  function setAccLangCookie(lang){
+    try { document.cookie = "accLang=" + (lang === "ro" ? "ro" : "en") + "; Path=/; Max-Age=31536000; SameSite=Lax; Secure"; } catch(e){}
+  }
+  try { var urlLang = new URLSearchParams(window.location.search).get("lang"); if (urlLang) setAccLangCookie(urlLang); } catch(e){}
   var select = document.getElementById("langSwitcherSelect");
   if (select) {
     // mutăm selectorul de limbă lângă iconița soare/lună, în antet — cerut
@@ -1850,6 +1856,7 @@ function buildLanguageSwitcherScript(nonce) {
     select.addEventListener("change", function(){
       var lang = select.value;
       try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
+      setAccLangCookie(lang);
       var path = select.getAttribute("data-path");
       window.location.href = path + "?lang=" + lang;
     });
@@ -1858,6 +1865,7 @@ function buildLanguageSwitcherScript(nonce) {
   try {
     var saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
+      setAccLangCookie(saved);
       var params = new URLSearchParams(window.location.search);
       if (params.get("lang") !== saved) {
         params.set("lang", saved);
@@ -3496,13 +3504,13 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
 // Turistul merge la formularul de propunere (cu numele căutat deja completat); proprietarul
 // alege ce are și ajunge, prin /cont/start/:tip, la autentificare și apoi direct în formularul lui.
 function renderSubmitChoicePage(nonce, baseUrl, lang, isIntl, touristHref) {
-  const ro = !isIntl;
+  const ro = !isIntl || lang === "ro"; // pe .eu cu limba română aleasă, textele rămân în română
   const T = (r, e) => (ro ? r : e);
   const title = T("Nu ați identificat locația dorită?", "Couldn't find the place? We can help.");
   const canonical = `${baseUrl}${isIntl ? "/submit-place" : "/propune"}`;
   const card = "display:flex;align-items:center;gap:14px;padding:18px 18px;border-radius:14px;border:2px solid var(--accent,#F0813A);text-decoration:none;color:inherit;background:var(--card,rgba(255,255,255,.04));font-weight:800;font-size:18px;cursor:pointer;font-family:inherit;width:100%;text-align:left;";
   const sub = "display:block;font-weight:500;font-size:14px;opacity:.8;margin-top:3px;";
-  const ownerLink = (tip, icon, label, hint) => `<a href="/cont/start/${tip}" rel="nofollow" style="${card}"><span style="font-size:26px">${icon}</span><span>${escapeHtml(label)}<span style="${sub}">${escapeHtml(hint)}</span></span></a>`;
+  const ownerLink = (tip, icon, label, hint) => `<a href="/cont/start/${tip}?lang=${ro ? "ro" : "en"}" rel="nofollow" style="${card}"><span style="font-size:26px">${icon}</span><span>${escapeHtml(label)}<span style="${sub}">${escapeHtml(hint)}</span></span></a>`;
   const bodyHtml = `
 <header>
   <div class="wrap header-row">
