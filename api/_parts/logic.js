@@ -3531,14 +3531,15 @@ function renderSubmitChoicePage(nonce, baseUrl, lang, isIntl, touristHref) {
     ${ownerLink("cazare", "🛏️", T("Cazare", "Accommodation"), T("Pensiune, hotel, apartament, camping", "Guesthouse, hotel, apartment, camping"))}
     ${ownerLink("restaurant", "🍽️", T("Restaurante & Cafenele", "Restaurant or café"), T("Localuri, cafenele, baruri", "Restaurants, cafés, bars"))}
     ${ownerLink("obiectiv", "🏛️", T("Atracții & Obiective turistice", "Tourist attraction"), T("Muzeu, castel, parc, atracție", "Museum, castle, park, attraction"))}
-    <button type="button" id="chBack" style="background:none;border:none;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;opacity:.8;justify-self:start;padding:6px 0">← ${T("Înapoi", "Back")}</button>
   </div>
 </main>
 <script nonce="${nonce}">
 (function(){
   var s1=document.getElementById("chStep1"),s2=document.getElementById("chStep2");
-  document.getElementById("chOwner").addEventListener("click",function(){s1.style.display="none";s2.style.display="grid";});
-  document.getElementById("chBack").addEventListener("click",function(){s2.style.display="none";s1.style.display="grid";});
+  // pasul 2 e o intrare proprie în istoric: butonul rotund „înapoi” te duce la pasul 1, apoi la pagina anterioară
+  function show(n){ s1.style.display = n === 2 ? "none" : "grid"; s2.style.display = n === 2 ? "grid" : "none"; }
+  document.getElementById("chOwner").addEventListener("click",function(){ try { history.pushState({ chStep: 2 }, ""); } catch(e){} show(2); });
+  window.addEventListener("popstate",function(e){ show(e.state && e.state.chStep === 2 ? 2 : 1); });
 })();
 </script>`;
   return pageShell({ title, description: title, canonical, bodyHtml, extraHead: '<meta name="robots" content="noindex, follow">', dataForClient: { type: "general", weekly: [], holidays: [] }, nonce, langCode: lang });
@@ -3562,7 +3563,8 @@ function buildGlobalBackButtonScript(nonce) {
   var headerRow = document.querySelector(".header-row");
   if (headerRow) headerRow.insertBefore(btn, headerRow.firstChild);
   var backHref = btn.getAttribute("data-back-href");
-  if (isHome || (!backHref && window.history.length <= 1)) return;
+  var backFallback = btn.getAttribute("data-back-fallback");
+  if (isHome || (!backHref && !backFallback && window.history.length <= 1)) return;
   btn.hidden = false;
 
   // --- Buton plutitor trasabil: stă implicit stânga-sus, dar poate fi
@@ -3690,6 +3692,7 @@ function buildGlobalBackButtonScript(nonce) {
       window.location.href = backHref;
       return;
     }
+    if (backFallback && window.history.length <= 1) { window.location.href = backFallback; return; }
     window.history.back();
   });
 
