@@ -554,7 +554,8 @@ ${scriptBody || ""}</script></body></html>`;
     begin(req, res);
     const v = effective(r);
     const sch = v.schedule || {};
-    const mode = sch.is247 ? "247" : (sch.days ? "days" : "none");
+    const mode = sch.appt === true ? "appt" : (sch.is247 ? "247" : (sch.days ? "days" : "none"));
+    const apptDaysTxt = sch.appt === true && Array.isArray(sch.openDays) ? sch.openDays.map((d) => d.date + (d.to ? ".." + d.to : "") + (d.label ? " | " + d.label : "")).join("\n") : "";
     const food = r.type === "restaurant" || r.type === "cafe";
     const dayNames = lang === "en" ? ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] : ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"];
     const order = [1, 2, 3, 4, 5, 6, 0];
@@ -580,8 +581,13 @@ ${scriptBody || ""}</script></body></html>`;
         <h3>${T("Descriere", "Description")}</h3>
         <textarea class="cl-in" id="edNote" maxlength="2000" rows="6">${E(v.note)}</textarea>
         <h3>${T("Program", "Opening hours")}</h3>
-        <select class="cl-in" id="edMode"><option value="none"${mode === "none" ? " selected" : ""}>${T("Fără program fix / nu se aplică", "No fixed hours / not applicable")}</option><option value="247"${mode === "247" ? " selected" : ""}>${T("Non-stop (24/7)", "Open 24/7")}</option><option value="days"${mode === "days" ? " selected" : ""}>${T("Program pe zile", "Hours per day")}</option></select>
+        <select class="cl-in" id="edMode"><option value="none"${mode === "none" ? " selected" : ""}>${T("Fără program fix / nu se aplică", "No fixed hours / not applicable")}</option><option value="247"${mode === "247" ? " selected" : ""}>${T("Non-stop (24/7)", "Open 24/7")}</option><option value="days"${mode === "days" ? " selected" : ""}>${T("Program pe zile", "Hours per day")}</option><option value="appt"${mode === "appt" ? " selected" : ""}>${T("Loc special: doar cu programare / porți deschise", "Special place: by appointment / open days")}</option></select>
         <div class="cl-days" id="edDays"${mode === "days" ? "" : " hidden"}>${dayRows}</div>
+        <div id="edAppt"${mode === "appt" ? "" : " hidden"}>
+          <p class="cl-hint">${T("Pagina arată „Doar cu programare”, fără „deschis acum”. Telefonul și site-ul se completează mai jos, la Contact.", "The page shows “By appointment only”, without “open now”. Phone and website go below, under Contact.")}</p>
+          <label class="cl-field">${T("E-mail pentru programări", "E-mail for booking a visit")}<input class="cl-in" id="edApptEmail" type="email" maxlength="160" value="${E(sch.contactEmail || "")}"></label>
+          <label class="cl-field">${T("Zile cu porți deschise (opțional): câte una pe linie, de forma AAAA-LL-ZZ | Eveniment (interval: AAAA-LL-ZZ..AAAA-LL-ZZ | Eveniment)", "Open days (optional): one per line, as YYYY-MM-DD | Event (range: YYYY-MM-DD..YYYY-MM-DD | Event)")}<textarea class="cl-in" id="edApptDays" maxlength="3000" rows="4" style="min-height:90px">${E(apptDaysTxt)}</textarea></label>
+        </div>
         <label class="cl-field">${T("Mențiune program (opțional — excepții, sărbători)", "Note about the hours (optional — exceptions, holidays)")}<textarea class="cl-in" id="edSNote" maxlength="600" rows="3" style="min-height:70px">${E(sch.note || "")}</textarea></label>
         <h3>${T("Contact", "Contact")}</h3>
         <div class="cl-row">
@@ -612,7 +618,7 @@ ${scriptBody || ""}</script></body></html>`;
     });
   }
   thumbs();
-  $("edMode").addEventListener("change", function(){ $("edDays").hidden = $("edMode").value !== "days"; });
+  $("edMode").addEventListener("change", function(){ $("edDays").hidden = $("edMode").value !== "days"; $("edAppt").hidden = $("edMode").value !== "appt"; });
   $("edFile").addEventListener("change", function(e){
     var files = Array.prototype.slice.call(e.target.files || []); e.target.value = "";
     var room = 11 - photos.length; if (room <= 0) { $("edPhotoMsg").textContent = ${L.safeJson(T("Maximum 11 poze.", "Maximum 11 photos."))}; return; }
@@ -643,6 +649,17 @@ ${scriptBody || ""}</script></body></html>`;
         d[row.getAttribute("data-day")] = row.querySelector(".cl-closed").checked ? { closed: true } : { open: row.querySelector(".cl-open").value, close: row.querySelector(".cl-close").value };
       });
       schedule = { is247: false, days: d };
+    }
+    else if (mode === "appt") {
+      var od = [];
+      $("edApptDays").value.split(String.fromCharCode(10)).forEach(function(line){
+        line = line.trim(); if (!line) return;
+        var parts = line.split("|"), dd = parts[0].trim().split(".."), item = { date: dd[0].trim() };
+        if (dd[1]) item.to = dd[1].trim();
+        var lb = parts.slice(1).join("|").trim(); if (lb) item.label = lb;
+        od.push(item);
+      });
+      schedule = { appt: true, contactEmail: $("edApptEmail").value, openDays: od };
     }
     if (schedule) schedule.note = $("edSNote").value;
     var b = $("edSave"); b.disabled = true;
@@ -787,7 +804,7 @@ function mountAdmin(app, deps) {
         const ed = parseJson(r.owner_edit) || {};
         const cur = { photos: photosOf(r), note: r.note || "", schedule: parseJson(r.schedule), phone: r.contact_phone || "", website: r.website_url || "", menu: r.menu_url || "" };
         const imgs = (a) => a.length ? `<div class="cl-a-th">${a.map((u) => `<img src="${E(u)}" alt="">`).join("")}</div>` : "<em>fără poze</em>";
-        const schTxt = (s) => !s ? "—" : s.is247 ? "Non-stop" : s.days ? Object.keys(s.days).sort().map((k) => `${["Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "Sâm"][k]}: ${s.days[k].closed ? "închis" : E(s.days[k].open + "–" + s.days[k].close)}`).join(" · ") : "—";
+        const schTxt = (s) => !s ? "—" : s.appt === true ? "Loc special: doar cu programare" + (s.contactEmail ? " · " + s.contactEmail : "") + (Array.isArray(s.openDays) && s.openDays.length ? " · porți deschise: " + s.openDays.map((d) => d.date + (d.to ? ".." + d.to : "") + (d.label ? " (" + d.label + ")" : "")).join("; ") : "") : s.is247 ? "Non-stop" : s.days ? Object.keys(s.days).sort().map((k) => `${["Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "Sâm"][k]}: ${s.days[k].closed ? "închis" : E(s.days[k].open + "–" + s.days[k].close)}`).join(" · ") : "—";
         const row = (lab, a, b) => `<tr><th>${lab}</th><td>${a}</td><td${a !== b ? ' class="cl-changed"' : ""}>${b}</td></tr>`;
         const pj = (v) => JSON.stringify(v);
         return `<div class="admin-submission-card clm" data-id="${r.id}" data-kind="edit">
