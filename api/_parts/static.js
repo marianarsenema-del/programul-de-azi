@@ -1498,7 +1498,10 @@ a{color:inherit;text-decoration:none;}
 @media (min-width:768px){.wrap{max-width:680px;}}
 @media (min-width:1024px){.wrap{max-width:900px;}}
 header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(14px + env(safe-area-inset-top)) 0 14px;}
-.header-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+/* ceasul din antet a fost scos de peste tot (rămâne în DOM, ascuns, ca scriptul să nu dea erori) */
+.live-clock{display:none !important;}
+.header-row .brand-stack{min-width:0;}
 .header-row .brand-stack{justify-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
 /* Linkurile de Cazare/Restaurant din antet — scoase complet, peste tot
    (mobil ȘI desktop). Pe mobil se suprapuneau cu butonul "înapoi"; pe
