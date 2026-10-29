@@ -3335,7 +3335,7 @@ async function renderSubmitPlacePage(nonce, baseUrl, lang, isIntl) {
     <div class="submit-place-label">${escapeHtml(t.scheduleLabel)}
       <style>.submit-place-schedule[hidden]{display:none !important;}</style>
       <select id="spScheduleMode">
-        <option value="none">${escapeHtml(lang === "ro" ? "Nu are program fix / nu știu (ex. un lac, o plajă, un traseu)" : "No fixed hours / I don't know (e.g. a lake, a beach, a trail)")}</option>
+        <option value="none">${escapeHtml(lang === "ro" ? "Fără program fix / nu știu" : "No fixed hours / not sure")}</option>
         <option value="247">${escapeHtml(t.schedule247)}</option>
         <option value="days">${escapeHtml(lang === "ro" ? "Are program pe zile" : "Has opening hours per day")}</option>
       </select>
