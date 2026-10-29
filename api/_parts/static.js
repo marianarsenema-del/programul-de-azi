@@ -1878,6 +1878,9 @@ button.affiliate-btn{cursor:pointer;box-sizing:border-box;font-family:inherit;li
   border:1px solid var(--glass-border);border-radius:12px;padding:14px 16px;width:100%;box-sizing:border-box;
 }
 .submit-place-label textarea{resize:vertical;min-height:80px;}
+/* iOS: textul lung al unei opțiuni din <select> lărgea toată pagina (se putea trage stânga-dreapta) */
+.submit-place-label{min-width:0;}
+.submit-place-label select{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .submit-place-label input::placeholder,
 .submit-place-label textarea::placeholder{color:var(--muted);}
 .submit-place-btn{
