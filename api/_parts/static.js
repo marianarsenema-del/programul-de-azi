@@ -2006,6 +2006,14 @@ tbody tr.today .day-cell::after{content:" • azi";font-family:var(--font-body);
    albă cu contur portocaliu pe tema luminoasă. */
 #siteSearchInput,.search-box-wrap .city-search-input{background-color:#171E3A;border:2px solid var(--accent);color:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;}
 #siteSearchInput::placeholder,.search-box-wrap .city-search-input::placeholder{color:#AEB6C8;}
+/* iPhone/Safari mărește automat pagina când apeși într-un câmp cu text mai mic de 16px și apoi rămâne „zoomată” (se poate trage stânga-dreapta).
+   Pe ecrane tactile, câmpurile de formular au deci minim 16px. Selectorul de limbă din antet rămâne mic (altfel nu încape antetul). */
+@media (hover:none) and (pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=submit]):not([type=button]),
+  textarea,
+  select{font-size:16px !important;}
+  .lang-switcher.in-header select{font-size:12px !important;}
+}
 html[data-theme="light"] #siteSearchInput,html[data-theme="light"] .search-box-wrap .city-search-input{background-color:#FFFFFF;border:2px solid var(--accent);color:#111;}
 html[data-theme="light"] #siteSearchInput::placeholder,html[data-theme="light"] .search-box-wrap .city-search-input::placeholder{color:#8a8f99;}
 
