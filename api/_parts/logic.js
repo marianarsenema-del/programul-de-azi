@@ -7535,6 +7535,11 @@ function buildPropertyCountryModalScript(lang) {
   var pendingHref = null;
   cta.addEventListener("click", function(e){
     if (stored() === "ro") return; // a răspuns deja „România” pe acest dispozitiv
+    // restricția „doar România” e doar pentru cazări; restaurantele, cafenelele și obiectivele se pot înscrie din orice țară
+    var ownerNext = cta.getAttribute("data-owner-next");
+    if (ownerNext === "restaurant" || ownerNext === "obiectiv") return;
+    var activeNow = document.querySelector(".acc-type-pill.is-active");
+    if (!ownerNext && activeNow && activeNow.getAttribute("data-dest") !== "cazare") return;
     e.preventDefault();
     pendingHref = cta.getAttribute("href");
     var active = document.querySelector(".acc-type-pill.is-active");
