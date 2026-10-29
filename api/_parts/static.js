@@ -1666,6 +1666,9 @@ button.plan-visit-option{width:100%;cursor:pointer;box-sizing:border-box;font-fa
    declanșează widget-uri), care altfel are stiluri implicite din browser. */
 button.affiliate-btn{cursor:pointer;box-sizing:border-box;font-family:inherit;line-height:normal;}
 .affiliate-banner-link{display:block;text-align:center;margin:14px 18px 0;}
+/* cutiile cu rotație (text / banner) au înălțime minimă, ca pagina să nu „sară” la fiecare schimbare */
+#beachPartnerCarousel,#genericPartnerCarousel,[id^="storeAffCarousel_"]{min-height:54px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
+.affiliate-banner-link img{display:block;}
 .affiliate-banner-link img{max-width:100%;height:auto;border-radius:var(--radius-md);display:inline-block;box-shadow:0 12px 26px -10px rgba(0,0,0,.4);transition:transform .15s ease;}
 .affiliate-banner-link:hover img{transform:translateY(-2px);}
 .affiliate-btn:hover{opacity:.92;transform:translateY(-1px);}
