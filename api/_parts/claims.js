@@ -581,7 +581,7 @@ ${scriptBody || ""}</script></body></html>`;
         <h3>${T("Descriere", "Description")}</h3>
         <textarea class="cl-in" id="edNote" maxlength="2000" rows="6">${E(v.note)}</textarea>
         <h3>${T("Program", "Opening hours")}</h3>
-        <select class="cl-in" id="edMode"><option value="none"${mode === "none" ? " selected" : ""}>${T("Fără program fix / nu se aplică", "No fixed hours / not applicable")}</option><option value="247"${mode === "247" ? " selected" : ""}>${T("Non-stop (24/7)", "Open 24/7")}</option><option value="days"${mode === "days" ? " selected" : ""}>${T("Program pe zile", "Hours per day")}</option><option value="appt"${mode === "appt" ? " selected" : ""}>${T("Loc special: doar cu programare / porți deschise", "Special place: by appointment / open days")}</option></select>
+        <select class="cl-in" id="edMode"><option value="none"${mode === "none" ? " selected" : ""}>${T("Fără program fix / nu se aplică", "No fixed hours / not applicable")}</option><option value="247"${mode === "247" ? " selected" : ""}>${T("Non-stop (24/7)", "Open 24/7")}</option><option value="days"${mode === "days" ? " selected" : ""}>${T("Program pe zile", "Hours per day")}</option><option value="appt"${mode === "appt" ? " selected" : ""}>${T("Doar cu programare / porți deschise", "By appointment / open days")}</option></select>
         <div class="cl-days" id="edDays"${mode === "days" ? "" : " hidden"}>${dayRows}</div>
         <div id="edAppt"${mode === "appt" ? "" : " hidden"}>
           <p class="cl-hint">${T("Pagina arată „Doar cu programare”, fără „deschis acum”. Telefonul și site-ul se completează mai jos, la Contact.", "The page shows “By appointment only”, without “open now”. Phone and website go below, under Contact.")}</p>
