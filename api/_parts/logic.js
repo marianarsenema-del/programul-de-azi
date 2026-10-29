@@ -3578,8 +3578,10 @@ function buildGlobalBackButtonScript(nonce) {
   // history.back() n-ar face nimic vizibil)
   var path = window.location.pathname;
   var isHome = path === "/" || /^\\/[a-z]{2}\\/?$/.test(path);
-  var headerRow = document.querySelector(".header-row");
-  if (headerRow) headerRow.insertBefore(btn, headerRow.firstChild);
+  // IMPORTANT: butonul rămâne copil direct al <body>. Mutat în <header> (sticky +
+  // backdrop-filter) devine "fixed" față de header, nu față de ecran → pe iOS
+  // apărea tăiat/în afara ecranului și lăsa o bandă colorată în fundal.
+  if (btn.parentNode !== document.body) document.body.appendChild(btn);
   var backHref = btn.getAttribute("data-back-href");
   var backFallback = btn.getAttribute("data-back-fallback");
   if (isHome || (!backHref && !backFallback && window.history.length <= 1)) return;
