@@ -1733,12 +1733,20 @@ function buildStoreAffiliateCarouselScript(buttonId, links, nonce, isBanner) {
   var isBanner = ${isBanner ? "true" : "false"};
   var img = isBanner ? btn.querySelector("img") : null;
   var idx = 0;
+  var maxH = 0;
+  function lockHeight(){ var h = btn.offsetHeight; if (h > maxH) { maxH = h; btn.style.minHeight = maxH + "px"; } }
+  lockHeight();
+  var ready = {};
+  if (isBanner) links.forEach(function(o){ if (o && o.banner) { var pi = new Image(); pi.onload = function(){ ready[o.banner] = true; lockHeight(); }; pi.src = o.banner; } });
   setInterval(function(){
-    idx = (idx + 1) % links.length;
-    var item = links[idx];
+    var next = (idx + 1) % links.length;
+    var item = links[next];
+    if (isBanner && item.banner && !ready[item.banner]) return;
+    idx = next;
     if (isBanner) {
       btn.href = item.url;
       if (img) { img.src = item.banner; if (item.alt) img.alt = item.alt; }
+      setTimeout(lockHeight, 50);
     } else {
       btn.href = item;
     }
@@ -1762,7 +1770,14 @@ function buildGenericPartnerCarouselScript(buttonId, offers, nonce) {
   var offers = ${safeJson(offers)};
   if (!offers || offers.length < 2) return;
   var idx = 0;
+  // fără „clipire”: înălțimea casetei nu mai scade între oferte (text vs. banner) și bannerul se schimbă abia după ce e încărcat
+  var maxH = 0;
+  function lockHeight(){ var h = btn.offsetHeight; if (h > maxH) { maxH = h; btn.style.minHeight = maxH + "px"; } }
+  lockHeight();
+  var ready = {};
+  offers.forEach(function(o){ if (o.banner) { var pi = new Image(); pi.onload = function(){ ready[o.banner] = true; }; pi.src = o.banner; } });
   function render(item){
+    lockHeight();
     btn.href = item.url;
     btn.innerHTML = "";
     if (item.banner) {
@@ -1786,8 +1801,11 @@ function buildGenericPartnerCarouselScript(buttonId, offers, nonce) {
     }
   }
   setInterval(function(){
-    idx = (idx + 1) % offers.length;
+    var next = (idx + 1) % offers.length;
+    if (offers[next].banner && !ready[offers[next].banner]) return; // bannerul nu e încă încărcat: rămâne oferta curentă
+    idx = next;
     render(offers[idx]);
+    setTimeout(lockHeight, 50);
   }, 5000);
 })();
 </script>`;
